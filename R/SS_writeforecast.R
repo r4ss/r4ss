@@ -120,13 +120,17 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       wl("N_forecast_loops")
 
       wl("First_forecast_loop_with_stochastic_recruitment")
-      if(!is.null(mylist[["Forecast_loop_control_3"]])) {
-        warning("Forecast_loop_control_3 has been renamed to fcast_rec_option\n", 
-                " so only fcast_rec_option will be written to the file.")
+      if (!is.null(mylist[["Forecast_loop_control_3"]])) {
+        warning(
+          "Forecast_loop_control_3 has been renamed to fcast_rec_option\n",
+          " so only fcast_rec_option will be written to the file."
+        )
       }
-      if(!is.null(mylist[["Forecast_loop_control_4"]])) {
-        warning("Forecast_loop_control_4 has been renamed to fcast_rec_val\n", 
-                " so only fcast_rec_val will be written to the file.")
+      if (!is.null(mylist[["Forecast_loop_control_4"]])) {
+        warning(
+          "Forecast_loop_control_4 has been renamed to fcast_rec_val\n",
+          " so only fcast_rec_val will be written to the file."
+        )
       }
       wl("fcast_rec_option")
       wl("fcast_rec_val")

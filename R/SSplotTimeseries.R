@@ -240,8 +240,8 @@ SSplotTimeseries <-
       # subplot9&10 = relative spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
-        yvals <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", "Value"] 
-        ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])           
+        yvals <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", "Value"]
+        ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
       }
 
       # subplot11-15 = recruitment
@@ -384,7 +384,7 @@ SSplotTimeseries <-
           }
           # calculation fractional year value associated with spawning season for spawning biomass plots
           stdtable[["YrSeas"]] <- stdtable[["Yr"]] + replist[["seasfracs"]][which(1:nseasons %in% spawnseas)]
-          if (ts[["YrSeas"]][1] == ts[["Yr"]][1]){
+          if (ts[["YrSeas"]][1] == ts[["Yr"]][1]) {
             stdtable[["YrSeas"]] <- stdtable[["Yr"]]
           }
 
