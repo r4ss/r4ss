@@ -1372,7 +1372,7 @@ SS_output <-
 
       # add columns to pars data.frame with info from labels
       seldev_pars[["Fleet"]] <- seldev_label_info[["X1"]]
-      yr_col <- grep("^y\\d\\d\\d\\d$",  seldev_label_info[1, ])
+      yr_col <- grep("^y\\d\\d\\d\\d$", seldev_label_info[1, ])
       type_bin_col <- grep("^[aAlL][[:alpha:]]{0,3}\\d$", seldev_label_info[1, ])
       seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[[yr_col]], 2))
       # note: bin was indicated by "a" for length- and age-based selectivity
@@ -2873,11 +2873,11 @@ SS_output <-
     }
 
 
-    if (depletion_basis %in% c(1,3:4)) {
+    if (depletion_basis %in% c(1, 3:4)) {
       starter <- SS_readstarter(
-          file = file.path(dir, "starter.ss"),
-          verbose = verbose
-        )
+        file = file.path(dir, "starter.ss"),
+        verbose = verbose
+      )
       depletion_multiplier <- starter$depl_denom_frac
     } else {
       depletion_multiplier <- 1
