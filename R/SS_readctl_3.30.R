@@ -19,6 +19,9 @@
 #'  is not used for any fleets; 2) use_datlist = TRUE and datlist is specified;
 #'  or 3) if comments in the control file should be used instead to determine
 #'  the the predM_fleets.
+#' @param Ntag_fleets The number of catch fleets in the model (fleets of )
+#'  type 1 or 2; not surveys). Used to set the number of survey parameters. 
+#'  Only used if tagging data is in the model and `use_datlist` is FALSE.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
@@ -45,6 +48,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
                             Nsexes = NULL,
                             Npopbins = NULL,
                             Nfleets = NULL,
+                            Ntag_fleets = NULL,
                             Do_AgeKey = NULL,
                             N_tag_groups = NULL,
                             catch_mult_fleets = NULL,
@@ -283,6 +287,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     }
     ctllist[["N_tag_groups"]] <- N_tag_groups <- datlist[["N_tag_groups"]]
     ctllist[["fleetnames"]] <- fleetnames <- datlist[["fleetnames"]]
+    Ntag_fleets <- length(which(datlist$fleetinfo$type < 3))
   }
   # specifications ----
   ctllist[["sourcefile"]] <- file
@@ -1496,11 +1501,11 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     # . one initial Tag loss parameter
     # . one continuos Tag loss parameter
     # . NB over-dispersion paramater
-    # For each fleet
+    # For each fleet (of type 1 or 2 only, not surveys):
     # . one tag reporting rate paramater
     # . one tag reporting rate decay paramater
     #
-    #  In total N_tag_groups*3+ Nfleets*2 parameters are needed to read
+    #  In total N_tag_groups*3+ Ntag_fleets*2 parameters are needed to read
     ctllist <- add_df(ctllist,
       name = "TG_Loss_init",
       nrow = ctllist[["N_tag_groups"]],
@@ -1527,19 +1532,19 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     )
     ctllist <- add_df(ctllist,
       name = "TG_Report_fleet",
-      nrow = ctllist[["Nfleets"]],
+      nrow = Ntag_fleets,
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("TG_report_fleet_par_", 1:ctllist[["Nfleets"]])
+        paste0("TG_report_fleet_par_", 1:Ntag_fleets)
     )
     ctllist <- add_df(ctllist,
       name = "TG_Report_fleet_decay",
-      nrow = ctllist[["Nfleets"]],
+      nrow = Ntag_fleets,
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("TG_report_decay_par_", 1:ctllist[["Nfleets"]])
+        paste0("TG_report_decay_par_", 1:Ntag_fleets)
     )
   }
 

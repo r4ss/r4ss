@@ -18,6 +18,7 @@ SS_readctl_3.30(
   Nsexes = NULL,
   Npopbins = NULL,
   Nfleets = NULL,
+  Ntag_fleets = NULL,
   Do_AgeKey = NULL,
   N_tag_groups = NULL,
   catch_mult_fleets = NULL,
@@ -68,6 +69,10 @@ if \code{use_datlist = FALSE}.}
 
 \item{Nfleets}{number of fishery and survey fleets in the model. This information is also not
 explicitly available in control file}
+
+\item{Ntag_fleets}{The number of catch fleets in the model (fleets of )
+type 1 or 2; not surveys). Used to set the number of survey parameters.
+Only used if tagging data is in the model and \code{use_datlist} is FALSE.}
 
 \item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to
 be read set 1 (but in fact any non zero numeric in R) or TRUE to enable to

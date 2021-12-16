@@ -25,6 +25,7 @@ SS_readctl(
   N_CPUE_obs = NULL,
   catch_mult_fleets = NULL,
   predM_fleets = NULL,
+  Ntag_fleets = NULL,
   N_rows_equil_catch = NULL,
   N_dirichlet_parms = NULL,
   ptype = FALSE
@@ -103,6 +104,11 @@ or 3) if comments in the control file should be used instead to determine
 the the predM_fleets. Used only in control file 3.30 syntax if
 \code{use_datlist = FALSE}.}
 
+\item{Ntag_fleets}{The number of catch fleets in the model (fleets of )
+type 1 or 2; not surveys). Used to set the number of survey parameters.
+Only used in control file 3.30 reading if tagging data is in the model and
+\code{use_datlist = FALSE}.}
+
 \item{N_rows_equil_catch}{Integer value of the number of parameter lines to
 read for equilibrium catch. Defaults to NULL, which means the function will
 attempt to figure out how many lines of equilibrium catch to read from the
@@ -111,7 +117,7 @@ control file comments. Used only in control file 3.30 syntax if
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet-Multinomial
 parameters. Defaults to 0. Used only in control file 3.30 syntax if
-\code{use_datlist = FALSE}..}
+\code{use_datlist = FALSE}.}
 
 \item{ptype}{LOGICAL if \code{TRUE}, which is the default,
 a column will be included in the output indicating parameter type.
