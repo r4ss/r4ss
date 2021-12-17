@@ -95,7 +95,7 @@ jobs:
             print(ctlname)
             file.remove(file.path(dir, datname))
             file.remove(file.path(dir, ctlname))
-            file.rename(file.path(dir,"data.ss_new"), file.path(dir, datname))
+            file.rename(file.path(dir,"data_echo.ss_new"), file.path(dir, datname))
             file.rename(file.path(dir, "control.ss_new"), file.path(dir, ctlname))
             # run the models without estimation
             file.remove(file.path(dir, "Report.sso"))
