@@ -30,7 +30,7 @@ jobs:
         run: Rscript -e 'install.packages("remotes")'
 
       - name: install r4ss
-        run: Rscript -e 'remotes::install_github("r4ss/r4ss")'
+        run: Rscript -e 'remotes::install_github("r4ss/r4ss@rel_19_changes")'
 
       - name: Get admb and put in path
         run: |
