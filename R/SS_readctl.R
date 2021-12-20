@@ -26,8 +26,8 @@
 #'  the the predM_fleets. Used only in control file 3.30 syntax if
 #'  `use_datlist = FALSE`.
 #' @param Ntag_fleets The number of catch fleets in the model (fleets of )
-#'  type 1 or 2; not surveys). Used to set the number of survey parameters. 
-#'  Only used in control file 3.30 reading if tagging data is in the model and 
+#'  type 1 or 2; not surveys). Used to set the number of survey parameters.
+#'  Only used in control file 3.30 reading if tagging data is in the model and
 #'  `use_datlist = FALSE`.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
