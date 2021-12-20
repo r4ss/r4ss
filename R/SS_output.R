@@ -1447,10 +1447,11 @@ SS_output <-
       # figure out which fleet uses which parameter,
       # currently (as of SS version 3.30.10.00), requires reading data file
       if (verbose) {
-        message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
+        message("Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters")
       }
+      datname <- get_dat_new_name(dir)
       datfile <- SS_readdat(
-        file = file.path(dir, "data.ss_new"),
+        file = file.path(dir, datname),
         verbose = verbose, version = "3.30"
       )
       # deal with case where data file is empty
