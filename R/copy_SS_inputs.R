@@ -103,11 +103,9 @@ copy_SS_inputs <- function(dir.old = NULL,
       overwrite = overwrite
     )
     # check data new file could be data.ss_new or data_echo.ss_new
-    dat_name <- 
-      ifelse(file.exists(file.path(dir.old, "data.ss_new")), 
-             "data.ss_new", "data_echo.ss_new")
+    datname <- get_dat_new_name(dir)
     results[2] <- file.copy(
-      from = file.path(dir.old, dat_name),
+      from = file.path(dir.old, datname),
       to = file.path(dir.new, starter[["datfile"]]),
       overwrite = overwrite
     )

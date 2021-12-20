@@ -1449,9 +1449,7 @@ SS_output <-
       if (verbose) {
         message("Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters")
       }
-      datname <- ifelse(file.exists(file.path(dir, "data.ss_new")),
-                        "data.ss_new",
-                        "data_echo.ss_new")
+      datname <- get_dat_new_name(dir)
       datfile <- SS_readdat(
         file = file.path(dir, datname),
         verbose = verbose, version = "3.30"
