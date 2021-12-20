@@ -25,6 +25,10 @@
 #'  or 3) if comments in the control file should be used instead to determine
 #'  the the predM_fleets. Used only in control file 3.30 syntax if
 #'  `use_datlist = FALSE`.
+#' @param Ntag_fleets The number of catch fleets in the model (fleets of )
+#'  type 1 or 2; not surveys). Used to set the number of survey parameters. 
+#'  Only used in control file 3.30 reading if tagging data is in the model and 
+#'  `use_datlist = FALSE`.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
@@ -35,7 +39,7 @@
 #' @param Nsurveys Number of surveys, for 3.24 and lower version models.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet-Multinomial
 #'  parameters. Defaults to 0. Used only in control file 3.30 syntax if
-#'  `use_datlist = FALSE`..
+#'  `use_datlist = FALSE`.
 #' @param ptype LOGICAL if `TRUE`, which is the default,
 #'  a column will be included in the output indicating parameter type.
 #'  Using `TRUE` can be useful, but causes problems for [SS_writectl],
@@ -92,6 +96,7 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
                        N_CPUE_obs = NULL,
                        catch_mult_fleets = NULL,
                        predM_fleets = NULL,
+                       Ntag_fleets = NULL,
                        N_rows_equil_catch = NULL,
                        N_dirichlet_parms = NULL,
                        ptype = FALSE) {
@@ -188,6 +193,7 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
       N_tag_groups = N_tag_groups,
       catch_mult_fleets = catch_mult_fleets,
       predM_fleets = predM_fleets,
+      Ntag_fleets = Ntag_fleets,
       N_rows_equil_catch = N_rows_equil_catch,
       N_dirichlet_parms = N_dirichlet_parms,
       use_datlist = use_datlist,
