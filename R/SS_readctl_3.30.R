@@ -252,7 +252,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       if (!file.exists(datlist)) {
         stop("Cannot find data file specified in datlist: ", datlist)
       }
-      datlist <- SS_readdat(file = datlist, version = "3.30", verbose = verbose)
+      datlist <- SS_readdat(file = datlist, version = version, verbose = verbose)
     }
     if (is.null(datlist)) stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
@@ -292,7 +292,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   # specifications ----
   ctllist[["sourcefile"]] <- file
   ctllist[["type"]] <- "Stock_Synthesis_control_file"
-  ctllist[["ReadVersion"]] <- "3.30"
+  ctllist[["ReadVersion"]] <- version
 
   ctllist[["eof"]] <- FALSE
 

@@ -1,51 +1,54 @@
-#' Read control file from SS
+#' Read control file from Stock Synthesis
 #'
-#' Read control file from Stock Synthesis (SS) into R as a list object.
-#' This function acts as a wrapper for version-specific SS_readctl_ functions.
-#' For example, if the control file was written using SS 3.24,
-#' then `SS_readctl` will call [SS_readctl_3.24]. Input arguments that do not
-#' pertain to the version of your control file can be left at their
+#' Read control file from Stock Synthesis (SS3) into R as a list object.
+#' This function acts as a wrapper for version-specific `SS_readctl_*()`.
+#' For example, if the control file was written using SS3 3.24,
+#' then `SS_readctl()` will call [SS_readctl_3.24()].
+#' Arguments for `SS_readctl()` that do not pertain to the version of
+#' `SS_readctl_*()` that will be used for your control file can be left at their
 #' default values.
 #'
 #' @template file
 #' @template readctl_vars
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
-#' @param N_CPUE_obs Number of CPUE observations. Used only in control file 3.24
-#'  syntax if `use_datlist = FALSE`.
+#' @param version Deprecated. SS3 version number, where only versions
+#'   "3.24" or newer are supported and this can be found in the input file
+#'   rather than supplying it as an argument.
+#' @param N_CPUE_obs Number of catch-per-unit-effort (CPUE) observations.
+#'   Used only in control file 3.24
+#'   syntax if `use_datlist = FALSE`.
 #' @param catch_mult_fleets Integer vector of fleets using the catch multiplier
 #'   option. Defaults to NULL and should be left as such if 1) the catch
 #'   multiplier option is not used for any fleet or 2) `use_datlist = TRUE` and
 #'   datlist is specified. Used only in control file 3.30 syntax if
 #'   `use_datlist = FALSE`.
 #' @param predM_fleets integer vector of fleets with predator mortality included.
-#'  Predator mortality fleets are only available in v3.30.18 and
-#'  higher. Defaults to NULL and should be left as such if 1) predation mortality
-#'  is not used for any fleets; 2) `use_datlist = TRUE` and `datlist` is specified;
-#'  or 3) if comments in the control file should be used instead to determine
-#'  the the predM_fleets. Used only in control file 3.30 syntax if
-#'  `use_datlist = FALSE`.
+#'   Predator mortality fleets are only available in v3.30.18 and
+#'   higher. Defaults to NULL and should be left as such if 1) predation mortality
+#'   is not used for any fleets; 2) `use_datlist = TRUE` and `datlist` is specified;
+#'   or 3) if comments in the control file should be used instead to determine
+#'   the the predM_fleets. Used only in control file 3.30 syntax if
+#'   `use_datlist = FALSE`.
 #' @param Ntag_fleets The number of catch fleets in the model (fleets of )
-#'  type 1 or 2; not surveys). Used to set the number of survey parameters.
-#'  Only used in control file 3.30 reading if tagging data is in the model and
-#'  `use_datlist = FALSE`.
+#'   type 1 or 2; not surveys). Used to set the number of survey parameters.
+#'   Only used in control file 3.30 reading if tagging data is in the model and
+#'   `use_datlist = FALSE`.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
-#'  read for equilibrium catch. Defaults to NULL, which means the function will
-#'  attempt to figure out how many lines of equilibrium catch to read from the
-#'  control file comments. Used only in control file 3.30 syntax if
-#'  `use_datlist = FALSE`.
+#'   read for equilibrium catch. Defaults to NULL, which means the function will
+#'   attempt to figure out how many lines of equilibrium catch to read from the
+#'   control file comments. Used only in control file 3.30 syntax if
+#'   `use_datlist = FALSE`.
 #' @param Nfleets Number of fishing fleets and surveys, for 3.30 models.
 #' @param Nfleet Number of fishing fleets, for 3.24 and lower version models.
 #' @param Nsurveys Number of surveys, for 3.24 and lower version models.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet-Multinomial
-#'  parameters. Defaults to 0. Used only in control file 3.30 syntax if
-#'  `use_datlist = FALSE`.
+#'   parameters. Defaults to 0. Used only in control file 3.30 syntax if
+#'   `use_datlist = FALSE`.
 #' @param ptype LOGICAL if `TRUE`, which is the default,
-#'  a column will be included in the output indicating parameter type.
-#'  Using `TRUE` can be useful, but causes problems for [SS_writectl],
-#'  and therefore is not recommended if you intend to write the list
-#'  back out into a file.
-#'  Used only in control file 3.24 syntax.
+#'   a column will be included in the output indicating parameter type.
+#'   Using `TRUE` can be useful, but causes problems for [SS_writectl],
+#'   and therefore is not recommended if you intend to write the list
+#'   back out into a file.
+#'   Used only in control file 3.24 syntax.
 #' @author Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
 #' @export
 #' @md
@@ -78,7 +81,10 @@
 #'   verbose = FALSE,
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
-SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycle::deprecated(),
+SS_readctl <- function(file,
+                       version = lifecycle::deprecated(),
+                       verbose = FALSE,
+                       echoall = lifecycle::deprecated(),
                        use_datlist = TRUE,
                        datlist = "data.ss_new",
                        ## Parameters that are not defined in control file
@@ -111,33 +117,18 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
     )
     Nsexes <- Ngenders
   }
+  if (lifecycle::is_present(version)) {
+    lifecycle::deprecate_warn(
+      when = "1.43.0",
+      what = "SS_readctl(version)",
+      details = "`version` is replaced by [version_search(file)] that finds the version."
+    )
+  }
 
   # wrapper function to call old or new version of SS_readctl
 
   # automatic testing of version number
-  if (is.null(version)) {
-    # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what = character(), nlines = 1, quiet = !verbose)
-    version <- substring(version, 3, 6)[1]
-    # if that fails, look for data.ss_new file in the same directory
-    if (version %in% c("3.24", "3.30")) {
-      if (verbose) cat("assuming version", version, "based on first line of control file\n")
-    } else {
-      newfile <- file.path(dirname(file), "control.ss_new")
-      if (file.exists(newfile)) {
-        version <- scan(newfile, what = character(), nlines = 1, quiet = !verbose)
-        version <- substring(version, 3, 6)
-        if (verbose) cat("assuming version", version, "based on first line of control.ss_new\n")
-      } else {
-        stop("input 'version' required due to missing value at top of", file)
-      }
-    }
-  }
-
-  nver <- as.numeric(substring(version, 1, 4))
-
-  if (verbose) cat("Char version is ", version, "\n")
-  if (verbose) cat("Numeric version is ", nver, "\n")
+  nver <- get_version_search(file, c("3.24", "3.30"))
 
   # call function for SS version 2.00
   if (nver < 3) {

@@ -256,44 +256,33 @@ SS_output <-
     } else {
       stop("can't find report file: ", repfile)
     }
-    rephead <- readLines(con = repfile, n = 50)
 
-    # warn if SS version used to create rep file is too old or too new for this code
-    # note: SS_versionCode is new with V3.20
-    # perhaps in the future we will use it to replace SS_versionshort throughout r4ss?
-    SS_versionCode <- rephead[grep("#V", rephead)]
-    SS_version <- rephead[grep("Stock_Synthesis", rephead)]
-    SS_version <- SS_version[substring(SS_version, 1, 2) != "#C"] # remove any version numbering in the comments
-    SS_version <- SS_version[1]
-    if (substring(SS_version, 1, 2) == "#V") {
-      SS_version <- substring(SS_version, 3)
-    }
-    if (substring(SS_version, 1, 4) == "3.30") {
-      SS_versionshort <- "3.30"
-      SS_versionNumeric <- as.numeric(SS_versionshort)
-    } else {
-      # typically something like "SS-V3.24"
-      SS_versionshort <- toupper(substr(SS_version, 1, 8))
-      SS_versionNumeric <- as.numeric(substring(SS_versionshort, 5))
-    }
-
+    # warn if SS version used to create rep file is too old or too new
+    rephead <- get_version_parse(get_version_raw(file = repfile))
+    SS_version <- rephead[["long"]]
+    SS_versionNumeric <- rephead[["numeric"]]
+    SS_versionshort <- rephead[["character"]]
     SS_versionMax <- 3.30
     SS_versionMin <- 3.24
 
     # test for version compatibility with this code
-    if (SS_versionNumeric < SS_versionMin | SS_versionNumeric > SS_versionMax) {
-      warning(
-        "This function tested on SS versions 3.24 and 3.30.\n",
-        "  You are using ", strsplit(SS_version, split = ";")[[1]][1],
-        " which MIGHT NOT WORK with this package."
-      )
+    SS_versionallowed <- eval(formals(get_version_search)[["allow"]])
+    SS_versiontest <- (
+      SS_versionNumeric < SS_versionMin |
+      SS_versionNumeric > SS_versionMax
+    )
+    statement <- glue::glue('
+      `SS_output()` is tested on SS3 versions \\
+      {glue::glue_collapse(SS_versionallowed, sep = ", ", last = " and ")}.
+      {repfile} was created using {SS_version},
+      which {ifelse(SS_versiontest, "MIGHT NOT", "SHOULD")} work with {{r4ss}}.
+      '
+    )
+    if (SS_versiontest) {
+      warning(statement)
     } else {
       if (verbose) {
-        message(
-          "This function tested on SS versions 3.24 and 3.30.\n",
-          "  You are using ", strsplit(SS_version, split = ";")[[1]][1],
-          " which SHOULD work with this package."
-        )
+        message(statement)
       }
     }
 
@@ -306,7 +295,7 @@ SS_output <-
         return(time[2])
       }
     }
-    repfiletime <- findtime(rephead)
+    repfiletime <- findtime(readLines(con = repfile, n = 50))
     if (verbose) {
       message("Report file time:", repfiletime)
     }
@@ -894,7 +883,7 @@ SS_output <-
         compdbase[["sex"]][compdbase[["Sexes"]] == 3] <- compdbase[["Sex"]][compdbase[["Sexes"]] == 3]
 
         # make correction to tag output associated with 3.24f (fixed in later versions)
-        if (substr(SS_version, 1, 9) == "SS-V3.24f") {
+        if (SS_version == "3.24f") {
           if (!hidewarn) {
             message("Correcting for bug in tag data output associated with SSv3.24f\n")
           }
@@ -1452,7 +1441,7 @@ SS_output <-
       datname <- get_dat_new_name(dir)
       datfile <- SS_readdat(
         file = file.path(dir, datname),
-        verbose = verbose, version = "3.30"
+        verbose = verbose
       )
       # deal with case where data file is empty
       if (is.null(datfile)) {
@@ -1462,7 +1451,7 @@ SS_output <-
         )
         datfile <- SS_readdat(
           file = file.path(dir, starter[["datfile"]]),
-          verbose = verbose, version = "3.30"
+          verbose = verbose
         )
       }
       age_data_info <- datfile[["age_info"]]
@@ -1918,8 +1907,8 @@ SS_output <-
     # accounting for additional Bmsy/Bzero line introduced in 3.24U
     # should be now robust up through 3.24AZ (if that ever gets created)
     if (SS_versionNumeric >= 3.30 |
-      substring(SS_version, 1, 9) %in% paste0("SS-V3.24", LETTERS[21:26]) |
-      substring(SS_version, 1, 10) %in% paste0("SS-V3.24A", LETTERS)) {
+      SS_version %in% paste0("3.24", LETTERS[21:26]) |
+      SS_version %in% paste0("3.24A", LETTERS)) {
       last_row_index <- 11
     } else {
       last_row_index <- 10

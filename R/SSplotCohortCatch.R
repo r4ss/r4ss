@@ -83,7 +83,6 @@ SSplotCohortCatch <-
     accuage <- replist[["accuage"]]
     growthvaries <- replist[["growthvaries"]]
     growdat <- replist[["endgrowth"]]
-    SS_versionshort <- toupper(substr(replist[["SS_version"]], 1, 8))
 
     #  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
     if (is.null(wtatage)) {
