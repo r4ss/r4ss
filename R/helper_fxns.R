@@ -15,7 +15,7 @@
 #'
 get_dat_new_name <- function(dir) {
   datname <- tail(
-    dir(path = dir, pattern = "data_*e*c*h*o*\\.ss_new"),
+    dir(path = dir, pattern = "data_?e?c?h?o?\\.ss_new"),
     1
   )
   ifelse(length(datname) == 0, NA, datname)
