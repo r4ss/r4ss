@@ -11,8 +11,12 @@ get_dat_new_name(dir)
 }
 \value{
 A string with the name of the data .ss_new file. If not found, will
-be NA.
+be NA. Both of strings are searched for using \code{dir(pattern = )} and
+if both exist, then \code{data_echo.ss_new} is returned.
 }
 \description{
-Get the name of the data .ss_new file in a directory
+In previous versions of Stock Synthesis,
+the file new data file was named \code{data.ss_new}.
+\verb{_echo} was added to the name when the file was parsed into three separate
+files.
 }
