@@ -10,4 +10,4 @@ on:
 name: call-doc-and-style-r
 jobs:
   call-workflow:
-    uses: nmfs-stock-synthesis/workflows/.github/workflows/doc-and-style-r.yml@main
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/doc-and-style-r.yml@main
