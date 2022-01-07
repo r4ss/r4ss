@@ -3503,36 +3503,51 @@ SS_output <-
     returndat[["M_at_age"]] <- M_at_age
 
     # new section added in SSv3.30.16.03
-    Report_Z_by_area_morph_platoon <-
-      matchfun2("Report_Z_by_area_morph_platoon",
-        adjust1 = 1,
-        header = FALSE
-      )
-    if (is.null(Report_Z_by_area_morph_platoon)) {
+    if (is.na(matchfun("Report_Z_by_area_morph_platoon"))) {
       Z_by_area <- NULL
       M_by_area <- NULL
     } else {
-      Z_by_area <- matchfun2("With_fishery",
-        adjust1 = 1,
-        "No_fishery_for_Z=M",
-        adjust2 = -1,
-        matchcol1 = 2,
-        matchcol2 = 2,
-        obj = Report_Z_by_area_morph_platoon,
-        header = TRUE,
-        type.convert = TRUE
-      )
-      M_by_area <- matchfun2("No_fishery_for_Z=M",
-        blank_lines = nrow(Report_Z_by_area_morph_platoon) + 1,
-        adjust1 = 1,
-        matchcol1 = 2,
-        obj = Report_Z_by_area_morph_platoon,
-        header = TRUE,
-        type.convert = TRUE
-      )
+      if (!is.na(matchfun("Report_Z_by_area_morph_platoon_2"))) {
+        # format associated with 3.30.19 and beyond (separate tables with/without fishery)
+        Z_by_area <- matchfun2("Report_Z_by_area_morph_platoon_2",
+          adjust1 = 1,
+          header = TRUE,
+          type.convert = TRUE
+        )
+        M_by_area <- matchfun2("Report_Z_by_area_morph_platoon_1",
+          adjust1 = 1,
+          header = TRUE,
+          type.convert = TRUE
+        )
+      } else {        
+        # format associated with 3.30.16.03 to 3.30.18.00 (tables under common header)
+        Report_Z_by_area_morph_platoon <-
+        matchfun2("Report_Z_by_area_morph_platoon",
+          adjust1 = 1,
+          header = FALSE
+        )
+        Z_by_area <- matchfun2("With_fishery",
+          adjust1 = 1,
+          "No_fishery_for_Z=M",
+          adjust2 = -1,
+          matchcol1 = 2,
+          matchcol2 = 2,
+          obj = Report_Z_by_area_morph_platoon,
+          header = TRUE,
+          type.convert = TRUE
+        )
+        M_by_area <- matchfun2("No_fishery_for_Z=M",
+          blank_lines = nrow(Report_Z_by_area_morph_platoon) + 1,
+          adjust1 = 1,
+          matchcol1 = 2,
+          obj = Report_Z_by_area_morph_platoon,
+          header = TRUE,
+          type.convert = TRUE
+          )
+      }
+      returndat["Z_by_area"] <- list(Z_by_area)
+      returndat["M_by_area"] <- list(M_by_area)
     }
-    returndat["Z_by_area"] <- list(Z_by_area)
-    returndat["M_by_area"] <- list(M_by_area)
 
     # Dynamic_Bzero output "with fishery"
     Dynamic_Bzero <- matchfun2("Spawning_Biomass_Report_2", 1)
