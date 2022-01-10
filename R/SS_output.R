@@ -3519,13 +3519,13 @@ SS_output <-
           header = TRUE,
           type.convert = TRUE
         )
-      } else {        
+      } else {
         # format associated with 3.30.16.03 to 3.30.18.00 (tables under common header)
         Report_Z_by_area_morph_platoon <-
-        matchfun2("Report_Z_by_area_morph_platoon",
-          adjust1 = 1,
-          header = FALSE
-        )
+          matchfun2("Report_Z_by_area_morph_platoon",
+            adjust1 = 1,
+            header = FALSE
+          )
         Z_by_area <- matchfun2("With_fishery",
           adjust1 = 1,
           "No_fishery_for_Z=M",
@@ -3543,7 +3543,7 @@ SS_output <-
           obj = Report_Z_by_area_morph_platoon,
           header = TRUE,
           type.convert = TRUE
-          )
+        )
       }
       returndat["Z_by_area"] <- list(Z_by_area)
       returndat["M_by_area"] <- list(M_by_area)
