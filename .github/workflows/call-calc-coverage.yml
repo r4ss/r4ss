@@ -13,4 +13,4 @@ on:
       - 'README.md'
 jobs:
   call-workflow:
-    uses: nmfs-stock-synthesis/workflows/.github/workflows/calc-coverage.yml@main
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/calc-coverage.yml@main
