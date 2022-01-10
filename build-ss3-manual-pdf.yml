@@ -35,3 +35,10 @@ jobs:
         with:
           name: SS330_User_Manual.pdf
           path: SS330_User_Manual.pdf
+          
+      - name: Upload log file when job fails
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with: 
+          name: SS330_User_Manual.log
+          path: SS330_User_Manual.log
