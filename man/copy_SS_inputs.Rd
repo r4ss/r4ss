@@ -18,9 +18,11 @@ copy_SS_inputs(
 )
 }
 \arguments{
-\item{dir.old}{Location of model files to be copied.}
+\item{dir.old}{Location of model files to be copied, either an absolute
+path or relative to the working directory.}
 
-\item{dir.new}{New location to which the files should be copied.}
+\item{dir.new}{New location to which the files should be copied,
+either an absolute path or relative to the working directory.}
 
 \item{create.dir}{Create dir.new directory if it doesn't exist already?}
 
@@ -41,7 +43,7 @@ dir.exe (if provided)?}
 \item{verbose}{Return updates of function progress to the R console?}
 }
 \value{
-Doesn't return anything
+Logical indicating whether all input files were copied succesfully.
 }
 \description{
 Reads the starter.ss file to figure out the names of the control and

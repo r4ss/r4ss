@@ -4,8 +4,10 @@
 #' data files, than copies those files along with starter.ss, forecast.ss,
 #' and wtatage.ss (if present) to a new directory, as specified.
 #'
-#' @param dir.old Location of model files to be copied.
-#' @param dir.new New location to which the files should be copied.
+#' @param dir.old Location of model files to be copied, either an absolute
+#' path or relative to the working directory.
+#' @param dir.new New location to which the files should be copied,
+#' either an absolute path or relative to the working directory.
 #' @param create.dir Create dir.new directory if it doesn't exist already?
 #' @param overwrite Overwrite existing files with matching names?
 #' @param recursive logical. Should elements of the path other than the last be
@@ -16,7 +18,7 @@
 #' @param copy_par Copy any .par files found in dir.old to dir.new?
 #' @param dir.exe Path to executable to copy instead of any in dir.old
 #' @param verbose Return updates of function progress to the R console?
-#' @return Doesn't return anything
+#' @return Logical indicating whether all input files were copied succesfully.
 #' @author Ian Taylor
 #' @export
 #' @examples
