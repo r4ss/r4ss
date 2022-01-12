@@ -17,7 +17,7 @@
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn Doering
 #' @export
 #' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
-#' [SS_readdat()], [SS_makedatlist()],
+#' [SS_readdat()],
 #' [SS_readstarter()], [SS_writestarter()],
 #' [SS_readforecast()], [SS_writeforecast()]
 SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,

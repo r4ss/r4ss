@@ -15,7 +15,7 @@
 #' Chantel R. Wetzel
 #' @export
 #' @seealso [SS_writedat()], [SS_writedat_3.30()],
-#' [SS_readdat()], [SS_makedatlist()],
+#' [SS_readdat()], 
 #' [SS_readstarter()], [SS_writestarter()],
 #' [SS_readforecast()], [SS_writeforecast()]
 #'
