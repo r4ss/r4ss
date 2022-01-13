@@ -16,7 +16,7 @@
 #' @export
 #' @importFrom stats reshape
 #' @seealso [SS_writedat()], [SS_writedat_3.24()],
-#' [SS_readdat()], 
+#' [SS_readdat()],
 #' [SS_readstarter()], [SS_writestarter()],
 #' [SS_readforecast()], [SS_writeforecast()]
 #'
