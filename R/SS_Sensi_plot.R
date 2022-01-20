@@ -200,7 +200,7 @@ SS_Sensi_plot <- function(model.summaries,
   parms <- data.frame(parms$Label, parms[, 1:(dim(parms)[2] - 3)], "Parameters")
   if (any(model.summaries$nsexes == 1)) {
     dev.quants <- rbind(
-      model.summaries$quants[model.summaries$quants$Label == "SSB_Initial", 1:(dim(model.summaries$quants)[2] - 2)] / 2,
+      model.summaries$quants[model.summaries$quants$Label == "SSB_Virgin", 1:(dim(model.summaries$quants)[2] - 2)] / 2,
       (model.summaries$quants[model.summaries$quants$Label == paste0("SSB_", current.year), 1:(dim(model.summaries$quants)[2] - 2)]) / 2,
       model.summaries$quants[model.summaries$quants$Label == paste0("Bratio_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
       model.summaries$quants[model.summaries$quants$Label == "Dead_Catch_SPR", 1:(dim(model.summaries$quants)[2] - 2)] / 2,
@@ -208,7 +208,7 @@ SS_Sensi_plot <- function(model.summaries,
     )
     # Extract SDs for use in the ggplots
     dev.quants.SD <- c(
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "SSB_Initial", 1] / 2,
+      model.summaries$quantsSD[model.summaries$quantsSD$Label == "SSB_Virgin", 1] / 2,
       (model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("SSB_", current.year), 1]) / 2,
       model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("Bratio_", current.year), 1],
       model.summaries$quantsSD[model.summaries$quantsSD$Label == "Dead_Catch_SPR", 1] / 2,
@@ -217,7 +217,7 @@ SS_Sensi_plot <- function(model.summaries,
   }
   if (any(model.summaries$nsexes == 2)) {
     dev.quants <- rbind(
-      model.summaries$quants[model.summaries$quants$Label == "SSB_Initial", 1:(dim(model.summaries$quants)[2] - 2)],
+      model.summaries$quants[model.summaries$quants$Label == "SSB_Virgin", 1:(dim(model.summaries$quants)[2] - 2)],
       model.summaries$quants[model.summaries$quants$Label == paste0("SSB_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
       model.summaries$quants[model.summaries$quants$Label == paste0("Bratio_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
       model.summaries$quants[model.summaries$quants$Label == "Dead_Catch_SPR", 1:(dim(model.summaries$quants)[2] - 2)],
@@ -225,7 +225,7 @@ SS_Sensi_plot <- function(model.summaries,
     )
     # Extract SDs for use in the ggplots
     dev.quants.SD <- c(
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "SSB_Initial", 1],
+      model.summaries$quantsSD[model.summaries$quantsSD$Label == "SSB_Virgin", 1],
       (model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("SSB_", current.year), 1]),
       model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("Bratio_", current.year), 1],
       model.summaries$quantsSD[model.summaries$quantsSD$Label == "Dead_Catch_SPR", 1],
