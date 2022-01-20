@@ -110,7 +110,7 @@ SS_RunJitter <- function(mydir,
     # check for use of .par file and replace original if needed
     if (starter[["init_values_src"]] == 1) {
       if (verbose) message("Replacing .par file with original")
-      file.copy(from = paste0(model, ".par_0.sso"), to = paste0(model, ".par"), overwrite = TRUE)
+      file.copy(from = "ss.par_0.sso", to = "ss.par", overwrite = TRUE)
     }
     # run model
     command <- paste(model, extras)

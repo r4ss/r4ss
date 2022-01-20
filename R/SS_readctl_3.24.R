@@ -14,9 +14,9 @@
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number 
+#' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number
 #'  of data points of each CPUE time series
-#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which 
+#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which
 #'  can not be determined from control file. Defaults to TRUE
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
@@ -39,7 +39,7 @@ SS_readctl_3.24 <- function(file,
                             nseas = NULL,
                             N_areas = NULL,
                             Nages = NULL,
-                            Ngenders = lifecycle::deprecated(), #soft deprecate
+                            Ngenders = lifecycle::deprecated(), # soft deprecate
                             Nsexes = NULL,
                             Npopbins = NA,
                             Nfleet = NULL,
@@ -54,28 +54,28 @@ SS_readctl_3.24 <- function(file,
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(echoall)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_readctl_3.24(echoall)"
     )
   }
   if (lifecycle::is_present(version)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_readctl_3.24(version)"
     )
   }
-  
+
   version <- "3.24"
   if (lifecycle::is_present(Ngenders)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_readctl_3.24(Ngenders)",
       details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
     )
     Nsexes <- Ngenders
   }
-  
-  
+
+
   # internally used fun definitions ----
   # function to read Stock Synthesis data files
 
@@ -208,7 +208,7 @@ SS_readctl_3.24 <- function(file,
     ctllist[["fleetnames"]] <- fleetnames
   } else {
     if (is.character(datlist)) {
-      if(!file.exists(datlist)) {
+      if (!file.exists(datlist)) {
         stop("Cannot find data file specified in datlist: ", datlist)
       }
       datlist <- SS_readdat(file = datlist, version = "3.24", verbose = FALSE)

@@ -13,6 +13,15 @@
 #'   option. Defaults to NULL and should be left as such if 1) the catch
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and
 #'   datlist is specified.
+#' @param predM_fleets integer vector of fleets with predator mortality included.
+#'  Predator mortality fleets are only available in v3.30.18 and
+#'  higher. Defaults to NULL and should be left as such if 1) predation mortality
+#'  is not used for any fleets; 2) use_datlist = TRUE and datlist is specified;
+#'  or 3) if comments in the control file should be used instead to determine
+#'  the the predM_fleets.
+#' @param Ntag_fleets The number of catch fleets in the model (fleets of )
+#'  type 1 or 2; not surveys). Used to set the number of survey parameters.
+#'  Only used if tagging data is in the model and `use_datlist` is FALSE.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
@@ -27,7 +36,7 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecated(), 
+SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecated(),
                             version = lifecycle::deprecated(),
                             use_datlist = TRUE,
                             datlist = "data.ss_new",
@@ -39,32 +48,34 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
                             Nsexes = NULL,
                             Npopbins = NULL,
                             Nfleets = NULL,
+                            Ntag_fleets = NULL,
                             Do_AgeKey = NULL,
                             N_tag_groups = NULL,
                             catch_mult_fleets = NULL,
+                            predM_fleets = NULL,
                             N_rows_equil_catch = NULL,
                             N_dirichlet_parms = NULL) {
-  
+
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(echoall)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_readctl_3.30(echoall)"
     )
   }
   if (lifecycle::is_present(version)) { # deprecated b/c it is unnecessary.
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_readctl_3.30(version)"
     )
   }
-  
+
   version <- "3.30"
-  
+
   if (lifecycle::is_present(Ngenders)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_readctl_3.30(Ngenders)",
       details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
     )
@@ -75,14 +86,14 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
 
   if (verbose) cat("running SS_readctl_3.30\n")
   dat <- readLines(file, warn = FALSE)
-
+  ctl_with_cmts <- dat # save original read in file with commemts
   Comments <- get_comments(dat)
   # End of codes to obtain Comments
   nver <- as.numeric(substring(version, 1, 4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
-  
+
   allnums <- NULL
   for (i in seq_len(length(dat))) {
     # First split between input and comments
@@ -153,8 +164,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
           ctllist$".i" <- ctllist$".i" + ncol
           return(ctllist)
         }
-    }
-    else {
+    } else {
       nrow <- nrows
     }
 
@@ -239,7 +249,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     ctllist[["fleetnames"]] <- fleetnames
   } else {
     if (is.character(datlist)) {
-      if(!file.exists(datlist)) {
+      if (!file.exists(datlist)) {
         stop("Cannot find data file specified in datlist: ", datlist)
       }
       datlist <- SS_readdat(file = datlist, version = "3.30", verbose = verbose)
@@ -277,6 +287,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     }
     ctllist[["N_tag_groups"]] <- N_tag_groups <- datlist[["N_tag_groups"]]
     ctllist[["fleetnames"]] <- fleetnames <- datlist[["fleetnames"]]
+    Ntag_fleets <- length(which(datlist$fleetinfo$type < 3))
   }
   # specifications ----
   ctllist[["sourcefile"]] <- file
@@ -693,7 +704,43 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   PType[cnt:(cnt + ctllist[["N_GP"]] - 1)] <- 14
   cnt <- cnt + ctllist[["N_GP"]]
   N_MGparm <- N_MGparm + ctllist[["N_GP"]]
-
+  # specify the parameter lines for predator fleets, if any.
+  if (use_datlist == TRUE) {
+    if (any(datlist[["fleetinfo"]][["type"]] == 4)) {
+      pred_indices <- which(datlist[["fleetinfo"]][["type"]] == 4)
+    } else {
+      pred_indices <- integer(0)
+    }
+  } else {
+    if (isTRUE(is.null(predM_fleets))) {
+      pred_fleet_lines <- grep("PredM2_\\d+$", ctl_with_cmts)
+      if (length(pred_fleet_lines) > 0) {
+        # get the fleets
+        tmp_pred_flts <- strsplit(ctl_with_cmts[pred_fleet_lines], split = "PredM2_")
+        tmp_pred_flts <- lapply(tmp_pred_flts, function(x) {
+          flt <- x[length(x)]
+          flt
+        })
+        pred_indices <- unlist(tmp_pred_flts)
+        message(
+          "Based on control file parameter names, assuming there are ",
+          length(pred_indices), " predation mortality parameters in MGparms."
+        )
+      } else {
+        pred_indices <- integer(0)
+      }
+    } else {
+      pred_indices <- predM_fleets
+      if (isTRUE(is.null(predM_fleets))) {
+        pred_indices <- integer(0)
+      }
+    }
+  }
+  if (isTRUE(length(pred_indices) > 0)) {
+    N_MGparm <- N_MGparm + length(pred_indices)
+    MGparmLabel <- c(MGparmLabel, paste0("PredM2_", pred_indices))
+    PType <- c(PType, rep(NA, length(pred_indices)))
+  }
   ctllist <- add_df(ctllist,
     name = "MG_parms", nrow = N_MGparm, ncol = 14,
     col.names = lng_par_colnames,
@@ -871,19 +918,25 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   if (ctllist[["F_Method"]] == 3) {
     ctllist <- add_elem(ctllist, "F_iter")
   }
-
-  # _initial_F_parms -----
-  # get them for fleet/seasons with non-zero initial equilbrium catch
+  if (ctllist[["F_Method"]] == 4) {
+    ctllist <- add_df(
+      ctllist = ctllist, ncol = 3,
+      col.names = c("Fleet", "start_F", "first_parm_phase"),
+      name = "F_4_Fleet_Parms"
+    )
+    ctllist <- add_elem(ctllist, "F_iter")
+  }
+  # initial_F_parms -----
+  # get them for fleet/seasons with non-zero initial equilibrium catch
 
   # determine N_rows_equil_catch if it is null and use_datlist = FALSE
   if (use_datlist == FALSE && is.null(N_rows_equil_catch)) {
     parm_error <- FALSE
-    ctl_with_cmts <- readLines(file)
-    Fparms_start <- grep("initial_F_parms; count", ctl_with_cmts)
+    Fparms_start <- grep("initial_F_parms; ", ctl_with_cmts)
     # parse to get count number
     if (length(Fparms_start) == 1) {
       F_parm_count <- strsplit(
-        grep("initial_F_parms; count", ctl_with_cmts, value = TRUE),
+        grep("initial_F_parms; ", ctl_with_cmts, value = TRUE),
         split = "= "
       )[[1]]
       F_parm_count <- F_parm_count[length(F_parm_count)]
@@ -1448,11 +1501,11 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     # . one initial Tag loss parameter
     # . one continuos Tag loss parameter
     # . NB over-dispersion paramater
-    # For each fleet
+    # For each fleet (of type 1 or 2 only, not surveys):
     # . one tag reporting rate paramater
     # . one tag reporting rate decay paramater
     #
-    #  In total N_tag_groups*3+ Nfleets*2 parameters are needed to read
+    #  In total N_tag_groups*3+ Ntag_fleets*2 parameters are needed to read
     ctllist <- add_df(ctllist,
       name = "TG_Loss_init",
       nrow = ctllist[["N_tag_groups"]],
@@ -1479,19 +1532,19 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     )
     ctllist <- add_df(ctllist,
       name = "TG_Report_fleet",
-      nrow = ctllist[["Nfleets"]],
+      nrow = Ntag_fleets,
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("TG_report_fleet_par_", 1:ctllist[["Nfleets"]])
+        paste0("TG_report_fleet_par_", 1:Ntag_fleets)
     )
     ctllist <- add_df(ctllist,
       name = "TG_Report_fleet_decay",
-      nrow = ctllist[["Nfleets"]],
+      nrow = Ntag_fleets,
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("TG_report_decay_par_", 1:ctllist[["Nfleets"]])
+        paste0("TG_report_decay_par_", 1:Ntag_fleets)
     )
   }
 
@@ -1519,54 +1572,65 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   else {
     ctllist[["N_lambdas"]] <- 0
   }
-  
+
   if (ctllist[["N_lambdas"]] > 0) {
-    chk1 <- duplicated(ctllist[["lambdas"]][,c("like_comp", "fleet", "phase")])
+    chk1 <- duplicated(ctllist[["lambdas"]][, c("like_comp", "fleet", "phase")])
     if (any(chk1)) # there are duplicates; don't remove. SS will just use the last one.
       {
         warn_comp <- ctllist[["lambdas"]][chk1, "like_comp"]
         warn_flt <- ctllist[["lambdas"]][chk1, "fleet"]
         warn_phz <- ctllist[["lambdas"]][chk1, "phase"]
-        warning("Duplicate lambda input for likelihood component(s): ",
-                paste0(warn_comp, collapse =  ", "), "; fleet(s): ",
-                paste0(warn_flt, collapse = ", "), "; phase(s):", 
-                paste0(warn_phz, collapse = ", "))
+        warning(
+          "Duplicate lambda input for likelihood component(s): ",
+          paste0(warn_comp, collapse = ", "), "; fleet(s): ",
+          paste0(warn_flt, collapse = ", "), "; phase(s):",
+          paste0(warn_phz, collapse = ", ")
+        )
       }
-      tmp_rownames <- vector(mode = "character", length = ctllist[["N_lambdas"]])
+    tmp_rownames <- vector(mode = "character", length = ctllist[["N_lambdas"]])
     for (i in seq_len(ctllist[["N_lambdas"]])) {
       like_comp <- ctllist[["lambdas"]][i, 1]
       fl <- fleetnames[ctllist[["lambdas"]][i, 2]]
       phz <- ctllist[["lambdas"]][i, 3]
       sizefreq_method <- ctllist[["lambdas"]][i, 5]
-      tmp_rownames[i] <- switch(as.character(like_comp), 
-       "1" = paste0("Surv_", fl, "_Phz", phz), 
-       "2" = paste0("discard_", fl, "_Phz", phz), 
-       "3" = paste0("mean-weight_", fl, "_Phz", phz), 
-       "4" = paste0("length_", fl, "_sizefreq_method_",
-                  sizefreq_method, "_Phz", phz), 
-       "5" = paste0("age_", fl, "_Phz", phz), 
-       "6" = paste0("SizeFreq_", fl, "_sizefreq_method_", 
-                  sizefreq_method, "_Phz", phz), 
-       "7" = paste0("SizeAge_", fl, "_sizefreq_method_", 
-                  sizefreq_method, "_Phz", phz), 
-       "8" = paste0("catch_", fl, "_Phz", phz), 
-       "9" = paste0("init_equ_catch_", fl, "_Phz", phz), 
-       "10" = paste0("recrdev_Phz", phz), 
-       "11" = paste0("parm_prior_", fl, "_Phz", phz), 
-       "12" = paste0("parm_dev_Phz", phz), 
-       "13" = paste0("CrashPen_Phz", phz), 
-       "14" = paste0("Morph-Comp_Phz", phz), 
-       "15" = paste0("Tag-comp-likelihood_", fl, "_Phz", phz), 
-       "16" = paste0("Tag-negbin-likelihood_", fl, "_Phz", phz), 
-       "17" = paste0("F-ballpark_", fl, "_Phz", phz), 
-       "18" = paste0("Regime-shift_", fl, "_Phz", phz), 
-        paste0(like_comp, "_", fl))
+      tmp_rownames[i] <- switch(as.character(like_comp),
+        "1" = paste0("Surv_", fl, "_Phz", phz),
+        "2" = paste0("discard_", fl, "_Phz", phz),
+        "3" = paste0("mean-weight_", fl, "_Phz", phz),
+        "4" = paste0(
+          "length_", fl, "_sizefreq_method_",
+          sizefreq_method, "_Phz", phz
+        ),
+        "5" = paste0("age_", fl, "_Phz", phz),
+        "6" = paste0(
+          "SizeFreq_", fl, "_sizefreq_method_",
+          sizefreq_method, "_Phz", phz
+        ),
+        "7" = paste0(
+          "SizeAge_", fl, "_sizefreq_method_",
+          sizefreq_method, "_Phz", phz
+        ),
+        "8" = paste0("catch_", fl, "_Phz", phz),
+        "9" = paste0("init_equ_catch_", fl, "_Phz", phz),
+        "10" = paste0("recrdev_Phz", phz),
+        "11" = paste0("parm_prior_", fl, "_Phz", phz),
+        "12" = paste0("parm_dev_Phz", phz),
+        "13" = paste0("CrashPen_Phz", phz),
+        "14" = paste0("Morph-Comp_Phz", phz),
+        "15" = paste0("Tag-comp-likelihood_", fl, "_Phz", phz),
+        "16" = paste0("Tag-negbin-likelihood_", fl, "_Phz", phz),
+        "17" = paste0("F-ballpark_", fl, "_Phz", phz),
+        "18" = paste0("Regime-shift_", fl, "_Phz", phz),
+        paste0(like_comp, "_", fl)
+      )
     }
     dup_rownames <- duplicated(tmp_rownames, fromLast = TRUE)
-    if(any(dup_rownames == TRUE)) {
+    if (any(dup_rownames == TRUE)) {
       tmp_n <- seq_along(dup_rownames[dup_rownames == TRUE])
-      tmp_rownames[dup_rownames] <- paste0(tmp_rownames[dup_rownames],
-                                           "_duplicate", tmp_n)
+      tmp_rownames[dup_rownames] <- paste0(
+        tmp_rownames[dup_rownames],
+        "_duplicate", tmp_n
+      )
     }
     rownames(ctllist[["lambdas"]]) <- tmp_rownames
   }
@@ -1580,29 +1644,30 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       ctllist <- add_vec(ctllist, name = "stddev_reporting_specs", length = 9)
     } else if (ctllist[["more_stddev_reporting"]] == 2) { # adds option for M
       ctllist <- add_vec(ctllist, name = "stddev_reporting_specs", length = 13)
-      # check that the inputs for 12 and 13 are valid. If they aren't, read 11 
+      # check that the inputs for 12 and 13 are valid. If they aren't, read 11
       # items instead and warn.
       valid_input <- TRUE
-      if(!ctllist[["stddev_reporting_specs"]][12] %in% c(0,1,2)) {
+      if (!ctllist[["stddev_reporting_specs"]][12] %in% c(0, 1, 2)) {
         valid_input <- FALSE
       }
-      if(!ctllist[["stddev_reporting_specs"]][13] %in% c(0,1)) {
+      if (!ctllist[["stddev_reporting_specs"]][13] %in% c(0, 1)) {
         valid_input <- FALSE
       }
-      if(valid_input == FALSE) {
-        warning("Incorrect inputs detected for stddev_reporting_specs when ",
-                "using option 2. Assuming that no input for dynamic B0 or ", 
-                "Summary Bio were provided, as in SS 3.30.15 and .16.\n", 
-                "Placeholder 0s added for ",
-                "ctllist[['stddev_reporting_specs']][12:13].\nIf the user ", 
-                "is using version 3.30.15 or 3.30.16, the 0s should  be ",
-                "removed before writing out the file by using the code ",
-                "\nctllist[['stddev_reporting_specs']] <- ctllist[['stddev_reporting_specs']][1:11]")
-        ctllist$".i" <-  ctllist$".i" - 2 #back up 
-        ctllist[["stddev_reporting_specs"]] <- 
+      if (valid_input == FALSE) {
+        warning(
+          "Incorrect inputs detected for stddev_reporting_specs when ",
+          "using option 2. Assuming that no input for dynamic B0 or ",
+          "Summary Bio were provided, as in SS 3.30.15 and .16.\n",
+          "Placeholder 0s added for ",
+          "ctllist[['stddev_reporting_specs']][12:13].\nIf the user ",
+          "is using version 3.30.15 or 3.30.16, the 0s should  be ",
+          "removed before writing out the file by using the code ",
+          "\nctllist[['stddev_reporting_specs']] <- ctllist[['stddev_reporting_specs']][1:11]"
+        )
+        ctllist$".i" <- ctllist$".i" - 2 # back up
+        ctllist[["stddev_reporting_specs"]] <-
           c(ctllist[["stddev_reporting_specs"]][1:11], 0, 0)
       }
-      
     } else {
       stop(
         "more_stddev_reporting read as ", ctllist[["more_stddev_reporting"]],
@@ -1612,7 +1677,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     }
     ## Selex bin
     if (ctllist[["stddev_reporting_specs"]][1] > 0 &
-        ctllist[["stddev_reporting_specs"]][4] > 0) {
+      ctllist[["stddev_reporting_specs"]][4] > 0) {
       ctllist <-
         add_vec(ctllist,
           name = "stddev_reporting_selex",
@@ -1621,8 +1686,8 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     }
     ## Growth bin
     # if using wt at age, this is not read.
-    if (ctllist[["EmpiricalWAA"]] != 0 & 
-        (ctllist[["stddev_reporting_specs"]][5] > 0 |
+    if (ctllist[["EmpiricalWAA"]] != 0 &
+      (ctllist[["stddev_reporting_specs"]][5] > 0 |
         ctllist[["stddev_reporting_specs"]][6] > 0)) {
       warning(
         "Additional stddev reporting being used with a model using ",
@@ -1634,16 +1699,16 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       ctllist[["stddev_reporting_specs"]][6] <- 0
     }
     if (ctllist[["stddev_reporting_specs"]][5] > 0 &
-        ctllist[["stddev_reporting_specs"]][6] > 0 & 
-        ctllist[["EmpiricalWAA"]] == 0) {
+      ctllist[["stddev_reporting_specs"]][6] > 0 &
+      ctllist[["EmpiricalWAA"]] == 0) {
       ctllist <- add_vec(ctllist,
         name = "stddev_reporting_growth",
         length = ctllist[["stddev_reporting_specs"]][6]
       )
     }
     ## N at age
-    if (ctllist[["stddev_reporting_specs"]][7] > 0 &
-        ctllist[["stddev_reporting_specs"]][9] > 0) {
+    if (ctllist[["stddev_reporting_specs"]][7] != 0 &
+      ctllist[["stddev_reporting_specs"]][9] > 0) {
       ctllist <- add_vec(ctllist,
         name = "stddev_reporting_N_at_A",
         length = ctllist[["stddev_reporting_specs"]][9]
@@ -1694,19 +1759,21 @@ get_tv_parlabs <- function(full_parms,
   loop_pars <- unique(loop_pars[order(loop_pars)])
   block_fxn <- full_parms[, "Block_Fxn"]
   # block_method_label corresponds block method of 0, 1, 2, 3, 4
-  block_method_label <- c("mult_","add_","repl_","delta_","revertrw_")
+  block_method_label <- c("mult_", "add_", "repl_", "delta_", "revertrw_")
   parlab <- vector() # a maybe faster approach is if we could initialize with the correct size.
   for (i in loop_pars) {
     tmp_parname <- rownames(full_parms)[i]
     # Add lines to the data frame as you go. (maybe can use the same approach as long parlines)
     if (i %in% par_num[["block"]]) {
       n_blk <- full_parms[["Block"]][i]
-      if(n_blk > 0) {
+      if (n_blk > 0) {
         tmp_blk_design <- block_design[[n_blk]]
         # Get the start year for each block
-        if(is.null(tmp_blk_design)){
-          stop("Time blocks used in parameter setup, but not defined in the top", 
-               "of the control file. Please define the time blocks.")
+        if (is.null(tmp_blk_design)) {
+          stop(
+            "Time blocks used in parameter setup, but not defined in the top",
+            "of the control file. Please define the time blocks."
+          )
         }
         blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
         lbl <- block_method_label[block_fxn[i] + 1]
@@ -1717,7 +1784,7 @@ get_tv_parlabs <- function(full_parms,
             "_BLK", n_blk, lbl, blk_start_yrs
           )
         )
-      } else { #trends
+      } else { # trends
         parlab <- c(
           parlab,
           paste0(
@@ -1727,19 +1794,19 @@ get_tv_parlabs <- function(full_parms,
         )
       }
     }
-    
+
     if (i %in% par_num[["env"]]) {
       tmp_pat <- abs(full_parms[["env_var&link"]][i])
-      if(isTRUE(tmp_pat > 400 & tmp_pat < 500)){ # pattern 4 needs 2 pars, all else 1.
-        parlab <- c(parlab, paste0(rep(tmp_parname, times = 2),
-            c("_ENV_offset", "_ENV_lgst_slope")
-          )
-        )
+      if (isTRUE(tmp_pat > 400 & tmp_pat < 500)) { # pattern 4 needs 2 pars, all else 1.
+        parlab <- c(parlab, paste0(
+          rep(tmp_parname, times = 2),
+          c("_ENV_offset", "_ENV_lgst_slope")
+        ))
       } else {
         parlab <- c(parlab, paste0(tmp_parname, "_ENV_add"))
       }
     }
-    
+
     if (i %in% par_num[["dev"]]) {
       # parameter name if there is devs
       parlab <- c(

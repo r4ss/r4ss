@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSplotSPR.R
 \name{SSplotSPR}
 \alias{SSplotSPR}
-\title{Plot SPR quantities.}
+\title{Plot Spawning Potential Ratio (SPR) quantities.}
 \usage{
 SSplotSPR(
   replist,
@@ -41,7 +41,15 @@ SSplotSPR(
 
 \item{uncertainty}{include plots showing uncertainty?}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows:
+\enumerate{
+\item timeseries of SPR,
+\item timeseries of 1 - SPR,
+\item timeseries of SPR ratio (as specified in the starter file), and
+\item phase plot of Biomass ratio vs SPR ratio (as specified in the
+starter file).
+}}
 
 \item{forecastplot}{Include forecast years in plot?}
 
@@ -53,7 +61,13 @@ SSplotSPR(
 
 \item{col4}{fourth color used}
 
-\item{sprtarg}{F/SPR proxy target. "default" chooses based on model output.}
+\item{sprtarg}{F/SPR proxy target. "default" chooses based on model output,
+where models which have SPR_report_basis = 0 or 1 specified in the starter
+file will use the SPR target specified in the forecast file. Models which
+have SPR_report_basis = 2 will use SPR at MSY for the SPR target
+and models which have the SPR_report_basis = 3 will use
+SPR at Btarget for the SPR target in these plots. Zero or negative values of
+sprtarg input here will cause no horizontal line to be plotted.}
 
 \item{btarg}{target depletion to be used in plots showing depletion. May be
 omitted by setting to NA. "default" chooses based on model output.}
@@ -79,7 +93,7 @@ be the directory where the model was run.}
 \item{verbose}{report progress to R GUI?}
 }
 \description{
-Plot SPR quantities, including 1-SPR and phase plot.
+Plot time series of SPR, 1-SPR, the chosen SPR ratio and the phase plot.
 }
 \seealso{
 \code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}

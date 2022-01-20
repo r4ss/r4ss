@@ -133,7 +133,7 @@ make_multifig <-
            venusmars = TRUE,
            sampsizeline = FALSE, effNline = FALSE, sampsizemean = NULL, effNmean = NULL,
            ipage = 0, scalebins = FALSE, sexvec = NULL,
-           multifig_colpolygon = c("grey60", "grey80", "grey70"),
+           multifig_colpolygon = grey(c(0.6, 0.8, 0.7), alpha = 0.7),
            multifig_oma = NULL, ...) {
     # switch to determine whether to show males below 0 line in same plot
     twosex <- TRUE
@@ -215,7 +215,7 @@ make_multifig <-
     # get axis limits
     xrange <- range(c(ptsx, linesx, ptsx, linesx))
     if (ymin0) {
-      yrange <- c(0, max(ptsy, linesy))
+      yrange <- c(0, max(ptsy, linesy, na.rm = TRUE))
     } else {
       yrange <- range(c(ptsy, linesy, ptsy, linesy))
     }
@@ -609,7 +609,7 @@ make_multifig <-
           pu <- par("usr")
           xval <- pu[2]
           if (length(ptsx_i0) > 0) {
-            text(xval, 0.5 * yrange[2], "\\VE+\\MA",
+            text(xval, 0.2 * yrange[2], "\\VE+\\MA",
               vfont = c("serif", "plain"),
               cex = 2, col = linescol[1], pos = 2
             )

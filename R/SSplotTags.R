@@ -321,10 +321,12 @@ SSplotTags <-
       }
 
       tagdata <- replist[["tagdbase1"]]
-      tagdata[["Fleet"]] <- as.character(tagdata[["Fleet"]])
 
-      max_num_fleets <- max(as.numeric(c(unique(tagdata[["Fleet"]])))) # need to get the max number of fleets you have so you can rep over that.
-      expected_by_fleets <- as.data.frame(rep(tagdbase2[["Exp"]], each = max_num_fleets)) # make a new column to bind to your other frame that contains the breakdown of obs + exp recaps by fleet
+      # need to get the max number of fleets you have so you can rep over that.
+      max_num_fleets <- max(tagdata[["Fleet"]])
+      # make a new column to bind to your other frame that contains
+      # the breakdown of obs + exp recaps by fleet
+      expected_by_fleets <- as.data.frame(rep(tagdbase2[["Exp"]], each = max_num_fleets))
       names(expected_by_fleets)[1] <- "Expected" # rename column
       new_tagdata <- cbind(tagdata, expected_by_fleets) # bind new column to tagdata dataframe
       fleet_numbers <- new_tagdata %>%
@@ -336,7 +338,6 @@ SSplotTags <-
         dplyr::group_by(.data[["Fleet"]], .data[["Yr"]]) %>%
         dplyr::summarize(sum_exp = sum(.data[["Numbers_Exp"]]), sum_obs = sum(.data[["Numbers_Obs"]]))
 
-      fleet_numbers2[["Fleet"]] <- sort(as.numeric(fleet_numbers2[["Fleet"]]), decreasing = FALSE)
       fleet_numbers2[["fleet_title"]] <- paste("Fleet_", as.character(fleet_numbers2[["Fleet"]]), sep = "")
 
       mycols <- rep("black", max_num_fleets) # set colors for plotting expected values

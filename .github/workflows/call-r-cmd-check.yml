@@ -1,0 +1,16 @@
+# Run r cmd check
+name: call-r-cmd-check
+# on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
+on: 
+  push: 
+    paths-ignore: 
+      - '.github/**'
+      - 'README.md'
+  pull_request: 
+    paths-ignore:
+      - '.github/**'
+      - 'README.md'
+  workflow_dispatch:
+jobs:
+  call-workflow:
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/r-cmd-check.yml@main

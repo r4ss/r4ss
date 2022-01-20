@@ -73,7 +73,6 @@ SSplotTimeseries <-
            labels = NULL,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            mainTitle = FALSE, mar = NULL) {
-
     if (missing(subplot)) {
       stop("'subplot' input required")
     }
@@ -93,8 +92,8 @@ SSplotTimeseries <-
 
     # set default plot margins
     if (is.null(mar)) {
-      if (mainTitle){
-        mar <-  c(5, 4, 4, 2) + 0.1
+      if (mainTitle) {
+        mar <- c(5, 4, 4, 2) + 0.1
       } else {
         mar <- c(5, 4, 2, 2) + 0.1
       }
@@ -131,6 +130,8 @@ SSplotTimeseries <-
     derived_quants <- replist[["derived_quants"]]
     # FecPar2        <- replist[["FecPar2"]]
     recruitment_dist <- replist[["recruitment_dist"]]
+    depletion_basis <- replist[["depletion_basis"]]
+    depletion_multiplier <- replist[["depletion_multiplier"]]
 
     if (btarg == "default") btarg <- replist[["btarg"]]
     if (minbthresh == "default") minbthresh <- replist[["minbthresh"]]
@@ -239,7 +240,7 @@ SSplotTimeseries <-
       # subplot9&10 = relative spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
-        yvals <- ts[["SpawnBio"]] / ts[["SpawnBio"]][!is.na(ts[["SpawnBio"]])][1]
+        yvals <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", "Value"]
         ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
       }
 
@@ -284,7 +285,7 @@ SSplotTimeseries <-
         if (subplot == 11) {
           # sum total recruitment across birth seasons
           for (y in ts[["Yr"]]) {
-            yvals[ts[["Yr"]] == y & ts[["Seas"]] == 1 & ts[["Area"]] ==1] <- sum(yvals[ts[["Yr"]] == y], na.rm = TRUE)
+            yvals[ts[["Yr"]] == y & ts[["Seas"]] == 1 & ts[["Area"]] == 1] <- sum(yvals[ts[["Yr"]] == y], na.rm = TRUE)
             yvals[ts[["Yr"]] == y & (ts[["Seas"]] > 1 | ts[["Area"]] > 1)] <- 0
           }
         }
@@ -324,6 +325,7 @@ SSplotTimeseries <-
             yvals[iyr] <- sum(ts[["SpawnBio"]][ts[["YrSeas"]] == y])
           }
           yvals <- yvals / yvals[!is.na(yvals)][1] # total depletion
+          yvals <- yvals / depletion_multiplier
         }
         ymax <- max(yvals, 1, na.rm = TRUE)
 
@@ -382,6 +384,9 @@ SSplotTimeseries <-
           }
           # calculation fractional year value associated with spawning season for spawning biomass plots
           stdtable[["YrSeas"]] <- stdtable[["Yr"]] + replist[["seasfracs"]][which(1:nseasons %in% spawnseas)]
+          if (ts[["YrSeas"]][1] == ts[["Yr"]][1]) {
+            stdtable[["YrSeas"]] <- stdtable[["Yr"]]
+          }
 
           # scaling and calculation of confidence intervals
           v <- stdtable[["Value"]] * bioscale
@@ -434,7 +439,7 @@ SSplotTimeseries <-
         filename <- main
         if (subplot %in% 9:10 & grepl(":", main)) {
           # remove extra stuff like "B/B_0" from filename
-          filename <- strsplit(main, split=":")[[1]][1]
+          filename <- strsplit(main, split = ":")[[1]][1]
         }
         filename <- gsub(",", "", filename, fixed = TRUE)
         filename <- gsub("~", "", filename, fixed = TRUE)
@@ -473,22 +478,22 @@ SSplotTimeseries <-
         if (btarg < 1) {
           abline(h = btarg, col = "red")
           text(max(startyr, minyr) + 4, btarg + 0.02 * diff(par()$usr[3:4]),
-               labels[10],
-               adj = 0
-               )
+            labels[10],
+            adj = 0
+          )
         }
         if (minbthresh < 1) {
           abline(h = minbthresh, col = "red")
           text(max(startyr, minyr) + 4, minbthresh + 0.02 * diff(par()$usr[3:4]),
-               labels[11],
-               adj = 0
-               )
+            labels[11],
+            adj = 0
+          )
         }
       }
       if (subplot %in% 9:10) {
         abline(h = 1.0, col = "red")
       }
-      
+
       if (subplot %in% 14:15) {
         # these plots show lines for each birth season,
         # but probably won't work if there are multiple birth seasons and multiple areas
@@ -533,7 +538,7 @@ SSplotTimeseries <-
           }
           mycol <- areacols[iarea]
           mytype <- "o" # overplotting points on lines for most time series
-          if (subplot == 11 & uncertainty){
+          if (subplot == 11 & uncertainty) {
             mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
           }
           if (!uncertainty) {
@@ -547,8 +552,9 @@ SSplotTimeseries <-
             # update if Bratio is not relative to unfished spawning output
             if (subplot == 9 & replist[["Bratio_label"]] != "B/B_0") {
               yvals <- NA * yvals
-              yvals[which(ts[["YrSeas"]] %in% stdtable[["YrSeas"]])] <-
-                stdtable[["Value"]][stdtable[["YrSeas"]] %in% ts[["YrSeas"]]]
+              # Change to year rather that middle of the year
+              yvals[which(ts[["Yr"]] %in% stdtable[["Yr"]])] <-
+                stdtable[["Value"]][stdtable[["Yr"]] %in% ts[["Yr"]]]
             }
 
             if (subplot != 11) {
@@ -582,16 +588,16 @@ SSplotTimeseries <-
             }
             if (subplot %in% c(7, 9)) {
               # add lines for main period
-              lines(stdtable[["YrSeas"]][plot2], stdtable[["upper"]][plot2], lty = 2, col = mycol)
-              lines(stdtable[["YrSeas"]][plot2], stdtable[["lower"]][plot2], lty = 2, col = mycol)
+              lines(stdtable[["Yr"]][plot2], stdtable[["upper"]][plot2], lty = 2, col = mycol)
+              lines(stdtable[["Yr"]][plot2], stdtable[["lower"]][plot2], lty = 2, col = mycol)
 
               # add dashes for early period
-              points(stdtable[["YrSeas"]][plot1] + 1, stdtable[["upper"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
-              points(stdtable[["YrSeas"]][plot1] + 1, stdtable[["lower"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
+              points(stdtable[["Yr"]][plot1] + 1, stdtable[["upper"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
+              points(stdtable[["Yr"]][plot1] + 1, stdtable[["lower"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
 
               # add dashes for forecast period
-              points(stdtable[["YrSeas"]][plot3], stdtable[["upper"]][plot3], pch = "-", col = mycol)
-              points(stdtable[["YrSeas"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
+              points(stdtable[["Yr"]][plot3], stdtable[["upper"]][plot3], pch = "-", col = mycol)
+              points(stdtable[["Yr"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
             }
             if (subplot == 11) { # confidence intervals as error bars because recruitment is more variable
               old_warn <- options()$warn # previous setting
@@ -609,11 +615,12 @@ SSplotTimeseries <-
         } # end loop over areas
         if (nareas > 1 & subplot %in% c(2, 3, 5, 6, 8, 10, 12, 13)) {
           legend("topright",
-                 legend = areanames[areas],
-                 lty = 1,
-                 pch = 1,
-                 col = areacols[areas],
-                 bty = "n")
+            legend = areanames[areas],
+            lty = 1,
+            pch = 1,
+            col = areacols[areas],
+            bty = "n"
+          )
         }
       } # end test for birthseason plots or not
       ## if (verbose) {

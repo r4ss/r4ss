@@ -7,7 +7,7 @@
 #'
 #' @template replist
 #' @param subplots vector controlling which subplots to create
-#' Numbering of subplots is as follows, 
+#' Numbering of subplots is as follows,
 #' \itemize{
 #'   \item 1: Expected numbers at age
 #'   \item 2: Mean age in the population
@@ -42,8 +42,8 @@
 #' @param add add to existing plot? (not yet implemented)
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @template pwidth
-#' @template pheight 
-#' @template punits 
+#' @template pheight
+#' @template punits
 #' @template ptsize
 #' @template res
 #' @param cex.main character expansion for plot titles
@@ -709,8 +709,8 @@ SSplotNumbers <-
 
         plot(0,
           type = "n", xlim = c(0, accuage),
-          ylim = c(0, 1.05 * max(equilage[equilage[[birth_seas_name]] == BirthSeas
-          & equilage[["Seas"]] == BirthSeas, remove])),
+          ylim = c(0, 1.05 * max(equilage[equilage[[birth_seas_name]] == BirthSeas &
+            equilage[["Seas"]] == BirthSeas, remove])),
           xaxs = "i", yaxs = "i", xlab = "Age", ylab = labels[9], main = main, cex.main = cex.main
         )
 
@@ -720,9 +720,9 @@ SSplotNumbers <-
         legendlegend <- NULL
         for (iarea in areas) {
           for (m in 1:nsexes) {
-            equilagetemp <- equilage[equilage[["Area"]] == iarea & equilage[["Sex"]] == m
-            & equilage[[birth_seas_name]] == BirthSeas
-            & equilage[["Seas"]] == BirthSeas, ]
+            equilagetemp <- equilage[equilage[["Area"]] == iarea & equilage[["Sex"]] == m &
+              equilage[[birth_seas_name]] == BirthSeas &
+              equilage[["Seas"]] == BirthSeas, ]
             if (nrow(equilagetemp) > 1) {
               cat(
                 "in plot of equilibrium age composition by gender and area\n",

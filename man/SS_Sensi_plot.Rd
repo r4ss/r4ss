@@ -79,7 +79,6 @@ Uses output from \code{\link[=SSsummarize]{SSsummarize()}} to make a figure show
 sensitivity of various quantities of interest.
 }
 \examples{
-
 \dontrun{
 # Set directory and extract ouput from models
 # Model 1 needs to be the Reference model, with sensitivity runs following
@@ -87,7 +86,7 @@ sensitivity of various quantities of interest.
 
 # Note: models are available in Jason Cope's github repository:
 # https://github.com/shcaba/Stock-Assessment-Sensitivity-Plots/
-dir <- 
+dir <-
   "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
 models.dirs <- paste0("Cab_SCS_MS_", 1:19)
 zz <- SSgetoutput(dirvec = file.path(dir, models.dirs))
@@ -95,7 +94,7 @@ zz <- SSgetoutput(dirvec = file.path(dir, models.dirs))
 # Use the summarize function in r4ss to get model summaries
 model.summaries <- SSsummarize(zz)
 
-# Define the names of each model. This will be used to label runs in the 
+# Define the names of each model. This will be used to label runs in the
 # table and in the figures.
 mod.names <- c(
   "Reference",
@@ -136,8 +135,10 @@ SS_Sensi_plot(
   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks
   anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
   anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
-  anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", 
-    "Other") # Sensitivity types labels
+  anno.lab = c(
+    "Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.",
+    "Other"
+  ) # Sensitivity types labels
 )
 }
 

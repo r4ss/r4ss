@@ -10,3 +10,4 @@ revdep
 docs
 ^jenkins
 ^\.github/
+^\.github$

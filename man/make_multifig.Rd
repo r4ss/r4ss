@@ -72,7 +72,7 @@ make_multifig(
   ipage = 0,
   scalebins = FALSE,
   sexvec = NULL,
-  multifig_colpolygon = c("grey60", "grey80", "grey70"),
+  multifig_colpolygon = grey(c(0.6, 0.8, 0.7), alpha = 0.7),
   multifig_oma = NULL,
   ...
 )

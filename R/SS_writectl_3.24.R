@@ -33,28 +33,28 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   # these should be removed after 1 release version.
   if (lifecycle::is_present(nseas)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_writectl_3.24(nseas)",
       details = "nseas is not used. ctllist[['nseas']] is used instead."
     )
   }
-  
+
   if (lifecycle::is_present(N_areas)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_writectl_3.24(N_areas)",
       details = "nseas is not used. ctllist[['N_areas']] is used instead."
     )
   }
-  
+
   if (lifecycle::is_present(Do_AgeKey)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_writectl_3.24(Do_AgeKey)",
       details = "Do_AgeKey is not used. ctllist[['Do_AgeKey']] is used instead."
     )
   }
-  
+
   # function to write Stock Synthesis ctl files
   if (verbose) cat("running SS_writectl\n")
 

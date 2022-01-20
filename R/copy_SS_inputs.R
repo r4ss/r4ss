@@ -4,8 +4,10 @@
 #' data files, than copies those files along with starter.ss, forecast.ss,
 #' and wtatage.ss (if present) to a new directory, as specified.
 #'
-#' @param dir.old Location of model files to be copied.
-#' @param dir.new New location to which the files should be copied.
+#' @param dir.old Location of model files to be copied, either an absolute
+#' path or relative to the working directory.
+#' @param dir.new New location to which the files should be copied,
+#' either an absolute path or relative to the working directory.
 #' @param create.dir Create dir.new directory if it doesn't exist already?
 #' @param overwrite Overwrite existing files with matching names?
 #' @param recursive logical. Should elements of the path other than the last be
@@ -16,11 +18,10 @@
 #' @param copy_par Copy any .par files found in dir.old to dir.new?
 #' @param dir.exe Path to executable to copy instead of any in dir.old
 #' @param verbose Return updates of function progress to the R console?
-#' @return Doesn't return anything
+#' @return Logical indicating whether all input files were copied succesfully.
 #' @author Ian Taylor
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' copy_SS_inputs(
 #'   dir.old = "c:/SS/old_model",
@@ -57,9 +58,12 @@ copy_SS_inputs <- function(dir.old = NULL,
     }
   }
   # read starter file to figure out what other inputs are
-  starter <- SS_readstarter(file.path(dir.old,
-                                      ifelse(use_ss_new, "starter.ss_new", "starter.ss")),
-                                      verbose = FALSE)
+  starter <- SS_readstarter(file.path(
+    dir.old,
+    ifelse(use_ss_new, "starter.ss_new", "starter.ss")
+  ),
+  verbose = FALSE
+  )
 
   if (verbose) {
     message("copying files from\n ", dir.old, "\nto\n ", dir.new)
@@ -100,8 +104,10 @@ copy_SS_inputs <- function(dir.old = NULL,
       to = file.path(dir.new, starter[["ctlfile"]]),
       overwrite = overwrite
     )
+    # check data new file could be data.ss_new or data_echo.ss_new
+    datname <- get_dat_new_name(dir.old)
     results[2] <- file.copy(
-      from = file.path(dir.old, "data.ss_new"),
+      from = file.path(dir.old, datname),
       to = file.path(dir.new, starter[["datfile"]]),
       overwrite = overwrite
     )
@@ -133,7 +139,7 @@ copy_SS_inputs <- function(dir.old = NULL,
     exefiles <- dir(dir.exe)[is.exe != "no"]
     if (length(exefiles) == 0) {
       warning("No executable files found in ", dir.exe)
-      if(.Platform[["OS.type"]] == "unix") {
+      if (.Platform[["OS.type"]] == "unix") {
         warning("Stock Synthesis executables cannot yet be copied for Mac or Linux")
       }
     }

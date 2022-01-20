@@ -53,7 +53,6 @@
 #' @export
 #' @seealso [SS_plots()]
 #' @examples
-#'
 #' \dontrun{
 #' # read model output
 #' myreplist <- SS_output(dir = "c:/SS/Simple/")
@@ -265,6 +264,7 @@ SS_output <-
     SS_versionCode <- rephead[grep("#V", rephead)]
     SS_version <- rephead[grep("Stock_Synthesis", rephead)]
     SS_version <- SS_version[substring(SS_version, 1, 2) != "#C"] # remove any version numbering in the comments
+    SS_version <- SS_version[1]
     if (substring(SS_version, 1, 2) == "#V") {
       SS_version <- substring(SS_version, 3)
     }
@@ -1353,9 +1353,11 @@ SS_output <-
       seldev_matrix <- NULL
     } else {
       # if semi-parametric selectivity IS used
-      if(any(duplicated(FleetNames))){
-        warning("Duplicated fleet names will cause only the semi-parametric",
-                " selectivity to be available for the first of the duplicates.")
+      if (any(duplicated(FleetNames))) {
+        warning(
+          "Duplicated fleet names will cause only the semi-parametric",
+          " selectivity to be available for the first of the duplicates."
+        )
       }
       # parse parameter labels to get info
       # the parameter labels look like like
@@ -1370,10 +1372,12 @@ SS_output <-
 
       # add columns to pars data.frame with info from labels
       seldev_pars[["Fleet"]] <- seldev_label_info[["X1"]]
-      seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[["X3"]], 2))
+      yr_col <- grep("^y\\d\\d\\d\\d$", seldev_label_info[1, ])
+      type_bin_col <- grep("^[aAlL][[:alpha:]]{0,3}\\d$", seldev_label_info[1, ])
+      seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[[yr_col]], 2))
       # note: bin was indicated by "a" for length- and age-based selectivity
       # until early 2020 when separate "A" or "Lbin" codes were used
-      seldev_pars[["Type"]] <- ifelse(substring(seldev_label_info[["X4"]], 1, 1) %in%
+      seldev_pars[["Type"]] <- ifelse(substring(seldev_label_info[[type_bin_col]], 1, 1) %in%
         c("A", "a"),
       yes = "age",
       no = "length"
@@ -1381,7 +1385,7 @@ SS_output <-
       # how many non-numeric digits to skip over in parsing bin value
       first_bin_digit <- ifelse(seldev_pars[["Type"]] == "age", 2, 5)
       # parse bin (age or length bin)
-      seldev_pars[["Bin"]] <- as.numeric(substring(seldev_label_info[["X4"]], first_bin_digit))
+      seldev_pars[["Bin"]] <- as.numeric(substring(seldev_label_info[[type_bin_col]], first_bin_digit))
       # remove label column which is redundant with rownames
       seldev_pars <- seldev_pars[, -1]
 
@@ -1443,10 +1447,11 @@ SS_output <-
       # figure out which fleet uses which parameter,
       # currently (as of SS version 3.30.10.00), requires reading data file
       if (verbose) {
-        message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
+        message("Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters")
       }
+      datname <- get_dat_new_name(dir)
       datfile <- SS_readdat(
-        file = file.path(dir, "data.ss_new"),
+        file = file.path(dir, datname),
         verbose = verbose, version = "3.30"
       )
       # deal with case where data file is empty
@@ -1489,10 +1494,10 @@ SS_output <-
                                      dbase) {
         ipar <- data_info[["ParmSelect"]][f]
         if (ipar %in% 1:nrow(DM_pars)) {
-          if(CompError == 1){
+          if (CompError == 1) {
             Theta <- DM_pars[["Theta"]][ipar]
           }
-          if(CompError == 2){
+          if (CompError == 2) {
             beta <- DM_pars[["Theta"]][ipar]
           }
         } else {
@@ -1501,19 +1506,19 @@ SS_output <-
             "Fleet = ", f, "and ParmSelect = ", ipar
           )
         }
-        if(CompError == 1){
+        if (CompError == 1) {
           DM_effN <-
             1 / (1 + Theta) +
             dbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
         }
-        if(CompError == 2){
+        if (CompError == 2) {
           DM_effN <-
             dbase[["Nsamp_adj"]][sub] * (1 + beta) /
-            (dbase[["Nsamp_adj"]][sub] + beta)
+              (dbase[["Nsamp_adj"]][sub] + beta)
         }
         DM_effN
       }
-      
+
       if (comp) { # only possible if CompReport.sso was read
         if (nrow(agedbase) > 0) {
           agedbase[["DM_effN"]] <- NA
@@ -1530,11 +1535,13 @@ SS_output <-
           if (age_data_info[["CompError"]][f] > 0) {
             sub <- agedbase[["Fleet"]] == f
             agedbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(CompError = age_data_info[["CompError"]][f],
-                                 f = f,
-                                 sub = sub,
-                                 data_info = age_data_info,
-                                 dbase = agedbase)
+              get_DM_sample_size(
+                CompError = age_data_info[["CompError"]][f],
+                f = f,
+                sub = sub,
+                data_info = age_data_info,
+                dbase = agedbase
+              )
           } # end test for D-M likelihood in age comp
         } # end loop over fleets within agedbase
 
@@ -1544,11 +1551,13 @@ SS_output <-
           if (len_data_info[["CompError"]][f] > 0) {
             sub <- lendbase[["Fleet"]] == f
             lendbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(CompError = len_data_info[["CompError"]][f],
-                                 f = f,
-                                 sub = sub,
-                                 data_info = len_data_info,
-                                 dbase = lendbase)
+              get_DM_sample_size(
+                CompError = len_data_info[["CompError"]][f],
+                f = f,
+                sub = sub,
+                data_info = len_data_info,
+                dbase = lendbase
+              )
           } # end test for D-M likelihood in len comp
         } # end loop over fleets within lendbase
 
@@ -1558,11 +1567,13 @@ SS_output <-
           if (age_data_info[["CompError"]][f] > 0) {
             sub <- condbase[["Fleet"]] == f
             condbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(CompError = age_data_info[["CompError"]][f],
-                                 f = f,
-                                 sub = sub,
-                                 data_info = age_data_info,
-                                 dbase = condbase)
+              get_DM_sample_size(
+                CompError = age_data_info[["CompError"]][f],
+                f = f,
+                sub = sub,
+                data_info = age_data_info,
+                dbase = condbase
+              )
           } # end test for D-M likelihood in age comp
         } # end loop over fleets within condbase
       } # end test for whether CompReport.sso info is available
@@ -2564,31 +2575,42 @@ SS_output <-
     )
     returndat[["mean_body_wt"]] <- mean_body_wt
 
-    # Time-varying growth
+    # get time series of mean length at age
     mean_size <- matchfun2("MEAN_SIZE_TIMESERIES", 1,
       "mean_size_Jan_1", -2,
       cols = 1:(4 + accuage + 1),
       header = TRUE,
       type.convert = TRUE
     )
+    # filter values for range of years in time series
+    # (may not be needed in more recent SS versions)
     growthvaries <- FALSE
     if (!is.null(mean_size)) {
       if (SS_versionNumeric < 3.30) {
         mean_size <- mean_size[mean_size[["Beg"]] == 1 &
-          mean_size[["Morph"]] == 1 &
           mean_size[["Yr"]] >= startyr &
           mean_size[["Yr"]] < endyr, ]
       } else {
         mean_size <- mean_size[mean_size[["SubSeas"]] == 1 &
-          mean_size[["Morph"]] == 1 &
           mean_size[["Yr"]] >= startyr &
           mean_size[["Yr"]] < endyr, ]
       }
       if (nseasons > 1) {
         mean_size <- mean_size[mean_size[["Seas"]] == 1, ]
       }
-      if (sum(!duplicated(mean_size[,-(1:4)])) > 1) {
-        growthvaries <- TRUE
+      # loop over morphs to check for time-varying growth
+      # (typically only 1 or 1:2 for females and males)
+      for (morph in unique(mean_size[["Morph"]])) {
+        # check is based on ages 0 up to accuage-1, because the mean
+        # length in the plus group can vary over time as a function of changes
+        # in the numbers at age (where fishing down the old fish causes
+        # fewer additional ages lumped into that group)
+        if (sum(!duplicated(mean_size[
+          mean_size[["Morph"]] == morph,
+          paste(0:(accuage - 1))
+        ])) > 1) {
+          growthvaries <- TRUE
+        }
       }
       returndat[["growthseries"]] <- mean_size
       returndat[["growthvaries"]] <- growthvaries
@@ -2601,12 +2623,13 @@ SS_output <-
     returndat[["sizeselex"]] <- sizeselex
 
     # Age-based selectivity
-    ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
+    # Updated for 3.30.17 which added an additional row in the AGE_SELEX header
+    ageselex <- matchfun2("COMBINED_ALK*selL*selA", 1, header = TRUE)
     if (!is.null(ageselex)) {
-      # account for additional header row added in March 2021 
+      # account for additional header row added in March 2021
       # SS commit: 31ae478d1bae53235e14912d8c5c452a62c71adb
       # (not the most efficient way to do this)
-      if(any(grepl("COMBINED_ALK", names(ageselex)))) {
+      if (any(grepl("COMBINED_ALK", names(ageselex)))) {
         ageselex <- matchfun2("AGE_SELEX", 5, header = TRUE)
       }
       ageselex <- df.rename(ageselex,
@@ -2761,7 +2784,7 @@ SS_output <-
         temp <- morph_indexing[morph_indexing[["BirthSeas"]] ==
           first_seas_with_recruits &
           morph_indexing[["Platoon_Dist"]] ==
-          max(morph_indexing[["Platoon_Dist"]]), ]
+            max(morph_indexing[["Platoon_Dist"]]), ]
         mainmorphs <- min(temp[["Index"]][temp[["Sex"]] == 1])
         if (nsexes == 2) {
           mainmorphs <- c(mainmorphs, min(temp[["Index"]][temp[["Sex"]] == 2]))
@@ -2850,26 +2873,41 @@ SS_output <-
       depletion_basis <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
     }
 
+
+    if (depletion_basis %in% c(1, 3:4)) {
+      starter <- SS_readstarter(
+        file = file.path(dir, "starter.ss"),
+        verbose = verbose
+      )
+      depletion_multiplier <- starter$depl_denom_frac
+    } else {
+      depletion_multiplier <- 1
+    }
+
     Bratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
     if (Bratio_denominator == "no_depletion_basis") {
-      Bratio_denominator <- NULL
-      Bratio_label <- NULL
+      Bratio_label <- "no_depletion_basis"
     } else {
       # create Bratio label for use in various plots
       if (grepl(pattern = "100", x = Bratio_denominator)) {
         # exclude 100% if present
-        Bratio_label <- paste0("B/",
-                               substring(Bratio_denominator, 6))
+        Bratio_label <- paste0(
+          "B/",
+          substring(Bratio_denominator, 6)
+        )
       } else {
-        Bratio_label <- paste0("B/(",
-                               Bratio_denominator,
-                               ")")
+        Bratio_label <- paste0(
+          "B/(",
+          Bratio_denominator,
+          ")"
+        )
       }
       if (Bratio_label == "B/Virgin_Biomass") {
         Bratio_label <- "B/B_0"
       }
     }
     returndat[["depletion_basis"]] <- depletion_basis
+    returndat[["depletion_multiplier"]] <- depletion_multiplier
     returndat[["Bratio_denominator"]] <- Bratio_denominator
     returndat[["Bratio_label"]] <- Bratio_label
 
@@ -3058,7 +3096,7 @@ SS_output <-
       shift <- grep("^Y", Kobe_head[, 1]) # may be "Year" or "Yr"
       if (length(shift) == 0) {
         # work around for bug in output for 3.24z (and maybe other versions)
-        shift <- grep("MSY_basis:_Year", Kobe_head[, 1]) 
+        shift <- grep("MSY_basis:_Year", Kobe_head[, 1])
       }
       Kobe_warn <- NA
       Kobe_MSY_basis <- NA
@@ -3465,36 +3503,51 @@ SS_output <-
     returndat[["M_at_age"]] <- M_at_age
 
     # new section added in SSv3.30.16.03
-    Report_Z_by_area_morph_platoon <-
-      matchfun2("Report_Z_by_area_morph_platoon",
-        adjust1 = 1,
-        header = FALSE
-      )
-    if (is.null(Report_Z_by_area_morph_platoon)) {
+    if (is.na(matchfun("Report_Z_by_area_morph_platoon"))) {
       Z_by_area <- NULL
       M_by_area <- NULL
     } else {
-      Z_by_area <- matchfun2("With_fishery",
-        adjust1 = 1,
-        "No_fishery_for_Z=M",
-        adjust2 = -1,
-        matchcol1 = 2,
-        matchcol2 = 2,
-        obj = Report_Z_by_area_morph_platoon,
-        header = TRUE,
-        type.convert = TRUE
-      )
-      M_by_area <- matchfun2("No_fishery_for_Z=M",
-        blank_lines = nrow(Report_Z_by_area_morph_platoon) + 1,
-        adjust1 = 1,
-        matchcol1 = 2,
-        obj = Report_Z_by_area_morph_platoon,
-        header = TRUE,
-        type.convert = TRUE
-      )
+      if (!is.na(matchfun("Report_Z_by_area_morph_platoon_2"))) {
+        # format associated with 3.30.19 and beyond (separate tables with/without fishery)
+        Z_by_area <- matchfun2("Report_Z_by_area_morph_platoon_2",
+          adjust1 = 1,
+          header = TRUE,
+          type.convert = TRUE
+        )
+        M_by_area <- matchfun2("Report_Z_by_area_morph_platoon_1",
+          adjust1 = 1,
+          header = TRUE,
+          type.convert = TRUE
+        )
+      } else {
+        # format associated with 3.30.16.03 to 3.30.18.00 (tables under common header)
+        Report_Z_by_area_morph_platoon <-
+          matchfun2("Report_Z_by_area_morph_platoon",
+            adjust1 = 1,
+            header = FALSE
+          )
+        Z_by_area <- matchfun2("With_fishery",
+          adjust1 = 1,
+          "No_fishery_for_Z=M",
+          adjust2 = -1,
+          matchcol1 = 2,
+          matchcol2 = 2,
+          obj = Report_Z_by_area_morph_platoon,
+          header = TRUE,
+          type.convert = TRUE
+        )
+        M_by_area <- matchfun2("No_fishery_for_Z=M",
+          blank_lines = nrow(Report_Z_by_area_morph_platoon) + 1,
+          adjust1 = 1,
+          matchcol1 = 2,
+          obj = Report_Z_by_area_morph_platoon,
+          header = TRUE,
+          type.convert = TRUE
+        )
+      }
+      returndat["Z_by_area"] <- list(Z_by_area)
+      returndat["M_by_area"] <- list(M_by_area)
     }
-    returndat["Z_by_area"] <- list(Z_by_area)
-    returndat["M_by_area"] <- list(M_by_area)
 
     # Dynamic_Bzero output "with fishery"
     Dynamic_Bzero <- matchfun2("Spawning_Biomass_Report_2", 1)

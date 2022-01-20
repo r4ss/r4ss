@@ -110,8 +110,7 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
           forelist$".i" <- forelist$".i" + ncol
           return(forelist)
         }
-    }
-    else {
+    } else {
       nrow <- nrows
     }
 
@@ -228,7 +227,7 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
     forelist <- add_elem(forelist, "Nforecastyrs")
     # check for compatible input with forecast option 1.
     if (forelist[["Forecast"]] == 0 & forelist[["Nforecastyrs"]] != 1) {
-      if(forelist[["SSversion"]] == 3.3) {
+      if (forelist[["SSversion"]] == 3.3) {
         warning(
           "Forecast = 0 should always be used with 1 forecast year. ",
           "Changing Nforecastyrs to 1. If you would prefer to use 0 years ",
@@ -268,8 +267,8 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
 
     forelist <- add_elem(forelist, "N_forecast_loops")
     forelist <- add_elem(forelist, "First_forecast_loop_with_stochastic_recruitment")
-    forelist <- add_elem(forelist, "Forecast_loop_control_3")
-    forelist <- add_elem(forelist, "Forecast_loop_control_4")
+    forelist <- add_elem(forelist, "fcast_rec_option")
+    forelist <- add_elem(forelist, "fcast_rec_val")
     forelist <- add_elem(forelist, "Forecast_loop_control_5")
     forelist <- add_elem(forelist, "FirstYear_for_caps_and_allocations")
     forelist <- add_elem(forelist, "stddev_of_log_catch_ratio")

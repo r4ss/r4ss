@@ -16,7 +16,7 @@
 #' @export
 #' @importFrom stats reshape
 #' @seealso [SS_writedat()], [SS_writedat_3.24()],
-#' [SS_readdat()], [SS_makedatlist()],
+#' [SS_readdat()],
 #' [SS_readstarter()], [SS_writestarter()],
 #' [SS_readforecast()], [SS_writeforecast()]
 #'
@@ -193,11 +193,12 @@ SS_writedat_3.30 <- function(datlist,
         }
         x
       })
-    for (ln in Comments)
+    for (ln in Comments) {
       writeComment(ln)
+    }
   }
   writeComment("#")
-  
+
   # write the contents
   wl("styr")
   wl("endyr")
@@ -205,11 +206,13 @@ SS_writedat_3.30 <- function(datlist,
   wl.vector("months_per_seas", comment = "#_months_per_seas")
   wl("Nsubseasons")
   wl("spawn_month")
-  if(isTRUE(d[["Ngenders"]] != d[["Nsexes"]])) {
-    warning("List element `Ngenders` is in the process of being deprecated and ", 
-            "replaced by the `Nsexes`. In the meantime, r4ss::SS_writedat_3.30 will", 
-            " warn when `Ngenders` and `Nsexes` do not have the same value and", 
-            " only Nsexes will be written.")
+  if (isTRUE(d[["Ngenders"]] != d[["Nsexes"]])) {
+    warning(
+      "List element `Ngenders` is in the process of being deprecated and ",
+      "replaced by the `Nsexes`. In the meantime, r4ss::SS_writedat_3.30 will",
+      " warn when `Ngenders` and `Nsexes` do not have the same value and",
+      " only Nsexes will be written."
+    )
   }
   wl("Nsexes")
   wl("Nages")
@@ -300,9 +303,11 @@ SS_writedat_3.30 <- function(datlist,
     print.df(d[["len_info"]], terminate = FALSE)
 
     # data bins
-    if(length(d[["lbin_vector"]]) != d[["N_lbins"]]) {
-      warning("The length of the lbin_vector is different than N_lbins. This ", 
-              "data file will likely not run with Stock Synthesis.")
+    if (length(d[["lbin_vector"]]) != d[["N_lbins"]]) {
+      warning(
+        "The length of the lbin_vector is different than N_lbins. This ",
+        "data file will likely not run with Stock Synthesis."
+      )
     }
     wl("N_lbins")
     writeComment("#_lbin_vector")
@@ -315,12 +320,14 @@ SS_writedat_3.30 <- function(datlist,
       d[["lencomp"]] <- data.frame(matrix(vector(), 0, 6 + d[["N_lbins"]] * abs(d[["Nsexes"]])))
     } else if (d[["use_lencomp"]] == 1) {
       # remove lines of zero len comps, and warn user.
-      zero_lencomp <- apply(d[["lencomp"]][,-(1:6)], MARGIN = 1, FUN = sum) == 0
-      if(any(zero_lencomp == TRUE)) {
-        warning("Lines of all zero length comp found. SS will exit on error if", 
-                " a line of comps is all zeros, so removing. Line(s) ", 
-                paste0(which(zero_lencomp), collapse = ", "))
-        d[["lencomp"]] <- d[["lencomp"]][!zero_lencomp,]
+      zero_lencomp <- apply(d[["lencomp"]][, -(1:6)], MARGIN = 1, FUN = sum) == 0
+      if (any(zero_lencomp == TRUE)) {
+        warning(
+          "Lines of all zero length comp found. SS will exit on error if",
+          " a line of comps is all zeros, so removing. Line(s) ",
+          paste0(which(zero_lencomp), collapse = ", ")
+        )
+        d[["lencomp"]] <- d[["lencomp"]][!zero_lencomp, ]
       }
     }
 
@@ -350,15 +357,16 @@ SS_writedat_3.30 <- function(datlist,
     if (is.null(d[["agecomp"]])) {
       # empty data.frame with correct number of columns needed for terminator row
       d[["agecomp"]] <- data.frame(matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Nsexes"]])))
-
     } else {
       # check for and remove any 0 lines and warn
-      zero_agecomp <- apply(d[["agecomp"]][,-(1:9)], MARGIN = 1, FUN = sum) == 0
-      if(any(zero_agecomp == TRUE)) {
-        warning("Lines of all zero age comp found. SS will exit on error if", 
-                " a line of comps is all zeros, so removing. Line(s) ", 
-                paste0(which(zero_agecomp), collapse = ", "))
-        d[["agecomp"]] <- d[["agecomp"]][!zero_agecomp,]
+      zero_agecomp <- apply(d[["agecomp"]][, -(1:9)], MARGIN = 1, FUN = sum) == 0
+      if (any(zero_agecomp == TRUE)) {
+        warning(
+          "Lines of all zero age comp found. SS will exit on error if",
+          " a line of comps is all zeros, so removing. Line(s) ",
+          paste0(which(zero_agecomp), collapse = ", ")
+        )
+        d[["agecomp"]] <- d[["agecomp"]][!zero_agecomp, ]
       }
     }
     print.df(d[["agecomp"]])

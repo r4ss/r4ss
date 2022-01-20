@@ -221,8 +221,7 @@
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.
 SS_plots <-
-  function(
-           replist = NULL, plot = 1:26, print = NULL, pdf = FALSE, png = TRUE, html = png,
+  function(replist = NULL, plot = 1:26, print = NULL, pdf = FALSE, png = TRUE, html = png,
            printfolder = "plots", dir = "default", fleets = "all", areas = "all",
            fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
            lwd = 1, areacols = "default", areanames = "default",
@@ -601,7 +600,7 @@ SS_plots <-
                 minbthresh = minbthresh,
                 minyr = minyr, maxyr = maxyr,
                 pwidth = pwidth, pheight = pheight, punits = punits,
-                ptsize = ptsize, res = res, 
+                ptsize = ptsize, res = res,
                 mainTitle = mainTitle,
                 cex.main = cex.main,
                 labels = tslabels,
@@ -846,6 +845,7 @@ SS_plots <-
           replist = replist,
           fleets = fleets,
           fleetnames = fleetnames,
+          fleetcols = fleetcols,
           plot = !png, print = png,
           datplot = datplot,
           pwidth = pwidth, pheight = pheight, punits = punits,
@@ -1580,7 +1580,9 @@ SS_plots <-
           pwidth = pwidth, pheight = pheight_tall, punits = punits,
           ptsize = ptsize, res = res, mainTitle = mainTitle, cex.main = cex.main,
           plotdir = plotdir, margins = c(5.1, 2.1, 4.1, SSplotDatMargin),
-          fleetnames = fleetnames, maxsize = maxsize
+          fleetnames = fleetnames,
+          fleetcol = fleetcols, # mismatch in names between functions
+          maxsize = maxsize
         )
       if (!is.null(temp) & length(temp) > 0) plotinfo <- temp[["plotinfo"]]
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
@@ -1676,9 +1678,14 @@ SS_plots <-
         plotdir,
         paste0(
           "plotInfoTable_",
-          format(png_time, "%d-%m-%Y_%H.%M.%S"), ".csv"
+          format(png_time, "%d-%m-%Y_%H.%M.%OS4"), ".csv"
         )
       )
+      if (file.exists(csvname)) {
+        # Warn if file exists (and will be overwritten, losing information).
+        # In the future the file name could be changed to avoid this
+        warning("Overwriting", csvname)
+      }
       write.csv(plotInfoTable, csvname, row.names = FALSE)
       if (verbose) message("Wrote table of info on PNG files to:\n   ", csvname)
       # write HTML files to display the images

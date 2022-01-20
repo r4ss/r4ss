@@ -86,8 +86,8 @@
 #' @param blue What color to use for males in bubble plots (default is slightly
 #' transparent blue)
 #' @template pwidth
-#' @template pheight 
-#' @template punits 
+#' @template pheight
+#' @template punits
 #' @template ptsize
 #' @template res
 #' @param plotdir directory where PNG files will be written. by default it will
@@ -419,7 +419,7 @@ SSplotComps <-
     } else {
       titletype <- "Pearson residuals, "
     }
-    
+
     # partition group is used by some aggregate plots (subplot 21+)
     # either equal to partition or constant across all samples
     if (nrow(dbase_kind) > 0) {
@@ -481,10 +481,10 @@ SSplotComps <-
                 filename_fltsexmkt <- paste0(filename_fltsexmkt, "mkt", j)
               }
 
-              caption <- paste(titledata, title_sexmkt, "aggregated across time by fleet", sep = "") # total title
+              caption1 <- paste(titledata, title_sexmkt, "aggregated across time by fleet", sep = "") # total title
 
               if (mainTitle) {
-                ptitle <- caption
+                ptitle <- caption1
               } else {
                 ptitle <- ""
               }
@@ -595,7 +595,9 @@ SSplotComps <-
                 if (print) { # set up plotting to png file if required
                   npages <- ceiling(length(unique(agg[["f"]])) / maxrows / maxcols)
                   for (ipage in 1:npages) {
-                    if (max_n_mkt > 0) {
+                    pagetext <- ""
+                    caption <- caption1
+                    if (max_n_mkt > 0 & ipage == 1) {
                       caption <-
                         paste0(
                           caption, ".\n <br> ",
@@ -605,7 +607,6 @@ SSplotComps <-
                           " the whole catch.\n"
                         )
                     }
-                    pagetext <- ""
                     if (npages > 1) {
                       pagetext <- paste("_page", ipage, sep = "")
                       caption <- paste(caption, "<br> (plot ", ipage, " of ", npages, ")", sep = "")
@@ -700,12 +701,12 @@ SSplotComps <-
                 title_sexmkt <- paste(titlesex, titlemkt, sep = "")
                 filename_fltsexmkt <- paste("sex", k, "mkt", j, sep = "")
 
-                caption <- paste0(
+                caption1 <- paste0(
                   titledata, title_sexmkt,
                   "\naggregated within season by fleet"
                 ) # total title
                 if (mainTitle) {
-                  ptitle <- caption
+                  ptitle <- caption1
                 } else {
                   ptitle <- ""
                 }
@@ -788,6 +789,7 @@ SSplotComps <-
                   npages <- ceiling(length(unique(agg[["fseas"]])) / maxrows / maxcols)
                   for (ipage in 1:npages)
                   {
+                    caption <- caption1
                     pagetext <- ""
                     if (npages > 1) {
                       pagetext <- paste("_page", ipage, sep = "")
@@ -1232,7 +1234,7 @@ SSplotComps <-
       par(mfcol = c(rows, cols), mar = c(5, 4, 4, 2) + .1, oma = rep(0, 4))
     } # end subplot 24
 
-    
+
     # loop over fleets
     for (f in fleets) {
       # check for the presence of data
@@ -1253,12 +1255,12 @@ SSplotComps <-
         # get table of info about the comp data of this kind/fleet
         if (kind %in% c("AGE", "GSTAGE", "cond", "GSTcond")) {
           data_info <- replist[["age_data_info"]]
-        } 
+        }
         if (kind %in% c("LEN", "GSTLEN")) {
           data_info <- replist[["len_data_info"]]
         }
-          
-        
+
+
         # loop over partitions (discard, retain, total)
         for (j in unique(dbasef[["Part"]])) {
           dbase <- dbasef[dbasef[["Part"]] == j, ]
@@ -1423,13 +1425,13 @@ SSplotComps <-
                 if (ipage == 1) {
                   if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
                     # get Theta value for this fleet
-                    if(kind %in% "LEN"){
+                    if (kind %in% "LEN") {
                       ipar <- data_info[["ParmSelect"]][f]
                     } else { # "AGE" or "cond"
                       ipar <- data_info[["ParmSelect"]][f]
                     }
                     # D-M option 1 (linear)
-                    if(data_info[["CompError"]][f] == 1) {
+                    if (data_info[["CompError"]][f] == 1) {
                       Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
                       # note: in caption below &#920 = Theta
                       caption_extra <-
@@ -1444,7 +1446,7 @@ SSplotComps <-
                         )
                     }
                     # D-M option 2 (saturating)
-                    if(data_info[["CompError"]][f] == 2) {
+                    if (data_info[["CompError"]][f] == 2) {
                       beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
                       # note: in captions below &#946 = beta
                       caption_extra <-
@@ -1458,21 +1460,21 @@ SSplotComps <-
                           "approximate sample size multiplier."
                         )
                     }
-                    caption_extra <- paste0(caption_extra,
-                                            "<br><br>For more info, see<br>",
-                                            "<blockquote>",
-                                            "Thorson, J.T., Johnson, K.F., ",
-                                            "Methot, R.D. and Taylor, I.G. 2017. ",
-                                            "Model-based estimates of effective sample size ",
-                                            "in stock assessment models using the ",
-                                            "Dirichlet-multinomial distribution. ",
-                                            "<i>Fisheries Research</i>",
-                                            "192: 84-93. ",
-                                            "<a href=https://doi.org/10.1016/j.fishres.2016.06.005>",
-                                            "https://doi.org/10.1016/j.fishres.2016.06.005</a>",
-                                            "</blockquote>"
-                                            )
-                    
+                    caption_extra <- paste0(
+                      caption_extra,
+                      "<br><br>For more info, see<br>",
+                      "<blockquote>",
+                      "Thorson, J.T., Johnson, K.F., ",
+                      "Methot, R.D. and Taylor, I.G. 2017. ",
+                      "Model-based estimates of effective sample size ",
+                      "in stock assessment models using the ",
+                      "Dirichlet-multinomial distribution. ",
+                      "<i>Fisheries Research</i>",
+                      "192: 84-93. ",
+                      "<a href=https://doi.org/10.1016/j.fishres.2016.06.005>",
+                      "https://doi.org/10.1016/j.fishres.2016.06.005</a>",
+                      "</blockquote>"
+                    )
                   } else { # if not using Dirichlet-Multinomial likelihood
                     caption_extra <-
                       paste0(
@@ -1628,10 +1630,10 @@ SSplotComps <-
 
           if (3 %in% subplots & kind == "cond") {
             # assemble caption that may also be used for plot title
-            caption <- paste(titletype, title_sexmkt, fleetnames[f], sep = "")
-            caption <- paste(caption, " (max=", round(max(z), digits = 2), ")", sep = "")
+            caption1 <- paste(titletype, title_sexmkt, fleetnames[f], sep = "")
+            caption1 <- paste(caption1, " (max=", round(max(z), digits = 2), ")", sep = "")
             if (mainTitle) {
-              ptitle <- caption
+              ptitle <- caption1
             } else {
               ptitle <- ""
             }
@@ -1684,6 +1686,7 @@ SSplotComps <-
                 length(unique(dbase[["sex"]])) / maxrows2 / maxcols2)
               for (ipage in 1:npages) {
                 pagetext <- ""
+                caption <- caption1
                 if (npages > 1) {
                   pagetext <- paste("_page", ipage, sep = "")
                   caption <- paste(caption, " (plot ", ipage, " of ", npages, ")", sep = "")
@@ -1712,9 +1715,9 @@ SSplotComps <-
                 sexvec <- ydbase[["sex"]]
                 if (4 %in% subplots) {
                   ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
-                  caption <- paste(aalyr, " age-at-length bin, ", title_sexmkt, fleetnames[f], sep = "")
+                  caption1 <- paste(aalyr, " age-at-length bin, ", title_sexmkt, fleetnames[f], sep = "")
                   if (mainTitle) {
-                    ptitle <- caption
+                    ptitle <- caption1
                   } else {
                     ptitle <- ""
                   }
@@ -1740,6 +1743,7 @@ SSplotComps <-
                     npages <- ceiling(length(unique(ydbase[["Yr.S"]])) / maxrows / maxcols)
                     for (ipage in 1:npages) {
                       pagetext <- ""
+                      caption <- caption1
                       if (npages > 1) {
                         pagetext <- paste("_page", ipage, sep = "")
                         caption <- paste(caption, " (plot ", ipage, " of ", npages, ")", sep = "")
@@ -1790,11 +1794,6 @@ SSplotComps <-
                   }
                   if (plot) tempfun5()
                   if (print) {
-                    pagetext <- ""
-                    if (npages > 1) {
-                      pagetext <- paste("_page", ipage, sep = "")
-                      caption <- paste(caption, " (plot ", ipage, " of ", npages, ")", sep = "")
-                    }
                     if (length(grep("Pearson", caption)) > 0) {
                       caption <- paste(
                         caption,
@@ -1834,9 +1833,9 @@ SSplotComps <-
                 abindbase <- dbase[dbase[["Lbin_hi"]] == ilenbin, ]
                 if (nrow(abindbase) > 0) { # check for data associated with this bin
                   sexvec <- abindbase[["sex"]]
-                  caption <- paste0("Age-at-length ", ilenbin, labels[7], ", ", title_sexmkt, fleetnames[f])
+                  caption1 <- paste0("Age-at-length ", ilenbin, labels[7], ", ", title_sexmkt, fleetnames[f])
                   if (mainTitle) {
-                    ptitle <- caption
+                    ptitle <- caption1
                   } else {
                     ptitle <- ""
                   }
@@ -1858,6 +1857,7 @@ SSplotComps <-
                     npages <- ceiling(length(unique(abindbase[["Yr.S"]])) / maxrows / maxcols)
                     for (ipage in 1:npages) {
                       pagetext <- ""
+                      caption <- caption1
                       if (npages > 1) {
                         pagetext <- paste0("_page", ipage)
                         caption <- paste0(caption, " (plot ", ipage, " of ", npages, ")")

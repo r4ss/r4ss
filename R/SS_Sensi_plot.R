@@ -43,7 +43,6 @@
 #' https://doi.org/10.1139/cjfas-2020-0082
 
 #' @examples
-#'
 #' \dontrun{
 #' # Set directory and extract ouput from models
 #' # Model 1 needs to be the Reference model, with sensitivity runs following
@@ -51,7 +50,7 @@
 #'
 #' # Note: models are available in Jason Cope's github repository:
 #' # https://github.com/shcaba/Stock-Assessment-Sensitivity-Plots/
-#' dir <- 
+#' dir <-
 #'   "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
 #' models.dirs <- paste0("Cab_SCS_MS_", 1:19)
 #' zz <- SSgetoutput(dirvec = file.path(dir, models.dirs))
@@ -59,7 +58,7 @@
 #' # Use the summarize function in r4ss to get model summaries
 #' model.summaries <- SSsummarize(zz)
 #'
-#' # Define the names of each model. This will be used to label runs in the 
+#' # Define the names of each model. This will be used to label runs in the
 #' # table and in the figures.
 #' mod.names <- c(
 #'   "Reference",
@@ -100,8 +99,10 @@
 #'   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks
 #'   anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
 #'   anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
-#'   anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", 
-#'     "Other") # Sensitivity types labels
+#'   anno.lab = c(
+#'     "Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.",
+#'     "Other"
+#'   ) # Sensitivity types labels
 #' )
 #' }
 #'
@@ -109,7 +110,7 @@ SS_Sensi_plot <- function(model.summaries,
                           dir = "",
                           current.year,
                           mod.names,
-                          #likelihood.out = c(1, 1, 1), # note which likelihoods are in the model
+                          # likelihood.out = c(1, 1, 1), # note which likelihoods are in the model
                           Sensi.RE.out = "Sensi_RE_out.DMP",
                           CI = 0.95,
                           TRP.in = 0.4,
@@ -132,66 +133,61 @@ SS_Sensi_plot <- function(model.summaries,
 
   # num.likes<-sum(likelihood.out)*2+2
   num.likes <- length(unique(model.summaries$likelihoods_by_fleet$Label)) # determine how many likelihoods components
-  nummods<-as.data.frame(matrix(NA,ncol(model.summaries$likelihoods_by_fleet)-2,length(unique(model.summaries$likelihoods_by_fleet$model))+2))
-  nummods[,1]<-colnames(model.summaries$likelihoods_by_fleet)[-c(1,2)]
-  colnames(nummods)<-c("Type", mod.names, "Label")
-  survey.lambda<-survey.like<-Lt.lambda<-Lt.like<-Age.lambda<-Age.like<-nummods
+  nummods <- as.data.frame(matrix(NA, ncol(model.summaries$likelihoods_by_fleet) - 2, length(unique(model.summaries$likelihoods_by_fleet$model)) + 2))
+  nummods[, 1] <- colnames(model.summaries$likelihoods_by_fleet)[-c(1, 2)]
+  colnames(nummods) <- c("Type", mod.names, "Label")
+  survey.lambda <- survey.like <- Lt.lambda <- Lt.like <- Age.lambda <- Age.like <- nummods
 
   if (missing(mod.names)) {
     mod.names <- paste("model ", 1:model.summaries$n)
   }
-  if (any(unique(model.summaries$likelihoods_by_fleet$Label)=="Surv_lambda")) 
-  {
-    survey.lb<-model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Surv_lambda",]
-    survey.lambda[,survey.lb$model+1]<-t(survey.lb[,3:ncol(survey.lb)])
-    survey.lambda$Label<-"Surv_lambda"
+  if (any(unique(model.summaries$likelihoods_by_fleet$Label) == "Surv_lambda")) {
+    survey.lb <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Surv_lambda", ]
+    survey.lambda[, survey.lb$model + 1] <- t(survey.lb[, 3:ncol(survey.lb)])
+    survey.lambda$Label <- "Surv_lambda"
 
-    survey.lk<-model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Surv_like",]
-    survey.like[,survey.lk$model+1]<-t(survey.lk[,3:ncol(survey.lk)])
-    survey.like$Label<-"Survey_likelihood"
+    survey.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Surv_like", ]
+    survey.like[, survey.lk$model + 1] <- t(survey.lk[, 3:ncol(survey.lk)])
+    survey.like$Label <- "Survey_likelihood"
 
 
-#    syrvlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_lambda"]
-#    survey.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(3, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_lambda")
-#    syrvlike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_like"]
-#    survey.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(syrvlike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_likelihood")
-  }
-  else {
+    #    syrvlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_lambda"]
+    #    survey.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(3, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_lambda")
+    #    syrvlike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_like"]
+    #    survey.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(syrvlike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_likelihood")
+  } else {
     survey.lambda <- survey.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
-  if (any(unique(model.summaries$likelihoods_by_fleet$Label)=="Length_lambda")) 
-  {
-    Lt.lb<-model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Length_lambda",]
-    Lt.lambda[,Lt.lb$model+1]<-t(Lt.lb[,3:ncol(Lt.lb)])
-    Lt.lambda$Label<-"Length_lambda"
+  if (any(unique(model.summaries$likelihoods_by_fleet$Label) == "Length_lambda")) {
+    Lt.lb <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Length_lambda", ]
+    Lt.lambda[, Lt.lb$model + 1] <- t(Lt.lb[, 3:ncol(Lt.lb)])
+    Lt.lambda$Label <- "Length_lambda"
 
-    Lt.lk<-model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Length_like",]
-    Lt.like[,Lt.lk$model+1]<-t(Lt.lk[,3:ncol(Lt.lk)])
-    Lt.like$Label<-"Length_likelihood"
+    Lt.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Length_like", ]
+    Lt.like[, Lt.lk$model + 1] <- t(Lt.lk[, 3:ncol(Lt.lk)])
+    Lt.like$Label <- "Length_likelihood"
 
     # Ltlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Length_lambda"]
     # Lt.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Ltlambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Lt_lambda")
     # Ltlike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Length_like"]
     # Lt.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Ltlike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Lt_likelihood")
-  }
-  else {
+  } else {
     Lt.lambda <- Lt.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
-  if (any(unique(model.summaries$likelihoods_by_fleet$Label)=="Age_lambda")) {
-    Age.lb<-model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Age_lambda",]
-    Age.lambda[,Age.lb$model+1]<-t(Age.lb[,3:ncol(Age.lb)])
-    Age.lambda$Label<-"Age_lambda"
+  if (any(unique(model.summaries$likelihoods_by_fleet$Label) == "Age_lambda")) {
+    Age.lb <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Age_lambda", ]
+    Age.lambda[, Age.lb$model + 1] <- t(Age.lb[, 3:ncol(Age.lb)])
+    Age.lambda$Label <- "Age_lambda"
 
-    Age.lk<-model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Age_like",]
-    Age.like[,Age.lk$model+1]<-t(Age.lk[,3:ncol(Age.lk)])
-    Age.like$Label<-"Age_likelihood"
-    
+    Age.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Age_like", ]
+    Age.like[, Age.lk$model + 1] <- t(Age.lk[, 3:ncol(Age.lk)])
+    Age.like$Label <- "Age_likelihood"
+
     # Agelambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_lambda"]
     # Age.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Agelambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Age_lambda")
     # Agelike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_like"]
     # Age.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Agelike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Age_likelihood")
-  }
-  else {
+  } else {
     Age.lambda <- Age.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
 
@@ -232,7 +228,7 @@ SS_Sensi_plot <- function(model.summaries,
       model.summaries$quantsSD[model.summaries$quantsSD$Label %in% c("Fstd_SPR", "annF_SPR"), 1]
     )
   }
-  
+
   dev.quants.labs <- data.frame(c("SB0", paste0("SSB_", current.year), paste0("Bratio_", current.year), "MSY_SPR", "F_SPR"), dev.quants, "Derived quantities")
   AICs <- 2 * model.summaries$npars + (2 * as.numeric(model.summaries$likelihoods[1, 1:model.summaries$n]))
   deltaAICs <- AICs - AICs[1]

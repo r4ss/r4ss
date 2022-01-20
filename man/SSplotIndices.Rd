@@ -18,6 +18,7 @@ SSplotIndices(
     "Log observed index", "Log expected index", "Standardized index", "Catchability (Q)",
     "Time-varying catchability", "Vulnerable biomass",
     "Catchability vs. vulnerable biomass", "Residual", "Deviation"),
+  fleetcols = NULL,
   col1 = "default",
   col2 = "default",
   col3 = "blue",
@@ -82,6 +83,9 @@ sizes}
 \item{datplot}{make plot of data only?}
 
 \item{labels}{vector of labels for plots (titles and axis labels)}
+
+\item{fleetcols}{vector of colors for all fleets (including those
+with no index data)}
 
 \item{col1}{vector of colors for points in each season for time series plot.
 Default is red for single season models and a rainbow using the

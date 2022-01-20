@@ -50,7 +50,6 @@ had errors like missing executable or Report.sso already present
 Loops over a vector of directories and iteratively runs SS in each one
 }
 \examples{
-
 \dontrun{
 extdata_mods <- system.file("extdata", package = "r4ss")
 dirvec <- c(

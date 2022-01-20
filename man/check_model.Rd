@@ -7,8 +7,9 @@
 check_model(model, mydir = getwd())
 }
 \arguments{
-\item{model}{Executable name of the \code{.exe} file in \code{mydir}
-without the extension, e.g., \code{"ss"}.}
+\item{model}{Name of the Stock Synthesis model file (which has the .exe for
+on Windows) in \code{mydir} without the extension (if any), e.g.,
+\code{"ss"} or \code{"ss_win"}.}
 
 \item{mydir}{The directory where \code{model} is located.}
 }

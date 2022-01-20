@@ -125,7 +125,6 @@ Make multi-figure plots of prior, posterior, and estimated asymptotic
 parameter distributions. MCMC not required to make function work.
 }
 \examples{
-
 \dontrun{
 # read model results
 model <- SS_output(dir = "c:/SS/Simple/")

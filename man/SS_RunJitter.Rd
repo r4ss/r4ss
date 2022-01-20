@@ -20,8 +20,9 @@ SS_RunJitter(
 \arguments{
 \item{mydir}{Directory where model files are located.}
 
-\item{model}{Executable name of the \code{.exe} file in \code{mydir}
-without the extension, e.g., \code{"ss"}.}
+\item{model}{Name of the Stock Synthesis model file (which has the .exe for
+on Windows) in \code{mydir} without the extension (if any), e.g.,
+\code{"ss"} or \code{"ss_win"}.}
 
 \item{extras}{Additional command line arguments passed to the executable.
 The default, \code{"-nohess"}, runs each jittered model without the hessian.}

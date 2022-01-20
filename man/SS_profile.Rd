@@ -119,7 +119,6 @@ be read using \code{\link[=SSgetoutput]{SSgetoutput()}} or by multiple calls to
 \code{\link[=SS_output]{SS_output()}} before sending to \code{\link[=SSplotProfile]{SSplotProfile()}}.
 }
 \examples{
-
 \dontrun{
 # note: don't run this in your main directory
 # make a copy in case something goes wrong
@@ -205,14 +204,16 @@ profile <- SS_profile(
   dir = dir_profile_SR, # directory
   masterctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
-  string = c("Zfrac","Beta"),
+  string = c("Zfrac", "Beta"),
   profilevec = par_table,
   extras = "-nohess"
 )
 
 # get model output
-profilemodels <- SSgetoutput(dirvec=dir_profile_SR,
-                             keyvec=1:nrow(par_table), getcovar=FALSE)
+profilemodels <- SSgetoutput(
+  dirvec = dir_profile_SR,
+  keyvec = 1:nrow(par_table), getcovar = FALSE
+)
 n <- length(profilemodels)
 profilesummary <- SSsummarize(profilemodels)
 
@@ -220,13 +221,14 @@ profilesummary <- SSsummarize(profilemodels)
 par_table$like <- as.numeric(profilesummary$likelihoods[1, 1:n])
 
 # reshape data frame into a matrix for use with contour
-like_matrix <- reshape2::acast(par_table, Zfrac~Beta, value.var="like")
+like_matrix <- reshape2::acast(par_table, Zfrac ~ Beta, value.var = "like")
 
 # make contour plot
-contour(x = as.numeric(rownames(like_matrix)),
-        y = as.numeric(colnames(like_matrix)),
-        z = like_matrix)
-
+contour(
+  x = as.numeric(rownames(like_matrix)),
+  y = as.numeric(colnames(like_matrix)),
+  z = like_matrix
+)
 }
 
 }

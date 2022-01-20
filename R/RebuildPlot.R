@@ -41,7 +41,6 @@
 #' @author Andre Punt, Ian Taylor
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' # example with one file
 #' DoProjectPlots(
@@ -105,7 +104,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   Net_Spawn_Graph <- function(UUU, Amin, Amax, Title) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "# Age Fecu") + 1
+    Ipnt <- which(UUU == "#Age_Fecu") + 1
     Xvals <- as.double(UUU[Ipnt:(Ipnt + Amax * 5 - Amin), 1])
     Yvals <- as.double(UUU[Ipnt:(Ipnt + Amax * 5 - Amin), 2])
     plot(Xvals, Yvals, xlab = "Age (years)", ylab = "Net Spawning Output", lty = 1, type = "l", lwd = lwd, xaxs = "i", yaxs = "i", ylim = c(0, 1.05 * max(Yvals)))
@@ -117,14 +116,14 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   RecruitmentPlots <- function(UUU, Title) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "# Recruitments") + 2
+    Ipnt <- which(UUU == "#Recruitments") + 2
     Npnt <- as.double(UUU[Ipnt - 1, 1])
     Xvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 1])
     Yvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 2])
     plot(Xvals, Yvals, xlab = "Year", ylab = "Recruitment", lty = 1, type = "l", lwd = lwd, yaxs = "i", ylim = c(0, 1.05 * max(Yvals)))
     title(Title)
 
-    Ipnt <- which(UUU == "# Recruits-per-spawner") + 2
+    Ipnt <- which(UUU == "#Recruits-per-spawner") + 2
     Npnt <- as.double(UUU[Ipnt - 1, 1])
     Xvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 1])
     Yvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 2])
@@ -135,7 +134,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   B0Dist <- function(UUU, Title) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "# B0 Dist") + 1
+    Ipnt <- which(UUU == "#B0_Dist") + 2
     Xvals <- as.double(UUU[Ipnt:(Ipnt + 19), 1])
     Yvals <- as.double(UUU[Ipnt:(Ipnt + 19), 2])
     plot(Xvals, Yvals, xlab = expression(B[0]), ylab = "Relative Density", type = "n", yaxs = "i", ylim = c(0, 1.05 * max(Yvals)))
@@ -154,7 +153,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   RecHist <- function(UUU, Title) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "# Recovery Histogram") + 2
+    Ipnt <- which(UUU == "#Recovery_Histogram") + 2
     Npnt <- as.double(UUU[Ipnt - 1, 1])
     Xvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 1])
     Yvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 2])
@@ -186,7 +185,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   AltStrategies <- function(FileN, UUUs, Options, Title, yearmax, Titles, cols = c("red", "blue", "green", "orange", "black", "pink")) {
     par(mfrow = c(OutlineMulti[1], OutlineMulti[2]))
 
-    Ipnt <- which(UUUs[[1]] == "# Recovery Histogram")
+    Ipnt <- which(UUUs[[1]] == "#Recovery_Histogram")
     Tmax <- as.double(UUUs[[1]][Ipnt - 1, 1])
     Yinit <- as.double(UUUs[[1]][Ipnt - 7, 1])
     MinRev <- as.double(UUUs[[1]][Ipnt - 10, 1])
@@ -195,7 +194,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     if (length(FileN) > 0) {
       for (Ifile in 2:length(FileN))
       {
-        Ipnt <- which(UUUs[[1]] == "# Recovery Histogram")
+        Ipnt <- which(UUUs[[1]] == "#Recovery_Histogram")
         Tmax2 <- as.double(UUUs[[1]][Ipnt - 1, 1])
         Yinit2 <- as.double(UUUs[[1]][Ipnt - 7, 1])
         MinRev2 <- as.double(UUUs[[1]][Ipnt - 10, 1])
@@ -219,7 +218,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
       {
         Files <- c(Files, Ifile)
         Opts <- c(Opts, II)
-        Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+        Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
         Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
         Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + 10 + II])
         LastCatch <- c(LastCatch, Yvals[length(Yvals)])
@@ -237,7 +236,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     xmax <- 0
     for (Ifile in 1:length(FileN))
     {
-      Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+      Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
       Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
       Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 1])
       if (yearmax > 0) {
@@ -271,7 +270,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
           Ifile <- Files[Icnt]
           II <- Opts[Icnt]
           IlineType <- IlineType + 1
-          Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+          Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
           Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
           Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 1])
           Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + II]) * 100
@@ -291,7 +290,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
         for (Ifile in 1:length(FileN)) {
           for (II in Options[[Ifile]])
           {
-            Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+            Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
             Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
             Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + 10 + II])
             if (max(Yvals) > ymax) ymax <- max(Yvals)
@@ -304,7 +303,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
           Ifile <- Files[Icnt]
           II <- Opts[Icnt]
           IlineType <- IlineType + 1
-          Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+          Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
           Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
           Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 1])
           Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + 10 + II])
@@ -321,7 +320,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
         for (Ifile in 1:length(FileN)) {
           for (II in Options[[Ifile]])
           {
-            Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+            Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
             Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
             Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + 20 + II]) * 100
             if (max(Yvals) > ymax) ymax <- max(Yvals)
@@ -334,7 +333,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
           Ifile <- Files[Icnt]
           II <- Opts[Icnt]
           IlineType <- IlineType + 1
-          Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+          Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
           Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
           Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 1])
           Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + 20 + II]) * 100
@@ -351,7 +350,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
         for (Ifile in 1:length(FileN)) {
           for (II in Options[[Ifile]])
           {
-            Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+            Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
             Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
             Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + 30 + II]) / BioScalar
             if (max(Yvals[Xvals <= xmax]) > ymax) ymax <- max(Yvals[Xvals <= xmax])
@@ -364,7 +363,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
           Ifile <- Files[Icnt]
           II <- Opts[Icnt]
           IlineType <- IlineType + 1
-          Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+          Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
           Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
           Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 1])
           Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt + Npnt - 1), 2 + 30 + II]) / BioScalar
@@ -374,7 +373,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
           if (is.null(AltStrat.output[["Bio"]])) AltStrat.output[["Bio"]] <- data.frame(Yr = Xvals)
           AltStrat.output[["Bio"]][, Icnt + 1] <- Yvals
         }
-        Jpnt <- which(UUUs[[1]] == "# Recruitments") - 8
+        Jpnt <- which(UUUs[[1]] == "#Recruitments") - 8
         B0 <- as.double(UUUs[[1]][Jpnt, 1])
         abline(h = 0.4 * B0 / BioScalar, lwd = 1, lty = 2)
         abline(h = 0.25 * B0 / BioScalar, lwd = 1, lty = 2)
@@ -395,15 +394,14 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     {
       Ifile <- Files[Icnt]
       II <- Opts[Icnt]
-      Ipnt <- which(UUUs[[Ifile]] == "# Summary 1") + 3
+      Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
       titles <- UUUs[[Ifile]][Ipnt - 1, 3:11]
 
       IlineType <- IlineType + 1
       if (any(Labels == "default")) {
         titls <- titles[II]
         if (length(FileN) > 0) titls <- paste(Titles[Ifile], ": ", titls, sep = "")
-      }
-      else {
+      } else {
         titls <- Labels[IlineType]
       }
 
@@ -423,7 +421,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     # this function makes plots of confidence intervals of individual trajectories
     par(mfrow = c(OutlineMulti[1], OutlineMulti[2]))
 
-    Ipnt <- which(UUU == "# Individual") + 2
+    Ipnt <- which(UUU == "#Individual") + 2
     Npnt <- as.double(UUU[Ipnt - 1, 1])
 
     # make an empty list to store values used in figures
@@ -444,7 +442,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
 
       if (ii == 7) {
         ind[["sb"]] <- PlotA(UUU, 36, "Spawning Biomass", Ipnt, Npnt, yearmax, BioScalar)
-        Jpnt <- which(UUU == "# Recruitments") - 8
+        Jpnt <- which(UUU == "#Recruitments") - 8
         B0 <- as.double(UUU[Jpnt, 1])
         ind[["sb"]][["B0"]] <- B0 / BioScalar
         abline(h = 0.4 * B0 / BioScalar, lwd = 1, lty = 2)
@@ -491,10 +489,10 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   FirstFive <- function(UUU, Title, yearmax) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "# Individual") + 2
+    Ipnt <- which(UUU == "#Individual") + 2
     Npnt <- as.double(UUU[Ipnt - 1, 1])
 
-    Ipnt <- which(UUU == "# First Five") + 1
+    Ipnt <- which(UUU == "#First_Five") + 2
     Xvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 1])
     if (yearmax > 0) {
       Use <- Xvals <= yearmax
@@ -524,7 +522,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   FinalRecovery <- function(UUU, Title) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "# Final Recovery") + 2
+    Ipnt <- which(UUU == "#Final_Recovery") + 2
     Npnt <- as.double(UUU[Ipnt - 1, 1])
     Npnt <- Npnt - 1
 

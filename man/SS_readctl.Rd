@@ -24,6 +24,8 @@ SS_readctl(
   N_tag_groups = NULL,
   N_CPUE_obs = NULL,
   catch_mult_fleets = NULL,
+  predM_fleets = NULL,
+  Ntag_fleets = NULL,
   N_rows_equil_catch = NULL,
   N_dirichlet_parms = NULL,
   ptype = FALSE
@@ -94,6 +96,19 @@ multiplier option is not used for any fleet or 2) \code{use_datlist = TRUE} and
 datlist is specified. Used only in control file 3.30 syntax if
 \code{use_datlist = FALSE}.}
 
+\item{predM_fleets}{integer vector of fleets with predator mortality included.
+Predator mortality fleets are only available in v3.30.18 and
+higher. Defaults to NULL and should be left as such if 1) predation mortality
+is not used for any fleets; 2) \code{use_datlist = TRUE} and \code{datlist} is specified;
+or 3) if comments in the control file should be used instead to determine
+the the predM_fleets. Used only in control file 3.30 syntax if
+\code{use_datlist = FALSE}.}
+
+\item{Ntag_fleets}{The number of catch fleets in the model (fleets of )
+type 1 or 2; not surveys). Used to set the number of survey parameters.
+Only used in control file 3.30 reading if tagging data is in the model and
+\code{use_datlist = FALSE}.}
+
 \item{N_rows_equil_catch}{Integer value of the number of parameter lines to
 read for equilibrium catch. Defaults to NULL, which means the function will
 attempt to figure out how many lines of equilibrium catch to read from the
@@ -102,7 +117,7 @@ control file comments. Used only in control file 3.30 syntax if
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet-Multinomial
 parameters. Defaults to 0. Used only in control file 3.30 syntax if
-\code{use_datlist = FALSE}..}
+\code{use_datlist = FALSE}.}
 
 \item{ptype}{LOGICAL if \code{TRUE}, which is the default,
 a column will be included in the output indicating parameter type.
@@ -129,7 +144,7 @@ dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
 # Read in the dat file to define the structure of the control file so that
 # you don't have to specify things in the function call such as 'Nfleet'
 datfilename <- dir(dirsimple, pattern = "data\\\\.ss", full.names = TRUE)
-dat <- r4ss::SS_readdat( file = datfilename, verbose = FALSE)
+dat <- r4ss::SS_readdat(file = datfilename, verbose = FALSE)
 # Read in the control file using a list object for datlist
 ctl <- r4ss::SS_readctl(
   file = dir(dirsimple, pattern = "control\\\\.ss", full.names = TRUE),
