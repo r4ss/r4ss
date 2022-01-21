@@ -167,10 +167,6 @@ SS_Sensi_plot <- function(model.summaries,
     Lt.like[, Lt.lk$model + 1] <- t(Lt.lk[, 3:ncol(Lt.lk)])
     Lt.like$Label <- "Length_likelihood"
 
-    # Ltlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Length_lambda"]
-    # Lt.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Ltlambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Lt_lambda")
-    # Ltlike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Length_like"]
-    # Lt.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Ltlike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Lt_likelihood")
   } else {
     Lt.lambda <- Lt.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
@@ -183,10 +179,6 @@ SS_Sensi_plot <- function(model.summaries,
     Age.like[, Age.lk$model + 1] <- t(Age.lk[, 3:ncol(Age.lk)])
     Age.like$Label <- "Age_likelihood"
 
-    # Agelambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_lambda"]
-    # Age.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Agelambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Age_lambda")
-    # Agelike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_like"]
-    # Age.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Agelike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Age_likelihood")
   } else {
     Age.lambda <- Age.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
