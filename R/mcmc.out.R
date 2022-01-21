@@ -33,7 +33,7 @@
 #' @param colNames Specific names of the `file` to extract and work with. `NULL`
 #'   keeps all columns
 #' @author Ian Stewart, Allan Hicks (modifications)
-#' @return
+#' @return `directory`, because this function is used for its plotting side effects
 #' @export
 #' @seealso [mcmc.nuisance()], [SSgetMCMC()]
 #' @examples
@@ -412,5 +412,6 @@ mcmc.out <- function(directory = "c:/mydirectory/",
       show = TRUE, # make figure or not
       col = c("GREY", topo.colors(20))
     )
-  } # close surface plot loop
+  } # close surface plot loop'
+  return(directory)
 } # end function
