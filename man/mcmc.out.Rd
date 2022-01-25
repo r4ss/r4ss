@@ -82,7 +82,7 @@ starter file, in the \code{-mcsave} runtime command, and in
 keeps all columns}
 }
 \value{
-
+\code{directory}, because this function is used for its plotting side effects
 }
 \description{
 Makes four panel plot showing trace plots, moving average, autocorrelations,
