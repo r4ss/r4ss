@@ -576,7 +576,7 @@ SS_output <-
     if (length(logfile) == 1 && file.info(file.path(dir, logfile))$size > 0) {
       logfile <- readLines(file.path(dir, logfile))
       logfile <- grep("^size", logfile, value = TRUE)
-      if(!length(logfile)){
+      if (!length(logfile)) {
         stop("Error reading ss.log. Check the file, it should contain 4 rows starting with 'size'")
       }
       names(logfile) <- c("TempFile", "Size")
