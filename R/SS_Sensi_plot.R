@@ -166,7 +166,6 @@ SS_Sensi_plot <- function(model.summaries,
     Lt.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Length_like", ]
     Lt.like[, Lt.lk$model + 1] <- t(Lt.lk[, 3:ncol(Lt.lk)])
     Lt.like$Label <- "Length_likelihood"
-
   } else {
     Lt.lambda <- Lt.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
@@ -178,7 +177,6 @@ SS_Sensi_plot <- function(model.summaries,
     Age.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Age_like", ]
     Age.like[, Age.lk$model + 1] <- t(Age.lk[, 3:ncol(Age.lk)])
     Age.like$Label <- "Age_likelihood"
-
   } else {
     Age.lambda <- Age.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
@@ -395,7 +393,8 @@ SS_Sensi_plot <- function(model.summaries,
     # RE plots
     Dev.quants.ggplot.SBs <- Dev.quants.ggplot[
       Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[1] |
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2], ]
+        Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2],
+    ]
     p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data$Model_num_plot, RE)) +
       geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
@@ -429,7 +428,8 @@ SS_Sensi_plot <- function(model.summaries,
       geom_hline(yintercept = 0, lwd = 0.5, color = "gray") +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[3], ] 
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[3],
+    ]
     p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, RE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
@@ -453,9 +453,10 @@ SS_Sensi_plot <- function(model.summaries,
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
     Dev.quants.ggplot.MSY_FMSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[4] | 
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[5], ]
-    
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[4] |
+        Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[5],
+    ]
+
     p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data$Model_num_plot, RE, group = .data$Metric)) +
       geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
@@ -492,8 +493,9 @@ SS_Sensi_plot <- function(model.summaries,
     # Log plots
     Dev.quants.ggplot.SBs <- Dev.quants.ggplot[
       Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[1] |
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2], ]
-    
+        Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2],
+    ]
+
     p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data$Model_num_plot, logRE)) +
       geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
@@ -529,7 +531,8 @@ SS_Sensi_plot <- function(model.summaries,
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3],
+    ]
     p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, logRE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
@@ -551,11 +554,12 @@ SS_Sensi_plot <- function(model.summaries,
       annotate("text", x = c((model.summaries$n + 1), (model.summaries$n + 1)), y = c(logTRP + 0.08, logLRP - 0.08), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       geom_hline(yintercept = c(logTRP, logLRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
-    
+
     Dev.quants.ggplot.MSY_FMSY <- Dev.quants.ggplot[
       Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4] |
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5], ]
-    
+        Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5],
+    ]
+
     p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data$Model_num_plot, logRE, group = .data$Metric)) +
       geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
@@ -593,7 +597,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[2] == 1) {
     # RE plot
     Dev.quants.ggplot.SB0 <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[1], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[1],
+    ]
     ggplot(Dev.quants.ggplot.SB0, aes(.data$Model_num_plot, RE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
@@ -618,7 +623,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plot
     Dev.quants.ggplot.SB0 <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[1], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[1],
+    ]
     ggplot(Dev.quants.ggplot.SB0, aes(.data$Model_num_plot, logRE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
@@ -645,8 +651,9 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[3] == 1) {
     # RE plots
     Dev.quants.ggplot.SBt <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[2], ]
-     ggplot(Dev.quants.ggplot.SBt, aes(.data$Model_num_plot, RE)) +
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[2],
+    ]
+    ggplot(Dev.quants.ggplot.SBt, aes(.data$Model_num_plot, RE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
@@ -670,7 +677,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plots
     Dev.quants.ggplot.SBt <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[2], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[2],
+    ]
     ggplot(Dev.quants.ggplot.SBt, aes(.data$Model_num_plot, logRE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
@@ -697,7 +705,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[4] == 1) {
     # RE plots
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3],
+    ]
     ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, RE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
@@ -724,7 +733,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plots
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3],
+    ]
     ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, logRE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
@@ -753,7 +763,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[5] == 1) {
     # RE plots
     Dev.quants.ggplot.MSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4],
+    ]
     ggplot(Dev.quants.ggplot.MSY, aes(.data$Model_num_plot, RE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
@@ -776,7 +787,8 @@ SS_Sensi_plot <- function(model.summaries,
     ggsave(file.path(dir, "Sensi_REplot_MSY.png"))
     # Log plots
     Dev.quants.ggplot.MSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4],
+    ]
     ggplot(Dev.quants.ggplot.MSY, aes(.data$Model_num_plot, logRE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
@@ -802,7 +814,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[6] == 1) {
     # RE plots
     Dev.quants.ggplot.FMSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5],
+    ]
     ggplot(Dev.quants.ggplot.FMSY, aes(.data$Model_num_plot, RE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
@@ -826,7 +839,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # RE plots
     Dev.quants.ggplot.FMSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5], ]
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5],
+    ]
     ggplot(Dev.quants.ggplot.FMSY, aes(.data$Model_num_plot, logRE)) +
       geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
