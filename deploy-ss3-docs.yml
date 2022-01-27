@@ -122,8 +122,8 @@ jobs:
      
       - name: render the rmd files
         run: |
-          rmarkdown::render("User_Guides/ss_model_tips/ss_model_tips.Rmd", output_format = "html_document", output_dir = "docs")
-          rmarkdown::render("User_Guides/getting_started/Getting_Started_SS.Rmd", output_format = "html_document", output_dir = "docs")
+          rmarkdown::render("User_Guides/ss_model_tips/ss_model_tips.Rmd", output_format = c("html_document", "pdf_document"), output_dir = "docs")
+          rmarkdown::render("User_Guides/getting_started/Getting_Started_SS.Rmd", output_format = c("html_document", "pdf_document"), output_dir = "docs")
         shell: Rscript {0}
        
       - name: Deploy to GitHub pages
