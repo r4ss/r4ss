@@ -38,6 +38,13 @@ jobs:
           html_txt <- gsub(
             "<p>_add:nnn<span>Catalog</span><span>Lang</span><span>(enUS)</span></p>",
             "", html_txt, fixed = TRUE)
+          # Add styling to tables add 1 because first col is on next row
+          first_lines <- grep("^<tr class=[[:punct:]]{1}[oe]", html_txt) + 1
+          tmp_lines <- html_txt[first_lines]
+          tmp_lines <- gsub("<td style=\"text-align: left;\">",
+                            "<td style=\"text-align: left;white-space: nowrap;\">",
+                            tmp_lines)
+          html_txt[first_lines] <- tmp_lines
           # remove Typical Value double header
           label <- grep(">Typical Value<", html_txt, fixed = TRUE)
           diff_label <- diff(label)
