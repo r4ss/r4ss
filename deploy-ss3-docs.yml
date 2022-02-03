@@ -34,9 +34,28 @@ jobs:
       - name: Edit html to improve formatting of experimental version of manual
         run: |
           html_txt <- readLines("SS330_User_Manual.html")
+          #read html snippits to add
+          html_snips <- readLines("html_usermanual_snippets.html")
+          # remove inline style
+          style_sec <- grep("style>", html_txt)
+          html_txt <- html_txt[-(style_sec[1]:style_sec[2])]
+          # add in the the navbar
+          navbar_snip <- grep("div", html_snips)
+          navbar_snip <- html_snips[navbar_snip[1]:navbar_snip[2]]
+          html_txt <- append(html_txt, navbar_snip, after = grep("<html", html_txt))
           html_txt <- gsub(
             "<p>_add:nnn<span>Catalog</span><span>Lang</span><span>(enUS)</span></p>",
             "", html_txt, fixed = TRUE)
+          # add link to css
+          css_snip <- grep("<link", html_snips, value = TRUE)
+          html_txt <- append(html_txt, css_snip, after = grep("<title>", html_txt))
+          # Add styling to tables add 1 because first col is on next row
+          first_lines <- grep("^<tr class=[[:punct:]]{1}[oe]", html_txt) + 1
+          tmp_lines <- html_txt[first_lines]
+          tmp_lines <- gsub("<td style=\"text-align: left;\">",
+                            "<td style=\"text-align: left;white-space: nowrap;\">",
+                            tmp_lines)
+          html_txt[first_lines] <- tmp_lines
           # remove Typical Value double header
           label <- grep(">Typical Value<", html_txt, fixed = TRUE)
           diff_label <- diff(label)
@@ -111,9 +130,6 @@ jobs:
           html_txt <- append(html_txt,
             '<li><a href="#sec:references"><span class="toc-section-number">17</span> References</a></li>',
             after = where_add)
-          # add formatting for tables
-          where_add <- grep("td {", html_txt, fixed = TRUE)
-          html_txt <- append(html_txt, "  vertical-align: top;", after = where_add)
           writeLines(html_txt, "SS330_User_Manual.html")
         shell: Rscript {0}
 
