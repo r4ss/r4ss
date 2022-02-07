@@ -3097,10 +3097,13 @@ SS_output <-
       # but I haven't kept track of which is which
       # read first 5 lines to figure out which one is the header
       Kobe_head <- matchfun2("Kobe_Plot", 0, "Kobe_Plot", 5, header = TRUE)
-      shift <- grep("^Y", Kobe_head[, 1]) # may be "Year" or "Yr"
+      shift <- grep("^Y(ea)?r", Kobe_head[, 1]) # may be "Year" or "Yr"
       if (length(shift) == 0) {
-        # work around for bug in output for 3.24z (and maybe other versions)
-        shift <- grep("MSY_basis:_Year", Kobe_head[, 1])
+        # work around for bug in output for 3.24z (and some other versions)
+        shift <- grep("MSY_basis:_Y(ea)?r", Kobe_head[, 1])
+        if(length(shift) == 0) {
+          stop("Bug: r4ss cannot find the start of table for the Kobe plot.")
+        }
       }
       Kobe_warn <- NA
       Kobe_MSY_basis <- NA
