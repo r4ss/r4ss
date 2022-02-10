@@ -77,6 +77,11 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
 
   wl("benchmarks")
   wl("MSY")
+  if(mylist[["MSY"]] == 5){
+    wl("MEY_units")
+    printdf("MEY_options")
+    writeLines("-9999 0 0 0")
+  }
   wl("SPRtarget")
   wl("Btarget")
   if (SSversion == 3.24) {
