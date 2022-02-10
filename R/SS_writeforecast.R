@@ -77,7 +77,7 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
 
   wl("benchmarks")
   wl("MSY")
-  if(mylist[["MSY"]] == 5){
+  if (mylist[["MSY"]] == 5) {
     wl("MEY_units")
     printdf("MEY_options")
     writeLines("-9999 0 0 0")

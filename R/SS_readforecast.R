@@ -187,12 +187,16 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
 
   forelist <- add_elem(forelist, "benchmarks")
   forelist <- add_elem(forelist, "MSY")
-  if(forelist[["MSY"]] == 5) {
+  if (forelist[["MSY"]] == 5) {
     forelist <- add_elem(forelist, "MEY_units")
-    forelist <- add_df(forelist, name = "MEY_options", ncol = 4,
-                      col.names = c("fleet", "cost_per_F", 
-                                    "price_per_mt", "adjust_f"))
-  } 
+    forelist <- add_df(forelist,
+      name = "MEY_options", ncol = 4,
+      col.names = c(
+        "fleet", "cost_per_F",
+        "price_per_mt", "adjust_f"
+      )
+    )
+  }
   forelist <- add_elem(forelist, "SPRtarget")
   forelist <- add_elem(forelist, "Btarget")
   if (forelist[["SSversion"]] == 3.24) {

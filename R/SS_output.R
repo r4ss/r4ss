@@ -3101,7 +3101,7 @@ SS_output <-
       if (length(shift) == 0) {
         # work around for bug in output for 3.24z (and some other versions)
         shift <- grep("MSY_basis:_Y(ea)?r", Kobe_head[, 1])
-        if(length(shift) == 0) {
+        if (length(shift) == 0) {
           stop("Bug: r4ss cannot find the start of table for the Kobe plot.")
         }
       }
