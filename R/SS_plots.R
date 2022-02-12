@@ -627,6 +627,24 @@ SS_plots <-
         plotdir = plotdir
       )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+
+      ### add plot of Dynamic B0
+      # first get vector of years
+      yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
+      yrs <- yrs[yrs >= minyr & yrs <= maxyr]
+      # now run plot function
+      plotinfo <- SSplotDynamicB0(
+        replist = replist,
+        yrs = yrs,
+        uncertainty = uncertainty,
+        plot = !png, print = png,
+        verbose = verbose,
+        pwidth = pwidth, pheight = pheight, punits = punits,
+        ptsize = ptsize, res = res,
+        plotdir = plotdir
+      )
+      if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      
     } # end if igroup in plot or print
 
     ##########################################
