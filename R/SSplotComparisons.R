@@ -100,10 +100,10 @@
 #' or a set of integers corresponding to the choice of models.
 #' @param shadealpha Transparency adjustment used to make default shadecol
 #' values (implemented as `adjustcolor(col=col, alpha.f=shadealpha)`)
-#' @template legend 
+#' @template legend
 #' @param legendlabels Optional vector of labels to include in legend. Default
 #' is 'model1','model2',etc.
-#' @template legendloc 
+#' @template legendloc
 #' @param legendorder Optional vector of model numbers that can be used to have
 #' the legend display the model names in an order that is different than that
 #' which is represented in the summary input object.

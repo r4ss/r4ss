@@ -55,8 +55,10 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
   if (yrs[1] == "all") {
     yrs <- replist[["startyr"]]:replist[["endyr"]]
   }
-  Ftot <- replist[["derived_quants"]][match(paste("F_", yrs, sep = ""),
-                                            replist[["derived_quants"]][["Label"]]), ]
+  Ftot <- replist[["derived_quants"]][match(
+    paste("F_", yrs, sep = ""),
+    replist[["derived_quants"]][["Label"]]
+  ), ]
   if (all(is.na(Ftot[["Value"]]))) {
     warning(
       "Skipping SSplotSummaryF because no real values found in DERIVED_QUANTITIES\n",
@@ -81,14 +83,16 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
     }
     if (uncertainty) {
       segments(as.numeric(substring(Ftot[["Label"]], 3, 6)),
-               uppFtot,
-               as.numeric(substring(Ftot[["Label"]], 3, 6)),
-               lowFtot,
-               col = gray(0.5))
+        uppFtot,
+        as.numeric(substring(Ftot[["Label"]], 3, 6)),
+        lowFtot,
+        col = gray(0.5)
+      )
     }
     points(as.numeric(substring(Ftot[["Label"]], 3, 6)),
-           Ftot[["Value"]],
-           pch = 16, type = "p")
+      Ftot[["Value"]],
+      pch = 16, type = "p"
+    )
     abline(h = Ftgt, col = "red")
   }
   if (plot) {

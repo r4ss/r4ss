@@ -644,7 +644,6 @@ SS_plots <-
         plotdir = plotdir
       )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
-      
     } # end if igroup in plot or print
 
     ##########################################
