@@ -16,6 +16,9 @@
 #' be the directory where the model was run.
 #' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
+#' These intervals will only appear when uncertainty in the dynamic B0
+#' estimates is available via the control file settings for
+#' "read specs for more stddev reporting".
 #' @template legend
 #' @param legendlabels Character vector with labels for the unfished
 #' equilibrium point (if [equilibrium == TRUE]) and the two lines showing
@@ -130,6 +133,21 @@ SSplotDynamicB0 <- function(replist,
   na.rm = TRUE
   )
 
+  # get subsets of derived quantities and extract year value
+  quants <- replist[["derived_quants"]]
+  quants_SSB <- quants[grep("SSB_", quants[["Label"]]), ]
+  quants_SSB_nofishing <- quants[grep("Dyn_Bzero_", quants[["Label"]]), ]
+
+  if (uncertainty & nrow(quants_SSB_nofishing) == 0) {
+    uncertainty <- FALSE
+    warning(
+      "Dynamic B0 not found in derived quantities, ",
+      "changing uncertainty to FALSE. ",
+      "To get uncertainty, modify control file under ",
+      "'read specs for more stddev reporting'."
+    )
+  }
+
   if (uncertainty) {
     # calculate intervals
 
@@ -139,11 +157,7 @@ SSplotDynamicB0 <- function(replist,
     Dynamic_Bzero[["SSB_nofishing_lo"]] <- NA
     Dynamic_Bzero[["SSB_nofishing_hi"]] <- NA
 
-    # get subsets of derived quantities and extract year value
-    quants <- replist[["derived_quants"]]
-    quants_SSB <- quants[grep("SSB_", quants[["Label"]]), ]
-    quants_SSB_nofishing <- quants[grep("Dyn_Bzero_", quants[["Label"]]), ]
-
+    # get year for each row
     quants_SSB[["Yr"]] <- substring(quants_SSB[["Label"]],
       first = nchar("SSB_") + 1
     )
