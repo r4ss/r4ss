@@ -19,7 +19,6 @@ jobs:
 
       - name: Get essential tools needed on docker
         run: |
-         yum -y update && yum clean all
          yum -y install wget
          yum install -y zip unzip
          yum install -y sudo
