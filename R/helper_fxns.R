@@ -162,7 +162,7 @@ SSdiagsTime2Year = function(ss3out,time.steps=0.25,end.time){
 #' 
   pngfun <- function(file, caption = NA){
     
-    if(filenameprefix){
+    if(exists("filenameprefix") == TRUE){
       # if extra text requested, add it before extention in file name (argument in ss3diags)
         file <- paste0(filenameprefix, file)
     }
@@ -170,7 +170,7 @@ SSdiagsTime2Year = function(ss3out,time.steps=0.25,end.time){
     png(filename = file.path(plotdir,file),
         width = pwidth, height = pheight, units = punits, res = res, 
         pointsize = ptsize)
-    if(!NA(par)){
+    if(class(par) == "list"){
     # change graphics parameters to input value (argument in ss3diags)
         par(par)
     }
