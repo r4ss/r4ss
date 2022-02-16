@@ -20,8 +20,8 @@ jobs:
       - name: Checkout models repo
         uses: actions/checkout@v2
         with:
-          repository: 'nmfs-stock-synthesis/ss-test-models'
-          path: ss-test-models-repo
+          repository: 'nmfs-stock-synthesis/test-models'
+          path: test-models-repo
 
       - name: setup R
         uses: r-lib/actions/setup-r@master
@@ -41,10 +41,10 @@ jobs:
 
       - name: move exes, scripts to needed locations
         run: |
-          mv ss-test-models-repo/models/Simple/starter.ss starter.ss
-          mv ss-test-models-repo/models/Simple/forecast.ss forecast.ss
-          mv ss-test-models-repo/models/Simple/control.ss control.ss
-          mv ss-test-models-repo/models/Simple/data.ss data.ss
+          mv test-models-repo/models/Simple/starter.ss starter.ss
+          mv test-models-repo/models/Simple/forecast.ss forecast.ss
+          mv test-models-repo/models/Simple/control.ss control.ss
+          mv test-models-repo/models/Simple/data.ss data.ss
           mv SS330/ss ss
           ls
 

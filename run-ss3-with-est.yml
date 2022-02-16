@@ -18,8 +18,8 @@ jobs:
       - name: Checkout models repo
         uses: actions/checkout@v2
         with:
-          repository: 'nmfs-stock-synthesis/ss-test-models'
-          path: ss-test-models-repo
+          repository: 'nmfs-stock-synthesis/test-models'
+          path: test-models-repo
 
       - name: setup R
         uses: r-lib/actions/setup-r@master
@@ -39,8 +39,8 @@ jobs:
 
       - name: move exes, scripts to needed locations
         run: |
-          mv ss-test-models-repo/models ss-test-models-repo/model_runs
-          mv SS330/ss ss-test-models-repo/model_runs/ss
+          mv test-models-repo/models test-models-repo/model_runs
+          mv SS330/ss test-models-repo/model_runs/ss
 
       - name: keep only fast running models
         run: |
@@ -55,25 +55,25 @@ jobs:
                      "Widow_2015", "YelloweyeRF_2017", "CanaryRf_2015",
                      "Petrale2015", "three_area_double_normal_selex",
                      "Sablefish2015")
-          all_mods <- list.dirs(file.path("ss-test-models-repo", "model_runs"),
+          all_mods <- list.dirs(file.path("test-models-repo", "model_runs"),
             full.names = FALSE, recursive = FALSE)
           keep_mods <- all_mods[!all_mods %in% rm_mods]
           message("Models to keep are ", paste0(keep_mods, collapse = ", " ))
           # remove files for models that are not in keep_mods
           for (i in rm_mods) {
-            tmp_rm_files <- list.files(file.path("ss-test-models-repo", "model_runs", i), full.names = TRUE)
+            tmp_rm_files <- list.files(file.path("test-models-repo", "model_runs", i), full.names = TRUE)
             file.remove(tmp_rm_files) #rm files
-            file.remove(file.path("ss-test-models-repo", "model_runs", i)) #rm dir
+            file.remove(file.path("test-models-repo", "model_runs", i)) #rm dir
           }
         shell: Rscript {0}
 
       - name: change permissions on ss exes
-        run: chmod a+x ss-test-models-repo/model_runs/ss
+        run: chmod a+x test-models-repo/model_runs/ss
 
       - name: run models
         run: |
-          mod_names <- list.dirs(file.path("ss-test-models-repo", "model_runs"), full.names = FALSE, recursive = FALSE)
-          mod_paths <- list.dirs(file.path("ss-test-models-repo", "model_runs"), full.names = TRUE, recursive = FALSE)
+          mod_names <- list.dirs(file.path("test-models-repo", "model_runs"), full.names = FALSE, recursive = FALSE)
+          mod_paths <- list.dirs(file.path("test-models-repo", "model_runs"), full.names = TRUE, recursive = FALSE)
           print(mod_names)
           run_ss <- function(dir) {
             wd <- getwd()
@@ -121,9 +121,9 @@ jobs:
 
       - name: Run comparison
         run: |
-          source("ss-test-models-repo/.github/r_scripts/compare.R")
+          source("test-models-repo/.github/r_scripts/compare.R")
           orig_wd <- getwd()
-          setwd("ss-test-models-repo")
+          setwd("test-models-repo")
           on.exit(orig_wd)
           dir.create("run_R")
           # get model folder names
@@ -173,12 +173,12 @@ jobs:
         shell: Rscript {0}
 
       - name: Determine results of test
-        run: cd ss-test-models-repo && Rscript .github/r_scripts/check_failed.R
+        run: cd test-models-repo && Rscript .github/r_scripts/check_failed.R
 
       - name: Archive results
         uses: actions/upload-artifact@main
         if: always()
         with:
           name: 'result_textfiles'
-          path: ss-test-models-repo/run_R/
+          path: test-models-repo/run_R/
 
