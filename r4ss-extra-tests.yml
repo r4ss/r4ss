@@ -1,4 +1,4 @@
-# Extra run of r4ss tests, when exe and models in ss-test-models are available.workflow_call
+# Extra run of r4ss tests, when exe and models in test-models are available.workflow_call
 # stored in this repo because only applicable to ss3 (and in particular r4ss)
 
 on:
@@ -61,13 +61,13 @@ jobs:
       - name: Get repository of SS models
         uses: actions/checkout@v2
         with:
-          repository: 'nmfs-stock-synthesis/ss-test-models'
-          path: ss-test-models-repo
+          repository: 'nmfs-stock-synthesis/test-models'
+          path: test-models-repo
 
       - name: move the models to the desired location
         run: |
-          mv ss-test-models-repo/models inst/extdata
-          rm  -rf ss-test-models-repo
+          mv test-models-repo/models inst/extdata
+          rm  -rf test-models-repo
           ls inst/extdata
 
       - name: Get the 3.30.18 SS3 executable and move to expected location
