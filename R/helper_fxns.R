@@ -125,25 +125,25 @@ SSdiagsTime2Year = function(ss3out,time.steps=0.25,end.time){
 #' @export
 #'
 #'
-    legendfun <- function(legendlabels, cumulative = FALSE) {
-      if(cumulative){
-        legendloc="topleft"
-      }
-      if(is.numeric(legendloc)) {
-        Usr <- par()$usr
-        legendloc <- list(x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
-                          y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3]))
-      }
-      
-      # if type input is "l" then turn off points on top of lines in legend
-      legend.pch <- -1
-      if(type=="l"){
-        legend.pch <- rep(NA,length(pch))
-      }
-      legend(legendloc, legend=legendlabels[legendorder],
-             col=col[legendorder], lty=lty[legendorder],seg.len = 2,
-             lwd=lwd[legendorder], pch=legend.pch[legendorder], bty="n", ncol=legendncol,pt.cex=0.7,cex=legendcex,y.intersp = legendsp)
-    }
+legendfun <- function(legendlabels, cumulative = FALSE) {
+  if(cumulative){
+    legendloc="topleft"
+  }
+  if(is.numeric(legendloc)) {
+    Usr <- par()$usr
+    legendloc <- list(x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
+                      y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3]))
+  }
+  
+  # if type input is "l" then turn off points on top of lines in legend
+  legend.pch <- -1
+  if(type=="l"){
+    legend.pch <- rep(NA,length(pch))
+  }
+  legend(legendloc, legend=legendlabels[legendorder],
+         col=col[legendorder], lty=lty[legendorder],seg.len = 2,
+         lwd=lwd[legendorder], pch=legend.pch[legendorder], bty="n", ncol=legendncol,pt.cex=0.7,cex=legendcex,y.intersp = legendsp)
+}
 
 
 #' Save as PNG
@@ -160,25 +160,25 @@ SSdiagsTime2Year = function(ss3out,time.steps=0.25,end.time){
 #' 
 #' @export
 #' 
-  pngfun <- function(file, caption = NA){
-    
-    if(exists("filenameprefix") == TRUE){
-      # if extra text requested, add it before extention in file name (argument in ss3diags)
-        file <- paste0(filenameprefix, file)
-    }
-    # open png file
-    png(filename = file.path(plotdir,file),
-        width = pwidth, height = pheight, units = punits, res = res, 
-        pointsize = ptsize)
-    if(class(par) == "list"){
-    # change graphics parameters to input value (argument in ss3diags)
-        par(par)
-    }
-   
-    plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-    return(plotinfo)
-  }
+pngfun <- function(file, caption = NA){
   
+  if(exists("filenameprefix") == TRUE){
+    # if extra text requested, add it before extention in file name (argument in ss3diags)
+      file <- paste0(filenameprefix, file)
+  }
+  # open png file
+  png(filename = file.path(plotdir,file),
+      width = pwidth, height = pheight, units = punits, res = res, 
+      pointsize = ptsize)
+  if(class(par) == "list"){
+  # change graphics parameters to input value (argument in ss3diags)
+      par(par)
+  }
+ 
+  plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
+  return(plotinfo)
+}
+
 #' Make a vector of colors.
 #'
 #' A subset of rich.colors by Arni Magnusson from the gplots package, with the
@@ -220,99 +220,99 @@ matchfun <- function(string, obj = rawrep[, 1], substr1 = TRUE) {
     }
 
 
-      #' extract a table from Report.sso by matching a keyword
-      #'
-      #' return a subset of values from the report file (or other file)
-      #' subset is defined by character strings at the start and end, with integer
-      #' adjustments of the number of lines to above/below the two strings
-      #'
-      #'
-      #' @param string1 keyword near top of table
-      #' @param adjust1 integer for number of rows after string1 to start table
-      #' @param string2 keyword near bottom of table
-      #' (or NULL to use blank line to end table)
-      #' @param adjust2 integer for number of rows after string2 to end table
-      #' (often a negative value)
-      #' @param which_blank which blank line (after string1) to use as the end
-      #' of the table (if using string2 = NULL)
-      #' @param cols which columns to return, can be an integer, a vector, "all",
-      #' or 'nonblank' (where this last returns all columns with at least one
-      #' non-blank values in it)
-      #' @param matchcol1 which column to search for string1
-      #' @param matchcol2 which column to search for string2
-      #' @param obj matrix object in which to search (always rawrep so far)
-      #' @param blank_lines vector of line numbers of obj which are blank
-      #' (to save the time of replicating this in each function call)
-      #' @param substr1 allow string1 to be a substring of the text in matchcol1?
-      #' (It must be start at the beginning regardless)
-      #' @param substr2 allow string2 to be a substring of the text in matchcol2?
-      #' (It must be start at the beginning regardless)
-      #' @param header Is the first row of the table a header?
-      #' @param apply type.convert() function to the resulting table?
-      #'
-      #' @export
-    matchfun2 <- function(string1,
-                          adjust1,
-                          string2 = NULL,
-                          adjust2 = -1,
-                          which_blank = 1,
-                          cols = "nonblank",
-                          matchcol1 = 1,
-                          matchcol2 = 1,
-                          obj = rawrep,
-                          blank_lines = rep_blank_or_hash_lines,
-                          substr1 = TRUE,
-                          substr2 = TRUE,
-                          header = FALSE,
-                          type.convert = FALSE) {
+#' extract a table from Report.sso by matching a keyword
+#'
+#' return a subset of values from the report file (or other file)
+#' subset is defined by character strings at the start and end, with integer
+#' adjustments of the number of lines to above/below the two strings
+#'
+#'
+#' @param string1 keyword near top of table
+#' @param adjust1 integer for number of rows after string1 to start table
+#' @param string2 keyword near bottom of table
+#' (or NULL to use blank line to end table)
+#' @param adjust2 integer for number of rows after string2 to end table
+#' (often a negative value)
+#' @param which_blank which blank line (after string1) to use as the end
+#' of the table (if using string2 = NULL)
+#' @param cols which columns to return, can be an integer, a vector, "all",
+#' or 'nonblank' (where this last returns all columns with at least one
+#' non-blank values in it)
+#' @param matchcol1 which column to search for string1
+#' @param matchcol2 which column to search for string2
+#' @param obj matrix object in which to search (always rawrep so far)
+#' @param blank_lines vector of line numbers of obj which are blank
+#' (to save the time of replicating this in each function call)
+#' @param substr1 allow string1 to be a substring of the text in matchcol1?
+#' (It must be start at the beginning regardless)
+#' @param substr2 allow string2 to be a substring of the text in matchcol2?
+#' (It must be start at the beginning regardless)
+#' @param header Is the first row of the table a header?
+#' @param apply type.convert() function to the resulting table?
+#'
+#' @export
+matchfun2 <- function(string1,
+                      adjust1,
+                      string2 = NULL,
+                      adjust2 = -1,
+                      which_blank = 1,
+                      cols = "nonblank",
+                      matchcol1 = 1,
+                      matchcol2 = 1,
+                      obj = rawrep,
+                      blank_lines = rep_blank_or_hash_lines,
+                      substr1 = TRUE,
+                      substr2 = TRUE,
+                      header = FALSE,
+                      type.convert = FALSE) {
 
-      line1 <- match(
-        string1,
-        if (substr1) {
-          substring(obj[, matchcol1], 1, nchar(string1))
-        } else {
-          obj[, matchcol1]
-        }
-      )
-      if (is.null(string2)) {
-        # get first blank or "#" line after the start
-        line2 <- blank_lines[blank_lines > line1][which_blank]
-        # if no remaining blank lines, use the end of the file
-        if (is.na(line2)) {
-          line2 <- nrow(obj)
-        }
+  line1 <- match(
+    string1,
+    if (substr1) {
+      substring(obj[, matchcol1], 1, nchar(string1))
+    } else {
+      obj[, matchcol1]
+    }
+  )
+  if (is.null(string2)) {
+    # get first blank or "#" line after the start
+    line2 <- blank_lines[blank_lines > line1][which_blank]
+    # if no remaining blank lines, use the end of the file
+    if (is.na(line2)) {
+      line2 <- nrow(obj)
+    }
+  } else {
+    line2 <- match(
+      string2,
+      if (substr2) {
+        substring(obj[, matchcol2], 1, nchar(string2))
       } else {
-        line2 <- match(
-          string2,
-          if (substr2) {
-            substring(obj[, matchcol2], 1, nchar(string2))
-          } else {
-            obj[, matchcol2]
-          }
-        )
+        obj[, matchcol2]
       }
-      if (is.na(line1) | is.na(line2)) {
-        return(NULL)
-      }
+    )
+  }
+  if (is.na(line1) | is.na(line2)) {
+    return(NULL)
+  }
 
-      if (is.numeric(cols)) {
-        out <- obj[(line1 + adjust1):(line2 + adjust2), cols]
-      }
-      if (cols[1] == "all") {
-        out <- obj[(line1 + adjust1):(line2 + adjust2), ]
-      }
-      if (cols[1] == "nonblank") {
-        # returns only columns that contain at least one non-empty value
-        out <- obj[(line1 + adjust1):(line2 + adjust2), ]
-        out <- out[, apply(out, 2, emptytest) < 1]
-      }
-      if (header && nrow(out) > 0) {
-        out[1, out[1, ] == ""] <- "NoName"
-        names(out) <- out[1, ]
-        out <- out[-1, ]
-      }
-      if (type.convert) {
-        out <- type.convert(out, as.is = TRUE)
-      }
-      return(out)
-    } # end matchfun2
+  if (is.numeric(cols)) {
+    out <- obj[(line1 + adjust1):(line2 + adjust2), cols]
+  }
+  if (cols[1] == "all") {
+    out <- obj[(line1 + adjust1):(line2 + adjust2), ]
+  }
+  if (cols[1] == "nonblank") {
+    # returns only columns that contain at least one non-empty value
+    out <- obj[(line1 + adjust1):(line2 + adjust2), ]
+    out <- out[, apply(out, 2, emptytest) < 1]
+  }
+  if (header && nrow(out) > 0) {
+    out[1, out[1, ] == ""] <- "NoName"
+    names(out) <- out[1, ]
+    out <- out[-1, ]
+  }
+  if (type.convert) {
+    out <- type.convert(out, as.is = TRUE)
+  }
+  return(out)
+} # end matchfun2
