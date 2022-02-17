@@ -125,7 +125,7 @@ SSdiagsTime2Year = function(ss3out,time.steps=0.25,end.time){
 #' @export
 #'
 #'
-legendfun <- function(legendlabels, cumulative = FALSE) {
+add_legend <- function(legendlabels, cumulative = FALSE) {
   if(cumulative){
     legendloc="topleft"
   }
@@ -160,7 +160,7 @@ legendfun <- function(legendlabels, cumulative = FALSE) {
 #' 
 #' @export
 #' 
-pngfun <- function(file, caption = NA){
+save_png <- function(file, caption = NA){
   
   if(exists("filenameprefix") == TRUE){
     # if extra text requested, add it before extention in file name (argument in ss3diags)
@@ -209,7 +209,7 @@ rich.colors.short <- function(n, alpha = 1) {
 #' @return line number from Report.sso (or other file)
 #' @export
 
-matchfun <- function(string, obj = rawrep[, 1], substr1 = TRUE) {
+match_report_line <- function(string, obj = rawrep[, 1], substr1 = TRUE) {
       # return a line number from the report file (or other file)
       # substr1 controls whether to compare subsets or the whole line
       match(string, if (substr1) {
@@ -251,7 +251,7 @@ matchfun <- function(string, obj = rawrep[, 1], substr1 = TRUE) {
 #' @param apply type.convert() function to the resulting table?
 #'
 #' @export
-matchfun2 <- function(string1,
+match_report_table <- function(string1,
                       adjust1,
                       string2 = NULL,
                       adjust2 = -1,
