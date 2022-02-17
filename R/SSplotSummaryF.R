@@ -37,11 +37,7 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
 
   # set default plot margins (repeated from SSplotTimeseries()
   if (is.null(mar)) {
-    if (mainTitle) {
-      mar <- c(5, 4, 4, 2) + 0.1
-    } else {
-      mar <- c(5, 4, 2, 2) + 0.1
-    }
+    mar <- c(5, 4, 2, 2) + 0.1
   }
 
   if (plotdir == "default") {

@@ -631,7 +631,11 @@ SSplotComps <-
                       pagetext, "_aggregated_across_time.png",
                       sep = ""
                     )
-                    plotinfo <- save_png(file = file, caption = caption)
+                    plotinfo <- save_png(
+                      plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                      pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                      caption = caption
+                    )
                     tempfun7(ipage = ipage, ...)
                     dev.off()
                   }
@@ -815,8 +819,11 @@ SSplotComps <-
                       "_aggregated_within_season.png",
                       sep = ""
                     )
-
-                    plotinfo <- save_png(file = file, caption = caption)
+                    plotinfo <- save_png(
+                      plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                      pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                      caption = caption
+                    )
                     tempfun8(ipage = ipage, ...)
                     dev.off()
                   }
@@ -974,7 +981,11 @@ SSplotComps <-
                       "_aggregated_across_seasons_within_year.png",
                       sep = ""
                     )
-                    save_png(file = file, caption = caption)
+                    plotinfo <- save_png(
+                      plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                      pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                      caption = caption
+                    )
                     tempfun9(ipage = ipage, ...)
                     dev.off()
                   }
@@ -1237,7 +1248,11 @@ SSplotComps <-
                 "_multi-fleet_comparison.png",
                 sep = ""
               )
-              plotinfo <- save_png(file = file, caption = caption)
+              plotinfo <- save_png(
+                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                caption = caption
+              )
               multifleet.bubble.fun(ipage = ipage)
               dev.off()
             } # end loop over pages within printing PNG
