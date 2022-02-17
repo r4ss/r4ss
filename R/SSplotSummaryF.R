@@ -14,15 +14,15 @@
 #' @param verbose Verbose output to R console?
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' @param add add to existing plot
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
+#' @template ptsize
 #' @template mar
 #' @author Allan Hicks
 #' @export
-#' @seealso [SSplotTimeseries()], ~~~
+#' @seealso [SSplotTimeseries()]
 SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fishing Mortality",
                            plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
                            uncertainty = TRUE,
@@ -55,7 +55,10 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
   if (yrs[1] == "all") {
     yrs <- replist[["startyr"]]:replist[["endyr"]]
   }
-  Ftot <- replist[["derived_quants"]][match(paste("F_", yrs, sep = ""), replist[["derived_quants"]][["Label"]]), ]
+  Ftot <- replist[["derived_quants"]][match(
+    paste("F_", yrs, sep = ""),
+    replist[["derived_quants"]][["Label"]]
+  ), ]
   if (all(is.na(Ftot[["Value"]]))) {
     warning(
       "Skipping SSplotSummaryF because no real values found in DERIVED_QUANTITIES\n",
@@ -78,18 +81,34 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
       )
       abline(h = 0, col = "grey")
     }
-    if (uncertainty) segments(as.numeric(substring(Ftot[["Label"]], 3, 6)), uppFtot, as.numeric(substring(Ftot[["Label"]], 3, 6)), lowFtot, col = gray(0.5))
-    points(as.numeric(substring(Ftot[["Label"]], 3, 6)), Ftot[["Value"]], pch = 16, type = "p")
+    if (uncertainty) {
+      segments(as.numeric(substring(Ftot[["Label"]], 3, 6)),
+        uppFtot,
+        as.numeric(substring(Ftot[["Label"]], 3, 6)),
+        lowFtot,
+        col = gray(0.5)
+      )
+    }
+    points(as.numeric(substring(Ftot[["Label"]], 3, 6)),
+      Ftot[["Value"]],
+      pch = 16, type = "p"
+    )
     abline(h = Ftgt, col = "red")
   }
-  if (plot) plotfun()
+  if (plot) {
+    plotfun()
+  }
   if (print) {
     caption <- "Summary F (definition of F depends on setting in starter.ss)"
     plotinfo <- pngfun(file = "ts_summaryF.png", caption = caption)
     plotfun()
     dev.off()
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Timeseries"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "Timeseries"
+    }
   }
-  if (verbose) cat("Plotting Summary F\n")
+  if (verbose) {
+    message("Plotting Summary F\n")
+  }
   return(invisible(plotinfo))
 }
