@@ -60,15 +60,7 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
                             cex.main = 1, mainTitle = TRUE, plotdir = "default") {
   # in-development function to plot matrix of length at age
 
-  # subfunction to write png files
-  pngfun <- function(file, caption = NA) {
-    png(
-      filename = file.path(plotdir, file),
-      width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-    )
-    plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-    return(plotinfo)
-  }
+  # table to store information on each plot
   plotinfo <- NULL
   if (plotdir == "default") {
     plotdir <- replist[["inputs"]][["dir"]]
@@ -262,7 +254,7 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
       # print to PNG file
       file <- paste0(filenameStart, islice, ".png")
       # caption creation is redundant with title creation inside AgeMatrix.fn
-      # but is required in advance to pass to pngfun
+      # but is required in advance to pass to save_png
       # not sure how this issue was dealt with in other functions
       if (option == 1) {
         caption <- paste(titleStart)
@@ -274,7 +266,11 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
       if (option == 2) {
         caption <- paste(titleStart, "\n", labels[5], islice)
       }
-      plotinfo <- pngfun(file = file, caption = caption)
+      plotinfo <- save_png(
+        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        caption = caption
+      )
       AgeMatrix.fn(slice = islice)
       dev.off()
     }

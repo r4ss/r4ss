@@ -32,22 +32,18 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
   # plots the summary F (or harvest rate) as set up in the starter file
   # needs a lot of work to be generalized
 
-  # subfunction to write png files
-  pngfun <- function(file, caption = NA) {
-    png(
-      filename = file.path(plotdir, file),
-      width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-    )
-    plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-    return(plotinfo)
-  }
-
-  # set default plot margins
-  if (is.null(mar)) {
-    mar <- c(5, 4, 2, 2) + 0.1
-  }
-
+  # table to store information on each plot
   plotinfo <- NULL
+
+  # set default plot margins (repeated from SSplotTimeseries()
+  if (is.null(mar)) {
+    if (mainTitle) {
+      mar <- c(5, 4, 4, 2) + 0.1
+    } else {
+      mar <- c(5, 4, 2, 2) + 0.1
+    }
+  }
+
   if (plotdir == "default") {
     plotdir <- replist[["inputs"]][["dir"]]
   }
@@ -78,14 +74,27 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
       )
       abline(h = 0, col = "grey")
     }
-    if (uncertainty) segments(as.numeric(substring(Ftot[["Label"]], 3, 6)), uppFtot, as.numeric(substring(Ftot[["Label"]], 3, 6)), lowFtot, col = gray(0.5))
+    if (uncertainty) {
+      segments(
+        x0 = as.numeric(substring(Ftot[["Label"]], 3, 6)),
+        y0 = uppFtot,
+        x1 = as.numeric(substring(Ftot[["Label"]], 3, 6)),
+        y1 = lowFtot,
+        col = gray(0.5)
+      )
+    }
     points(as.numeric(substring(Ftot[["Label"]], 3, 6)), Ftot[["Value"]], pch = 16, type = "p")
     abline(h = Ftgt, col = "red")
   }
   if (plot) plotfun()
   if (print) {
     caption <- "Summary F (definition of F depends on setting in starter.ss)"
-    plotinfo <- pngfun(file = "ts_summaryF.png", caption = caption)
+    file <- "ts_summaryF.png"
+    plotinfo <- save_png(
+      plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+      pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+      caption = caption
+    )
     plotfun()
     dev.off()
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "Timeseries"

@@ -176,15 +176,7 @@ SSplotPars <-
       return(Prior_Like)
     } # end GetPrior function
 
-    # function to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     # check input
@@ -617,7 +609,11 @@ SSplotPars <-
         # define filename
         file <- paste0("parameter_distributions", pagetext, ".png", sep = "")
         # start png file and add to plotinfo
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
 
         # change margins and number of panels
         par(mfcol = c(nrows, ncols), mar = c(2, 1, 2, 1), oma = c(2, 2, 0, 0))

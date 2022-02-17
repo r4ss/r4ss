@@ -57,17 +57,8 @@ SSplotSPR <-
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            plotdir = "default",
            verbose = TRUE) {
-    # plot SPR-related quantities
 
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     if (plotdir == "default") {
@@ -142,7 +133,11 @@ SSplotSPR <-
             round(sprtarg, 3)
           )
         }
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         spr_timeseries()
         dev.off()
       }
@@ -180,7 +175,11 @@ SSplotSPR <-
               "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3)
             )
           }
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           minus_spr_timeseries()
           dev.off()
         }
@@ -289,7 +288,11 @@ SSplotSPR <-
           "Timeseries of SPR ratio:",
           SPRratioLabel
         )
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         spr_ratio_timeseries()
         dev.off()
       }
@@ -493,7 +496,11 @@ SSplotSPR <-
             "<code>SS_plots(..., btarg = -1)</code>."
           )
 
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           make.phase.plot.MLE()
           dev.off()
         }

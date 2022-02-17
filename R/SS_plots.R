@@ -1668,6 +1668,7 @@ SS_plots <-
       # make sure there are no factors
       plotInfoTable[["file"]] <- as.character(plotInfoTable[["file"]])
       plotInfoTable[["caption"]] <- as.character(plotInfoTable[["caption"]])
+      plotInfoTable[["alt_text"]] <- as.character(plotInfoTable[["alt_text"]])
       # record the current time and the model run time
       png_time <- Sys.time()
       # png_time2 <- format(writetime,'%d-%m-%Y_%H.%M')

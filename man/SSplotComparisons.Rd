@@ -227,16 +227,22 @@ remove)}
 \item{minbthresh}{Minimum biomass threshold at which to show a line (set to
 0 to remove)}
 
-\item{pwidth}{Width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{Height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{Units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{Point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{plotdir}{Directory where PNG or PDF files will be written. By default
 it will be the directory where the model was run.}
