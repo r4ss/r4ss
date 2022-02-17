@@ -55,7 +55,10 @@ be the directory where the model was run.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{uncertainty}{Show 95\% uncertainty intervals around point estimates?}
+\item{uncertainty}{Show 95\% uncertainty intervals around point estimates?
+These intervals will only appear when uncertainty in the dynamic B0
+estimates is available via the control file settings for
+"read specs for more stddev reporting".}
 
 \item{legend}{Add a legend?}
 
