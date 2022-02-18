@@ -1,3 +1,6 @@
+# r4ss 1.43.1 (18 Febuarary 2022)
+* Added Common Utilty Functions
+
 # r4ss 1.39.1 (18 August 2020)
 * Numerous bug fixes and minor improvements
 * Compatibility with SS version 3.30.16
