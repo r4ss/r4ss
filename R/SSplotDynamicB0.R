@@ -309,7 +309,7 @@ SSplotDynamicB0 <- function(replist,
       )
     }
 
-    file = "ts_DynamicB0.png"
+    file <- "ts_DynamicB0.png"
     plotinfo <- save_png(
       plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
       pheight = pheight, punits = punits, res = res, ptsize = ptsize,
