@@ -110,19 +110,19 @@ SS_output <-
     }
 
     match_report_table <- function(string1,
-                          adjust1,
-                          string2 = NULL,
-                          adjust2 = -1,
-                          which_blank = 1,
-                          cols = "nonblank",
-                          matchcol1 = 1,
-                          matchcol2 = 1,
-                          obj = rawrep,
-                          blank_lines = rep_blank_or_hash_lines,
-                          substr1 = TRUE,
-                          substr2 = TRUE,
-                          header = FALSE,
-                          type.convert = FALSE) {
+                                   adjust1,
+                                   string2 = NULL,
+                                   adjust2 = -1,
+                                   which_blank = 1,
+                                   cols = "nonblank",
+                                   matchcol1 = 1,
+                                   matchcol2 = 1,
+                                   obj = rawrep,
+                                   blank_lines = rep_blank_or_hash_lines,
+                                   substr1 = TRUE,
+                                   substr2 = TRUE,
+                                   header = FALSE,
+                                   type.convert = FALSE) {
       # extract a table from Report.sso by matching a keyword
       #
       # return a subset of values from the report file (or other file)
