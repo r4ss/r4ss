@@ -153,14 +153,6 @@ SSplotProfile <-
            add_cutoff = FALSE,
            cutoff_prob = 0.95,
            verbose = TRUE, ...) {
-    # subfunction to write png files
-    pngfun <- function(file) {
-      png(
-        filename = file.path(plotdir, file), width = pwidth, height = pheight,
-        units = punits, res = res, pointsize = ptsize
-      )
-    }
-
     if (print) {
       if (is.null(plotdir)) {
         stop("to print PNG files, you must supply a directory as 'plotdir'")
@@ -310,7 +302,11 @@ SSplotProfile <-
 
     if (plot) plotprofile()
     if (print) {
-      pngfun("profile_plot_likelihood.png")
+      save_png(
+        file = "profile_plot_likelihood.png",
+        plotdir = plotdir, pwidth = pwidth,
+        pheight = pheight, punits = punits, res = res, ptsize = ptsize
+      )
       plotprofile()
       dev.off()
     }

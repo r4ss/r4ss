@@ -64,15 +64,7 @@ SSplotData <- function(replist,
                        alphasize = 1,
                        mainTitle = FALSE,
                        verbose = TRUE) {
-  # subfunction to write png files
-  pngfun <- function(file, caption = NA) {
-    png(
-      filename = file.path(plotdir, file),
-      width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-    )
-    plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-    return(plotinfo)
-  }
+  # table to store information on each plot
   plotinfo <- NULL
 
   ## ### override datasize variable in seasonal models
@@ -435,7 +427,12 @@ SSplotData <- function(replist,
     }
     if (print) {
       caption <- "Data presence by year for each fleet and data type."
-      plotinfo <- pngfun(file = "data_plot.png", caption = caption)
+      file <- "data_plot.png"
+      plotinfo <- save_png(
+        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        caption = caption
+      )
       plotdata(datasize = FALSE)
       dev.off()
     }
@@ -468,7 +465,12 @@ SSplotData <- function(replist,
           "things like index uncertainty)."
         )
       }
-      plotinfo <- pngfun(file = "data_plot2.png", caption = caption)
+      file <- "data_plot2.png"
+      plotinfo <- save_png(
+        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        caption = caption
+      )
       plotdata(datasize = TRUE)
       dev.off()
     }

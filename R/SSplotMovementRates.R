@@ -44,15 +44,7 @@ SSplotMovementRates <-
            verbose = TRUE) {
     # if(verbose) cat("Running SSplotMovementRates function\n")
 
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
@@ -111,7 +103,11 @@ SSplotMovementRates <-
             # file <- "move1_movement_rates.png"
             file <- paste0("move1_movement_rates_seas", moveseas[iseas], ".png")
             caption <- main
-            plotinfo <- pngfun(file = file, caption = caption)
+            plotinfo <- save_png(
+              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              caption = caption
+            )
             move.endyr.fn()
             dev.off()
           }
@@ -266,7 +262,11 @@ SSplotMovementRates <-
                   Source_area, "to", Dest_area, ".png"
                 )
                 caption <- main
-                plotinfo <- pngfun(file = file, caption = caption)
+                plotinfo <- save_png(
+                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                  caption = caption
+                )
                 move.mountains.fn()
                 dev.off()
               }

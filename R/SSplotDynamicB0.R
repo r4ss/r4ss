@@ -73,16 +73,6 @@ SSplotDynamicB0 <- function(replist,
     }
   }
 
-  # subfunction to write png files
-  pngfun <- function(file, caption = NA) {
-    png(
-      filename = file.path(plotdir, file),
-      width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-    )
-    plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-    return(plotinfo)
-  }
-
   # set default plot margins
   if (is.null(mar)) {
     if (mainTitle) {
@@ -319,7 +309,12 @@ SSplotDynamicB0 <- function(replist,
       )
     }
 
-    plotinfo <- pngfun(file = "ts_DynamicB0.png", caption = caption)
+    file = "ts_DynamicB0.png"
+    plotinfo <- save_png(
+      plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+      pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+      caption = caption
+    )
     plotfun()
     dev.off()
     if (!is.null(plotinfo)) {

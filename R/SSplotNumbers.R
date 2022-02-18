@@ -94,16 +94,8 @@ SSplotNumbers <-
            plotdir = "default",
            mainTitle = FALSE,
            verbose = TRUE) {
-    # plot various things related to numbers-at-age for Stock Synthesis
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+
+    # table to store information on each plot
     plotinfo <- NULL
 
     natage <- replist[["natage"]]
@@ -372,7 +364,11 @@ SSplotNumbers <-
                   fileperiod, ".png"
                 )
                 caption <- plottitle1
-                plotinfo <- pngfun(file = file, caption = caption)
+                plotinfo <- save_png(
+                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                  caption = caption
+                )
                 ageBubble.fn()
                 dev.off()
               }
@@ -383,7 +379,11 @@ SSplotNumbers <-
                   sep = ""
                 )
                 caption <- plottitle2
-                plotinfo <- pngfun(file = file, caption = caption)
+                plotinfo <- save_png(
+                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                  caption = caption
+                )
                 meanAge.fn()
                 dev.off()
               }
@@ -424,7 +424,11 @@ SSplotNumbers <-
               if (nareas > 1) filepart <- paste0("_", areanames[iarea], filepart)
               file <- paste0("numbers3_frac_female_age", filepart, ".png")
               caption <- plottitle3
-              plotinfo <- pngfun(file = file, caption = caption)
+              plotinfo <- save_png(
+                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                caption = caption
+              )
               numbersRatioAge.fn(labcex = 0.6)
               dev.off()
             }
@@ -613,7 +617,11 @@ SSplotNumbers <-
                     filepartsex, ".png"
                   )
                   caption <- plottitle1
-                  plotinfo <- pngfun(file = file, caption = caption)
+                  plotinfo <- save_png(
+                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    caption = caption
+                  )
                   lenBubble.fn()
                   dev.off()
                 }
@@ -621,7 +629,11 @@ SSplotNumbers <-
                 if (7 %in% subplots & m == 2 & nsexes == 2) {
                   file <- paste0("numbers7_meanlen", filepartarea, ".png")
                   caption <- plottitle2
-                  plotinfo <- pngfun(file = file, caption = caption)
+                  plotinfo <- save_png(
+                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    caption = caption
+                  )
                   meanLen.fn()
                   dev.off()
                 }
@@ -675,7 +687,11 @@ SSplotNumbers <-
                 }
                 file <- paste0("numbers8_frac_female_len", filepart, ".png")
                 caption <- caption
-                plotinfo <- pngfun(file = file, caption = caption)
+                plotinfo <- save_png(
+                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                  caption = caption
+                )
                 numbersRatioLen.fn(labcex = 0.6)
                 dev.off()
               }
@@ -771,7 +787,11 @@ SSplotNumbers <-
       if (print & 4 %in% subplots) {
         file <- "numbers4_equilagecomp.png"
         caption <- labels[10]
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         equilibfun()
         dev.off()
       } # end print to PNG
@@ -839,7 +859,11 @@ SSplotNumbers <-
           # make files with plots of age error standard deviations
           file <- "numbers5_ageerrorSD.png"
           caption <- paste0(labels[8], ": ", labels[4])
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           ageingfun()
           dev.off()
 
@@ -847,7 +871,11 @@ SSplotNumbers <-
           if (mean(ageingbias == 0) != 1) {
             file <- "numbers5_ageerrorMeans.png"
             caption <- paste0(labels[8], ": ", labels[5])
-            plotinfo <- pngfun(file = file, caption = caption)
+            plotinfo <- save_png(
+              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              caption = caption
+            )
             ageingfun2()
             dev.off()
           }
