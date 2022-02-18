@@ -145,40 +145,6 @@ add_legend <- function(legendlabels, cumulative = FALSE) {
          lwd=lwd[legendorder], pch=legend.pch[legendorder], bty="n", ncol=legendncol,pt.cex=0.7,cex=legendcex,y.intersp = legendsp)
 }
 
-
-#' Save as PNG
-#'
-#' Function to save a plot as a png
-#'  
-#' @param file file to be saved as png
-#' @param caption  text to be added to figure as caption
-#' 
-#' 
-#' @return plotinfo dataframe with file and caption
-#' 
-#' @keywords utils png plot
-#' 
-#' @export
-#' 
-save_png <- function(file, caption = NA){
-  
-  if(exists("filenameprefix") == TRUE){
-    # if extra text requested, add it before extention in file name (argument in ss3diags)
-      file <- paste0(filenameprefix, file)
-  }
-  # open png file
-  png(filename = file.path(plotdir,file),
-      width = pwidth, height = pheight, units = punits, res = res, 
-      pointsize = ptsize)
-  if(class(par) == "list"){
-  # change graphics parameters to input value (argument in ss3diags)
-      par(par)
-  }
- 
-  plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-  return(plotinfo)
-}
-
 #' Make a vector of colors.
 #'
 #' A subset of rich.colors by Arni Magnusson from the gplots package, with the
@@ -316,3 +282,64 @@ match_report_table <- function(string1,
   }
   return(out)
 } # end matchfun2
+
+#' Open png device and return info on the file being created
+#'
+#' this was previously contained within each of the SSplotXXX() functions.
+#' It (1) translates the not-quite-matching specifications for the image to the
+#' values needed by png(), then (2) returns the plotinfo data.frame
+#' (which exists within each function which calls this) after adding a row
+#' with the filename and caption for each new plot
+#' Note: this just opens the png device which needs to be closed via dev.off()
+#' outside this function.
+#'
+#' @param plotinfo table of information about all plots
+#' @param file filename to write to (including .png extension)
+#' @param plotdir directory where plots will be written
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template res
+#' @template ptsize
+#' @param caption caption for the image
+#' @param alt_text alternative text for screen readers
+#' (if left as NA then will be set based on the caption)
+#' @author Ian G. Taylor
+
+save_png <- function(plotinfo,
+                     file,
+                     plotdir,
+                     pwidth,
+                     pheight,
+                     punits,
+                     res,
+                     ptsize,
+                     caption = NA,
+                     alt_text = NA) {
+
+  # replace any slashes (as in 'Eggs/kg_inter_Fem')
+  file <- gsub(pattern = "/", replacement = "_per_", x = file, fixed = TRUE)
+
+  # open png device
+  png(
+    filename = file.path(plotdir, file),
+    width = pwidth,
+    height = pheight,
+    units = punits,
+    res = res,
+    pointsize = ptsize
+  )
+
+  # change graphics parameters to input value
+  if (!is.null(par)) {
+    par(par)
+  }
+
+  # assemble and return info
+  invisible(rbind(plotinfo, data.frame(
+    file = file,
+    caption = caption,
+    alt_text = alt_text
+  )))
+}
+

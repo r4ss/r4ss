@@ -74,22 +74,8 @@ SSplotSexRatio <-
            maxrows = 6, maxcols = 6,
            rows = 1, cols = 1, fixdims = TRUE, verbose = TRUE,
            mainTitle = FALSE, ...) {
-    ################################################################################
-    ## SSplotSexRatio
-    ################################################################################
 
-
-    if (!exists("make_multifig_sexratio")) stop("you are missing the function 'make_muliti_sexratio'")
-
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     SS_versionNumeric <- replist[["SS_versionNumeric"]]
@@ -241,9 +227,11 @@ SSplotSexRatio <-
                 }
               }
               file <- paste0(filenamestart, filename_fltmkt, pagetext, ".png")
-              plotinfo <- pngfun(
-                file = file,
-                caption = paste0(caption, caption_count, caption_extra)
+              caption <- paste0(caption, caption_count, caption_extra)
+              plotinfo <- save_png(
+                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                caption = caption
               )
               tempfun(ipage = ipage, ...)
               dev.off()

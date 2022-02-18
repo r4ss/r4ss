@@ -79,15 +79,7 @@ SSplotTimeseries <-
     if (length(subplot) > 1) {
       stop("function can only do 1 subplot at a time")
     }
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     # set default plot margins
@@ -436,21 +428,30 @@ SSplotTimeseries <-
 
       if (print) { # if printing to a file
         # adjust file names
-        filename <- main
+        caption <- main
+        file <- main
         if (subplot %in% 9:10 & grepl(":", main)) {
           # remove extra stuff like "B/B_0" from filename
           filename <- strsplit(main, split = ":")[[1]][1]
         }
-        filename <- gsub(",", "", filename, fixed = TRUE)
-        filename <- gsub("~", "", filename, fixed = TRUE)
-        filename <- gsub("%", "", filename, fixed = TRUE)
-        if (forecastplot) filename <- paste(filename, "forecast")
-        if (uncertainty & subplot %in% c(5, 7, 9)) filename <- paste(filename, "intervals")
-        filename <- paste("ts", subplot, "_", filename, ".png", sep = "")
+        file <- gsub(",", "", file, fixed = TRUE)
+        file <- gsub("~", "", file, fixed = TRUE)
+        file <- gsub("%", "", file, fixed = TRUE)
+        if (forecastplot) {
+          file <- paste(file, "forecast")
+        }
+        if (uncertainty & subplot %in% c(5, 7, 9)) {
+          file <- paste(file, "intervals")
+        }
+        file <- paste("ts", subplot, "_", file, ".png", sep = "")
         # replace any spaces with underscores
-        filename <- gsub(pattern = " ", replacement = "_", x = filename, fixed = TRUE)
-        # if(verbose) cat("printing plot to file:",filename,"\n")
-        plotinfo <- pngfun(file = filename, caption = main)
+        file <- gsub(pattern = " ", replacement = "_", x = file, fixed = TRUE)
+        # if(verbose) cat("printing plot to file:", file, "\n")
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
       }
 
       # move VIRG value from startyr-2 to startyr-1 to show closer to plot

@@ -627,6 +627,26 @@ SS_plots <-
         plotdir = plotdir
       )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+
+      ### add plot of Dynamic B0
+      # first get vector of years
+      yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
+      yrs <- yrs[yrs >= minyr & yrs <= maxyr]
+      # check for uncertainty in Dynamic B0 estimates
+      Dyn_Bzero_uncertainty <-
+        any(grepl("Dyn_Bzero", replist[["derived_quants"]][["Label"]]))
+      # now run plot function
+      plotinfo <- SSplotDynamicB0(
+        replist = replist,
+        yrs = yrs,
+        uncertainty = (uncertainty & Dyn_Bzero_uncertainty),
+        plot = !png, print = png,
+        verbose = verbose,
+        pwidth = pwidth, pheight = pheight, punits = punits,
+        ptsize = ptsize, res = res,
+        plotdir = plotdir
+      )
+      if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
     } # end if igroup in plot or print
 
     ##########################################
@@ -1668,6 +1688,7 @@ SS_plots <-
       # make sure there are no factors
       plotInfoTable[["file"]] <- as.character(plotInfoTable[["file"]])
       plotInfoTable[["caption"]] <- as.character(plotInfoTable[["caption"]])
+      plotInfoTable[["alt_text"]] <- as.character(plotInfoTable[["alt_text"]])
       # record the current time and the model run time
       png_time <- Sys.time()
       # png_time2 <- format(writetime,'%d-%m-%Y_%H.%M')

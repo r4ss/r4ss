@@ -100,13 +100,10 @@
 #' or a set of integers corresponding to the choice of models.
 #' @param shadealpha Transparency adjustment used to make default shadecol
 #' values (implemented as `adjustcolor(col=col, alpha.f=shadealpha)`)
-#' @param legend Add a legend?
+#' @template legend
 #' @param legendlabels Optional vector of labels to include in legend. Default
 #' is 'model1','model2',etc.
-#' @param legendloc Location of legend. Either a string like "topleft" or a
-#' vector of two numeric values representing the fraction of the maximum in
-#' the x and y dimensions, respectively. See ?legend for more info on the
-#' string options.
+#' @template legendloc
 #' @param legendorder Optional vector of model numbers that can be used to have
 #' the legend display the model names in an order that is different than that
 #' which is represented in the summary input object.
@@ -117,11 +114,11 @@
 #' 0 to remove)
 #' @param sprtarg Target value for SPR-ratio where line is drawn in the SPR
 #' plots and phase plot.
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize Point size for PNG file
+#' @template ptsize
 #' @param plotdir Directory where PNG or PDF files will be written. By default
 #' it will be the directory where the model was run.
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
@@ -262,8 +259,11 @@ SSplotComparisons <-
     meanRecWarning <- TRUE
     ymax_vec <- rep(NA, 17) # vector of ymax values for each plot
 
-    # subfunction to write png files
-    pngfun <- function(file) {
+    # local version of save_png which doesn't relate to plotinfo and
+    # also adds control over 'filenameprefix' and 'par',
+    # (where the code is not following good practices and
+    # those arguments are not formally passed to the function)
+    save_png_comparisons <- function(file) {
       # if extra text requested, add it before extention in file name
       file <- paste0(filenameprefix, file)
       # open png file
@@ -279,7 +279,9 @@ SSplotComparisons <-
       par(par)
     }
 
-    if (png) print <- TRUE
+    if (png) {
+      print <- TRUE
+    }
 
     if (png & is.null(plotdir)) {
       stop("to print PNG files, you must supply a directory as 'plotdir'")
@@ -2182,7 +2184,7 @@ SSplotComparisons <-
         ymax_vec[1] <- plotSpawnBio(show_uncertainty = FALSE)
       }
       if (print) {
-        pngfun("compare1_spawnbio.png")
+        save_png_comparisons("compare1_spawnbio.png")
         ymax_vec[1] <- plotSpawnBio(show_uncertainty = FALSE)
         dev.off()
       }
@@ -2198,7 +2200,7 @@ SSplotComparisons <-
           ymax_vec[2] <- plotSpawnBio(show_uncertainty = TRUE)
         }
         if (print) {
-          pngfun("compare2_spawnbio_uncertainty.png")
+          save_png_comparisons("compare2_spawnbio_uncertainty.png")
           ymax_vec[2] <- plotSpawnBio(show_uncertainty = TRUE)
           dev.off()
         }
@@ -2215,7 +2217,7 @@ SSplotComparisons <-
         ymax_vec[3] <- plotBratio(show_uncertainty = FALSE)
       }
       if (print) {
-        pngfun("compare3_Bratio.png")
+        save_png_comparisons("compare3_Bratio.png")
         ymax_vec[3] <- plotBratio(show_uncertainty = FALSE)
         dev.off()
       }
@@ -2231,7 +2233,7 @@ SSplotComparisons <-
           ymax_vec[4] <- plotBratio(show_uncertainty = TRUE)
         }
         if (print) {
-          pngfun("compare4_Bratio_uncertainty.png")
+          save_png_comparisons("compare4_Bratio_uncertainty.png")
           ymax_vec[4] <- plotBratio(show_uncertainty = TRUE)
           dev.off()
         }
@@ -2247,7 +2249,7 @@ SSplotComparisons <-
         ymax_vec[5] <- plotSPRratio(show_uncertainty = FALSE)
       }
       if (print) {
-        pngfun("compare5_SPRratio.png")
+        save_png_comparisons("compare5_SPRratio.png")
         ymax_vec[5] <- plotSPRratio(show_uncertainty = FALSE)
         dev.off()
       }
@@ -2263,7 +2265,7 @@ SSplotComparisons <-
           ymax_vec[6] <- plotSPRratio(show_uncertainty = TRUE)
         }
         if (print) {
-          pngfun("compare6_SPRratio_uncertainty.png")
+          save_png_comparisons("compare6_SPRratio_uncertainty.png")
           ymax_vec[6] <- plotSPRratio(show_uncertainty = TRUE)
           dev.off()
         }
@@ -2279,7 +2281,7 @@ SSplotComparisons <-
         ymax_vec[7] <- plotF(show_uncertainty = FALSE)
       }
       if (print) {
-        pngfun("compare7_Fvalue.png")
+        save_png_comparisons("compare7_Fvalue.png")
         ymax_vec[7] <- plotF(show_uncertainty = FALSE)
         dev.off()
       }
@@ -2296,7 +2298,7 @@ SSplotComparisons <-
           ymax_vec[8] <- plotF(show_uncertainty = TRUE)
         }
         if (print) {
-          pngfun("compare8_Fvalue_uncertainty.png")
+          save_png_comparisons("compare8_Fvalue_uncertainty.png")
           ymax_vec[8] <- plotF(show_uncertainty = TRUE)
           dev.off()
         }
@@ -2312,7 +2314,7 @@ SSplotComparisons <-
         ymax_vec[9] <- plotRecruits(show_uncertainty = FALSE)
       }
       if (print) {
-        pngfun("compare9_recruits.png")
+        save_png_comparisons("compare9_recruits.png")
         ymax_vec[9] <- plotRecruits(show_uncertainty = FALSE)
         dev.off()
       }
@@ -2328,7 +2330,7 @@ SSplotComparisons <-
           ymax_vec[10] <- plotRecruits()
         }
         if (print) {
-          pngfun("compare10_recruits_uncertainty.png")
+          save_png_comparisons("compare10_recruits_uncertainty.png")
           ymax_vec[10] <- plotRecruits()
           dev.off()
         }
@@ -2345,7 +2347,7 @@ SSplotComparisons <-
           ymax_vec[11] <- plotRecDevs(show_uncertainty = FALSE)
         }
         if (print) {
-          pngfun("compare11_recdevs.png")
+          save_png_comparisons("compare11_recdevs.png")
           ymax_vec[11] <- plotRecDevs(show_uncertainty = FALSE)
           dev.off()
         }
@@ -2362,7 +2364,7 @@ SSplotComparisons <-
           ymax_vec[12] <- plotRecDevs()
         }
         if (print) {
-          pngfun("compare12_recdevs_uncertainty.png")
+          save_png_comparisons("compare12_recdevs_uncertainty.png")
           ymax_vec[12] <- plotRecDevs()
           dev.off()
         }
@@ -2380,7 +2382,7 @@ SSplotComparisons <-
           ymax_vec[13] <- plotIndices(log = FALSE, iindex = iindex)
         }
         if (print) {
-          pngfun(paste0(
+          save_png_comparisons(paste0(
             "compare13_indices",
             index_plot_suffix[iindex],
             ".png"
@@ -2401,7 +2403,7 @@ SSplotComparisons <-
           ymax_vec[14] <- plotIndices(log = TRUE, iindex = iindex)
         }
         if (print) {
-          pngfun(paste0(
+          save_png_comparisons(paste0(
             "compare14_indices_log",
             index_plot_suffix[iindex],
             ".png"
@@ -2422,7 +2424,7 @@ SSplotComparisons <-
         ymax_vec[15] <- plotPhase()
       }
       if (print) {
-        pngfun("compare15_phase_plot.png")
+        save_png_comparisons("compare15_phase_plot.png")
         ymax_vec[15] <- plotPhase()
         dev.off()
       }
@@ -2489,7 +2491,7 @@ SSplotComparisons <-
                 )
               }
               if (print) {
-                pngfun(paste("compare16_densities_", name, ".png", sep = ""))
+                save_png_comparisons(paste("compare16_densities_", name, ".png", sep = ""))
                 ymax_vec[16] <- plotDensities(
                   parname = name, xlab = xlab,
                   denslwd = densitylwd
@@ -2513,7 +2515,7 @@ SSplotComparisons <-
                 )
               }
               if (print) {
-                pngfun(paste("compare17_densities_", name, ".png", sep = ""))
+                save_png_comparisons(paste("compare17_densities_", name, ".png", sep = ""))
                 ymax_vec[17] <- plotDensities(
                   parname = name, xlab = xlab,
                   denslwd = densitylwd,
@@ -2534,7 +2536,7 @@ SSplotComparisons <-
     ##   if(verbose) message("subplot 19: growth, females\n")
     ##   if(plot) plotgrowth(sex='f')
     ##   if(print){
-    ##     pngfun("compare19_growth_females.png")
+    ##     save_png_comparisons("compare19_growth_females.png")
     ##     plotgrowth(sex='f')
     ##     dev.off()
     ##   }
@@ -2545,7 +2547,7 @@ SSplotComparisons <-
     ##   if(verbose) message("subplot 20: growth, males\n")
     ##   if(plot) plotgrowth(sex='m')
     ##   if(print){
-    ##     pngfun("compare20_growth_males.png")
+    ##     save_png_comparisons("compare20_growth_males.png")
     ##     plotgrowth(sex='m')
     ##     dev.off()
     ##   }

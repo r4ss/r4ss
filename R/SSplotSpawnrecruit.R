@@ -81,15 +81,7 @@ SSplotSpawnrecruit <-
            show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE) {
     # plot of spawner recruit curve
 
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     recruit <- replist[["recruit"]]
@@ -374,7 +366,11 @@ SSplotSpawnrecruit <-
       if (1 %in% subplot) {
         file <- "SR_curve.png"
         caption <- paste("Stock-recruit curve.", color.caption)
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         StockRecruitCurve.fn()
         dev.off()
       }
@@ -385,7 +381,11 @@ SSplotSpawnrecruit <-
           "years with (log) deviations > ", textmindev, ".",
           color.caption
         )
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         StockRecruitCurve.fn(text = TRUE)
         dev.off()
       }
@@ -397,7 +397,11 @@ SSplotSpawnrecruit <-
           "years with (log) deviations > ", textmindev, ".",
           color.caption
         )
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         stock_vs_devs.fn(text = TRUE)
         dev.off()
       }

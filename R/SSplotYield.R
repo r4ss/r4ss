@@ -53,15 +53,7 @@ SSplotYield <-
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
            plotdir = "default",
            verbose = TRUE) {
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     # extract quantities from replist
@@ -155,7 +147,11 @@ SSplotYield <-
             if (print) {
               file <- "yield1_yield_curve.png"
               caption <- "Yield curve"
-              plotinfo <- pngfun(file = file, caption = caption)
+              plotinfo <- save_png(
+                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                caption = caption
+              )
               yieldfunc()
               dev.off()
             }
@@ -168,7 +164,11 @@ SSplotYield <-
             if (print) {
               file <- "yield2_yield_curve_with_refpoints.png"
               caption <- "Yield curve with reference points"
-              plotinfo <- pngfun(file = file, caption = caption)
+              plotinfo <- save_png(
+                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                caption = caption
+              )
               yieldfunc(refpoints = refpoints)
               dev.off()
             }
@@ -266,7 +266,11 @@ SSplotYield <-
             "recovering fish populations. <i>Can. J. Fish. Aquat. Sci.</i>",
             "65: 2536-2551.</blockquote>"
           )
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         sprodfunc()
         dev.off()
       }
@@ -286,7 +290,11 @@ SSplotYield <-
         if (print) {
           file <- "yield4_YPR_timeseries.png"
           caption <- "Time series of yield per recruit (kg)"
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           YPR_timeseries()
           dev.off()
         }

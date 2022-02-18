@@ -94,16 +94,8 @@ SSplotNumbers <-
            plotdir = "default",
            mainTitle = FALSE,
            verbose = TRUE) {
-    # plot various things related to numbers-at-age for Stock Synthesis
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+
+    # table to store information on each plot
     plotinfo <- NULL
 
     natage <- replist[["natage"]]
@@ -171,22 +163,22 @@ SSplotNumbers <-
       if ("Settlement" %in% names(natage)) {
         settlement <- unique(natage[["Settlement"]])
         if (length(settlement) > 1) {
-          cat("Numbers at age plots only show first settlement event\n")
+          message("Numbers at age plots only show first settlement event")
         }
       }
       birth_seas_name <- grep("^BirthSeas", colnames(natage), value = TRUE)
       bseas <- unique(natage[[birth_seas_name]])
       if (length(bseas) > 1) {
-        cat("Numbers at age plots are for only the first birth season\n")
+        message("Numbers at age plots are for only the first birth season")
       }
       if (ngpatterns > 1) {
-        cat(
+        message(
           "Numbers at age plots may not deal correctly with growth patterns:",
-          "no guarantees!\n"
+          "no guarantees!"
         )
       }
       if (nseasons > 1) {
-        cat("Numbers at age plots are for season 1 only\n")
+        message("Numbers at age plots are for season 1 only")
         # change plot labels for seasonal models
         labels[16] <- gsub(pattern = "of year", replacement = "of season 1", x = labels[16])
         labels[17] <- gsub(pattern = "of year", replacement = "of season 1", x = labels[17])
@@ -372,7 +364,11 @@ SSplotNumbers <-
                   fileperiod, ".png"
                 )
                 caption <- plottitle1
-                plotinfo <- pngfun(file = file, caption = caption)
+                plotinfo <- save_png(
+                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                  caption = caption
+                )
                 ageBubble.fn()
                 dev.off()
               }
@@ -383,7 +379,11 @@ SSplotNumbers <-
                   sep = ""
                 )
                 caption <- plottitle2
-                plotinfo <- pngfun(file = file, caption = caption)
+                plotinfo <- save_png(
+                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                  caption = caption
+                )
                 meanAge.fn()
                 dev.off()
               }
@@ -424,14 +424,18 @@ SSplotNumbers <-
               if (nareas > 1) filepart <- paste0("_", areanames[iarea], filepart)
               file <- paste0("numbers3_frac_female_age", filepart, ".png")
               caption <- plottitle3
-              plotinfo <- pngfun(file = file, caption = caption)
+              plotinfo <- save_png(
+                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                caption = caption
+              )
               numbersRatioAge.fn(labcex = 0.6)
               dev.off()
             }
           } else {
-            cat(
-              "skipped sex ratio contour plot because females=males\n",
-              "for all ages and years\n"
+            message(
+              "skipped sex ratio contour plot because females=males ",
+              "for all ages and years"
             )
           }
         } # end area loop
@@ -613,7 +617,11 @@ SSplotNumbers <-
                     filepartsex, ".png"
                   )
                   caption <- plottitle1
-                  plotinfo <- pngfun(file = file, caption = caption)
+                  plotinfo <- save_png(
+                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    caption = caption
+                  )
                   lenBubble.fn()
                   dev.off()
                 }
@@ -621,7 +629,11 @@ SSplotNumbers <-
                 if (7 %in% subplots & m == 2 & nsexes == 2) {
                   file <- paste0("numbers7_meanlen", filepartarea, ".png")
                   caption <- plottitle2
-                  plotinfo <- pngfun(file = file, caption = caption)
+                  plotinfo <- save_png(
+                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    caption = caption
+                  )
                   meanLen.fn()
                   dev.off()
                 }
@@ -675,14 +687,18 @@ SSplotNumbers <-
                 }
                 file <- paste0("numbers8_frac_female_len", filepart, ".png")
                 caption <- caption
-                plotinfo <- pngfun(file = file, caption = caption)
+                plotinfo <- save_png(
+                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                  caption = caption
+                )
                 numbersRatioLen.fn(labcex = 0.6)
                 dev.off()
               }
             } else {
-              cat(
+              message(
                 "skipped sex ratio contour plot because females=males",
-                "for all lengths and years\n"
+                " for all lengths and years"
               )
             }
           } # end area loop
@@ -692,26 +708,34 @@ SSplotNumbers <-
       ##########
       # plot of equilibrium age composition by gender and area
       equilibfun <- function() {
+        # subset to unfished equilibrium
         equilage <- natage[natage[["Era"]] == "VIRG", ]
+        # remove rows with all zeros
         equilage <- equilage[as.vector(apply(equilage[, remove], 1, sum)) > 0, ]
-
-
+        # figure out birth season / spawning seaso
         BirthSeas <- spawnseas
         if (!(spawnseas %in% bseas)) BirthSeas <- min(bseas)
         if (length(bseas) > 1) {
-          cat("showing equilibrium age for first birth season", BirthSeas, "\n")
+          message("showing equilibrium age for first birth season", BirthSeas)
         }
 
+        # sort out plot title
         main <- ""
         if (mainTitle) {
           main <- labels[10]
         }
 
+        ymax <- max(equilage[
+          equilage[[birth_seas_name]] == BirthSeas &
+            equilage[["Seas"]] == BirthSeas &
+            equilage[["Beg/Mid"]] == "B",
+          "0"
+        ])
         plot(0,
           type = "n", xlim = c(0, accuage),
-          ylim = c(0, 1.05 * max(equilage[equilage[[birth_seas_name]] == BirthSeas &
-            equilage[["Seas"]] == BirthSeas, remove])),
-          xaxs = "i", yaxs = "i", xlab = "Age", ylab = labels[9], main = main, cex.main = cex.main
+          ylim = c(0, 1.05 * ymax),
+          xaxs = "i", yaxs = "i", xlab = "Age", ylab = labels[9],
+          main = main, cex.main = cex.main
         )
 
         # now fill in legend
@@ -720,19 +744,26 @@ SSplotNumbers <-
         legendlegend <- NULL
         for (iarea in areas) {
           for (m in 1:nsexes) {
-            equilagetemp <- equilage[equilage[["Area"]] == iarea & equilage[["Sex"]] == m &
+            # subset to beginning of the year and birth season within each area and sex
+            equilagetemp <- equilage[equilage[["Area"]] == iarea &
+              equilage[["Sex"]] == m &
               equilage[[birth_seas_name]] == BirthSeas &
-              equilage[["Seas"]] == BirthSeas, ]
-            if (nrow(equilagetemp) > 1) {
-              cat(
-                "in plot of equilibrium age composition by gender and area\n",
-                "multiple morphs are not supported,",
-                "using first row from choices below\n"
+              equilage[["Seas"]] == BirthSeas &
+              equilage[["Beg/Mid"]] == "B", ]
+            # subset to columns with numbers at age values only
+            equilagetemp <- equilagetemp[, remove]
+            if (nrow(equilagetemp) == 1) {
+              lines(0:accuage, equilagetemp, lty = m, lwd = 3, col = areacols[iarea])
+            } else {
+              matplot(
+                x = 0:accuage, y = t(equilagetemp), type = "l",
+                lty = m, lwd = 3, col = areacols[iarea], add = TRUE
               )
-              print(equilagetemp[, 1:10])
+              message(
+                "Multiple matching lines in equilibrium plot indicate multiple ",
+                "morphs or platoons within each area/sex combination."
+              )
             }
-            equilagetemp <- equilagetemp[1, remove]
-            lines(0:accuage, equilagetemp, lty = m, lwd = 3, col = areacols[iarea])
             legendlty <- c(legendlty, m)
             legendcol <- c(legendcol, areacols[iarea])
 
@@ -756,7 +787,11 @@ SSplotNumbers <-
       if (print & 4 %in% subplots) {
         file <- "numbers4_equilagecomp.png"
         caption <- labels[10]
-        plotinfo <- pngfun(file = file, caption = caption)
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         equilibfun()
         dev.off()
       } # end print to PNG
@@ -824,7 +859,11 @@ SSplotNumbers <-
           # make files with plots of age error standard deviations
           file <- "numbers5_ageerrorSD.png"
           caption <- paste0(labels[8], ": ", labels[4])
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           ageingfun()
           dev.off()
 
@@ -832,7 +871,11 @@ SSplotNumbers <-
           if (mean(ageingbias == 0) != 1) {
             file <- "numbers5_ageerrorMeans.png"
             caption <- paste0(labels[8], ": ", labels[5])
-            plotinfo <- pngfun(file = file, caption = caption)
+            plotinfo <- save_png(
+              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              caption = caption
+            )
             ageingfun2()
             dev.off()
           }

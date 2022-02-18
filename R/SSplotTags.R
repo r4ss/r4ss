@@ -65,15 +65,7 @@ SSplotTags <-
            ), # 10
            plotdir = "default",
            verbose = TRUE) {
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+    # table to store information on each plot
     plotinfo <- NULL
 
     if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
@@ -402,70 +394,110 @@ SSplotTags <-
         if (1 %in% subplots) {
           file <- "tags_by_group.png"
           caption <- "Expected and observed recaptures by tag group"
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun1()
           dev.off()
         }
         if (2 %in% subplots) {
           file <- "tags_aggregated.png"
           caption <- labels[5]
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun2()
           dev.off()
         }
         if (3 %in% subplots) {
           file <- "tags_data_bubbleplot.png"
           caption <- labels[6]
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun3()
           dev.off()
         }
         if (4 %in% subplots) {
           file <- "tags_residuals.png"
           caption <- labels[7]
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun4()
           dev.off()
         }
         if (5 %in% subplots) {
           file <- "tags_lines.png"
           caption <- labels[8]
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun5()
           dev.off()
         }
         if (6 %in% subplots) {
           file <- "tags_parameters.png"
           caption <- "Tag-related parameters"
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun6()
           dev.off()
         }
         if (7 %in% subplots) {
           file <- "tags_alive.png"
           caption <- "'Tags alive' by tag group"
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun7()
           dev.off()
         }
         if (8 %in% subplots) {
           file <- "tags_total_recaptures.png"
           caption <- "Total tag recaptures"
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun8()
           dev.off()
         }
         if (9 %in% subplots) {
           file <- "summarized_recaptures_fleet.png"
           caption <- "summarized observed and expected numbers of recaptures by fleet"
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun9()
           dev.off()
         }
         if (10 %in% subplots) {
           file <- "pearson_residuals_taggroup.png"
           caption <- "Pearson residuals by tag group"
-          plotinfo <- pngfun(file = file, caption = caption)
+          plotinfo <- save_png(
+            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            caption = caption
+          )
           tagfun10()
           dev.off()
         }

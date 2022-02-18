@@ -143,6 +143,7 @@ SS_makeHTMLdiagnostictable <- function(replist,
   outtable_df <- data.frame(
     "file" = filename,
     "caption" = caption,
+    "alt_text" = NA,
     "category" = rep("DiagnosticTables", length(filename))
   )
 

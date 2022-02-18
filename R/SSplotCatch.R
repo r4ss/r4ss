@@ -153,15 +153,8 @@ SSplotCatch <-
       # note: subplot 16
       "16: landings + dead discards"
     )
-    # subfunction to write png files
-    pngfun <- function(file, caption = NA) {
-      png(
-        filename = file.path(plotdir, file),
-        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
-      )
-      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
-      return(plotinfo)
-    }
+
+    # table to store information on each plot
     plotinfo <- NULL
 
     F_method <- replist[["F_method"]]
@@ -590,7 +583,7 @@ SSplotCatch <-
         for (i in 1:length(badstrings)) {
           myname <- gsub(pattern = badstrings[i], replacement = " ", x = myname, fixed = T)
         }
-        filename <- paste0("catch", myname, ".png")
+        file <- paste0("catch", myname, ".png")
         # default caption is based on the subplot_names vector defined at the top
         caption <- substring(myname, 3)
         # add to caption for a few plots
@@ -612,15 +605,21 @@ SSplotCatch <-
             "compare catch in the same units."
           )
         }
-        plotinfo2 <- pngfun(filename, caption = caption)
+        plotinfo2 <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
         # "a" is TRUE/FALSE indicator that plot got produced
         a <- makeplots(isubplot)
         dev.off()
         # delete empty files if they somehow got created
-        if (!a & file.exists(filename)) {
-          file.remove(filename)
+        if (!a & file.exists(file)) {
+          file.remove(file)
         }
-        if (a) plotinfo <- plotinfo2
+        if (a) {
+          plotinfo <- plotinfo2
+        }
       }
     }
 
