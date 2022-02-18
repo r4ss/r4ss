@@ -59,7 +59,7 @@
 #' @param indexQlabel Add catchability to legend in plot of index fits
 #' (TRUE/FALSE)?
 #' @param indexQdigits Number of significant digits for catchability in legend
-#' (if `indexQlabel=TRUE`)
+#' (if `indexQlabel = TRUE`)
 #' @param indexSEvec Optional replacement for the SE values in
 #' `summaryoutput[["indices"]]` to deal with the issue of differing uncertainty by
 #' models described above.

@@ -4,7 +4,7 @@
 #'
 #' @template replist
 #' @param ylab Y-axis label. Default is "Spawning biomass (mt)" which is replaced
-#' by "Spawning output" for models with replist[["SpawnOutputUnits"]] == "numbers"
+#' by "Spawning output" for models with `replist[["SpawnOutputUnits"]] == "numbers"`
 #' @param equilibrium Show equilibrium in plot? Applies whether "yrs" is specified
 #' or not.
 #' @param forecast Show forecast years in plot? Only applies if yrs = "all".
@@ -21,7 +21,7 @@
 #' "read specs for more stddev reporting".
 #' @template legend
 #' @param legendlabels Character vector with labels for the unfished
-#' equilibrium point (if [equilibrium == TRUE]) and the two lines showing
+#' equilibrium point (if `equilibrium = TRUE`) and the two lines showing
 #' spawning biomass or output without and with fishing.
 #' @template legendloc
 #' @param col Optional vector of colors to be used for the two lines

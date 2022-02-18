@@ -14,10 +14,10 @@ parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.43.0\cr Date: \tab 2021-06-11\cr License: \tab GPL-3\cr LazyLoad: \tab
+1.43.1\cr Date: \tab 2022-02-18\cr License: \tab GPL-3\cr LazyLoad: \tab
 yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 Should be compatible with Stock Synthesis versions 3.24 through 3.30
-(specifically version 3.30.17.00, from June 2021).
+(specifically version 3.30.19beta, from February 2022).
 }
 \examples{
 \dontrun{
@@ -41,7 +41,7 @@ Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
 Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
 Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
 Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron,
-Nathan Vaughan, LaTreese S. Denson, and Ashleigh J. Novak
+Nathan Vaughan, LaTreese S. Denson, Ashleigh J. Novak, and Henning Winker
 
 Package maintainer: Ian G. Taylor \href{mailto:Ian.Taylor@noaa.gov}{Ian.Taylor@noaa.gov}
 }

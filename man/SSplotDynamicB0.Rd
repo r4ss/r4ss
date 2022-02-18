@@ -35,7 +35,7 @@ SSplotDynamicB0(
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{ylab}{Y-axis label. Default is "Spawning biomass (mt)" which is replaced
-by "Spawning output" for models with replist[\link{"SpawnOutputUnits"}] == "numbers"}
+by "Spawning output" for models with \code{replist[["SpawnOutputUnits"]] == "numbers"}}
 
 \item{equilibrium}{Show equilibrium in plot? Applies whether "yrs" is specified
 or not.}
@@ -63,12 +63,12 @@ estimates is available via the control file settings for
 \item{legend}{Add a legend?}
 
 \item{legendlabels}{Character vector with labels for the unfished
-equilibrium point (if \link{equilibrium == TRUE}) and the two lines showing
+equilibrium point (if \code{equilibrium = TRUE}) and the two lines showing
 spawning biomass or output without and with fishing.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \link{help("legend")} for more info on
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
 the string options.}
 
 \item{col}{Optional vector of colors to be used for the two lines

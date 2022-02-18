@@ -140,7 +140,7 @@ these intervals may differ across models.}
 (TRUE/FALSE)?}
 
 \item{indexQdigits}{Number of significant digits for catchability in legend
-(if \code{indexQlabel=TRUE})}
+(if \code{indexQlabel = TRUE})}
 
 \item{indexSEvec}{Optional replacement for the SE values in
 \code{summaryoutput[["indices"]]} to deal with the issue of differing uncertainty by
@@ -209,7 +209,7 @@ is 'model1','model2',etc.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \link{help("legend")} for more info on
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
 the string options.}
 
 \item{legendorder}{Optional vector of model numbers that can be used to have
