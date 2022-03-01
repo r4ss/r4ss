@@ -77,7 +77,7 @@ jobs:
            })
 
           plots <- lapply(out, function(x) {
-            tryCatch(r4ss::SS_plots(x, verbose = FALSE),
+            tryCatch(r4ss::SS_plots(x, verbose = FALSE, openfile = FALSE),
           			   error = function(e) {
           			 print(e)
           			   })
