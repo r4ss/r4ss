@@ -123,11 +123,15 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #'
 #' @param legendlabels Optional vector of labels to include in legend.
 #' @param cumulative default for legend location set to topleft
+#' @template legendloc
+#' @param legendorder Optional vector of model numbers that can be used to have
+#' the legend display the model names in an order that is different than that
+#' which is represented in the summary input object.
 #'
 #' @export
 #'
 #'
-add_legend <- function(legendlabels, cumulative = FALSE) {
+add_legend <- function(legendlabels, legendloc = "topleft", legendorder = 1, cumulative = FALSE) {
   if (cumulative) {
     legendloc <- "topleft"
   }
