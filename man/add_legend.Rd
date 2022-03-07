@@ -6,13 +6,22 @@
 \usage{
 add_legend(
   legendlabels,
+  cumulative = FALSE,
   legendloc = "topleft",
-  legendorder = 1,
-  cumulative = FALSE
+  legendorder = "default",
+  legendncol = 1,
+  legendcex = 1,
+  legendsp = 0.9,
+  col = NULL,
+  pch = NULL,
+  lty = 1,
+  lwd = 2
 )
 }
 \arguments{
 \item{legendlabels}{Optional vector of labels to include in legend.}
+
+\item{cumulative}{default for legend location set to topleft}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
@@ -23,7 +32,19 @@ the string options.}
 the legend display the model names in an order that is different than that
 which is represented in the summary input object.}
 
-\item{cumulative}{default for legend location set to topleft}
+\item{legendncol}{Number of columns for the legend.}
+
+\item{legendcex}{Allows to adjust legend cex. Defaults to 1.}
+
+\item{legendsp}{Space between legend labels}
+
+\item{col}{Optional vector of colors to be used for lines. Input NULL}
+
+\item{pch}{Optional vector of plot character values}
+
+\item{lty}{Optional vector of line types}
+
+\item{lwd}{Optional vector of line widths}
 }
 \description{
 ss3diags function to add legend to plots
