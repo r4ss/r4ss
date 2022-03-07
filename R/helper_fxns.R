@@ -220,8 +220,8 @@ rich.colors.short <- function(n, alpha = 1) {
 #' @param alt_text alternative text for screen readers
 #' (if left as NA then will be set based on the caption)
 #' @author Ian G. Taylor
-#' 
-#' @export 
+#'
+#' @export
 
 save_png <- function(plotinfo,
                      file,
