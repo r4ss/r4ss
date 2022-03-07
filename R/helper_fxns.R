@@ -131,7 +131,17 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @export
 #'
 #'
-add_legend <- function(legendlabels, legendloc = "topleft", legendorder = 1, cumulative = FALSE) {
+add_legend <- function(legendlabels,
+                       cumulative = FALSE,
+                       legendloc,
+                       legendorder,
+                       legendncol,
+                       legendcex,
+                       legendsp,
+                       pch,
+                       col,
+                       lty,
+                       lwd) {
   if (cumulative) {
     legendloc <- "topleft"
   }
@@ -151,7 +161,9 @@ add_legend <- function(legendlabels, legendloc = "topleft", legendorder = 1, cum
   legend(legendloc,
     legend = legendlabels[legendorder],
     col = col[legendorder], lty = lty[legendorder], seg.len = 2,
-    lwd = lwd[legendorder], pch = legend.pch[legendorder], bty = "n", ncol = legendncol, pt.cex = 0.7, cex = legendcex, y.intersp = legendsp
+    lwd = lwd[legendorder], pch = legend.pch[legendorder],
+    bty = "n", ncol = legendncol, pt.cex = 0.7,
+    cex = legendcex, y.intersp = legendsp
   )
 }
 
