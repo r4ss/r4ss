@@ -127,6 +127,16 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @param legendorder Optional vector of model numbers that can be used to have
 #' the legend display the model names in an order that is different than that
 #' which is represented in the summary input object.
+#' @param legendorder Optional vector of model numbers that can be used to have
+#' the legend display the model names in an order that is different than that
+#' which is represented in the summary input object.
+#' @param legendncol Number of columns for the legend.
+#' @param legendcex Allows to adjust legend cex. Defaults to 1.
+#' @param legendsp Space between legend labels
+#' @param col Optional vector of colors to be used for lines. Input NULL
+#' @param pch Optional vector of plot character values
+#' @param lty Optional vector of line types
+#' @param lwd Optional vector of line widths
 #'
 #' @export
 #'
@@ -138,8 +148,8 @@ add_legend <- function(legendlabels,
                        legendncol = 1,
                        legendcex = 1,
                        legendsp = 0.9,
-                       pch = NULL,
                        col = NULL,
+                       pch = NULL,
                        lty = 1,
                        lwd = 2) {
   if (cumulative) {
