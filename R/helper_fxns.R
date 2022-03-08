@@ -137,6 +137,8 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @param pch Optional vector of plot character values
 #' @param lty Optional vector of line types
 #' @param lwd Optional vector of line widths
+#' @param type Type parameter passed to points (default 'o' overplots points on
+#' top of lines)
 #'
 #' @export
 #'
@@ -151,7 +153,8 @@ add_legend <- function(legendlabels,
                        col = NULL,
                        pch = NULL,
                        lty = 1,
-                       lwd = 2) {
+                       lwd = 2,
+                       type = "l") {
   if (cumulative) {
     legendloc <- "topleft"
   }
