@@ -15,7 +15,8 @@ add_legend(
   col = NULL,
   pch = NULL,
   lty = 1,
-  lwd = 2
+  lwd = 2,
+  type = "l"
 )
 }
 \arguments{
@@ -45,6 +46,9 @@ which is represented in the summary input object.}
 \item{lty}{Optional vector of line types}
 
 \item{lwd}{Optional vector of line widths}
+
+\item{type}{Type parameter passed to points (default 'o' overplots points on
+top of lines)}
 }
 \description{
 ss3diags function to add legend to plots

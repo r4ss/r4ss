@@ -14,7 +14,8 @@ save_png(
   res,
   ptsize,
   caption = NA,
-  alt_text = NA
+  alt_text = NA,
+  filenameprefix = NA
 )
 }
 \arguments{
@@ -45,6 +46,9 @@ The default is \code{res = 300}.}
 
 \item{alt_text}{alternative text for screen readers
 (if left as NA then will be set based on the caption)}
+
+\item{filenameprefix}{Additional text to append to PNG or PDF file names.
+It will be separated from default name by an underscore.}
 }
 \description{
 this was previously contained within each of the SSplotXXX() functions.
