@@ -219,6 +219,8 @@ rich.colors.short <- function(n, alpha = 1) {
 #' @param caption caption for the image
 #' @param alt_text alternative text for screen readers
 #' (if left as NA then will be set based on the caption)
+#' @param filenameprefix Additional text to append to PNG or PDF file names.
+#' It will be separated from default name by an underscore.
 #' @author Ian G. Taylor
 #' 
 #' @export 
@@ -232,10 +234,14 @@ save_png <- function(plotinfo,
                      res,
                      ptsize,
                      caption = NA,
-                     alt_text = NA) {
+                     alt_text = NA,
+                     filenameprefix = NA) {
 
   # replace any slashes (as in 'Eggs/kg_inter_Fem')
   file <- gsub(pattern = "/", replacement = "_per_", x = file, fixed = TRUE)
+  if(filenameprefix != "") {
+    file <- paste0(filenameprefix, file)
+  }
 
   # open png device
   png(
