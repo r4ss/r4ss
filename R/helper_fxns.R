@@ -137,6 +137,8 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @param pch Optional vector of plot character values
 #' @param lty Optional vector of line types
 #' @param lwd Optional vector of line widths
+#' @param type Type parameter passed to points (default 'o' overplots points on
+#' top of lines)
 #'
 #' @export
 #'
@@ -151,7 +153,8 @@ add_legend <- function(legendlabels,
                        col = NULL,
                        pch = NULL,
                        lty = 1,
-                       lwd = 2) {
+                       lwd = 2,
+                       type = "l") {
   if (cumulative) {
     legendloc <- "topleft"
   }
@@ -219,6 +222,8 @@ rich.colors.short <- function(n, alpha = 1) {
 #' @param caption caption for the image
 #' @param alt_text alternative text for screen readers
 #' (if left as NA then will be set based on the caption)
+#' @param filenameprefix Additional text to append to PNG or PDF file names.
+#' It will be separated from default name by an underscore.
 #' @author Ian G. Taylor
 #'
 #' @export
@@ -232,10 +237,14 @@ save_png <- function(plotinfo,
                      res,
                      ptsize,
                      caption = NA,
-                     alt_text = NA) {
+                     alt_text = NA,
+                     filenameprefix = NA) {
 
   # replace any slashes (as in 'Eggs/kg_inter_Fem')
   file <- gsub(pattern = "/", replacement = "_per_", x = file, fixed = TRUE)
+  if(!is.na(filenameprefix)) {
+    file <- paste0(filenameprefix, file)
+  }
 
   # open png device
   png(
