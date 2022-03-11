@@ -310,34 +310,34 @@ SSplotComparisons <-
     }
 
     # subfunction to add legend
-    legendfun <- function(legendlabels, cumulative = FALSE) {
-      if (cumulative) {
-        legendloc <- "topleft"
-      }
-      if (is.numeric(legendloc)) {
-        Usr <- par()$usr
-        legendloc <- list(
-          x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
-          y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3])
-        )
-      }
-
-      # if type input is "l" then turn off points on top of lines in legend
-      legend.pch <- pch
-      if (type == "l") {
-        legend.pch <- rep(NA, length(pch))
-      }
-      legend(legendloc,
-        legend = legendlabels[legendorder],
-        col = col[legendorder],
-        lty = lty[legendorder],
-        seg.len = 2,
-        lwd = lwd[legendorder],
-        pch = legend.pch[legendorder],
-        bty = "n",
-        ncol = legendncol
-      )
-    }
+    # legendfun <- function(legendlabels, cumulative = FALSE) {
+    #   if (cumulative) {
+    #     legendloc <- "topleft"
+    #   }
+    #   if (is.numeric(legendloc)) {
+    #     Usr <- par()$usr
+    #     legendloc <- list(
+    #       x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
+    #       y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3])
+    #     )
+    #   }
+    # 
+    #   # if type input is "l" then turn off points on top of lines in legend
+    #   legend.pch <- pch
+    #   if (type == "l") {
+    #     legend.pch <- rep(NA, length(pch))
+    #   }
+    #   legend(legendloc,
+    #     legend = legendlabels[legendorder],
+    #     col = col[legendorder],
+    #     lty = lty[legendorder],
+    #     seg.len = 2,
+    #     lwd = lwd[legendorder],
+    #     pch = legend.pch[legendorder],
+    #     bty = "n",
+    #     ncol = legendncol
+    #   )
+    # }
 
     # get stuff from summary output
     n <- summaryoutput[["n"]]
@@ -918,7 +918,12 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        legendfun(legendlabels)
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col= col,
+                         pch= pch,
+                         lwd = lwd, 
+                         lty = lty)
       }
       # return upper y-limit
       return(ylim[2])
@@ -1027,7 +1032,12 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        legendfun(legendlabels)
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col = col,
+                         pch = pch,
+                         lwd = lwd, 
+                         lty = lty)
       }
       # return upper y-limit
       return(ylim[2])
@@ -1191,7 +1201,12 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        legendfun(legendlabels)
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col = col,
+                         pch = pch,
+                         lwd = lwd, 
+                         lty = lty)
       }
       box()
       if (exists("oldmar")) {
@@ -1284,7 +1299,14 @@ SSplotComparisons <-
         line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
       )
       box()
-      if (legend) legendfun(legendlabels)
+      if (legend) {
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col = col,
+                         pch = pch,
+                         lwd = lwd, 
+                         lty = lty)
+      }
 
       # return upper y-limit
       return(ylim[2])
@@ -1420,7 +1442,12 @@ SSplotComparisons <-
       abline(h = 0, col = "grey")
       if (legend) {
         # add legend if requested
-        legendfun(legendlabels)
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col = col,
+                         pch = pch,
+                         lwd = lwd, 
+                         lty = lty)
       }
       if (!add) {
         if (tickEndYr) { # include ending year in axis labels
@@ -1556,7 +1583,12 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        legendfun(legendlabels)
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col = col,
+                         pch = pch,
+                         lwd = lwd, 
+                         lty = lty)
       }
       # return upper y-limit
       return(ylim[2])
@@ -1625,7 +1657,12 @@ SSplotComparisons <-
 
       if (legend) {
         # add legend if requested
-        legendfun(legendlabels)
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col = col,
+                         pch = pch,
+                         lwd = lwd, 
+                         lty = lty)
       }
       # return upper y-limit
       return(ylim[2])
@@ -1748,7 +1785,12 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        legendfun(legendlabels)
+        r4ss::add_legend(legendlabels,
+                         legendloc = legendloc,
+                         col = col,
+                         pch = pch,
+                         lwd = lwd, 
+                         lty = lty)
       }
 
       if (indexPlotEach) {
@@ -2159,7 +2201,13 @@ SSplotComparisons <-
         }
         # add legend
         if (legend) {
-          legendfun(legendlabels, cumulative)
+          r4ss::add_legend(legendlabels,
+                           legendloc = legendloc,
+                           cumulative = cumulative,
+                           col = col,
+                           pch = pch,
+                           lwd = lwd, 
+                           lty = lty)
         }
       }
       # in the future, this could return the upper y-limit,
