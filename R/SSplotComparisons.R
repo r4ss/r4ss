@@ -918,7 +918,7 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col= col,
                          pch= pch,
@@ -1032,7 +1032,7 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col = col,
                          pch = pch,
@@ -1201,7 +1201,7 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col = col,
                          pch = pch,
@@ -1300,7 +1300,7 @@ SSplotComparisons <-
       )
       box()
       if (legend) {
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col = col,
                          pch = pch,
@@ -1442,7 +1442,7 @@ SSplotComparisons <-
       abline(h = 0, col = "grey")
       if (legend) {
         # add legend if requested
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col = col,
                          pch = pch,
@@ -1583,7 +1583,7 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col = col,
                          pch = pch,
@@ -1657,7 +1657,7 @@ SSplotComparisons <-
 
       if (legend) {
         # add legend if requested
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col = col,
                          pch = pch,
@@ -1785,7 +1785,7 @@ SSplotComparisons <-
       }
       if (legend) {
         # add legend if requested
-        r4ss::add_legend(legendlabels,
+        add_legend(legendlabels,
                          legendloc = legendloc,
                          col = col,
                          pch = pch,
@@ -2201,7 +2201,7 @@ SSplotComparisons <-
         }
         # add legend
         if (legend) {
-          r4ss::add_legend(legendlabels,
+          add_legend(legendlabels,
                            legendloc = legendloc,
                            cumulative = cumulative,
                            col = col,
