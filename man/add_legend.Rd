@@ -6,9 +6,8 @@
 \usage{
 add_legend(
   legendlabels,
-  cumulative = FALSE,
   legendloc = "topleft",
-  legendorder = "default",
+  legendorder = NULL,
   legendncol = 1,
   legendcex = 1,
   legendsp = 0.9,
@@ -21,8 +20,6 @@ add_legend(
 }
 \arguments{
 \item{legendlabels}{Optional vector of labels to include in legend.}
-
-\item{cumulative}{default for legend location set to topleft}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in

@@ -122,7 +122,6 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' ss3diags function to add legend to plots
 #'
 #' @param legendlabels Optional vector of labels to include in legend.
-#' @param cumulative default for legend location set to topleft
 #' @template legendloc
 #' @param legendorder Optional vector of model numbers that can be used to have
 #' the legend display the model names in an order that is different than that
@@ -144,9 +143,8 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #'
 #'
 add_legend <- function(legendlabels,
-                       cumulative = FALSE,
                        legendloc = "topleft",
-                       legendorder = "default",
+                       legendorder = NULL,
                        legendncol = 1,
                        legendcex = 1,
                        legendsp = 0.9,
@@ -155,8 +153,8 @@ add_legend <- function(legendlabels,
                        lty = 1,
                        lwd = 2,
                        type = "l") {
-  if (cumulative) {
-    legendloc <- "topleft"
+  if (is.null(legendorder)) {
+    legendorder <- 1:length(legendlabels)
   }
   if (is.numeric(legendloc)) {
     Usr <- par()$usr
