@@ -321,7 +321,7 @@ SSplotComparisons <-
     #       y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3])
     #     )
     #   }
-    # 
+    #
     #   # if type input is "l" then turn off points on top of lines in legend
     #   legend.pch <- pch
     #   if (type == "l") {
@@ -916,13 +916,14 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
       # return upper y-limit
       return(ylim[2])
@@ -1032,13 +1033,14 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
       # return upper y-limit
       return(ylim[2])
@@ -1203,13 +1205,14 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
       box()
       if (exists("oldmar")) {
@@ -1304,13 +1307,14 @@ SSplotComparisons <-
       box()
       if (legend) {
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
 
       # return upper y-limit
@@ -1448,13 +1452,14 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
       if (!add) {
         if (tickEndYr) { # include ending year in axis labels
@@ -1591,13 +1596,14 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
       # return upper y-limit
       return(ylim[2])
@@ -1667,13 +1673,14 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
       # return upper y-limit
       return(ylim[2])
@@ -1797,13 +1804,14 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(legendlabels,
-                   legendloc = legendloc,
-                   legendorder = legendorder,
-                   legendncol = legendncol,
-                   col= col,
-                   pch= pch,
-                   lwd = lwd, 
-                   lty = lty)
+          legendloc = legendloc,
+          legendorder = legendorder,
+          legendncol = legendncol,
+          col = col,
+          pch = pch,
+          lwd = lwd,
+          lty = lty
+        )
       }
 
       if (indexPlotEach) {
@@ -2215,15 +2223,16 @@ SSplotComparisons <-
         # add legend
         if (legend) {
           add_legend(legendlabels,
-                     # override legend location for cumulative plots
-                     # where topleft should always work best
-                     legendloc = ifelse(cumulative, "topleft", legendloc),
-                     legendorder = legendorder,
-                     legendncol = legendncol,
-                     col= col,
-                     pch= pch,
-                     lwd = lwd, 
-                     lty = lty)
+            # override legend location for cumulative plots
+            # where topleft should always work best
+            legendloc = ifelse(cumulative, "topleft", legendloc),
+            legendorder = legendorder,
+            legendncol = legendncol,
+            col = col,
+            pch = pch,
+            lwd = lwd,
+            lty = lty
+          )
         }
       }
       # in the future, this could return the upper y-limit,
