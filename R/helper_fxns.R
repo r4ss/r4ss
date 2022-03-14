@@ -173,10 +173,16 @@ add_legend <- function(legendlabels,
   }
   legend(legendloc,
     legend = legendlabels[legendorder],
-    col = col[legendorder], lty = lty[legendorder], seg.len = 2,
-    lwd = lwd[legendorder], pch = legend.pch[legendorder],
-    bty = "n", ncol = legendncol, pt.cex = 0.7,
-    cex = legendcex, y.intersp = legendsp
+    col = col[legendorder], 
+    lty = lty[legendorder], 
+    seg.len = 2,
+    lwd = lwd[legendorder], 
+    pch = legend.pch[legendorder],
+    bty = "n", 
+    ncol = legendncol, 
+    pt.cex = 0.7,
+    cex = legendcex, 
+    y.intersp = legendsp
   )
 }
 
