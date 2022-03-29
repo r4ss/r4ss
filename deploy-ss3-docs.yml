@@ -33,7 +33,7 @@ jobs:
         # Note: for the following R code, may be a single command to deal with the double header issue before rendering.
       - name: Edit html to improve formatting of experimental version of manual
         run: |
-          html_txt <- readLines("SS330_User_Mranual.html")
+          html_txt <- readLines("SS330_User_Manual.html")
           #read html snippits to add
           html_snips <- readLines("html_usermanual_snippets.html")
           # remove inline style
