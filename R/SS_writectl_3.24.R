@@ -150,7 +150,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       }
       #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
       #                 row.names=FALSE,col.names=FALSE)
-      write.fwf(
+      write_fwf4(
         file = zz, x = dataframe, append = TRUE, sep = "\t", quote = FALSE,
         rownames = FALSE, colnames = FALSE, digits = 6
       )

@@ -159,7 +159,7 @@ SS_writedat_3.30 <- function(datlist,
           quote = FALSE
         )
       } else {
-        write.fwf(
+        write_fwf4(
           file = zz,
           x = dataframe,
           append = TRUE,
@@ -317,10 +317,12 @@ SS_writedat_3.30 <- function(datlist,
     writeComment("#\n#_lencomp")
     if (is.null(d[["lencomp"]]) & d[["use_lencomp"]] == 1) {
       # empty data.frame with correct number of columns needed for terminator row
-      d[["lencomp"]] <- data.frame(matrix(vector(), 0, 6 + d[["N_lbins"]] * abs(d[["Nsexes"]])))
+      d[["lencomp"]] <-
+        data.frame(matrix(vector(), 0, 6 + d[["N_lbins"]] * abs(d[["Nsexes"]])))
     } else if (d[["use_lencomp"]] == 1) {
       # remove lines of zero len comps, and warn user.
-      zero_lencomp <- apply(d[["lencomp"]][, -(1:6)], MARGIN = 1, FUN = sum) == 0
+      zero_lencomp <-
+        apply(d[["lencomp"]][, -seq_len(6)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_lencomp == TRUE)) {
         warning(
           "Lines of all zero length comp found. SS will exit on error if",
@@ -350,16 +352,21 @@ SS_writedat_3.30 <- function(datlist,
     writeComment("#\n#_age_info")
     print.df("age_info", terminate = FALSE)
 
-    wl("Lbin_method", comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
-    wl("max_combined_age", comment = "#_combine males into females at or below this bin number")
+    wl("Lbin_method",
+      comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
+    wl("max_combined_age",
+      comment = "#_combine males into females at or below this bin number")
 
     # age comps
     if (is.null(d[["agecomp"]])) {
       # empty data.frame with correct number of columns needed for terminator row
-      d[["agecomp"]] <- data.frame(matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Nsexes"]])))
+      d[["agecomp"]] <-
+        data.frame(
+          matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Nsexes"]])))
     } else {
       # check for and remove any 0 lines and warn
-      zero_agecomp <- apply(d[["agecomp"]][, -(1:9)], MARGIN = 1, FUN = sum) == 0
+      zero_agecomp <-
+        apply(d[["agecomp"]][, -seq_len(9)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_agecomp == TRUE)) {
         warning(
           "Lines of all zero age comp found. SS will exit on error if",
@@ -385,22 +392,14 @@ SS_writedat_3.30 <- function(datlist,
   }
   wl("N_sizefreq_methods")
   if (d[["N_sizefreq_methods"]] > 0) {
-    #  writeLines(paste(paste(d[["nbins_per_method"]],collapse=" "),"#_nbins_per_method"))
     wl.vector("nbins_per_method", comment = "#_nbins_per_method")
-    #  writeLines(paste(paste(d[["units_per_method"]],collapse=" "),"#_units_per_method"))
     wl.vector("units_per_method", comment = "#_units_per_method")
-    #  writeLines(paste(paste(d[["scale_per_method"]],collapse=" "),"#_scale_per_method"))
     wl.vector("scale_per_method", comment = "#_scale_per_method")
-    #  writeLines(paste(paste(d[["mincomp_per_method"]],collapse=" "),"#_mincomp_per_method"))
     wl.vector("mincomp_per_method", comment = "#_mincomp_per_method")
-    #  writeLines(paste(paste(d[["Nobs_per_method"]],collapse=" "),"#_Nobs_per_method"))
     wl.vector("Nobs_per_method", comment = "#_Nobs_per_method")
     writeComment("#\n#_Sizefreq bins")
-    #  wl("size_freq_bins_list")
     writeComment("#\n#_sizefreq_bins_list")
-    #  lapply(d[["sizefreq_bins_list"]],FUN=function(line){writeLines(paste(line,collapse=" "))})
     wl.list("sizefreq_bins_list")
-    #  writeLines("#_Year season Fleet Gender Partition SampleSize <data> ")
     lapply(d[["sizefreq_data_list"]], print.df, terminate = FALSE)
   }
   # write tagging data
@@ -424,9 +423,6 @@ SS_writedat_3.30 <- function(datlist,
 
   writeComment("#")
   writeLines("999", con = zz)
-  #  options(width=oldwidth,max.print=oldmax.print)
-  #  sink()
-  #  close(zz)
   if (verbose) {
     message("file written to ", outfile)
   }

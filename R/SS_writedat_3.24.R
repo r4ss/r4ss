@@ -148,7 +148,7 @@ SS_writedat_3.24 <- function(datlist,
           quote = FALSE
         )
       } else {
-        write.fwf(
+        write_fwf4(
           file = zz,
           x = dataframe,
           append = TRUE,

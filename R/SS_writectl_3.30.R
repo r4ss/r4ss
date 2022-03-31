@@ -149,7 +149,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
         )
         dataframe[["comments"]] <- rownames(dataframe)
       }
-      write.fwf(
+      write_fwf4(
         file = zz, x = dataframe, append = TRUE, sep = "\t", quote = FALSE,
         rownames = FALSE, colnames = FALSE, digits = 6
       )
