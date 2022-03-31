@@ -353,16 +353,19 @@ SS_writedat_3.30 <- function(datlist,
     print.df("age_info", terminate = FALSE)
 
     wl("Lbin_method",
-      comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
+      comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths"
+    )
     wl("max_combined_age",
-      comment = "#_combine males into females at or below this bin number")
+      comment = "#_combine males into females at or below this bin number"
+    )
 
     # age comps
     if (is.null(d[["agecomp"]])) {
       # empty data.frame with correct number of columns needed for terminator row
       d[["agecomp"]] <-
         data.frame(
-          matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Nsexes"]])))
+          matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Nsexes"]]))
+        )
     } else {
       # check for and remove any 0 lines and warn
       zero_agecomp <-
