@@ -46,25 +46,24 @@
 #' @export
 #'
 write_fwf4 <- function(x,
-                      file = "",
-                      append = FALSE,
-                      quote = FALSE,
-                      sep = " ",
-                      na = "NA",
-                      rownames = FALSE,
-                      colnames = TRUE,
-                      rowCol = NULL,
-                      justify = "left",
-                      width = NULL,
-                      eol = "\n",
-                      qmethod = c("escape", "double"),
-                      digits = 6,
-                      checkNA = TRUE,
-                      checkInfty = TRUE,
-                      checkError = TRUE
-                      ) {
+                       file = "",
+                       append = FALSE,
+                       quote = FALSE,
+                       sep = " ",
+                       na = "NA",
+                       rownames = FALSE,
+                       colnames = TRUE,
+                       rowCol = NULL,
+                       justify = "left",
+                       width = NULL,
+                       eol = "\n",
+                       qmethod = c("escape", "double"),
+                       digits = 6,
+                       checkNA = TRUE,
+                       checkInfty = TRUE,
+                       checkError = TRUE) {
   # If input is a matrix, convert it to a data.frame
-  if (is.matrix(x))x <- as.data.frame(x)
+  if (is.matrix(x)) x <- as.data.frame(x)
   # if checkError is TRUE, make checkNA and checkInfty TRUE,
   # regarless of their inputs
   if (checkError) {
@@ -75,37 +74,43 @@ write_fwf4 <- function(x,
   nCol <- ncol(x)
   if (colnames) {
     colnames <-
-    if (!is.null(colnames(x)) && length(colnames(x)) == nCol) {
-      paste0(colnames(x), collapse = sep)
-    }else{
-      paste0("V", seq_len(nCol), collapse = sep)
-    }
+      if (!is.null(colnames(x)) && length(colnames(x)) == nCol) {
+        paste0(colnames(x), collapse = sep)
+      } else {
+        paste0("V", seq_len(nCol), collapse = sep)
+      }
   }
   # Process by column
   for (i in seq_len(nCol)) {
     vect0 <- x[, i]
     if (!is.null(width) && length(width) != nCol) {
-      if (length(width) == 1)
+      if (length(width) == 1) {
         width1 <- width
-      if (length(width) != 1 & length(width) != nCol)
+      }
+      if (length(width) != 1 & length(width) != nCol) {
         stop("length(width) must be 1 or ncol(x)")
+      }
       width1 <- width[i]
     }
     #
     if (is.numeric(vect0)) {
       isNA <- is.na(vect0)
       if (any(isNA)) {
-        warning("Found NA in data.frame. Correspong inputs id\n",
-          x[isNA, ])
-        #if (checkNA)
+        warning(
+          "Found NA in data.frame. Correspong inputs id\n",
+          x[isNA, ]
+        )
+        # if (checkNA)
         #  stop("Found NA in data.frame")
         stopifnot("Found NA in data.frame" = checkNA == FALSE)
       }
       isInfty <- is.infinite(vect0)
       if (any(isInfty)) {
-        warning("Found Infinity in data.frame. Correspong inputs id\n",
-          x[isInfty, ])
-        #if (checkInfty)
+        warning(
+          "Found Infinity in data.frame. Correspong inputs id\n",
+          x[isInfty, ]
+        )
+        # if (checkInfty)
         #  stop("Found Infinity in data.frame")
         stopifnot("Found Infinity in data.frame" = checkInfty == FALSE)
       }
@@ -116,32 +121,32 @@ write_fwf4 <- function(x,
       if (is.null(width) || width1 < max(nchar(vect_char))) {
         width1 <- max(nchar(vect_char))
       }
-      blank0 <- paste0(rep(" ",  width1), collapse = "")
+      blank0 <- paste0(rep(" ", width1), collapse = "")
       vect_out <-
-        paste0(substring(blank0, 1, width1  - nchar(vect_char)), vect_char)
+        paste0(substring(blank0, 1, width1 - nchar(vect_char)), vect_char)
     } else if (is.character(vect0)) {
       # if vect0 is not numeric
       vect_char <- paste(vect0)
       if (is.null(width) || width1 < max(nchar(vect_char))) {
         width1 <- max(nchar(vect_char))
       }
-      blank0 <- paste0(rep(" ",  width1), collapse = "")
+      blank0 <- paste0(rep(" ", width1), collapse = "")
       vect_out <-
-      if (justify == "left") {
-        paste0(vect_char, substring(blank0, 1, width1  - nchar(vect_char)))
-      } else {
-        paste0(substring(blank0, 1, width1  - nchar(vect_char)), vect_char)
-      }
+        if (justify == "left") {
+          paste0(vect_char, substring(blank0, 1, width1 - nchar(vect_char)))
+        } else {
+          paste0(substring(blank0, 1, width1 - nchar(vect_char)), vect_char)
+        }
     } else {
       stop("x is neither numeric or character")
     }
 
     y <-
-    if (i == 1) {
-      vect_out
-    }else{
-      paste(y, vect_out, sep = sep)
-    }
+      if (i == 1) {
+        vect_out
+      } else {
+        paste(y, vect_out, sep = sep)
+      }
   }
   write.table(
     x = y,
@@ -165,5 +170,5 @@ write_fwf4 <- function(x,
 #' @param tol tolerace
 #' @export
 #'
-  is.wholenumber <-
-      function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+is.wholenumber <-
+  function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
