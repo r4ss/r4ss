@@ -1,4 +1,4 @@
-#' Get Stock Synthesis input files for a model
+#' Read all Stock Synthesis input files for a model
 #'
 #' Read all the input files for a Stock Synthesis model into R as a list object.
 #' These files will be in a single directory on your machine, i.e., `dir`.
@@ -15,8 +15,7 @@
 #'   The default is to read the original files.
 #' @template verbose
 #'
-#' @author Ian G. Taylor created this function while
-#' conducting the 2021 lingcod stock assessment.
+#' @author Ian G. Taylor, Kelli F. Johnson
 #'
 #' @return An invisible list is returned.
 #' The first element is the directory that was provided in the argument `dir`.
@@ -28,11 +27,15 @@
 #' * control
 #' * starter
 #' * forecast
+#' * wtatage (will be NULL if not required by the model)
 #'
 #' @export
 #' @seealso
-#' * [SS_readstarter()], [SS_readdat()], [SS_readctl()], and [SS_readforecast()]
-#'   are used to read in the input files.
+#' * [SS_write()] can be used to write the input files using the list
+#'   created by this function.
+#' * [SS_readstarter()], [SS_readdat()], [SS_readctl()],
+#'   [SS_readforecast()], and [SS_readwtatage()] are used by this
+#'   function to read in the input files.
 #' * [SS_output()] to read in equivalent SS output files.
 #'
 #' @examples
@@ -77,6 +80,14 @@ SS_read <- function(dir = NULL,
     file = file.path(dir, ifelse(ss_new, "forecast.ss_new", "forecast.ss")),
     verbose = verbose
   )
+  if (ctl[["EmpiricalWAA"]]) {
+    wtatage <- r4ss::SS_readwtatage(
+      file = file.path(dir, ifelse(ss_new, "wtatage.ss_new", "wtatage.ss")),
+      verbose = verbose
+    )
+  } else {
+    wtatage <- NULL
+  }
 
   # return a list of the lists for each file
   invisible(list(
@@ -85,6 +96,7 @@ SS_read <- function(dir = NULL,
     dat = dat,
     ctl = ctl,
     start = start,
-    fore = fore
+    fore = fore,
+    wtatage = wtatage
   ))
 }
