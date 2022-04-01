@@ -42,24 +42,26 @@ five model input files.
 }
 \examples{
 \dontrun{
-# read inputs to modify the data file
-inputs <- SS_read(
+# read inputlist to modify the data file
+inputlist <- SS_read(
   dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
 )
 
 # modify the starter file (use the par file)
-inputs$start$init_values_src <- 1
+inputlist[["start"]][["init_values_src"]] <- 1
 
 # modify the data file (remove age comps from years prior to 1990)
-inputs$dat$agecomp <- inputs$dat$agecomp \%>\% dplyr::filter(Yr >= 1990)
+inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] \%>\%
+                                     dplyr::filter(Yr >= 1990)
 
 # modify the control file (turn off early recdevs and change range of yrs)
-inputs$ctl$recdev_early_phase <- -abs(inputs$ctl$recdev_early_phase)
-inputs$ctl$MainRdevYrFirst <- 1980
+inputlist[["ctl"]][["recdev_early_phase"]] <-
+  -abs(inputlist[["ctl"]][["recdev_early_phase"]])
+inputlist[["ctl"]][["MainRdevYrFirst"]] <- 1980
 
 # write the files to a new folder within the source directory
-SS_write(inputs = inputs,
-         dir = file.path(inputs$dir, "modified_inputs"))
+SS_write(inputlist = inputlist,
+         dir = file.path(inputlist[["dir"]], "modified_inputs"))
 }
 }
 \seealso{

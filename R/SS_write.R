@@ -25,24 +25,26 @@
 
 #' @examples
 #' \dontrun{
-#' # read inputs to modify the data file
-#' inputs <- SS_read(
+#' # read inputlist to modify the data file
+#' inputlist <- SS_read(
 #'   dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
 #' )
 #'
 #' # modify the starter file (use the par file)
-#' inputs$start$init_values_src <- 1
+#' inputlist[["start"]][["init_values_src"]] <- 1
 #'
 #' # modify the data file (remove age comps from years prior to 1990)
-#' inputs$dat$agecomp <- inputs$dat$agecomp %>% dplyr::filter(Yr >= 1990)
+#' inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] %>%
+#'                                      dplyr::filter(Yr >= 1990)
 #'
 #' # modify the control file (turn off early recdevs and change range of yrs)
-#' inputs$ctl$recdev_early_phase <- -abs(inputs$ctl$recdev_early_phase)
-#' inputs$ctl$MainRdevYrFirst <- 1980
+#' inputlist[["ctl"]][["recdev_early_phase"]] <-
+#'   -abs(inputlist[["ctl"]][["recdev_early_phase"]])
+#' inputlist[["ctl"]][["MainRdevYrFirst"]] <- 1980
 #'
 #' # write the files to a new folder within the source directory
-#' SS_write(inputs = inputs,
-#'          dir = file.path(inputs$dir, "modified_inputs"))
+#' SS_write(inputlist = inputlist,
+#'          dir = file.path(inputlist[["dir"]], "modified_inputs"))
 #' }
 
 SS_write <- function(inputlist,
@@ -62,23 +64,23 @@ SS_write <- function(inputlist,
 
   # write data file
   if ("dat" %in% files) {
-    r4ss::SS_writedat(inputs$dat,
-      outfile = file.path(dir, inputs$start$datfile),
+    r4ss::SS_writedat(datlist = inputlist[["dat"]],
+      outfile = file.path(dir, inputlist[["start"]][["datfile"]]),
       overwrite = overwrite,
       verbose = verbose
     )
   }
   # write control file
   if ("ctl" %in% files) {
-    r4ss::SS_writectl(inputs$ctl,
-      outfile = file.path(dir, inputs$start$ctlfile),
+    r4ss::SS_writectl(ctllist = inputlist[["ctl"]],
+      outfile = file.path(dir, inputlist[["start"]][["ctlfile"]]),
       overwrite = overwrite,
       verbose = verbose
     )
   }
   # write starter file
   if ("start" %in% files) {
-    r4ss::SS_writestarter(inputs$start,
+    r4ss::SS_writestarter(mylist = inputlist[["start"]],
       dir = dir,
       overwrite = overwrite,
       verbose = verbose,
@@ -87,15 +89,15 @@ SS_write <- function(inputlist,
   }
   # write forecast file
   if ("fore" %in% files) {
-    r4ss::SS_writeforecast(inputs$fore,
+    r4ss::SS_writeforecast(mylist = inputlist[["fore"]],
       dir = dir,
       overwrite = overwrite,
       verbose = verbose
     )
   }
   # write wtatage file (if needed)
-  if ("wtatage" %in% files & inputs$ctl$EmpiricalWAA) {
-    r4ss::SS_writewtatage()(inputs$wtatage,
+  if ("wtatage" %in% files & inputlist[["ctl"]][["EmpiricalWAA"]]) {
+    r4ss::SS_writewtatage(mylist = inputlist[["wtatage"]],
       dir = dir,
       overwrite = overwrite,
       verbose = verbose

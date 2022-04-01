@@ -11,7 +11,8 @@ test_that("models can be read and written", {
     full.names = TRUE,
     recursive = FALSE
   )
-  message("Will read and write models", basename(all_mods))
+  message("Will read and write models:\n  ", paste(basename(all_mods),
+                                              collapse = ",\n  "))
   for (m in all_mods) {
     message("Now reading model ", basename(m))
 
@@ -55,9 +56,13 @@ test_that("models can be read and written", {
 
     # remove files again
     lapply(files, function(x) file.remove(x))
+    # remove wtatage file if it exists
+    if (file.exists(file.path(m, "wtatage.ss"))) {
+      file.remove(file.path(m, "wtatage.ss"))
+    }
 
     # write all files at once
-    SS_write(allfiles)
+    SS_write(inputlist = allfiles, dir = allfiles[["dir"]])
     # confirm that they got written
     lapply(files, function(x) expect_true(file.exists(x)))
   }

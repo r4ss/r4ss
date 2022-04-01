@@ -25,7 +25,7 @@ to the screen.}
 \value{
 An invisible list is returned.
 The first element is the directory that was provided in the argument \code{dir}.
-The second element is the result of \link{normalizePath(dir)},
+The second element is the result of \code{normalizePath(dir)},
 which gives the full path.
 The remaining four elements are list objects from reading in
 the following input files:

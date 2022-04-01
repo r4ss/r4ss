@@ -19,7 +19,7 @@
 #'
 #' @return An invisible list is returned.
 #' The first element is the directory that was provided in the argument `dir`.
-#' The second element is the result of [normalizePath(dir)],
+#' The second element is the result of `normalizePath(dir)`,
 #' which gives the full path.
 #' The remaining four elements are list objects from reading in
 #' the following input files:
