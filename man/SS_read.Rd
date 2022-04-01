@@ -60,7 +60,7 @@ created by this function.
 \item \code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_readctl]{SS_readctl()}},
 \code{\link[=SS_readforecast]{SS_readforecast()}}, and \code{\link[=SS_readwtatage]{SS_readwtatage()}} are used by this
 function to read in the input files.
-\item \code{\link[=SS_output]{SS_output()}} to read in equivalent SS output files.
+\item \code{\link[=SS_output]{SS_output()}} to read in equivalent SS3 output files.
 }
 }
 \author{

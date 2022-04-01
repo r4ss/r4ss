@@ -36,7 +36,7 @@
 #' * [SS_readstarter()], [SS_readdat()], [SS_readctl()],
 #'   [SS_readforecast()], and [SS_readwtatage()] are used by this
 #'   function to read in the input files.
-#' * [SS_output()] to read in equivalent SS output files.
+#' * [SS_output()] to read in equivalent SS3 output files.
 #'
 #' @examples
 #' # Read in the 'simple' example model stored in {r4ss}

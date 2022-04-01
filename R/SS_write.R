@@ -6,7 +6,7 @@
 #' using the `SS_write*()` functions for the four or
 #' five model input files.
 #'
-#' @param inputs list created by [SS_read()]
+#' @param inputlist list created by [SS_read()]
 #' @template dir
 #' @param files vector of file types to write. The default is the four
 #' standard input files plus wtatage.ss if used. The ss.par file is not
@@ -45,21 +45,19 @@
 #'          dir = file.path(inputs$dir, "modified_inputs"))
 #' }
 
-SS_write <- function(inputs,
-                     dir = NULL,
+SS_write <- function(inputlist,
+                     dir = "",
                      files = c("dat", "ctl", "start", "fore", "wtatage"),
                      overwrite = FALSE,
                      verbose = FALSE) {
   # create directory if not already there
-  if (!is.null(dir)) {
+  if (dir != "") {
     if (!dir.exists(dir)) {
       if (verbose) {
         message("Creating new directory: ", dir)
       }
       dir.create(dir)
     }
-  } else {
-    dir <- ""
   }
 
   # write data file

@@ -5,15 +5,15 @@
 \title{Write all Stock Synthesis input files for a model}
 \usage{
 SS_write(
-  inputs,
-  dir = NULL,
+  inputlist,
+  dir = "",
   files = c("dat", "ctl", "start", "fore", "wtatage"),
   overwrite = FALSE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{inputs}{list created by \code{\link[=SS_read]{SS_read()}}}
+\item{inputlist}{list created by \code{\link[=SS_read]{SS_read()}}}
 
 \item{dir}{A file path to the directory of interest.
 Typically used with \code{file}, an additional input argument,
