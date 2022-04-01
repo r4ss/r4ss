@@ -37,15 +37,28 @@ test_that("models can be read and written", {
     # the length of the native starter object
     expect_equal(length(start), length(allfiles[["start"]]))
 
-    #### Checks related to writing files
-    files <- file.path(m, c("starter.ss", "forecast.ss", start[["datfile"]], 
+    #### Checks related to SS_write* functions
+    files <- file.path(m, c("starter.ss", "forecast.ss", start[["datfile"]],
                             start[["ctlfile"]]))
+    # remove files
     lapply(files, function(x) file.remove(x))
+
+    # write files individually
     message("Now writing model ", basename(m))
     SS_writestarter(start, dir = m, verbose = FALSE)
     SS_writeforecast(fore, dir = m, verbose = FALSE)
     SS_writedat(dat, outfile = file.path(m, start[["datfile"]]), verbose = FALSE)
     SS_writectl(ctl, outfile = file.path(m, start[["ctlfile"]]), verbose = FALSE)
+
+    # confirm that they got written
+    lapply(files, function(x) expect_true(file.exists(x)))
+
+    # remove files again
+    lapply(files, function(x) file.remove(x))
+
+    # write all files at once
+    SS_write(allfiles)
+    # confirm that they got written
     lapply(files, function(x) expect_true(file.exists(x)))
   }
 
