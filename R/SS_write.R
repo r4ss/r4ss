@@ -8,9 +8,6 @@
 #'
 #' @param inputlist list created by [SS_read()]
 #' @template dir
-#' @param files vector of file types to write. The default is the four
-#' standard input files plus wtatage.ss if used. The ss.par file is not
-#' yet supported by this function or [SS_read()].
 #' @template overwrite
 #' @template verbose
 #'
@@ -35,7 +32,7 @@
 #'
 #' # modify the data file (remove age comps from years prior to 1990)
 #' inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] %>%
-#'                                      dplyr::filter(Yr >= 1990)
+#'   dplyr::filter(Yr >= 1990)
 #'
 #' # modify the control file (turn off early recdevs and change range of yrs)
 #' inputlist[["ctl"]][["recdev_early_phase"]] <-
@@ -43,13 +40,13 @@
 #' inputlist[["ctl"]][["MainRdevYrFirst"]] <- 1980
 #'
 #' # write the files to a new folder within the source directory
-#' SS_write(inputlist = inputlist,
-#'          dir = file.path(inputlist[["dir"]], "modified_inputs"))
+#' SS_write(
+#'   inputlist = inputlist,
+#'   dir = file.path(inputlist[["dir"]], "modified_inputs")
+#' )
 #' }
-
 SS_write <- function(inputlist,
                      dir = "",
-                     files = c("dat", "ctl", "start", "fore", "wtatage"),
                      overwrite = FALSE,
                      verbose = FALSE) {
   # create directory if not already there
@@ -62,47 +59,66 @@ SS_write <- function(inputlist,
     }
   }
 
-  # write data file
-  if ("dat" %in% files) {
-    r4ss::SS_writedat(datlist = inputlist[["dat"]],
-      outfile = file.path(dir, inputlist[["start"]][["datfile"]]),
-      overwrite = overwrite,
-      verbose = verbose
-    )
-  }
-  # write control file
-  if ("ctl" %in% files) {
-    r4ss::SS_writectl(ctllist = inputlist[["ctl"]],
-      outfile = file.path(dir, inputlist[["start"]][["ctlfile"]]),
-      overwrite = overwrite,
-      verbose = verbose
-    )
-  }
+  # check for contents of inputlist
+  check_inputlist(inputlist)
+
   # write starter file
-  if ("start" %in% files) {
-    r4ss::SS_writestarter(mylist = inputlist[["start"]],
+  if ("start" %in% names(inputlist)) {
+    r4ss::SS_writestarter(
+      mylist = inputlist[["start"]],
       dir = dir,
       overwrite = overwrite,
       verbose = verbose,
       warn = FALSE
     )
+  } else {
+    stop(
+      '"start" element of input list not available ',
+      "(required to get names of data and control files)"
+    )
   }
+
+  # write data file
+  if ("dat" %in% names(inputlist)) {
+    r4ss::SS_writedat(
+      datlist = inputlist[["dat"]],
+      outfile = file.path(dir, inputlist[["start"]][["datfile"]]),
+      overwrite = overwrite,
+      verbose = verbose
+    )
+  }
+
+  # write control file
+  if ("ctl" %in% names(inputlist)) {
+    r4ss::SS_writectl(
+      ctllist = inputlist[["ctl"]],
+      outfile = file.path(dir, inputlist[["start"]][["ctlfile"]]),
+      overwrite = overwrite,
+      verbose = verbose
+    )
+  }
+
   # write forecast file
-  if ("fore" %in% files) {
-    r4ss::SS_writeforecast(mylist = inputlist[["fore"]],
+  if ("fore" %in% names(inputlist)) {
+    r4ss::SS_writeforecast(
+      mylist = inputlist[["fore"]],
       dir = dir,
       overwrite = overwrite,
       verbose = verbose
     )
   }
+
   # write wtatage file (if needed)
-  if ("wtatage" %in% files & inputlist[["ctl"]][["EmpiricalWAA"]]) {
-    r4ss::SS_writewtatage(mylist = inputlist[["wtatage"]],
+  if ("wtatage" %in% names(inputlist) &
+    inputlist[["ctl"]][["EmpiricalWAA"]]) {
+    r4ss::SS_writewtatage(
+      mylist = inputlist[["wtatage"]],
       dir = dir,
       overwrite = overwrite,
       verbose = verbose
     )
   }
+
   # message noting that all files have been written
   if (verbose) {
     message("Wrote all input files to ", dir)

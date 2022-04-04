@@ -43,11 +43,9 @@
 #' inputs <- SS_read(
 #'   dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
 #' )
-
 SS_read <- function(dir = NULL,
                     ss_new = FALSE,
                     verbose = FALSE) {
-
   if (is.null(dir)) {
     dir <- getwd()
   }

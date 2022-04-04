@@ -4,13 +4,7 @@
 \alias{SS_write}
 \title{Write all Stock Synthesis input files for a model}
 \usage{
-SS_write(
-  inputlist,
-  dir = "",
-  files = c("dat", "ctl", "start", "fore", "wtatage"),
-  overwrite = FALSE,
-  verbose = FALSE
-)
+SS_write(inputlist, dir = "", overwrite = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{inputlist}{list created by \code{\link[=SS_read]{SS_read()}}}
@@ -22,10 +16,6 @@ The default value is \code{dir = NULL}, which leads to using
 the current working directory, and thus, full file paths should
 not be specified for other arguments as they will be appended
 to \code{dir}.}
-
-\item{files}{vector of file types to write. The default is the four
-standard input files plus wtatage.ss if used. The ss.par file is not
-yet supported by this function or \code{\link[=SS_read]{SS_read()}}.}
 
 \item{overwrite}{A logical value specifying if the existing file(s)
 should be overwritten. The default value is \code{overwrite = FALSE}.}
@@ -52,7 +42,7 @@ inputlist[["start"]][["init_values_src"]] <- 1
 
 # modify the data file (remove age comps from years prior to 1990)
 inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] \%>\%
-                                     dplyr::filter(Yr >= 1990)
+  dplyr::filter(Yr >= 1990)
 
 # modify the control file (turn off early recdevs and change range of yrs)
 inputlist[["ctl"]][["recdev_early_phase"]] <-
@@ -60,8 +50,10 @@ inputlist[["ctl"]][["recdev_early_phase"]] <-
 inputlist[["ctl"]][["MainRdevYrFirst"]] <- 1980
 
 # write the files to a new folder within the source directory
-SS_write(inputlist = inputlist,
-         dir = file.path(inputlist[["dir"]], "modified_inputs"))
+SS_write(
+  inputlist = inputlist,
+  dir = file.path(inputlist[["dir"]], "modified_inputs")
+)
 }
 }
 \seealso{
