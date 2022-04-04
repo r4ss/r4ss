@@ -91,7 +91,6 @@
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 #' @examples
-#'
 #' \dontrun{
 #' # Set up the folders ----
 #' # Create a temporary directory, feel free to change this location
@@ -107,34 +106,38 @@
 #' )
 #' # copy comp report file
 #' file.copy(
-#' from = file.path(example_path, "CompReport.sso"),
-#' to = file.path(mod_path, "CompReport.sso")
+#'   from = file.path(example_path, "CompReport.sso"),
+#'   to = file.path(mod_path, "CompReport.sso")
 #' )
 #' # Use the SS_tune_comps function----
-#' 
+#'
 #' # Examples where a model is not run ----
-#' 
+#'
 #' # Just get the Francis and MI tables, without running the model. Note that the
-#' # model in mod_path needs to already have been run with Stock Synthesis, so 
+#' # model in mod_path needs to already have been run with Stock Synthesis, so
 #' # that a report file is available.
-#' 
-#' weight_table <- SS_tune_comps(dir = mod_path,
-#'                               option = "none",
-#'                               verbose = FALSE)
-#' # view the weights. Note that the columns New_Francis and New_MI show the 
+#'
+#' weight_table <- SS_tune_comps(
+#'   dir = mod_path,
+#'   option = "none",
+#'   verbose = FALSE
+#' )
+#' # view the weights. Note that the columns New_Francis and New_MI show the
 #' # weights, but neither were added to the New_Var_adj column
 #' weight_table
-#' 
-#' # Get the Francis and MI tables, but with the Francis weights in the 
+#'
+#' # Get the Francis and MI tables, but with the Francis weights in the
 #' # New_Var_adj column. Note if option = "MI" were used, the output would be
 #' # the same except that the New_Var_adj column would contain the MI weights.
-#' weight_table_fran <- SS_tune_comps(dir = mod_path,
-#'                                         option = "Francis",
-#'                                         verbose = FALSE)
+#' weight_table_fran <- SS_tune_comps(
+#'   dir = mod_path,
+#'   option = "Francis",
+#'   verbose = FALSE
+#' )
 #' weight_table_fran
-#' 
+#'
 #' # Add Dirichlet multinomial tuning parameters to the model, without running it.
-#' 
+#'
 #' DM_parm_info <- SS_tune_comps(
 #'   option = "DM",
 #'   niters_tuning = 0, # 0 means the model will not be run.
@@ -142,18 +145,18 @@
 #'   model = "ss",
 #'   extras = "-nohess",
 #'   verbose = FALSE
-#'   )
-#'  # See the Dirichlet parameters added to the model.
-#'  DM_parm_info[["tuning_table_list"]]
-#'  # can also look in the data file to see which fleets of comp data now have
-#'  # DM parameters. The "ParmSelect" colum of the len_info and age_info 
-#'  contains the dirichlet multinomial parameter numbers.
-#'  dat <- SS_readdat(file.path(mod_path, "simple_data.ss"),verbose = FALSE)
-#'  dat[["len_info"]]
-#'  dat[["age_info"]]
-#' 
+#' )
+#' # See the Dirichlet parameters added to the model.
+#' DM_parm_info[["tuning_table_list"]]
+#' # can also look in the data file to see which fleets of comp data now have
+#' # DM parameters. The "ParmSelect" column of the len_info and age_info
+#' # contains the dirichlet multinomial parameter numbers.
+#' dat <- SS_readdat(file.path(mod_path, "simple_data.ss"), verbose = FALSE)
+#' dat[["len_info"]]
+#' dat[["age_info"]]
+#'
 #' # Examples where models are run ----
-#' 
+#'
 #' # Run MI weighting and allow upweighting for 1 iteration. Assume that an ss
 #' # executable called "ss or ss.exe" is available in the mod_path folder.
 #' # If the executable is not available, then the call will exit on error.
@@ -169,8 +172,8 @@
 #' )
 #' # see the tuning table, and the weights applied to the model.
 #' tune_info
-#' 
-#' # Add Dirichlet multinomial paramters and rerun. The function will 
+#'
+#' # Add Dirichlet multinomial paramters and rerun. The function will
 #' # automatically remove the MI weighting and add in the DM parameters.
 #' # Use extras = "-nohess" when running model to speed up run.
 #' DM_parm_info <- SS_tune_comps(
@@ -183,7 +186,7 @@
 #' )
 #' # see the DM parameter estimates
 #' DM_parm_info[["tuning_table_list"]]
-#' 
+#'
 #' # cleanup ----
 #' unlink(mod_path, recursive = TRUE)
 #' }
@@ -216,7 +219,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   # get the r4ss files
   start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
   dat <- SS_readdat(file.path(dir, start[["datfile"]]),
-    verbose = FALSE, section = 1)
+    verbose = FALSE, section = 1
+  )
   ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
     use_datlist = TRUE, datlist = dat,
     verbose = FALSE
@@ -260,11 +264,11 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
     if (!is.null(ctl[["dirichlet_parms"]])) {
       if (verbose) message("Removing DM parameters from model")
       # take DM specifications out of data file
-      if(!is.null(dat[["len_info"]])){
+      if (!is.null(dat[["len_info"]])) {
         dat[["len_info"]][, "CompError"] <- 0
         dat[["len_info"]][, "ParmSelect"] <- 0
       }
-      if(!is.null(dat[["age_info"]])){
+      if (!is.null(dat[["age_info"]])) {
         dat[["age_info"]][, "CompError"] <- 0
         dat[["age_info"]][, "ParmSelect"] <- 0
       }
@@ -293,7 +297,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           covar = !grepl("nohess", extras),
           hidewarn = TRUE
         )
-     )
+      )
     }
     if (niters_tuning == 0 | option == "none") {
       # calculate the tuning table and rerun
@@ -452,7 +456,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
         ctl[["Variance_adjustment_list"]] <-
           ctl[["Variance_adjustment_list"]][!ctl[["Variance_adjustment_list"]][["Factor"]] %in%
-                                            c(4:5),]
+            c(4:5), ]
       }
       # remove the list if there's nothing left
       if (nrow(ctl[["Variance_adjustment_list"]]) == 0) {
@@ -615,7 +619,7 @@ get_tuning_table <- function(replist, fleets,
           # starting with version 3.30.16?
           MI_mult <-
             tunetable[["HarMean_effN"]][tunetable[["Fleet"]] == fleet] /
-            tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
+              tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
           stop("Model output missing required values, perhaps due to an older version of SS")

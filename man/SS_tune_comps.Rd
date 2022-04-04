@@ -134,7 +134,6 @@ calculated from the harmonic mean and input sample sizes.
 }
 
 \examples{
-
 \dontrun{
 # Set up the folders ----
 # Create a temporary directory, feel free to change this location
@@ -150,30 +149,34 @@ file.copy(
 )
 # copy comp report file
 file.copy(
-from = file.path(example_path, "CompReport.sso"),
-to = file.path(mod_path, "CompReport.sso")
+  from = file.path(example_path, "CompReport.sso"),
+  to = file.path(mod_path, "CompReport.sso")
 )
 # Use the SS_tune_comps function----
 
 # Examples where a model is not run ----
 
 # Just get the Francis and MI tables, without running the model. Note that the
-# model in mod_path needs to already have been run with Stock Synthesis, so 
+# model in mod_path needs to already have been run with Stock Synthesis, so
 # that a report file is available.
 
-weight_table <- SS_tune_comps(dir = mod_path,
-                              option = "none",
-                              verbose = FALSE)
-# view the weights. Note that the columns New_Francis and New_MI show the 
+weight_table <- SS_tune_comps(
+  dir = mod_path,
+  option = "none",
+  verbose = FALSE
+)
+# view the weights. Note that the columns New_Francis and New_MI show the
 # weights, but neither were added to the New_Var_adj column
 weight_table
 
-# Get the Francis and MI tables, but with the Francis weights in the 
+# Get the Francis and MI tables, but with the Francis weights in the
 # New_Var_adj column. Note if option = "MI" were used, the output would be
 # the same except that the New_Var_adj column would contain the MI weights.
-weight_table_fran <- SS_tune_comps(dir = mod_path,
-                                        option = "Francis",
-                                        verbose = FALSE)
+weight_table_fran <- SS_tune_comps(
+  dir = mod_path,
+  option = "Francis",
+  verbose = FALSE
+)
 weight_table_fran
 
 # Add Dirichlet multinomial tuning parameters to the model, without running it.
@@ -185,15 +188,15 @@ DM_parm_info <- SS_tune_comps(
   model = "ss",
   extras = "-nohess",
   verbose = FALSE
-  )
- # See the Dirichlet parameters added to the model.
- DM_parm_info[["tuning_table_list"]]
- # can also look in the data file to see which fleets of comp data now have
- # DM parameters. The "ParmSelect" colum of the len_info and age_info 
- contains the dirichlet multinomial parameter numbers.
- dat <- SS_readdat(file.path(mod_path, "simple_data.ss"),verbose = FALSE)
- dat[["len_info"]]
- dat[["age_info"]]
+)
+# See the Dirichlet parameters added to the model.
+DM_parm_info[["tuning_table_list"]]
+# can also look in the data file to see which fleets of comp data now have
+# DM parameters. The "ParmSelect" column of the len_info and age_info
+# contains the dirichlet multinomial parameter numbers.
+dat <- SS_readdat(file.path(mod_path, "simple_data.ss"), verbose = FALSE)
+dat[["len_info"]]
+dat[["age_info"]]
 
 # Examples where models are run ----
 
@@ -213,7 +216,7 @@ tune_info <- SS_tune_comps(
 # see the tuning table, and the weights applied to the model.
 tune_info
 
-# Add Dirichlet multinomial paramters and rerun. The function will 
+# Add Dirichlet multinomial paramters and rerun. The function will
 # automatically remove the MI weighting and add in the DM parameters.
 # Use extras = "-nohess" when running model to speed up run.
 DM_parm_info <- SS_tune_comps(
