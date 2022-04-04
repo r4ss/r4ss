@@ -28,6 +28,8 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
   }
   # Check user inputs are valid to avoid issues with functions.
   # check ctllist
+  stopifnot(is.list(ctllist))
+  stopifnot("type" %in% names(ctllist))
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
     stop("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
   }
