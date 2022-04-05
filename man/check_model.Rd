@@ -22,5 +22,5 @@ an input argument to numerous \code{r4ss} functions,
 does not contain the extension and is available.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

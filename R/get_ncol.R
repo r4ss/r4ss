@@ -14,7 +14,7 @@
 #' @noRd
 #' @return
 #' An integer value specifying the number of columns in `file`.
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @seealso [SS_output()]
 #'
 get_ncol <- function(file, skip = 0, nrows = -1) {

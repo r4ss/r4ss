@@ -6,7 +6,7 @@
 #'
 #' @template model
 #' @param mydir The directory where `model` is located.
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @return A cleaned `model` name based on the input argument.
 
 check_model <- function(model, mydir = getwd()) {

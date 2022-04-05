@@ -11,7 +11,7 @@
 #' @template overwrite
 #' @template verbose
 #' @template warn
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @export
 #' @seealso [SS_readwtatage()]
 #'

@@ -34,5 +34,5 @@ with the default entry that does not end in \code{.sso}, is
 modified differently.\verb{_i.sso} is added to the file name.
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }
