@@ -5,7 +5,7 @@
 #'
 #' @param inputlist List created by the `SS_read()` function with
 #' elements "dat", "ctl", "start", "fore", and (optionally) "wtatage".
-#' @author Kelli Faye Johnson, Ian G. Taylor
+#' @author Kelli F. Johnson, Ian G. Taylor
 #' @return Either TRUE if the input list is valid, or FALSE if not, with
 #' a warning about which elements are missing.
 #' @seealso [SS_write()]

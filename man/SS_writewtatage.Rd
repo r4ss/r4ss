@@ -46,5 +46,5 @@ created using \code{\link[=SS_readwtatage]{SS_readwtatage()}}
 \code{\link[=SS_readwtatage]{SS_readwtatage()}}
 }
 \author{
-Kelli Faye Johnson
+Kelli F. Johnson
 }

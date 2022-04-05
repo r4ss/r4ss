@@ -12,7 +12,7 @@
 #' @template verbose
 #' @param pattern A character value specifying the file names to search
 #' for in `getwd()`.
-#' @author Kelli Faye Johnson
+#' @author Kelli F. Johnson
 #' @returns Invisibly returns a vector of logical values specifying
 #' whether or not the file was successfully renamed.
 #'

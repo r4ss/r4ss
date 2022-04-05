@@ -22,5 +22,5 @@ Check the elements of the \code{inputlist} list used as an argument in
 \code{\link[=SS_write]{SS_write()}}
 }
 \author{
-Kelli Faye Johnson, Ian G. Taylor
+Kelli F. Johnson, Ian G. Taylor
 }
