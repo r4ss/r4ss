@@ -832,11 +832,7 @@ SS_output <-
     if (comp) { # skip this stuff if no CompReport.sso file
       # read header section of file to get bin information
       # first, figure out how many columns are needed
-
-      # IGT 11-Sept-2020: temporarily hardwiring while I figure out how
-      #                   read.table works
-      ncols.compfile <- 300
-      # ncols.compfile <- get_ncol(compfile, skip = 3, nrows = 25)
+      ncols.compfile <- get_ncol(compfile, skip = 3, nrows = 25)
 
       # now read table using the appropriate number of columns
       allbins <- read.table(
