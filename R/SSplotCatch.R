@@ -168,7 +168,6 @@ SSplotCatch <-
     endyr <- replist[["endyr"]]
     FleetNames <- replist[["FleetNames"]]
     IsFishFleet <- replist[["IsFishFleet"]]
-    SS_versionshort <- toupper(substr(replist[["SS_version"]], 1, 8))
     SS_versionNumeric <- replist[["SS_versionNumeric"]]
 
     # if the user has no specified whether catch should be in numbers or not

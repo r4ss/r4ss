@@ -1,18 +1,18 @@
-#' read Stock Synthesis data file
+#' Read Stock Synthesis data file
 #'
 #' Read Stock Synthesis data file into list object in R. This function is a
-#' wrapper which calls SS_readdat_2.00, SS_readdat_3.00, SS_readdat_3.24, or SS_readdat_3.30
+#' wrapper that calls
+#' [SS_readdat_2.00()], [SS_readdat_3.00()],
+#' [SS_readdat_3.24()], or [SS_readdat_3.30()]
 #' (and potentially additional functions in the future). This setup allows those
 #' functions to be cleaner (if somewhat redundant) than a single function that
-#' attempts to do everything. Returned datlist is mostly consistent across versions.
-#'
+#' attempts to do everything.
+#' The returned list is mostly consistent across versions.
 #'
 #' @template file
-#' @param version SS version number.
-#'  Currently "2.00", "3.00", "3.24" or "3.30" are supported,
-#'  either as character or numeric values (noting that numeric 3.30  = 3.3). If
-#'  version is NULL, the version (3.24 or 3.30) will be looked for on the first
-#'  line of the file.
+#' @param version Deprecated. SS3 version number, where only versions
+#'   "3.24" or newer are supported and this can be found in the input file
+#'   rather than supplying it as an argument.
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
@@ -31,31 +31,24 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 
-SS_readdat <- function(file, version = NULL, verbose = TRUE, echoall = FALSE, section = NULL) {
+SS_readdat <- function(file,
+                       version = lifecycle::deprecated(),
+                       verbose = TRUE,
+                       echoall = FALSE,
+                       section = NULL) {
 
-  # automatic testing of version number ----
-  if (is.null(version)) {
-    # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what = character(), nlines = 5, quiet = !verbose)
-    version <- substring(version, 3, 6)
-    version <- version[version %in% c("3.24", "3.30")]
-    # if that fails, look for data.ss_new file in the same directory
-    if (length(version) > 0) {
-      if (verbose) cat("assuming version", version, "based on first five lines of data file\n")
-    } else {
-      newfile <- file.path(dirname(file), "data.ss_new")
-      if (file.exists(newfile)) {
-        version <- scan(newfile, what = character(), nlines = 1, quiet = !verbose)
-        version <- substring(version, 3, 6)
-        if (verbose) cat("assuming version", version, "based on first line of data.ss_new\n")
-      } else {
-        stop("input 'version' required due to missing value at top of", file)
-      }
-    }
+  # warn about soft deprecated arguments ----
+  if (lifecycle::is_present(version)) {
+    lifecycle::deprecate_warn(
+      when = "1.43.0",
+      what = "SS_readctl(version)",
+      details = "`version` is replaced by [version_search(file)] that finds the version."
+    )
   }
-  nver <- as.numeric(substring(version, 1, 4))
-  if (verbose) cat("Char version is ", version, "\n")
-  if (verbose) cat("Numeric version is ", nver, "\n")
+  nver <- get_version_search(file,
+    allow = c("2.00", "3.00", "3.24", "3.30"),
+    verbose = verbose
+  )
 
   # call function for SS version 2.00 ----
   if (nver < 3) {

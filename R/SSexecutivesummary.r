@@ -510,8 +510,10 @@ SSexecutivesummary <- function(replist,
     f.btgt.name <- "Fstd_Btgt"
     f.spr.name <- "Fstd_SPR"
 
-    # if (toupper(substr(replist[["SS_version"]], 10, 11)) < 13){
-    if (toupper(substr(replist[["SS_version"]], 6, 7)) < 13) {
+    if (
+      replist[["SS_versionshort"]] == "3.30" &
+      substr(replist[["SS_version"]], 6, 7) < 13
+    ) {
       sb.unfished <- "SSB_Unfished"
       smry.unfished <- "SmryBio_Unfished"
       recr.unfished <- "Recr_Unfished"
@@ -520,7 +522,11 @@ SSexecutivesummary <- function(replist,
       totyield.msy <- "TotYield_MSY"
     }
 
-    if (toupper(substr(replist[["SS_version"]], 6, 7)) > 15) {
+    if (!(
+      replist[["SS_versionNumeric"]] <= 3.3 &
+      substr(replist[["SS_version"]], 6, 7) <= 15
+      )
+    ) {
       f.msy.name <- "annF_MSY"
       f.btgt.name <- "annF_Btgt"
       f.spr.name <- "annF_SPR"

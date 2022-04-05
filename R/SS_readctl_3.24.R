@@ -211,7 +211,7 @@ SS_readctl_3.24 <- function(file,
       if (!file.exists(datlist)) {
         stop("Cannot find data file specified in datlist: ", datlist)
       }
-      datlist <- SS_readdat(file = datlist, version = "3.24", verbose = FALSE)
+      datlist <- SS_readdat(file = datlist, version = version, verbose = FALSE)
     }
     if (is.null(datlist)) {
       stop("datlist from SS_readdat is needed if use_datlist is TRUE")
@@ -244,7 +244,7 @@ SS_readctl_3.24 <- function(file,
   # specifications ----
   ctllist[["sourcefile"]] <- file
   ctllist[["type"]] <- "Stock_Synthesis_control_file"
-  ctllist[["ReadVersion"]] <- "3.24"
+  ctllist[["ReadVersion"]] <- version
 
   ctllist[["eof"]] <- FALSE
   # internally used commmon values ----

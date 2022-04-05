@@ -1,33 +1,49 @@
-#' read forecast file
+#' Read forecast file
 #'
-#' read Stock Synthesis forecast file into list object in R
+#' Read Stock Synthesis forecast file into list object in R.
 #'
 #'
 #' @template file
 #' @param Nfleets Number of fleets (not required in 3.30).
 #' @param Nareas Number of areas (not required in 3.30).
-#' @param nseas number of seasons (not required in 3.30).
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
+#' @param nseas Number of seasons (not required in 3.30).
+#' @param version Deprecated. SS3 version number, where only versions
+#'   "3.24" or newer are supported and this can be found in the input file
+#'   rather than supplying it as an argument.
+#'   If your file does not have version information, just include
+#'   `#V3.30` in `file` as the first row if you are using SS3 3.30 or newer.
+#'   You should upgrade your files if you are using an older version.
 #' @param readAll Should the function continue even if Forecast = 0 or -1
 #' (at which point SS stops reading)?
-#' @param verbose Should there be verbose output while running the file?
+#' @template verbose
 #' @author Ian Taylor + Nathan Vaughan
 #' @export
 #' @seealso [SS_readstarter()], [SS_readdat()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()],
 
-SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL, nseas = NULL,
-                            version = "3.30", readAll = FALSE, verbose = TRUE) {
-
-  # function to read Stock Synthesis forecast files
-  if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
-    # turns out 3.30 != "3.30" in R
-    stop("version must be either 3.24 or 3.30")
+SS_readforecast <- function(file = "forecast.ss",
+                            Nfleets = NULL,
+                            Nareas = NULL,
+                            nseas = NULL,
+                            version = lifecycle::deprecated(),
+                            readAll = FALSE,
+                            verbose = TRUE) {
+  # warn about soft deprecated arguments ----
+  if (lifecycle::is_present(version)) {
+    lifecycle::deprecate_warn(
+      when = "1.43.0",
+      what = "SS_readctl(version)",
+      details = "`version` is replaced by [version_search(file)] that finds the version."
+    )
   }
+  nver <- get_version_search(
+    file = file,
+    allow = c("3.24", "3.30"),
+    verbose = verbose
+  )
 
-  if (version == "3.24") {
+  if (nver == 3.24) {
     if (is.null(Nfleets) | is.null(Nareas) | is.null(nseas)) {
       stop("version 3.24 must include values for Nfleets, Nareas, and nseas. At least one of these is missing")
     }
@@ -36,7 +52,6 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
   if (verbose) cat("running SS_readforecast\n")
   dat <- readLines(file, warn = FALSE)
 
-  nver <- as.numeric(substring(version, 1, 4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
@@ -181,7 +196,7 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
   if (!is.null(Nareas)) {
     forelist[["Nareas"]] <- as.numeric(Nareas)
   }
-  forelist[["SSversion"]] <- as.numeric(version)
+  forelist[["SSversion"]] <- nver
   forelist[["sourcefile"]] <- file
   forelist[["type"]] <- "Stock_Synthesis_forecast_file"
 
@@ -257,7 +272,7 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
       cat("Forecast years: ", forelist[["Fcast_years"]], "\n")
     }
 
-    if (version == "3.30" | version == 3.3) {
+    if (nver == 3.3) {
       forelist <- add_elem(forelist, "Fcast_selex")
       if (verbose) {
         cat("Forecast selectivity option: ", forelist[["Fcast_selex"]], "\n")
@@ -288,7 +303,7 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
     forelist <- add_elem(forelist, "fleet_relative_F")
     forelist <- add_elem(forelist, "basis_for_fcast_catch_tuning")
 
-    if (version == 3.24) {
+    if (nver == 3.24) {
       if (forelist[["fleet_relative_F"]] == 2) {
         forelist <- add_df(forelist, nrows = forelist[["nseas"]], ncol = forelist[["Nfleets"]], col.names = paste0("Fleet ", 1:forelist[["Nfleets"]]), name = "vals_fleet_relative_f")
       }

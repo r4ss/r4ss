@@ -463,7 +463,7 @@ SS_plots <-
       ystep <- -.05
       text(0, y, "Plots created using the 'r4ss' package in R", pos = 4)
       y <- y + ystep
-      text(0, y, paste("Stock Synthesis version:", substr(SS_version, 1, 9)), pos = 4)
+      text(0, y, paste("Stock Synthesis version:", SS_version), pos = 4)
       y <- y + ystep
       text(0, y, StartTime, pos = 4)
       y <- y + ystep
