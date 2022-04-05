@@ -183,14 +183,23 @@ jobs:
           mv SS330/ss.exe SS330/ss_win.exe
           mv SS330/ss_opt.exe SS330/ss_opt_win.exe
 
-      - name: Build stock synthesis for unix
-        if: matrix.config.os == 'macOS-latest' || matrix.config.os == 'ubuntu-latest'
+      - name: Build stock synthesis for mac
+        if: matrix.config.os == 'macOS-latest'
         run: |
           rm -rf SS330
           rm -rf ss_osx.tar
           mkdir SS330
           /bin/bash ./Make_SS_330_new.sh -b SS330
           /bin/bash ./Make_SS_330_new.sh -b SS330 -o
+          
+      - name: Build stock synthesis for linux with p flag
+        if:  matrix.config.os == 'ubuntu-latest'
+        run: |
+          rm -rf SS330
+          rm -rf ss_osx.tar
+          mkdir SS330
+          /bin/bash ./Make_SS_330_new.sh -b SS330 -p
+          /bin/bash ./Make_SS_330_new.sh -b SS330 -o -p
 
       - name: Verify binary on mac
         if: matrix.config.os == 'macOS-latest'
