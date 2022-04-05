@@ -12,7 +12,8 @@ test_that("models can be read and written", {
     recursive = FALSE
   )
   message("Will read and write models:\n  ", paste(basename(all_mods),
-                                              collapse = ",\n  "))
+    collapse = ",\n  "
+  ))
   for (m in all_mods) {
     message("Now reading model ", basename(m))
 
@@ -39,8 +40,10 @@ test_that("models can be read and written", {
     expect_equal(length(start), length(allfiles[["start"]]))
 
     #### Checks related to SS_write* functions
-    files <- file.path(m, c("starter.ss", "forecast.ss", start[["datfile"]],
-                            start[["ctlfile"]]))
+    files <- file.path(m, c(
+      "starter.ss", "forecast.ss", start[["datfile"]],
+      start[["ctlfile"]]
+    ))
     # remove files
     lapply(files, function(x) file.remove(x))
 
