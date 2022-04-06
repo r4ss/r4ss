@@ -36,7 +36,6 @@ SS_readdat <- function(file,
                        verbose = TRUE,
                        echoall = FALSE,
                        section = NULL) {
-
   if (is.null(version)) {
     lifecycle::deprecate_warn(
       when = "1.43.2",

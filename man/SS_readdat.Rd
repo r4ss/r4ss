@@ -6,7 +6,7 @@
 \usage{
 SS_readdat(
   file,
-  version = NULL,
+  version = "3.30",
   verbose = TRUE,
   echoall = FALSE,
   section = NULL
