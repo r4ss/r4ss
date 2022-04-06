@@ -1,3 +1,7 @@
+# r4ss 1.43.2 (04 April 2022)
+* Standardize version = "3.30" in read and write functions and
+  deprecate NULL as an option
+
 # r4ss 1.43.1 (18 Febuarary 2022)
 * Added Common Utilty Functions
 

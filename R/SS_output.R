@@ -1456,7 +1456,7 @@ SS_output <-
       datname <- get_dat_new_name(dir)
       datfile <- SS_readdat(
         file = file.path(dir, datname),
-        verbose = verbose, version = "3.30"
+        verbose = verbose,
       )
       # deal with case where data file is empty
       if (is.null(datfile)) {

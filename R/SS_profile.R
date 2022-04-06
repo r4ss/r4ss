@@ -42,9 +42,7 @@
 #' re-run a subset of the cases in situations where the function was
 #' interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 #' is the length of profilevec.
-#' @param SSversion SS version number. Currently only "3.24" or "3.30" are
-#' supported, either as character or numeric values
-#' (noting that numeric 3.30  = 3.3).
+#' @template version
 #' @param prior_check Check to make sure the starter file is set to include
 #' the prior likelihood contribution in the total likelihood.  Default = TRUE.
 #' @param read_like Read the table of likelihoods from each model as it finishes.
@@ -199,7 +197,7 @@ SS_profile <-
            saveoutput = TRUE,
            overwrite = TRUE,
            whichruns = NULL,
-           SSversion = "3.30",
+           version = "3.30",
            prior_check = TRUE,
            read_like = TRUE,
            verbose = TRUE) {
@@ -236,7 +234,7 @@ SS_profile <-
       stop("You should input either 'linenum' or 'string' (but not both)")
     }
     if (usepar) { # if using parfile
-      if (parfile != "ss.par" & (SSversion == "3.30" | SSversion == 3.3)) {
+      if (parfile != "ss.par" & (version == "3.30" | version == 3.3)) {
         stop("'parfile' input needs to be 'ss.par' for SS version 3.30 models")
       }
       if (is.null(parlinenum) & is.null(parstring)) {
@@ -350,14 +348,6 @@ SS_profile <-
       )
     }
 
-    if (is.null(parfile)) {
-      # in 3.24, the par file name matched the executable
-      parfile <- paste0(model, ".par")
-      if (SSversion == "3.30" | SSversion == 3.3) { # turns out 3.30 != "3.30" in R
-        # in 3.30, it should always be ss.par
-        parfile <- "ss.par"
-      }
-    }
     if (usepar) {
       file.copy(parfile, "parfile_original_backup.sso")
     }

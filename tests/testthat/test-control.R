@@ -146,6 +146,7 @@ test_that("SS_readctl and SS_writectl works for 3.24", {
   }
   SS_writectl(
     ctllist = ctl_3.24,
+    version = "3.24",
     verbose = FALSE,
     overwrite = TRUE,
     outfile = file.path(sim_3.24, "testctl.ss")
@@ -182,6 +183,7 @@ test_that("SS_readctl and SS_writectl works for 3.24 when datlist = FALSE", {
     ctllist = ctl_3.24,
     verbose = FALSE,
     overwrite = TRUE,
+    version = "3.24",
     outfile = file.path(sim_3.24, "testctl.ss")
   )
   expect_true(file.exists(file.path(sim_3.24, "testctl.ss")))

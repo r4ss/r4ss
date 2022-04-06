@@ -31,27 +31,17 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 
-SS_readdat <- function(file, version = NULL, verbose = TRUE, echoall = FALSE, section = NULL) {
+SS_readdat <- function(file,
+                       version = "3.30",
+                       verbose = TRUE,
+                       echoall = FALSE,
+                       section = NULL) {
 
-  # automatic testing of version number ----
   if (is.null(version)) {
-    # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what = character(), nlines = 5, quiet = !verbose)
-    version <- substring(version, 3, 6)
-    version <- version[version %in% c("3.24", "3.30")]
-    # if that fails, look for data.ss_new file in the same directory
-    if (length(version) > 0) {
-      if (verbose) cat("assuming version", version, "based on first five lines of data file\n")
-    } else {
-      newfile <- file.path(dirname(file), "data.ss_new")
-      if (file.exists(newfile)) {
-        version <- scan(newfile, what = character(), nlines = 1, quiet = !verbose)
-        version <- substring(version, 3, 6)
-        if (verbose) cat("assuming version", version, "based on first line of data.ss_new\n")
-      } else {
-        stop("input 'version' required due to missing value at top of", file)
-      }
-    }
+    lifecycle::deprecate_warn(
+      when = "1.43.2",
+      what = "SS_readctl(version = 'must be 3.24 or 3.30')"
+    )
   }
   nver <- as.numeric(substring(version, 1, 4))
   if (verbose) cat("Char version is ", version, "\n")

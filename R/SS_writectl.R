@@ -7,10 +7,7 @@
 #'
 #' @param ctllist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new control file.
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30 = 3.3).
-#' Defaults to NULL, which means that the function will attempt to determine the
-#' version from `ctllist`.
+#' @template version
 #' @param overwrite Should existing files be overwritten? Defaults to FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #' Defaults to FALSE.
@@ -20,7 +17,10 @@
 #' [SS_readdat()],
 #' [SS_readstarter()], [SS_writestarter()],
 #' [SS_readforecast()], [SS_writeforecast()]
-SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
+SS_writectl <- function(ctllist,
+                        outfile,
+                        version = "3.30",
+                        overwrite = FALSE,
                         verbose = FALSE) {
   # function to write Stock Synthesis data files
   if (verbose) {
@@ -33,9 +33,17 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
     stop("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
   }
-  # check version input
   if (is.null(version)) {
-    version <- ctllist[["ReadVersion"]]
+    lifecycle::deprecate_stop(
+      when = "1.43.2",
+      what = "SS_readctl(version = 'must be 3.24 or 3.30')"
+    )
+  }
+  if(ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
+    stop(
+      "Input 'version' does not match ctllist[['ReadVersion']] of ",
+      "'", ctllist[["ReadVersion"]], "'."
+    )
   }
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     stop("Input 'version' should be either '3.24' or '3.30'")

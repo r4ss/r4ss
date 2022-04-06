@@ -9,8 +9,7 @@
 #'
 #' @template file
 #' @template readctl_vars
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
+#' @template version
 #' @param N_CPUE_obs Number of CPUE observations. Used only in control file 3.24
 #'  syntax if `use_datlist = FALSE`.
 #' @param catch_mult_fleets Integer vector of fleets using the catch multiplier
@@ -78,7 +77,10 @@
 #'   verbose = FALSE,
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
-SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycle::deprecated(),
+SS_readctl <- function(file,
+                       version = "3.30",
+                       verbose = FALSE,
+                       echoall = lifecycle::deprecated(),
                        use_datlist = TRUE,
                        datlist = "data.ss_new",
                        ## Parameters that are not defined in control file
@@ -111,27 +113,11 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
     )
     Nsexes <- Ngenders
   }
-
-  # wrapper function to call old or new version of SS_readctl
-
-  # automatic testing of version number
   if (is.null(version)) {
-    # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what = character(), nlines = 1, quiet = !verbose)
-    version <- substring(version, 3, 6)[1]
-    # if that fails, look for data.ss_new file in the same directory
-    if (version %in% c("3.24", "3.30")) {
-      if (verbose) cat("assuming version", version, "based on first line of control file\n")
-    } else {
-      newfile <- file.path(dirname(file), "control.ss_new")
-      if (file.exists(newfile)) {
-        version <- scan(newfile, what = character(), nlines = 1, quiet = !verbose)
-        version <- substring(version, 3, 6)
-        if (verbose) cat("assuming version", version, "based on first line of control.ss_new\n")
-      } else {
-        stop("input 'version' required due to missing value at top of", file)
-      }
-    }
+    lifecycle::deprecate_stop(
+      when = "1.43.2",
+      what = "SS_readctl(version = 'must be 3.24 or 3.30')"
+    )
   }
 
   nver <- as.numeric(substring(version, 1, 4))
