@@ -18,11 +18,13 @@ jobs:
         id: get-link-to-release
         run: |
           link_to_release=$(curl https://api.github.com/repos/nmfs-stock-synthesis/stock-synthesis/releases/latest | grep "html_url" | grep 'releases' | grep -Eo 'https://[^\"]*')
+          release_digits=$(echo "${link_to_release}" | sed 's/https\:\/\/github\.com\/nmfs-stock-synthesis\/stock-synthesis\/releases\/tag\/v3\.30\.//')
           echo "::set-output name=link_to_release::${link_to_release}"
+          echo "::set-output name=release_digits::${release_digits}"
 
-      - name: Bump version using sed
+      - name: Bump version using sed. Match SS3 version followed by 00
         run: |
-          sed -r -i 's/(Version: ?[0-9]+\.)([0-9]+)(\.[0-9+])/echo "\1\$((\2+1))\3"/ge' DESCRIPTION
+          sed -r -i 's/(Version: ?[0-9]+\.)([0-9]+\.[0-9+])/echo "\1${{ steps.get-link-to-release.outputs.release_digits }}.00"/ge' DESCRIPTION
 
       - name: Move exes to the right location
         run: |
