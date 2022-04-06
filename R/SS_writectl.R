@@ -34,9 +34,15 @@ SS_writectl <- function(ctllist,
     stop("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
   }
   if (is.null(version)) {
-    lifecycle::deprecate_warn(
+    lifecycle::deprecate_stop(
       when = "1.43.2",
       what = "SS_readctl(version = 'must be 3.24 or 3.30')"
+    )
+  }
+  if(ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
+    stop(
+      "Input 'version' does not match ctllist[['ReadVersion']] of ",
+      "'", ctllist[["ReadVersion"]], "'."
     )
   }
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {

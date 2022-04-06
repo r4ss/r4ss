@@ -114,7 +114,7 @@ SS_readctl <- function(file,
     Nsexes <- Ngenders
   }
   if (is.null(version)) {
-    lifecycle::deprecate_warn(
+    lifecycle::deprecate_stop(
       when = "1.43.2",
       what = "SS_readctl(version = 'must be 3.24 or 3.30')"
     )
