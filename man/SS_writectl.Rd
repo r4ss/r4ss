@@ -7,7 +7,7 @@
 SS_writectl(
   ctllist,
   outfile,
-  version = NULL,
+  version = "3.30",
   overwrite = FALSE,
   verbose = FALSE
 )
@@ -17,10 +17,10 @@ SS_writectl(
 
 \item{outfile}{Filename for where to write new control file.}
 
-\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30 = 3.3).
-Defaults to NULL, which means that the function will attempt to determine the
-version from \code{ctllist}.}
+\item{version}{SS version number. Currently "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).
+\code{version = NULL} is no longer the default or an allowed entry.
+The default is \code{version = "3.30"}.}
 
 \item{overwrite}{Should existing files be overwritten? Defaults to FALSE.}
 

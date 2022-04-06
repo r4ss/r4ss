@@ -39,7 +39,7 @@ SS_writectl <- function(ctllist,
       what = "SS_readctl(version = 'must be 3.24 or 3.30')"
     )
   }
-  if(ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
+  if (ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
     stop(
       "Input 'version' does not match ctllist[['ReadVersion']] of ",
       "'", ctllist[["ReadVersion"]], "'."

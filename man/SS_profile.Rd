@@ -24,7 +24,7 @@ SS_profile(
   saveoutput = TRUE,
   overwrite = TRUE,
   whichruns = NULL,
-  SSversion = "3.30",
+  version = "3.30",
   prior_check = TRUE,
   read_like = TRUE,
   verbose = TRUE
@@ -89,9 +89,10 @@ re-run a subset of the cases in situations where the function was
 interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 is the length of profilevec.}
 
-\item{SSversion}{SS version number. Currently only "3.24" or "3.30" are
-supported, either as character or numeric values
-(noting that numeric 3.30  = 3.3).}
+\item{version}{SS version number. Currently "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).
+\code{version = NULL} is no longer the default or an allowed entry.
+The default is \code{version = "3.30"}.}
 
 \item{prior_check}{Check to make sure the starter file is set to include
 the prior likelihood contribution in the total likelihood.  Default = TRUE.}

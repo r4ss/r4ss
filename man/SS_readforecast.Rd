@@ -25,8 +25,10 @@ See the formal arguments for a possible default filename.}
 
 \item{nseas}{number of seasons (not required in 3.30).}
 
-\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
+\item{version}{SS version number. Currently "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).
+\code{version = NULL} is no longer the default or an allowed entry.
+The default is \code{version = "3.30"}.}
 
 \item{readAll}{Should the function continue even if Forecast = 0 or -1
 (at which point SS stops reading)?}
