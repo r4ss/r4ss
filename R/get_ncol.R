@@ -22,7 +22,7 @@ get_ncol <- function(file, skip = 0, nrows = -1) {
   initial <- 100
   while (!all(numcol[length(numcol)] == "")) {
     numcol <- utils::read.table(file,
-      col.names = 1:initial, fill = TRUE, quote = "",
+      fill = TRUE, quote = "",
       colClasses = "character", nrows = nrows, skip = skip,
       comment.char = ""
     )
