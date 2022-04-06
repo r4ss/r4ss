@@ -7,8 +7,7 @@
 #' @param Nfleets Number of fleets (not required in 3.30).
 #' @param Nareas Number of areas (not required in 3.30).
 #' @param nseas number of seasons (not required in 3.30).
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
+#' @template version
 #' @param readAll Should the function continue even if Forecast = 0 or -1
 #' (at which point SS stops reading)?
 #' @param verbose Should there be verbose output while running the file?
@@ -18,8 +17,13 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()],
 
-SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL, nseas = NULL,
-                            version = "3.30", readAll = FALSE, verbose = TRUE) {
+SS_readforecast <- function(file = "forecast.ss",
+                            Nfleets = NULL,
+                            Nareas = NULL,
+                            nseas = NULL,
+                            version = "3.30",
+                            readAll = FALSE,
+                            verbose = TRUE) {
 
   # function to read Stock Synthesis forecast files
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {

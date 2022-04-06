@@ -31,7 +31,11 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 
-SS_readdat <- function(file, version = NULL, verbose = TRUE, echoall = FALSE, section = NULL) {
+SS_readdat <- function(file,
+                       version = "3.30",
+                       verbose = TRUE,
+                       echoall = FALSE,
+                       section = NULL) {
 
   # automatic testing of version number ----
   if (is.null(version)) {

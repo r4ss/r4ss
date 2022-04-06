@@ -9,8 +9,7 @@
 #'
 #' @template file
 #' @template readctl_vars
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
+#' @template version
 #' @param N_CPUE_obs Number of CPUE observations. Used only in control file 3.24
 #'  syntax if `use_datlist = FALSE`.
 #' @param catch_mult_fleets Integer vector of fleets using the catch multiplier
@@ -78,7 +77,10 @@
 #'   verbose = FALSE,
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
-SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycle::deprecated(),
+SS_readctl <- function(file,
+                       version = "3.30",
+                       verbose = FALSE,
+                       echoall = lifecycle::deprecated(),
                        use_datlist = TRUE,
                        datlist = "data.ss_new",
                        ## Parameters that are not defined in control file
