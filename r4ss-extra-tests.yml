@@ -87,5 +87,5 @@ jobs:
       - name: Test
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: devtools::test()
+        run: devtools::test(stop_on_failure = TRUE)
         shell: Rscript {0}
