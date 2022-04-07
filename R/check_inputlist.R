@@ -21,7 +21,7 @@ check_inputlist <- function(inputlist) {
 
   # check for whether wtatage is required and if so, add it to the
   # vector of elements
-  if ("wtatage" %in% files & inputlist[["ctl"]][["EmpiricalWAA"]]) {
+  if ((!is.null(inputlist[["wtatage"]])) & inputlist[["ctl"]][["EmpiricalWAA"]]) {
     elements <- c(elements, "wtatage")
   }
 
