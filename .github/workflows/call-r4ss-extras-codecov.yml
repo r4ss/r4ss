@@ -1,0 +1,27 @@
+# Run code cov
+name: calc code coverage
+# on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
+# only run on pushes to main when there have been code changes
+# or on pull requests
+on: 
+  push: 
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+      - 'README.md'
+  pull_request:
+    branches:
+      - main
+    # paths-ignore:
+    #   - '.github/**'
+    #   - 'README.md'
+  workflow_dispatch:
+jobs:
+  call-workflow-extra:
+    # this step runs the r4ss tests again, after downloading ss3 exes and the
+    # nmfs-stock-synthesis/ss-test-models repo.
+    uses: nmfs-stock-synthesis/workflows/.github/workflows/r4ss-extra-tests.yml@main
+    with:
+      run-codecov: true
+
