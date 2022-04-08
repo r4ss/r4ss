@@ -87,11 +87,11 @@ SSplotSPR <-
     if (sprtarg == "default") {
       sprtarg <- replist[["sprtarg"]]
       if (grepl("SPR_MSY", SPRratioLabel)) {
-        sprtarg <- replist$derived_quants["SPR_MSY", "Value"]
+        sprtarg <- replist[["derived_quants"]]["SPR_MSY", "Value"]
         sprtarg_label <- "SPR at MSY"
       }
       if (grepl("SPR_at_B", SPRratioLabel)) {
-        sprtarg <- replist$derived_quants["SPR_Btgt", "Value"]
+        sprtarg <- replist[["derived_quants"]]["SPR_Btgt", "Value"]
         sprtarg_label <- substring(SPRratioLabel,
           first = nchar("(1-SPR)/(1-") + 1,
           last = nchar("(1-SPR)/(1-SPR_at_B48%")
@@ -228,10 +228,10 @@ SSplotSPR <-
     )
     Bratio_endyr_SD <- Bratio[["StdDev"]][Bratio[["Yr"]] == endyr]
     SPRratio_endyr_SD <- SPRratio[["StdDev"]][SPRratio[["Yr"]] == endyr]
-    B_SPR_endyr_corr <- replist$CoVar[
-      replist$CoVar$label.i %in%
+    B_SPR_endyr_corr <- replist[["CoVar"]][
+      replist[["CoVar"]][["label.i"]] %in%
         paste0("Bratio_", endyr) &
-        replist$CoVar$label.j %in%
+        replist[["CoVar"]][["label.j"]] %in%
           paste0("SPRratio_", endyr),
       "corr"
     ]
@@ -393,7 +393,7 @@ SSplotSPR <-
         # which has GPL-2 | GPL-3 license
         # https://CRAN.R-project.org/package=mixtools
         es <- eigen(sigma)
-        e1 <- es$vec %*% diag(sqrt(es$val))
+        e1 <- es[["vec"]] %*% diag(sqrt(es[["val"]]))
         r1 <- sqrt(qchisq(0.95, 2))
         theta <- seq(0, 2 * pi, len = 250)
         v1 <- cbind(r1 * cos(theta), r1 * sin(theta))

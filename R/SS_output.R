@@ -2883,7 +2883,7 @@ SS_output <-
         file = file.path(dir, "starter.ss"),
         verbose = verbose
       )
-      depletion_multiplier <- starter$depl_denom_frac
+      depletion_multiplier <- starter[["depl_denom_frac"]]
     } else {
       depletion_multiplier <- 1
     }

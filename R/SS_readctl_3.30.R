@@ -287,7 +287,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     }
     ctllist[["N_tag_groups"]] <- N_tag_groups <- datlist[["N_tag_groups"]]
     ctllist[["fleetnames"]] <- fleetnames <- datlist[["fleetnames"]]
-    Ntag_fleets <- length(which(datlist$fleetinfo$type < 3))
+    Ntag_fleets <- length(which(datlist[["fleetinfo"]][["type"]] < 3))
   }
   # specifications ----
   ctllist[["sourcefile"]] <- file

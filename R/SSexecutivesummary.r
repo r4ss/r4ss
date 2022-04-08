@@ -69,7 +69,7 @@ SSexecutivesummary <- function(replist,
   }
 
   if (plotfolder == "default") {
-    csv.dir <- paste0(replist$inputs$dir, "/tables")
+    csv.dir <- paste0(replist[["inputs"]][["dir"]], "/tables")
   }
   if (plotfolder != "default") {
     csv.dir <- paste0(plotfolder, "/tables")
@@ -99,10 +99,10 @@ SSexecutivesummary <- function(replist,
     }
 
     if (!single) {
-      value <- dat[grep(label, dat$Label), ]
-      value <- value[value$Label >= paste0(label, "_", yrs[1]) &
-        value$Label <= paste0(label, "_", max(yrs)), ]
-      dq <- value$Value
+      value <- dat[grep(label, dat[["Label"]]), ]
+      value <- value[value[["Label"]] >= paste0(label, "_", yrs[1]) &
+        value[["Label"]] <= paste0(label, "_", max(yrs)), ]
+      dq <- value[["Value"]]
       ind <- names(value) %in% c("StdDev", "Parm_StDev")
       sd <- value[, ind]
     }
@@ -136,7 +136,7 @@ SSexecutivesummary <- function(replist,
     # https://stackoverflow.com/questions/5173692/how-to-return-number-of-decimal-places-in-r
     if (match_digits) {
       decimalplaces <- function(x) {
-        ifelse(abs(x - round(x)) > .Machine$double.eps^0.5,
+        ifelse(abs(x - round(x)) > .Machine[["double.eps"]]^0.5,
           nchar(sub("^\\d+\\.", "", sub("0+$", "", as.character(x)))),
           0
         )
@@ -214,7 +214,7 @@ SSexecutivesummary <- function(replist,
   # ======================================================================
   # Spawning Biomass or Spawning Output?
   # ======================================================================
-  if (replist$SpawnOutputUnits == "numbers") {
+  if (replist[["SpawnOutputUnits"]] == "numbers") {
     sb.label <- "Spawning Output"
     sb.text.name <- "spawning output"
   } else {
@@ -238,15 +238,15 @@ SSexecutivesummary <- function(replist,
     csv_name <- "a_Catches_ES.csv"
     for (i in 1:nfleets) {
       name <- paste0("retain(B):_", i)
-      input.catch <- replist$timeseries[replist$timeseries$Yr %in% years_minus_final, name]
+      input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
       catch <- cbind(catch, input.catch)
 
       name <- paste0("dead(B):_", i)
-      dead <- replist$timeseries[replist$timeseries$Yr %in% years_minus_final, name]
+      dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
       if (!is.null(dead)) {
         total.dead <- total.dead + dead
         if (is.null(fleetnames)) {
-          fleet.names <- c(fleet.names, replist$FleetNames[i])
+          fleet.names <- c(fleet.names, replist[["FleetNames"]][i])
         } else {
           fleet.names <- c(fleet.names, fleetnames[i])
         }
@@ -296,9 +296,9 @@ SSexecutivesummary <- function(replist,
 
     ssb <- Get.Values(replist = replist, label = sb.name, years, ci_value)
     if (nsexes == 1) {
-      ssb$dq <- ssb$dq / sexfactor
-      ssb$low <- ssb$low / sexfactor
-      ssb$high <- ssb$high / sexfactor
+      ssb[["dq"]] <- ssb[["dq"]] / sexfactor
+      ssb[["low"]] <- ssb[["low"]] / sexfactor
+      ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
     depl <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
     for (i in 1:length(years)) {
@@ -307,12 +307,12 @@ SSexecutivesummary <- function(replist,
     if (format) {
       es.b <- data.frame(
         years,
-        comma(ssb$dq, digits = dig), paste0(comma(ssb$low, digits = dig), "\u2013", comma(ssb$high, digits = dig)),
-        print(depl$dq, digits = 1), paste0(print(depl$low, digits = 1), "\u2013", print(depl$high, digits = 1))
+        comma(ssb[["dq"]], digits = dig), paste0(comma(ssb[["low"]], digits = dig), "\u2013", comma(ssb[["high"]], digits = dig)),
+        print(depl[["dq"]], digits = 1), paste0(print(depl[["low"]], digits = 1), "\u2013", print(depl[["high"]], digits = 1))
       )
       colnames(es.b) <- c("Year", sb.label, "Interval", "Fraction Unfished", "Interval")
     } else {
-      es.b <- data.frame(years, ssb$dq, ssb$low, ssb$high, depl$dq, depl$low, depl$high)
+      es.b <- data.frame(years, ssb[["dq"]], ssb[["low"]], ssb[["high"]], depl[["dq"]], depl[["low"]], depl[["high"]])
       colnames(es.b) <- c(
         "Year", sb.label, "Lower Interval", "Upper Interval",
         "Fraction Unfished", "Lower Interval", "Upper Interval"
@@ -409,7 +409,7 @@ SSexecutivesummary <- function(replist,
 
       colnames(es.c) <- c("Year", "Recruitment", "Interval", "Recruitment Deviations", "Interval")
     } else {
-      es.c <- data.frame(years, recruits$dq, recruits$low, recruits$high, devs.out[, 1], devs.out[, 2], devs.out[, 3])
+      es.c <- data.frame(years, recruits[["dq"]], recruits[["low"]], recruits[["high"]], devs.out[, 1], devs.out[, 2], devs.out[, 3])
       colnames(es.c) <- c(
         "Year", "Recruitment", "Lower Interval", "Upper Interval",
         "Recruitment Deviations", "Lower Interval", "Upper Interval"
@@ -442,14 +442,14 @@ SSexecutivesummary <- function(replist,
       "Fill in F method"
     )
 
-    if (stringr::str_detect(replist$SPRratioLabel, "%")) {
+    if (stringr::str_detect(replist[["SPRratioLabel"]], "%")) {
       spr_label <- paste0(
-        substring(replist$SPRratioLabel, 1, 14), " ",
-        substring(replist$SPRratioLabel, 16, 17),
+        substring(replist[["SPRratioLabel"]], 1, 14), " ",
+        substring(replist[["SPRratioLabel"]], 16, 17),
         "\\%)"
       )
     } else {
-      spr_label <- replist$SPRratioLabel
+      spr_label <- replist[["SPRratioLabel"]]
     }
 
     adj.spr <- Get.Values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
@@ -457,8 +457,8 @@ SSexecutivesummary <- function(replist,
     if (format) {
       es.d <- data.frame(
         years_minus_final,
-        print(adj.spr$dq, 2), paste0(print(adj.spr$low, 2), "\u2013", print(adj.spr$high, 2)),
-        print(f.value$dq, 4), paste0(print(f.value$low, 4), "\u2013", print(f.value$high, 4))
+        print(adj.spr[["dq"]], 2), paste0(print(adj.spr[["low"]], 2), "\u2013", print(adj.spr[["high"]], 2)),
+        print(f.value[["dq"]], 4), paste0(print(f.value[["low"]], 4), "\u2013", print(f.value[["high"]], 4))
       )
       colnames(es.d) <- c(
         "Year", spr_type, "Interval",
@@ -467,8 +467,8 @@ SSexecutivesummary <- function(replist,
     } else {
       es.d <- data.frame(
         years_minus_final,
-        adj.spr$dq, adj.spr$low, adj.spr$high,
-        f.value$dq, f.value$low, f.value$high
+        adj.spr[["dq"]], adj.spr[["low"]], adj.spr[["high"]],
+        f.value[["dq"]], f.value[["low"]], f.value[["high"]]
       )
       colnames(es.d) <- c(
         "Year", spr_label, "Lower Interval", "Upper Interval",
@@ -703,7 +703,7 @@ SSexecutivesummary <- function(replist,
     catch <- dead <- total.dead <- 0
     for (i in 1:nfleets) {
       name <- paste0("retain(B):_", i)
-      input.catch <- replist$timeseries[replist$timeseries$Yr %in% years_minus_final, name]
+      input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
       catch <- cbind(catch, input.catch)
 
       name <- paste0("dead(B):_", i)
@@ -970,7 +970,7 @@ SSexecutivesummary <- function(replist,
 
     for (i in 1:nfleets) {
       name <- paste0("retain(B):_", i)
-      input.catch <- replist$timeseries[replist$timeseries$Yr %in% ind, name]
+      input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% ind, name]
       catch <- cbind(catch, input.catch)
 
       name <- paste0("dead(B):_", i)
@@ -1243,8 +1243,8 @@ SSexecutivesummary <- function(replist,
   csv_name <- "likelihoods.csv"
 
   like <- cbind(
-    rownames(replist$likelihoods_used),
-    replist$likelihoods_used$values
+    rownames(replist[["likelihoods_used"]]),
+    replist[["likelihoods_used"]][["values"]]
   )
   colnames(like) <- c("Label", "Total")
   like[, 1] <- gsub("\\_", " ", like[, 1])
