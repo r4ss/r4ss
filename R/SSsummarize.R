@@ -75,7 +75,7 @@ SSsummarize <- function(biglist,
     allyears <- union(allyears, stats[["timeseries"]][["Yr"]])
     likenames <- union(likenames, rownames(stats[["likelihoods_used"]]))
     # accumulator age for each model
-    accuages[imodel] <- stats$accuage
+    accuages[imodel] <- stats[["accuage"]]
   }
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
@@ -210,7 +210,7 @@ SSsummarize <- function(biglist,
         # subset for the female main morph
         imorphf <- stats[["morph_indexing"]][["Index"]][
           stats[["morph_indexing"]][["Sex"]] == 1 &
-            stats[["morph_indexing"]][["Platoon"]] %in% stats$mainmorphs
+            stats[["morph_indexing"]][["Platoon"]] %in% stats[["mainmorphs"]]
         ]
         growthtemp <- growthtemp[growthtemp[["Morph"]] == imorphf, -(1:4)]
         # remove any rows with all zeros (not sure why these occur)

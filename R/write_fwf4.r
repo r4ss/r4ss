@@ -171,4 +171,4 @@ write_fwf4 <- function(x,
 #' @export
 #'
 is.wholenumber <-
-  function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
+  function(x, tol = .Machine[["double.eps"]]^0.5) abs(x - round(x)) < tol
