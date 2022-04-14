@@ -278,8 +278,16 @@ SS_writedat_3.30 <- function(datlist,
   writeComment("#\n#_meanbodywt")
   wl("use_meanbodywt")
   wl("DF_for_meanbodywt", comment = "#_DF_for_meanbodywt_T-distribution_like")
-  print.df(d[["meanbodywt"]])
-
+  if (d[["use_meanbodywt"]] == 1) {
+    if (!is.null(d[["meanbodywt"]])) {
+      print.df(d[["meanbodywt"]])
+    } else {
+      writeLines(text = "#_yr month fleet part type obs stderr", con = zz)
+      writeLines(
+        text = "-9999 0 0 0 0 0 0 # terminator for mean body size data ",
+        con = zz)
+    }
+  }
   # write length and age comps
   # population length bins
   writeComment("#\n#_population_length_bins")
