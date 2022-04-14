@@ -285,7 +285,8 @@ SS_writedat_3.30 <- function(datlist,
       writeLines(text = "#_yr month fleet part type obs stderr", con = zz)
       writeLines(
         text = "-9999 0 0 0 0 0 0 # terminator for mean body size data ",
-        con = zz)
+        con = zz
+      )
     }
   }
   # write length and age comps
