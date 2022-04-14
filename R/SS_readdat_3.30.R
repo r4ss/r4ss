@@ -325,10 +325,10 @@ SS_readdat_3.30 <-
       datlist[["DF_for_meanbodywt"]] <- get.val(dat, ind)
       datlist[["meanbodywt"]] <- get.df(dat, ind)
       if (!is.null(datlist[["meanbodywt"]])) {
-      colnames(datlist[["meanbodywt"]]) <- c(
-        "Year", "Seas", "Fleet", "Partition", "Type",
-        "Value", "Std_in"
-      )
+        colnames(datlist[["meanbodywt"]]) <- c(
+          "Year", "Seas", "Fleet", "Partition", "Type",
+          "Value", "Std_in"
+        )
       }
     } else {
       datlist[["DF_for_meanbodywt"]] <- NULL
