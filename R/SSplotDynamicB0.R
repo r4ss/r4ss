@@ -63,6 +63,10 @@ SSplotDynamicB0 <- function(replist,
     warning('No element "Dynamic_Bzero" in replist input')
     return()
   }
+  if (!"SSB_nofishing" %in% names(replist[["Dynamic_Bzero"]])) {
+    warning('Skipping Dynamic B0 plot (not yet working for this model configuration)')
+    return()
+  }
 
   # check if spawning output rather than spawning biomass is plotted
   if (is.null(replist[["SpawnOutputUnits"]]) ||
