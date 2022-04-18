@@ -66,13 +66,9 @@ SSplotSPR <-
     }
 
     sprseries <- replist[["sprseries"]]
-    timeseries <- replist[["timeseries"]]
     derived_quants <- replist[["derived_quants"]]
-    nsexes <- replist[["nsexes"]]
     nseasons <- replist[["nseasons"]]
-    nareas <- replist[["nareas"]]
     endyr <- replist[["endyr"]]
-    managementratiolabels <- replist[["managementratiolabels"]]
     SPRratioLabel <- replist[["SPRratioLabel"]]
 
     # message about skipping plots
@@ -393,7 +389,7 @@ SSplotSPR <-
         # which has GPL-2 | GPL-3 license
         # https://CRAN.R-project.org/package=mixtools
         es <- eigen(sigma)
-        e1 <- es[["vec"]] %*% diag(sqrt(es[["val"]]))
+        e1 <- es[["vectors"]] %*% diag(sqrt(es[["values"]]))
         r1 <- sqrt(qchisq(0.95, 2))
         theta <- seq(0, 2 * pi, len = 250)
         v1 <- cbind(r1 * cos(theta), r1 * sin(theta))
