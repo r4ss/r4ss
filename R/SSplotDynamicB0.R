@@ -64,7 +64,7 @@ SSplotDynamicB0 <- function(replist,
     return()
   }
   if (!"SSB_nofishing" %in% names(replist[["Dynamic_Bzero"]])) {
-    warning('Skipping Dynamic B0 plot (not yet working for this model configuration)')
+    warning("Skipping Dynamic B0 plot (not yet working for this model configuration)")
     return()
   }
 
