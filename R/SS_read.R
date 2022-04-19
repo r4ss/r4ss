@@ -57,7 +57,7 @@ SS_read <- function(dir = NULL,
   )
 
   if (ss_new) {
-    datname <- "data.ss_new"
+    datname <- get_dat_new_name(dir)
     ctlname <- "control.ss_new"
   } else {
     datname <- start[["datfile"]]
