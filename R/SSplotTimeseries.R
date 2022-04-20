@@ -431,8 +431,8 @@ SSplotTimeseries <-
         caption <- main
         file <- main
         if (subplot %in% 9:10 & grepl(":", main)) {
-          # remove extra stuff like "B/B_0" from filename
-          filename <- strsplit(main, split = ":")[[1]][1]
+          # remove extra stuff like "B/B_0" from file
+          file <- strsplit(main, split = ":")[[1]][1]
         }
         file <- gsub("[,~%*]", "", file)
         if (forecastplot) {
