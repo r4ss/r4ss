@@ -434,9 +434,7 @@ SSplotTimeseries <-
           # remove extra stuff like "B/B_0" from filename
           filename <- strsplit(main, split = ":")[[1]][1]
         }
-        file <- gsub(",", "", file, fixed = TRUE)
-        file <- gsub("~", "", file, fixed = TRUE)
-        file <- gsub("%", "", file, fixed = TRUE)
+        file <- gsub("[,~%*]", "", file)
         if (forecastplot) {
           file <- paste(file, "forecast")
         }
