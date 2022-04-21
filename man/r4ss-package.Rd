@@ -29,7 +29,7 @@ Useful links:
 \author{
 \strong{Maintainer}: Ian G. Taylor \email{ian.taylor@noaa.gov}
 
-Other contributors:
+Authors:
 \itemize{
   \item Ian J. Stewart
   \item Allan C. Hicks
