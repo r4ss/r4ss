@@ -37,7 +37,6 @@ Authors@R: c(person(given = "Ian G.", family = "Taylor",
   person(given = "Lee", family = "Qi", role = "aut"),
   person(given = "Megumi", family = "Oshima", role = "aut"),
   person(given = "Eric", family = "Fletcher", role = "aut"))
-Maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 Depends:
     R (>= 3.5.0)
 Imports:
