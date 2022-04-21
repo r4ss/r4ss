@@ -2,23 +2,11 @@
 % Please edit documentation in R/r4ss-package.R
 \docType{package}
 \name{r4ss-package}
-\alias{r4ss-package}
-\alias{_PACKAGE}
 \alias{r4ss}
-\title{R tools for Stock Synthesis}
+\alias{r4ss-package}
+\title{r4ss: R Code for Stock Synthesis}
 \description{
-A collection of R functions for use with Stock Synthesis, a fisheries stock
-assessment modeling platform written in ADMB by Dr. Richard D.  Methot at
-the NMFS Northwest Fisheries Science Center. The functions include tools for
-summarizing and plotting results, manipulating files, visualizing model
-parameterizations, and various other tasks.
-}
-\details{
-\tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.43.2\cr Date: \tab 2022-04-06\cr License: \tab GPL-3\cr LazyLoad: \tab
-yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
-Should be compatible with Stock Synthesis versions 3.24 through 3.30
-(specifically version 3.30.19.01, from April 2022).
+A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of r4ss is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.19.01, from April 2022).
 }
 \examples{
 \dontrun{
@@ -29,10 +17,6 @@ myreplist <- SS_output(dir = "c:/SS/simple/")
 SS_plots(replist = myreplist)
 }
 
-}
-\references{
-r4ss on GitHub: \url{https://github.com/r4ss}
-\cr Download Stock Synthesis: \url{https://vlab..noaa.gov/web/stock-synthesis/home}
 }
 \seealso{
 Useful links:

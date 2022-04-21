@@ -41,6 +41,9 @@ Description: A collection of R functions for use with Stock Synthesis, a
     include tools for summarizing and plotting results, manipulating files,
     visualizing model parameterizations, and various other common stock
     assessment tasks.
+    This version of r4ss is compatible with Stock Synthesis versions
+    3.24 through 3.30 (specifically version 3.30.19.01, from April
+    2022).
 License: GPL-3
 Encoding: UTF-8
 LazyLoad: yes
