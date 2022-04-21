@@ -78,7 +78,7 @@ run_SS_models <- function(dirvec = NULL,
     tmp_exe <- Sys.which(basename(exe))[[1]] # get 1st ss exe with name exe that is in your path
     if (tmp_exe != "") {
       warning(
-        "An binary named ", basename(exe),
+        "A binary named ", basename(exe),
         " was found in your PATH and will be",
         " used by default even though exe_in_path is FALSE. Please remove",
         " the exe in your PATH to avoid this behavior. This binary is",
