@@ -3,6 +3,7 @@
 \docType{package}
 \name{r4ss-package}
 \alias{r4ss-package}
+\alias{_PACKAGE}
 \alias{r4ss}
 \title{R tools for Stock Synthesis}
 \description{
@@ -14,10 +15,10 @@ parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.43.1\cr Date: \tab 2022-02-18\cr License: \tab GPL-3\cr LazyLoad: \tab
+1.43.2\cr Date: \tab 2022-04-06\cr License: \tab GPL-3\cr LazyLoad: \tab
 yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 Should be compatible with Stock Synthesis versions 3.24 through 3.30
-(specifically version 3.30.19beta, from February 2022).
+(specifically version 3.30.19.01, from April 2022).
 }
 \examples{
 \dontrun{
@@ -33,6 +34,14 @@ SS_plots(replist = myreplist)
 r4ss on GitHub: \url{https://github.com/r4ss}
 \cr Download Stock Synthesis: \url{https://vlab..noaa.gov/web/stock-synthesis/home}
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/r4ss/r4ss}
+  \item Report bugs at \url{https://github.com/r4ss/r4ss/issues}
+}
+
+}
 \author{
 Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
 Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
@@ -45,3 +54,4 @@ Nathan Vaughan, LaTreese S. Denson, Ashleigh J. Novak, and Henning Winker
 
 Package maintainer: Ian G. Taylor \href{mailto:Ian.Taylor@noaa.gov}{Ian.Taylor@noaa.gov}
 }
+\keyword{internal}
