@@ -27,15 +27,44 @@ Useful links:
 
 }
 \author{
-Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
-Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
-Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
-Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
-Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
-Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
-Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron,
-Nathan Vaughan, LaTreese S. Denson, Ashleigh J. Novak, and Henning Winker
+\strong{Maintainer}: Ian G. Taylor \email{ian.taylor@noaa.gov}
 
-Package maintainer: Ian G. Taylor \href{mailto:Ian.Taylor@noaa.gov}{Ian.Taylor@noaa.gov}
+Other contributors:
+\itemize{
+  \item Ian J. Stewart
+  \item Allan C. Hicks
+  \item Tommy M. Garrison
+  \item Andre E. Punt
+  \item John R. Wallace
+  \item Chantel R. Wetzel
+  \item James T. Thorson
+  \item Yukio Takeuchi
+  \item Kotaro Ono
+  \item Cole C. Monnahan
+  \item Christine C. Stawitz
+  \item Z. Teresa A'mar
+  \item Athol R. Whitten
+  \item Kelli F. Johnson
+  \item Robbie L. Emmet
+  \item Sean C. Anderson
+  \item Gwladys I. Lambert
+  \item Megan M. Stachura
+  \item Andrew B. Cooper
+  \item Andi Stephens
+  \item Neil L. Klaer
+  \item Carey R. McGilliard
+  \item Iago Mosqueira
+  \item Watal M. Iwasaki
+  \item Kathryn L. Doering
+  \item Andrea M. Havron
+  \item Nathan Vaughan
+  \item LaTreese S. Denson
+  \item Ashleigh J. Novak
+  \item Henning Winker
+  \item Lee Qi
+  \item Megumi Oshima
+  \item Eric Fletcher
+}
+
 }
 \keyword{internal}
