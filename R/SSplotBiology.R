@@ -1581,7 +1581,12 @@ SSplotBiology <-
     } # end disable of time-varying growth for multi-season models
 
     # plot time-series of any time-varying quantities
-    if (24 %in% subplots) {
+    if(is.null(MGparmAdj)) {
+      message("Skipping time varying quantity plots, most likely because the\n", 
+              "MGparm_By_Year_after_adjustments table (report:7) is not report\n", 
+              "in the Report.sso file.")
+    }
+    if (24 %in% subplots & !is.null(MGparmAdj)) {
       # general function to work for any parameter
       timeVaryingParmFunc <- function(parmlabel, forecast = FALSE) {
         if (forecast) {

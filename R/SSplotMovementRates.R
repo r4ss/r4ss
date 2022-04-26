@@ -116,7 +116,12 @@ SSplotMovementRates <-
     } # end subplot 1
 
     # subplot 2: time-varying movement
-    if (2 %in% subplots) {
+    if(is.null(MGparmAdj)) {
+      message("Skipping time varying quantity plots, most likely because the\n", 
+              "MGparm_By_Year_after_adjustments table (report:7) is not report\n", 
+              "in the Report.sso file.")
+    }
+    if (2 %in% subplots & !is.null(MGparmAdj)) {
       # subset some report values
       movepars <- parameters[grep("Move", replist[["parameters"]][["Label"]]), ]
       MGparmAdj <- MGparmAdj[, c(1, grep("MoveParm", names(MGparmAdj)))]
