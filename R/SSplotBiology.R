@@ -1583,7 +1583,7 @@ SSplotBiology <-
     # plot time-series of any time-varying quantities
     if(is.null(MGparmAdj)) {
       message("Skipping time varying quantity plots, most likely because the\n", 
-              "MGparm_By_Year_after_adjustments table (report:7) is not report\n", 
+              "MGparm_By_Year_after_adjustments table (report:7) is not reported\n", 
               "in the Report.sso file.")
     }
     if (24 %in% subplots & !is.null(MGparmAdj)) {
