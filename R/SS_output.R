@@ -1886,8 +1886,7 @@ SS_output <-
           # temp fix  for 3.30.19
           if (length(grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]])) == 1) {
             tmp_brk_line <- grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]]) - 1
-            recruit_dist_endyr <- recruit_dist_endyr[seq_len(tmp_brk_line),]
-                                 
+            recruit_dist_endyr <- recruit_dist_endyr[seq_len(tmp_brk_line), ]
           }
         }
         # bundle original and extra tables into a list
