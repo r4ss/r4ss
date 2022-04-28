@@ -104,7 +104,13 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
     endyrvec = endyrvec,
     legendlabels = paste("Data", 0:-2, "years")
   )
+  #calculate Mohn's rho values
+  # TODO: add better tests for mohns rho. Some values aren't calcualted b/c they
+  # are missing in the summaries for this model run.
+  mohns_rho <-  SSmohnsrho(retroSummary)
+  expect_length(mohns_rho, 12)
 })
+
 
 test_that("SS_RunJitter runs on newest simple model", {
   path_simple <- tail(dir(runs_path, full.names = TRUE), 1)
