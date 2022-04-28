@@ -424,7 +424,7 @@ SS_readdat_3.30 <-
         if (any(zero_lencomp == TRUE)) {
           warning(
             "Lines of all zero length comp found. SS will exit on error if",
-            " a line of comps is all zeros. Line(s) ",
+            " a line of comps is all zeroes and year is positive. Line(s) ",
             paste0(which(zero_lencomp), collapse = ", ")
           )
         }
