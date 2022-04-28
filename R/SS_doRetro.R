@@ -2,7 +2,9 @@
 #'
 #' Do retrospective analyses by creating new directories, copying model files,
 #' and iteratively changing the starter file to set the number of years of data
-#' to exclude.
+#' to exclude. Note that there was a  bug for retrospectives in 3.30.01;
+#' the user should update their model to a newer version of Stock Synthesis to
+#' run retrospectives
 #'
 #'
 #' @param masterdir Directory where everything takes place.
