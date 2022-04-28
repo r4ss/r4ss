@@ -89,21 +89,28 @@ SSmohnsrho <-
       mohnSSB.all[i] <-
         sum((summaryoutput[["SpawnBio"]][ind, i + 1] - summaryoutput[["SpawnBio"]][ind, 1]) /
           summaryoutput[["SpawnBio"]][ind, 1]) / length(ind)
-
       ind <- which(summaryoutput[["recruits"]][["Yr"]] == startyr):which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1])
       mohnRec.all[i] <-
         sum((summaryoutput[["recruits"]][ind, i + 1] - summaryoutput[["recruits"]][ind, 1]) /
           summaryoutput[["recruits"]][ind, 1]) / length(ind)
-
+      if(length(which(summaryoutput[["Bratio"]][["Yr"]] == startyr + 1)) != 0) {
       ind <- which(summaryoutput[["Bratio"]][["Yr"]] == startyr + 1):which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1])
       mohnBratio.all[i] <-
         sum((summaryoutput[["Bratio"]][ind, i + 1] - summaryoutput[["Bratio"]][ind, 1]) /
           summaryoutput[["Bratio"]][ind, 1]) / length(ind)
-
+      } else {
+        warning("Skipping Wood's Hole Mohns Rho on Bratio, as Bratio is not available for year after the first model year.")
+        mohnBratio.all[i] <- NA
+      }
+      if(length(which(summaryoutput[["Fvalue"]][["Yr"]] == startyr)) != 0) {
       ind <- which(summaryoutput[["Fvalue"]][["Yr"]] == startyr):which(summaryoutput[["Fvalue"]][["Yr"]] == endyrvec[i + 1])
       mohnF.all[i] <-
         sum((summaryoutput[["Fvalue"]][ind, i + 1] - summaryoutput[["Fvalue"]][ind, 1]) /
           summaryoutput[["Fvalue"]][ind, 1]) / length(ind)
+      } else {
+        warning("Skipping Wood's Hole Mohn's Rho on Fvalue, ecause Fvalue is not available for first model year.")
+        mohnF.all[i] <- NA
+      }
     }
 
     mohn.out <- list()
