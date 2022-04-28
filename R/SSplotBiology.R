@@ -3,7 +3,6 @@
 #' Plot biology related quantities from Stock Synthesis model output, including
 #' mean weight, maturity, fecundity, and spawning output.
 #'
-#'
 #' @template replist
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
@@ -25,7 +24,9 @@
 #'   \item 21	Natural mortality (if age-dependent)
 #'   \item 22	Time-varying growth persp
 #'   \item 23	Time-varying growth contour
-#'   \item 24	plot time-series of any time-varying quantities
+#'   \item 24	plot time-series of any time-varying quantities (created if the 
+#'     MGparm_By_Year_after_adjustments table (report:7) is available in the 
+#'     Report.sso file)
 #'   \item 31	hermaphroditism transition probability
 #'   \item 32	hermaphroditism cumulative probability
 #' }
@@ -1581,59 +1582,60 @@ SSplotBiology <-
     } # end disable of time-varying growth for multi-season models
 
     # plot time-series of any time-varying quantities
-    if(is.null(MGparmAdj)) {
-      message("Skipping time varying quantity plots, most likely because the\n", 
-              "MGparm_By_Year_after_adjustments table (report:7) is not reported\n", 
-              "in the Report.sso file.")
-    }
-    if (24 %in% subplots & !is.null(MGparmAdj)) {
-      # general function to work for any parameter
-      timeVaryingParmFunc <- function(parmlabel, forecast = FALSE) {
-        if (forecast) {
-          MGparmAdj.tmp <- MGparmAdj
-        } else {
-          MGparmAdj.tmp <- MGparmAdj[MGparmAdj[["Yr"]] <= endyr, ]
+    if (24 %in% subplots) {
+      if(!is.null(MGparmAdj)) {
+        # general function to work for any parameter
+        timeVaryingParmFunc <- function(parmlabel, forecast = FALSE) {
+          if (forecast) {
+            MGparmAdj.tmp <- MGparmAdj
+          } else {
+            MGparmAdj.tmp <- MGparmAdj[MGparmAdj[["Yr"]] <= endyr, ]
+          }
+          # trim based on minyr and maxyr
+          MGparmAdj.tmp <- MGparmAdj.tmp[MGparmAdj.tmp[["Yr"]] >= minyr &
+            MGparmAdj.tmp[["Yr"]] <= maxyr, ]
+          # make plot
+          plot(MGparmAdj.tmp[["Yr"]], MGparmAdj.tmp[[parmlabel]],
+            xlab = labels[12], ylab = parmlabel, type = "l", lwd = 3, col = colvec[2]
+          )
         }
-        # trim based on minyr and maxyr
-        MGparmAdj.tmp <- MGparmAdj.tmp[MGparmAdj.tmp[["Yr"]] >= minyr &
-          MGparmAdj.tmp[["Yr"]] <= maxyr, ]
-        # make plot
-        plot(MGparmAdj.tmp[["Yr"]], MGparmAdj.tmp[[parmlabel]],
-          xlab = labels[12], ylab = parmlabel, type = "l", lwd = 3, col = colvec[2]
-        )
-      }
-      # check to make sure MGparmAdj looks as expected
-      # (maybe had different or conditional format in old SS versions)
-      if (!is.null(ncol(MGparmAdj)) && ncol(MGparmAdj) > 1) {
-        # loop over columns looking for time-varying parameters
-        for (icol in 2:ncol(MGparmAdj)) {
-          parmlabel <- names(MGparmAdj)[icol]
-          # exclude column indicating change added with version 3.30.06.02
-          if (parmlabel != "Change?") {
-            parmvals <- MGparmAdj[, icol]
-            # check for changes
-            if (length(unique(parmvals[MGparmAdj[["Yr"]] <= endyr])) > 1) {
-              # make plot
-              if (plot) timeVaryingParmFunc(parmlabel)
-              if (print) {
-                file <- paste0("bio24_time-varying_", parmlabel, ".png")
-                # replace % sign which cause problems for filename
-                file <- gsub(
-                  pattern = "%", replacement = "percent", x = file,
-                  fixed = TRUE
-                )
-                caption <- "Time-varying mortality and growth parameters"
-                plotinfo <- save_png(
-                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
-                  caption = caption
-                )
-                timeVaryingParmFunc(parmlabel)
-                dev.off()
+        # check to make sure MGparmAdj looks as expected
+        # (maybe had different or conditional format in old SS versions)
+        if (!is.null(ncol(MGparmAdj)) && ncol(MGparmAdj) > 1) {
+          # loop over columns looking for time-varying parameters
+          for (icol in 2:ncol(MGparmAdj)) {
+            parmlabel <- names(MGparmAdj)[icol]
+            # exclude column indicating change added with version 3.30.06.02
+            if (parmlabel != "Change?") {
+              parmvals <- MGparmAdj[, icol]
+              # check for changes
+              if (length(unique(parmvals[MGparmAdj[["Yr"]] <= endyr])) > 1) {
+                # make plot
+                if (plot) timeVaryingParmFunc(parmlabel)
+                if (print) {
+                  file <- paste0("bio24_time-varying_", parmlabel, ".png")
+                  # replace % sign which cause problems for filename
+                  file <- gsub(
+                    pattern = "%", replacement = "percent", x = file,
+                    fixed = TRUE
+                  )
+                  caption <- "Time-varying mortality and growth parameters"
+                  plotinfo <- save_png(
+                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    caption = caption
+                  )
+                  timeVaryingParmFunc(parmlabel)
+                  dev.off()
+                }
               }
             }
           }
         }
+      } else {
+        message("Skipping timevarying quantity plots (subplot 24), most likely\n",
+                "because the MGparm_By_Year_after_adjustments table (report:7)\n",
+                "is not reported in the Report.sso file.")
       }
     }
 
