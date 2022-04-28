@@ -4,24 +4,24 @@
 \alias{getADMBHessian}
 \title{Read admodel.hes file}
 \usage{
-getADMBHessian(File, FileName)
+getADMBHessian(File = getwd(), FileName = "admodel.hes")
 }
 \arguments{
-\item{File}{Directory in which .hes file is located.}
+\item{File}{Directory in which .hes file is located. Defaults to the working
+directory.}
 
-\item{FileName}{Name of .hes file.}
+\item{FileName}{Name of .hes file. Defaults to admodel.hes.}
 }
 \value{
 A list with elements num.pars, hes, hybrid_bounded_flag, and scale.
 }
 \description{
 This function reads in all of the information contained in the
-admodel.hes file. Some of this is needed for relaxing the
-covariance matrix, and others just need to be recorded and
-rewritten to file so ADMB "sees" what it's expecting.
+.hes file. Some is needed for relaxing the covariance matrix, while the rest
+is recorded and rewritten to file as ADMB expects.
 }
 \note{
-Explanation of the methods (in PDF form) published here:
+Explanation of the methods (in PDF form):
 \url{https://github.com/admb-project/admb-examples/blob/master/admb-tricks/covariance-calculations/ADMB_Covariance_Calculations.pdf}
 }
 \seealso{
