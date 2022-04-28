@@ -62,7 +62,9 @@ Numbering of subplots is as follows:
 \item 21    Natural mortality (if age-dependent)
 \item 22    Time-varying growth persp
 \item 23    Time-varying growth contour
-\item 24    plot time-series of any time-varying quantities
+\item 24    plot time-series of any time-varying quantities (created if the
+MGparm_By_Year_after_adjustments table (report:7) is available in the
+Report.sso file)
 \item 31    hermaphroditism transition probability
 \item 32    hermaphroditism cumulative probability
 }

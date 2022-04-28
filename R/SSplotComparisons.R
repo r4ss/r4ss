@@ -1078,9 +1078,9 @@ SSplotComparisons <-
       par(par)
       # make plot
       if (!add) {
-        if (!is.na(SPRratioLabel) &&
+        if (isTRUE(!is.na(SPRratioLabel) &&
           SPRratioLabel ==
-            paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)")) {
+            paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)"))) {
 
           # add to right-hand outer margin to make space
           # for second vertical axis
@@ -1129,7 +1129,7 @@ SSplotComparisons <-
       }
       abline(h = 0, col = "grey")
       if (sprtarg > 0) {
-        if (SPRratioLabel == "1-SPR") {
+        if (isTRUE(SPRratioLabel == "1-SPR")) {
           # if starter file chooses raw SPR as the option for reporting,
           # don't show ratio
           abline(h = sprtarg, col = "red", lty = 2)
@@ -1143,11 +1143,11 @@ SSplotComparisons <-
         } else {
           # draw line at sprtarg
           yticks <- pretty(ylim)
-          if (!is.na(SPRratioLabel) &&
+          if (isTRUE(!is.na(SPRratioLabel) &&
             SPRratioLabel == paste0(
               "(1-SPR)/(1-SPR_",
               floor(100 * sprtarg), "%)"
-            )) {
+            ))) {
             # add right-hand vertical axis showing 1-SPR
             abline(h = 1, col = "red", lty = 2)
             text(SPRratio[["Yr"]][1] + 4, 1 + 0.03, labels[10], adj = 0)

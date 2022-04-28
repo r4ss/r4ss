@@ -2,13 +2,13 @@
 #'
 #' Plots estimated movement rates in final year for each area/season with movement as
 #' reported in Report.sso. If movement is time-varying, an additional figure shows
-#' pattern across years.
-#'
+#' pattern across years (if the MGparm_By_Year_after_adjustments table (report:7) 
+#' is available in the Report.sso file)
 #'
 #' @template replist
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
-#' @param subplots which subplots to create
+#' @param subplots which subplots to create.
 #' @param plotdir where to put the plots (uses model directory by default)
 #' @param colvec vector of colors for each movement rate in the plot
 #' @param ylim optional input for y range of the plot. By default plot ranges
@@ -117,163 +117,169 @@ SSplotMovementRates <-
 
     # subplot 2: time-varying movement
     if (2 %in% subplots) {
-      # subset some report values
-      movepars <- parameters[grep("Move", replist[["parameters"]][["Label"]]), ]
-      MGparmAdj <- MGparmAdj[, c(1, grep("MoveParm", names(MGparmAdj)))]
-      # exclude forecast years (values were reported as zeros)
-      MGparmAdj <- MGparmAdj[MGparmAdj[["Yr"]] <= replist[["endyr"]], ]
-      time <- any(apply(MGparmAdj[, -1], 2, function(x) {
-        any(x != x[1])
-      }))
-      if (time) {
-        warning("plot of time-varying movement rates not currently working")
-        if (FALSE) {
-          if (verbose) cat("  running subplot 2: time-varying movement rates\n")
-          moveinfo <- move[, 1:6]
-          moveinfo[["LabelBase2"]] <- paste("seas_", moveinfo[["Seas"]], "_GP_", moveinfo[["GP"]],
-            "from_", moveinfo[["Source"]], "to_", moveinfo[["Dest"]],
-            sep = ""
-          )
-          moveinfo <- moveinfo[moveinfo[["LabelBase2"]] %in% substring(movepars[["Label"]], 12), ]
-          ## print(moveinfo)
-          nmoves <- nrow(moveinfo)
-          if (verbose) cat("  N movement rates:", nmoves, "\n")
-          if (nareas > 2) {
-            cat(
-              "  WARNING: time-varying movement plots not yet configured",
-              "for models with N areas > 2\n"
+      if (!is.null(MGparmAdj)) {
+        # subset some report values
+        movepars <- parameters[grep("Move", replist[["parameters"]][["Label"]]), ]
+        MGparmAdj <- MGparmAdj[, c(1, grep("MoveParm", names(MGparmAdj)))]
+        # exclude forecast years (values were reported as zeros)
+        MGparmAdj <- MGparmAdj[MGparmAdj[["Yr"]] <= replist[["endyr"]], ]
+        time <- any(apply(MGparmAdj[, -1], 2, function(x) {
+          any(x != x[1])
+        }))
+        if (time) {
+          warning("plot of time-varying movement rates not currently working")
+          if (FALSE) {
+            if (verbose) cat("  running subplot 2: time-varying movement rates\n")
+            moveinfo <- move[, 1:6]
+            moveinfo[["LabelBase2"]] <- paste("seas_", moveinfo[["Seas"]], "_GP_", moveinfo[["GP"]],
+              "from_", moveinfo[["Source"]], "to_", moveinfo[["Dest"]],
+              sep = ""
             )
-          } else {
-            yrvec <- replist[["startyr"]]:replist[["endyr"]]
-            nyrs <- length(yrvec)
-
-            ## if(nmoves*2 != nrow(movepars)){
-            ##   cat("warning!: In SSplotMovementRates function.\n
-            ##                Problem with number of parameters.\n
-            ##                2*nrow(moveinfo)=",2*nrow(moveinfo),"\n,
-            ##                nrow(movepars)  =",nrow(movepars),"\n")
-            ## }
-
-            movecalc <- function(min.move.age, accuage, minage, maxage,
-                                 valueA, valueB, from, to, seasdur) {
-              # subfunction to calculate movement rates
-              # similar to one in the "movepars" function.
-              # in the future, these could be generalized and stand-alone in the r4ss package
-              veclengths <- unique(c(
-                length(minage), length(maxage),
-                length(valueA), length(valueB),
-                length(from), length(to)
-              ))
-              if (length(veclengths) != 1) {
-                stop("Error! input vectors  minage, maxage, valueA, valueB, from, and to need to all have the same length.")
-              } else {
-                npars <- veclengths
-              }
-
-              agevec <- 0:accuage
-              nages <- length(agevec)
-
-              movemat1 <- matrix(NA, npars, nages) # raw values
-              movemat2 <- matrix(NA, npars, nages) # normalized to sum to 1
-
-              temp <- 1 / (maxage - minage)
-              temp1 <- temp * (valueB - valueA)
-
-              for (iage in 1:nages) {
-                for (ipar in 1:npars) {
-                  if (agevec[iage] <= minage[ipar]) {
-                    movemat1[ipar, iage] <- valueA[ipar]
-                  }
-                  if (agevec[iage] >= maxage[ipar]) {
-                    movemat1[ipar, iage] <- valueB[ipar]
-                  }
-                  if (agevec[iage] > minage[ipar] & agevec[iage] < maxage[ipar]) {
-                    movemat1[ipar, iage] <-
-                      valueA[ipar] + (agevec[iage] - minage[ipar]) * temp1[ipar]
+            moveinfo <- moveinfo[moveinfo[["LabelBase2"]] %in% substring(movepars[["Label"]], 12), ]
+            ## print(moveinfo)
+            nmoves <- nrow(moveinfo)
+            if (verbose) cat("  N movement rates:", nmoves, "\n")
+            if (nareas > 2) {
+              cat(
+                "  WARNING: time-varying movement plots not yet configured",
+                "for models with N areas > 2\n"
+              )
+            } else {
+              yrvec <- replist[["startyr"]]:replist[["endyr"]]
+              nyrs <- length(yrvec)
+  
+              ## if(nmoves*2 != nrow(movepars)){
+              ##   cat("warning!: In SSplotMovementRates function.\n
+              ##                Problem with number of parameters.\n
+              ##                2*nrow(moveinfo)=",2*nrow(moveinfo),"\n,
+              ##                nrow(movepars)  =",nrow(movepars),"\n")
+              ## }
+  
+              movecalc <- function(min.move.age, accuage, minage, maxage,
+                                   valueA, valueB, from, to, seasdur) {
+                # subfunction to calculate movement rates
+                # similar to one in the "movepars" function.
+                # in the future, these could be generalized and stand-alone in the r4ss package
+                veclengths <- unique(c(
+                  length(minage), length(maxage),
+                  length(valueA), length(valueB),
+                  length(from), length(to)
+                ))
+                if (length(veclengths) != 1) {
+                  stop("Error! input vectors  minage, maxage, valueA, valueB, from, and to need to all have the same length.")
+                } else {
+                  npars <- veclengths
+                }
+  
+                agevec <- 0:accuage
+                nages <- length(agevec)
+  
+                movemat1 <- matrix(NA, npars, nages) # raw values
+                movemat2 <- matrix(NA, npars, nages) # normalized to sum to 1
+  
+                temp <- 1 / (maxage - minage)
+                temp1 <- temp * (valueB - valueA)
+  
+                for (iage in 1:nages) {
+                  for (ipar in 1:npars) {
+                    if (agevec[iage] <= minage[ipar]) {
+                      movemat1[ipar, iage] <- valueA[ipar]
+                    }
+                    if (agevec[iage] >= maxage[ipar]) {
+                      movemat1[ipar, iage] <- valueB[ipar]
+                    }
+                    if (agevec[iage] > minage[ipar] & agevec[iage] < maxage[ipar]) {
+                      movemat1[ipar, iage] <-
+                        valueA[ipar] + (agevec[iage] - minage[ipar]) * temp1[ipar]
+                    }
                   }
                 }
-              }
-              movemat1 <- exp(movemat1)
-              movemat1[from != to, ] <- (1 / nseasons) * movemat1[from != to, ]
-              movemat2 <- movemat1 / matrix(apply(movemat1, 2, sum), npars, nages, byrow = T)
-              names <- paste("from_", from, "to_", to, sep = "")
-              # fix movement at 0 for when from and to areas don't match
-              movemat2[, 0:accuage < min.move.age] <- from == to
-              rownames(movemat2) <- names
-
-              return(movemat2)
-            } # end movecalc subfunction
-
-            # make an array of movement rates by source area, age, destination area, and year
-            moveByYr <- array(NA,
-              dim = c(accuage + 1, nyrs, nmoves),
-              dimnames = list(
-                age = 0:accuage,
-                yr = yrvec, movement = 1:nmoves
+                movemat1 <- exp(movemat1)
+                movemat1[from != to, ] <- (1 / nseasons) * movemat1[from != to, ]
+                movemat2 <- movemat1 / matrix(apply(movemat1, 2, sum), npars, nages, byrow = T)
+                names <- paste("from_", from, "to_", to, sep = "")
+                # fix movement at 0 for when from and to areas don't match
+                movemat2[, 0:accuage < min.move.age] <- from == to
+                rownames(movemat2) <- names
+  
+                return(movemat2)
+              } # end movecalc subfunction
+  
+              # make an array of movement rates by source area, age, destination area, and year
+              moveByYr <- array(NA,
+                dim = c(accuage + 1, nyrs, nmoves),
+                dimnames = list(
+                  age = 0:accuage,
+                  yr = yrvec, movement = 1:nmoves
+                )
               )
-            )
-            for (iyr in 1:nyrs) {
-              y <- yrvec[iyr]
+              for (iyr in 1:nyrs) {
+                y <- yrvec[iyr]
+                for (imove in 1:nmoves) {
+                  LabelA <- paste("MoveParm_A_", moveinfo[["LabelBase2"]][imove], sep = "")
+                  LabelB <- paste("MoveParm_B_", moveinfo[["LabelBase2"]][imove], sep = "")
+                  seas <- moveinfo[["Seas"]][imove]
+                  basevalueA <- movepars[["Value"]][movepars[["Label"]] == LabelA]
+                  basevalueB <- movepars[["Value"]][movepars[["Label"]] == LabelB]
+                  valueA <- MGparmAdj[[LabelA]][MGparmAdj[["Yr"]] == y]
+                  valueB <- MGparmAdj[[LabelB]][MGparmAdj[["Yr"]] == y]
+                  # fill in array
+                  moveByYr[, iyr, imove] <-
+                    movecalc(
+                      min.move.age = min.move.age,
+                      accuage = accuage,
+                      minage = rep(moveinfo[["minage"]][imove], 2),
+                      maxage = rep(moveinfo[["maxage"]][imove], 2),
+                      valueA = c(valueA, 0),
+                      valueB = c(valueB, 0),
+                      from = rep(moveinfo[["Source_area"]][imove], 2),
+                      to = c(moveinfo[["Dest_area"]][imove], moveinfo[["Source_area"]][imove]),
+                      seasdur = seasdur[seas]
+                    )
+                } # end loop over movement definitions
+              } # end loop over years to calculate moveByYr array
+  
+              # make plots
+              cat("Warning! Time-varying movement plots are experimental and might be totally wrong\n")
               for (imove in 1:nmoves) {
-                LabelA <- paste("MoveParm_A_", moveinfo[["LabelBase2"]][imove], sep = "")
-                LabelB <- paste("MoveParm_B_", moveinfo[["LabelBase2"]][imove], sep = "")
-                seas <- moveinfo[["Seas"]][imove]
-                basevalueA <- movepars[["Value"]][movepars[["Label"]] == LabelA]
-                basevalueB <- movepars[["Value"]][movepars[["Label"]] == LabelB]
-                valueA <- MGparmAdj[[LabelA]][MGparmAdj[["Yr"]] == y]
-                valueB <- MGparmAdj[[LabelB]][MGparmAdj[["Yr"]] == y]
-                # fill in array
-                moveByYr[, iyr, imove] <-
-                  movecalc(
-                    min.move.age = min.move.age,
-                    accuage = accuage,
-                    minage = rep(moveinfo[["minage"]][imove], 2),
-                    maxage = rep(moveinfo[["maxage"]][imove], 2),
-                    valueA = c(valueA, 0),
-                    valueB = c(valueB, 0),
-                    from = rep(moveinfo[["Source_area"]][imove], 2),
-                    to = c(moveinfo[["Dest_area"]][imove], moveinfo[["Source_area"]][imove]),
-                    seasdur = seasdur[seas]
+                Source_area <- moveinfo[["Source_area"]][imove]
+                Dest_area <- moveinfo[["Dest_area"]][imove]
+                movetable <- moveByYr[, , imove]
+                ### not sure why following line was present, removing on 10 May 2018
+                # movetable <- moveByYr[1, ,imove,]
+                main <- paste(
+                  "Time-varying movement from area", Source_area,
+                  "to area", Dest_area
+                )
+                move.mountains.fn <- function() {
+                  mountains(zmat = t(movetable), xvec = 0:accuage, yvec = yrvec, xlab = "Age", ylab = "Year")
+                  title(main = main, cex.main = cex.main)
+                }
+  
+                if (plot) move.mountains.fn()
+                if (print) {
+                  file <- paste0(
+                    "move2_time-varying_movement_rates_",
+                    Source_area, "to", Dest_area, ".png"
                   )
-              } # end loop over movement definitions
-            } # end loop over years to calculate moveByYr array
-
-            # make plots
-            cat("Warning! Time-varying movement plots are experimental and might be totally wrong\n")
-            for (imove in 1:nmoves) {
-              Source_area <- moveinfo[["Source_area"]][imove]
-              Dest_area <- moveinfo[["Dest_area"]][imove]
-              movetable <- moveByYr[, , imove]
-              ### not sure why following line was present, removing on 10 May 2018
-              # movetable <- moveByYr[1, ,imove,]
-              main <- paste(
-                "Time-varying movement from area", Source_area,
-                "to area", Dest_area
-              )
-              move.mountains.fn <- function() {
-                mountains(zmat = t(movetable), xvec = 0:accuage, yvec = yrvec, xlab = "Age", ylab = "Year")
-                title(main = main, cex.main = cex.main)
+                  caption <- main
+                  plotinfo <- save_png(
+                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    caption = caption
+                  )
+                  move.mountains.fn()
+                  dev.off()
+                }
               }
-
-              if (plot) move.mountains.fn()
-              if (print) {
-                file <- paste0(
-                  "move2_time-varying_movement_rates_",
-                  Source_area, "to", Dest_area, ".png"
-                )
-                caption <- main
-                plotinfo <- save_png(
-                  plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                  pheight = pheight, punits = punits, res = res, ptsize = ptsize,
-                  caption = caption
-                )
-                move.mountains.fn()
-                dev.off()
-              }
-            }
-          } # end check for Nareas > 2
-        } # end if(FALSE) turning off section that isn't working
-      } # end check for time-varying movement
+            } # end check for Nareas > 2
+          } # end if(FALSE) turning off section that isn't working
+        } # end check for time-varying movement
+      } else {
+        message("Skipping time varying movement plots (subplot 2), most likely\n", 
+                "because MGparm_By_Year_after_adjustments table (report:7) is\n",
+                "not reported in the Report.sso file.")
+      }
     } # end subplot 2
     returnlist <- list()
     if (!is.null(moveByYr)) {

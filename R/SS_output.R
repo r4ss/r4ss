@@ -1883,6 +1883,11 @@ SS_output <-
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_endyr", 1,
             header = TRUE, type.convert = TRUE
           )
+          # fix needed for 3.30.19 and 3.30.19.01 (fixed in future versions of SS3)
+          if (length(grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]])) == 1) {
+            tmp_brk_line <- grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]]) - 1
+            recruit_dist_endyr <- recruit_dist_endyr[seq_len(tmp_brk_line), ]
+          }
         }
         # bundle original and extra tables into a list
         recruitment_dist <- list(

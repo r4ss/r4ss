@@ -32,7 +32,7 @@ SSplotMovementRates(
 
 \item{print}{print to PNG files?}
 
-\item{subplots}{which subplots to create}
+\item{subplots}{which subplots to create.}
 
 \item{plotdir}{where to put the plots (uses model directory by default)}
 
@@ -69,7 +69,8 @@ The default is \code{res = 300}.}
 \description{
 Plots estimated movement rates in final year for each area/season with movement as
 reported in Report.sso. If movement is time-varying, an additional figure shows
-pattern across years.
+pattern across years (if the MGparm_By_Year_after_adjustments table (report:7)
+is available in the Report.sso file)
 }
 \examples{
 \dontrun{
