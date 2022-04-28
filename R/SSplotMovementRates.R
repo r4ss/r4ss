@@ -2,7 +2,7 @@
 #'
 #' Plots estimated movement rates in final year for each area/season with movement as
 #' reported in Report.sso. If movement is time-varying, an additional figure shows
-#' pattern across years (if the MGparm_By_Year_after_adjustments table (report:7) 
+#' pattern across years (if the MGparm_By_Year_after_adjustments table (report:7)
 #' is available in the Report.sso file)
 #'
 #' @template replist
@@ -147,14 +147,14 @@ SSplotMovementRates <-
             } else {
               yrvec <- replist[["startyr"]]:replist[["endyr"]]
               nyrs <- length(yrvec)
-  
+
               ## if(nmoves*2 != nrow(movepars)){
               ##   cat("warning!: In SSplotMovementRates function.\n
               ##                Problem with number of parameters.\n
               ##                2*nrow(moveinfo)=",2*nrow(moveinfo),"\n,
               ##                nrow(movepars)  =",nrow(movepars),"\n")
               ## }
-  
+
               movecalc <- function(min.move.age, accuage, minage, maxage,
                                    valueA, valueB, from, to, seasdur) {
                 # subfunction to calculate movement rates
@@ -170,16 +170,16 @@ SSplotMovementRates <-
                 } else {
                   npars <- veclengths
                 }
-  
+
                 agevec <- 0:accuage
                 nages <- length(agevec)
-  
+
                 movemat1 <- matrix(NA, npars, nages) # raw values
                 movemat2 <- matrix(NA, npars, nages) # normalized to sum to 1
-  
+
                 temp <- 1 / (maxage - minage)
                 temp1 <- temp * (valueB - valueA)
-  
+
                 for (iage in 1:nages) {
                   for (ipar in 1:npars) {
                     if (agevec[iage] <= minage[ipar]) {
@@ -201,10 +201,10 @@ SSplotMovementRates <-
                 # fix movement at 0 for when from and to areas don't match
                 movemat2[, 0:accuage < min.move.age] <- from == to
                 rownames(movemat2) <- names
-  
+
                 return(movemat2)
               } # end movecalc subfunction
-  
+
               # make an array of movement rates by source area, age, destination area, and year
               moveByYr <- array(NA,
                 dim = c(accuage + 1, nyrs, nmoves),
@@ -238,7 +238,7 @@ SSplotMovementRates <-
                     )
                 } # end loop over movement definitions
               } # end loop over years to calculate moveByYr array
-  
+
               # make plots
               cat("Warning! Time-varying movement plots are experimental and might be totally wrong\n")
               for (imove in 1:nmoves) {
@@ -255,7 +255,7 @@ SSplotMovementRates <-
                   mountains(zmat = t(movetable), xvec = 0:accuage, yvec = yrvec, xlab = "Age", ylab = "Year")
                   title(main = main, cex.main = cex.main)
                 }
-  
+
                 if (plot) move.mountains.fn()
                 if (print) {
                   file <- paste0(
@@ -276,9 +276,11 @@ SSplotMovementRates <-
           } # end if(FALSE) turning off section that isn't working
         } # end check for time-varying movement
       } else {
-        message("Skipping time varying movement plots (subplot 2), most likely\n", 
-                "because MGparm_By_Year_after_adjustments table (report:7) is\n",
-                "not reported in the Report.sso file.")
+        message(
+          "Skipping time varying movement plots (subplot 2), most likely\n",
+          "because MGparm_By_Year_after_adjustments table (report:7) is\n",
+          "not reported in the Report.sso file."
+        )
       }
     } # end subplot 2
     returnlist <- list()

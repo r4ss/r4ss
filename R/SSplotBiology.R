@@ -24,8 +24,8 @@
 #'   \item 21	Natural mortality (if age-dependent)
 #'   \item 22	Time-varying growth persp
 #'   \item 23	Time-varying growth contour
-#'   \item 24	plot time-series of any time-varying quantities (created if the 
-#'     MGparm_By_Year_after_adjustments table (report:7) is available in the 
+#'   \item 24	plot time-series of any time-varying quantities (created if the
+#'     MGparm_By_Year_after_adjustments table (report:7) is available in the
 #'     Report.sso file)
 #'   \item 31	hermaphroditism transition probability
 #'   \item 32	hermaphroditism cumulative probability
@@ -1583,7 +1583,7 @@ SSplotBiology <-
 
     # plot time-series of any time-varying quantities
     if (24 %in% subplots) {
-      if(!is.null(MGparmAdj)) {
+      if (!is.null(MGparmAdj)) {
         # general function to work for any parameter
         timeVaryingParmFunc <- function(parmlabel, forecast = FALSE) {
           if (forecast) {
@@ -1633,9 +1633,11 @@ SSplotBiology <-
           }
         }
       } else {
-        message("Skipping timevarying quantity plots (subplot 24), most likely\n",
-                "because the MGparm_By_Year_after_adjustments table (report:7)\n",
-                "is not reported in the Report.sso file.")
+        message(
+          "Skipping timevarying quantity plots (subplot 24), most likely\n",
+          "because the MGparm_By_Year_after_adjustments table (report:7)\n",
+          "is not reported in the Report.sso file."
+        )
       }
     }
 
