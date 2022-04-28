@@ -137,11 +137,14 @@ copy_SS_inputs <- function(dir.old = NULL,
     # figure out which files are executables
     is.exe <- file.info(dir(dir.exe, full.names = TRUE))$exe
     exefiles <- dir(dir.exe)[is.exe != "no"]
+    if (.Platform[["OS.type"]] == "unix") {
+      # Anything without an extension is listed (may need to make this more
+      # specific??)
+      exefiles <- list.files(dir.exe, pattern = "^[^.]+$")
+      message("Unix binaries are: ", paste0(exefiles, collapse = ", "))
+    }
     if (length(exefiles) == 0) {
       warning("No executable files found in ", dir.exe)
-      if (.Platform[["OS.type"]] == "unix") {
-        warning("Stock Synthesis executables cannot yet be copied for Mac or Linux")
-      }
     }
     if (length(exefiles) > 1) {
       warning("Copying multiple executable files")
