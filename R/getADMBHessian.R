@@ -1,7 +1,7 @@
 #' Read admodel.hes file
 #'
 #' This function reads in all of the information contained in the
-#' .hes file. Some is needed for relaxing the covariance matrix, while the rest 
+#' .hes file. Some is needed for relaxing the covariance matrix, while the rest
 #' is recorded and rewritten to file as ADMB expects.
 #' @param File Directory in which .hes file is located. Defaults to the working
 #'  directory.

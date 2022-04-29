@@ -11,14 +11,15 @@ dir.create(temp_path, showWarnings = FALSE)
 on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
 test_that("populate_multiple_folders runs", {
-  copy_info <- populate_multiple_folders(outerdir.old = example_path,
-                            outerdir.new = temp_path,
-                            exe.file = NULL,
-                            verbose = FALSE
-                            )
+  copy_info <- populate_multiple_folders(
+    outerdir.old = example_path,
+    outerdir.new = temp_path,
+    exe.file = NULL,
+    verbose = FALSE
+  )
   expect_true(all(copy_info[["results.files"]]))
   lapply(copy_info[["dir"]], function(d) {
     expect_true(file.exists(file.path(temp_path, d)))
-    expect_length(list.files(file.path(temp_path,d)), 4)
+    expect_length(list.files(file.path(temp_path, d)), 4)
   })
 })

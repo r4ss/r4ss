@@ -70,10 +70,10 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
     endyrvec = endyrvec,
     legendlabels = paste("Data", 0:-2, "years")
   )
-  #calculate Mohn's rho values
+  # calculate Mohn's rho values
   # TODO: add better tests for mohns rho. Some values aren't calcualted b/c they
   # are missing in the summaries for this model run.
-  mohns_rho <-  SSmohnsrho(retroSummary)
+  mohns_rho <- SSmohnsrho(retroSummary)
   expect_length(mohns_rho, 12)
 })
 
@@ -166,16 +166,20 @@ test_that("SS_profile runs on simple_3.30.12 model", {
 test_that("Run an SS3 model and read the hessian", {
   path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
   skip_if((!file.exists(file.path(path_3.30.12, "ss"))) &
-            (!file.exists(file.path(path_3.30.12, "ss.exe"))),
-          message = "skipping test that requires SS executable"
+    (!file.exists(file.path(path_3.30.12, "ss.exe"))),
+  message = "skipping test that requires SS executable"
   )
-  copy_results <- copy_SS_inputs(dir.old = path_3.30.12, 
-                 dir.new = file.path(tmp_path, "test_mod_run"), copy_exe = TRUE)
+  copy_results <- copy_SS_inputs(
+    dir.old = path_3.30.12,
+    dir.new = file.path(tmp_path, "test_mod_run"), copy_exe = TRUE
+  )
   expect_true(copy_results)
   run_results <- run_SS_models(dirvec = file.path(tmp_path, "test_mod_run"))
   expect_true(run_results[["results"]] == "ran model")
-  hes <- getADMBHessian(File = file.path(tmp_path, "test_mod_run"), 
-                 FileName = "admodel.hes")
+  hes <- getADMBHessian(
+    File = file.path(tmp_path, "test_mod_run"),
+    FileName = "admodel.hes"
+  )
   expect_length(hes, 4)
   expect_true(is.matrix(hes[["hes"]]))
 })
