@@ -629,24 +629,28 @@ SS_plots <-
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
 
       ### add plot of Dynamic B0
-      # first get vector of years
-      yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
-      yrs <- yrs[yrs >= minyr & yrs <= maxyr]
-      # check for uncertainty in Dynamic B0 estimates
-      Dyn_Bzero_uncertainty <-
-        any(grepl("Dyn_Bzero", replist[["derived_quants"]][["Label"]]))
-      # now run plot function
-      plotinfo <- SSplotDynamicB0(
-        replist = replist,
-        yrs = yrs,
-        uncertainty = (uncertainty & Dyn_Bzero_uncertainty),
-        plot = !png, print = png,
-        verbose = verbose,
-        pwidth = pwidth, pheight = pheight, punits = punits,
-        ptsize = ptsize, res = res,
-        plotdir = plotdir
-      )
-      if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      if (is.null(replist[["Dynamic_Bzero"]])) {
+        message("Skipping dynamic B0 plot because output not available")
+      } else {
+        # first get vector of years
+        yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
+        yrs <- yrs[yrs >= minyr & yrs <= maxyr]
+        # check for uncertainty in Dynamic B0 estimates
+        Dyn_Bzero_uncertainty <-
+          any(grepl("Dyn_Bzero", replist[["derived_quants"]][["Label"]]))
+        # now run plot function
+        plotinfo <- SSplotDynamicB0(
+          replist = replist,
+          yrs = yrs,
+          uncertainty = (uncertainty & Dyn_Bzero_uncertainty),
+          plot = !png, print = png,
+          verbose = verbose,
+          pwidth = pwidth, pheight = pheight, punits = punits,
+          ptsize = ptsize, res = res,
+          plotdir = plotdir
+        )
+        if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      }
     } # end if igroup in plot or print
 
     ##########################################
