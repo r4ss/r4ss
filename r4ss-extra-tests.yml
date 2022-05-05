@@ -76,7 +76,7 @@ jobs:
           rm  -rf test-models-repo
           ls inst/extdata
 
-      - name: Get the 3.30.18 SS3 executable and move to expected location
+      - name: Get the latest SS3 executable and move to expected location
         run: |
           curl https://api.github.com/repos/nmfs-stock-synthesis/stock-synthesis/releases/latest | grep "browser_download_url" | grep -Eo 'https://[^\"]*' | grep "ss_linux" | xargs wget
           mv ss_linux ss
