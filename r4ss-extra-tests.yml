@@ -78,7 +78,8 @@ jobs:
 
       - name: Get the 3.30.18 SS3 executable and move to expected location
         run: |
-          wget -O ss https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/v3.30.18/ss_linux
+          curl https://api.github.com/repos/nmfs-stock-synthesis/stock-synthesis/releases/latest | grep "browser_download_url" | grep -Eo 'https://[^\"]*' | grep "ss_linux" | xargs wget
+          mv ss_linux ss
           sudo chmod a+x ss
           cp ss inst/extdata/simple_3.30.12/ss
           cp ss inst/extdata/simple_3.30.13/ss
