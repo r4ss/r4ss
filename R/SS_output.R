@@ -551,7 +551,7 @@ SS_output <-
     if (!is.na(btarg) & btarg == 0.25) {
       if (verbose) {
         message(
-          "Setting minimum biomass threshhold to 0.25",
+          "Setting minimum biomass threshhold to 0.125",
           "  based on US west coast assumption associated with flatfish target of 0.25.",
           "  (can replace or override in SS_plots by setting 'minbthresh')"
         )
