@@ -232,7 +232,12 @@ SSplotTimeseries <-
       # subplot9&10 = relative spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
-        yvals <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", "Value"]
+        yvals <- NA * ts[["SpawnBio"]] # placeholder to ensure the correct length
+        # get derived quantities for Bratio
+        quants <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", ]
+        # get year for each row
+        quants[["Yr"]] <- as.numeric(substring(quants[["Label"]], 8))
+        yvals[ts[["Yr"]] %in% quants[["Yr"]]] <- quants[["Value"]]
         ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
       }
 
@@ -533,7 +538,12 @@ SSplotTimeseries <-
           }
           if (subplot %in% 9:10) {
             plot1 <- NULL
-            plot2[3] <- FALSE
+            # remove the start year if Bratio_[startyr] is not in
+            # derived quantities (which will be the case for any model
+            # without initial equilibrium catch)
+            if (!paste0("Bratio_", startyr) %in% stdtable$Label) {
+              plot2[3] <- FALSE
+            }
           }
           mycol <- areacols[iarea]
           mytype <- "o" # overplotting points on lines for most time series
