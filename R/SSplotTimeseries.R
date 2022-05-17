@@ -541,7 +541,7 @@ SSplotTimeseries <-
             # remove the start year if Bratio_[startyr] is not in
             # derived quantities (which will be the case for any model
             # without initial equilibrium catch)
-            if (!paste0("Bratio_", startyr) %in% stdtable$Label) {
+            if (uncertainty && !paste0("Bratio_", startyr) %in% derived_quants[["Label"]]) {
               plot2[3] <- FALSE
             }
           }
