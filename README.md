@@ -39,13 +39,13 @@ Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson, Chantel R. Wetzel, Ian J. S
 
 ## Changes
 
-See [NEWS.md](https://github.com/r4ss/r4ss/blob/master/NEWS.md) for a (not very complete) log of changes to r4ss, starting with r4ss v1.24.0 from 2014. The list of commits at <https://github.com/r4ss/r4ss/commits/master> provides a much more detailed list.
+See [NEWS.md](https://github.com/r4ss/r4ss/blob/main/NEWS.md) for a (not very complete) log of changes to r4ss, starting with r4ss v1.24.0 from 2014. The list of commits at <https://github.com/r4ss/r4ss/commits/main> provides a much more detailed list.
 
 ## Contributing to r4ss
 
 Interested in contributing to r4ss? We recognize contributions come in many forms, including but not limited to code, reporting issues, creating examples and/or documentation.
 
-We strive to follow the [NMFS Fisheries Toolbox Contribution Guide](https://github.com/nmfs-fish-tools/Resources/blob/master/CONTRIBUTING.md). We also have included r4ss-specific code contribution information in the [Git workflow page of the r4ss wiki](https://github.com/r4ss/r4ss/wiki/Git-Workflow). Note that these are guidelines, not rules, and we are open to collaborations in other ways that may work better for you. Please feel free to reach out to us by opening an issue in this repository or by emailing the maintainer (call `maintainer("r4ss")` in R to view the current maintainer's name and email address).
+We strive to follow the [NMFS Fisheries Toolbox Contribution Guide](https://github.com/nmfs-fish-tools/Resources/blob/main/CONTRIBUTING.md). We also have included r4ss-specific code contribution information in the [Git workflow page of the r4ss wiki](https://github.com/r4ss/r4ss/wiki/Git-Workflow). Note that these are guidelines, not rules, and we are open to collaborations in other ways that may work better for you. Please feel free to reach out to us by opening an issue in this repository or by emailing the maintainer (call `maintainer("r4ss")` in R to view the current maintainer's name and email address).
 
 Note that by contributing, you are expect to uphold the [code of conduct](#code-of-conduct).
 

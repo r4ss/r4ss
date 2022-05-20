@@ -10,23 +10,11 @@
 #' @author Ian Taylor
 #' @export
 #' @references
-#' <http://www.pcouncil.org/wp-content/uploads/2006_hake_assessment_FINAL_ENTIRE.pdf>
+#' <https://www.pcouncil.org/documents/2006/02/stock-assessment-of-pacific-hake-whiting-in-u-s-and-canadian-waters-in-2006-february-16-2006.pdf>
 #' (A description is on page 41 and Figures 55-56 (pg 139-140) show some
 #' results.)
 SSbootstrap <- function() {
-  # this is not yet a generalized function, just some example code for how to do
-  # a parametric bootstrap such as was done for the Pacific hake model in 2006
-  # See http://www.pcouncil.org/wp-content/uploads/2006_hake_assessment_FINAL_ENTIRE.pdf
-  # A description is on page 41 and Figures 55-56 (pg 139-140) show some results.
-
-  # Written by Ian Taylor on 10/11/2012 after disucussion with Nancie Cummings
-
-  # first set "Number of datafiles to produce" in starter.ss = 100 or some large number
-  # re-run model to get data.ss_new file concatenating all bootstrap data files
-
   # Directory where bootstrap will be run.
-  # You probably want to use a copy of the directory where you ran it,
-  # so as not to overwrite the true results.
   inpath <- "c:/Simple"
 
   # setwd(inpath) # change working directory (commented out to avoid violating CRAN policy)

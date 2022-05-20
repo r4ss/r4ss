@@ -369,7 +369,7 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
       file.info(file.path(File, stdfile))$size > 0) {
       # try reading output
       SsOutput <- try(SS_output(File, covar = TRUE, forecast = FALSE, verbose = F, printstats = F), silent = TRUE)
-      if (class(SsOutput) != "try-error") {
+      if (inherits(SsOutput, "try-error")) {
         BiasRamp <- SS_fitbiasramp(SsOutput, altmethod = "psoptim", print = FALSE, plot = FALSE)
         file.remove(file.path(File, stdfile))
         # Put into CTL
