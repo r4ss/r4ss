@@ -86,7 +86,7 @@ very difficult to be sure that what this function does is appropriate for all
 combinations of options. The following notes (for version A) might help anyone
 wanting to check or correct the code.
 \enumerate{
-\item The code first removes un-needed rows
+\item The code first removes unneeded rows
 from database condbase.
 \item The remaining rows of the database are grouped
 (indexed by vector indx) and relevant statistics (e.g., observed and expected

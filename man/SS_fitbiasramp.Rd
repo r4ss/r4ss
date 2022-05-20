@@ -94,9 +94,9 @@ for bias adjustment in Stock Synthesis.
 }
 \details{
 Implementation of the bias adjustment ramp within Stock Synthesis increases
-the likelihood that the estimated recruitmente events, which are
+the likelihood that the estimated recruitment events, which are
 log-normally distributed, are mean unbiased and comparable to results from
-Markov chain Mone Carlo estimation routines
+Markov chain Monte Carlo estimation routines
 (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}).
 Options to account for the fact that data typically do not equally represent
 all modelled time periods are as follows:

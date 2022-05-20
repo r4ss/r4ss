@@ -1,9 +1,14 @@
+# r4ss 1.44.0 (23 May 2022)
+* Minor improvements and bug fixes
+* Compatibility with SS3 version 3.30.19
+* Submitted to CRAN
+
 # r4ss 1.43.2 (04 April 2022)
 * Standardize version = "3.30" in read and write functions and
   deprecate NULL as an option
 
-# r4ss 1.43.1 (18 Febuarary 2022)
-* Added Common Utilty Functions
+# r4ss 1.43.1 (18 February 2022)
+* Added Common Utility Functions
 
 # r4ss 1.39.1 (18 August 2020)
 * Numerous bug fixes and minor improvements

@@ -14,7 +14,7 @@
 #'
 #' Function to write formatted table similar to
 #' table written by gdata::write.fwf from data.frame or matrix
-#' This function doesnot accept columns or logical with factor
+#' This function does not accept columns or logical with factor
 #'
 #' @param x data.frame or matrix the object to be written
 #' @param file either a character string naming a file or a
@@ -165,7 +165,7 @@ write_fwf4 <- function(x,
 
 #---------------------------------------------------------------
 #' Utility function to test if x is "numerically" integer wrt machine epsilon
-#'  taken from exaple section of help of is.integer
+#'  taken from example section of help of is.integer
 #' @param x value to check if it is "integer"
 #' @param tol tolerace
 #' @export

@@ -21,11 +21,11 @@
 #' TRUE will divide by 2.
 #' @param endyr Optional input to choose a different ending year for tables
 #' (could be useful for catch-only updates)
-#' @param adopted_ofl Vector of adopted ofl values to be printed in the mangagement performance
+#' @param adopted_ofl Vector of adopted ofl values to be printed in the management performance
 #' table. This should be a vector of 10 values.
-#' @param adopted_abc Vector of adopted abc values to be printed in the mangagement performance
+#' @param adopted_abc Vector of adopted abc values to be printed in the management performance
 #' table. This should be a vector of 10 values.
-#' @param adopted_acl Vector of adopted acl values to be printed in the mangagement performance
+#' @param adopted_acl Vector of adopted acl values to be printed in the management performance
 #' table. This should be a vector of 10 values.
 #' @param forecast_ofl Optional input vector for management adopted OFL values for table g. These values
 #' will be overwrite the OFL values in the projection table, rather than the model estimated
@@ -33,13 +33,13 @@
 #' @param forecast_abc Optional input vector for management adopted ABC values for table g. These values
 #' will be overwrite the ABC values in the projection table, rather than the model estimated
 #' ABC values. Example input: c(1500, 1300)
-#' @param format Logical. Option to control whether tables are formatted (e.g. commas added, CIs separeted with "-"). The
+#' @param format Logical. Option to control whether tables are formatted (e.g. commas added, CIs separated with "-"). The
 #' formatting is intended to create tables that can be cut and pasted easily into a word document without additional formatting
 #' work. If the tables are being used by LaTex/Markdown or other documenting software, having formatting turned on prevents
 #' the tables from being formatted further since the objects are no longer numeric.
 #' @param match_digits TRUE/FALSE switch on whether the low and high interval values
 #' in e_ReferencePoints_ES will be reported with the same number of decimal digits
-#' as the estaimte.
+#' as the estimate.
 #' @param verbose Return updates of function progress to the R console?
 #'
 #' @return Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).

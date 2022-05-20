@@ -1,4 +1,4 @@
-#' Srite Stock Synthesis control file
+#' Write Stock Synthesis control file
 #'
 #' Write Stock Synthesis control file from list object in R which was probably
 #' created using [SS_readctl()]. This function is a

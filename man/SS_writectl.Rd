@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_writectl.R
 \name{SS_writectl}
 \alias{SS_writectl}
-\title{Srite Stock Synthesis control file}
+\title{Write Stock Synthesis control file}
 \usage{
 SS_writectl(
   ctllist,
