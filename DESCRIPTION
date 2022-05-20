@@ -3,7 +3,7 @@ Type: Package
 Title: R Code for Stock Synthesis
 Version: 1.44.0
 Authors@R: c(person(given = "Ian G.", family = "Taylor",
-  email = "ian.taylor@noaa.gov", role = c("aut","cre")),
+  email = "Ian.Taylor@noaa.gov", role = c("aut","cre")),
   person(given = "Ian J.", family = "Stewart", role = "aut"),
   person(given = "Allan C.", family = "Hicks", role = "aut"),
   person(given = "Tommy M.", family = "Garrison", role = "aut"),
