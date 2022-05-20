@@ -1,6 +1,6 @@
 # r4ss: R code for Stock Synthesis
 
-[![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml) [![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://codecov.io/gh/r4ss/r4ss)
+[![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml) [![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r4ss/r4ss)
 
 Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Methot. The Stock Synthesis software and many other associated materials are available on the NOAA Virtual Laboratory at [https://vlab.noaa.gov/web/stock-synthesis/home](https://vlab.noaa.gov/web/stock-synthesis/home). The r4ss package is a collection of R functions for interacting with Stock Synthesis. It is based on the original work of Ian Stewart begun around 2005 and released as an open source R package in 2009. The package has a long list of authors and has benefited from a large community of users making suggestions and reporting issues.
 
@@ -45,7 +45,7 @@ See [NEWS.md](https://github.com/r4ss/r4ss/blob/main/NEWS.md) for a (not very co
 
 Interested in contributing to r4ss? We recognize contributions come in many forms, including but not limited to code, reporting issues, creating examples and/or documentation.
 
-We strive to follow the [NMFS Fisheries Toolbox Contribution Guide](https://github.com/nmfs-fish-tools/Resources/blob/main/CONTRIBUTING.md). We also have included r4ss-specific code contribution information in the [Git workflow page of the r4ss wiki](https://github.com/r4ss/r4ss/wiki/Git-Workflow). Note that these are guidelines, not rules, and we are open to collaborations in other ways that may work better for you. Please feel free to reach out to us by opening an issue in this repository or by emailing the maintainer (call `maintainer("r4ss")` in R to view the current maintainer's name and email address).
+We strive to follow the [NMFS Fisheries Toolbox Contribution Guide](https://github.com/nmfs-fish-tools/Resources/blob/master/CONTRIBUTING.md). We also have included r4ss-specific code contribution information in the [Git workflow page of the r4ss wiki](https://github.com/r4ss/r4ss/wiki/Git-Workflow). Note that these are guidelines, not rules, and we are open to collaborations in other ways that may work better for you. Please feel free to reach out to us by opening an issue in this repository or by emailing the maintainer (call `maintainer("r4ss")` in R to view the current maintainer's name and email address).
 
 Note that by contributing, you are expect to uphold the [code of conduct](#code-of-conduct).
 

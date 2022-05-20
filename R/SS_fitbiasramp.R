@@ -1,7 +1,7 @@
 #' Estimate bias adjustment for recruitment deviates
 #'
 #' Uses standard error of estimated recruitment deviates to estimate the 5
-#' controls ([Methot and Taylor, 2011](\doi{10.1139/f2011-092}))
+#' controls ([Methot and Taylor, 2011](https://doi.org/10.1139/f2011-092))
 #' for bias adjustment in Stock Synthesis.
 #'
 #' @details
@@ -9,7 +9,7 @@
 #' the likelihood that the estimated recruitment events, which are
 #' log-normally distributed, are mean unbiased and comparable to results from
 #' Markov chain Monte Carlo estimation routines
-#' ([Methot and Taylor, 2011](\doi{10.1139/f2011-092})).
+#' ([Methot and Taylor, 2011](https://doi.org/10.1139/f2011-092)).
 #' Options to account for the fact that data typically do not equally represent
 #' all modelled time periods are as follows:
 #' \enumerate{
