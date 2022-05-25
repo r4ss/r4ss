@@ -15,11 +15,6 @@ model in 2006.
 \note{
 Thanks to Nancie Cummings for inspiration.
 }
-\references{
-\url{https://www.pcouncil.org/documents/2006/02/stock-assessment-of-pacific-hake-whiting-in-u-s-and-canadian-waters-in-2006-february-16-2006.pdf}
-(A description is on page 41 and Figures 55-56 (pg 139-140) show some
-results.)
-}
 \author{
 Ian Taylor
 }
