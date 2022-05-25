@@ -38,9 +38,10 @@ SS_readdat <- function(file,
                        section = NULL) {
   if (is.null(version)) {
     lifecycle::deprecate_warn(
-      when = "1.43.2",
+      when = "1.44.1",
       what = "SS_readctl(version = 'must be 3.24 or 3.30')"
     )
+    version <- "3.30"
   }
   nver <- as.numeric(substring(version, 1, 4))
   if (verbose) cat("Char version is ", version, "\n")
