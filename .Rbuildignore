@@ -28,3 +28,4 @@ docs
 ^inst/extdata/simple_3.30.13/ss3.par$
 ^inst/extdata/simple_3.30.13/warning.sso$
 ^vignettes/
+^CRAN-SUBMISSION$

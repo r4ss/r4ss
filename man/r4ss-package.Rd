@@ -6,7 +6,7 @@
 \alias{r4ss-package}
 \title{r4ss: R Code for Stock Synthesis}
 \description{
-A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of r4ss is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.19.01, from April 2022).
+A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of '{r4ss}' is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.19.01, from April 2022).
 }
 \examples{
 \dontrun{
