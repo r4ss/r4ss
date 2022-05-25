@@ -27,7 +27,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Ian G. Taylor \email{ian.taylor@noaa.gov}
+\strong{Maintainer}: Ian G. Taylor \email{Ian.Taylor@noaa.gov}
 
 Authors:
 \itemize{

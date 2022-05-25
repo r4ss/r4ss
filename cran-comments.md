@@ -1,27 +1,13 @@
-* This is a new release
+## Release summary
 
-## Test environments
-* Ubuntu Linux 16.04.6 LTS (release on Travis CI)
-* Windows 10 (local, R 4.0.2)
-* win-builder (devel)
+* This is a new release
 
 ## R CMD check results
 0 errors | 0 warnings | 0 notes
 
-### Error
-None
+## revdepcheck results
 
-### Warning
-None
+We checked 2 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
-### Note
-None
-
-## Downstream dependencies
-I have checked the 2 downstream dependencies:
-
-* ss3sim: There were no issues.
-
-* MSEtool: There were no issues.
-
-
+ * We saw 0 new problems
+ * We failed to check 0 packages
