@@ -17,8 +17,9 @@
 #' (typically will be `model[["endyr"]] + 1`)
 #' @param data_year Last year of of timeseries data
 #' @param sciencecenter Origin of assessment report
-#' @param Mgt_Council Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)
-#' @author Ian G. Taylor, Andi Stephens
+#' @param Mgt_Council Council jurisdiction. Currently the only option
+#' outside of the default is Gulf of Mexico (`"GM"`)
+#' @author Ian G. Taylor, Andi Stephens, LaTreese S. Denson
 #' @export
 #' @seealso [SS_output()]
 #' @examples

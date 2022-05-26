@@ -4,7 +4,7 @@
 \alias{write_fwf4}
 \title{Function to write formatted table similar to
 table written by gdata::write.fwf from data.frame or matrix
-This function doesnot accept columns or logical with factor}
+This function does not accept columns or logical with factor}
 \usage{
 write_fwf4(
   x,
@@ -73,7 +73,7 @@ the initial letter.}
 \description{
 Function to write formatted table similar to
 table written by gdata::write.fwf from data.frame or matrix
-This function doesnot accept columns or logical with factor
+This function does not accept columns or logical with factor
 }
 \author{
 Yukio Takeuchi

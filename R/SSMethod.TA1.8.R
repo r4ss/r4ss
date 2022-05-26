@@ -16,7 +16,7 @@
 #' notes might help anyone wanting to check or correct the code.
 #' \enumerate{
 #'   \item The code first takes the appropriate database (lendbase, sizedbase,
-#'         agedbase, or condbase) and removes un-needed rows.
+#'         agedbase, or condbase) and removes unneeded rows.
 #'   \item The remaining rows of the database are grouped into individual
 #'         comps (indexed by vector indx) and relevant statistics (e.g.,
 #'         observed and expected mean length or age), and ancillary data,

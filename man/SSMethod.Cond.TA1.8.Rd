@@ -86,7 +86,7 @@ very difficult to be sure that what this function does is appropriate for all
 combinations of options. The following notes (for version A) might help anyone
 wanting to check or correct the code.
 \enumerate{
-\item The code first removes un-needed rows
+\item The code first removes unneeded rows
 from database condbase.
 \item The remaining rows of the database are grouped
 (indexed by vector indx) and relevant statistics (e.g., observed and expected
@@ -103,7 +103,7 @@ Francis, R.I.C.C. (2011). Data weighting in statistical
 fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 
 Punt, A.E. (2015). Some insights into data weighting in integrated stock assessments.
-Fish. Res. \url{http://dx.doi.org/10.1016/j.fishres.2015.12.006}
+Fish. Res.
 }
 \seealso{
 \code{\link[=SSMethod.TA1.8]{SSMethod.TA1.8()}}

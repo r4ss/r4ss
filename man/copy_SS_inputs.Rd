@@ -43,7 +43,7 @@ dir.exe (if provided)?}
 \item{verbose}{Return updates of function progress to the R console?}
 }
 \value{
-Logical indicating whether all input files were copied succesfully.
+Logical indicating whether all input files were copied successfully.
 }
 \description{
 Reads the starter.ss file to figure out the names of the control and

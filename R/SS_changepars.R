@@ -116,7 +116,7 @@ SS_changepars <-
       "newprior" = newprior, "newprsd" = newprsd, "newprtype" = newprtype,
       "estimate" = estimate, "newphs" = newphs
     )
-    if (is.null(linenums) & !is.null(strings) & class(strings) == "character") {
+    if (is.null(linenums) & !is.null(strings) & is.character(strings)) {
       # get table of parameter lines
       ctltable <- SS_parlines(ctlfile = fullctlfile)
 

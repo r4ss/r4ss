@@ -89,15 +89,15 @@ The default is \code{cex.main=1}.}
 }
 \description{
 Uses standard error of estimated recruitment deviates to estimate the 5
-controls (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011})
+controls (Methot and Taylor, 2011)
 for bias adjustment in Stock Synthesis.
 }
 \details{
 Implementation of the bias adjustment ramp within Stock Synthesis increases
-the likelihood that the estimated recruitmente events, which are
+the likelihood that the estimated recruitment events, which are
 log-normally distributed, are mean unbiased and comparable to results from
-Markov chain Mone Carlo estimation routines
-(\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}).
+Markov chain Monte Carlo estimation routines
+(Methot and Taylor, 2011).
 Options to account for the fact that data typically do not equally represent
 all modelled time periods are as follows:
 \enumerate{
@@ -117,7 +117,6 @@ not recommended because it will lead to biased results.}
 Methot, R.D. and Taylor, I.G., 2011.
 Adjusting for bias due to variability of estimated recruitments in fishery assessment models.
 Can. J. Fish. Aquat. Sci., 68:1744-1760.
-\href{https://doi.org/10.1139/f2011-092}{10.1139/f2011-092}.
 }
 \seealso{
 \code{\link[=SS_output]{SS_output()}}

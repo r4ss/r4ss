@@ -18,16 +18,16 @@ SSbiologytables(
 
 \item{printfolder}{The sub-directory under 'dir' (see below) in which the
 PNG files will be located.  The default sub-directory is "plots".
-The directory will be created if it doesn\'t exist.
-If 'printfolder' is set to "", it is ignored and the PNG files will be located
-in the directory specified by 'dir'.}
+The directory will be created if it doesn not exist.
+If 'printfolder' is set to "", it is ignored and the PNG files will
+be located in the directory specified by 'dir'.}
 
 \item{dir}{The directory in which a PDF file (if requested) will be created
 and within which the printfolder sub-directory (see above) will be created
 if png=TRUE. By default it will be the same directory that the report file
 was read from by the \code{SS_output} function. Alternatives to the default
 can be either relative (to the working directory) or absolute paths.
-The function will attempt to create the directory it doesn't exist, but it
+The function will attempt to create the directory it does not exist, but it
 does not do so recursively.}
 
 \item{fleetnames}{Either the string "default", or a vector of characters

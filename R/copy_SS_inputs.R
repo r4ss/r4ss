@@ -18,7 +18,7 @@
 #' @param copy_par Copy any .par files found in dir.old to dir.new?
 #' @param dir.exe Path to executable to copy instead of any in dir.old
 #' @param verbose Return updates of function progress to the R console?
-#' @return Logical indicating whether all input files were copied succesfully.
+#' @return Logical indicating whether all input files were copied successfully.
 #' @author Ian Taylor
 #' @export
 #' @examples

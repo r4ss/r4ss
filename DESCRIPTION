@@ -1,9 +1,9 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.43.2
+Version: 1.44.0
 Authors@R: c(person(given = "Ian G.", family = "Taylor",
-  email = "ian.taylor@noaa.gov", role = c("aut","cre")),
+  email = "Ian.Taylor@noaa.gov", role = c("aut","cre")),
   person(given = "Ian J.", family = "Stewart", role = "aut"),
   person(given = "Allan C.", family = "Hicks", role = "aut"),
   person(given = "Tommy M.", family = "Garrison", role = "aut"),
@@ -67,7 +67,7 @@ Description: A collection of R functions for use with Stock Synthesis, a
     include tools for summarizing and plotting results, manipulating files,
     visualizing model parameterizations, and various other common stock
     assessment tasks.
-    This version of r4ss is compatible with Stock Synthesis versions
+    This version of '{r4ss}' is compatible with Stock Synthesis versions
     3.24 through 3.30 (specifically version 3.30.19.01, from April
     2022).
 License: GPL-3
@@ -76,5 +76,4 @@ LazyLoad: yes
 URL: https://github.com/r4ss/r4ss
 BugReports: https://github.com/r4ss/r4ss/issues
 RoxygenNote: 7.1.2
-VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

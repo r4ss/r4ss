@@ -53,9 +53,9 @@ subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.}
 
 \item{col2}{line color for dynamic surplus production plot}
 
-\item{lty}{line type (only applied to equilbrium yield plot at this time)}
+\item{lty}{line type (only applied to equilibrium yield plot at this time)}
 
-\item{lwd}{line width (only applied to equilbrium yield plot at this time)}
+\item{lwd}{line width (only applied to equilibrium yield plot at this time)}
 
 \item{cex.main}{character expansion for plot titles}
 
