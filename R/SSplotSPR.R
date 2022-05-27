@@ -348,7 +348,8 @@ SSplotSPR <-
       old_warn <- options()$warn # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
       # add arrows
-      arrows(x0 = phase_df[["Bratio"]][-nrow(phase_df)],
+      arrows(
+        x0 = phase_df[["Bratio"]][-nrow(phase_df)],
         y0 = phase_df[["SPRratio"]][-nrow(phase_df)],
         x1 = phase_df[["Bratio"]][-1],
         y1 = phase_df[["SPRratio"]][-1],
@@ -357,7 +358,8 @@ SSplotSPR <-
       )
       options(warn = old_warn) # returning to old value
       # add points for each year:
-      points(x = phase_df[["Bratio"]],
+      points(
+        x = phase_df[["Bratio"]],
         y = phase_df[["SPRratio"]],
         pch = 21,
         col = 1,
@@ -420,10 +422,12 @@ SSplotSPR <-
         )
       }
       # label a sequence of years
-      label_yrs <- sort(unique(c(min(shared_yrs), 
-      pretty((min(shared_yrs) + 10):(max(shared_yrs) - 10)), 
-      max(shared_yrs))))
-browser()
+      # choice of years is first, last, and multiple of 10
+      label_yrs <- unique(c(
+        min(shared_yrs),
+        shared_yrs[which(shared_yrs %% 10 == 0)],
+        max(shared_yrs)
+      ))
       df_rows <- which(phase_df[["yr"]] %in% label_yrs)
       text(
         x = phase_df[df_rows, "Bratio"],
@@ -431,29 +435,11 @@ browser()
         labels = phase_df[df_rows, "yr"],
         cex = 0.6,
         adj = c(-0.5, -0.3), # above and to the right
-        col = adjustcolor(phase_df[df_rows, "col"], 
-                          offset = c(-0.2, -0.2, -0.2, 0))
+        col = adjustcolor(phase_df[df_rows, "col"],
+          offset = c(-0.5, -0.5, -0.5, 0)
+        )
       )
-      
-      # yr <- min(Bratio[["Yr"]][Bratio[["period"]] %in% period])
-      # text(
-      #   x = Bratio_vals[1],
-      #   y = SPRratio_vals[1],
-      #   labels = yr,
-      #   cex = 0.6,
-      #   adj = c(-0.5, -0.3), # above and to the right
-      #   col = colvec[1]
-      # )
-      # yr <- max(Bratio[["Yr"]][Bratio[["period"]] %in% period])
-      # text(
-      #   x = Bratio_vals[length(Bratio_vals)],
-      #   y = SPRratio_vals[length(Bratio_vals)],
-      #   labels = yr,
-      #   adj = c(1.5, -0.3), # above and to the left
-      #   cex = 0.6,
-      #   col = colvec[length(colvec)]
-      # )
-# 
+
       # add lines at 1.0 in each dimension
       abline(
         h = 1,
@@ -461,6 +447,7 @@ browser()
         lty = 2,
         col = rgb(0, 0, 0, 0.4)
       )
+
       # if Bratio denominator is B0, then add line at btarg and minbthresh
       if (replist[["Bratio_label"]] == "B/B_0" & btarg > 0) {
         abline(
@@ -469,6 +456,7 @@ browser()
           col = rgb(0, 0, 0, 0.4)
         )
       }
+
       # if SPRratio denominator is not SPR target,
       # then add a line at sprtarg
       if (sprtarg > 0 & SPRratioLabel == "1-SPR") {
@@ -484,23 +472,26 @@ browser()
         # )
       }
 
- arrows(x0 = phase_df[-nrow(phase_df), "Bratio"],
+      arrows(
+        x0 = phase_df[-nrow(phase_df), "Bratio"],
         y0 = phase_df[-nrow(phase_df), "SPRratio"],
         x1 = phase_df[-1, "Bratio"],
         y1 = phase_df[-1, "SPRratio"],
         length = 0.09,
         col = phase_df[["col"]][-1]
- )
+      )
 
       # add bigger points for first and final years
-      points(x = phase_df[1, "Bratio"],
+      points(
+        x = phase_df[1, "Bratio"],
         y = phase_df[1, "SPRratio"],
         pch = 21,
         col = 1,
         bg = phase_df[1, "col"],
         cex = 1.2
       )
-      points(x = phase_df[nrow(phase_df), "Bratio"],
+      points(
+        x = phase_df[nrow(phase_df), "Bratio"],
         y = phase_df[nrow(phase_df), "SPRratio"],
         pch = 21,
         col = 1,
