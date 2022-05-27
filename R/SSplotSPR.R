@@ -28,6 +28,9 @@
 #' sprtarg input here will cause no horizontal line to be plotted.
 #' @param btarg target depletion to be used in plots showing depletion. May be
 #' omitted by setting to NA. "default" chooses based on model output.
+#' @param minbthresh minimum biomass thresholdto be used in plots
+#' showing depletion. May be omitted by setting to NA. "default" chooses
+#' based on model output.
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param pwidth width of plot
 #' @param pheight height of plot
@@ -46,7 +49,7 @@ SSplotSPR <-
            uncertainty = TRUE,
            subplots = 1:4, forecastplot = FALSE,
            col1 = "black", col2 = "blue", col3 = "green3", col4 = "red",
-           sprtarg = "default", btarg = "default",
+           sprtarg = "default", btarg = "default", minbthresh = "default",
            labels = c(
              "Year", # 1
              "SPR", # 2
@@ -96,6 +99,9 @@ SSplotSPR <-
     }
     if (btarg == "default") {
       btarg <- replist[["btarg"]]
+    }
+    if (minbthresh == "default") {
+      minbthresh <- replist[["minbthresh"]]
     }
 
     # choose which points to plot
@@ -318,8 +324,17 @@ SSplotSPR <-
         )
         return()
       }
-      plot(Bratio_vals,
-        SPRratio_vals,
+      # put things into a data.frame to keep track of relationships
+      # between year, Bratio, SPRratio and color
+      phase_df <- data.frame(
+        yr = shared_yrs,
+        Bratio = Bratio_vals,
+        SPRratio = SPRratio_vals,
+        col = rev(rich.colors.short(n = length(shared_yrs)))
+      )
+      # make empty plot
+      plot(phase_df[["Bratio_vals"]],
+        phase_df[["SPRratio_vals"]],
         type = "n",
         pch = 20,
         xlim = c(0, 1.1 * max(1, Bratio_vals)),
@@ -329,26 +344,28 @@ SSplotSPR <-
         xaxs = "i",
         yaxs = "i"
       )
-      colvec <- rev(rich.colors.short(n = length(Bratio_vals)))
+      # deal with warnings
       old_warn <- options()$warn # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
-      arrows(Bratio_vals[-length(Bratio_vals)],
-        SPRratio_vals[-length(SPRratio_vals)],
-        Bratio_vals[-1],
-        SPRratio_vals[-1],
+      # add arrows
+      arrows(x0 = phase_df[["Bratio"]][-nrow(phase_df)],
+        y0 = phase_df[["SPRratio"]][-nrow(phase_df)],
+        x1 = phase_df[["Bratio"]][-1],
+        y1 = phase_df[["SPRratio"]][-1],
         length = 0.09,
-        col = colvec
+        col = phase_df[["col"]][-1]
       )
       options(warn = old_warn) # returning to old value
       # add points for each year:
-      points(Bratio_vals,
-        SPRratio_vals,
+      points(x = phase_df[["Bratio"]],
+        y = phase_df[["SPRratio"]],
         pch = 21,
         col = 1,
-        bg = colvec
+        bg = phase_df[["col"]]
       )
 
       # add uncertainty intervals for final year:
+      # vertical interval
       segments(
         x0 = Bratio[["Value"]][Bratio[["Yr"]] == endyr],
         y0 = SPRratio[["lower"]][SPRratio[["Yr"]] == endyr],
@@ -356,6 +373,7 @@ SSplotSPR <-
         y1 = SPRratio[["upper"]][SPRratio[["Yr"]] == endyr],
         col = rgb(0, 0, 0, 0.5)
       )
+      # horizontal interval
       segments(
         x0 = Bratio[["lower"]][Bratio[["Yr"]] == endyr],
         y0 = SPRratio[["Value"]][SPRratio[["Yr"]] == endyr],
@@ -401,26 +419,41 @@ SSplotSPR <-
           border = NA
         )
       }
-      # label first and final years:
-      yr <- min(Bratio[["Yr"]][Bratio[["period"]] %in% period])
+      # label a sequence of years
+      label_yrs <- sort(unique(c(min(shared_yrs), 
+      pretty((min(shared_yrs) + 10):(max(shared_yrs) - 10)), 
+      max(shared_yrs))))
+browser()
+      df_rows <- which(phase_df[["yr"]] %in% label_yrs)
       text(
-        x = Bratio_vals[1],
-        y = SPRratio_vals[1],
-        labels = yr,
+        x = phase_df[df_rows, "Bratio"],
+        y = phase_df[df_rows, "SPRratio"],
+        labels = phase_df[df_rows, "yr"],
         cex = 0.6,
         adj = c(-0.5, -0.3), # above and to the right
-        col = colvec[1]
+        col = adjustcolor(phase_df[df_rows, "col"], 
+                          offset = c(-0.2, -0.2, -0.2, 0))
       )
-      yr <- max(Bratio[["Yr"]][Bratio[["period"]] %in% period])
-      text(
-        x = Bratio_vals[length(Bratio_vals)],
-        y = SPRratio_vals[length(Bratio_vals)],
-        labels = yr,
-        adj = c(1.5, -0.3), # above and to the left
-        cex = 0.6,
-        col = colvec[length(colvec)]
-      )
-
+      
+      # yr <- min(Bratio[["Yr"]][Bratio[["period"]] %in% period])
+      # text(
+      #   x = Bratio_vals[1],
+      #   y = SPRratio_vals[1],
+      #   labels = yr,
+      #   cex = 0.6,
+      #   adj = c(-0.5, -0.3), # above and to the right
+      #   col = colvec[1]
+      # )
+      # yr <- max(Bratio[["Yr"]][Bratio[["period"]] %in% period])
+      # text(
+      #   x = Bratio_vals[length(Bratio_vals)],
+      #   y = SPRratio_vals[length(Bratio_vals)],
+      #   labels = yr,
+      #   adj = c(1.5, -0.3), # above and to the left
+      #   cex = 0.6,
+      #   col = colvec[length(colvec)]
+      # )
+# 
       # add lines at 1.0 in each dimension
       abline(
         h = 1,
@@ -428,28 +461,50 @@ SSplotSPR <-
         lty = 2,
         col = rgb(0, 0, 0, 0.4)
       )
-      # if denominator is B0, then add line at btarg
+      # if Bratio denominator is B0, then add line at btarg and minbthresh
       if (replist[["Bratio_label"]] == "B/B_0" & btarg > 0) {
         abline(
-          v = btarg,
+          v = c(btarg, minbthresh),
           lty = 2,
           col = rgb(0, 0, 0, 0.4)
         )
       }
+      # if SPRratio denominator is not SPR target,
+      # then add a line at sprtarg
+      if (sprtarg > 0 & SPRratioLabel == "1-SPR") {
+        abline(
+          h = 1 - sprtarg,
+          lty = 2,
+          col = rgb(0, 0, 0, 0.4)
+        )
+        # caption <- paste0(
+        #   caption,
+        #   ". Horizontal line is at 1 - ", sprtarg_label, ": ",
+        #   "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3)
+        # )
+      }
+
+ arrows(x0 = phase_df[-nrow(phase_df), "Bratio"],
+        y0 = phase_df[-nrow(phase_df), "SPRratio"],
+        x1 = phase_df[-1, "Bratio"],
+        y1 = phase_df[-1, "SPRratio"],
+        length = 0.09,
+        col = phase_df[["col"]][-1]
+ )
 
       # add bigger points for first and final years
-      points(Bratio_vals[1],
-        SPRratio_vals[1],
+      points(x = phase_df[1, "Bratio"],
+        y = phase_df[1, "SPRratio"],
         pch = 21,
         col = 1,
-        bg = colvec[1],
+        bg = phase_df[1, "col"],
         cex = 1.2
       )
-      points(Bratio_vals[length(Bratio_vals)],
-        SPRratio_vals[length(Bratio_vals)],
+      points(x = phase_df[nrow(phase_df), "Bratio"],
+        y = phase_df[nrow(phase_df), "SPRratio"],
         pch = 21,
         col = 1,
-        bg = colvec[length(Bratio_vals)],
+        bg = phase_df[nrow(phase_df), "col"],
         cex = 1.2
       )
     } # end make.phase.plot.MLE function
