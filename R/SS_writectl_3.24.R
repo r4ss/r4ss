@@ -99,7 +99,10 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
     }
     if (!is.null(dataframe)) {
       if (header) {
-        dataframe[["PType"]] <- NULL
+        if(isTRUE(!is.null(dataframe[["PType"]]))) {
+          warning("column PType found in parameter dataframe, but is deprecated as of r4ss 1.45.0. Please remove.")
+          dataframe[["PType"]] <- NULL
+        }
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
         writeLines(paste(names(dataframe), collapse = "\t"), con = zz)
       }
