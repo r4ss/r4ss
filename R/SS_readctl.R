@@ -127,7 +127,6 @@ SS_readctl <- function(file,
     }
     ctllist <- SS_readctl_3.24(
       file = file,
-      echoall = echoall,
       verbose = verbose,
       nseas = nseas,
       N_areas = N_areas,
@@ -152,7 +151,6 @@ SS_readctl <- function(file,
     ctllist <- SS_readctl_3.30(
       file = file,
       verbose = verbose,
-      echoall = echoall,
       nseas = nseas,
       N_areas = N_areas,
       Nages = Nages,

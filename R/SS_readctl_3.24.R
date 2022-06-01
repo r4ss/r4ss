@@ -59,7 +59,7 @@ SS_readctl_3.24 <- function(file,
   if (verbose) message("running SS_readctl_3.24\n")
   dat <- readLines(file, warn = FALSE)
 
-  nver <- as.numeric(substring(version, 1, 4))
+  nver <- as.numeric(substring("3.24", 1, 4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]

@@ -61,7 +61,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   ctl_with_cmts <- dat # save original read in file with commemts
   Comments <- get_comments(dat)
   # End of codes to obtain Comments
-  nver <- as.numeric(substring(version, 1, 4))
+  nver <- as.numeric(substring("3.30", 1, 4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
