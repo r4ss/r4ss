@@ -7,14 +7,11 @@
 SS_readctl_3.30(
   file,
   verbose = FALSE,
-  echoall = lifecycle::deprecated(),
-  version = lifecycle::deprecated(),
   use_datlist = TRUE,
   datlist = "data.ss_new",
   nseas = NULL,
   N_areas = NULL,
   Nages = NULL,
-  Ngenders = lifecycle::deprecated(),
   Nsexes = NULL,
   Npopbins = NULL,
   Nfleets = NULL,
@@ -35,12 +32,6 @@ See the formal arguments for a possible default filename.}
 \item{verbose}{Should there be verbose output while running the file?
 Defaults to FALSE.}
 
-\item{echoall}{Deprecated. Debugging tool (not fully implemented) of echoing
-blocks of values as it is being read.}
-
-\item{version}{Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
-
 \item{use_datlist}{LOGICAL. If TRUE, use datlist to derive parameters which
 can not be determined from control file. Defaults to TRUE.}
 
@@ -54,9 +45,6 @@ explicitly available in control file and used only if \code{use_datlist = FALSE}
 explicitly available in control file and used only if if \code{use_datlist = FALSE}.}
 
 \item{Nages}{oldest age in the model. This information is also not
-explicitly available in control file and used only if \code{use_datlist = FALSE}.}
-
-\item{Ngenders}{Deprecated. Number of sexes in the model. This information is also not
 explicitly available in control file and used only if \code{use_datlist = FALSE}.}
 
 \item{Nsexes}{number of sexes in the model. This information is also not
