@@ -752,11 +752,14 @@ SS_readdat_3.30 <-
     ###############################################################################
     ## Tag data ----
     datlist[["do_tags"]] <- get.val(dat, ind)
-    if (datlist[["do_tags"]]) {
+    if (datlist[["do_tags"]] > 0) {
       datlist[["N_tag_groups"]] <- get.val(dat, ind)
       datlist[["N_recap_events"]] <- get.val(dat, ind)
       datlist[["mixing_latency_period"]] <- get.val(dat, ind)
       datlist[["max_periods"]] <- get.val(dat, ind)
+      if (datlist[["do_tags"]] == 2) {
+        datlist[["TG_min_recap"]] <- get.val(dat, ind)
+      }
       ## Read tag release data
       if (datlist[["N_tag_groups"]] > 0) {
         Ncols <- 8
