@@ -48,13 +48,14 @@ in Data.SS_New (instead of MLE or bootstrap values)? Default=F.}
 be added). Default="".}
 }
 \description{
-A function to split apart bootstrap data files created in data.ss_new.  To
-get bootstraps, the input "N bootstrap file to produce" in starter.ss needs
-to be 3 or greater. The function can either create a file for just the
-input data (if \code{inputs=TRUE}), a file for just the MLE values
-(if \code{MLE = TRUE}), or separate files for each of the bootstraps
-(if \code{inputs=FALSE} and \code{MLE=FALSE}).
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function is being deprecated because it is no longer needed in as of
+Stock Synthesis 3.30.19, where the files are already split. If needing to
+split older version of SS3, this could be done with \code{SS_readdat()} and
+`SS_writedat()'
 }
 \author{
 Ian Taylor
 }
+\keyword{internal}
