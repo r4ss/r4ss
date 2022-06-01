@@ -1002,7 +1002,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   # selectivity parlines -----
   # This contains the number of params for each pattern (the name)
   selex_patterns <- c(
-    "0" = 0, "1" = 2, "2" = 8, "3" = 6, "4" = 0, "5" = 2,
+    "0" = 0, "1" = 2, "2" = 6, "3" = 6, "4" = 0, "5" = 2,
     "6" = 2, "7" = 8, "8" = 8, "9" = 6, "10" = 0, "11" = 2,
     "12" = 2, "13" = 8, "14" = Nages + 1, "15" = 0,
     "16" = 2, "17" = Nages + 1, "18" = 8, "19" = 6,
