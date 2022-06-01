@@ -1,8 +1,6 @@
 
 #' @param verbose Should there be verbose output while running the file?
 #' Defaults to FALSE.
-#' @param echoall Deprecated. Debugging tool (not fully implemented) of echoing
-#'  blocks of values as it is being read.
 #' @param use_datlist LOGICAL. If TRUE, use datlist to derive parameters which 
 #'  can not be determined from control file. Defaults to TRUE.
 #' @param datlist list or character. If list, should be a list produced from
@@ -12,8 +10,6 @@
 #' @param N_areas number of spatial areas in the model. Default = 1. This information is not
 #'  explicitly available in control file and used only if if `use_datlist = FALSE`.
 #' @param Nages oldest age in the model. This information is also not
-#'  explicitly available in control file and used only if `use_datlist = FALSE`.
-#' @param Ngenders Deprecated. Number of sexes in the model. This information is also not
 #'  explicitly available in control file and used only if `use_datlist = FALSE`.
 #' @param Nsexes number of sexes in the model. This information is also not
 #'  explicitly available in control file and used only if `use_datlist = FALSE`.

@@ -4,8 +4,6 @@
 #' This function should be called from SS_readctl.
 #'
 #' @template file
-#' @param version Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @template readctl_vars
 #' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
@@ -36,15 +34,13 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecated(),
-                            version = lifecycle::deprecated(),
+SS_readctl_3.30 <- function(file, verbose = FALSE,
                             use_datlist = TRUE,
                             datlist = "data.ss_new",
                             ## Parameters that are not defined in control file
                             nseas = NULL,
                             N_areas = NULL,
                             Nages = NULL,
-                            Ngenders = lifecycle::deprecated(),
                             Nsexes = NULL,
                             Npopbins = NULL,
                             Nfleets = NULL,
@@ -57,30 +53,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
                             N_dirichlet_parms = NULL) {
 
   # deprecated variable warnings -----
-  # soft deprecated for now, but fully deprecate in the future.
-  if (lifecycle::is_present(echoall)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.30(echoall)"
-    )
-  }
-  if (lifecycle::is_present(version)) { # deprecated b/c it is unnecessary.
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.30(version)"
-    )
-  }
-
-  version <- "3.30"
-
-  if (lifecycle::is_present(Ngenders)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.30(Ngenders)",
-      details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
-    )
-    Nsexes <- Ngenders
-  }
 
   # function to read Stock Synthesis data files
 

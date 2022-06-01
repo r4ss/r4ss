@@ -7,8 +7,6 @@
 #'
 #'
 #' @template file
-#' @param version Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @template readctl_vars
 #' @param Nfleet number of fisheries in the model. This information is also not
 #'  explicitly available in control file
@@ -31,15 +29,12 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.24 <- function(file,
                             verbose = FALSE,
-                            echoall = lifecycle::deprecated(), # soft deprecate
-                            version = lifecycle::deprecated(), # soft deprecate
                             use_datlist = TRUE,
                             datlist = "data.ss_new",
                             # Parameters that are not defined in control file:
                             nseas = NULL,
                             N_areas = NULL,
                             Nages = NULL,
-                            Ngenders = lifecycle::deprecated(), # soft deprecate
                             Nsexes = NULL,
                             Npopbins = NA,
                             Nfleet = NULL,
@@ -49,32 +44,15 @@ SS_readctl_3.24 <- function(file,
                             # This information is needed if Q_type of 3 or 4 is used
                             N_CPUE_obs = NULL,
                             ##################################
-                            ptype = FALSE) {
+                            ptype = FALSE) { # note will want to change ptype to = lifecycle::deprecated()
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
-  if (lifecycle::is_present(echoall)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.24(echoall)"
-    )
-  }
-  if (lifecycle::is_present(version)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.24(version)"
-    )
-  }
-
-  version <- "3.24"
-  if (lifecycle::is_present(Ngenders)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.24(Ngenders)",
-      details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
-    )
-    Nsexes <- Ngenders
-  }
-
+  # if (lifecycle::is_present(echoall)) {
+  #   lifecycle::deprecate_warn(
+  #     when = "1.41.1",
+  #     what = "SS_readctl_3.24(echoall)"
+  #   )
+  # }
 
   # internally used fun definitions ----
   # function to read Stock Synthesis data files
