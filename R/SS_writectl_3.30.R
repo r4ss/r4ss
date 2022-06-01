@@ -132,7 +132,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
         rownames(dataframe)[nrow(dataframe)] <- "terminator"
       }
       if (header) {
-        dataframe[["PType"]] <- NULL
+        if (isTRUE(!is.null(dataframe[["PType"]]))) {
+          warning("column PType found in parameter dataframe, but is deprecated. Please remove.")
+          dataframe[["PType"]] <- NULL
+        }
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
         writeLines(paste(names(dataframe), collapse = "\t"), con = zz)
       }
@@ -407,7 +410,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   )
   # MG parms ----
   writeComment(c("#", "#_growth_parms"))
-  printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
+  printdf("MG_parms")
 
   # MG timevarying parms ----
   if (any(ctllist[["MG_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -463,12 +466,11 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     "LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type",
     "PHASE", "env-var", "use_dev", "dev_mnyr",
     "dev_mxyr", "dev_PH", "Block",
-    "Blk_Fxn # parm_name", "PType"
-  )
+    "Blk_Fxn # parm_name")
   # "Blk_Fxn # parm_name" is just to get the parm_name header printed, too.
   printdf("SR_parms")
   # reset column names back.
-  colnames(ctllist[["SR_parms"]]) <- c(lng_par_colnames, "PType")
+  colnames(ctllist[["SR_parms"]]) <- lng_par_colnames
 
   # SR tv parms ----
   if (any(ctllist[["SR_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
