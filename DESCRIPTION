@@ -1,7 +1,7 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.44.0
+Version: 1.45.0
 Authors@R: c(person(given = "Ian G.", family = "Taylor",
   email = "Ian.Taylor@noaa.gov", role = c("aut","cre")),
   person(given = "Ian J.", family = "Stewart", role = "aut"),

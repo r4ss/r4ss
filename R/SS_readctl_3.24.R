@@ -18,8 +18,7 @@
 #'  can not be determined from control file. Defaults to TRUE
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
-#' @param ptype include a column in the output indicating parameter type?
-#' (Can be useful, but causes problems for SS_writectl.) Defaults to FALSE.
+#' @param ptype deprecated.
 #' @author Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
@@ -44,15 +43,15 @@ SS_readctl_3.24 <- function(file,
                             # This information is needed if Q_type of 3 or 4 is used
                             N_CPUE_obs = NULL,
                             ##################################
-                            ptype = FALSE) { # note will want to change ptype to = lifecycle::deprecated()
+                            ptype = lifecycle::deprecated()) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
-  # if (lifecycle::is_present(echoall)) {
-  #   lifecycle::deprecate_warn(
-  #     when = "1.41.1",
-  #     what = "SS_readctl_3.24(echoall)"
-  #   )
-  # }
+  if (lifecycle::is_present(ptype)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_readctl_3.24(ptype)"
+    )
+  }
 
   # internally used fun definitions ----
   # function to read Stock Synthesis data files

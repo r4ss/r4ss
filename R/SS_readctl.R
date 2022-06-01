@@ -94,10 +94,16 @@ SS_readctl <- function(file,
                        Ntag_fleets = NULL,
                        N_rows_equil_catch = NULL,
                        N_dirichlet_parms = NULL,
-                       ptype = FALSE) {
+                       ptype = lifecycle::deprecated()) {
 
   # warn about soft deprecated arguments ----
-  # echoall warning will occur in in SS_readctl_3.24 and SS_readctl_3.30
+   # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(ptype)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_readctl(ptype)"
+    )
+  }
 
   nver <- as.numeric(substring(version, 1, 4))
 
