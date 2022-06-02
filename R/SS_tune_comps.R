@@ -195,7 +195,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
                           digits = 6, write = TRUE, niters_tuning = 0,
                           init_run = FALSE, dir = getwd(), model = "ss",
                           exe_in_path = FALSE, extras = "-nox",
-                          allow_up_tuning = FALSE,
+                          allow_up_tuning = FALSE, write_files_niters_0 = FALSE,
                           verbose = TRUE, ...) {
   # check inputs
   option <- match.arg(option, several.ok = FALSE)
@@ -306,6 +306,17 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         option = option, digits = digits,
         write = write, verbose = verbose
       )
+      if(write_files_niters_0) {
+         #use new tunings to get the variance adjustments and modify ctl file
+         var_adj_list <- calc_new_var(dir, extras, replist = replist, fleets, 
+         option, digits, write,verbose, allow_up_tuning)
+        #write out the new ctl file that contains the adjustments
+        SS_writectl(var_adj_list$ctl,
+          file.path(dir, start[["ctlfile"]]),
+          overwrite = TRUE,
+          verbose = FALSE
+        )
+      }
       return(tuning_table)
     }
     if (niters_tuning > 0) {
@@ -321,62 +332,11 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
             hidewarn = TRUE
           )
         )
-        # construct the variance adjustment
-        var_adj <- get_tuning_table(
-          replist = out, fleets = fleets,
-          option = option, digits = digits,
-          write = write, verbose = verbose
-        )
-        var_adj_unmodified <- var_adj
-        var_adj <- var_adj[, 1:3]
-        colnames(var_adj) <- c("Factor", "Fleet", "Value")
-        if (allow_up_tuning == FALSE) {
-          var_adj[["Value"]] <- ifelse(var_adj[["Value"]] > 1, 1, var_adj[["Value"]])
-        }
-        var_adj <- var_adj[var_adj[["Fleet"]] %in% fleets, ]
-        start <- SS_readstarter(file.path(dir, "starter.ss"),
-          verbose = FALSE
-        )
-        dat <- SS_readdat(file.path(dir, start[["datfile"]]),
-          verbose = FALSE, section = 1
-        )
-        ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
-          use_datlist = TRUE, datlist = dat,
-          verbose = FALSE
-        )
-        if ((nrow(var_adj)) > 0) {
-          ctl[["DoVar_adjust"]] <- 1
-          if (is.null(ctl[["Variance_adjustment_list"]])) {
-            # create the list if it does not already exist
-            ctl[["Variance_adjustment_list"]] <- var_adj
-          } else {
-            # leave all var adj intact, unless they match factor and fleet in var_adj.
-            cur_var_adj <- ctl[["Variance_adjustment_list"]]
-            for (i in seq_len(nrow(var_adj))) {
-              tmp_fac <- var_adj[i, "Factor"]
-              tmp_flt <- var_adj[i, "Fleet"]
-              tmp_row <- which(ctl[["Variance_adjustment_list"]][, "Factor"] == tmp_fac &
-                ctl[["Variance_adjustment_list"]][, "Fleet"] == tmp_flt)
-              if (length(tmp_row) == 1) {
-                ctl[["Variance_adjustment_list"]][tmp_row, ] <- var_adj[i, ]
-              } else if (length(tmp_row) == 0) {
-                ctl[["Variance_adjustment_list"]] <- rbind(ctl[["Variance_adjustment_list"]], var_adj[i, ])
-              }
-              # sanity check. If user recieving this error message, function is not
-              # working as developer intended.
-              if (length(tmp_row) > 1) {
-                stop(
-                  "Multiple rows with same factor and fleet in the variance ",
-                  "variance adjustment list, which should not be possible. Please",
-                  " check that the control file will work with SS. If still having",
-                  " issues, please report your problem: ",
-                  "https://github.com/r4ss/r4ss/issues"
-                )
-              }
-            }
-          }
-        }
-        SS_writectl(ctl,
+        #use new tunings to get the variance adjustments and modify ctl file
+         var_adj_list <- calc_new_var(dir, extras, replist = out, fleets, option, digits, write, 
+                       verbose, allow_up_tuning)
+        #write out the new ctl file that contains the adjustments
+        SS_writectl(var_adj_list$ctl,
           file.path(dir, start[["ctlfile"]]),
           overwrite = TRUE,
           verbose = FALSE
@@ -388,8 +348,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           verbose = verbose, ...
         )
         # save the weights from the run to a list
-        weights[[it]] <- var_adj
-        tuning_table_list[[it]] <- var_adj_unmodified
+        weights[[it]] <- var_adj_list$var_adj
+        tuning_table_list[[it]] <- var_adj_list$var_adj_unmodified
       }
     }
   }
@@ -733,4 +693,68 @@ get_last_phase <- function(ctl) {
     ctl[["F_setup2"]][2], ctl[["specs_2D_AR"]][, "devphase"]
   )
   last_phase <- ceiling(max(phases)) # round up if not integer value.
+}
+
+calc_new_var <- function(dir, extras, replist, fleets, option, digits, write, 
+                          verbose, allow_up_tuning) {
+
+  # construct the variance adjustment
+  var_adj <- get_tuning_table(
+    replist = replist, fleets = fleets,
+    option = option, digits = digits,
+    write = write, verbose = verbose
+  )
+  var_adj_unmodified <- var_adj
+  var_adj <- var_adj[, 1:3]
+  colnames(var_adj) <- c("Factor", "Fleet", "Value")
+  if (allow_up_tuning == FALSE) {
+    var_adj[["Value"]] <- ifelse(var_adj[["Value"]] > 1, 1, var_adj[["Value"]])
+  }
+  var_adj <- var_adj[var_adj[["Fleet"]] %in% fleets, ]
+  start <- SS_readstarter(file.path(dir, "starter.ss"),
+    verbose = FALSE
+  )
+  dat <- SS_readdat(file.path(dir, start[["datfile"]]),
+    verbose = FALSE, section = 1
+  )
+  ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
+    use_datlist = TRUE, datlist = dat,
+    verbose = FALSE
+  )
+  if ((nrow(var_adj)) > 0) {
+    ctl[["DoVar_adjust"]] <- 1
+    if (is.null(ctl[["Variance_adjustment_list"]])) {
+      # create the list if it does not already exist
+      ctl[["Variance_adjustment_list"]] <- var_adj
+    } else {
+      # leave all var adj intact, unless they match factor and fleet in var_adj.
+      cur_var_adj <- ctl[["Variance_adjustment_list"]]
+      for (i in seq_len(nrow(var_adj))) {
+        tmp_fac <- var_adj[i, "Factor"]
+        tmp_flt <- var_adj[i, "Fleet"]
+        tmp_row <- which(ctl[["Variance_adjustment_list"]][, "Factor"] == tmp_fac &
+          ctl[["Variance_adjustment_list"]][, "Fleet"] == tmp_flt)
+        if (length(tmp_row) == 1) {
+          ctl[["Variance_adjustment_list"]][tmp_row, ] <- var_adj[i, ]
+        } else if (length(tmp_row) == 0) {
+          ctl[["Variance_adjustment_list"]] <- rbind(ctl[["Variance_adjustment_list"]], var_adj[i, ])
+        }
+        # sanity check. If user recieving this error message, function is not
+        # working as developer intended.
+        if (length(tmp_row) > 1) {
+          stop(
+            "Multiple rows with same factor and fleet in the variance ",
+            "variance adjustment list, which should not be possible. Please",
+            " check that the control file will work with SS. If still having",
+            " issues, please report your problem: ",
+            "https://github.com/r4ss/r4ss/issues"
+          )
+        }
+      }
+    }
+  }
+  out_list <- list(var_adj = var_adj, 
+  var_adj_unmodified = var_adj_unmodified,
+  ctl = ctl)
+  out_list
 }
