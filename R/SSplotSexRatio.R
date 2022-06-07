@@ -238,8 +238,8 @@ SSplotSexRatio <-
             }
           }
         } # end loop over partitions (index j)
-        ##        } # end test for whether gender in vector of requested sexes
-        ##      } # end loop over combined/not-combined genders
+        ##        } # end test for whether sex in vector of requested sexes
+        ##      } # end loop over combined/not-combined sexes
       } # end if data
     } # end loop over fleets
 

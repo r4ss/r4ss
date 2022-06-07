@@ -168,7 +168,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   }
   wl("fracfemale") # _fracfemale
   wl("natM_type", comment = "#_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate")
-  writeComment("#_Age_natmort_by gender x growthpattern")
+  writeComment("#_Age_natmort_by sex x growthpattern")
   if (ctllist[["natM_type"]] == 1) {
     wl("N_natM", comment = "#_Number of M_segments")
     wl.vector("M_ageBreakPoints", comment = "# age(real) at M breakpoints")

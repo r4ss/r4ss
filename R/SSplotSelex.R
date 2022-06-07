@@ -20,7 +20,7 @@
 #' @param maxyr optional input for maximum year to show in plots
 #' @param season Which season (if seasonal model) for selectivity shown in
 #' multi-line plot (default = 1).
-#' @param sexes Optional vector to subset genders for which to make plots
+#' @param sexes Optional vector to subset sexes for which to make plots
 #' (1=females, 2=males)
 #' @param selexlines Vector to select which lines get plotted. values are 1.
 #' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.
