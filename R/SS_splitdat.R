@@ -3,10 +3,11 @@
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' 
-#'  This function is being deprecated because it is no longer needed in as of
+#'  `SS_splitdat()` is being deprecated because it is no longer needed in as of
 #'  Stock Synthesis 3.30.19, where the files are already split. If needing to
-#'  split older version of SS3, this could be done with `SS_readdat()` and
-#'  `SS_writedat()'
+#'  split older version of SS3, this could be done by reading in the file to
+#'  `SS_readdat()`, specifying the section argument to grab the desired part of
+#'   the file, and then writing out the file using. `SS_writedat()'.
 #' @param inpath Directory containing the input file. By default the working
 #' directory given by getwd() is used. Default="working_directory".
 #' @param outpath Directory into which the output file will be written.
@@ -41,7 +42,7 @@ SS_splitdat <-
            inputs = FALSE,
            notes = "") {
     lifecycle::deprecate_warn("1.45.0", "SS_splitdat()", 
-      details = "Update to SS3.30.19 or greater or use SS_readdat() instead.")
+      details = "Upgrade to SS3.30.19 or see the description in ?SS_splitdat() for a workaround.")
     # this is a function to split bootstrap aggregated in the data.ss_new file
     # which is output from Stock Synthesis into individual data files. 
     if (MLE & inputs) stop("can't have both 'MLE' and 'inputs' = TRUE")

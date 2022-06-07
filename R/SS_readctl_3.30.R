@@ -61,7 +61,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   ctl_with_cmts <- dat # save original read in file with commemts
   Comments <- get_comments(dat)
   # End of codes to obtain Comments
-  nver <- as.numeric(substring("3.30", 1, 4))
+  nver <- 3.30
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
@@ -230,7 +230,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
     ctllist[["Nages"]] <- Nages <- datlist[["Nages"]]
-    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Ngenders"]] # note: change this line if datlist[["Nsexes"]] used instead
+    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Nsexes"]]
     if (datlist[["lbin_method"]] == 1) {
       ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbins"]] # b/c method 1 uses data length bins
     } else if (datlist[["lbin_method"]] == 2) {

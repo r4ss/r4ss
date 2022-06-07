@@ -194,9 +194,7 @@ SS_readdat_3.30 <-
     datlist[["months_per_seas"]] <- get.vec(dat, ind)
     datlist[["Nsubseasons"]] <- get.val(dat, ind)
     datlist[["spawn_month"]] <- get.val(dat, ind)
-    datlist[["Ngenders"]] <- get.val(dat, ind)
-    # Keep both Nsexes and Ngenders for now, but get rid of Ngenders in the future.
-    datlist[["Nsexes"]] <- datlist[["Ngenders"]]
+    datlist[["Nsexes"]] <- get.val(dat, ind)
     datlist[["Nages"]] <- get.val(dat, ind)
     datlist[["N_areas"]] <- get.val(dat, ind)
     datlist[["Nfleets"]] <- get.val(dat, ind)

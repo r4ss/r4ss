@@ -59,7 +59,7 @@ SS_readctl_3.24 <- function(file,
   if (verbose) message("running SS_readctl_3.24\n")
   dat <- readLines(file, warn = FALSE)
 
-  nver <- as.numeric(substring("3.24", 1, 4))
+  nver <- 3.24
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
@@ -196,7 +196,7 @@ SS_readctl_3.24 <- function(file,
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
     ctllist[["Nages"]] <- Nages <- datlist[["Nages"]]
-    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Ngenders"]] # note: change if renamed to datlist[["Nsexes"]]
+    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Nsexes"]]
     ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbinspop"]]
     ctllist[["Nfleet"]] <- Nfleet <- datlist[["Nfleet"]]
     ctllist[["Nsurveys"]] <- Nsurveys <- datlist[["Nsurveys"]]
@@ -399,12 +399,12 @@ SS_readctl_3.24 <- function(file,
   MGparmLabel <- list()
   cnt <- 1
 
-  GenderLabel <- c("Fem", "Mal")
+  SexLabel <- c("Fem", "Mal")
   for (i in 1:ctllist[["Nsexes"]]) {
     for (j in 1:ctllist[["N_GP"]]) {
       if (N_natMparms > 0) {
         MGparmLabel[1:N_natMparms + cnt - 1] <-
-          paste0("NatM_p_", 1:N_natMparms, "_", GenderLabel[i], "_GP_", j)
+          paste0("NatM_p_", 1:N_natMparms, "_", SexLabel[i], "_GP_", j)
         cnt <- cnt + N_natMparms
       }
       if (ctllist[["GrowthModel"]] == 1) { # VB
@@ -412,14 +412,14 @@ SS_readctl_3.24 <- function(file,
           "L_at_Amin_", "L_at_Amax_", "VonBert_K_", "CV_young_",
           "CV_old_"
         )
-        MGparmLabel[1:5 + cnt - 1] <- paste0(tmp, "_", GenderLabel[i], "_GP_", j)
+        MGparmLabel[1:5 + cnt - 1] <- paste0(tmp, "_", SexLabel[i], "_GP_", j)
         cnt <- cnt + 5
       } else if (ctllist[["GrowthModel"]] == 2) { # Richards
         tmp <- c(
           "L_at_Amin_", "L_at_Amax_", "VonBert_K_", "Richards_", "CV_young_",
           "CV_old_"
         )
-        MGparmLabel[1:6 + cnt - 1] <- paste0(tmp, "_", GenderLabel[i], "_GP_", j)
+        MGparmLabel[1:6 + cnt - 1] <- paste0(tmp, "_", SexLabel[i], "_GP_", j)
         cnt <- cnt + 6
       } else if (ctllist[["GrowthModel"]] == 3) {
         tmp <- c(
@@ -427,66 +427,66 @@ SS_readctl_3.24 <- function(file,
           paste0("Age_K_", 1:ctllist[["N_ageK"]]), "CV_young_", "CV_old_"
         )
         MGparmLabel[1:(5 + ctllist[["N_ageK"]]) + cnt - 1] <-
-          paste0(tmp, "_", GenderLabel[i], "_GP_", j)
+          paste0(tmp, "_", SexLabel[i], "_GP_", j)
         cnt <- cnt + 5 + ctllist[["N_ageK"]]
       }
     }
   }
 
-  N_MGparm <- N_MGparm + 2 * ctllist[["Nsexes"]] + 2 + 2 # add for wt-len(by gender), mat-len parms; eggs
-  MGparmLabel[cnt] <- paste0("Wtlen_1_", GenderLabel[1])
+  N_MGparm <- N_MGparm + 2 * ctllist[["Nsexes"]] + 2 + 2 # add for wt-len(by sex), mat-len parms; eggs
+  MGparmLabel[cnt] <- paste0("Wtlen_1_", SexLabel[1])
   cnt <- cnt + 1
-  MGparmLabel[cnt] <- paste0("Wtlen_2_", GenderLabel[1])
+  MGparmLabel[cnt] <- paste0("Wtlen_2_", SexLabel[1])
   cnt <- cnt + 1
-  MGparmLabel[cnt] <- paste0("Mat50%_", GenderLabel[1])
+  MGparmLabel[cnt] <- paste0("Mat50%_", SexLabel[1])
   cnt <- cnt + 1
-  MGparmLabel[cnt] <- paste0("Mat_slope_", GenderLabel[1])
+  MGparmLabel[cnt] <- paste0("Mat_slope_", SexLabel[1])
   cnt <- cnt + 1
   if (ctllist[["fecundity_option"]] == 1) {
-    MGparmLabel[cnt] <- paste0("Eggs/kg_inter_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs/kg_inter_", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Eggs/kg_slope_wt_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs/kg_slope_wt_", SexLabel[1])
     cnt <- cnt + 1
   } else if (ctllist[["fecundity_option"]] == 2) {
-    MGparmLabel[cnt] <- paste0("Eggs_scalar_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_scalar_", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Eggs_exp_len_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_exp_len_", SexLabel[1])
     cnt <- cnt + 1
   } else if (ctllist[["fecundity_option"]] == 3) {
-    MGparmLabel[cnt] <- paste0("Eggs_scalar_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_scalar_", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Eggs_exp_wt_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_exp_wt_", SexLabel[1])
     cnt <- cnt + 1
   } else if (ctllist[["fecundity_option"]] == 4) {
-    MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_intercept_", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Eggs_slope_len_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_slope_len_", SexLabel[1])
     cnt <- cnt + 1
   } else if (ctllist[["fecundity_option"]] == 5) {
-    MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_intercept_", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", SexLabel[1])
     cnt <- cnt + 1
   } else if (ctllist[["fecundity_option"]] == 6) { # check what to do with option 6
-    MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_intercept_", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", SexLabel[1])
     cnt <- cnt + 1
   } else {
     stop("Fecundity option ", ctllist[["fecundity_option"]], " is not supported")
   }
   if (ctllist[["Nsexes"]] == 2) {
-    MGparmLabel[cnt] <- paste0("Wtlen_1_", GenderLabel[2])
+    MGparmLabel[cnt] <- paste0("Wtlen_1_", SexLabel[2])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Wtlen_2_", GenderLabel[2])
+    MGparmLabel[cnt] <- paste0("Wtlen_2_", SexLabel[2])
     cnt <- cnt + 1
   }
   if (ctllist[["hermaphroditism_option"]]) {
-    MGparmLabel[cnt] <- paste0("Herm_Infl_age", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Herm_Infl_age", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Herm_stdev", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Herm_stdev", SexLabel[1])
     cnt <- cnt + 1
-    MGparmLabel[cnt] <- paste0("Herm_asymptote", GenderLabel[1])
+    MGparmLabel[cnt] <- paste0("Herm_asymptote", SexLabel[1])
     cnt <- cnt + 1
     N_MGparm <- N_MGparm + 3
   }

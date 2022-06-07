@@ -63,7 +63,7 @@ test_that("SS_readctl and SS_writectl works for 3.30.13 when not reading from da
     nseas = dat_3.30.13[["nseas"]],
     N_areas = dat_3.30.13[["N_areas"]],
     Nages = dat_3.30.13[["Nages"]],
-    Nsexes = dat_3.30.13[["Ngenders"]],
+    Nsexes = dat_3.30.13[["Nsexes"]],
     Nfleets = dat_3.30.13[["Nfleets"]],
     N_rows_equil_catch = NULL,
     Do_AgeKey = FALSE
@@ -167,7 +167,7 @@ test_that("SS_readctl and SS_writectl works for 3.24 when datlist = FALSE", {
     nseas = dat_3.24[["nseas"]],
     N_areas = dat_3.24[["N_areas"]],
     Nages = dat_3.24[["Nages"]],
-    Nsexes = dat_3.24[["Ngenders"]],
+    Nsexes = dat_3.24[["Nsexes"]],
     Nfleet = dat_3.24[["Nfleet"]],
     Nsurveys = dat_3.24[["Nsurveys"]],
     N_CPUE_obs = dat_3.24[["N_cpue"]],
