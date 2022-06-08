@@ -289,7 +289,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   wl("natM_type",
     comment = paste0(
       "#_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;",
-      "_3=agespecific;_4=agespec_withseasinterpolate;_6=Survivorship_Lorenzen"
+      "_3=agespecific;_4=agespec_withseasinterpolate;_5=Maunder_M;_6=Age-range_Lorenzen"
     )
   )
   # Following lines depends on the natM_type value.
@@ -307,10 +307,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     printdf("natM")
   } else if (ctllist[["natM_type"]] == 6) {
     wl("Lorenzen_minage",
-       comment = "#_minimum age for average M based Lorenzen M;"
+       comment = "#_minimum age for Age-range Lorenzen M;"
     )
     wl("Lorenzen_maxage",
-       comment = "#_maximum age for average M based Lorenzen M;"
+       comment = "#_maximum age for Age-range Lorenzen M;"
     )
     writeComment(" #_later read 1P per Sex x G Morph")
   } else {
