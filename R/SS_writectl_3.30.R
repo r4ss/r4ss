@@ -307,10 +307,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     printdf("natM")
   } else if (ctllist[["natM_type"]] == 6) {
     wl("Lorenzen_minage",
-       comment = "#_minimum age for Age-range Lorenzen M;"
+      comment = "#_minimum age for Age-range Lorenzen M;"
     )
     wl("Lorenzen_maxage",
-       comment = "#_maximum age for Age-range Lorenzen M;"
+      comment = "#_maximum age for Age-range Lorenzen M;"
     )
     writeComment(" #_later read 1P per Sex x G Morph")
   } else {
