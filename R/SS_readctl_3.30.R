@@ -369,7 +369,11 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   } else if (ctllist[["natM_type"]] %in% c(3, 4)) {
     N_natMparms <- 0
     ctllist <- add_df(ctllist, name = "natM", nrow = ctllist[["N_GP"]] * abs(ctllist[["Nsexes"]]), ncol = Nages + 1, col.names = paste0("Age_", 0:Nages))
-  } else {
+  } else if (ctllist[["natM_type"]] == 6) {
+    N_natMparms <- 1
+    ctllist <- add_elem(ctllist, name = "Lorenzen_minage") ## Minimum age to calculate average M for Lorenzen M
+    ctllist <- add_elem(ctllist, name = "Lorenzen_maxage") ## Maximum age to calculate average M for Lorenzen M
+  }else {
     stop("natM_type =", ctllist[["natM_type"]], " is not yet implemented in this script")
   }
   if (verbose) message("N_natMparms =", N_natMparms, "\n")
