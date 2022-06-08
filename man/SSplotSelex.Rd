@@ -69,7 +69,7 @@ be included in plot of selectivity across multiple fleets?}
 \item{season}{Which season (if seasonal model) for selectivity shown in
 multi-line plot (default = 1).}
 
-\item{sexes}{Optional vector to subset genders for which to make plots
+\item{sexes}{Optional vector to subset sexes for which to make plots
 (1=females, 2=males)}
 
 \item{selexlines}{Vector to select which lines get plotted. values are 1.

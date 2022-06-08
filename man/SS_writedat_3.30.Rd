@@ -8,7 +8,7 @@ SS_writedat_3.30(
   datlist,
   outfile,
   overwrite = FALSE,
-  faster = FALSE,
+  faster = lifecycle::deprecated(),
   verbose = TRUE
 )
 }
@@ -19,7 +19,7 @@ SS_writedat_3.30(
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
 
-\item{faster}{Speed up writing by writing length and age comps without aligning
+\item{faster}{Deprecated. Speed up writing by writing length and age comps without aligning
 the columns (by using write.table instead of print.data.frame)}
 
 \item{verbose}{Should there be verbose output while running the file?}
@@ -37,5 +37,5 @@ created using \code{\link[=SS_readdat]{SS_readdat()}} (which would have called o
 }
 \author{
 Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kelli F. Johnson,
-Chantel R. Wetzel
+Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 }

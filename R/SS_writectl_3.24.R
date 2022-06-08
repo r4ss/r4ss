@@ -7,7 +7,7 @@
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #'  Defaults to FALSE.
-#' @author Yukio Takeuchi, Kathryn Doering
+#' @author Yukio Takeuchi, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readctl_3.24()],[SS_readstarter()],
 # ' \code{\link{SS_readforecast}},

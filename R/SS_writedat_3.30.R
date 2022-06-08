@@ -12,7 +12,7 @@
 #' the columns (by using write.table instead of print.data.frame)
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kelli F. Johnson,
-#' Chantel R. Wetzel
+#' Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @importFrom stats reshape
 #' @seealso [SS_writedat()], [SS_writedat_3.24()],

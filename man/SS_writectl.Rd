@@ -40,5 +40,6 @@ wrapper which calls either SS_writectl_3.24 or SS_writectl_3.30
 \code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_writeforecast]{SS_writeforecast()}}
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn Doering
+Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn L.
+Doering, Nathan R. Vaughan
 }

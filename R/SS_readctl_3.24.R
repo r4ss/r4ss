@@ -19,7 +19,8 @@
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
 #' @param ptype deprecated.
-#' @author Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
+#' @author Yukio Takeuchi, Neil Klaer, Iago Mosqueira, Kathryn L.
+#' Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
 #' [SS_readdat_3.24()],[SS_readdat_3.30()]

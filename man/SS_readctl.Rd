@@ -149,12 +149,18 @@ ctl <- r4ss::SS_readctl(
 }
 \seealso{
 See the following for version-specific SS_readctl functions:
-SS_readctl_3.24, SS_readctl_3.30.
+SS_readctl_3.24
+SS_readctl_3.30.
 The returned list structure can be written back to the disk using
 \link{SS_writectl}.\cr
 See the following for other \code{SS_read} functions:
-SS_readctl, SS_readdat, SS_readforecast, SS_readstarter, SS_readwtatage.\cr
+SS_readctl
+SS_readdat
+SS_readforecast
+SS_readstarter
+SS_readwtatage.\cr
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
+Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer, Kelli F.
+Johnson, Kathryn L. Doering, Nathan R. Vaughan
 }

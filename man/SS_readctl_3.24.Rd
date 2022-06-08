@@ -88,5 +88,6 @@ that calls SS_readctl_3.24 (this function) or SS_readctl_3.30
 \code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
+Yukio Takeuchi, Neil Klaer, Iago Mosqueira, Kathryn L.
+Doering, Nathan R. Vaughan
 }

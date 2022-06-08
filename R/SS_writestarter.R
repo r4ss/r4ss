@@ -11,7 +11,7 @@
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
 #' @param warn Deprecated.
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 #' @export
 #' @seealso [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],

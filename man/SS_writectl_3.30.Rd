@@ -28,5 +28,6 @@ using \code{\link[=SS_writectl]{SS_writectl()}} and should not be called directl
 \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Kathryn Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki
+Kathryn L. Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki,
+Nathan R. Vaughan
 }

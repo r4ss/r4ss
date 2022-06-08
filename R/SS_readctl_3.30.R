@@ -26,7 +26,8 @@
 #'  control file comments.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0.
-#' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
+#' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, Kathryn L.
+#' Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
 #' [SS_readdat_3.24()],[SS_readdat_3.30()]

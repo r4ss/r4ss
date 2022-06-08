@@ -24,5 +24,5 @@ created using \code{\link[=SS_readctl]{SS_readctl()}}
 \code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}},\code{\link[=SS_readstarter]{SS_readstarter()}},
 }
 \author{
-Yukio Takeuchi, Kathryn Doering
+Yukio Takeuchi, Kathryn L. Doering, Nathan R. Vaughan
 }

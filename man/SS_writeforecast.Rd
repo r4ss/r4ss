@@ -40,5 +40,5 @@ created using \code{\link[=SS_readforecast]{SS_readforecast()}}
 \code{\link[=SS_writestarter]{SS_writestarter()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 }

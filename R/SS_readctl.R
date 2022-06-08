@@ -40,7 +40,8 @@
 #'  parameters. Defaults to 0. Used only in control file 3.30 syntax if
 #'  `use_datlist = FALSE`.
 #' @param ptype Deprecated.
-#' @author Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
+#' @author Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer, Kelli F.
+#' Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @md
 #' @return

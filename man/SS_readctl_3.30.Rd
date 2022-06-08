@@ -105,5 +105,6 @@ This function should be called from SS_readctl.
 \code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
+Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, Kathryn L.
+Doering, Nathan R. Vaughan
 }

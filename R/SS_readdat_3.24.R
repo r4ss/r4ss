@@ -16,7 +16,7 @@
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
 #' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Kelli F. Johnson,
-#' Chantel R. Wetzel
+#' Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readdat()], [SS_readdat_3.30()]
 #' [SS_readstarter()], [SS_readforecast()],

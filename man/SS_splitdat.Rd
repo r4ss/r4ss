@@ -50,10 +50,11 @@ be added). Default="".}
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This function is being deprecated because it is no longer needed in as of
+\code{SS_splitdat()} is being deprecated because it is no longer needed in as of
 Stock Synthesis 3.30.19, where the files are already split. If needing to
-split older version of SS3, this could be done with \code{SS_readdat()} and
-`SS_writedat()'
+split older version of SS3, this could be done by reading in the file to
+\code{SS_readdat()}, specifying the section argument to grab the desired part of
+the file, and then writing out the file using. `SS_writedat()'.
 }
 \author{
 Ian Taylor
