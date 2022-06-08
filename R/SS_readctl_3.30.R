@@ -373,7 +373,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     N_natMparms <- 1
     ctllist <- add_elem(ctllist, name = "Lorenzen_minage") ## Minimum age to calculate average M for Lorenzen M
     ctllist <- add_elem(ctllist, name = "Lorenzen_maxage") ## Maximum age to calculate average M for Lorenzen M
-  }else {
+  } else {
     stop("natM_type =", ctllist[["natM_type"]], " is not yet implemented in this script")
   }
   if (verbose) message("N_natMparms =", N_natMparms, "\n")
