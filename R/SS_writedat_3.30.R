@@ -392,6 +392,9 @@ SS_writedat_3.30 <- function(datlist,
   }
 
   writeComment("#\n#_MeanSize_at_Age_obs")
+  if (is.null(d[["MeanSize_at_Age_obs"]]) && d[["use_MeanSize_at_Age_obs"]]) {
+    d[["use_MeanSize_at_Age_obs"]] <- 0
+  }
   wl("use_MeanSize_at_Age_obs")
   print.df(d[["MeanSize_at_Age_obs"]])
 
