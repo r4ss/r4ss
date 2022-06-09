@@ -20,10 +20,10 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readdat_2.00 <- function(file, verbose = TRUE, 
-  echoall = lifecycle::deprecated(), section = NULL) {
+SS_readdat_2.00 <- function(file, verbose = TRUE,
+                            echoall = lifecycle::deprecated(), section = NULL) {
   # function to read Stock Synthesis data files
-    if (lifecycle::is_present(echoall)) {
+  if (lifecycle::is_present(echoall)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
       what = "SS_readdat_2.00(echoall)",

@@ -28,7 +28,7 @@ SS_writedat_3.24 <- function(datlist,
   if (verbose) {
     message("running SS_writedat_3.24")
   }
- if (lifecycle::is_present(faster)) {
+  if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
       what = "SS_writedat_3.24(faster)"

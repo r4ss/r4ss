@@ -41,7 +41,6 @@ SSsummarize <- function(biglist,
                         lowerCI = 0.025,
                         upperCI = 0.975,
                         verbose = TRUE) {
-
   if (lifecycle::is_present(selgender)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
@@ -49,7 +48,7 @@ SSsummarize <- function(biglist,
       details = "Please use selsex instead. Ability to use selgender will be dropped in next release."
     )
     selsex <- selgender
-  }                        
+  }
   # confirm that biglist is a list of lists, each created by SS_output()
   # this could be improved with the use of S3 classes in the future
   if (!is.list(biglist) | # if whole thing is not a list

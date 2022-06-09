@@ -16,10 +16,10 @@
 #' @seealso [SS_readwtatage()]
 #'
 SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
-                            overwrite = FALSE, verbose = TRUE, 
+                            overwrite = FALSE, verbose = TRUE,
                             warn = lifecycle::deprecated()) {
   if (verbose) message("running SS_writewtatage\n")
-  
+
   if (lifecycle::is_present(warn)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
