@@ -10,14 +10,21 @@
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
-#' @param warn Print warning if overwriting file?
-#' @author Ian Taylor
+#' @param warn Deprecated.
+#' @author Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 #' @export
 #' @seealso [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
-                            overwrite = FALSE, verbose = TRUE, warn = TRUE) {
+                            overwrite = FALSE, verbose = TRUE,
+                            warn = lifecycle::deprecated()) {
+  if (lifecycle::is_present(warn)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_writestarter(warn)"
+    )
+  }
   if (verbose) cat("running SS_writestarter\n")
   if (mylist[["type"]] != "Stock_Synthesis_starter_file") {
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
@@ -39,9 +46,6 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
     if (!overwrite) {
       stop(paste("file exists:", outfile, "\n  set overwrite=TRUE to replace\n"))
     } else {
-      if (warn) {
-        cat("overwriting file:", outfile, "\n")
-      }
       file.remove(outfile)
     }
   } else {

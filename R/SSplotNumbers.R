@@ -388,7 +388,7 @@ SSplotNumbers <-
                 dev.off()
               }
             } # end printing to PNG file
-          } # end gender loop
+          } # end sex loop
         } # end period loop
       } # end area loop
       if (nsexes > 1) {
@@ -638,7 +638,7 @@ SSplotNumbers <-
                   dev.off()
                 }
               } # end printing of plot 14
-            } # end gender loop
+            } # end sex loop
           } # end period loop
         } # end area loop
 
@@ -706,7 +706,7 @@ SSplotNumbers <-
       } # end numbers at length plots
 
       ##########
-      # plot of equilibrium age composition by gender and area
+      # plot of equilibrium age composition by sex and area
       equilibfun <- function() {
         # subset to unfished equilibrium
         equilage <- natage[natage[["Era"]] == "VIRG", ]

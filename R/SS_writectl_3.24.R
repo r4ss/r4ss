@@ -2,58 +2,21 @@
 #'
 #' write Stock Synthesis control file from list object in R which was probably
 #' created using [SS_readctl()]
-#'
-#'
 #' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #'  Defaults to FALSE.
-#' @param nseas Deprecated. number of season in the model. This information is not
-#'  explicitly available in control file
-#' @param N_areas Deprecated. number of spatial areas in the model. This information is also not
-#'  explicitly available in control file
-#' @param Do_AgeKey Deprecated. Flag to indicate if 7 additional ageing error parameters to be read
-#'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
-#'  to disable them. This information is not explicitly available in control file, too.
-#' @author Yukio Takeuchi
+#' @author Yukio Takeuchi, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readctl_3.24()],[SS_readstarter()],
 # ' \code{\link{SS_readforecast}},
 # ' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 # ' \code{\link{SS_writedat}}
-SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALSE,
-                             ## Parameters that are not defined in control file
-                             ## if ctllist is an output of SS_readctl these three inputs will be overriden by
-                             ## nseas,N_areas and Do_AgeKey in ctllist
-                             nseas = lifecycle::deprecated(),
-                             N_areas = lifecycle::deprecated(),
-                             Do_AgeKey = lifecycle::deprecated()) {
+SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, 
+                             verbose = FALSE) {
   # Add msgs for deprecated args ----
   # these should be removed after 1 release version.
-  if (lifecycle::is_present(nseas)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_writectl_3.24(nseas)",
-      details = "nseas is not used. ctllist[['nseas']] is used instead."
-    )
-  }
-
-  if (lifecycle::is_present(N_areas)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_writectl_3.24(N_areas)",
-      details = "nseas is not used. ctllist[['N_areas']] is used instead."
-    )
-  }
-
-  if (lifecycle::is_present(Do_AgeKey)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_writectl_3.24(Do_AgeKey)",
-      details = "Do_AgeKey is not used. ctllist[['Do_AgeKey']] is used instead."
-    )
-  }
 
   # function to write Stock Synthesis ctl files
   if (verbose) cat("running SS_writectl\n")
@@ -136,7 +99,13 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     }
     if (!is.null(dataframe)) {
       if (header) {
-        dataframe[["PType"]] <- NULL
+        if (isTRUE(!is.null(dataframe[["PType"]]))) {
+          warning(
+            "Please remove PType column in parameter dataframe, ",
+            "which was deprecated as of r4ss 1.45.0."
+          )
+          dataframe[["PType"]] <- NULL
+        }
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
         writeLines(paste(names(dataframe), collapse = "\t"), con = zz)
       }
@@ -199,7 +168,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   }
   wl("fracfemale") # _fracfemale
   wl("natM_type", comment = "#_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate")
-  writeComment("#_Age_natmort_by gender x growthpattern")
+  writeComment("#_Age_natmort_by sex x growthpattern")
   if (ctllist[["natM_type"]] == 1) {
     wl("N_natM", comment = "#_Number of M_segments")
     wl.vector("M_ageBreakPoints", comment = "# age(real) at M breakpoints")

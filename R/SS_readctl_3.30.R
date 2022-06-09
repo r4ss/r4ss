@@ -4,8 +4,6 @@
 #' This function should be called from SS_readctl.
 #'
 #' @template file
-#' @param version Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @template readctl_vars
 #' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
@@ -28,7 +26,8 @@
 #'  control file comments.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0.
-#' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
+#' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, Kathryn L.
+#' Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
 #' [SS_readdat_3.24()],[SS_readdat_3.30()]
@@ -36,15 +35,13 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecated(),
-                            version = lifecycle::deprecated(),
+SS_readctl_3.30 <- function(file, verbose = FALSE,
                             use_datlist = TRUE,
                             datlist = "data.ss_new",
                             ## Parameters that are not defined in control file
                             nseas = NULL,
                             N_areas = NULL,
                             Nages = NULL,
-                            Ngenders = lifecycle::deprecated(),
                             Nsexes = NULL,
                             Npopbins = NULL,
                             Nfleets = NULL,
@@ -57,30 +54,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
                             N_dirichlet_parms = NULL) {
 
   # deprecated variable warnings -----
-  # soft deprecated for now, but fully deprecate in the future.
-  if (lifecycle::is_present(echoall)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.30(echoall)"
-    )
-  }
-  if (lifecycle::is_present(version)) { # deprecated b/c it is unnecessary.
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.30(version)"
-    )
-  }
-
-  version <- "3.30"
-
-  if (lifecycle::is_present(Ngenders)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl_3.30(Ngenders)",
-      details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
-    )
-    Nsexes <- Ngenders
-  }
 
   # function to read Stock Synthesis data files
 
@@ -89,7 +62,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   ctl_with_cmts <- dat # save original read in file with commemts
   Comments <- get_comments(dat)
   # End of codes to obtain Comments
-  nver <- as.numeric(substring(version, 1, 4))
+  nver <- 3.30
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
@@ -258,7 +231,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
     ctllist[["Nages"]] <- Nages <- datlist[["Nages"]]
-    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Ngenders"]] # note: change this line if datlist[["Nsexes"]] used instead
+    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Nsexes"]]
     if (datlist[["lbin_method"]] == 1) {
       ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbins"]] # b/c method 1 uses data length bins
     } else if (datlist[["lbin_method"]] == 2) {
@@ -430,30 +403,21 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   N_MGparm <- MGparm_per_def * ctllist[["N_GP"]] * abs(ctllist[["Nsexes"]]) ## Parameters for M and Growth multiplied by N_GP and Nsexes
   MGparmLabel <- list()
   cnt <- 1
-  PType <- array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5,
-  # Hermaph = 6, RecDevs GP = 7 Areas = 8 Seas= 9, RecDev Interactions = 10,
-  # GrowthDevs = 11, Movement = 12, AgeKey = 13, Frac female = 14,
-  # catch mult = NA (but could assign in the future),
-  # ? = 15,
-  # MGparm_seas_effects = 16, SRparms = 17, initial_F_parms = 18
 
   GenderLabel <- c("Fem", "Mal")
   for (i in seq_len(abs(ctllist[["Nsexes"]]))) {
     for (j in seq_len(ctllist[["N_GP"]])) {
       if (N_natMparms > 0) {
         MGparmLabel[1:N_natMparms + cnt - 1] <- paste0("NatM_p_", 1:N_natMparms, "_", GenderLabel[i], "_GP_", j)
-        PType[cnt:(N_natMparms + cnt - 1)] <- 1
         cnt <- cnt + N_natMparms
       }
       if (ctllist[["GrowthModel"]] == 1) { # VB
         tmp <- c("L_at_Amin", "L_at_Amax", "VonBert_K", "CV_young", "CV_old")
         MGparmLabel[1:5 + cnt - 1] <- paste0(tmp, "_", GenderLabel[i], "_GP_", j)
-        PType[cnt:(5 + cnt - 1)] <- 2
         cnt <- cnt + 5
       } else if (ctllist[["GrowthModel"]] == 2) { # Richards
         tmp <- c("L_at_Amin", "L_at_Amax", "VonBert_K", "Richards", "CV_young", "CV_old")
         MGparmLabel[1:6 + cnt - 1] <- paste0(tmp, "_", GenderLabel[i], "_GP_", j)
-        PType[cnt:(6 + cnt - 1)] <- 2
         cnt <- cnt + 6
       } else if (ctllist[["GrowthModel"]] %in% 3:5) {
         tmp <- c(
@@ -461,68 +425,50 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
           paste0("Age_K_", ctllist[["Age_K_points"]]), "CV_young", "CV_old"
         )
         MGparmLabel[1:(5 + Age_K_count) + cnt - 1] <- paste0(tmp, "_", GenderLabel[i], "_GP_", j)
-        PType[cnt:((5 + Age_K_count) + cnt - 1)] <- 2
         cnt <- cnt + 5 + Age_K_count
       } else if (ctllist[["GrowthModel"]] == 8) {
         tmp <- c("L_at_Amin", "L_at_Amax", "VonBert_K", "Cessation", "CV_young", "CV_old")
         MGparmLabel[1:6 + cnt - 1] <- paste0(tmp, "_", GenderLabel[i], "_GP_", j)
-        PType[cnt:(6 + cnt - 1)] <- 2
         cnt <- cnt + 6
       }
       MGparmLabel[cnt] <- paste0("Wtlen_1_", GenderLabel[i], "_GP_", j)
-      PType[cnt] <- 3
       cnt <- cnt + 1
       MGparmLabel[cnt] <- paste0("Wtlen_2_", GenderLabel[i], "_GP_", j)
-      PType[cnt] <- 3
       cnt <- cnt + 1
       if (i == 1) {
         MGparmLabel[cnt] <- paste0("Mat50%_", GenderLabel[1], "_GP_", j)
-        PType[cnt] <- 4
         cnt <- cnt + 1
         MGparmLabel[cnt] <- paste0("Mat_slope_", GenderLabel[1], "_GP_", j)
-        PType[cnt] <- 4
         cnt <- cnt + 1
         if (ctllist[["maturity_option"]] == 1) {
           MGparmLabel[cnt] <- paste0("Eggs/kg_inter_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
           MGparmLabel[cnt] <- paste0("Eggs/kg_slope_wt_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
         } else if (ctllist[["maturity_option"]] == 2) {
           MGparmLabel[cnt] <- paste0("Eggs_scalar_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
           MGparmLabel[cnt] <- paste0("Eggs_exp_len_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
         } else if (ctllist[["maturity_option"]] == 3) {
           MGparmLabel[cnt] <- paste0("Eggs_scalar_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
           MGparmLabel[cnt] <- paste0("Eggs_exp_wt_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
         } else if (ctllist[["maturity_option"]] == 4) {
           MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
           MGparmLabel[cnt] <- paste0("Eggs_slope_len_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
         } else if (ctllist[["maturity_option"]] == 5) {
           MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
           MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
         } else if (ctllist[["maturity_option"]] == 6) { # check what to do with option 6
           MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
           MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", GenderLabel[1], "_GP_", j)
-          PType[cnt] <- 5
           cnt <- cnt + 1
         } else {
           stop("Maturity option : ", ctllist[["maturity_option"]], " is not supported")
@@ -534,13 +480,10 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
 
   if (ctllist[["hermaphroditism_option"]] != 0) {
     MGparmLabel[cnt] <- paste0("Herm_Infl_age", GenderLabel[1])
-    PType[cnt] <- 6
     cnt <- cnt + 1
     MGparmLabel[cnt] <- paste0("Herm_stdev", GenderLabel[1])
-    PType[cnt] <- 6
     cnt <- cnt + 1
     MGparmLabel[cnt] <- paste0("Herm_asymptote", GenderLabel[1])
-    PType[cnt] <- 6
     cnt <- cnt + 1
     N_MGparm <- N_MGparm + 3
   }
@@ -614,49 +557,16 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     },
     "4" = NULL
   )
-  # Get the parameter type for recruitment dist params, type depends on method.
-  RecrDist_PType <- switch(ctllist[["recr_dist_method"]],
-    "1" = {
-      tmp_PType <- rep(c(7, 8, 9),
-        times = c(
-          ctllist[["N_GP"]],
-          ctllist[["N_areas"]],
-          ctllist[["nseas"]]
-        )
-      )
-      if (ctllist[["recr_dist_inx"]]) { # interactions
-        tmp_PType <- c(tmp_PType, rep(10, times = ctllist[["N_GP"]] * ctllist[["N_areas"]] * ctllist[["nseas"]]))
-      }
-      tmp_PType
-    },
-    "2" = {
-      tmp_PType <- rep(c(7, 8, 9), times = c(
-        ctllist[["N_GP"]],
-        ctllist[["N_areas"]],
-        N_settle_timings
-      ))
-      if (ctllist[["recr_dist_inx"]]) { # interactions
-        tmp_PType <- c(tmp_PType, rep(10, times = ctllist[["N_GP"]] * ctllist[["N_areas"]] * N_settle_timings))
-      }
-      tmp_PType
-    },
-    # may want a different PType for 3 in the future?
-    "3" = rep(10, times = nrow(ctllist[["recr_dist_pattern"]])),
-    "4" = NULL # because no params
-  )
-
   # Add the labels, their parameter type and then adjust the count.
   N_RecrDist_parms <- length(RecrDistLabel)
   if (N_RecrDist_parms > 0) {
     MGparmLabel[cnt:(cnt + N_RecrDist_parms - 1)] <- RecrDistLabel
-    PType[cnt:(cnt + N_RecrDist_parms - 1)] <- RecrDist_PType
     cnt <- cnt + N_RecrDist_parms # add on to the count
     N_MGparm <- N_MGparm + N_RecrDist_parms # add on to number of MGparms
   }
 
   N_MGparm <- N_MGparm + 1 # add 1 parameter for cohort-specific growth parameter
   MGparmLabel[cnt] <- "CohortGrowDev"
-  PType[cnt] <- 11
   cnt <- cnt + 1
   if ((N_areas > 1) && (ctllist[["N_moveDef"]] > 0)) {
     N_MGparm <- N_MGparm + ctllist[["N_moveDef"]] * 2 # add 2 * N_moveDef for movement params
@@ -667,14 +577,12 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       from <- ctllist[["moveDef"]][i, 3]
       to <- ctllist[["moveDef"]][i, 4]
       MGparmLabel[cnt + 0:1] <- paste0("MoveParm_", c("A", "B"), "_seas_", seas, "_GP_", GP, "_from_", from, "_to_", to)
-      PType[cnt:(cnt + 1)] <- 12
       cnt <- cnt + 2
     }
   }
   # age error parameters
   if (ctllist[["Do_AgeKey"]]) {
     MGparmLabel[cnt + 0:6] <- paste0("AgeKeyParm", 1:7)
-    PType[cnt:(cnt + 6)] <- 13
     cnt <- cnt + 7
     N_MGparm <- N_MGparm + 7
   }
@@ -700,12 +608,10 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   if (!is.null(catch_mult_fleets)) {
     MGparmLabel[cnt + 0:(length(catch_mult_fleets) - 1)] <-
       paste0("Catch_Mult:_", catch_mult_fleets)
-    PType[cnt:(cnt + (length(catch_mult_fleets) - 1))] <- NA
     cnt <- cnt + length(catch_mult_fleets)
     N_MGparm <- N_MGparm + length(catch_mult_fleets)
   }
   MGparmLabel[cnt + 1:ctllist[["N_GP"]] - 1] <- paste0("FracFemale_GP_", 1:ctllist[["N_GP"]])
-  PType[cnt:(cnt + ctllist[["N_GP"]] - 1)] <- 14
   cnt <- cnt + ctllist[["N_GP"]]
   N_MGparm <- N_MGparm + ctllist[["N_GP"]]
   # specify the parameter lines for predator fleets, if any.
@@ -743,15 +649,12 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   if (isTRUE(length(pred_indices) > 0)) {
     N_MGparm <- N_MGparm + length(pred_indices)
     MGparmLabel <- c(MGparmLabel, paste0("PredM2_", pred_indices))
-    PType <- c(PType, rep(NA, length(pred_indices)))
   }
   ctllist <- add_df(ctllist,
     name = "MG_parms", nrow = N_MGparm, ncol = 14,
     col.names = lng_par_colnames,
     comments = MGparmLabel
   )
-
-  ctllist[["MG_parms"]] <- cbind(ctllist[["MG_parms"]], PType)
 
   # MG timevarying parlines ------
   if (any(ctllist[["MG_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -775,15 +678,12 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
 
   # Read seasonal effects ----
   ctllist <- add_vec(ctllist, name = "MGparm_seas_effects", length = 10)
-  PType <- array()
   N_seas_effects <- length(ctllist[["MGparm_seas_effects"]][ctllist[["MGparm_seas_effects"]] > 0])
   if (N_seas_effects > 0) {
     ctllist <- add_df(ctllist, "MG_parms_seas",
       nrow = N_seas_effects * ctllist[["nseas"]], ncol = 7,
       col.names = srt_par_colnames
     )
-    PType[1:(N_seas_effects * ctllist[["nseas"]])] <- 16
-    ctllist[["MG_parms_seas"]] <- cbind(ctllist[["MG_parms_seas"]], PType)
   }
 
   # SR -----
@@ -831,13 +731,10 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     return(ctllist)
   }
 
-  PType <- array()
   ctllist <- add_df(ctllist,
     name = "SR_parms", nrow = N_SRparm2, ncol = 14,
     col.names = lng_par_colnames, comments = SRparmsLabels
   )
-  PType[1:N_SRparm2] <- 17
-  ctllist[["SR_parms"]] <- cbind(ctllist[["SR_parms"]], PType)
 
   # SR timevarying parlines ----
   # time block, environmental link, and parm devs parameters
@@ -858,7 +755,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       col.names = srt_par_colnames,
       comments = tmp_parlab
     )
-    ctllist[["SR_parms_tv"]][["PType"]] <- 17
   }
   # recdevs ----
   ctllist <- add_elem(ctllist, "do_recdev") # do_recdev:  0=none; 1=devvector; 2=simple deviations; 3=deviation vector; 4=3 with summed deviation penalty
@@ -989,7 +885,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       ncol = 7, col.names = srt_par_colnames,
       comments = comments_initF
     )
-    ctllist[["init_F"]][["PType"]] <- 18
   }
   # TODO: maybe add check for use_datlist = FALSE? this would involve using
   # comments in the ctl file to try to figure out if the lines in the ctlfile
@@ -1088,7 +983,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
         col.names = srt_par_colnames,
         comments = tmp_parlab
       )
-      # Need Ptype?
     }
   }
   # selecitivty -----
@@ -1113,7 +1007,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   # selectivity parlines -----
   # This contains the number of params for each pattern (the name)
   selex_patterns <- c(
-    "0" = 0, "1" = 2, "2" = 8, "3" = 6, "4" = 0, "5" = 2,
+    "0" = 0, "1" = 2, "2" = 6, "3" = 6, "4" = 0, "5" = 2,
     "6" = 2, "7" = 8, "8" = 8, "9" = 6, "10" = 0, "11" = 2,
     "12" = 2, "13" = 8, "14" = Nages + 1, "15" = 0,
     "16" = 2, "17" = Nages + 1, "18" = 8, "19" = 6,

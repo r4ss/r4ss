@@ -5,7 +5,7 @@
 #'
 #' @template file
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Kathryn L. Doering
 #' @export
 #' @seealso [SS_readforecast()], [SS_readdat()],
 #' [SS_writestarter()],

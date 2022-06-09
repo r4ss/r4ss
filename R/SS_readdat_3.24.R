@@ -16,7 +16,7 @@
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
 #' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Kelli F. Johnson,
-#' Chantel R. Wetzel
+#' Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readdat()], [SS_readdat_3.30()]
 #' [SS_readstarter()], [SS_readforecast()],
@@ -166,8 +166,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
 
 
   # more dimensions
-  datlist[["Ngenders"]] <- allnums[i]
-  datlist[["Nsexes"]] <- datlist[["Ngenders"]]
+  datlist[["Nsexes"]] <- allnums[i]
   i <- i + 1
   datlist[["Nages"]] <- Nages <- allnums[i]
   i <- i + 1
@@ -500,7 +499,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     # read generalized size frequency data
     sizefreq_data_list <- list()
     for (imethod in 1:N_sizefreq_methods) {
-      Ncols <- 7 + datlist[["Ngenders"]] * nbins_per_method[imethod]
+      Ncols <- 7 + datlist[["Nsexes"]] * nbins_per_method[imethod]
       Nrows <- Nobs_per_method[imethod]
       sizefreq_data_tmp <- data.frame(matrix(allnums[i:(i + Nrows * Ncols - 1)],
         nrow = Nrows, ncol = Ncols, byrow = TRUE

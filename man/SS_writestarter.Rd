@@ -10,7 +10,7 @@ SS_writestarter(
   file = "starter.ss",
   overwrite = FALSE,
   verbose = TRUE,
-  warn = TRUE
+  warn = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ SS_writestarter(
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
 
-\item{warn}{Print warning if overwriting file?}
+\item{warn}{Deprecated.}
 }
 \description{
 write Stock Synthesis starter file from list object in R which was probably
@@ -37,5 +37,5 @@ created using \code{\link[=SS_readstarter]{SS_readstarter()}}
 \code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 }

@@ -10,7 +10,8 @@ SSsummarize(
   ageselfactor = "Asel",
   selfleet = NULL,
   selyr = "startyr",
-  selgender = 1,
+  selgender = lifecycle::deprecated(),
+  selsex = 1,
   SpawnOutputUnits = NULL,
   lowerCI = 0.025,
   upperCI = 0.975,
@@ -36,8 +37,10 @@ NULL=all fleets. Default=NULL.}
 summarized.  NOTE: NOT CURRENTLY WORKING.  Options: NULL=all years,
 "startyr" = first year.}
 
-\item{selgender}{Vector of genders (1 and/or 2) for which selectivity will
-be summarized. NULL=all genders. Default=NULL.}
+\item{selgender}{Deprecated. Use selsex instead.}
+
+\item{selsex}{Vector of sexes (1 and/or 2) for which selectivity will
+be summarized. NULL=all sexes. Default=NULL.}
 
 \item{SpawnOutputUnits}{Optional single value or vector of "biomass" or
 "numbers" giving units of spawning for each model.}

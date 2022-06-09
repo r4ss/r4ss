@@ -11,7 +11,8 @@
 #' @param overwrite Should existing files be overwritten? Defaults to FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #' Defaults to FALSE.
-#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn Doering
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn L.
+#' Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
 #' [SS_readdat()],

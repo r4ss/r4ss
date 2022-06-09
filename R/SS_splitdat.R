@@ -1,13 +1,13 @@
 #' Split apart bootstrap data to make input file.
 #'
-#' A function to split apart bootstrap data files created in data.ss_new.  To
-#' get bootstraps, the input "N bootstrap file to produce" in starter.ss needs
-#' to be 3 or greater. The function can either create a file for just the
-#' input data (if `inputs=TRUE`), a file for just the MLE values
-#' (if `MLE = TRUE`), or separate files for each of the bootstraps
-#' (if `inputs=FALSE` and `MLE=FALSE`).
-#'
-#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' 
+#'  `SS_splitdat()` is being deprecated because it is no longer needed in as of
+#'  Stock Synthesis 3.30.19, where the files are already split. If needing to
+#'  split older version of SS3, this could be done by reading in the file to
+#'  `SS_readdat()`, specifying the section argument to grab the desired part of
+#'   the file, and then writing out the file using. `SS_writedat()'.
 #' @param inpath Directory containing the input file. By default the working
 #' directory given by getwd() is used. Default="working_directory".
 #' @param outpath Directory into which the output file will be written.
@@ -28,6 +28,7 @@
 #' @param notes Notes to the top of the new file (comment indicator "#C" will
 #' be added). Default="".
 #' @author Ian Taylor
+#' @keywords internal
 #' @export
 SS_splitdat <-
   function(inpath = "working_directory",
@@ -40,8 +41,10 @@ SS_splitdat <-
            MLE = TRUE,
            inputs = FALSE,
            notes = "") {
+    lifecycle::deprecate_warn("1.45.0", "SS_splitdat()", 
+      details = "Upgrade to SS3.30.19 or see the description in ?SS_splitdat() for a workaround.")
     # this is a function to split bootstrap aggregated in the data.ss_new file
-    # which is output from Stock Synthesis into individual data files.
+    # which is output from Stock Synthesis into individual data files. 
     if (MLE & inputs) stop("can't have both 'MLE' and 'inputs' = TRUE")
 
     if (inpath == "working_directory") inpath <- getwd()

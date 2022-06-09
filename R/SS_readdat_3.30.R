@@ -16,7 +16,7 @@
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
 #' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Chris J. Grandin,
-#' Kelli F. Johnson, Chantel R. Wetzel
+#' Kelli F. Johnson, Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @importFrom utils type.convert
 #' @seealso [SS_readdat()], [SS_readdat_3.30()]
@@ -194,9 +194,7 @@ SS_readdat_3.30 <-
     datlist[["months_per_seas"]] <- get.vec(dat, ind)
     datlist[["Nsubseasons"]] <- get.val(dat, ind)
     datlist[["spawn_month"]] <- get.val(dat, ind)
-    datlist[["Ngenders"]] <- get.val(dat, ind)
-    # Keep both Nsexes and Ngenders for now, but get rid of Ngenders in the future.
-    datlist[["Nsexes"]] <- datlist[["Ngenders"]]
+    datlist[["Nsexes"]] <- get.val(dat, ind)
     datlist[["Nages"]] <- get.val(dat, ind)
     datlist[["N_areas"]] <- get.val(dat, ind)
     datlist[["Nfleets"]] <- get.val(dat, ind)
@@ -752,11 +750,14 @@ SS_readdat_3.30 <-
     ###############################################################################
     ## Tag data ----
     datlist[["do_tags"]] <- get.val(dat, ind)
-    if (datlist[["do_tags"]]) {
+    if (datlist[["do_tags"]] > 0) {
       datlist[["N_tag_groups"]] <- get.val(dat, ind)
       datlist[["N_recap_events"]] <- get.val(dat, ind)
       datlist[["mixing_latency_period"]] <- get.val(dat, ind)
       datlist[["max_periods"]] <- get.val(dat, ind)
+      if (datlist[["do_tags"]] == 2) {
+        datlist[["TG_min_recap"]] <- get.val(dat, ind)
+      }
       ## Read tag release data
       if (datlist[["N_tag_groups"]] > 0) {
         Ncols <- 8

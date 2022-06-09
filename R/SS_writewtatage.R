@@ -10,15 +10,22 @@
 #' Default="wtatage.ss".
 #' @template overwrite
 #' @template verbose
-#' @template warn
+#' @param warn Deprecated.
 #' @author Kelli F. Johnson
 #' @export
 #' @seealso [SS_readwtatage()]
 #'
 SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
-                            overwrite = FALSE, verbose = TRUE, warn = TRUE) {
+                            overwrite = FALSE, verbose = TRUE, 
+                            warn = lifecycle::deprecated()) {
   if (verbose) message("running SS_writewtatage\n")
-
+  
+  if (lifecycle::is_present(warn)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_writewtatage(warn)"
+    )
+  }
   # Prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
   on.exit({
@@ -35,9 +42,6 @@ SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
     if (!overwrite) {
       stop("file exists:", outfile, "\n  set overwrite=TRUE to replace\n")
     } else {
-      if (warn) {
-        message("overwriting file:", outfile, "\n")
-      }
       file.remove(outfile)
     }
   } else {

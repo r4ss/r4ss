@@ -51,5 +51,5 @@ attempts to do everything. Returned datlist is mostly consistent across versions
 }
 \author{
 Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
-Chantel R. Wetzel
+Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 }

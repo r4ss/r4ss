@@ -37,7 +37,6 @@ SSplotSelex(
   ptsize = 10,
   cex.main = 1,
   mainTitle = TRUE,
-  showmain = lifecycle::deprecated(),
   mar = NULL,
   plotdir = "default",
   verbose = TRUE
@@ -70,7 +69,7 @@ be included in plot of selectivity across multiple fleets?}
 \item{season}{Which season (if seasonal model) for selectivity shown in
 multi-line plot (default = 1).}
 
-\item{sexes}{Optional vector to subset genders for which to make plots
+\item{sexes}{Optional vector to subset sexes for which to make plots
 (1=females, 2=males)}
 
 \item{selexlines}{Vector to select which lines get plotted. values are 1.
@@ -169,8 +168,6 @@ The default is \code{res = 300}.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top
 (not yet implemented for all plots)}
-
-\item{showmain}{Deprecated, use mainTitle instead.}
 
 \item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
 

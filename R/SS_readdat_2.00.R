@@ -9,8 +9,7 @@
 #' @template file
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is being read.
+#' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
@@ -21,8 +20,16 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NULL) {
+SS_readdat_2.00 <- function(file, verbose = TRUE, 
+  echoall = lifecycle::deprecated(), section = NULL) {
   # function to read Stock Synthesis data files
+    if (lifecycle::is_present(echoall)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_readdat_2.00(echoall)",
+      details = "Please use verbose = TRUE instead"
+    )
+  }
 
   if (verbose) cat("running SS_readdat_2.00\n")
   dat <- readLines(file, warn = FALSE)
@@ -161,7 +168,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   ## }
 
   # more dimensions
-  datlist[["Ngenders"]] <- Ngenders <- allnums[i]
+  datlist[["Nsexes"]] <- allnums[i]
   i <- i + 1
   datlist[["Nages"]] <- Nages <- allnums[i]
   i <- i + 1
@@ -303,7 +310,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   if (verbose) cat("N_lencomp =", N_lencomp, "\n")
 
   if (N_lencomp > 0) {
-    Ncols <- N_lbins * Ngenders + 6
+    Ncols <- N_lbins * datlist[["Nsexes"]] + 6
     lencomp <- data.frame(matrix(
       allnums[i:(i + N_lencomp * Ncols - 1)],
       nrow = N_lencomp, ncol = Ncols, byrow = TRUE
@@ -311,12 +318,12 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + N_lencomp * Ncols
     names(lencomp) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("l", lbin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", lbin_vector, sep = ""), paste("m", lbin_vector, sep = ""))
       } else {
         NULL
@@ -364,19 +371,19 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
 
   if (N_agecomp > 0) {
     if (N_agebins == 0) stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
-    Ncols <- N_agebins * Ngenders + 9
+    Ncols <- N_agebins * datlist[["Nsexes"]] + 9
     agecomp <- data.frame(matrix(allnums[i:(i + N_agecomp * Ncols - 1)],
       nrow = N_agecomp, ncol = Ncols, byrow = TRUE
     ))
     i <- i + N_agecomp * Ncols
     names(agecomp) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
       } else {
         NULL
@@ -393,7 +400,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   i <- i + 1
   if (verbose) cat("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs, "\n")
   if (N_MeanSize_at_Age_obs > 0) {
-    Ncols <- 2 * N_agebins * Ngenders + 7
+    Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
     MeanSize_at_Age_obs <- data.frame(matrix(
       allnums[i:(i + N_MeanSize_at_Age_obs * Ncols - 1)],
       nrow = N_MeanSize_at_Age_obs, ncol = Ncols, byrow = TRUE
@@ -401,22 +408,22 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + N_MeanSize_at_Age_obs * Ncols
     names(MeanSize_at_Age_obs) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
       } else {
         NULL
       },
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("N_a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("N_f", agebin_vector, sep = ""), paste("N_m", agebin_vector, sep = ""))
       } else {
         NULL

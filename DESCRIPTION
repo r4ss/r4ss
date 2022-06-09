@@ -1,7 +1,7 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.44.0
+Version: 1.45.0
 Authors@R: c(person(given = "Ian G.", family = "Taylor",
   email = "Ian.Taylor@noaa.gov", role = c("aut","cre")),
   person(given = "Ian J.", family = "Stewart", role = "aut"),
@@ -30,7 +30,7 @@ Authors@R: c(person(given = "Ian G.", family = "Taylor",
   person(given = "Watal M.", family = "Iwasaki", role = "aut"),
   person(given = "Kathryn L.", family = "Doering", role = "aut"),
   person(given = "Andrea M.", family = "Havron", role = "aut"),
-  person(given = "Nathan", family = "Vaughan", role = "aut"),
+  person(given = "Nathan R.", family = "Vaughan", role = "aut"),
   person(given = "LaTreese S.", family = "Denson", role = "aut"),
   person(given = "Ashleigh J.", family = "Novak", role = "aut"),
   person(given = "Henning", family = "Winker", role = "aut"),

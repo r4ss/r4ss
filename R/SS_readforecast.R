@@ -11,7 +11,7 @@
 #' @param readAll Should the function continue even if Forecast = 0 or -1
 #' (at which point SS stops reading)?
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor + Nathan Vaughan
+#' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readstarter()], [SS_readdat()],
 #' [SS_writestarter()],

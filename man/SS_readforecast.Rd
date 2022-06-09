@@ -44,5 +44,5 @@ read Stock Synthesis forecast file into list object in R
 \code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}},
 }
 \author{
-Ian Taylor + Nathan Vaughan
+Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 }

@@ -9,7 +9,8 @@
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #'  Defaults to FALSE.
-#' @author Kathryn Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki
+#' @author Kathryn L. Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki,
+#' Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readctl_3.30()],[SS_readstarter()],
 #' [SS_readforecast()],
@@ -132,7 +133,13 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
         rownames(dataframe)[nrow(dataframe)] <- "terminator"
       }
       if (header) {
-        dataframe[["PType"]] <- NULL
+        if (isTRUE(!is.null(dataframe[["PType"]]))) {
+          warning(
+            "Please remove PType column in parameter dataframe, ",
+            "which was deprecated as of r4ss 1.45.0."
+          )
+          dataframe[["PType"]] <- NULL
+        }
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
         writeLines(paste(names(dataframe), collapse = "\t"), con = zz)
       }
@@ -415,7 +422,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   )
   # MG parms ----
   writeComment(c("#", "#_growth_parms"))
-  printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
+  printdf("MG_parms")
 
   # MG timevarying parms ----
   if (any(ctllist[["MG_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -471,12 +478,11 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     "LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type",
     "PHASE", "env-var", "use_dev", "dev_mnyr",
     "dev_mxyr", "dev_PH", "Block",
-    "Blk_Fxn # parm_name", "PType"
-  )
+    "Blk_Fxn # parm_name")
   # "Blk_Fxn # parm_name" is just to get the parm_name header printed, too.
   printdf("SR_parms")
   # reset column names back.
-  colnames(ctllist[["SR_parms"]]) <- c(lng_par_colnames, "PType")
+  colnames(ctllist[["SR_parms"]]) <- lng_par_colnames
 
   # SR tv parms ----
   if (any(ctllist[["SR_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &

@@ -9,7 +9,7 @@ SS_writedat(
   outfile,
   version = "3.30",
   overwrite = FALSE,
-  faster = FALSE,
+  faster = lifecycle::deprecated(),
   verbose = TRUE
 )
 }
@@ -24,7 +24,7 @@ either as character or numeric values (noting that numeric 3.30 = 3.3).}
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
 
-\item{faster}{Speed up writing by writing length and age comps without aligning
+\item{faster}{Deprecated. Speed up writing by writing length and age comps without aligning
 the columns (by using write.table instead of print.data.frame)}
 
 \item{verbose}{Should there be verbose output while running the file?}

@@ -22,5 +22,5 @@ read Stock Synthesis starter file into list object in R
 \code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Kathryn L. Doering
 }

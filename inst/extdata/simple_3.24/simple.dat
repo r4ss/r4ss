@@ -12,7 +12,7 @@ FISHERY1%SURVEY1%SURVEY2
  1 1 1 #_area_assignments_for_each_fishery_and_survey
  1 #_units of catch:  1=bio; 2=num
  0.01 #_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3
-2 #_Ngenders
+2 #_Nsexes
 40 #_Nages
  0 #_init_equil_catch_for_each_fishery
 31 #_N_lines_of_catch_to_read
