@@ -13,7 +13,7 @@
 # ' \code{\link{SS_readforecast}},
 # ' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 # ' \code{\link{SS_writedat}}
-SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, 
+SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
                              verbose = FALSE) {
   # Add msgs for deprecated args ----
   # these should be removed after 1 release version.

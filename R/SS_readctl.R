@@ -98,7 +98,7 @@ SS_readctl <- function(file,
                        ptype = lifecycle::deprecated()) {
 
   # warn about soft deprecated arguments ----
-   # soft deprecated for now, but fully deprecate in the future.
+  # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(ptype)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",

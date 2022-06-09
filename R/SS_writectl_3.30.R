@@ -478,7 +478,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     "LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type",
     "PHASE", "env-var", "use_dev", "dev_mnyr",
     "dev_mxyr", "dev_PH", "Block",
-    "Blk_Fxn # parm_name")
+    "Blk_Fxn # parm_name"
+  )
   # "Blk_Fxn # parm_name" is just to get the parm_name header printed, too.
   printdf("SR_parms")
   # reset column names back.

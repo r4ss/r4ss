@@ -26,7 +26,7 @@ SS_writedat_3.30 <- function(datlist,
                              faster = lifecycle::deprecated(),
                              verbose = TRUE) {
   # function to write Stock Synthesis data files
-   if (lifecycle::is_present(faster)) {
+  if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
       what = "SS_writedat_3.30(faster)"
