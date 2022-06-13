@@ -9,14 +9,13 @@
 #' The starter file is helpful because it provides names for the
 #' control and data files.
 #'
-#' @template dir
+#' @param dir A file path to the directory of interest or a raw github URL (see
+#' example). The default value is \code{dir = NULL}.
 #' @param ss_new A logical that controls if the `.ss_new` files or
 #'   the original input files are read in.
 #'   The default is to read the original files.
 #' @template verbose
-#'
 #' @author Ian G. Taylor, Kelli F. Johnson
-#'
 #' @return An invisible list is returned.
 #' The first element is the directory that was provided in the argument `dir`.
 #' The second element is the result of `normalizePath(dir)`,
