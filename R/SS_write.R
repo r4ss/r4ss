@@ -68,8 +68,7 @@ SS_write <- function(inputlist,
       mylist = inputlist[["start"]],
       dir = dir,
       overwrite = overwrite,
-      verbose = verbose,
-      warn = FALSE
+      verbose = verbose
     )
   } else {
     stop(

@@ -5,7 +5,7 @@
 #'
 #' @param parfile Filename either with full path or relative to working directory.
 #' @param datsource list or character. If list, should be a list produced
-#' from [SS_writedat()]. If character, should be the full file location of an
+#' from [SS_readdat()]. If character, should be the full file location of an
 #' SS data file.
 #' @param ctlsource list or character. If list, should be a list produced
 #' from [SS_writectl()]. If character, should be the full file location of an
@@ -14,13 +14,15 @@
 #' Default=TRUE.
 #' @author Nathan R. Vaughan
 #' @export
-#' @seealso [SS_readctl()],
+#' @seealso [SS_writepar_3.30()],
+#' [SS_readctl()],
 #' [SS_readdat()],
 #' [SS_readstarter()],
 #' [SS_readforecast()],
+#' [SS_writectl()],
+#' [SS_writedat()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()],
-#' [SS_writedat()]
 SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   if (is.character(datsource)) {
     datlist <- SS_readdat(file = datsource, version = "3.30", verbose = FALSE)
