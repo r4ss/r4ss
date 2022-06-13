@@ -15,7 +15,16 @@
 #' @author Kelli F. Johnson, Ian G. Taylor
 #'
 SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
-  if (!file.exists(file) | file.info(file)$size == 0) {
+
+  # Complicated check because of the early return of NULL rather than an error
+  # and readLines() will error out if the file does not exist
+  # but file.exists() and file.info() do not work on URLs
+  test <- tryCatch(
+    expr = readLines(file),
+    error = function(x) "No file",
+    warning = function(x) "No file"
+  )
+  if (test[1] == "No file" | length(test) <= 2) {
     if (verbose) {
       message("Skipping weight-at-age file. File missing or empty: ", file)
     }

@@ -14,9 +14,11 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
     message("running SS_readstarter")
   }
-  size <- file.info(file)$size
-  if (is.na(size) || size == 0) stop("file empty or missing:", file)
-  starter <- readLines(file, warn = F)
+
+  starter <- readLines(file, warn = FALSE)
+  if (length(starter) == 0) {
+    stop("The following file was empty: ", file)
+  }
   mylist <- list()
 
   mylist[["sourcefile"]] <- file
