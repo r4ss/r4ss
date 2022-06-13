@@ -7,8 +7,9 @@
 #' particularly helpful, i.e., `ctlfile` and `datfile`, respectively.
 #' @examples
 #' starter_list <- SS_readstarter(
-#'   system.file("extdata", "simple_3.30.13", "starter.ss"),
-#'   verbose = FALSE
+#'   system.file("extdata", "simple_3.30.13", "starter.ss",
+#'     package = "r4ss", verbose = FALSE
+#'   )
 #' )
 #' # The following lines should be TRUE and demonstrate how you can know the
 #' # names of the control and data file given information in the starter file.
