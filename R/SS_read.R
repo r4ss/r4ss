@@ -5,7 +5,7 @@
 #' Functionality comes from the `r4ss::SS_read*()` functions.
 #' This function simplifies the number of lines of code you need to write by
 #' using all of the read functions to read in the
-#' starter, control, data, and forecast files.
+#' starter, control, data, and forecast files and maybe the weight-at-age file.
 #' The starter file is helpful because it provides names for the
 #' control and data files.
 #'
@@ -21,13 +21,13 @@
 #' The first element is the directory that was provided in the argument `dir`.
 #' The second element is the result of `normalizePath(dir)`,
 #' which gives the full path.
-#' The remaining four elements are list objects from reading in
+#' The remaining five elements are list objects resulting from reading in
 #' the following input files:
 #' * data
 #' * control
 #' * starter
 #' * forecast
-#' * wtatage (will be NULL if not required by the model)
+#' * wtatage (will be `NULL` if not required by the model)
 #'
 #' @export
 #' @seealso
@@ -43,6 +43,18 @@
 #' inputs <- SS_read(
 #'   dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
 #' )
+#' # Read in an example from GitHub stored in user-examples,
+#' # wrapped in `dontrun` because it requires an Internet connection
+#' \dontrun{
+#' webexample <- SS_read(file.path(
+#'   "https://raw.githubusercontent.com",
+#'   "nmfs-stock-synthesis",
+#'   "user-examples",
+#'   "main",
+#'   "model_files",
+#'   "simple_long_wtatage"
+#' ))
+#' }
 SS_read <- function(dir = NULL,
                     ss_new = FALSE,
                     verbose = FALSE) {
