@@ -10,7 +10,7 @@
 #' the control and data files.
 #'
 #' @param dir A file path to the directory of interest or a raw github URL (see
-#' example). The default value is \code{dir = NULL}.
+#' example). The default is the current working directory, `dir = getwd()`.
 #' @param ss_new A logical that controls if the `.ss_new` files or
 #'   the original input files are read in.
 #'   The default is to read the original files.
@@ -45,7 +45,7 @@
 #' # Read in an example from GitHub stored in user-examples,
 #' # wrapped in `dontrun` because it requires an Internet connection
 #' \dontrun{
-#' webexample <- SS_read(file.path(
+#' webexample <- SS_read(dir = file.path(
 #'   "https://raw.githubusercontent.com",
 #'   "nmfs-stock-synthesis",
 #'   "user-examples",
@@ -54,12 +54,9 @@
 #'   "simple_long_wtatage"
 #' ))
 #' }
-SS_read <- function(dir = NULL,
+SS_read <- function(dir = getwd(),
                     ss_new = FALSE,
                     verbose = FALSE) {
-  if (is.null(dir)) {
-    dir <- getwd()
-  }
 
   # Read in starter first to find the names of the input files
   start <- SS_readstarter(
