@@ -14,7 +14,7 @@
 #' # names of the control and data file given information in the starter file.
 #' starter_list[["ctlfile"]] == "simple_control.ss"
 #' starter_list[["datfile"]] == "simple_data.ss"
-#' @author Ian G. Taylor, Kathryn L. Doering, Kelli Johnson
+#' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 #' @export
 #' @seealso
 #' * [SS_readforecast()],
