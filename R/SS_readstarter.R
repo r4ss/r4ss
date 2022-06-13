@@ -2,9 +2,9 @@
 #'
 #' @template file
 #' @template verbose
-#' @return A list with essentially on element for each line of input values.
-#' Entries for the name of the control and data file are particularly helpful,
-#' i.e., `ctlfile` and `datfile`, respectively.
+#' @return A list with one element for each line of input values.
+#' List elements containing the name of the control and data file are
+#' particularly helpful, i.e., `ctlfile` and `datfile`, respectively.
 #' @examples
 #' starter_list <- SS_readstarter(
 #'   system.file("extdata", "simple_3.30.13", "starter.ss"),
@@ -14,7 +14,7 @@
 #' # names of the control and data file given information in the starter file.
 #' starter_list[["ctlfile"]] == "simple_control.ss"
 #' starter_list[["datfile"]] == "simple_data.ss"
-#' @author Ian G. Taylor, Kathryn L. Doering
+#' @author Ian G. Taylor, Kathryn L. Doering, Kelli Johnson
 #' @export
 #' @seealso
 #' * [SS_readforecast()],

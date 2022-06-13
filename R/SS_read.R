@@ -5,9 +5,9 @@
 #' Functionality comes from the `r4ss::SS_read*()` functions.
 #' This function simplifies the number of lines of code you need to write by
 #' using all of the read functions to read in the
-#' starter, control, data, and forecast files and maybe the weight-at-age file.
-#' The starter file is helpful because it provides names for the
-#' control and data files.
+#' starter, control, data, and forecast files and if requested, the
+#' weight-at-age file. The starter file is helpful because it provides names for
+#' the control and data files.
 #'
 #' @param dir A file path to the directory of interest or a raw github URL (see
 #' example). The default value is \code{dir = NULL}.
