@@ -20,7 +20,6 @@
 #' @author Kelli F. Johnson, Ian G. Taylor
 #'
 SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
-
   test <- tryCatch(
     expr = readLines(file),
     error = function(x) "No file",

@@ -86,9 +86,13 @@ test_that("empty files lead to NULL or error", {
 
 test_that("ss_read works with a raw github URL", {
   skip_if_offline(host = "github.com")
-  list_objs <- SS_read(dir = 
-  "https://raw.githubusercontent.com/nmfs-stock-synthesis/test-models/main/models/Simple")
+  list_objs <- SS_read(
+    dir =
+      "https://raw.githubusercontent.com/nmfs-stock-synthesis/test-models/main/models/Simple"
+  )
   expect_true(is.list(list_objs))
-  expect_equal(names(list_objs), c("dir", "path", "dat", "ctl", "start", "fore",
-   "wtatage"))
+  expect_equal(names(list_objs), c(
+    "dir", "path", "dat", "ctl", "start", "fore",
+    "wtatage"
+  ))
 })
