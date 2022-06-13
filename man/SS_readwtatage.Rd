@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readwtatage.R
 \name{SS_readwtatage}
 \alias{SS_readwtatage}
-\title{Read weight-at-age data file}
+\title{Read in a weight-at-age data file as a data frame}
 \usage{
 SS_readwtatage(file = "wtatage.ss", verbose = TRUE)
 }
@@ -17,14 +17,21 @@ to the screen.}
 \value{
 Returns a data frame with a variable number of columns based on the
 number of ages that are included in the file. Though, the first columns
-will always be Yr, Seas, Sex, Bio_Pattern, BirthSeas, and Fleet.
+will always be \code{Yr}, \code{Seas}, \code{Sex}, \code{Bio_Pattern}, \code{BirthSeas}, and \code{Fleet}.
 The seventh column will be age zero.
 The last or next to last column will be the maximum age included
-in the weight-at-age data. For SS version 3.30 and greater, the last column
-will be a column of comments.
+in the weight-at-age data. For Stock Synthesis versions 3.30 and greater,
+the last column will be a column of comments.
+
+\code{NULL} is returned if \code{file} does not exist or if the file does exist but
+it is empty. This behavior is different than other \verb{SS_read*} functions that
+error if either of the previous checks are \code{TRUE}. Thus, a complicated check
+involving \code{\link[=tryCatch]{tryCatch()}} is used around \code{\link[=readLines]{readLines()}} to allow for returning
+\code{NULL} rather than \code{stop()}. Additionally, this check accommodates a URL
+for \code{file}.
 }
 \description{
-Read in a weight-at-age data file into a data frame in R.
+Read in a weight-at-age data file as a data frame
 }
 \author{
 Kelli F. Johnson, Ian G. Taylor
