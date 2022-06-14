@@ -23,10 +23,10 @@
 SS_readdat_3.00 <- function(file, verbose = TRUE,
                             echoall = lifecycle::deprecated(), section = NULL) {
   # function to read Stock Synthesis data files
-  if (lifecycle::is_present(verbose)) {
+  if (lifecycle::is_present(echoall)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
-      what = "SS_readdat_3.00(verbose)",
+      what = "SS_readdat_3.00(echoall)",
       details = "Please use verbose = TRUE instead."
     )
   }
