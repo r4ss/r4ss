@@ -117,7 +117,11 @@ SS_write <- function(inputlist,
       verbose = verbose
     )
   }
-
+  
+  if ("par" %in% names(inputlist)){
+    r4ss::SS_writepar_3.30(inputlist[["par"]], outfile = file.path(dir, "ss.par"), verbose = FALSE)
+  }
+  
   # message noting that all files have been written
   if (verbose) {
     message("Wrote all input files to ", dir)

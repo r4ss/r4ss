@@ -87,6 +87,12 @@ SS_read <- function(dir = NULL,
     wtatage <- NULL
   }
 
+  par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
+                         datsource = dat,
+                         ctlsource = ctl,
+                         verbose = FALSE
+  )
+  
   # return a list of the lists for each file
   invisible(list(
     dir = dir,
@@ -95,6 +101,7 @@ SS_read <- function(dir = NULL,
     ctl = ctl,
     start = start,
     fore = fore,
-    wtatage = wtatage
+    wtatage = wtatage,
+    par = par
   ))
 }
