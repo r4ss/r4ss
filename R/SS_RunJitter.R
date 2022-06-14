@@ -91,7 +91,7 @@ SS_RunJitter <- function(mydir,
   if (!is.null(init_values_src)) {
     starter[["init_values_src"]] <- init_values_src
   }
-  r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE, warn = FALSE)
+  r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
   file_increment(0, verbose = verbose)
 
   # create empty ss.dat file to avoid the ADMB message
