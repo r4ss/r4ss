@@ -67,12 +67,6 @@ SSplotData <- function(replist,
   # table to store information on each plot
   plotinfo <- NULL
 
-  ## ### override datasize variable in seasonal models
-  ## if(replist[["nseasons"]] > 1){
-  ##   cat("  Setting datasize to FALSE because not yet implemented for seasonal models.\n")
-  ##   datasize <- FALSE
-  ## }
-
   ### get info from replist
   # dimensions
   startyr <- replist[["startyr"]]

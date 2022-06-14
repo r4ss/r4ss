@@ -31,7 +31,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     )
   }
 
-  if (verbose) cat("running SS_readdat_3.00\n")
+  if (verbose) message("running SS_readdat_3.00")
   dat <- readLines(file, warn = FALSE)
 
   # split apart any bootstrap or expected value sections in data.ss_new
@@ -134,32 +134,28 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     fleetnames <- "fleet1"
   }
 
-  # if(verbose) cat("fleetnames:",fleetnames,'\n')
   datlist[["fleetnames"]] <- fleetnames
   datlist[["surveytiming"]] <- surveytiming <- allnums[i:(i + Ntypes - 1)]
   i <- i + Ntypes
   datlist[["areas"]] <- areas <- allnums[i:(i + Ntypes - 1)]
   i <- i + Ntypes
   if (verbose) {
-    cat("areas:", areas, "\n")
-    cat("fleet info:\n")
-    print(data.frame(
+    message("areas:", areas)
+    message("fleet info:\n", paste0(capture.output(
+      data.frame(
       fleet = 1:Ntypes,
       name = fleetnames,
       area = areas,
       timing = surveytiming,
       type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
-    ))
+      )), collapse = "\n")
+    )
   }
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming, areas))
   names(fleetinfo1) <- fleetnames
   fleetinfo1[["input"]] <- c("#_surveytiming", "#_areas")
   datlist[["fleetinfo1"]] <- fleetinfo1
-  ## if(verbose){
-  ##   cat("fleetinfo1:\n")
-  ##   print(t(fleetinfo1))
-  ## }
 
   datlist[["units_of_catch"]] <- units_of_catch <- allnums[i:(i + Nfleet - 1)]
   i <- i + Nfleet
@@ -169,10 +165,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   names(fleetinfo2) <- fleetnames[1:Nfleet]
   fleetinfo2[["input"]] <- c("#_units_of_catch", "#_se_log_catch")
   datlist[["fleetinfo2"]] <- fleetinfo2
-  ## if(verbose){
-  ##   cat("fleetinfo2:\n")
-  ##   print(t(fleetinfo2))
-  ## }
 
 
   # more dimensions
@@ -187,7 +179,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   # catch
   datlist[["N_catch"]] <- N_catch <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_catch =", N_catch, "\n")
+  if (verbose) message("N_catch =", N_catch)
   Nvals <- N_catch * (Nfleet + 2)
   catch <- data.frame(matrix(allnums[i:(i + Nvals - 1)],
     nrow = N_catch, ncol = (Nfleet + 2), byrow = TRUE
@@ -199,7 +191,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_cpue =", N_cpue, "\n")
+  if (verbose) message("N_cpue =", N_cpue)
   if (N_cpue > 0) {
     CPUEinfo <- data.frame(matrix(c(1:Ntypes, rep(1, Ntypes), rep(0, Ntypes)),
       nrow = Ntypes, ncol = 3, byrow = FALSE
@@ -230,7 +222,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   datlist[["N_discard"]] <- N_discard <- allnums[i]
   i <- i + 1
 
-  if (verbose) cat("N_discard =", N_discard, "\n")
+  if (verbose) message("N_discard =", N_discard)
   if (N_discard > 0) {
     # discard data
     Ncols <- 5
@@ -262,7 +254,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   # meanbodywt
   datlist[["N_meanbodywt"]] <- N_meanbodywt <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_meanbodywt =", N_meanbodywt, "\n")
+  if (verbose) message("N_meanbodywt =", N_meanbodywt, "\n")
 
 
   if (N_meanbodywt > 0) {
@@ -277,7 +269,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     # don't know if this is needed for version 2.00
     # datlist[["DF_for_meanbodywt"]] <- allnums[i]
     # i <- i+1
-    # if(verbose) cat("DF_for_meanbodywt =",datlist[["DF_for_meanbodywt"]],"\n")
+
     datlist[["DF_for_meanbodywt"]] <- NULL
   } else {
     datlist[["DF_for_meanbodywt"]] <- NULL
@@ -288,7 +280,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["lbin_method"]] <- lbin_method <- allnums[i]
   i <- i + 1
-  if (verbose) cat("lbin_method =", lbin_method, "\n")
+  if (verbose) message("lbin_method =", lbin_method)
   if (lbin_method == 2) {
     datlist[["binwidth"]] <- allnums[i]
     i <- i + 1
@@ -296,7 +288,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     i <- i + 1
     datlist[["maximum_size"]] <- allnums[i]
     i <- i + 1
-    if (verbose) cat("bin width, min, max =", datlist[["binwidth"]], ", ", datlist[["minimum_size"]], ", ", datlist[["maximum_size"]], "\n")
+    if (verbose) message("bin width, min, max =", datlist[["binwidth"]], ", ", datlist[["minimum_size"]], ", ", datlist[["maximum_size"]])
   } else {
     datlist[["binwidth"]] <- NA
     datlist[["minimum_size"]] <- NA
@@ -307,7 +299,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     i <- i + 1
     datlist[["lbin_vector_pop"]] <- allnums[i:(i + N_lbinspop - 1)]
     i <- i + N_lbinspop
-    if (verbose) cat("N_lbinspop =", N_lbinspop, "\nlbin_vector_pop:\n")
+    if (verbose) message("N_lbinspop =", N_lbinspop, "\nlbin_vector_pop:\n")
   } else {
     datlist[["N_lbinspop"]] <- NA
     datlist[["lbin_vector_pop"]] <- NA
@@ -331,8 +323,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   datlist[["N_lencomp"]] <- N_lencomp <- allnums[i]
   i <- i + 1
 
-  # if(verbose) cat(datlist[-15:0 + length(datlist)])
-  if (verbose) cat("N_lencomp =", N_lencomp, "\n")
+  if (verbose) message("N_lencomp =", N_lencomp)
 
   if (N_lencomp > 0) {
     Ncols <- N_lbins * datlist[["Nsexes"]] + 6
@@ -362,7 +353,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   # age data
   datlist[["N_agebins"]] <- N_agebins <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_agebins =", N_agebins, "\n")
+  if (verbose) message("N_agebins =", N_agebins, "\n")
   if (N_agebins > 0) {
     agebin_vector <- allnums[i:(i + N_agebins - 1)]
     i <- i + N_agebins
@@ -389,7 +380,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["N_agecomp"]] <- N_agecomp <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_agecomp =", N_agecomp, "\n")
+  if (verbose) message("N_agecomp =", N_agecomp)
 
   datlist[["Lbin_method"]] <- allnums[i]
   i <- i + 1
@@ -424,7 +415,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   # MeanSize_at_Age
   datlist[["N_MeanSize_at_Age_obs"]] <- N_MeanSize_at_Age_obs <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs, "\n")
+  if (verbose) message("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs)
   if (N_MeanSize_at_Age_obs > 0) {
     Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
     MeanSize_at_Age_obs <- data.frame(matrix(
@@ -480,7 +471,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["N_sizefreq_methods"]] <- N_sizefreq_methods <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_sizefreq_methods =", N_sizefreq_methods, "\n")
+  if (verbose) message("N_sizefreq_methods =", N_sizefreq_methods)
   if (N_sizefreq_methods > 0) {
     # get details of generalized size frequency methods
     datlist[["nbins_per_method"]] <- nbins_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
@@ -494,15 +485,16 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     datlist[["Nobs_per_method"]] <- Nobs_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
     i <- i + N_sizefreq_methods
     if (verbose) {
-      cat("details of generalized size frequency methods:\n")
-      print(data.frame(
-        method = 1:N_sizefreq_methods,
-        nbins = nbins_per_method,
-        units = units_per_method,
-        scale = scale_per_method,
-        mincomp = mincomp_per_method,
-        nobs = Nobs_per_method
-      ))
+      message("details of generalized size frequency methods:\n", 
+        paste0(capture.output(data.frame(
+          method = 1:N_sizefreq_methods,
+          nbins = nbins_per_method,
+          units = units_per_method,
+          scale = scale_per_method,
+          mincomp = mincomp_per_method,
+          nobs = Nobs_per_method
+        )), collapse = "\n")
+      )
     }
     # get list of bin vectors
     sizefreq_bins_list <- list()
@@ -537,7 +529,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
           }
         )
       if (verbose) {
-        cat("Method =", imethod, "  (first two rows, ten columns):\n")
+        message("Method =", imethod, "  (first two rows, ten columns):\n")
         print(sizefreq_data_tmp[1:min(Nrows, 2), 1:min(Ncols, 10)])
       }
       if (any(sizefreq_data_tmp[["Method"]] != imethod)) {
@@ -563,7 +555,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["do_tags"]] <- do_tags <- allnums[i]
   i <- i + 1
-  if (verbose) cat("do_tags =", do_tags, "\n")
+  if (verbose) message("do_tags =", do_tags)
 
   if (do_tags != 0) {
     datlist[["N_tag_groups"]] <- N_tag_groups <- allnums[i]
@@ -582,7 +574,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
       i <- i + N_tag_groups * Ncols
       names(tag_releases) <- c("TG", "Area", "Yr", "Season", "tfill", "Gender", "Age", "Nrelease")
       if (verbose) {
-        cat("Head of tag release data:\n")
+        message("Head of tag release data:\n")
         print(head(tag_releases))
       }
     } else {
@@ -597,7 +589,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
       i <- i + N_recap_events * Ncols
       names(tag_recaps) <- c("TG", "Yr", "Season", "Fleet", "Nrecap")
       if (verbose) {
-        cat("Head of tag recapture data:\n")
+        message("Head of tag recapture data:\n")
         print(head(tag_recaps))
       }
     } else {
@@ -608,13 +600,13 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["morphcomp_data"]] <- do_morphcomps <- allnums[i]
   i <- i + 1
-  if (verbose) cat("do_morphcomps =", do_morphcomps, "\n")
+  if (verbose) message("do_morphcomps =", do_morphcomps)
 
   if (allnums[i] == 999) {
-    if (verbose) cat("read of data file 3.00 complete (final value = 999)\n")
+    if (verbose) message("read of data file 3.00 complete (final value = 999)\n")
     datlist[["eof"]] <- TRUE
   } else {
-    cat("Error: final value is", allnums[i], " but should be 999\n")
+    message("Error: final value is", allnums[i], " but should be 999\n")
     datlist[["eof"]] <- FALSE
   }
 

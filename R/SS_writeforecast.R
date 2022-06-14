@@ -22,7 +22,7 @@
 SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
                              writeAll = FALSE, overwrite = FALSE, verbose = TRUE) {
   # function to write Stock Synthesis forecast files
-  if (verbose) cat("running SS_writeforecast\n")
+  if (verbose) message("running SS_writeforecast")
 
   if (!is.list(mylist) || mylist[["type"]] != "Stock_Synthesis_forecast_file") {
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'")
@@ -41,18 +41,18 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
     if (!overwrite) {
       stop(paste("file exists:", outfile, "\n  set overwrite=TRUE to replace\n"))
     } else {
-      if (verbose) cat("overwriting file:", outfile, "\n")
+      if (verbose) message("overwriting file:", outfile)
       file.remove(outfile)
     }
   } else {
-    if (verbose) cat("writing new file:", outfile, "\n")
+    if (verbose) message("writing new file:", outfile)
   }
 
   # preliminary setup
   oldwidth <- options()$width
   options(width = 1000)
 
-  if (verbose) cat("opening connection to", outfile, "\n")
+  if (verbose) message("opening connection to", outfile)
   zz <- file(outfile, open = "at")
   sink(zz)
   wl <- function(name) {
@@ -224,5 +224,5 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
   options(width = oldwidth)
   sink()
   close(zz)
-  if (verbose) cat("file written to", outfile, "\n")
+  if (verbose) message("file written to", outfile)
 }

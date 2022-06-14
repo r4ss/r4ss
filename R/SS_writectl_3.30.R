@@ -30,7 +30,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cat("File exists and input 'overwrite'=FALSE:", outfile, "\n")
+      message("File exists and input 'overwrite'=FALSE:", outfile)
       return()
     } else {
       file.remove(outfile)

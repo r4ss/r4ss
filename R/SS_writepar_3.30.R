@@ -18,18 +18,18 @@
 SS_writepar_3.30 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
 
   # function to write Stock Synthesis parameter files
-  if (verbose) cat("running SS_writepar_3.30\n")
+  if (verbose) message("running SS_writepar_3.30")
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cat("File exists and input 'overwrite'=FALSE:", outfile, "\n")
+      message("File exists and input 'overwrite'=FALSE:", outfile)
       return()
     } else {
       file.remove(outfile)
     }
   }
 
-  if (verbose) message("Opening connection to ", outfile, "\n")
+  if (verbose) message("Opening connection to ", outfile)
   zz <- file(outfile, open = "at") # open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
 

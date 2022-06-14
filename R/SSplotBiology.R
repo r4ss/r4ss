@@ -276,12 +276,7 @@ SSplotBiology <-
 
 
     if (!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
-    # trying to fix error when spawning not in season 1:
-    ## if(nrow(growdat[growdat[["Sex"]]==1 & growdat[["Morph"]]==morphs[1],])==0){
-    ##   seas <- replist[["spawnseas"]]
-    ##   growdat      <- replist[["endgrowth"]][replist[["endgrowth"]][["Seas"]]==seas,]
-    ##   cat("Note: growth will be shown for spawning season =",seas,"\n")
-    ## }
+
     if (nseasons > 1) {
       labels[6] <- gsub(
         "beginning of the year",
@@ -359,7 +354,7 @@ SSplotBiology <-
       ## quick function to check for valid wtatage matrix and remove first
       ## redundant row if it's there. Used in weight_plot and maturity_plot.
       if (nrow(x) < 2) {
-        cat("not enough rows in weight-at-age matrix to plot\n")
+        message("Not enough rows in weight-at-age matrix to plot")
         return(NULL)
       }
       if (all(x[1, ] == x[2, ])) {
@@ -938,9 +933,9 @@ SSplotBiology <-
         plotinfo.tmp <- plotinfo.tmp[, c("file", "caption", "alt_text")]
         plotinfo <- rbind(plotinfo, plotinfo.tmp)
       } else {
-        cat(
+        message(
           "Skipped some plots because AGE_LENGTH_KEY unavailable in report file\n",
-          "          because starter file set to produce limited report detail.\n"
+          "because starter file set to produce limited report detail."
         )
       }
     }
@@ -948,7 +943,7 @@ SSplotBiology <-
     # function for illustrating parameterization of growth curves
     growth_curve_labeled_fn <- function(option = 1) { # growth
       if (is.null(Growth_Parameters)) {
-        cat("Need updated SS_output function to get Growth_Parameters output\n")
+        message("Need updated SS_output function to get Growth_Parameters output\n")
         return()
       }
       # save current parameter settings
@@ -1070,7 +1065,7 @@ SSplotBiology <-
     # function for illustrating parameterization of CVs around growth curves
     CV_values_labeled_fn <- function(option = 1) { # growth
       if (is.null(Growth_Parameters)) {
-        cat("Need updated SS_output function to get Growth_Parameters output\n")
+        message("Need updated SS_output function to get Growth_Parameters output")
         return()
       }
       # save current parameter settings
@@ -1483,16 +1478,16 @@ SSplotBiology <-
     # Time-varying growth
     if (is.null(growthvaries)) {
       if (verbose) {
-        cat(
-          "No check for time-varying growth because\n",
-          "     starter file set to produce limited report detail.\n"
+        message(
+          "No check for time-varying growth because starter file set to produce\n", 
+          "limited report detail."
         )
       }
     } else { # temporarily disable multi-season plotting of time-varying growth
       if (is.null(growthseries)) {
-        cat(
-          "! Warning: no time-varying growth info because\n",
-          "     starter file set to produce limited report detail.\n"
+        warning(
+          "No time-varying growth info because starter file set to produce\n",
+          "limited report detail."
         )
       } else {
         # if growth is time varying and weight-at-age not used

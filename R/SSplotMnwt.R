@@ -134,9 +134,6 @@ SSplotMnwt <-
           } # end loop over subplots
         } # end loop over market categories
       } # end loop over fleets
-      ##   if(verbose) cat("Finished mean body weight plot\n")
-      ## }else{ # if mean weight data exists
-      ##   if(verbose) cat("No mean body weight data to plot\n")
     }
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "Mnwt"
     return(invisible(plotinfo))

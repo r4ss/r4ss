@@ -450,9 +450,9 @@ SSplotComps <-
     # Add asterix to indicate super periods and then remove rows labeled "skip".
     # It would be better to somehow show the range of years, but that seems difficult.
     if (any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")) {
-      cat(
-        "Note: removing super-period composition values labeled 'skip'\n",
-        "     and designating super-period values with a '*'\n"
+      message(
+        "Removing super-period composition values labeled 'skip'\n",
+        "and designating super-period values with a '*'"
       )
       dbase_kind <- dbase_kind[dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip", ]
       dbase_kind[["YrSeasName"]] <- paste(dbase_kind[["YrSeasName"]], ifelse(dbase_kind[["SuprPer"]] == "Sup", "*", ""), sep = "")
@@ -743,7 +743,7 @@ SSplotComps <-
                 agg <- aggregate(x = df, by = list(bin = dbase[["Bin"]], f = dbase[["Fleet"]], s = dbase[["Seas"]]), FUN = sum)
                 agg <- agg[agg[["f"]] %in% fleets, ]
                 if (any(agg[["s"]] <= 0)) {
-                  cat("super-periods may not work correctly in plots of aggregated comps\n")
+                  message("super-periods may not work correctly in plots of aggregated comps")
                   agg <- agg[agg[["s"]] > 0, ]
                 }
                 agg[["obs"]] <- agg[["obs"]] / agg[["Nsamp_adj"]]
@@ -1101,10 +1101,10 @@ SSplotComps <-
 
             if (max_n_ageerr > 1) {
               if (ageerr_warning) {
-                cat(
-                  "Note: multiple samples with different ageing error types within fleet/year.\n",
-                  "     Plots label '2005a3' indicates ageing error type 3 for 2005 sample.\n",
-                  "     Bubble plots may be misleading with overlapping bubbles.\n"
+                message(
+                  "Multiple samples with different ageing error types within fleet/year.\n",
+                  "Plots label '2005a3' indicates ageing error type 3 for 2005 sample.\n",
+                  "Bubble plots may be misleading with overlapping bubbles.\n"
                 )
                 ageerr_warning <- FALSE
               }
@@ -1180,7 +1180,7 @@ SSplotComps <-
             # add lines for growth of individual cohorts if requested
             if (length(cohortlines) > 0) {
               for (icohort in 1:length(cohortlines)) {
-                cat("  Adding line for", cohortlines[icohort], "cohort\n")
+                message("  Adding line for", cohortlines[icohort], "cohort\n")
                 if (kind == "LEN") {
                   lines(growdatF[["Age"]] + cohortlines[icohort],
                     growdatF[["Len_Mid"]],
@@ -1308,7 +1308,7 @@ SSplotComps <-
 
           if (max_n_ageerr > 1) {
             if (ageerr_warning) {
-              cat(
+              message(
                 "Note: multiple samples with different ageing error types within fleet/year.\n",
                 "     Plots label '2005a3' indicates ageing error type 3 for 2005 sample.\n",
                 "     Bubble plots may be misleading with overlapping bubbles.\n"
@@ -1607,7 +1607,7 @@ SSplotComps <-
               # add lines for growth of individual cohorts if requested
               if (length(cohortlines) > 0) {
                 for (icohort in 1:length(cohortlines)) {
-                  cat("  Adding line for", cohortlines[icohort], "cohort\n")
+                  message("  Adding line for", cohortlines[icohort], "cohort\n")
                   if (kind == "LEN") {
                     if (nsexes > 1) {
                       lines(growdatF[["Age_Mid"]] + cohortlines[icohort],
@@ -1684,9 +1684,9 @@ SSplotComps <-
               if (!datonly && is.logical(effNline) && effNline) {
                 # scaling when displaying both input and effective
                 sampsizeline <- effNline <- max(dbase[["Bin"]]) / max(dbase[["Nsamp_adj"]], dbase[["effN"]], na.rm = TRUE)
-                cat("  Fleet ", f, " ", titlesex, "adj. input & effective N in red & green scaled by ", effNline, "\n", sep = "")
+                message("  Fleet ", f, " ", titlesex, "adj. input & effective N in red & green scaled by ", effNline, "\n", sep = "")
               } else {
-                cat("  Fleet ", f, " ", titlesex, "adj. input N in red scaled by ", sampsizeline, "\n", sep = "")
+                message("  Fleet ", f, " ", titlesex, "adj. input N in red scaled by ", sampsizeline, "\n", sep = "")
               }
             }
             # function to make plots
@@ -1872,7 +1872,7 @@ SSplotComps <-
             goodbins <- intersect(aalbin, dbase[["Lbin_hi"]])
             if (length(goodbins) > 0) {
               if (length(badbins) > 0) {
-                cat(
+                message(
                   "Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data:", badbins, "\n",
                   "       the following inputs for 'aalbin' are fine:", goodbins, "\n"
                 )

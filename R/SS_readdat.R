@@ -44,8 +44,6 @@ SS_readdat <- function(file,
     version <- "3.30"
   }
   nver <- as.numeric(substring(version, 1, 4))
-  if (verbose) cat("Char version is ", version, "\n")
-  if (verbose) cat("Numeric version is ", nver, "\n")
 
   # call function for SS version 2.00 ----
   if (nver < 3) {

@@ -160,11 +160,11 @@ TSCplot <- function(SSout,
 
   if (!is.null(makePDF)) {
     dev.off()
-    cat("The plot is in pdf file", makePDF, "\n")
+    message("The plot is in pdf file ", makePDF)
   }
   if (!is.null(makePNG)) {
     dev.off()
-    cat("The plot is in png file", makePNG, "\n")
+    message("The plot is in png file", makePNG)
   }
 
   invisible(SP)

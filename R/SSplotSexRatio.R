@@ -145,9 +145,9 @@ SSplotSexRatio <-
     ## Add asterix to indicate super periods and then remove rows labeled "skip".
     ## It would be better to somehow show the range of years, but that seems difficult.
     if (any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")) {
-      cat(
-        "Note: removing super-period composition values labeled 'skip'\n",
-        "     and designating super-period values with a '*'\n"
+      message(
+        "Removing super-period composition values labeled 'skip'\n",
+        "     and designating super-period values with a '*'"
       )
       dbase_kind <- dbase_kind[dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip", ]
       dbase_kind[["YrSeasName"]] <- paste(dbase_kind[["YrSeasName"]], ifelse(dbase_kind[["SuprPer"]] == "Sup", "*", ""), sep = "")

@@ -25,7 +25,7 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
       what = "SS_writestarter(warn)"
     )
   }
-  if (verbose) cat("running SS_writestarter\n")
+  if (verbose) message("running SS_writestarter")
   if (mylist[["type"]] != "Stock_Synthesis_starter_file") {
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
   }
@@ -49,14 +49,14 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
       file.remove(outfile)
     }
   } else {
-    if (verbose) cat("writing new file:", outfile, "\n")
+    if (verbose) message("writing new file:", outfile)
   }
 
   # record current max characters per line and then expand in case of long lines
   oldwidth <- options()$width
   options(width = 1000)
 
-  if (verbose) cat("opening connection to", outfile, "\n")
+  if (verbose) message("opening connection to", outfile)
   zz <- file(outfile, open = "at")
   sink(zz)
 
@@ -150,5 +150,5 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
   options(width = oldwidth)
   sink()
   close(zz)
-  if (verbose) cat("file written to", outfile, "\n")
+  if (verbose) message("file written to", outfile)
 }

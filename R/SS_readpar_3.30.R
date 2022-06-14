@@ -42,7 +42,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   }
 
   # function to read Stock Synthesis parameter files
-  if (verbose) cat("running SS_readpar_3.30\n")
+  if (verbose) message("running SS_readpar_3.30")
   parvals <- readLines(parfile, warn = FALSE)
 
   parlist <- list()

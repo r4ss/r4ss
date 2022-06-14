@@ -75,7 +75,7 @@ SS_splitdat <-
       for (i in 1:length(starts)) {
         outfile <- paste(outpath, "/", outpattern, ifelse(number, i, ""), ".ss", sep = "")
         outline <- paste("# Data file created from", infile, "to", outfile)
-        if (verbose) cat(outline, "\n")
+        if (verbose) message(outline)
         writeLines(c(outline, filelines[starts[i]:ends[i]]), outfile)
       }
     } else {
@@ -83,14 +83,14 @@ SS_splitdat <-
         outfile <- paste(outpath, "/", outpattern, ".ss", sep = "")
         if (notes != "") notes <- paste("#C", notes) else notes <- NULL
         notes <- c(notes, paste("#C MLE data file created from", infile, "to", outfile))
-        if (verbose) cat("MLE data file created from", infile, "to", outfile, "\n")
+        if (verbose) message("MLE data file created from", infile, "to", outfile)
         writeLines(c(notes, filelines[MLEstart:MLEend]), outfile)
       }
       if (inputs) {
         outfile <- paste(outpath, "/", outpattern, ".ss", sep = "")
         if (notes != "") notes <- paste("#C", notes) else notes <- NULL
         notes <- c(notes, paste("#C data file created from", infile, "to", outfile))
-        if (verbose) cat("file with copies of input data created from", infile, "to", outfile, "\n")
+        if (verbose) message("file with copies of input data created from ", infile, " to ", outfile)
         writeLines(c(notes, filelines[inputstart:inputend]), outfile)
       }
     }

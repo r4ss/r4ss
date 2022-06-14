@@ -144,13 +144,13 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   options(warn = old_warn)
 
   if (verbose) {
-    cat("Existing table of variance adjustments:\n")
-    print(ctl)
+    message("Existing table of variance adjustments:\n", 
+    paste0(capture.output(ctl), collapse = "\n"))
   }
 
   if (is.null(newrow) & is.null(newtable)) {
     if (verbose) {
-      cat("No new adjustments provided, so no file written.\n")
+      message("No new adjustments provided, so no file written.")
     }
     return(invisible(ctl))
   }
@@ -173,8 +173,8 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   }
 
   if (verbose) {
-    cat("New table of variance adjustments:\n")
-    print(ctl)
+    message("New table of variance adjustments:\n", 
+      paste0(capture.output(ctl), collapse = "\n"))
   }
 
   # absolute position of the rows to change
@@ -196,7 +196,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   }
 
   # open connection to file
-  if (verbose) cat("opening connection to", newctlfile, "\n")
+  if (verbose) message("opening connection to", newctlfile)
   zz <- file(newctlfile, open = "at")
   sink(zz)
   # change maximum number of columns
@@ -229,7 +229,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   sink()
   close(zz)
   if (verbose) {
-    cat("file written to", newctlfile, "\n")
+    message("file written to", newctlfile)
   }
   # return table of values
   return(invisible(ctl))

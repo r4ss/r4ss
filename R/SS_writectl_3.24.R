@@ -19,7 +19,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   # these should be removed after 1 release version.
 
   # function to write Stock Synthesis ctl files
-  if (verbose) cat("running SS_writectl\n")
+  if (verbose) message("running SS_writectl")
 
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
     stop("input 'ctllist' should be a list with $type=='Stock_Synthesis_control_file'")
@@ -27,7 +27,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cat("File exists and input 'overwrite'=FALSE:", outfile, "\n")
+      message("File exists and input 'overwrite'=FALSE: ", outfile)
       return()
     } else {
       file.remove(outfile)
@@ -38,7 +38,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   oldmax.print <- options()$max.print
   options(width = 5000, max.print = 9999999)
 
-  if (verbose) cat("opening connection to", outfile, "\n")
+  if (verbose) message("opening connection to", outfile)
   zz <- file(outfile, open = "at")
   #  on.exit({if(sink.number()>0) sink();close(zz)})
   on.exit(close(zz))
@@ -270,7 +270,6 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   # SRR
   writeComment("#_Spawner-Recruitment")
   wl("SR_function", comment = "#_SR_function: 2=Ricker; 3=std_B-H; 4=SCAA; 5=Hockey; 6=B-H_flattop; 7=survival_3Parm; 8=Shepard_3Parm")
-  # writeComment("#_LO HI INIT PRIOR PR_type SD PHASE")
   printdf("SR_parms")
   wl("SR_env_link")
   wl("SR_env_target")
@@ -280,7 +279,6 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   wl("recdev_phase", comment = "recdev phase")
   wl("recdev_adv", comment = "(0/1) to read 13 advanced options")
   if (ctllist[["recdev_adv"]]) {
-    #  cat("writing 13 advanced SRR options\n")
     wl("recdev_early_start", comment = "#_recdev_early_start (0=none; neg value makes relative to recdev_start)")
     wl("recdev_early_phase", comment = "#_recdev_early_phase")
     wl("Fcast_recr_phase", comment = "#_forecast_recruitment phase (incl. late recr) (0 value resets to maxphase+1)")
@@ -352,8 +350,10 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   # Density dependant Q(Q-power)
   if (sum(ctllist[["Q_setup"]][, 1]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)) {
-      cat("must create base Q parm to use Q_power for fleet: ", which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2))
-      stop()
+      prob_flts <- 
+        which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)
+      stop("must create base Q parm to use Q_power for fleet(s): ", 
+      paste0(prob_flts, collapse = ", "))
     }
     printdf("Q_power", header = header)
     header <- FALSE
@@ -361,8 +361,8 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   # Q-env
   if (sum(ctllist[["Q_setup"]][, 2]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)) {
-      cat("must create base Q parm to use Q_env for fleet: ", which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2))
-      stop()
+      stop("must create base Q parm to use Q_env for fleet: ", 
+        which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2))
     }
     printdf("Q_env", header = header)
     header <- FALSE
@@ -493,5 +493,5 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   options(width = oldwidth, max.print = oldmax.print)
   # sink()
   # close(zz)
-  if (verbose) cat("file written to", outfile, "\n")
+  if (verbose) message("File written to", outfile)
 }

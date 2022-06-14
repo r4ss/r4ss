@@ -433,7 +433,6 @@ SS_readdat_3.30 <-
         print(head(datlist[["lencomp"]], 2))
         message("\nLast 2 rows of lencomp:")
         print(tail(datlist[["lencomp"]], 2))
-        cat("\n")
       }
     }
 
@@ -540,7 +539,6 @@ SS_readdat_3.30 <-
         print(head(datlist[["agecomp"]], 2))
         message("\nLast 2 rows of agecomp:")
         print(tail(datlist[["agecomp"]], 2))
-        cat("\n")
       }
     } else {
       if (verbose) {
@@ -636,7 +634,6 @@ SS_readdat_3.30 <-
         print(head(datlist[["MeanSize_at_Age_obs"]], 2))
         message("\nLast 2 rows of MeanSize_at_Age_obs:")
         print(tail(datlist[["MeanSize_at_Age_obs"]], 2))
-        cat("\n")
       }
       # The formatting of the mean size at age in data.ss_new has sample sizes
       # on a separate line below the mean size values, and this applies to the
@@ -668,7 +665,6 @@ SS_readdat_3.30 <-
         print(head(datlist[["envdat"]], 2))
         message("\nLast 2 rows of envdat:")
         print(tail(datlist[["envdat"]], 2))
-        cat("\n")
       }
     } else {
       datlist[["envdat"]] <- NULL

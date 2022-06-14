@@ -308,15 +308,16 @@ SS_profile <-
         stop("input whichruns should be NULL or a subset of 1:", n, "\n", sep = "")
       }
     }
-    cat("doing runs: ", paste(whichruns, collapse = ","), ",\n  out of n=", n, "\n", sep = "")
+    message("Doing runs: ", paste(whichruns, collapse = ", "), 
+      ",\n  out of n = ", n)
+
 
     converged <- rep(NA, n)
     totallike <- rep(NA, n)
     liketable <- NULL
 
-    cat("changing working directory to ", dir, ",\n",
-      " but will be changed back on exit from function.\n",
-      sep = ""
+    message("Changing working directory to ", dir, ",\n",
+      " but will be changed back on exit from function."
     )
     setwd(dir) # change working directory
     stdfile <- paste(model, ".std", sep = "")
@@ -358,12 +359,11 @@ SS_profile <-
       # then don't bother running anything
       newrepfile <- paste("Report", i, ".sso", sep = "")
       if (!overwrite & file.exists(newrepfile)) {
-        cat("skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
-          "  and file exists: ", newrepfile, "\n",
-          sep = ""
+        message("skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
+          "  and file exists: ", newrepfile
         )
       } else {
-        cat("running profile i=", i, "/", n, "\n", sep = "")
+        message("running profile i=", i, "/", n)
 
         # change initial values in the control file
         # this also sets phase negative which is needed even when par file is used
@@ -446,8 +446,8 @@ SS_profile <-
         # run model
         command <- paste(model, extras)
         if (OS != "windows") command <- paste("./", command, sep = "")
-        cat("Running model in directory:", getwd(), "\n")
-        cat("Using the command: '", command, "'\n", sep = "")
+        message("Running model in directory:", getwd())
+        message("Using the command: ", command)
         if (OS == "windows" & !systemcmd) {
           shell(cmd = command)
         } else {
