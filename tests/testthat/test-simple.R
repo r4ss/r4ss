@@ -181,19 +181,9 @@ test_that("SS_readdat and SS_writedat both work for 3.24", {
   SS_writedat(
     datlist = simple3.24_dat,
     outfile = file.path(temp_path, "testdat_3.24.ss"),
-    version = "3.24",
-    faster = FALSE, verbose = FALSE
+    version = "3.24", verbose = FALSE
   )
   expect_true(file.exists(file.path(temp_path, "testdat_3.24.ss")))
-
-  # write data file with faster option
-  suppressWarnings(SS_writedat(
-    datlist = simple3.24_dat,
-    outfile = file.path(temp_path, "fastdat_3.24.ss"),
-    version = "3.24",
-    faster = TRUE, verbose = FALSE
-  ))
-  expect_true(file.exists(file.path(temp_path, "fastdat_3.24.ss")))
 })
 
 ###############################################################################
@@ -213,18 +203,10 @@ test_that("SS_readdat and SS_writedat both work for 3.30.01", {
   SS_writedat(
     datlist = simple3.30.01_dat,
     outfile = file.path(temp_path, "testdat_3.30.01.ss"),
-    faster = FALSE, verbose = FALSE
+    verbose = FALSE
   )
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.01.ss")))
 
-  # write data file with faster option - suppress warnings b/c they can be
-  # safely ignored.
-  suppressWarnings(SS_writedat(
-    datlist = simple3.30.01_dat,
-    outfile = file.path(temp_path, "fastdat_3.30.01.ss"),
-    faster = TRUE, verbose = FALSE
-  ))
-  expect_true(file.exists(file.path(temp_path, "fastdat_3.30.01.ss")))
 })
 
 ###############################################################################
@@ -241,16 +223,9 @@ test_that("SS_readdat and SS_writedat both work for 3.30.12", {
   SS_writedat(
     datlist = simple3.30.12_dat,
     outfile = file.path(temp_path, "testdat_3.30.12.ss"),
-    faster = FALSE, verbose = FALSE
+    verbose = FALSE
   )
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.12.ss")))
-  # write data file with faster option
-  suppressWarnings(SS_writedat(
-    datlist = simple3.30.12_dat,
-    outfile = file.path(temp_path, "fastdat_3.30.12.ss"),
-    faster = TRUE, verbose = FALSE
-  ))
-  expect_true(file.exists(file.path(temp_path, "fastdat_3.30.12.ss")))
 })
 
 ###############################################################################
@@ -267,16 +242,9 @@ test_that("SS_readdat and SS_writedat both work for 3.30.13", {
   SS_writedat(
     datlist = simple3.30.13_dat,
     outfile = file.path(temp_path, "testdat_3.30.13.ss"),
-    faster = FALSE, verbose = FALSE
+    verbose = FALSE
   )
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.13.ss")))
-  # write data file with faster option
-  suppressWarnings(SS_writedat(
-    datlist = simple3.30.13_dat,
-    outfile = file.path(temp_path, "fastdat_3.30.13.ss"),
-    faster = TRUE, verbose = FALSE
-  ))
-  expect_true(file.exists(file.path(temp_path, "fastdat_3.30.13.ss")))
 })
 
 # Note: for blank lines, SS_readdat just warns, while SS_writedat removes.
