@@ -8,7 +8,7 @@ SS_readdat(
   file,
   version = "3.30",
   verbose = TRUE,
-  echoall = FALSE,
+  echoall = lifecycle::deprecated(),
   section = NULL
 )
 }
@@ -26,8 +26,7 @@ line of the file.}
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
 
-\item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
-data as it is being read.}
+\item{echoall}{Deprecated.}
 
 \item{section}{Which data set to read. Only applies for a data.ss_new file
 created by Stock Synthesis. Allows the choice of either expected values

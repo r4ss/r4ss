@@ -206,7 +206,6 @@ test_that("SS_readdat and SS_writedat both work for 3.30.01", {
     verbose = FALSE
   )
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.01.ss")))
-
 })
 
 ###############################################################################
