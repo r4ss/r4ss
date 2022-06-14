@@ -31,7 +31,7 @@ SS_readdat_3.30 <-
         details = "Please use verbose = TRUE instead"
       )
     }
-    
+
     if (verbose) {
       message("Running SS_readdat_3.30")
     }
@@ -249,7 +249,7 @@ SS_readdat_3.30 <-
         message("Read bycatch data.")
       }
     }
-    
+
     ## Catch data ----
     datlist[["catch"]] <- get.df(dat, ind)
     colnames(datlist[["catch"]]) <- c(
@@ -282,7 +282,7 @@ SS_readdat_3.30 <-
       datlist[["CPUE"]] <- NULL
     }
 
-    
+
     ## Discard data ----
     ## fleet.nums.with.catch is defined in the catch section above.
     datlist[["N_discard_fleets"]] <- get.val(dat, ind)
