@@ -78,8 +78,7 @@
 #' `spacepoints > 1`) for each line (so that adjacent lines have points in
 #' different years)
 #' @template legendloc
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template ptsize
 #' @template res

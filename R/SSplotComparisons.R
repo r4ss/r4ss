@@ -113,8 +113,7 @@
 #' 0 to remove)
 #' @param sprtarg Target value for SPR-ratio where line is drawn in the SPR
 #' plots and phase plot.
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

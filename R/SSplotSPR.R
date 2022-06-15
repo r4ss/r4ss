@@ -29,8 +29,7 @@
 #' @param btarg target depletion to be used in plots showing depletion. May be
 #' omitted by setting to NA. "default" chooses based on model output.
 #' @template labels
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

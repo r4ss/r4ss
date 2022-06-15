@@ -27,8 +27,7 @@
 #' @param ghost TRUE/FALSE indicator for whether to show presence of
 #' composition data from ghost fleets (data for which the fit is shown, but is
 #' not included in the likelihood calculations).
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

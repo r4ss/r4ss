@@ -138,8 +138,7 @@
 #' @param effNline show line for effective sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param showlegend Display legends in various plots?
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template pheight_tall
 #' @template punits
 #' @template ptsize

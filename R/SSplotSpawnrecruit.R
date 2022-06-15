@@ -17,8 +17,7 @@
 #' @param bioscale multiplier on spawning biomass, set to 0.5 for single-sex
 #' models
 #' @template plotdir
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template ptsize
 #' @template res

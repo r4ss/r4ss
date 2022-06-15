@@ -24,8 +24,7 @@
 #' @param showeffN add effective sample sizes to plot
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template ptsize
 #' @template res

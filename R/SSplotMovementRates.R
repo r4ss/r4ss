@@ -19,8 +19,7 @@
 #' @template legendloc
 #' @param moveseas choice of season for which movement rates are shown
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

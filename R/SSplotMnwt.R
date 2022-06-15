@@ -19,8 +19,7 @@
 #' @template labels
 #' @param col1 first color to use in plot (for expected values)
 #' @param col2 second color to use in plot (for observations and intervals)
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

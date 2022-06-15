@@ -141,9 +141,8 @@ numbers, then catch plots should be interpreted carefully.}
 white space at the top of the figure)}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
-
-\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+\code{punits}. The default is \code{pwidth=6.5}.
+#' @param pheight Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
 

@@ -68,8 +68,7 @@
 #' @param addmax Add a point on the y-axis for the maximum catch (default=TRUE)
 #' @param ymax Optional input for ymax value (can be used to add or subtract
 #' white space at the top of the figure)
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

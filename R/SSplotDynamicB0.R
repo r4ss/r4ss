@@ -30,8 +30,7 @@
 #' @param lwd Optional vector of line widths to be used for the two lines.
 #'  Single value will apply to both lines.
 #' @param add add to existing plot
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template ptsize
 #' @template res

@@ -13,8 +13,7 @@
 #' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' @param add add to existing plot
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

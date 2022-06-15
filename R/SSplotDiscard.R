@@ -23,8 +23,7 @@
 #' discard amounts are very high)
 #' @param col1 First color to use in plot (for expected values)
 #' @param col2 Second color to use in plot (for observations and intervals)
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize

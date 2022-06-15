@@ -16,8 +16,7 @@
 #' enough)
 #' @param main title for plot
 #' @template plotdir
-#' @template pwidth
-#' @template pheight
+#' @template pwidth_pheight
 #' @template punits
 #' @template res
 #' @template ptsize
