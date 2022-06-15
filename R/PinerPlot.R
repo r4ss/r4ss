@@ -14,7 +14,7 @@
 #' @param models Optional subset of the models described in
 #' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
-#' @param fleets Optional vector of fleet numbers to include.
+#' @template fleets
 #' @template fleetnames
 #' @param profile.string Character string used to find parameter over which the
 #' profile was conducted. If `exact=FALSE`, this can be a substring of

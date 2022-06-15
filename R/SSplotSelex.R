@@ -5,7 +5,7 @@
 #'
 #'
 #' @template replist
-#' @param fleets Optional vector to subset fleets for which to make plots
+#' @template fleets
 #' @param infotable Optional table of information controlling appearance of
 #' plot and legend. Is produced as output and can be modified and entered as
 #' input.

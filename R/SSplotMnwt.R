@@ -12,7 +12,7 @@
 #' @template plot
 #' @template print
 #' @template plotdir
-#' @param fleets optional vector to subset fleets for which plots will be made
+#' @template fleets
 #' @template fleetnames
 #' @param datplot Make data-only plot of discards? This can override the choice
 #' of `subplots`.

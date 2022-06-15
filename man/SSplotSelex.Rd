@@ -49,7 +49,8 @@ SSplotSelex(
 plot and legend. Is produced as output and can be modified and entered as
 input.}
 
-\item{fleets}{Optional vector to subset fleets for which to make plots}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 

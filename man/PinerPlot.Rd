@@ -63,7 +63,8 @@ PinerPlot(
 \code{summaryoutput}.  Either "all" or a vector of numbers indicating
 columns in summary tables.}
 
-\item{fleets}{Optional vector of fleet numbers to include.}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 

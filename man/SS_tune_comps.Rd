@@ -24,7 +24,8 @@ SS_tune_comps(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{fleets}{Either the string 'all', or a vector of fleet numbers}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
 \item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
 The first option, \code{none}, will only return information about the

@@ -26,7 +26,7 @@
 #'
 #' @template plot
 #' @template print
-#' @param fleets optional vector to subset fleets for which plots will be made
+#' @template fleets
 #' @template fleetnames
 #' @param smooth add smoothed line to plots of observed vs. expected sample
 #' sizes

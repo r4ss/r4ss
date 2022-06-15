@@ -71,7 +71,8 @@ provided first:
 
 \item{print}{Print to PNG files?}
 
-\item{fleets}{optional vector to subset fleets for which plots will be made}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 

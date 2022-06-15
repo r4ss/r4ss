@@ -14,7 +14,7 @@
 #' @param CI confidence interval for uncertainty
 #' @template plot
 #' @template print
-#' @param fleets optional vector to subset fleets for which plots will be made
+#' @template fleets
 #' @template fleetnames
 #' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
 #' @param datonly make plots of data without fits?

@@ -59,9 +59,7 @@
 #' can be either relative (to the working directory) or absolute paths.
 #' The function will attempt to create the directory it doesn't exist, but it
 #' does not do so recursively.
-#' @param fleets Either the string "all", or a vector of numerical values, like
-#' c(1,3), listing fleets or surveys for which plots should be made. By
-#' default, plots will be made for all fleets and surveys.  Default="all".
+#' @template fleets
 #' @param areas Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing areas for which plots should be made in a multi-area model.
 #' By default, plots will be made for all areas (excepting cases where the
