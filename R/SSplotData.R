@@ -31,7 +31,7 @@
 #' not included in the likelihood calculations).
 #' @template pwidth
 #' @template pheight
-#' @param punits units for PNG file
+#' @template punits
 #' @template res
 #' @template ptsize
 #' @template cex.main

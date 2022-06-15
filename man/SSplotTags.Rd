@@ -76,8 +76,9 @@ added to bubble plots to avoid cropping}
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 \code{help("png")} in R for details).}

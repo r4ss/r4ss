@@ -25,7 +25,7 @@
 #' @param col2 Second color to use in plot (for observations and intervals)
 #' @template pwidth
 #' @template pheight
-#' @param punits Units for PNG file
+#' @template punits
 #' @template res
 #' @template ptsize
 #' @template cex.main

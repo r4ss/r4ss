@@ -23,8 +23,7 @@
 #' added to bubble plots to avoid cropping
 #' @template pwidth
 #' @template pheight
-#' @param punits units for `pwidth` and `pheight`. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
+#' @template punits
 #' @template ptsize
 #' @template res
 #' @template cex.main

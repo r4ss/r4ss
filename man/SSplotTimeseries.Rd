@@ -109,7 +109,9 @@ output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).}
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}

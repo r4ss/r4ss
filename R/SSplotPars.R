@@ -37,8 +37,7 @@
 #' @template print
 #' @template pwidth
 #' @template pheight
-#' @param punits Units for `pwidth` and `pheight`. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
+#' @template punits
 #' @template ptsize
 #' @template res
 #' @param strings Subset parameters included in the plot using substring from

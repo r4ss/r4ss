@@ -21,7 +21,7 @@
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
 #' @template pwidth
 #' @template pheight
-#' @param punits units for PNG file
+#' @template punits
 #' @template res
 #' @template ptsize
 #' @template cex.main

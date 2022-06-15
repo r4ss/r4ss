@@ -57,7 +57,7 @@
 #' defaults if a legend is used
 #' @template pwidth
 #' @template pheight
-#' @param punits units for PNG file
+#' @template punits
 #' @template res
 #' @template ptsize
 #' @template cex.main
