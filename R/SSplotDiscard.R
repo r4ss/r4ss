@@ -14,7 +14,7 @@
 #' @param fleetnames Optional replacement for fleenames used in data file
 #' @param datplot Make data-only plot of discards? This can override the choice
 #' of `subplots`.
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param yhi Maximum y-value which will always be included in the plot
 #' (all data included regardless). Default = 1 so that discard fractions are always
 #' plotted on a 0-1 range, but total discard amounts which are greater than this value

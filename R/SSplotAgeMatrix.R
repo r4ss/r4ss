@@ -25,7 +25,7 @@
 #' of the polygon up.
 #' @template plot
 #' @template print
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits

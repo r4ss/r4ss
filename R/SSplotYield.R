@@ -17,7 +17,7 @@
 #' @param add add to existing plot? (not yet implemented)
 #' @template plot
 #' @template print
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param col line color for equilibrium plot
 #' @param col2 line color for dynamic surplus production plot
 #' @param lty line type (only applied to equilibrium yield plot at this time)

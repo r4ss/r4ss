@@ -53,7 +53,7 @@
 #' values (see ?rgb for more info)
 #' @param legendloc Location of legend (see ?legend for more info)
 #' @template plotdir
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits

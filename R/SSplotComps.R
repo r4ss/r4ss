@@ -101,7 +101,7 @@
 #' input vs. effective sample size?
 #' @param cohortlines optional vector of birth years for cohorts for which to
 #' add growth curves to numbers at length bubble plots
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param printmkt show market categories in plot titles?
 #' @param printsex show sex in plot titles?
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot

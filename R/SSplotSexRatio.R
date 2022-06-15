@@ -31,7 +31,7 @@
 #' @template res
 #' @template plotdir
 #' @template cex.main
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
 #' plots

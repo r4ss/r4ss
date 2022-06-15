@@ -31,7 +31,7 @@
 #' @param col2 color for lines with expected values
 #' @param col3 shading color for observations within latency period
 #' @param col4 shading color for observations after latency period
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template plotdir
 #' @template verbose
 #' @author Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak

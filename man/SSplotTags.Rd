@@ -97,7 +97,7 @@ The default is \code{cex.main=1}.}
 
 \item{col4}{shading color for observations after latency period}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels)}
 
 \item{plotdir}{Directory where PNG files will be written.}
 

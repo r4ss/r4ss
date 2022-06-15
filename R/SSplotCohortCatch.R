@@ -26,7 +26,7 @@
 #' @param lwd Line width
 #' @template plotdir
 #' @param xlab x-label for all plots
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits

@@ -40,7 +40,7 @@
 #' with SSv3.11)
 #' @param meanlines add lines for mean age or length on top of bubble plots
 #' @param add add to existing plot? (not yet implemented)
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits

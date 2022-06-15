@@ -86,7 +86,7 @@
 #' @template plot
 #' @template print
 #' @param add Add to existing plot (not yet implemented)
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param col1 color for female growth curve
 #' @param col2 color for male growth curve
 #' @template cex.main

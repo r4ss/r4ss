@@ -28,7 +28,7 @@
 #' sprtarg input here will cause no horizontal line to be plotted.
 #' @param btarg target depletion to be used in plots showing depletion. May be
 #' omitted by setting to NA. "default" chooses based on model output.
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits

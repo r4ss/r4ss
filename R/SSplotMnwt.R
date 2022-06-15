@@ -16,7 +16,7 @@
 #' @param fleetnames optional replacement for fleenames used in data file
 #' @param datplot Make data-only plot of discards? This can override the choice
 #' of `subplots`.
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param col1 first color to use in plot (for expected values)
 #' @param col2 second color to use in plot (for observations and intervals)
 #' @template pwidth

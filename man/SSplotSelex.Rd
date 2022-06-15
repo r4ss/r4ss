@@ -130,7 +130,7 @@ from length-based, "Asel2". You can choose only one using
 
 \item{add}{Add to existing plot (not yet implemented)}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels)}
 
 \item{col1}{color for female growth curve}
 

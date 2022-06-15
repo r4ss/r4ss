@@ -32,7 +32,7 @@
 #' sizes
 #' @param add add to existing plot (not yet implemented)
 #' @param datplot make plot of data only?
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param fleetcols vector of colors for all fleets (including those
 #' with no index data)
 #' @param col1 vector of colors for points in each season for time series plot.

@@ -72,7 +72,7 @@ sprtarg input here will cause no horizontal line to be plotted.}
 \item{btarg}{target depletion to be used in plots showing depletion. May be
 omitted by setting to NA. "default" chooses based on model output.}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels)}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}

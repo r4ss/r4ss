@@ -96,7 +96,7 @@ The default is \code{res = 300}.}
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels)}
 
 \item{maxrows}{maximum (or fixed) number or rows of panels in the plot}
 

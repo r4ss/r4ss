@@ -50,7 +50,7 @@
 #' May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
 #' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
 #' @param xlab x axis label for all plots
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits

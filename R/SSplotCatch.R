@@ -60,7 +60,7 @@
 #' @param legendloc Location of legend (see ?legend for more info)
 #' @param order Optional input to change the order of fleets in stacked plots.
 #' @param xlab x-label for all plots
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param catchasnumbers Is catch in numbers instead of biomass? Should be set
 #' automatically if set to NULL. If fleets include a mix of biomass and
 #' numbers, then catch plots should be interpreted carefully.

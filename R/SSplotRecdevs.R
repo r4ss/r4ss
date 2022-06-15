@@ -18,7 +18,7 @@
 #' @param col3 third color used
 #' @param col4 fourth color used
 #' @param legendloc location of legend. see ?legend for more info
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits

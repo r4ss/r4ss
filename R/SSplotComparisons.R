@@ -64,7 +64,7 @@
 #' models described above.
 #' @param indexPlotEach TRUE plots the observed index for each model with
 #' colors, or FALSE just plots observed once in black dots.
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param col Optional vector of colors to be used for lines. Input NULL
 #' makes use of `rich.colors.short` function.
 #' @param shadecol Optional vector of colors to be used for shading uncertainty

@@ -232,7 +232,7 @@ input vs. effective sample size?}
 \item{cohortlines}{optional vector of birth years for cohorts for which to
 add growth curves to numbers at length bubble plots}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels)}
 
 \item{printmkt}{show market categories in plot titles?}
 

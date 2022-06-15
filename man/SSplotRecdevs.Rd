@@ -60,7 +60,7 @@ SSplotRecdevs(
 
 \item{legendloc}{location of legend. see ?legend for more info}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels)}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}
