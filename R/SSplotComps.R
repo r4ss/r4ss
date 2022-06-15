@@ -41,7 +41,7 @@
 #' @template plot
 #' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
-#' @param fleetnames optional vector of fleet names to put in the labels
+#' @template fleetnames
 #' @param sexes which sexes to show plots for. Default="all" which will include
 #' males, females, and unsexed. This option is not fully implemented for all
 #' plots.

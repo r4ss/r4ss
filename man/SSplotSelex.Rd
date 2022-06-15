@@ -51,7 +51,7 @@ input.}
 
 \item{fleets}{Optional vector to subset fleets for which to make plots}
 
-\item{fleetnames}{Optional replacement for fleenames used in data file}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{sizefactors}{Which elements of the factors column of SIZE_SELEX should
 be included in plot of selectivity across multiple fleets?}

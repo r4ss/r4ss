@@ -164,8 +164,7 @@ c(1,3), listing areas for which plots should be made in a multi-area model.
 By default, plots will be made for all areas (excepting cases where the
 function has not yet been updated for multi-area models). Default="all".}
 
-\item{fleetnames}{Either the string "default", or a vector of characters
-strings to use for each fleet name. Default="default".}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{fleetcols}{Either the string "default", or a vector of colors to use
 for each fleet.  Default="default".}

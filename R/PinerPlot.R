@@ -15,7 +15,7 @@
 #' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param fleets Optional vector of fleet numbers to include.
-#' @param fleetnames Optional character vector of names for each fleet.
+#' @template fleetnames
 #' @param profile.string Character string used to find parameter over which the
 #' profile was conducted. If `exact=FALSE`, this can be a substring of
 #' one of the SS parameter labels found in the Report.sso file.

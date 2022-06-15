@@ -24,8 +24,7 @@
 #' "wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".
 #' @param fleets Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing fleets or surveys to be included in the plot.
-#' @param fleetnames A vector of alternative names to use in the plot. By
-#' default the parameter names in the data file are used.
+#' @template fleetnames
 #' @param ghost TRUE/FALSE indicator for whether to show presence of
 #' composition data from ghost fleets (data for which the fit is shown, but is
 #' not included in the likelihood calculations).

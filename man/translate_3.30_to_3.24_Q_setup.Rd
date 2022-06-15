@@ -16,10 +16,7 @@ control file r4ss list output generated from \link{SS_readctl}.}
 
 \item{Nfleets}{Number of fleets in the model}
 
-\item{fleetnames}{Name of the fleets. Defaults to fleet numbers, in the order}
-}
-\value{
-A dataframe containing the 3.24 Q setup.
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 }
 \description{
 Use 3.30 q options to create the 3.24 q setup

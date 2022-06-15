@@ -65,7 +65,7 @@ columns in summary tables.}
 
 \item{fleets}{Optional vector of fleet numbers to include.}
 
-\item{fleetnames}{Optional character vector of names for each fleet.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{profile.string}{Character string used to find parameter over which the
 profile was conducted. If \code{exact=FALSE}, this can be a substring of

@@ -73,7 +73,7 @@ provided first:
 
 \item{fleets}{optional vector to subset fleets for which plots will be made}
 
-\item{fleetnames}{optional replacement for fleenames used in data file}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{smooth}{add smoothed line to plots of observed vs. expected sample
 sizes}

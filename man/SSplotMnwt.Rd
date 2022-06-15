@@ -42,7 +42,7 @@ choice of \code{subplots}.}
 
 \item{fleets}{optional vector to subset fleets for which plots will be made}
 
-\item{fleetnames}{optional replacement for fleenames used in data file}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{datplot}{Make data-only plot of discards? This can override the choice
 of \code{subplots}.}

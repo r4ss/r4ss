@@ -11,7 +11,7 @@
 #' @param es_only TRUE/FALSE switch to produce only the executive summary tables
 #' will be produced, default is FALSE which will return all executive summary
 #' tables, historical catches, and numbers-at-ages
-#' @param fleetnames A vector of user-defined names providing a name for each fleet in the model.
+#' @template fleetnames
 #' @param tables Which tables to produce (default is everything). Note: some
 #' tables depend on calculations related to previous tables, so will fail
 #' if requested on their own (e.g. Table 'f' can't be created

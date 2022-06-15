@@ -124,7 +124,7 @@ through the conditional data. Default=-1.}
 
 \item{fleets}{optional vector to subset fleets for which plots will be made}
 
-\item{fleetnames}{optional vector of fleet names to put in the labels}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{sexes}{which sexes to show plots for. Default="all" which will include
 males, females, and unsexed. This option is not fully implemented for all

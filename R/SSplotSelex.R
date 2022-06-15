@@ -9,7 +9,7 @@
 #' @param infotable Optional table of information controlling appearance of
 #' plot and legend. Is produced as output and can be modified and entered as
 #' input.
-#' @param fleetnames Optional replacement for fleenames used in data file
+#' @template fleetnames
 #' @param sizefactors Which elements of the factors column of SIZE_SELEX should
 #' be included in plot of selectivity across multiple fleets?
 #' @param agefactors Which elements of the factors column of AGE_SELEX should

@@ -58,8 +58,7 @@ of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}
 
-\item{fleetnames}{A vector of alternative names to use in the plot. By
-default the parameter names in the data file are used.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{ghost}{TRUE/FALSE indicator for whether to show presence of
 composition data from ghost fleets (data for which the fit is shown, but is

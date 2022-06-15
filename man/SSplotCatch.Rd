@@ -95,8 +95,7 @@ only.  Other options include "o" for overplotting points on lines.}
 
 \item{fleetcols}{Vector of colors by fleet}
 
-\item{fleetnames}{Optional replacement for fleenames used in data file,
-should include all fleets (not just those with catch)}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{lwd}{Line width}
 

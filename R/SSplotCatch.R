@@ -44,8 +44,7 @@
 #' @param fleetlty Vector of line type by fleet
 #' @param fleetpch Vector of plot character by fleet
 #' @param fleetcols Vector of colors by fleet
-#' @param fleetnames Optional replacement for fleenames used in data file,
-#' should include all fleets (not just those with catch)
+#' @template fleetnames
 #' @param lwd Line width
 #' @param areacols Vector of colors by area. Default uses rich.colors by Arni
 #' Magnusson

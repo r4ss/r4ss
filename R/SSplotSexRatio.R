@@ -15,7 +15,7 @@
 #' @template plot
 #' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
-#' @param fleetnames optional vector of fleet names to put in the labels
+#' @template fleetnames
 #' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
 #' @param datonly make plots of data without fits?
 #' @param linescol Color for line showing expected value (default is purple).

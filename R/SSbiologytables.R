@@ -18,8 +18,7 @@
 #' can be either relative (to the working directory) or absolute paths.
 #' The function will attempt to create the directory it does not exist, but it
 #' does not do so recursively.
-#' @param fleetnames Either the string "default", or a vector of characters
-#' strings to use for each fleet name. Default="default".
+#' @template fleetnames
 #' @param selexyr The year to summarize selectivity, the default is the final
 #' model yr strings to use for each fleet name. Default="default".
 #'
