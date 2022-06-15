@@ -24,7 +24,7 @@
 #' @param lwd line width (only applied to equilibrium yield plot at this time)
 #' @param cex.main character expansion for plot titles
 #' @param pwidth width of plot
-#' @param pheight height of plot
+#' @template pheight
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file

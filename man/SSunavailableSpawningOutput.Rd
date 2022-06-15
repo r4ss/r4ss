@@ -28,7 +28,9 @@ SSunavailableSpawningOutput(
 
 \item{pwidth}{Width of plot}
 
-\item{pheight}{Height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
 \item{punits}{Units for PNG file}
 

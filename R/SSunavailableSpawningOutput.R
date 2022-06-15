@@ -9,7 +9,7 @@
 #' @param print Print to PNG files?
 #' @template plotdir
 #' @param pwidth Width of plot
-#' @param pheight Height of plot
+#' @template pheight
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize Point size for PNG file

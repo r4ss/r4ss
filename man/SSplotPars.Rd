@@ -97,8 +97,9 @@ initial value, prior, posterior, and median of the posterior.}
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. Default=7.}
 
-\item{pheight}{Default height width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
 \item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
 (pixels), "in" (inches), "cm" or "mm". Default="in".}

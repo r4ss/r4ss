@@ -30,7 +30,7 @@
 #' composition data from ghost fleets (data for which the fit is shown, but is
 #' not included in the likelihood calculations).
 #' @param pwidth width of plot
-#' @param pheight height of plot
+#' @template pheight
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file

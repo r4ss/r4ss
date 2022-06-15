@@ -27,7 +27,7 @@
 #' @param print Print to PNG files?
 #' @param labels Vector of labels for plots (titles and axis labels)
 #' @param pwidth Width of plot
-#' @param pheight Height of plot
+#' @template pheight
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize Point size for PNG file

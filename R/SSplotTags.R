@@ -23,8 +23,7 @@
 #' added to bubble plots to avoid cropping
 #' @param pwidth default width of plots printed to files in units of
 #' `punits`. Default=7.
-#' @param pheight default height width of plots printed to files in units of
-#' `punits`. Default=7.
+#' @template pheight
 #' @param punits units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize point size for plotted text in plots printed to files (see

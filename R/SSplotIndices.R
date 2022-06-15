@@ -56,7 +56,7 @@
 #' @param seasnames optional vector of names for each season to replace
 #' defaults if a legend is used
 #' @param pwidth width of plot
-#' @param pheight height of plot
+#' @template pheight
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file

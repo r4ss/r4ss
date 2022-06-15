@@ -37,8 +37,7 @@
 #' @param print Print to PNG files?
 #' @param pwidth Default width of plots printed to files in units of
 #' `punits`. Default=7.
-#' @param pheight Default height width of plots printed to files in units of
-#' `punits`. Default=7.
+#' @template pheight
 #' @param punits Units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize Point size for plotted text in plots printed to files (see

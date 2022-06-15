@@ -70,7 +70,7 @@
 #' @param ymax Optional input for ymax value (can be used to add or subtract
 #' white space at the top of the figure)
 #' @param pwidth Width of plot
-#' @param pheight Height of plot
+#' @template pheight
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file

@@ -24,7 +24,7 @@
 #' @param col1 First color to use in plot (for expected values)
 #' @param col2 Second color to use in plot (for observations and intervals)
 #' @param pwidth Width of plot
-#' @param pheight Height of plot
+#' @template pheight
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize Point size for PNG file

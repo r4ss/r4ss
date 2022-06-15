@@ -52,7 +52,7 @@
 #' @param xlab x axis label for all plots
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param pwidth width of plot
-#' @param pheight height of plot
+#' @template pheight
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file

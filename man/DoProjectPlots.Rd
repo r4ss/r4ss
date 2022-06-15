@@ -83,7 +83,9 @@ Rgui. Default=FALSE.}
 
 \item{pwidth}{Width of the plot window or PDF file (in inches). Default=7.}
 
-\item{pheight}{Height of the plot window or PDF file (in inches). Default=7.}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
 \item{lwd}{Line width for many of the plot elements. Default=2.}
 }
