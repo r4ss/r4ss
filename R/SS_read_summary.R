@@ -3,7 +3,7 @@
 #' read Stock Synthesis ss_summary.sso file into list object in R
 #'
 #'
-#' @param file Filename either with full path or relative to working directory.
+#' @template file
 #' @template verbose
 #' @return Output will be a list with four elements, `header`,
 #' `likelihoods`, `parameters`, and `derived_quants`.
