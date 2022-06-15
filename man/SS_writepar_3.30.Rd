@@ -19,12 +19,15 @@ SS_writepar_3.30(parlist, outfile, overwrite = TRUE, verbose = FALSE)
 Write Stock Synthesis (version 3.30) parameter file from list object in R to file.
 }
 \seealso{
-\code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readdat]{SS_readdat()}}
-\code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}},\code{\link[=SS_readdat_3.30]{SS_readdat_3.30()}}
-\code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}},
-\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_readpar_3.30]{SS_readpar_3.30()}},
+\code{\link[=SS_readctl]{SS_readctl()}},
+\code{\link[=SS_readdat]{SS_readdat()}}
+\code{\link[=SS_readstarter]{SS_readstarter()}},
+\code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_writectl]{SS_writectl()}},
+\code{\link[=SS_writedat]{SS_writedat()}},
 \code{\link[=SS_writestarter]{SS_writestarter()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}
 }
 \author{
 Nathan R. Vaughan

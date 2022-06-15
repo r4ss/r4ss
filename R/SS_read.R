@@ -20,20 +20,22 @@
 #' The first element is the directory that was provided in the argument `dir`.
 #' The second element is the result of `normalizePath(dir)`,
 #' which gives the full path.
-#' The remaining five elements are list objects resulting from reading in
+#' The remaining four to six elements are list objects from reading in
 #' the following input files:
 #' * data
 #' * control
 #' * starter
 #' * forecast
-#' * wtatage (will be `NULL` if not required by the model)
+#' * wtatage (will be NULL if not required by the model)
+#' * par (will be null if control and par do not match)
 #'
 #' @export
 #' @seealso
 #' * [SS_write()] can be used to write the input files using the list
 #'   created by this function.
 #' * [SS_readstarter()], [SS_readdat()], [SS_readctl()],
-#'   [SS_readforecast()], and [SS_readwtatage()] are used by this
+#'   [SS_readforecast()], [SS_readwtatage()],
+#'   [SS_readpar_3.30()], and [SS_readpar_3.24()] used by this
 #'   function to read in the input files.
 #' * [SS_output()] to read in equivalent SS3 output files.
 #'
@@ -95,6 +97,27 @@ SS_read <- function(dir = getwd(),
     wtatage <- NULL
   }
 
+  par <- NULL
+  if(file.exists(file.path(dir, "ss.par"))){
+    try(
+      {
+        if(ctl[["ReadVersion"]]=="3.24"){
+          par <- r4ss::SS_readpar_3.24(file.path(dir, "ss.par"),
+                                    datsource = dat,
+                                    ctlsource = ctl,
+                                    verbose = verbose)
+        }else{
+          par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
+                                       datsource = dat,
+                                       ctlsource = ctl,
+                                       verbose = verbose)  
+        }
+      },
+      silent = !verbose
+    )
+  }
+  
+  
   # return a list of the lists for each file
   invisible(list(
     dir = dir,
@@ -103,6 +126,7 @@ SS_read <- function(dir = getwd(),
     ctl = ctl,
     start = start,
     fore = fore,
-    wtatage = wtatage
+    wtatage = wtatage,
+    par = par
   ))
 }

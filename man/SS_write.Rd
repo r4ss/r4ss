@@ -27,8 +27,8 @@ to the screen.}
 Writes all the input files for a Stock Synthesis model using the list
 created by \code{\link[=SS_read]{SS_read()}}
 (presumably after modification of one or more elements)
-using the \verb{SS_write*()} functions for the four or
-five model input files.
+using the \verb{SS_write*()} functions for the four to
+six model input files.
 }
 \examples{
 \dontrun{
@@ -60,7 +60,8 @@ SS_write(
 \itemize{
 \item \code{\link[=SS_read]{SS_read()}} creates the list that is used by this function.
 \item \code{\link[=SS_writestarter]{SS_writestarter()}}, \code{\link[=SS_writedat]{SS_writedat()}}, \code{\link[=SS_writectl]{SS_writectl()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}}, and \code{\link[=SS_writewtatage]{SS_writewtatage()}} are used to write the
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writewtatage]{SS_writewtatage()}}, \code{\link[=SS_writepar_3.30]{SS_writepar_3.30()}},
+and \code{\link[=SS_writepar_3.24]{SS_writepar_3.24()}} are used to write the
 input files.
 }
 }
