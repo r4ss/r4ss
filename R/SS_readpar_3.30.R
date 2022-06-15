@@ -333,6 +333,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         dev_parm_labels <- c(dev_parm_labels, paste0(rownames(dev_temp), "_dev_seq"))
       }
     }
+    
     # Add 2DAR selectivity parameters if they exist
     if (!is.null(ctllist[["pars_2D_AR"]])) {
       if (!is.null(parlist[["S_parms"]])) {
@@ -341,6 +342,17 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         parlist[["S_parms"]] <- ctllist[["pars_2D_AR"]][, 3:4]
       }
     }
+    
+    # Add 2DAR devs if they exist
+    if (!is.null(ctllist[["specs_2D_AR"]])) {
+      dev_temp <- ctllist[["specs_2D_AR"]]
+      if (length(dev_temp[, 1]) > 0) {
+        dev_parm_start <- c(dev_parm_start, rep(1,length(dev_temp[, 1])))
+        dev_parm_end <- c(dev_parm_end, (dev_temp[, 3]-dev_temp[, 2] + 1)*(dev_temp[, 5]-dev_temp[, 4] + 1))
+        dev_parm_labels <- c(dev_parm_labels, paste0(rownames(dev_temp), "_dev_seq"))
+      }
+    }
+    
     colnames(parlist[["S_parms"]]) <- c("INIT", "ESTIM")
     # Read in values for selectivity parameters and add to list
     S_seq <- as.numeric(parvals[(grep("selparm", parvals) + 1)])

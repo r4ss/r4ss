@@ -27,7 +27,7 @@ An invisible list is returned.
 The first element is the directory that was provided in the argument \code{dir}.
 The second element is the result of \code{normalizePath(dir)},
 which gives the full path.
-The remaining four elements are list objects from reading in
+The remaining four to six elements are list objects from reading in
 the following input files:
 \itemize{
 \item data
@@ -35,6 +35,7 @@ the following input files:
 \item starter
 \item forecast
 \item wtatage (will be NULL if not required by the model)
+\item par (will be null if control and par do not match)
 }
 }
 \description{
@@ -58,7 +59,8 @@ inputs <- SS_read(
 \item \code{\link[=SS_write]{SS_write()}} can be used to write the input files using the list
 created by this function.
 \item \code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_readctl]{SS_readctl()}},
-\code{\link[=SS_readforecast]{SS_readforecast()}}, and \code{\link[=SS_readwtatage]{SS_readwtatage()}} are used by this
+\code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_readwtatage]{SS_readwtatage()}},
+\code{\link[=SS_readpar_3.30]{SS_readpar_3.30()}}, and \code{\link[=SS_readpar_3.24]{SS_readpar_3.24()}} used by this
 function to read in the input files.
 \item \code{\link[=SS_output]{SS_output()}} to read in equivalent SS3 output files.
 }
