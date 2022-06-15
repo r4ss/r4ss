@@ -55,7 +55,7 @@ subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.}
 
 \item{lty}{line type (only applied to equilibrium yield plot at this time)}
 
-\item{lwd}{line width (only applied to equilibrium yield plot at this time)}
+\item{lwd}{Line width for plot elements.}
 
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}

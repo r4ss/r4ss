@@ -97,7 +97,7 @@ only.  Other options include "o" for overplotting points on lines.}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
-\item{lwd}{Line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{areacols}{Vector of colors by area. Default uses rich.colors by Arni
 Magnusson}

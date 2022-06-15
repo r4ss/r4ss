@@ -99,7 +99,7 @@ Default=TRUE.}
 
 \item{pch}{Optional vector of plot characters for the points.}
 
-\item{lty}{Line total for the likelihood components.}
+\item{lty}{Line type for the likelihood components.}
 
 \item{lty.total}{Line type for the total likelihood.}
 

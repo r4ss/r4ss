@@ -23,7 +23,7 @@
 #' `cohortlabvec`.
 #' @param cohortlabvec Optional vector of birth years for cohorts to label in
 #' plot. Value overrides `cohortlabfrac`.
-#' @param lwd Line width
+#' @template lwd
 #' @template plotdir
 #' @param xlab x-label for all plots
 #' @template labels

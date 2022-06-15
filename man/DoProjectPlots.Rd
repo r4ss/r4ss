@@ -88,7 +88,7 @@ Rgui. Default=FALSE.}
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
 
-\item{lwd}{Line width for many of the plot elements. Default=2.}
+\item{lwd}{Line width for plot elements.}
 }
 \description{
 Make a set of plots based on output from Andre Punt's Rebuilder program.

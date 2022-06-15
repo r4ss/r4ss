@@ -31,7 +31,7 @@
 #' @param pch Optional vector of plot characters for the points.
 #' @param lty Line total for the likelihood components.
 #' @param lty.total Line type for the total likelihood.
-#' @param lwd Line width for the likelihood components.
+#' @template lwd
 #' @param lwd.total Line width for the total likelihood.
 #' @param cex Character expansion for the points representing the likelihood
 #' components.

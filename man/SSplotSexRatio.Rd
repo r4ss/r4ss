@@ -65,7 +65,7 @@ c(1,3), listing fleets or surveys to be included in the plot.}
 
 \item{linescol}{Color for line showing expected value (default is purple).}
 
-\item{lwd}{line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{showsampsize}{add sample sizes to plot}
 

@@ -89,7 +89,7 @@ be increased if fleet names run off right-hand margin}
 
 \item{cex}{Character expansion for points showing isolated years of data}
 
-\item{lwd}{Line width for lines showing ranges of years of data}
+\item{lwd}{Line width for plot elements.}
 
 \item{maxsize}{The size (cex) of the largest bubble in the datasize
 plot. Default is 1.}

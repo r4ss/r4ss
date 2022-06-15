@@ -137,7 +137,7 @@ from length-based, "Asel2". You can choose only one using
 
 \item{col2}{color for male growth curve}
 
-\item{lwd}{Line widths for plots}
+\item{lwd}{Line width for plot elements.}
 
 \item{spacepoints}{number of years between points shown on top of lines (for
 long timeseries, points every year get mashed together)}

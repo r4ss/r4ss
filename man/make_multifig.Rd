@@ -196,7 +196,7 @@ replaced with better approach}
 
 \item{lty}{line type}
 
-\item{lwd}{line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{pch}{point character type}
 

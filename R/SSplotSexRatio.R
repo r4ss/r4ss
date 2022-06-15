@@ -19,7 +19,7 @@
 #' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
 #' @param datonly make plots of data without fits?
 #' @param linescol Color for line showing expected value (default is purple).
-#' @param lwd line width
+#' @template lwd
 #' @param showsampsize add sample sizes to plot
 #' @param showeffN add effective sample sizes to plot
 #' @param axis1 position of bottom axis values

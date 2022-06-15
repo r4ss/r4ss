@@ -21,7 +21,7 @@
 #' @param col line color for equilibrium plot
 #' @param col2 line color for dynamic surplus production plot
 #' @param lty line type (only applied to equilibrium yield plot at this time)
-#' @param lwd line width (only applied to equilibrium yield plot at this time)
+#' @template lwd
 #' @template cex.main
 #' @template pwidth
 #' @template pheight

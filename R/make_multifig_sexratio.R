@@ -39,7 +39,7 @@
 #' @param ptscol color for points/bars
 #' @param linescol color for fitted model
 #' @param lty line type
-#' @param lwd line width
+#' @template lwd
 #' @param nlegends number of lines of text to add as legends in each plot
 #' @param legtext text in legend, a list of length=nlegends. values may be any
 #' of 1.  "yr", 2. "sampsize", 3. "effN", or a vector of length = ptsx.

@@ -174,7 +174,7 @@ Default=1.}
 \item{fleetpch}{Vector of point types used for each fleet in some plots.
 Default=1.}
 
-\item{lwd}{Line width for some plots. Default=1.}
+\item{lwd}{Line width for plot elements.}
 
 \item{areacols}{Either the string "default", or a vector of colors to use
 for each area. Default="default".}

@@ -36,7 +36,7 @@
 #' @param margins margins of plot (passed to par() function), which may need to
 #' be increased if fleet names run off right-hand margin
 #' @param cex Character expansion for points showing isolated years of data
-#' @param lwd Line width for lines showing ranges of years of data
+#' @template lwd
 #' @template verbose
 #' @param maxsize The size (cex) of the largest bubble in the datasize
 #' plot. Default is 1.

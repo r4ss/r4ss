@@ -27,8 +27,8 @@
 #' (single value will apply to both lines).
 #' @param lty Optional vector of line types to be used for the two lines
 #' (single value will apply to both lines).
-#' @param lwd Optional vector of line widths to be used for the two lines
-#' (single value will apply to both lines).
+#' @param lwd Optional vector of line widths to be used for the two lines.
+#'  Single value will apply to both lines.
 #' @param add add to existing plot
 #' @template pwidth
 #' @template pheight

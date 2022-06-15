@@ -58,7 +58,7 @@ default, top 10\% of cohorts are labeled. Value will be overridden by
 \item{cohortlabvec}{Optional vector of birth years for cohorts to label in
 plot. Value overrides \code{cohortlabfrac}.}
 
-\item{lwd}{Line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 

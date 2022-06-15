@@ -76,8 +76,8 @@ the string options.}
 \item{lty}{Optional vector of line types to be used for the two lines
 (single value will apply to both lines).}
 
-\item{lwd}{Optional vector of line widths to be used for the two lines
-(single value will apply to both lines).}
+\item{lwd}{Optional vector of line widths to be used for the two lines.
+Single value will apply to both lines.}
 
 \item{add}{add to existing plot}
 

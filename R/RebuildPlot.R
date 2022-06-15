@@ -37,7 +37,7 @@
 #' Rgui. Default=FALSE.
 #' @template pwidth
 #' @template pheight
-#' @param lwd Line width for many of the plot elements. Default=2.
+#' @template lwd
 #' @author Andre Punt, Ian Taylor
 #' @export
 #' @examples

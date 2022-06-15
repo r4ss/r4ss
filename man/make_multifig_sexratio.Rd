@@ -108,7 +108,7 @@ and c(.15, .3) for sexratio.option=2.}
 
 \item{lty}{line type}
 
-\item{lwd}{line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{nlegends}{number of lines of text to add as legends in each plot}
 

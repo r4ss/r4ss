@@ -71,7 +71,7 @@
 #' Default=1.
 #' @param fleetpch Vector of point types used for each fleet in some plots.
 #' Default=1.
-#' @param lwd Line width for some plots. Default=1.
+#' @template lwd
 #' @param areacols Either the string "default", or a vector of colors to use
 #' for each area. Default="default".
 #' @param areanames Optional vector of names for each area used in titles.

@@ -45,7 +45,7 @@
 #' @param fleetpch Vector of plot character by fleet
 #' @param fleetcols Vector of colors by fleet
 #' @template fleetnames
-#' @param lwd Line width
+#' @template lwd
 #' @param areacols Vector of colors by area. Default uses rich.colors by Arni
 #' Magnusson
 #' @param areanames Names for areas. Default is to use Area1, Area2,...

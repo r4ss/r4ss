@@ -71,7 +71,7 @@
 #' }
 #' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
 #' = 1.0 for all ages beginning at age 1)?
-#' @param lwd Line widths for plots
+#' @template lwd
 #' @param spacepoints number of years between points shown on top of lines (for
 #' long timeseries, points every year get mashed together)
 #' @param staggerpoints number of years to stagger the first point (if

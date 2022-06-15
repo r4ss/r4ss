@@ -91,7 +91,7 @@ label exactly, or is a substring OK.}
 
 \item{lty.total}{Line type for the total likelihood.}
 
-\item{lwd}{Line width for the likelihood components.}
+\item{lwd}{Line width for plot elements.}
 
 \item{lwd.total}{Line width for the total likelihood.}
 
