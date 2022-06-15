@@ -19,7 +19,7 @@
 #' @param col4 fourth color used
 #' @param legendloc location of legend. see ?legend for more info
 #' @param labels vector of labels for plots (titles and axis labels)
-#' @param pwidth width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res

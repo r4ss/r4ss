@@ -16,7 +16,7 @@
 #' enough)
 #' @param main title for plot
 #' @template plotdir
-#' @param pwidth width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res

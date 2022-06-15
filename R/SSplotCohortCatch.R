@@ -27,7 +27,7 @@
 #' @template plotdir
 #' @param xlab x-label for all plots
 #' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res

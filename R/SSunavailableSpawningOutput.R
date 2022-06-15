@@ -8,7 +8,7 @@
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @template plotdir
-#' @param pwidth Width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res

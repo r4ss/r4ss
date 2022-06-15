@@ -74,8 +74,8 @@ SSplotSexRatio(
 
 \item{axis2}{position of left size axis values}
 
-\item{pwidth}{default width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used

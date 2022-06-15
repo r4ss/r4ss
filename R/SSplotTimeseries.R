@@ -51,7 +51,7 @@
 #' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
 #' @param xlab x axis label for all plots
 #' @param labels vector of labels for plots (titles and axis labels)
-#' @param pwidth width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res

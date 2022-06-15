@@ -19,7 +19,7 @@
 #' @param legendloc location passed to legend function (if used)
 #' @param moveseas choice of season for which movement rates are shown
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
-#' @param pwidth width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res

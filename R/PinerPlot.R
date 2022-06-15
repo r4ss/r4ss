@@ -48,7 +48,7 @@
 #' @param type Line type (see ?plot for more info).
 #' @param legend Include legend?
 #' @param legendloc Location of legend (see ?legend for more info).
-#' @param pwidth Width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res

@@ -54,7 +54,7 @@
 #' @param legendloc Location of legend (see ?legend for more info)
 #' @template plotdir
 #' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot
+#' @template pwidth
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res

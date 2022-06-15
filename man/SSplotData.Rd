@@ -65,7 +65,8 @@ default the parameter names in the data file are used.}
 composition data from ghost fleets (data for which the fit is shown, but is
 not included in the likelihood calculations).}
 
-\item{pwidth}{width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
