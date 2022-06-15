@@ -100,6 +100,6 @@ test_that("ss_read works with a raw github URL", {
   expect_true(is.list(list_objs))
   expect_equal(names(list_objs), c(
     "dir", "path", "dat", "ctl", "start", "fore",
-    "wtatage"
+    "wtatage", "par"
   ))
 })
