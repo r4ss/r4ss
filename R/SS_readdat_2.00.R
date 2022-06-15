@@ -193,7 +193,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   names(catch) <- c(fleetnames[1:Nfleet], "year", "seas")
   datlist[["catch"]] <- catch
   i <- i + Nvals
-  if (echoall) print(catch)
 
 
   # CPUE
@@ -218,10 +217,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   }
   datlist[["CPUEinfo"]] <- CPUEinfo
   datlist[["CPUE"]] <- CPUE
-  if (echoall) {
-    print(CPUEinfo)
-    print(CPUE)
-  }
 
   # discards
   # datlist[["discard_units"]] <- discard_units <- allnums[i]; i <- i+1
@@ -277,14 +272,12 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     # don't know if this is needed for version 2.00
     # datlist[["DF_for_meanbodywt"]] <- allnums[i]
     # i <- i+1
-    # if(echoall) cat("DF_for_meanbodywt =",datlist[["DF_for_meanbodywt"]],"\n")
     datlist[["DF_for_meanbodywt"]] <- NULL
   } else {
     datlist[["DF_for_meanbodywt"]] <- NULL
     meanbodywt <- NULL
   }
   datlist[["meanbodywt"]] <- meanbodywt
-  if (echoall) print(meanbodywt)
 
   datlist[["comp_tail_compression"]] <- allnums[i]
   i <- i + 1
@@ -301,12 +294,10 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   i <- i + 1
   datlist[["lbin_vector"]] <- lbin_vector <- allnums[i:(i + N_lbins - 1)]
   i <- i + N_lbins
-  if (echoall) print(lbin_vector)
 
   datlist[["N_lencomp"]] <- N_lencomp <- allnums[i]
   i <- i + 1
 
-  # if(verbose) cat(datlist[-15:0 + length(datlist)])
   if (verbose) cat("N_lencomp =", N_lencomp, "\n")
 
   if (N_lencomp > 0) {
@@ -345,7 +336,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     agebin_vector <- NULL
   }
   datlist[["agebin_vector"]] <- agebin_vector
-  if (echoall) print(agebin_vector)
 
   datlist[["N_ageerror_definitions"]] <- N_ageerror_definitions <- allnums[i]
   i <- i + 1

@@ -79,3 +79,27 @@ test_that("models can be read and written", {
 
   # todo: run the models with no est to make sure the written files work with SS
 })
+
+test_that("empty files lead to NULL or error", {
+  expect_null((SS_readwtatage("nonexistentfile.ss", verbose = FALSE)))
+  expect_message((SS_readwtatage("nonexistentfile.ss")))
+  # Have to catch warning because as of 3rd edition of {testthat},
+  # `expect_*` can only trap one expectation and the following leads to
+  # both an error and a warning.
+  expect_error(suppressWarnings(
+    SS_readstarter("nonexistentfile.ss", verbose = FALSE)
+  ))
+})
+
+test_that("ss_read works with a raw github URL", {
+  skip_if_offline(host = "github.com")
+  list_objs <- SS_read(
+    dir =
+      "https://raw.githubusercontent.com/nmfs-stock-synthesis/test-models/main/models/Simple"
+  )
+  expect_true(is.list(list_objs))
+  expect_equal(names(list_objs), c(
+    "dir", "path", "dat", "ctl", "start", "fore",
+    "wtatage"
+  ))
+})
