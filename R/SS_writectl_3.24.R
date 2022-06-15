@@ -110,20 +110,16 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
         writeLines(paste(names(dataframe), collapse = "\t"), con = zz)
       }
       if (!is.na(headerLine)) xxx <- 2
-      #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
       if (!is.null(rownames(dataframe))) {
         rownames(dataframe) <- sapply(rownames(dataframe), function(z) {
           ifelse(length(grep(x = z, pattern = "^#")) == 1, z, paste0("#_", z))
         })
         dataframe[["comments"]] <- rownames(dataframe)
       }
-      #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
-      #                 row.names=FALSE,col.names=FALSE)
       write_fwf4(
         file = zz, x = dataframe, append = TRUE, sep = "\t", quote = FALSE,
         rownames = FALSE, colnames = FALSE, digits = 6
       )
-      #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
     }
   }
 
@@ -491,7 +487,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   writeComment("#")
   writeLines("999", con = zz)
   options(width = oldwidth, max.print = oldmax.print)
-  # sink()
-  # close(zz)
-  if (verbose) message("File written to", outfile)
+  if (verbose) {
+    message("File written to ", outfile)
+  }
 }

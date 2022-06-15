@@ -83,8 +83,8 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
     for (istring in 1:length(labelstrings)) {
       labels <- c(labels, names(mcmcdata)[grep(labelstrings[istring], names(mcmcdata))])
     }
-    message("All labels matching the input 'labelstrings':")
-    print(labels)
+    message("All labels matching the input 'labelstrings': " , 
+      paste0(labels, collapse = ", "))
     mcmcdata <- mcmcdata[, names(mcmcdata) %in% labels]
   } else {
     # when "all" are requested, exclude Iter and Objective_function columns

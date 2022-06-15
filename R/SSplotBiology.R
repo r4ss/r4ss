@@ -428,7 +428,6 @@ SSplotBiology <-
           }
         }
       } else {
-        # print(seas)
         # if empirical weight-at-age IS used
         fecmat <- wtatage[wtatage[["Fleet"]] == -2 & wtatage[["Sex"]] == 1, ]
         if (nrow(fecmat) > 1) {
@@ -443,7 +442,6 @@ SSplotBiology <-
               seas_label <- paste("in season", iseas)
             }
             main <- paste("", seas_label)
-            # print(head(fecmat))
             fecmat_seas <- clean_wtatage(fecmat_seas)
             ## persp(x=abs(fecmat_seas[,1]),
             ##       y=0:accuage,

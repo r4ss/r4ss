@@ -182,8 +182,6 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
         Temp <- Temp[-(grep("#", Temp):length(Temp))]
       }
       Temp <- as.numeric(Temp)
-      # print(Temp)
-      # print(CTL_linenum_Type[ParI])
       if (is.na(CTL_linenum_Type[ParI])) {
         if (length(Temp) == 7) {
           CTL_linenum_Type[ParI] <- "Short_Param"

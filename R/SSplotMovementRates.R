@@ -135,7 +135,6 @@ SSplotMovementRates <-
               sep = ""
             )
             moveinfo <- moveinfo[moveinfo[["LabelBase2"]] %in% substring(movepars[["Label"]], 12), ]
-            ## print(moveinfo)
             nmoves <- nrow(moveinfo)
             if (verbose) message("N movement rates:", nmoves)
             if (nareas > 2) {

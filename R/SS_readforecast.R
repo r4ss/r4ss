@@ -77,8 +77,8 @@ SS_readforecast <- function(file = "forecast.ss",
     }
     if (!is.na(name)) names(forelist)[names(forelist) == "temp"] <- name
     if (verbose) {
-      message(name, ",i=", forelist$".i")
-      print(forelist[name])
+      message(name, ",i=", forelist$".i", "\n", 
+        paste0(forelist[[name]], collapse = "\n"))
     }
     return(forelist)
   }
@@ -135,8 +135,8 @@ SS_readforecast <- function(file = "forecast.ss",
     forelist$".i" <- i
     if (!is.na(name)) names(forelist)[names(forelist) == "temp"] <- name
     if (verbose) {
-      message(name, ",i=", forelist$".i", "\n")
-      print(forelist[[which(names(forelist) == name)]])
+      message(name, ",i=", forelist$".i", "\n", 
+      paste0(forelist[[which(names(forelist) == name)]], collapse = "\n"))
     }
     return(forelist)
   }

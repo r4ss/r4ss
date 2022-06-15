@@ -1276,10 +1276,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     }
   }
   if (verbose) {
-    message("size_selex_Nparms")
-    print(unlist(lapply(size_selex_label, function(x) length(x))))
-    message("age_selex_Nparms")
-    print(unlist(lapply(age_selex_label, function(x) length(x))))
+    message("Read size and age selectivity setup.")
   }
   # Selex parameters
   if (sum(length(unlist(size_selex_label))) > 0) {

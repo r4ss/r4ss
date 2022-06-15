@@ -291,11 +291,11 @@ SS_profile <-
       }
 
       if (verbose) {
-        message("Profiling over ", npars, "parameters")
         if (!is.null(string)) {
           profilevec_df <- data.frame(profilevec)
           names(profilevec_df) <- string
-          print(profilevec_df)
+          message("Profiling over ", npars, " parameters\n", 
+          paste0(profilevec_df, collapse = "\n"))
         }
       }
     }
@@ -431,7 +431,7 @@ SS_profile <-
             paste("# changed from", parval, "to", profilevec[i])
           )
           par <- c(par, "#", note)
-          print(note)
+          message(paste0(note, collapse = "\n"))
           # write new par file
           writeLines(par, paste0(parfile, "_input_", i, ".ss"))
           writeLines(par, parfile)

@@ -590,8 +590,7 @@ SS_output <-
         }
       } else {
         if (verbose) {
-          message("!warning: temporary files were written in this run:")
-          print(logfile)
+          message("Temporary files were written in this run.")
         }
       }
     } else {
