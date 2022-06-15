@@ -3,8 +3,8 @@
 #' Writes all the input files for a Stock Synthesis model using the list
 #' created by [SS_read()]
 #' (presumably after modification of one or more elements)
-#' using the `SS_write*()` functions for the four or
-#' five model input files.
+#' using the `SS_write*()` functions for the four to
+#' six model input files.
 #'
 #' @param inputlist list created by [SS_read()]
 #' @template dir
@@ -17,7 +17,8 @@
 #' @seealso
 #' * [SS_read()] creates the list that is used by this function.
 #' * [SS_writestarter()], [SS_writedat()], [SS_writectl()],
-#' [SS_writeforecast()], and [SS_writewtatage()] are used to write the
+#' [SS_writeforecast()], [SS_writewtatage()], [SS_writepar_3.30()], 
+#' and [SS_writepar_3.24()] are used to write the
 #' input files.
 
 #' @examples
@@ -122,7 +123,17 @@ SS_write <- function(inputlist,
   if ("par" %in% names(inputlist)){
     if(!is.null(inputlist[["par"]])){
       try(
-        r4ss::SS_writepar_3.30(inputlist[["par"]], outfile = file.path(dir, "ss.par"), verbose = FALSE),
+        {
+          if(inputlist[["ctl"]][["ReadVersion"]]=="3.24"){
+            par <- r4ss::SS_writepar_3.24(inputlist[["par"]], 
+                                          outfile = file.path(dir, "ss.par"), 
+                                          verbose = verbose)
+          }else{
+            par <- r4ss::SS_writepar_3.30(inputlist[["par"]], 
+                                          outfile = file.path(dir, "ss.par"), 
+                                          verbose = verbose)  
+          }
+        },
         silent = !verbose
       )
     }
