@@ -32,7 +32,7 @@
 #' help("png") in R for details). Default=12.
 #' @template res
 #' @template plotdir
-#' @param cex.main character expansion parameter for plot titles
+#' @template cex.main
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot

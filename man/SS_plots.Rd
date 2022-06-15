@@ -299,8 +299,8 @@ The default is \code{res = 300}.}
 \item{mainTitle}{Logical indicating if a title should be included at the top
 (not yet implemented for all plots)}
 
-\item{cex.main}{Character expansion parameter for plot titles (not yet
-implemented for all plots). Default=1.}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{selexlines}{Vector controlling which lines should be shown on
 selectivity plots if the model includes retention. Default=1:5.}

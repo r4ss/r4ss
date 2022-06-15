@@ -85,7 +85,8 @@ help("png") in R for details). Default=12.}
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{cex.main}{character expansion parameter for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{col1}{color for bubbles}
 

@@ -80,8 +80,8 @@ The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 
-\item{cex.main}{Character expansion for plot titles (no titles in this
-function yet)}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

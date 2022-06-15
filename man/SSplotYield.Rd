@@ -57,7 +57,8 @@ subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.}
 
 \item{lwd}{line width (only applied to equilibrium yield plot at this time)}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}

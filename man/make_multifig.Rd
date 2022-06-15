@@ -120,7 +120,8 @@ number of elements in \code{yr} input.}
 
 \item{main}{title of plot}
 
-\item{cex.main}{character expansion for title}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{xlab}{x-axis label}
 

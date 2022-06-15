@@ -40,7 +40,8 @@ The default is \code{res = 300}.}
 
 \item{ptsize}{Point size for PNG file}
 
-\item{cex.main}{Character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 }
 \description{
 Calculate and plot the unavailable spawning output- separating out ones that

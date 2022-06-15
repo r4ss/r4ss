@@ -89,7 +89,7 @@
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param col1 color for female growth curve
 #' @param col2 color for male growth curve
-#' @param cex.main character expansion for plot titles
+#' @template cex.main
 #' @template mainTitle
 #' @template mar
 #' @template plotdir

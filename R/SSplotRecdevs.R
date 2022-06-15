@@ -24,7 +24,7 @@
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
+#' @template cex.main
 #' @template plotdir
 #' @template verbose
 #' @author Ian Taylor, Ian Stewart

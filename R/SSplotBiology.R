@@ -59,7 +59,7 @@
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
+#' @template cex.main
 #' @param imageplot_text Whether to add numerical text to the image plots
 #' when using weight at age. Defaults to FALSE.
 #' @param imageplot_text_round The number of significant digits to which

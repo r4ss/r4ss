@@ -13,7 +13,7 @@
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
+#' @template cex.main
 #' @author Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 #' @export
 

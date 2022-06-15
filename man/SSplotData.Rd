@@ -79,7 +79,8 @@ The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{margins}{margins of plot (passed to par() function), which may need to
 be increased if fleet names run off right-hand margin}

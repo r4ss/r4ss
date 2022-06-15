@@ -22,7 +22,7 @@
 #' @param col2 line color for dynamic surplus production plot
 #' @param lty line type (only applied to equilibrium yield plot at this time)
 #' @param lwd line width (only applied to equilibrium yield plot at this time)
-#' @param cex.main character expansion for plot titles
+#' @template cex.main
 #' @template pwidth
 #' @template pheight
 #' @param punits units for PNG file

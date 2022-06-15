@@ -25,7 +25,7 @@
 #' @param legend.yadj If a legend is added, how much should the y-axis be
 #' expanded to make space for it.
 #' @param main Title of plot. Default="".
-#' @param cex.main Character expansion for title. Default=1.
+#' @template cex.main
 #' @param xlab X-axis label.
 #' @param ylab Y-axis label.
 #' @param minnbubble Minimum number of unique x values below which extra space

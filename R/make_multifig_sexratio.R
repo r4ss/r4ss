@@ -19,7 +19,7 @@
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of elements in `yr` input.
 #' @param main title of plot
-#' @param cex.main character expansion for title
+#' @template cex.main
 #' @param xlab x-axis label
 #' @param ylab y-axis label
 #' @param horiz_lab axis labels set horizontal all the time (TRUE), never

@@ -32,8 +32,7 @@
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file
-#' @param cex.main Character expansion for plot titles (no titles in this
-#' function yet)
+#' @template cex.main
 #' @template verbose
 #' @author Ian Taylor
 #' @export

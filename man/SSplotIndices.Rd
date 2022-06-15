@@ -132,7 +132,8 @@ The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{mainTitle}{switch which allows the plot title to be left off}
 

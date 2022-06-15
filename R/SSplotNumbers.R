@@ -46,7 +46,7 @@
 #' @template punits
 #' @template ptsize
 #' @template res
-#' @param cex.main character expansion for plot titles
+#' @template cex.main
 #' @template plotdir
 #' @param mainTitle Logical indicating if a title should be included at the top
 #' @template verbose

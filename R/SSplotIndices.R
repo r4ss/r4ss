@@ -60,7 +60,7 @@
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
+#' @template cex.main
 #' @param mainTitle switch which allows the plot title to be left off
 #' @template plotdir
 #' @param minyr First year to show in plot (for zooming in on a subset of

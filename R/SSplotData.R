@@ -34,7 +34,7 @@
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
+#' @template cex.main
 #' @param margins margins of plot (passed to par() function), which may need to
 #' be increased if fleet names run off right-hand margin
 #' @param cex Character expansion for points showing isolated years of data

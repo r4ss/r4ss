@@ -28,7 +28,7 @@
 #' @param ptsize point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
 #' @template res
-#' @param cex.main character expansion parameter for plot titles
+#' @template cex.main
 #' @param col1 color for bubbles
 #' @param col2 color for lines with expected values
 #' @param col3 shading color for observations within latency period

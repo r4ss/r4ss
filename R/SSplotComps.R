@@ -91,7 +91,7 @@
 #' @template ptsize
 #' @template res
 #' @template plotdir
-#' @param cex.main character expansion parameter for plot titles
+#' @template cex.main
 #' @param linepos should lines be added before points (linepos=1) or after
 #' (linepos=2)?
 #' @param fitbar show fit to bars instead of points

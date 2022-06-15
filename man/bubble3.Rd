@@ -65,7 +65,8 @@ expanded to make space for it.}
 
 \item{main}{Title of plot. Default="".}
 
-\item{cex.main}{Character expansion for title. Default=1.}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{xlab}{X-axis label.}
 

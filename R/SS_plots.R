@@ -148,8 +148,7 @@
 #' @template ptsize
 #' @template res
 #' @template mainTitle
-#' @param cex.main Character expansion parameter for plot titles (not yet
-#' implemented for all plots). Default=1.
+#' @template cex.main
 #' @param selexlines Vector controlling which lines should be shown on
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.

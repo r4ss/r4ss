@@ -53,7 +53,7 @@
 #' @param punits Units for PNG file
 #' @template res
 #' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
+#' @template cex.main
 #' @template plotdir
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 #' based on common cutoff of half of chi-squared of p=.95 with 1 degree of

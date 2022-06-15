@@ -215,7 +215,8 @@ The default is \code{res = 300}.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 
-\item{cex.main}{character expansion parameter for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{linepos}{should lines be added before points (linepos=1) or after
 (linepos=2)?}
