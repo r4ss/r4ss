@@ -118,9 +118,13 @@ SS_write <- function(inputlist,
     )
   }
   
+  
   if ("par" %in% names(inputlist)){
     if(!is.null(inputlist[["par"]])){
-      r4ss::SS_writepar_3.30(inputlist[["par"]], outfile = file.path(dir, "ss.par"), verbose = FALSE)
+      try(
+        r4ss::SS_writepar_3.30(inputlist[["par"]], outfile = file.path(dir, "ss.par"), verbose = FALSE),
+        silent = !verbose
+      )
     }
   }
   

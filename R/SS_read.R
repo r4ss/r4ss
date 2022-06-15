@@ -87,15 +87,18 @@ SS_read <- function(dir = NULL,
     wtatage <- NULL
   }
 
+  par <- NULL
   if(file.exists(file.path(dir, "ss.par"))){
-    par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
-                           datsource = dat,
-                           ctlsource = ctl,
-                           verbose = FALSE
+    try(
+      par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
+                                  datsource = dat,
+                                  ctlsource = ctl,
+                                  verbose = FALSE),
+      silent = !verbose
     )
-  }else{
-    par <- NULL
   }
+  
+  
   # return a list of the lists for each file
   invisible(list(
     dir = dir,
