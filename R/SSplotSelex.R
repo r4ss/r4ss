@@ -77,7 +77,7 @@
 #' @param staggerpoints number of years to stagger the first point (if
 #' `spacepoints > 1`) for each line (so that adjacent lines have points in
 #' different years)
-#' @param legendloc location of legend. See ?legend for more info.
+#' @template legendloc
 #' @template pwidth
 #' @template pheight
 #' @template punits

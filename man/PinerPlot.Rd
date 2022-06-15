@@ -116,7 +116,10 @@ plotted.}
 
 \item{legend}{Include legend?}
 
-\item{legendloc}{Location of legend (see ?legend for more info).}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}

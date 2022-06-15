@@ -113,7 +113,10 @@ Default=1.}
 
 \item{legend}{add a legend to seasonal colors (only for seasonal models)}
 
-\item{legendloc}{add a legend to seasonal colors (default is "topright")}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{seasnames}{optional vector of names for each season to replace
 defaults if a legend is used}

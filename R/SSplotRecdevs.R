@@ -17,7 +17,7 @@
 #' @param col2 second color used
 #' @param col3 third color used
 #' @param col4 fourth color used
-#' @param legendloc location of legend. see ?legend for more info
+#' @template legendloc
 #' @template labels
 #' @template pwidth
 #' @template pheight

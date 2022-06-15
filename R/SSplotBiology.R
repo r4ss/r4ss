@@ -51,7 +51,7 @@
 #' values can be applied to other plots in the future
 #' @param shadealpha Transparency parameter used to make default shadecol
 #' values (see ?rgb for more info)
-#' @param legendloc Location of legend (see ?legend for more info)
+#' @template legendloc
 #' @template plotdir
 #' @template labels
 #' @template pwidth

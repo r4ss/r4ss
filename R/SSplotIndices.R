@@ -52,7 +52,7 @@
 #' Default=1.
 #' @param bg Background color for points with pch=21.
 #' @param legend add a legend to seasonal colors (only for seasonal models)
-#' @param legendloc add a legend to seasonal colors (default is "topright")
+#' @template legendloc
 #' @param seasnames optional vector of names for each season to replace
 #' defaults if a legend is used
 #' @template pwidth

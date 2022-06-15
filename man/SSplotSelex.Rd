@@ -145,7 +145,10 @@ long timeseries, points every year get mashed together)}
 \code{spacepoints > 1}) for each line (so that adjacent lines have points in
 different years)}
 
-\item{legendloc}{location of legend. See ?legend for more info.}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}

@@ -176,7 +176,7 @@
 #' Default=F.
 #' @param catchbars show catch by fleet as barplot instead of stacked polygons
 #' (default=TRUE)
-#' @param legendloc Location for all legends. Default="topleft".
+#' @template legendloc
 #' @param minyr First year to show in time-series and time-varying plots
 #' @param maxyr Last year to show in time-series and time-varying plots. This
 #' can either be an alternative to, or redundant with, the forecastplot input.

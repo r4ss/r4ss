@@ -56,7 +56,7 @@
 #' @param forecastplot Add points from forecast years
 #' @template plotdir
 #' @param showlegend Put legend on plot
-#' @param legendloc Location of legend (see ?legend for more info)
+#' @template legendloc
 #' @param order Optional input to change the order of fleets in stacked plots.
 #' @param xlab x-label for all plots
 #' @template labels

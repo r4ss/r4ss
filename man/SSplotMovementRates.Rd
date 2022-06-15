@@ -45,7 +45,10 @@ area).}
 \item{legend}{add a legend designating which color goes with which pair of
 areas?}
 
-\item{legendloc}{location passed to legend function (if used)}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{moveseas}{choice of season for which movement rates are shown}
 

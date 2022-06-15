@@ -32,10 +32,7 @@
 #' will by replaced by a vector of colors of length equal to
 #' `nrow(replist[["recruit"]])`
 #' @param legend add a legend to the figure?
-#' @param legendloc location of legend. By default it is chosen as the first
-#' value in the set of "topleft", "topright", "bottomright" that results in no
-#' overlap with the points in the plot, but the user can override this with their
-#' choice of location. See ?legend for more info on the options.
+#' @template legendloc
 #' @param minyr minimum year of recruitment deviation to show in plot
 #' @param textmindev minimum recruitment deviation for label to be added so
 #' only extreme devs are labeled (labels are added to first and last years as
