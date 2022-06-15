@@ -12,7 +12,7 @@
 #' @param sexratio.option code to choose among (1) female:male ratio or
 #' (2) fraction females out of the total
 #' @param CI confidence interval for uncertainty
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels

@@ -7,7 +7,7 @@
 #' @param subplot vector of which subplots to show.  1=plot without labels,
 #' 2=plot with year labels.
 #' @param add add to existing plot?
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param xlim optional control of x range
 #' @param ylim optional control of y range

@@ -4,7 +4,7 @@
 #' mean weight, maturity, fecundity, and spawning output.
 #'
 #' @template replist
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @param add add to existing plot
 #' @param subplots vector controlling which subplots to create

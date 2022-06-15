@@ -36,7 +36,7 @@ choice of \code{subplots}.}
 
 \item{ymax}{Optional input to override default ymax value.}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

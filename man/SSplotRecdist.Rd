@@ -26,7 +26,7 @@ SSplotRecdist(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

@@ -7,7 +7,7 @@
 #' @param yrs Which years to include.
 #' @param Ftgt Target F where horizontal line is shown.
 #' @param ylab Y-axis label.
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @template plotdir
 #' @template verbose

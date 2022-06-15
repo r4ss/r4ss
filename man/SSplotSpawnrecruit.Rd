@@ -49,7 +49,7 @@ SSplotSpawnrecruit(
 
 \item{add}{add to existing plot?}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

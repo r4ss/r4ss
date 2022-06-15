@@ -6,7 +6,7 @@
 #'
 #'
 #' @template replist
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @template plotdir
 #' @param subplot vector controlling which subplots to create

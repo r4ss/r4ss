@@ -6,7 +6,7 @@
 #'
 #'
 #' @template replist
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param areanames optional vector to replace c("Area1","Area2",...)
 #' @param seasnames optional vector to replace c("Season1","Season2",...)

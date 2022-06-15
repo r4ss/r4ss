@@ -56,7 +56,7 @@ included in this group but now replaced by better distribution plots)
 \item 10: Distribution of observed age at true age by ageing error type
 }}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

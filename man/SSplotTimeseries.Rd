@@ -82,7 +82,7 @@ scaling is done automatically by SS.}
 
 \item{maxyr}{optional input for maximum year to show in plots}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

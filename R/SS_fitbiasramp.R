@@ -36,7 +36,7 @@
 #' uncertainty, or just the second panel in the set?  Default=TRUE.
 #' @param transform An experimental option to treat the transform the 5
 #' quantities to improve minimization. Doesn't work well. Default=FALSE.
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @template plotdir
 #' @param shownew Include new estimated bias adjustment values on top of values

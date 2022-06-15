@@ -40,7 +40,7 @@
 #' scaling is done automatically by SS.
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @template plotdir
 #' @template verbose

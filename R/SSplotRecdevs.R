@@ -6,7 +6,7 @@
 #'
 #' @template replist
 #' @param subplots vector controlling which subplots to create
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param add add to existing plot (not yet implemented)
 #' @param uncertainty include plots showing uncertainty?

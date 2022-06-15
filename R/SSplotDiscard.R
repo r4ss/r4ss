@@ -7,7 +7,7 @@
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If `plotdat = FALSE` then subplot 1 is not created, regardless of
 #' choice of `subplots`.
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @template plotdir
 #' @param fleets Optional vector to subset fleets for which plots will be made

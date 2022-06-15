@@ -38,7 +38,7 @@
 #' conditional age-at-length data will be produced for all years.  Useful to
 #' see if growth curves are ok, or to see the information on year classes move
 #' through the conditional data. Default=-1.
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels

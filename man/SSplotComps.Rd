@@ -118,7 +118,7 @@ conditional age-at-length data will be produced for all years.  Useful to
 see if growth curves are ok, or to see the information on year classes move
 through the conditional data. Default=-1.}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

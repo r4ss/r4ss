@@ -5,7 +5,7 @@
 #' too big to be selected
 #'
 #' @template replist
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @template plotdir
 #' @template pwidth

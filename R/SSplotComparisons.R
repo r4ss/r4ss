@@ -27,7 +27,7 @@
 #'   \item 16  densities
 #'   \item 17  cumulative densities
 #' }
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @param png Has same result as `print`, included for consistency with
 #' `SS_plots`.

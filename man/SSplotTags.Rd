@@ -57,7 +57,7 @@ causes all groups to be included.}
 
 \item{tagcols}{number or columns of panels for multi-panel plots}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

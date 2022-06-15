@@ -36,7 +36,7 @@ SSplotRecdevs(
 
 \item{subplots}{vector controlling which subplots to create}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}
 

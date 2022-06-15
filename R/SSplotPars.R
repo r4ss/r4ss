@@ -33,7 +33,7 @@
 #' distributions and the median of the posterior distribution.
 #' @param colvec Vector of colors used for lines and polygons showing MLE,
 #' initial value, prior, posterior, and median of the posterior.
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @template pwidth
 #' @template pheight

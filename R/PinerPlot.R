@@ -7,7 +7,7 @@
 #' but the name seems to have stuck.
 #' @param summaryoutput List created by the function
 #' [SSsummarize()].
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @param component Which likelihood component to plot. Default is "Length_like".
 #' @param main Title for plot. Should match component.

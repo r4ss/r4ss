@@ -6,7 +6,7 @@
 #' is available in the Report.sso file)
 #'
 #' @template replist
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param subplots which subplots to create.
 #' @template plotdir

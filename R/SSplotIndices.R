@@ -24,7 +24,7 @@
 #'   \item 12  index deviations (independent of index uncertainty)
 #' }
 #'
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional replacement for fleenames used in data file

@@ -8,7 +8,7 @@
 #' @template replist
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @param cohortcols Vector of colors to show for each cohort. Default is range
 #' of colors shade indicating time period.

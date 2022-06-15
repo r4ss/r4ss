@@ -21,7 +21,7 @@
 #'   \item 9: no plot yet
 #'   \item 10: Distribution of observed age at true age by ageing error type
 #' }
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param numbers.unit Units for numbers. Default (based on typical Stock Synthesis
 #' setup) is thousands (numbers.unit=1000).

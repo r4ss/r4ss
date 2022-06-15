@@ -15,7 +15,7 @@
 #' @param refpoints character vector of which reference points to display in
 #' subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.
 #' @param add add to existing plot? (not yet implemented)
-#' @param plot plot to active plot device?
+#' @template plot
 #' @template print
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param col line color for equilibrium plot

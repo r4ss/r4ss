@@ -10,7 +10,7 @@
 #' @param forecast Show forecast years in plot? Only applies if yrs = "all".
 #' @param yrs Which years to include. Default "all" will show startyr to endyr + 1
 #' modified by the arguments `forecast`.
-#' @param plot Plot to active plot device?
+#' @template plot
 #' @template print
 #' @template plotdir
 #' @template verbose
