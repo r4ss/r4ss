@@ -27,7 +27,7 @@
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res
-#' @param ptsize point size for PNG file
+#' @template ptsize
 #' @template plotdir
 #' @template verbose
 #' @author Ian Stewart, Ian Taylor

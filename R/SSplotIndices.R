@@ -59,7 +59,7 @@
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res
-#' @param ptsize point size for PNG file
+#' @template ptsize
 #' @template cex.main
 #' @param mainTitle switch which allows the plot title to be left off
 #' @template plotdir

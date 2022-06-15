@@ -12,7 +12,7 @@
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res
-#' @param ptsize Point size for PNG file
+#' @template ptsize
 #' @template cex.main
 #' @author Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 #' @export

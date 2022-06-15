@@ -79,8 +79,8 @@ for plots that work best with a taller format and a single plot per page.}
 \item{punits}{units for \code{pwidth} and \code{pheight}. Can be "px"
 (pixels), "in" (inches), "cm" or "mm". Default="in".}
 
-\item{ptsize}{point size for plotted text in plots printed to files (see
-help("png") in R for details). Default=12.}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}

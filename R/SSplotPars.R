@@ -39,8 +39,7 @@
 #' @template pheight
 #' @param punits Units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize Point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
+#' @template ptsize
 #' @template res
 #' @param strings Subset parameters included in the plot using substring from
 #' parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both

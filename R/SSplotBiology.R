@@ -58,7 +58,7 @@
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res
-#' @param ptsize Point size for PNG file
+#' @template ptsize
 #' @template cex.main
 #' @param imageplot_text Whether to add numerical text to the image plots
 #' when using weight at age. Defaults to FALSE.

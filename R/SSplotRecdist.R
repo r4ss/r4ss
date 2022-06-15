@@ -20,7 +20,7 @@
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res
-#' @param ptsize point size for PNG file
+#' @template ptsize
 #' @template cex.main
 #' @template verbose
 #' @author Ian Taylor

@@ -33,7 +33,7 @@
 #' @template pheight
 #' @param punits units for PNG file
 #' @template res
-#' @param ptsize point size for PNG file
+#' @template ptsize
 #' @template cex.main
 #' @param margins margins of plot (passed to par() function), which may need to
 #' be increased if fleet names run off right-hand margin

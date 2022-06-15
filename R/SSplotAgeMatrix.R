@@ -30,7 +30,7 @@
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res
-#' @param ptsize Point size for PNG file
+#' @template ptsize
 #' @template cex.main
 #' @param mainTitle Logical indicating if a title should be included at the top
 #' @template plotdir

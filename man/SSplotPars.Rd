@@ -105,7 +105,7 @@ for plots that work best with a taller format and a single plot per page.}
 (pixels), "in" (inches), "cm" or "mm". Default="in".}
 
 \item{ptsize}{Point size for plotted text in plots printed to files (see
-help("png") in R for details). Default=12.}
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}

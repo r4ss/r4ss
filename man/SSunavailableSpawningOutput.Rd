@@ -38,7 +38,8 @@ for plots that work best with a taller format and a single plot per page.}
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{Point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}

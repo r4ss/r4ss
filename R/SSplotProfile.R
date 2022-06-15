@@ -59,7 +59,7 @@
 #' @template pheight
 #' @param punits Units for PNG file
 #' @template res
-#' @param ptsize Point size for PNG file
+#' @template ptsize
 #' @template cex.main
 #' @template plotdir
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval

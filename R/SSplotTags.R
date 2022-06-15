@@ -25,8 +25,7 @@
 #' @template pheight
 #' @param punits units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
+#' @template ptsize
 #' @template res
 #' @template cex.main
 #' @param col1 color for bubbles
