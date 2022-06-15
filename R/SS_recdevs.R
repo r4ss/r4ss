@@ -20,7 +20,7 @@
 #' @param ctlfile Name of control file to modify.  Default="control.ss_new".
 #' @param newctlfile Name of new file to output modified control file.
 #' Default="control_modified.ss".
-#' @param verbose Verbose output to R command line? Default=TRUE.
+#' @template verbose
 #' @param writectl Write new file? Default=TRUE.
 #' @param returnctl Return contents ctl file as an object in the R workspace.
 #' Default=FALSE.

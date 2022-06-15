@@ -110,7 +110,8 @@ for single plots}
 \item{fixdims}{fix the dimensions at maxrows by maxcols or resize based on
 number of years of data}
 
-\item{verbose}{return updates of function progress to the R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{mainTitle}{Logical indicating if a title for the plot should be produced}
 

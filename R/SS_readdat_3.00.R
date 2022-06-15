@@ -7,8 +7,7 @@
 #'
 #'
 #' @template file
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template verbose
 #' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values

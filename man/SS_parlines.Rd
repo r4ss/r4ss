@@ -21,8 +21,8 @@ SS_parlines(
 \item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
-\item{verbose}{TRUE/FALSE switch for amount of detail produced by function.
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{active}{Should only active parameters (those with positive phase) be
 output? Default=FALSE.}

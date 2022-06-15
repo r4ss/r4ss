@@ -21,8 +21,8 @@ SSgetMCMC(
 \arguments{
 \item{dir}{Directory containing MCMC output.}
 
-\item{verbose}{TRUE/FALSE switch to get more or less information about the
-progress of the function.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{writecsv}{Write key parameters and certainty nuisance quantities to a
 CSV file.}

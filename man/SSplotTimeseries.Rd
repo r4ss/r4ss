@@ -89,7 +89,8 @@ scaling is done automatically by SS.}
 \item{plotdir}{directory where PNG or PDF files will be written. by default
 it will be the directory where the model was run.}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{btarg}{Target depletion to be used in plots showing depletion. May be
 omitted by setting to 0. "default" chooses value based on modeloutput.}

@@ -27,7 +27,7 @@
 #' @param cex.main character expansion for plot titles
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso [SS_plots()], [SS_fitbiasramp()]

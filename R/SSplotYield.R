@@ -30,7 +30,7 @@
 #' @param ptsize point size for PNG file
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

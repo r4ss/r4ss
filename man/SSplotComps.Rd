@@ -270,7 +270,8 @@ sample size. Occasionally a calculation of effective N blows up to very
 large numbers, rendering it impossible to observe the relationship for other
 data. Default=5000.}
 
-\item{verbose}{return updates of function progress to the R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{scalebins}{Rescale expected and observed proportions by dividing by
 bin width for models where bins have different widths? Caution!: May not

@@ -95,7 +95,8 @@ overlapping points.}
 
 \item{mainTitle}{TRUE/FALSE switch to turn on/off the title on the plot.}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot shows graphical display of what data is being used in the model.  Some

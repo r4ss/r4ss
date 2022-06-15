@@ -26,7 +26,7 @@
 #' Otherwise, limits are based on the model results.
 #' @param ylim Optional y-axis limits to be applied to all plots.
 #' Otherwise, limits are based on the model results.
-#' @param verbose Controls amount of text output (maybe).
+#' @template verbose
 #' @param debug Provide additional messages to help with debugging when the
 #' function fails.
 #' @param nrows How many rows in multi-figure plot.

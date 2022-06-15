@@ -23,8 +23,8 @@ either as character or numeric values (noting that numeric 3.30  = 3.3). If
 version is NULL, the version (3.24 or 3.30) will be looked for on the first
 line of the file.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{echoall}{Deprecated.}
 

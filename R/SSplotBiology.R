@@ -68,7 +68,7 @@
 #' all your values are small and there's no contrast in the text, you might
 #' want to make this 1 or 2.
 #' @param mainTitle Logical indicating if a title should be included at the top
-#' @param verbose Return updates of function progress to the R GUI?
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

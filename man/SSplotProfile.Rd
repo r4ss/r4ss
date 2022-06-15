@@ -154,8 +154,8 @@ can be adjusted using the \code{cutoff_prob} below.}
 
 \item{cutoff_prob}{Probability associated with \code{add_cutoff} above.}
 
-\item{verbose}{Return updates of function progress to the R GUI? (Doesn't do
-anything yet.)}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{\dots}{Additional arguments passed to the \code{plot} command.}
 }

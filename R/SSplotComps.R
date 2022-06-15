@@ -126,7 +126,7 @@
 #' sample size. Occasionally a calculation of effective N blows up to very
 #' large numbers, rendering it impossible to observe the relationship for other
 #' data. Default=5000.
-#' @param verbose return updates of function progress to the R GUI?
+#' @template verbose
 #' @param scalebins Rescale expected and observed proportions by dividing by
 #' bin width for models where bins have different widths? Caution!: May not
 #' work correctly in all cases.

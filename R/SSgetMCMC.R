@@ -5,8 +5,7 @@
 #'
 #'
 #' @param dir Directory containing MCMC output.
-#' @param verbose TRUE/FALSE switch to get more or less information about the
-#' progress of the function.
+#' @template verbose
 #' @param writecsv Write key parameters and certainty nuisance quantities to a
 #' CSV file.
 #' @param postname Name of file with parameter posteriors (default matches

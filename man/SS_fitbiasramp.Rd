@@ -30,7 +30,8 @@ SS_fitbiasramp(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{verbose}{Controls the amount of output to the screen.  Default=FALSE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{startvalues}{A vector of 5 values for the starting points in the
 minimization. Default=NULL.}

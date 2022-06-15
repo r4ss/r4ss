@@ -153,7 +153,7 @@
 #' added.
 #' @param par list of graphics parameter values passed to the `par`
 #' function
-#' @param verbose Report progress to R GUI?
+#' @template verbose
 #' @param mcmcVec Vector of TRUE/FALSE values (or single value) indicating
 #' whether input values are from MCMC or to use normal distribution around
 #' MLE

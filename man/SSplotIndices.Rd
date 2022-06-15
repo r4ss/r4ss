@@ -152,7 +152,8 @@ the total uncertainty which may result from estimating a parameter for
 extra standard deviations. This is only added for the plots with index
 fit included (the data-only plots only show the input uncertainty).}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{\dots}{Extra arguments to pass to calls to \code{plot}}
 }

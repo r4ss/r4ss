@@ -13,7 +13,8 @@ SS_writepar_3.30(parlist, outfile, overwrite = TRUE, verbose = FALSE)
 
 \item{overwrite}{Should existing files be overwritten? Default=TRUE.}
 
-\item{verbose}{Should there be verbose output while running the file?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Write Stock Synthesis (version 3.30) parameter file from list object in R to file.

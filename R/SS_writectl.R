@@ -9,8 +9,7 @@
 #' @param outfile Filename for where to write new control file.
 #' @template version
 #' @param overwrite Should existing files be overwritten? Defaults to FALSE.
-#' @param verbose Should there be verbose output while running the file?
-#' Defaults to FALSE.
+#' @template verbose
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn L.
 #' Doering, Nathan R. Vaughan
 #' @export

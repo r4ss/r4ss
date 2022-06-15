@@ -15,7 +15,7 @@
 #' @param exe.file Filename of executable to copy into all the subfolders.
 #' A value of NULL will skip copying the executable.
 #' @param exe.only Only copy exe files from exe.dir, don't copy input files
-#' @param verbose Return updates of function progress to the R console?
+#' @template verbose
 #' @return Returns table of results indicating which directories were
 #' successfully populated with the model input files and/or executables
 #' @author Ian Taylor

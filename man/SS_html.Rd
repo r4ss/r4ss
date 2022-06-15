@@ -36,7 +36,8 @@ runs. Only do this if you know what you're doing.}
 
 \item{filenotes}{Add additional notes to home page.}
 
-\item{verbose}{Display more info while running this function?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Writes a set of HTML files with tabbed navigation between them.  Depends on

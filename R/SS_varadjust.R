@@ -17,8 +17,7 @@
 #' (may need to increase from default if you have a huge number of fleets)
 #' @param overwrite Overwrite file if it exists?
 #' @template version
-#' @param verbose TRUE/FALSE switch for amount of detail produced by function.
-#' Default=TRUE.
+#' @template verbose
 #' @author Ian G. Taylor, Gwladys I. Lambert
 #' @seealso [SS_tune_comps()], [SS_parlines()], [SS_changepars()]
 #' @export

@@ -12,8 +12,7 @@
 #' (at which point SS stops reading, and remaining elements in list may not be
 #' available, depending on settings used in SS_readforecast)
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readstarter()], [SS_readforecast()],

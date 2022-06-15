@@ -184,8 +184,8 @@ for each area. Default="default".}
 \item{areanames}{Optional vector of names for each area used in titles.
 Default="default".}
 
-\item{verbose}{Return updates of function progress to the R GUI?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{uncertainty}{Include values in plots showing estimates of uncertainty
 (requires positive definite hessian in model?  Default=TRUE.}

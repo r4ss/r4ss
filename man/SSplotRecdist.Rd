@@ -58,7 +58,8 @@ The default is \code{res = 300}.}
 
 \item{cex.main}{character expansion for plot titles}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Image plot shows fraction of recruitment in each combination of area and

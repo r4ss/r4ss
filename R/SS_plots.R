@@ -79,8 +79,7 @@
 #' for each area. Default="default".
 #' @param areanames Optional vector of names for each area used in titles.
 #' Default="default".
-#' @param verbose Return updates of function progress to the R GUI?
-#' Default=TRUE.
+#' @template verbose
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the timeseries plots and

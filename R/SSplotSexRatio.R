@@ -46,7 +46,7 @@
 #' for single plots
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of years of data
-#' @param verbose return updates of function progress to the R GUI?
+#' @template verbose
 #' @param mainTitle Logical indicating if a title for the plot should be produced
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Cole Monnahan, Ian Taylor

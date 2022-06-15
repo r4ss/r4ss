@@ -17,8 +17,8 @@ SS data file.}
 from \code{\link[=SS_writectl]{SS_writectl()}}. If character, should be the full file location of an
 SS control file.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Read Stock Synthesis (version 3.30) parameter file into list object in R.

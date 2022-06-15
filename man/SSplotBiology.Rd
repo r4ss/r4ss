@@ -128,7 +128,8 @@ The default is \code{res = 300}.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top}
 
-\item{verbose}{Return updates of function progress to the R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot biology related quantities from Stock Synthesis model output, including

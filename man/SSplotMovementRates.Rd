@@ -64,7 +64,8 @@ The default is \code{res = 300}.}
 
 \item{cex.main}{Character expansion parameter for plot titles}
 
-\item{verbose}{Print information on function progress.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plots estimated movement rates in final year for each area/season with movement as

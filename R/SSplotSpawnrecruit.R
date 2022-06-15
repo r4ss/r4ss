@@ -23,7 +23,7 @@
 #' @template punits
 #' @template ptsize
 #' @template res
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points
 #' (where the 4th value for the points is the color of the circle around the
 #' background color provided by `ptcol`

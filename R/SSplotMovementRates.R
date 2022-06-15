@@ -25,7 +25,7 @@
 #' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main Character expansion parameter for plot titles
-#' @param verbose Print information on function progress.
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()], [SSplotMovementRates()],

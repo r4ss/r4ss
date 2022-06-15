@@ -113,7 +113,8 @@ be the directory where the model was run.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot numbers-at-age related data and fits from Stock Synthesis output.

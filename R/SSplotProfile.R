@@ -68,8 +68,7 @@
 #' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
 #' can be adjusted using the `cutoff_prob` below.
 #' @param cutoff_prob Probability associated with `add_cutoff` above.
-#' @param verbose Return updates of function progress to the R GUI? (Doesn't do
-#' anything yet.)
+#' @template verbose
 #' @param \dots Additional arguments passed to the `plot` command.
 #' @note Someday the function [SS_profile()] will be improved and
 #' made to work directly with this plotting function, but they don't yet work

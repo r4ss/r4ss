@@ -35,7 +35,7 @@
 #' @param ptsize point size for PNG file
 #' @param cex.main Character expansion for plot titles (no titles in this
 #' function yet)
-#' @param verbose Report progress to R console?
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

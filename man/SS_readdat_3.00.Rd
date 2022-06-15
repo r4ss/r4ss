@@ -16,8 +16,8 @@ SS_readdat_3.00(
 
 See the formal arguments for a possible default filename.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{echoall}{Deprecated.}
 

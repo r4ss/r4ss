@@ -294,7 +294,8 @@ added.}
 \item{par}{list of graphics parameter values passed to the \code{par}
 function}
 
-\item{verbose}{Report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{mcmcVec}{Vector of TRUE/FALSE values (or single value) indicating
 whether input values are from MCMC or to use normal distribution around

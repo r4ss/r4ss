@@ -23,7 +23,7 @@
 #' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SSplotRecdevs()]

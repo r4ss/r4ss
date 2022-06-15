@@ -67,7 +67,7 @@
 #'   value to the given parameter but change the remaining parameters, where
 #'   the vector of values needs to be in the same order as either
 #'   `linenums` or `strings`.
-#' @param verbose More detailed output to command line. Default=TRUE.
+#' @template verbose
 #' @author Ian Taylor, Christine Stawitz, Chantel Wetzel
 #' @seealso [SS_parlines()], [SS_profile()]
 #' @export

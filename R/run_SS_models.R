@@ -17,7 +17,7 @@
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted.
 #' @param intern Show output in the R console or save to a file?
-#' @param verbose Return updates of function progress to the R console?
+#' @template verbose
 #' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
 #' will look for exe in the model folders. Default = FALSE.
 #' @return Returns table showing which directories had model run and which

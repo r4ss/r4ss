@@ -50,7 +50,7 @@
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param mainTitle Logical indicating if a title should be included at the top
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_output()], [SS_plots()]

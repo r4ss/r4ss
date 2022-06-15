@@ -36,7 +36,8 @@ A value of NULL will skip copying the executable.}
 
 \item{exe.only}{Only copy exe files from exe.dir, don't copy input files}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
 Returns table of results indicating which directories were

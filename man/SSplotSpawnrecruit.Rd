@@ -84,7 +84,8 @@ The default is \code{res = 300}.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 \code{help("png")} in R for details).}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{colvec}{vector of length 4 with colors for 3 lines and 1 set of points
 (where the 4th value for the points is the color of the circle around the

@@ -16,7 +16,7 @@
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param faster Deprecated. Speed up writing by writing length and age comps without aligning
 #' the columns (by using write.table instead of print.data.frame)
-#' @param verbose Should there be verbose output while running the file?
+#' @template verbose
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 #' @export
 #' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],

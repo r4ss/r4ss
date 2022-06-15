@@ -74,7 +74,8 @@ Otherwise, limits are based on the model results.}
 \item{ylim}{Optional y-axis limits to be applied to all plots.
 Otherwise, limits are based on the model results.}
 
-\item{verbose}{Controls amount of text output (maybe).}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{debug}{Provide additional messages to help with debugging when the
 function fails.}

@@ -38,7 +38,7 @@
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
-#' @param verbose return updates of function progress to the R GUI?
+#' @template verbose
 #' @author Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 #' @import ggplot2
 #' @export

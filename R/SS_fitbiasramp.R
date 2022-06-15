@@ -26,7 +26,7 @@
 #' }
 #'
 #' @template replist
-#' @param verbose Controls the amount of output to the screen.  Default=FALSE.
+#' @template verbose
 #' @param startvalues A vector of 5 values for the starting points in the
 #' minimization. Default=NULL.
 #' @param method A method to apply to the 'optim' function. See ?optim for

@@ -75,7 +75,8 @@ The default is \code{res = 300}.}
 
 \item{cex.main}{Character expansion for plot titles}
 
-\item{verbose}{Report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot fit to discard fraction from Stock Synthesis output file.

@@ -99,7 +99,8 @@ The default is \code{res = 300}.}
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
-\item{verbose}{return updates of function progress to the R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot observed and expected tag recaptures in aggregate and by tag group.

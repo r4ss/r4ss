@@ -16,7 +16,8 @@ final year of values to show for each model.}
 \item{startyr}{Single year used to calculate the start of the Wood's Hole
 Mohn's Rho value across all years. Defaults to startyr of reference model.}
 
-\item{verbose}{Print messages when running the function?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Function calculates:

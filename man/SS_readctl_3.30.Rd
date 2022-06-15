@@ -29,9 +29,6 @@ SS_readctl_3.30(
 
 See the formal arguments for a possible default filename.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
-
 \item{use_datlist}{LOGICAL. If TRUE, use datlist to derive parameters which
 can not be determined from control file. Defaults to TRUE.}
 

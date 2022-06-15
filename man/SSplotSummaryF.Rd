@@ -39,7 +39,8 @@ SSplotSummaryF(
 \item{plotdir}{Directory where PNG files will be written. By default it will
 be the directory where the model was run.}
 
-\item{verbose}{Verbose output to R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{uncertainty}{Show 95\% uncertainty intervals around point estimates?}
 

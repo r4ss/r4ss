@@ -76,7 +76,7 @@
 #' the total uncertainty which may result from estimating a parameter for
 #' extra standard deviations. This is only added for the plots with index
 #' fit included (the data-only plots only show the input uncertainty).
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @param \dots Extra arguments to pass to calls to `plot`
 #' @author Ian Stewart, Ian Taylor, James Thorson
 #' @export

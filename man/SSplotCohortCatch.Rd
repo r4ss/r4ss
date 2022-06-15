@@ -81,7 +81,8 @@ The default is \code{res = 300}.}
 \item{cex.main}{Character expansion for plot titles (no titles in this
 function yet)}
 
-\item{verbose}{Report progress to R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Cumulative catch contributions for each cohort are plotted based on

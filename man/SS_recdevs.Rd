@@ -45,7 +45,8 @@ directory in use by R. Default="working_directory".}
 \item{newctlfile}{Name of new file to output modified control file.
 Default="control_modified.ss".}
 
-\item{verbose}{Verbose output to R command line? Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{writectl}{Write new file? Default=TRUE.}
 
