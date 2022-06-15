@@ -8,7 +8,7 @@
 #' the file new data file was named `data.ss_new`.
 #' `_echo` was added to the name when the file was parsed into three separate
 #' files.
-#' @param dir Relative or absolute path to a directory
+#' @template dir
 #' @return A string with the name of the data .ss_new file. If not found, will
 #'  be NA. Both of strings are searched for using `dir(pattern = )` and
 #'  if both exist, then `data_echo.ss_new` is returned.

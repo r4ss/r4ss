@@ -18,7 +18,9 @@ get_SIS_info(
 \arguments{
 \item{model}{Output from SS_output}
 
-\item{dir}{Directory where the file will be written}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{writecsv}{Write results to a CSV file (where the name will have the
 format "[stock]_2019_SIS_info.csv" where \code{stock}

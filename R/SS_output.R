@@ -8,10 +8,7 @@
 #' contained within the list produced by this function.
 #'
 #'
-#' @param dir Directory containing the Stock Synthesis model output.
-#' Forward slashes or double backslashes and quotes are necessary.
-#' This can also either be an absolute path or relative to the working
-#' directory.
+#' @template dir
 #' @param dir.mcmc Optional directory containing MCMC output. This can either be
 #' relative to `dir`, such that `file.path(dir, dir.mcmc)`
 #' will end up in the right place, or an absolute path.

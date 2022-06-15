@@ -4,7 +4,7 @@
 #' files) from a model.
 #'
 #'
-#' @param dir Directory containing MCMC output.
+#' @template dir
 #' @template verbose
 #' @param writecsv Write key parameters and certainty nuisance quantities to a
 #' CSV file.

@@ -2,7 +2,7 @@
 #'
 #' Function has not been fully tested yet
 #'
-#' @param dir Directory with control file to change.
+#' @template dir
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #' Default="control_modified.ss".

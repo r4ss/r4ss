@@ -7,7 +7,9 @@
 get_dat_new_name(dir)
 }
 \arguments{
-\item{dir}{Relative or absolute path to a directory}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 }
 \value{
 A string with the name of the data .ss_new file. If not found, will

@@ -3,7 +3,7 @@
 #' Iteratively changes the control file using SS_changepars.
 #'
 #'
-#' @param dir Directory where input files and executable are located.
+#' @template dir
 #' @param masterctlfile Source control file. Default = "control.ss_new"
 #' @param newctlfile Destination for new control files (must match entry in
 #' starter file). Default = "control_modified.ss".

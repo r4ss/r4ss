@@ -5,7 +5,7 @@
 #'
 #'
 #' @param mylist List object created by [SS_readstarter()].
-#' @param dir Directory for new starter file. Default=NULL (working directory).
+#' @template dir
 #' @param file Filename for new starter file. Default="starter.ss".
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @template verbose

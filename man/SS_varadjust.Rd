@@ -20,7 +20,9 @@ SS_varadjust(
 )
 }
 \arguments{
-\item{dir}{Directory with control file to change.}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{ctlfile}{Control file name. Default="control.ss_new".}
 

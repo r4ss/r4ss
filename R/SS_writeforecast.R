@@ -5,8 +5,7 @@
 #'
 #'
 #' @param mylist List object created by [SS_readforecast()].
-#' @param dir Directory for new forecast file. Default=NULL (working
-#' directory).
+#' @template dir
 #' @param file Filename for new forecast file. Default="forecast.ss".
 #' @param writeAll Should the function continue even if Forecast=0
 #' (at which point SS stops reading, and remaining elements in list may not be
