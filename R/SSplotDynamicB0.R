@@ -11,7 +11,7 @@
 #' @param yrs Which years to include. Default "all" will show startyr to endyr + 1
 #' modified by the arguments `forecast`.
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @template plotdir
 #' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?

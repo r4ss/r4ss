@@ -38,7 +38,7 @@
 #' @param add Add to existing plot? (not yet implemented)
 #' @param areas Optional subset of areas to plot for spatial models
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @param type Type parameter passed to plot function. Default "l" is lines
 #' only.  Other options include "o" for overplotting points on lines.
 #' @param fleetlty Vector of line type by fleet

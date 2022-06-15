@@ -16,7 +16,7 @@
 #' subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.
 #' @param add add to existing plot? (not yet implemented)
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param col line color for equilibrium plot
 #' @param col2 line color for dynamic surplus production plot

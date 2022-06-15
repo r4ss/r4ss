@@ -28,8 +28,7 @@
 #'   \item 17  cumulative densities
 #' }
 #' @param plot Plot to active plot device?
-#' @param print Send plots to PNG files in directory specified by
-#' `plotdir`?
+#' @template print
 #' @param png Has same result as `print`, included for consistency with
 #' `SS_plots`.
 #' @param pdf Write output to PDF file? Can't be used in conjunction with

@@ -24,7 +24,7 @@
 #' @param shift_lo A numeric value specifying the amount to shift the bottom
 #' of the polygon up.
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @param labels Vector of labels for plots (titles and axis labels)
 #' @template pwidth
 #' @template pheight

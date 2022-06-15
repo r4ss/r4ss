@@ -7,7 +7,7 @@
 #'
 #' @template replist
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @template plotdir
 #' @param subplot vector controlling which subplots to create
 #' Currently there are only 2 subplots:

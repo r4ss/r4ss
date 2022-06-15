@@ -6,7 +6,7 @@
 #'
 #' @template replist
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @template plotdir
 #' @template pwidth
 #' @template pheight

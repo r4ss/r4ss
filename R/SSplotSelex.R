@@ -84,7 +84,7 @@
 #' @template ptsize
 #' @template res
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @param add Add to existing plot (not yet implemented)
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param col1 color for female growth curve

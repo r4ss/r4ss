@@ -59,7 +59,7 @@ causes all groups to be included.}
 
 \item{plot}{plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{pntscalar}{maximum bubble size for balloon plots; each plot scaled
 independently based on this maximum size and the values plotted. Often some

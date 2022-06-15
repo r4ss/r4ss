@@ -7,7 +7,7 @@
 #'
 #' @template replist
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param areanames optional vector to replace c("Area1","Area2",...)
 #' @param seasnames optional vector to replace c("Season1","Season2",...)
 #' @param xlab optional x-axis label (if the area names aren\'t informative

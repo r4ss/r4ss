@@ -41,7 +41,7 @@
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @template plotdir
 #' @template verbose
 #' @param btarg Target depletion to be used in plots showing depletion. May be

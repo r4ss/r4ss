@@ -69,7 +69,7 @@ provided first:
 
 \item{plot}{plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{fleets}{optional vector to subset fleets for which plots will be made}
 

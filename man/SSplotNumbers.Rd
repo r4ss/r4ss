@@ -58,7 +58,7 @@ included in this group but now replaced by better distribution plots)
 
 \item{plot}{plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{numbers.unit}{Units for numbers. Default (based on typical Stock Synthesis
 setup) is thousands (numbers.unit=1000).}

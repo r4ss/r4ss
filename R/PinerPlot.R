@@ -8,7 +8,7 @@
 #' @param summaryoutput List created by the function
 #' [SSsummarize()].
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @param component Which likelihood component to plot. Default is "Length_like".
 #' @param main Title for plot. Should match component.
 #' @param models Optional subset of the models described in

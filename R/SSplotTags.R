@@ -14,7 +14,7 @@
 #' @param tagrows number or rows of panels for multi-panel plots
 #' @param tagcols number or columns of panels for multi-panel plots
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param pntscalar maximum bubble size for balloon plots; each plot scaled
 #' independently based on this maximum size and the values plotted. Often some
 #' plots look better with one value and others with a larger or smaller value.

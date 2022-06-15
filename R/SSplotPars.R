@@ -34,7 +34,7 @@
 #' @param colvec Vector of colors used for lines and polygons showing MLE,
 #' initial value, prior, posterior, and median of the posterior.
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @template pwidth
 #' @template pheight
 #' @param punits Units for `pwidth` and `pheight`. Can be "px"

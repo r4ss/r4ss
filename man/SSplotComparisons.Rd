@@ -101,8 +101,7 @@ Numbering of subplots is as follows:
 
 \item{plot}{Plot to active plot device?}
 
-\item{print}{Send plots to PNG files in directory specified by
-\code{plotdir}?}
+\item{print}{Print to PNG files?}
 
 \item{png}{Has same result as \code{print}, included for consistency with
 \code{SS_plots}.}

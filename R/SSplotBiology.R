@@ -5,7 +5,7 @@
 #'
 #' @template replist
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @param add add to existing plot
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:

@@ -39,7 +39,7 @@
 #' see if growth curves are ok, or to see the information on year classes move
 #' through the conditional data. Default=-1.
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels
 #' @param sexes which sexes to show plots for. Default="all" which will include

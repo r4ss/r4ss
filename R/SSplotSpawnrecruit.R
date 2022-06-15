@@ -8,7 +8,7 @@
 #' 2=plot with year labels.
 #' @param add add to existing plot?
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param xlim optional control of x range
 #' @param ylim optional control of y range
 #' @param labels vector containing x-axis label for models with spawning biomass

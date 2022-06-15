@@ -8,7 +8,7 @@
 #' If `plotdat = FALSE` then subplot 1 is not created, regardless of
 #' choice of `subplots`.
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @template plotdir
 #' @param fleets Optional vector to subset fleets for which plots will be made
 #' @param fleetnames Optional replacement for fleenames used in data file

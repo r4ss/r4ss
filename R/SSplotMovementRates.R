@@ -7,7 +7,7 @@
 #'
 #' @template replist
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param subplots which subplots to create.
 #' @template plotdir
 #' @param colvec vector of colors for each movement rate in the plot

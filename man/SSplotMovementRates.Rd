@@ -30,7 +30,7 @@ SSplotMovementRates(
 
 \item{plot}{plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{subplots}{which subplots to create.}
 

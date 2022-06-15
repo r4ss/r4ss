@@ -7,7 +7,7 @@
 #'
 #' @param summaryoutput List created by the function [SSsummarize()].
 #' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template print
 #' @param models Optional subset of the models described in
 #' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.

@@ -5,7 +5,7 @@
 #' @template replist
 #' @param add add to existing plot (not yet implemented)
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param uncertainty include plots showing uncertainty?
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:

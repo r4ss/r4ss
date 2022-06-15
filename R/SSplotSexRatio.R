@@ -13,7 +13,7 @@
 #' (2) fraction females out of the total
 #' @param CI confidence interval for uncertainty
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels
 #' @param yupper upper limit on ymax (only applies for sexratio.option == 1)

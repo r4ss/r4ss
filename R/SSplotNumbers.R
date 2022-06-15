@@ -22,7 +22,7 @@
 #'   \item 10: Distribution of observed age at true age by ageing error type
 #' }
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param numbers.unit Units for numbers. Default (based on typical Stock Synthesis
 #' setup) is thousands (numbers.unit=1000).
 #' @param areas optional subset of areas to plot for spatial models

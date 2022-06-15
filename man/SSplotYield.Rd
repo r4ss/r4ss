@@ -45,7 +45,7 @@ subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.}
 
 \item{plot}{plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{labels}{vector of labels for plots (titles and axis labels)}
 

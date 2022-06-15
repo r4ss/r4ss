@@ -7,7 +7,7 @@
 #' @template replist
 #' @param subplots vector controlling which subplots to create
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param add add to existing plot (not yet implemented)
 #' @param uncertainty include plots showing uncertainty?
 #' @param minyr optional input for minimum year to show in plots

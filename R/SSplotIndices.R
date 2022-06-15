@@ -25,7 +25,7 @@
 #' }
 #'
 #' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template print
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional replacement for fleenames used in data file
 #' @param smooth add smoothed line to plots of observed vs. expected sample
