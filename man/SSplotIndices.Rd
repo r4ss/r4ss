@@ -133,8 +133,7 @@ The default is \code{res = 300}.}
 
 \item{mainTitle}{switch which allows the plot title to be left off}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{minyr}{First year to show in plot (for zooming in on a subset of
 values)}

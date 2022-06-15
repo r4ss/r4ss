@@ -55,8 +55,7 @@
 #' @param annualcatch Include plot of catch aggregated across seasons within
 #' each year
 #' @param forecastplot Add points from forecast years
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template plotdir
 #' @param showlegend Put legend on plot
 #' @param legendloc Location of legend (see ?legend for more info)
 #' @param order Optional input to change the order of fleets in stacked plots.

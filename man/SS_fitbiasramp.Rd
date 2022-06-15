@@ -50,8 +50,7 @@ quantities to improve minimization. Doesn't work well. Default=FALSE.}
 
 \item{print}{Print to PNG files?}
 
-\item{plotdir}{Directory where PNG files will be written. By default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{shownew}{Include new estimated bias adjustment values on top of values
 used in the model? (TRUE/FALSE)}

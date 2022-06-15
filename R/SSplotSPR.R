@@ -35,8 +35,7 @@
 #' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export

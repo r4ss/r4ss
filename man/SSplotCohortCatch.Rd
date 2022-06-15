@@ -60,8 +60,7 @@ plot. Value overrides \code{cohortlabfrac}.}
 
 \item{lwd}{Line width}
 
-\item{plotdir}{Directory where PNG or PDF files will be written. By default
-it will be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{xlab}{x-label for all plots}
 

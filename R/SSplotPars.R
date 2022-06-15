@@ -5,9 +5,7 @@
 #'
 #'
 #' @template replist
-#' @param plotdir A path to the folder where the plots will be saved. The default
-#' is `NULL`, which leads to the plots being created in the folder that
-#' contains the results.
+#' @template plotdir
 #' @param xlab Label on horizontal axis.
 #' @param ylab Label on vertical axis.
 #' @param showmle Show MLE estimate and asymptotic variance estimate with blue

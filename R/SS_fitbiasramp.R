@@ -38,8 +38,7 @@
 #' quantities to improve minimization. Doesn't work well. Default=FALSE.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. By default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param shownew Include new estimated bias adjustment values on top of values
 #' used in the model? (TRUE/FALSE)
 #' @param oldctl Optional name of existing control file to modify.

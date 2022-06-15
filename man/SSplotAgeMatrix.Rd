@@ -78,8 +78,7 @@ The default is \code{res = 300}.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 }
 \description{
 Distribution of length at age or observed age at true age is represented

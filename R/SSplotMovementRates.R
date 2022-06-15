@@ -9,7 +9,7 @@
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param subplots which subplots to create.
-#' @param plotdir where to put the plots (uses model directory by default)
+#' @template plotdir
 #' @param colvec vector of colors for each movement rate in the plot
 #' @param ylim optional input for y range of the plot. By default plot ranges
 #' from 0 to 10% above highest movement rate (not including fish staying in an

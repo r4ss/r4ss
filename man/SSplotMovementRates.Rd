@@ -34,7 +34,7 @@ SSplotMovementRates(
 
 \item{subplots}{which subplots to create.}
 
-\item{plotdir}{where to put the plots (uses model directory by default)}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{colvec}{vector of colors for each movement rate in the plot}
 

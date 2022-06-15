@@ -28,8 +28,7 @@
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export

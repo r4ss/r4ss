@@ -52,8 +52,7 @@
 #' @param shadealpha Transparency parameter used to make default shadecol
 #' values (see ?rgb for more info)
 #' @param legendloc Location of legend (see ?legend for more info)
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param labels Vector of labels for plots (titles and axis labels)
 #' @param pwidth Width of plot
 #' @param pheight Height of plot

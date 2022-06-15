@@ -36,8 +36,7 @@
 #' @param col3 shading color for observations within latency period
 #' @param col4 shading color for observations after latency period
 #' @param labels vector of labels for plots (titles and axis labels)
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template verbose
 #' @author Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 #' @import ggplot2

@@ -89,8 +89,7 @@ help("png") in R for details). Default=12.}
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{cex.main}{character expansion parameter for plot titles}
 

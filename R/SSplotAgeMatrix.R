@@ -33,8 +33,7 @@
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @param mainTitle Logical indicating if a title should be included at the top
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [SSplotNumbers()]

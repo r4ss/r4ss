@@ -90,8 +90,7 @@
 #' @template punits
 #' @template ptsize
 #' @template res
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param cex.main character expansion parameter for plot titles
 #' @param linepos should lines be added before points (linepos=1) or after
 #' (linepos=2)?

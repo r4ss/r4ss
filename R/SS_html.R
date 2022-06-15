@@ -6,7 +6,7 @@
 #'
 #'
 #' @template replist
-#' @param plotdir Directory where PNG files are located.
+#' @template plotdir
 #' @param plotInfoTable CSV file with info on PNG files. By default, the
 #' `plotdir` directory will be searched for files with name beginning
 #' 'plotInfoTable*'

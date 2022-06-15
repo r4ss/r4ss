@@ -9,8 +9,7 @@
 #' @param ylab Y-axis label.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. By default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' @param add add to existing plot

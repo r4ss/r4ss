@@ -12,8 +12,7 @@
 #' modified by the arguments `forecast`.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. By default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' These intervals will only appear when uncertainty in the dynamic B0

@@ -23,7 +23,7 @@ save_png(
 
 \item{file}{filename to write to (including .png extension)}
 
-\item{plotdir}{directory where plots will be written}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}

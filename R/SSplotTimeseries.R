@@ -42,8 +42,7 @@
 #' @param maxyr optional input for maximum year to show in plots
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
-#' @param plotdir directory where PNG or PDF files will be written. by default
-#' it will be the directory where the model was run.
+#' @template plotdir
 #' @template verbose
 #' @param btarg Target depletion to be used in plots showing depletion. May be
 #' omitted by setting to 0. "default" chooses value based on modeloutput.

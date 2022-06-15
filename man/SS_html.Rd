@@ -19,7 +19,7 @@ SS_html(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plotdir}{Directory where PNG files are located.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{plotInfoTable}{CSV file with info on PNG files. By default, the
 \code{plotdir} directory will be searched for files with name beginning

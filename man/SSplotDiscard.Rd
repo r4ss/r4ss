@@ -38,8 +38,7 @@ choice of \code{subplots}.}
 
 \item{print}{Print to PNG files?}
 
-\item{plotdir}{Directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{fleets}{Optional vector to subset fleets for which plots will be made}
 

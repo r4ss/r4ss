@@ -92,8 +92,7 @@
 #' @param cex.main character expansion for plot titles
 #' @template mainTitle
 #' @template mar
-#' @param plotdir Directory where PNG files will be written. By default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export

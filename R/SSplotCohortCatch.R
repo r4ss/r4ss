@@ -24,8 +24,7 @@
 #' @param cohortlabvec Optional vector of birth years for cohorts to label in
 #' plot. Value overrides `cohortlabfrac`.
 #' @param lwd Line width
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template plotdir
 #' @param xlab x-label for all plots
 #' @param labels Vector of labels for plots (titles and axis labels)
 #' @param pwidth Width of plot

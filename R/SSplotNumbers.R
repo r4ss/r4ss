@@ -47,8 +47,7 @@
 #' @template ptsize
 #' @template res
 #' @param cex.main character expansion for plot titles
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param mainTitle Logical indicating if a title should be included at the top
 #' @template verbose
 #' @author Ian Stewart, Ian Taylor

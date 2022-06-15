@@ -64,8 +64,7 @@ relationship making spawning output not equal to spawning biomass.}
 \item{bioscale}{multiplier on spawning biomass, set to 0.5 for single-sex
 models}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}

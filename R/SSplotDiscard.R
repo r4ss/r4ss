@@ -9,8 +9,7 @@
 #' choice of `subplots`.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param fleets Optional vector to subset fleets for which plots will be made
 #' @param fleetnames Optional replacement for fleenames used in data file
 #' @param datplot Make data-only plot of discards? This can override the choice

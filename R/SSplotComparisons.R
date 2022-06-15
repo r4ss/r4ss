@@ -119,8 +119,7 @@
 #' @template punits
 #' @template res
 #' @template ptsize
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template plotdir
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
 #' It will be separated from default name by an underscore.
 #' @param densitynames Vector of names (or subset of names) of parameters or

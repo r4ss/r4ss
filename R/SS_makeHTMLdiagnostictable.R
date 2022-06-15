@@ -3,8 +3,7 @@
 #' Creates html tables that show diagnostic outputs, including status checks, gradients, and correlations.
 #'
 #' @template replist
-#' @param plotdir Directory where the text files containing the tables will be written.
-#' By default it will be the directory where the model was run.
+#' @template plotdir
 #' @param gradmax the largest gradient value for estimated parameter; the default is 1E-3
 #' @return a three-element vector; the first element is the name of the html table file, the second is the table caption, and the third is the category of output type
 #' @author Christine Stawitz

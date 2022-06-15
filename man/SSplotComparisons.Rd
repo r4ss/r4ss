@@ -244,8 +244,7 @@ The default is \code{res = 300}.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 \code{help("png")} in R for details).}
 
-\item{plotdir}{Directory where PNG or PDF files will be written. By default
-it will be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{filenameprefix}{Additional text to append to PNG or PDF file names.
 It will be separated from default name by an underscore.}

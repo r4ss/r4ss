@@ -37,8 +37,7 @@ SSplotData(
 
 \item{print}{print to PNG files?}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{subplot}{vector controlling which subplots to create
 Currently there are only 2 subplots:

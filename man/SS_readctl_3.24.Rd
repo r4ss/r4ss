@@ -27,6 +27,9 @@ SS_readctl_3.24(
 
 See the formal arguments for a possible default filename.}
 
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which
 can not be determined from control file. Defaults to TRUE}
 

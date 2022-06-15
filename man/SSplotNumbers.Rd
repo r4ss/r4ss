@@ -108,8 +108,7 @@ The default is \code{res = 300}.}
 
 \item{cex.main}{character expansion for plot titles}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top}
 

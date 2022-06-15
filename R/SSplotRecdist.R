@@ -15,8 +15,7 @@
 #' @param ylab optional y-axis label (if the season names aren\'t informative
 #' enough)
 #' @param main title for plot
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file

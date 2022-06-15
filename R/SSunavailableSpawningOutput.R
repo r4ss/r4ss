@@ -7,8 +7,7 @@
 #' @template replist
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param pwidth Width of plot
 #' @param pheight Height of plot
 #' @param punits Units for PNG file

@@ -16,8 +16,7 @@
 #' relationship making spawning output not equal to spawning biomass.
 #' @param bioscale multiplier on spawning biomass, set to 0.5 for single-sex
 #' models
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template pwidth
 #' @template pheight
 #' @template punits

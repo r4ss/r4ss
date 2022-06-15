@@ -86,8 +86,7 @@ scaling is done automatically by SS.}
 
 \item{print}{print to PNG files?}
 
-\item{plotdir}{directory where PNG or PDF files will be written. by default
-it will be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

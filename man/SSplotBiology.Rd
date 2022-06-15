@@ -108,8 +108,7 @@ want to make this 1 or 2.}
 
 \item{legendloc}{Location of legend (see ?legend for more info)}
 
-\item{plotdir}{Directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{labels}{Vector of labels for plots (titles and axis labels)}
 

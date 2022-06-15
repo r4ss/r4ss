@@ -131,8 +131,7 @@ The default is \code{res = 300}.}
 
 \item{cex.main}{Character expansion for plot titles}
 
-\item{plotdir}{Directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{add_cutoff}{Add dashed line at ~1.92 to indicate 95\% confidence interval
 based on common cutoff of half of chi-squared of p=.95 with 1 degree of

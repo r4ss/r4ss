@@ -217,7 +217,7 @@ rich.colors.short <- function(n, alpha = 1) {
 #'
 #' @param plotinfo table of information about all plots
 #' @param file filename to write to (including .png extension)
-#' @param plotdir directory where plots will be written
+#' @template plotdir
 #' @template pwidth
 #' @template pheight
 #' @template punits

@@ -42,8 +42,7 @@ enough)}
 
 \item{main}{title for plot}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{pwidth}{width of plot}
 

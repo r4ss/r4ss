@@ -114,8 +114,7 @@ each year}
 
 \item{forecastplot}{Add points from forecast years}
 
-\item{plotdir}{Directory where PNG or PDF files will be written. By default
-it will be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{showlegend}{Put legend on plot}
 

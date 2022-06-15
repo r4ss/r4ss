@@ -61,8 +61,7 @@
 #' @template res
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 #' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
 #' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value

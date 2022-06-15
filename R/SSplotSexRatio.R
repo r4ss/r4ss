@@ -33,8 +33,7 @@
 #' @param ptsize point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
 #' @template res
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @param cex.main character expansion parameter for plot titles
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot

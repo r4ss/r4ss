@@ -41,9 +41,7 @@ SSplotPars(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plotdir}{A path to the folder where the plots will be saved. The default
-is \code{NULL}, which leads to the plots being created in the folder that
-contains the results.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{xlab}{Label on horizontal axis.}
 
