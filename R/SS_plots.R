@@ -199,6 +199,46 @@
 #' and posterior distributions instead of full parameter range?
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
+#' @details Functions to make groups of plots (e.g., `SSplotBiology()`) are
+#'  called by `SS_plots()`. These functions invisibly return a table with
+#'  details on the plots created. This table is  manipulated in `SS_plots()` and
+#'  written to a CSV file called `plotInfoTable_*.csv`, where * is replaced by
+#'  the date that the plots were created. One column of info is `category`,
+#'  which isncludes a category for the plot (e.g., biology plots will all be
+#'  labeled as the `bio` category.)
+#'
+#'  If `html = TRUE`, `SS_html()` is called at the end of `SS_plots()` to create
+#'  the html output. A new tab in the html output for each unique value in the
+#'  `category` column of `plotInfoTable_*.csv`.
+#'
+#'  A new html file for each category is created with a name set by
+#'  `paste("_SS_output_", category, ".html", sep = "")` which includes
+#'  information on all the plots or tables associated with that category in the
+#'  order they appear in the CSV files. The tabbed output at the top of each
+#'  html file includes references to all the other files. If there are
+#'  duplicated file names in the CSV files (e.g., from multiple calls to
+#'  `SS_plots()` with different inputs), the one with the more recent `png_time`
+#'  is used. To view the html output, open `_SS_output.html` in a browser.
+#'
+#'  Note that `SS_plots()` will avoid overwriting old plots created from running
+#'  `SS_plots()` by renaming old plotting output with the date appended to the
+#'  end of the file name (e.g., if `plots` is the `plotdir`, then it would be
+#'  renamed to something like `plots_StartTime_Tue_Jun_22_17.34.28_2021`). The
+#'  new output will be added to the specified `plotdir`.
+#'
+#'  Users can add their own figures to the html view. This can be done by either
+#'  multiple calls to `SS_plots()` with different arguments, or generating plots
+#'  outside of r4ss, adding details about these plots to a new
+#'  `plotInfoTable_*.csv` file, and calling `SS_html()` directly. Creating a
+#'  plotInfoTable_*.csv filename that is alphabetically earlier than the ones
+#'  created by `r4ss` should put the extra plots above the other r4ss plots
+#'  within that category. Adding any value for `category` other than the
+#'  existing defaults creates a new tab.
+#'
+#'  Multiple calls to `SS_plots()` with different arguments is possible, but if
+#'  adding more panels to a given plot, file may be generated that are no longer
+#'  needed, e.g., a lingering "page3" file when all the files now fit on pages 1
+#'  and 2.
 #' @export
 #' @seealso [SS_output()], [SSplotBiology()],
 #' [SSplotCatch()], [SSplotComps()],
