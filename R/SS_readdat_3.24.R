@@ -9,8 +9,7 @@
 #' @template file
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is being read.
+#' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
@@ -22,7 +21,16 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NULL) {
+SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecated(), section = NULL) {
+
+  # deprecated arguments
+  if (lifecycle::is_present(echoall)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_readdat_3.24(echoall)",
+      details = "Please use verbose = TRUE instead"
+    )
+  }
   # function to read Stock Synthesis data files
 
   if (verbose) message("running SS_readdat_3.24")
@@ -147,7 +155,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   fleetinfo1[["input"]] <- c("#_surveytiming", "#_areas")
   datlist[["fleetinfo1"]] <- fleetinfo1
 
-
   datlist[["units_of_catch"]] <- units_of_catch <- allnums[i:(i + Nfleet - 1)]
   i <- i + Nfleet
   datlist[["se_log_catch"]] <- se_log_catch <- allnums[i:(i + Nfleet - 1)]
@@ -156,7 +163,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   names(fleetinfo2) <- fleetnames[1:Nfleet]
   fleetinfo2[["input"]] <- c("#_units_of_catch", "#_se_log_catch")
   datlist[["fleetinfo2"]] <- fleetinfo2
-
 
 
   # more dimensions
@@ -178,7 +184,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   names(catch) <- c(fleetnames[1:Nfleet], "year", "seas")
   datlist[["catch"]] <- catch
   i <- i + Nvals
-  if (echoall) print(catch)
 
   # CPUE
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
@@ -201,10 +206,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   }
   datlist[["CPUEinfo"]] <- CPUEinfo
   datlist[["CPUE"]] <- CPUE
-  if (echoall) {
-    print(CPUEinfo)
-    print(CPUE)
-  }
 
   # discards
   # datlist[["discard_units"]] <- discard_units <- allnums[i]; i <- i+1
@@ -248,7 +249,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   if (verbose) message("N_meanbodywt =", N_meanbodywt)
   datlist[["DF_for_meanbodywt"]] <- allnums[i]
   i <- i + 1
-  if (echoall) message("DF_for_meanbodywt =", datlist[["DF_for_meanbodywt"]])
 
   if (N_meanbodywt > 0) {
     Ncols <- 6
@@ -262,12 +262,11 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     meanbodywt <- NULL
   }
   datlist[["meanbodywt"]] <- meanbodywt
-  if (echoall) print(meanbodywt)
 
   # length data
   datlist[["lbin_method"]] <- lbin_method <- allnums[i]
   i <- i + 1
-  if (echoall) message("lbin_method =", lbin_method)
+
   if (lbin_method == 2) {
     datlist[["binwidth"]] <- allnums[i]
     i <- i + 1
@@ -275,7 +274,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + 1
     datlist[["maximum_size"]] <- allnums[i]
     i <- i + 1
-    if (echoall) message("bin width, min, max =", datlist[["binwidth"]], ", ", datlist[["minimum_size"]], ", ", datlist[["maximum_size"]])
+
   } else {
     datlist[["binwidth"]] <- NA
     datlist[["minimum_size"]] <- NA
@@ -286,7 +285,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + 1
     datlist[["lbin_vector_pop"]] <- allnums[i:(i + N_lbinspop - 1)]
     i <- i + N_lbinspop
-    if (echoall) message("N_lbinspop =", N_lbinspop, "\nlbin_vector_pop:")
+
   } else {
     datlist[["N_lbinspop"]] <- NA
     datlist[["lbin_vector_pop"]] <- NA
@@ -302,7 +301,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   i <- i + 1
   datlist[["lbin_vector"]] <- lbin_vector <- allnums[i:(i + N_lbins - 1)]
   i <- i + N_lbins
-  if (echoall) print(lbin_vector)
 
   datlist[["N_lencomp"]] <- N_lencomp <- allnums[i]
   i <- i + 1
@@ -345,7 +343,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     agebin_vector <- NULL
   }
   datlist[["agebin_vector"]] <- agebin_vector
-  if (echoall) print(agebin_vector)
 
   datlist[["N_ageerror_definitions"]] <- N_ageerror_definitions <- allnums[i]
   i <- i + 1

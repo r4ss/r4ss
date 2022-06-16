@@ -9,12 +9,15 @@
 #' @param verbose Should there be verbose output while running the file?
 #' @author Nathan R. Vaughan
 #' @export
-#' @seealso [SS_readctl()], [SS_readdat()]
-#' [SS_readdat_3.24()],[SS_readdat_3.30()]
-#' [SS_readctl_3.24()],
-#' [SS_readstarter()], [SS_readforecast()],
+#' @seealso [SS_readpar_3.30()],
+#' [SS_readctl()], 
+#' [SS_readdat()]
+#' [SS_readstarter()], 
+#' [SS_readforecast()],
+#' [SS_writectl()],
+#' [SS_writedat()],
 #' [SS_writestarter()],
-#' [SS_writeforecast()], [SS_writedat()]
+#' [SS_writeforecast()]
 SS_writepar_3.30 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
 
   # function to write Stock Synthesis parameter files

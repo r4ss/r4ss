@@ -5,36 +5,37 @@
 #' Functionality comes from the `r4ss::SS_read*()` functions.
 #' This function simplifies the number of lines of code you need to write by
 #' using all of the read functions to read in the
-#' starter, control, data, and forecast files.
-#' The starter file is helpful because it provides names for the
-#' control and data files.
+#' starter, control, data, and forecast files and if requested, the
+#' weight-at-age file. The starter file is helpful because it provides names for
+#' the control and data files.
 #'
-#' @template dir
+#' @param dir A file path to the directory of interest or a raw github URL (see
+#' example). The default is the current working directory, `dir = getwd()`.
 #' @param ss_new A logical that controls if the `.ss_new` files or
 #'   the original input files are read in.
 #'   The default is to read the original files.
 #' @template verbose
-#'
 #' @author Ian G. Taylor, Kelli F. Johnson
-#'
 #' @return An invisible list is returned.
 #' The first element is the directory that was provided in the argument `dir`.
 #' The second element is the result of `normalizePath(dir)`,
 #' which gives the full path.
-#' The remaining four elements are list objects from reading in
+#' The remaining four to six elements are list objects from reading in
 #' the following input files:
 #' * data
 #' * control
 #' * starter
 #' * forecast
 #' * wtatage (will be NULL if not required by the model)
+#' * par (will be null if control and par do not match)
 #'
 #' @export
 #' @seealso
 #' * [SS_write()] can be used to write the input files using the list
 #'   created by this function.
 #' * [SS_readstarter()], [SS_readdat()], [SS_readctl()],
-#'   [SS_readforecast()], and [SS_readwtatage()] are used by this
+#'   [SS_readforecast()], [SS_readwtatage()],
+#'   [SS_readpar_3.30()], and [SS_readpar_3.24()] used by this
 #'   function to read in the input files.
 #' * [SS_output()] to read in equivalent SS3 output files.
 #'
@@ -43,12 +44,21 @@
 #' inputs <- SS_read(
 #'   dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
 #' )
-SS_read <- function(dir = NULL,
+#' # Read in an example from GitHub stored in user-examples,
+#' # wrapped in `dontrun` because it requires an Internet connection
+#' \dontrun{
+#' webexample <- SS_read(dir = file.path(
+#'   "https://raw.githubusercontent.com",
+#'   "nmfs-stock-synthesis",
+#'   "user-examples",
+#'   "main",
+#'   "model_files",
+#'   "simple_long_wtatage"
+#' ))
+#' }
+SS_read <- function(dir = getwd(),
                     ss_new = FALSE,
                     verbose = FALSE) {
-  if (is.null(dir)) {
-    dir <- getwd()
-  }
 
   # Read in starter first to find the names of the input files
   start <- SS_readstarter(
@@ -87,14 +97,36 @@ SS_read <- function(dir = NULL,
     wtatage <- NULL
   }
 
+  par <- NULL
+  if(file.exists(file.path(dir, "ss.par"))){
+    try(
+      {
+        if(ctl[["ReadVersion"]]=="3.24"){
+          par <- r4ss::SS_readpar_3.24(file.path(dir, "ss.par"),
+                                    datsource = dat,
+                                    ctlsource = ctl,
+                                    verbose = verbose)
+        }else{
+          par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
+                                       datsource = dat,
+                                       ctlsource = ctl,
+                                       verbose = verbose)  
+        }
+      },
+      silent = !verbose
+    )
+  }
+  
+  
   # return a list of the lists for each file
   invisible(list(
     dir = dir,
-    path = normalizePath(dir),
+    path = normalizePath(dir, mustWork = FALSE),
     dat = dat,
     ctl = ctl,
     start = start,
     fore = fore,
-    wtatage = wtatage
+    wtatage = wtatage,
+    par = par
   ))
 }

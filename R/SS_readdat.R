@@ -15,8 +15,7 @@
 #'  line of the file.
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is being read.
+#' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
@@ -34,7 +33,7 @@
 SS_readdat <- function(file,
                        version = "3.30",
                        verbose = TRUE,
-                       echoall = FALSE,
+                       echoall = lifecycle::deprecated(),
                        section = NULL) {
   if (is.null(version)) {
     lifecycle::deprecate_warn(
@@ -43,13 +42,20 @@ SS_readdat <- function(file,
     )
     version <- "3.30"
   }
+  if (lifecycle::is_present(echoall)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_readdat(echoall)",
+      details = "Please use verbose = TRUE instead"
+    )
+  }
   nver <- as.numeric(substring(version, 1, 4))
 
   # call function for SS version 2.00 ----
   if (nver < 3) {
     datlist <- SS_readdat_2.00(
       file = file, verbose = verbose,
-      echoall = echoall, section = section
+      section = section
     )
   }
 
@@ -57,7 +63,7 @@ SS_readdat <- function(file,
   if ((nver >= 3) && (nver < 3.2)) {
     datlist <- SS_readdat_3.00(
       file = file, verbose = verbose,
-      echoall = echoall, section = section
+      section = section
     )
   }
 
@@ -65,14 +71,14 @@ SS_readdat <- function(file,
   if ((nver >= 3.2) && (nver < 3.3)) {
     datlist <- SS_readdat_3.24(
       file = file, verbose = verbose,
-      echoall = echoall, section = section
+      section = section
     )
   }
   # call function for SS version 3.30 ----
   if (nver >= 3.3) {
     datlist <- SS_readdat_3.30(
       file = file, verbose = verbose,
-      echoall = echoall, section = section
+      section = section
     )
   }
   # return the result

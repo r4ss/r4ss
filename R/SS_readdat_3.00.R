@@ -210,10 +210,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   }
   datlist[["CPUEinfo"]] <- CPUEinfo
   datlist[["CPUE"]] <- CPUE
-  if (verbose) {
-    print(CPUEinfo)
-    print(CPUE)
-  }
 
   # discards
   # datlist[["discard_units"]] <- discard_units <- allnums[i]; i <- i+1
@@ -254,8 +250,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   # meanbodywt
   datlist[["N_meanbodywt"]] <- N_meanbodywt <- allnums[i]
   i <- i + 1
-  if (verbose) message("N_meanbodywt =", N_meanbodywt, "\n")
-
 
   if (N_meanbodywt > 0) {
     Ncols <- 6
@@ -276,7 +270,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     meanbodywt <- NULL
   }
   datlist[["meanbodywt"]] <- meanbodywt
-  if (verbose) print(meanbodywt)
 
   datlist[["lbin_method"]] <- lbin_method <- allnums[i]
   i <- i + 1
@@ -288,7 +281,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     i <- i + 1
     datlist[["maximum_size"]] <- allnums[i]
     i <- i + 1
-    if (verbose) message("bin width, min, max =", datlist[["binwidth"]], ", ", datlist[["minimum_size"]], ", ", datlist[["maximum_size"]])
+
   } else {
     datlist[["binwidth"]] <- NA
     datlist[["minimum_size"]] <- NA
@@ -322,8 +315,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["N_lencomp"]] <- N_lencomp <- allnums[i]
   i <- i + 1
-
-  if (verbose) message("N_lencomp =", N_lencomp)
 
   if (N_lencomp > 0) {
     Ncols <- N_lbins * datlist[["Nsexes"]] + 6
@@ -361,7 +352,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     agebin_vector <- NULL
   }
   datlist[["agebin_vector"]] <- agebin_vector
-  if (verbose) print(agebin_vector)
 
   datlist[["N_ageerror_definitions"]] <- N_ageerror_definitions <- allnums[i]
   i <- i + 1
@@ -380,7 +370,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
   datlist[["N_agecomp"]] <- N_agecomp <- allnums[i]
   i <- i + 1
-  if (verbose) message("N_agecomp =", N_agecomp)
 
   datlist[["Lbin_method"]] <- allnums[i]
   i <- i + 1
@@ -484,18 +473,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     i <- i + N_sizefreq_methods
     datlist[["Nobs_per_method"]] <- Nobs_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
     i <- i + N_sizefreq_methods
-    if (verbose) {
-      message("details of generalized size frequency methods:\n", 
-        paste0(capture.output(data.frame(
-          method = 1:N_sizefreq_methods,
-          nbins = nbins_per_method,
-          units = units_per_method,
-          scale = scale_per_method,
-          mincomp = mincomp_per_method,
-          nobs = Nobs_per_method
-        )), collapse = "\n")
-      )
-    }
+
     # get list of bin vectors
     sizefreq_bins_list <- list()
     for (imethod in 1:N_sizefreq_methods) {

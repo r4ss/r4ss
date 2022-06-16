@@ -10,7 +10,7 @@ SS_readpar_3.30(parfile, datsource, ctlsource, verbose = TRUE)
 \item{parfile}{Filename either with full path or relative to working directory.}
 
 \item{datsource}{list or character. If list, should be a list produced
-from \code{\link[=SS_writedat]{SS_writedat()}}. If character, should be the full file location of an
+from \code{\link[=SS_readdat]{SS_readdat()}}. If character, should be the full file location of an
 SS data file.}
 
 \item{ctlsource}{list or character. If list, should be a list produced
@@ -24,13 +24,15 @@ Default=TRUE.}
 Read Stock Synthesis (version 3.30) parameter file into list object in R.
 }
 \seealso{
+\code{\link[=SS_writepar_3.30]{SS_writepar_3.30()}},
 \code{\link[=SS_readctl]{SS_readctl()}},
 \code{\link[=SS_readdat]{SS_readdat()}},
 \code{\link[=SS_readstarter]{SS_readstarter()}},
 \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_writectl]{SS_writectl()}},
+\code{\link[=SS_writedat]{SS_writedat()}},
 \code{\link[=SS_writestarter]{SS_writestarter()}},
 \code{\link[=SS_writeforecast]{SS_writeforecast()}},
-\code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Nathan R. Vaughan
