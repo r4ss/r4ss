@@ -429,7 +429,7 @@ SSplotData <- function(replist,
   }
 
   ## Make the plot with no scaling on circles
-  if (1 %in% subplot) {
+  if (1 %in% subplots) {
     if (plot) {
       plotdata(datasize = FALSE)
     }
@@ -447,7 +447,7 @@ SSplotData <- function(replist,
   }
 
   ## Make second data plot
-  if (2 %in% subplot) {
+  if (2 %in% subplots) {
     if (plot) {
       plotdata(datasize = TRUE)
     }
