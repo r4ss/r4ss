@@ -9,12 +9,13 @@
 #' @template plot
 #' @template print
 #' @template plotdir
-#' @param subplot vector controlling which subplots to create
+#' @param subplots vector controlling which subplots to create
 #' Currently there are only 2 subplots:
 #' \itemize{
 #'   \item 1 equal size points showing presence/absence of data type by year/fleet
 #'   \item 2 points scaled to indicate quantity or precision of data
 #' }
+#' @param subplot Deprecated. Use subplots instead.
 #' @param fleetcol Either the string "default", or a vector of colors to use
 #' for each fleet. If tagging data is included, an additional color needs to be
 #' added for the tag releases which are not assigned to a fleet.
@@ -50,7 +51,7 @@
 SSplotData <- function(replist,
                        plot = TRUE, print = FALSE,
                        plotdir = "default",
-                       subplot = 1:2,
+                       subplots = 1:2,
                        fleetcol = "default",
                        datatypes = "all", fleets = "all", fleetnames = "default", ghost = FALSE,
                        pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
@@ -59,7 +60,18 @@ SSplotData <- function(replist,
                        maxsize = 1.0,
                        alphasize = 1,
                        mainTitle = FALSE,
-                       verbose = TRUE) {
+                       verbose = TRUE, 
+                       subplot = lifecycle::deprecated()) {
+      # Warning about deprecated arguments. Should be removed after 1 release.
+        # warn about soft deprecated arguments
+    if (lifecycle::is_present(subplot)) {
+      lifecycle::deprecate_warn(
+        when = "1.45.1",
+        what = "SSplotData(subplot)",
+        details = "Please use subplots instead. Assigning subplot to subplots."
+      )
+      subplots <- subplot
+    }
   # table to store information on each plot
   plotinfo <- NULL
 

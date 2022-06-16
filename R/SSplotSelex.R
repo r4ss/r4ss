@@ -24,7 +24,7 @@
 #' (1=females, 2=males)
 #' @param selexlines Vector to select which lines get plotted. values are 1.
 #' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.
-#' @param subplot Vector controlling which subplots to create.
+#' @param subplots Vector controlling which subplots to create.
 #' Numbering of subplots is as follows,
 #'
 #' *Plots with all fleets grouped together*
@@ -69,6 +69,7 @@
 #'   \item 21 selectivity at age and length contour with overlaid growth curve
 #'   \item 22 selectivity with uncertainty if requested at end of control file
 #' }
+#' @param subplot Deprecated. Use subplots instead.
 #' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
 #' = 1.0 for all ages beginning at age 1)?
 #' @template lwd
@@ -107,7 +108,7 @@ SSplotSelex <-
            season = 1,
            sexes = "all",
            selexlines = 1:6,
-           subplot = 1:25,
+           subplots = 1:25,
            skipAgeSelex10 = TRUE,
            plot = TRUE, print = FALSE, add = FALSE,
            labels = c(
@@ -128,7 +129,17 @@ SSplotSelex <-
            mainTitle = TRUE,
            mar = NULL,
            plotdir = "default",
-           verbose = TRUE) {
+           verbose = TRUE, subplot = lifecycle::deprecated()) {
+
+    # Warning about deprecated arguments. Should be removed after 1 release.
+    if (lifecycle::is_present(subplot)) {
+      lifecycle::deprecate_warn(
+        when = "1.45.1",
+        what = "SSplotSelex(subplot)",
+        details = "Please use subplots instead. Assigning subplot to subplots."
+      )
+      subplots <- subplot
+    }
 
     # empty table into which information on line types etc. might be copied
     infotable2 <- NULL
