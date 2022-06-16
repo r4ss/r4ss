@@ -1,0 +1,46 @@
+---
+title: "Customizing {r4ss} output and posting to github pages"
+author: "Ian Taylor and Kathryn Doering"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Introduction to r4ss}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(r4ss)
+```
+
+# Overview
+
+The html output from `r4ss::SS_plots()` can be posted to [GitHub
+Pages](https://pages.github.com/). This is an easy way to share model results
+publicly. For example, [html output for a big skate
+assessment](https://r4ss.github.io/r4ss/BigSkate/) is hosted on Github Pages. In
+this vignette, we demonstrate how to add custom plots created outside of {r4ss}
+ to the html output and provide links to documentation for hosting on Github.
+
+
+# Creating plots
+
+See the documentation details by calling `?r4ss::SS_plots` in the R console.
+This provides information on how `SS_plots()` works and how the html output can
+be modified to customize the html output.
+
+# Example: Creating plots from simple and adding a custom tab
+- Walk through how to run SS_plots (keep this short, because, shown in the intro vignette)
+- Make some new plots to add outside of {r4ss}
+- Add them to the .csv
+- Run SS_html
+- Demo the output with new tab
+
+# Getting the plots onto github
+Instructions for using Github Pages are thoroughly documented in the [Github
+Documentation](https://docs.github.com/en/pages/quickstart).
