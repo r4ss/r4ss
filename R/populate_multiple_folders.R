@@ -9,7 +9,7 @@
 #' @param outerdir.new New outer directory into which the subfolders
 #' should be created.
 #' @param create.dir Create new outer directory if it doesn't exist already?
-#' @param overwrite Overwrite existing files with matching names?
+#' @template overwrite
 #' @param use_ss_new Use .ss_new files instead of original inputs?
 #' @param exe.dir Path to executable to copy into all the subfolders.
 #' @param exe.file Filename of executable to copy into all the subfolders.

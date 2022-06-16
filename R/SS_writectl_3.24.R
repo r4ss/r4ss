@@ -4,7 +4,7 @@
 #' created using [SS_readctl()]
 #' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @template overwrite
 #' @template verbose
 #' @author Yukio Takeuchi, Kathryn L. Doering, Nathan R. Vaughan
 #' @export

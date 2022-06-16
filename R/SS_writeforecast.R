@@ -10,7 +10,7 @@
 #' @param writeAll Should the function continue even if Forecast=0
 #' (at which point SS stops reading, and remaining elements in list may not be
 #' available, depending on settings used in SS_readforecast)
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @template overwrite
 #' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export

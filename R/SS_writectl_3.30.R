@@ -6,7 +6,7 @@
 #'
 #' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @template overwrite
 #' @template verbose
 #' @author Kathryn L. Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki,
 #' Nathan R. Vaughan
