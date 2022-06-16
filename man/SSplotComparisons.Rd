@@ -148,7 +148,7 @@ models described above.}
 \item{indexPlotEach}{TRUE plots the observed index for each model with
 colors, or FALSE just plots observed once in black dots.}
 
-\item{labels}{Vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{col}{Optional vector of colors to be used for lines. Input NULL
 makes use of \code{rich.colors.short} function.}

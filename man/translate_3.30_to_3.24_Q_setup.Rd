@@ -18,6 +18,9 @@ control file r4ss list output generated from \link{SS_readctl}.}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 }
+\value{
+A dataframe containing the 3.24 Q setup.
+}
 \description{
 Use 3.30 q options to create the 3.24 q setup
 }

@@ -126,7 +126,7 @@ the string options.}
 
 \item{xlab}{x-label for all plots}
 
-\item{labels}{Vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{catchasnumbers}{Is catch in numbers instead of biomass? Should be set
 automatically if set to NULL. If fleets include a mix of biomass and

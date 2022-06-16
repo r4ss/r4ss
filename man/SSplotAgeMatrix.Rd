@@ -61,7 +61,7 @@ of the polygon up.}
 
 \item{print}{Print to PNG files?}
 
-\item{labels}{Vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}.}

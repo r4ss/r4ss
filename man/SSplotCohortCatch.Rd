@@ -64,7 +64,7 @@ plot. Value overrides \code{cohortlabfrac}.}
 
 \item{xlab}{x-label for all plots}
 
-\item{labels}{Vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}.}

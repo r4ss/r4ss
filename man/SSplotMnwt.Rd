@@ -48,7 +48,7 @@ c(1,3), listing fleets or surveys to be included in the plot.}
 \item{datplot}{Make data-only plot of discards? This can override the choice
 of \code{subplots}.}
 
-\item{labels}{Vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{col1}{first color to use in plot (for expected values)}
 
