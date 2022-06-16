@@ -4,6 +4,7 @@
 #' This function should be called from SS_readctl.
 #'
 #' @template file
+#' @template verbose
 #' @template readctl_vars
 #' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file

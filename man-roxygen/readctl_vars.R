@@ -1,6 +1,3 @@
-
-#' @param verbose A logical value specifying if output should be printed
-#' to the screen.
 #' @param use_datlist LOGICAL. If TRUE, use datlist to derive parameters which 
 #'  can not be determined from control file. Defaults to TRUE.
 #' @param datlist list or character. If list, should be a list produced from
