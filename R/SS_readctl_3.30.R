@@ -1768,6 +1768,7 @@ translate_3.30_to_3.24_var_adjust <- function(Variance_adjustment_list = NULL,
 #'  control file r4ss list output generated from [SS_readctl].
 #' @param Nfleets Number of fleets in the model
 #' @template fleetnames
+#' @return A dataframe containing the 3.24 Q setup.
 translate_3.30_to_3.24_Q_setup <- function(Q_options,
                                            Nfleets,
                                            fleetnames = seq_len(Nfleets)) {
