@@ -9,7 +9,7 @@ SSplotData(
   plot = TRUE,
   print = FALSE,
   plotdir = "default",
-  subplot = 1:2,
+  subplots = 1:2,
   fleetcol = "default",
   datatypes = "all",
   fleets = "all",
@@ -27,7 +27,8 @@ SSplotData(
   maxsize = 1,
   alphasize = 1,
   mainTitle = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  subplot = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -39,7 +40,7 @@ SSplotData(
 
 \item{plotdir}{Directory where PNG files will be written.}
 
-\item{subplot}{vector controlling which subplots to create
+\item{subplots}{vector controlling which subplots to create
 Currently there are only 2 subplots:
 \itemize{
 \item 1 equal size points showing presence/absence of data type by year/fleet
@@ -65,8 +66,9 @@ composition data from ghost fleets (data for which the fit is shown, but is
 not included in the likelihood calculations).}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.
-#' @param pheight Height of plots printed to png files in units of \code{punits}.
+\code{punits}. The default is \code{pwidth=6.5}.}
+
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
 
@@ -101,6 +103,8 @@ overlapping points.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{subplot}{Deprecated. Use subplots instead.}
 }
 \description{
 Plot shows graphical display of what data is being used in the model.  Some

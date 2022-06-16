@@ -17,7 +17,7 @@ SSplotSelex(
   season = 1,
   sexes = "all",
   selexlines = 1:6,
-  subplot = 1:25,
+  subplots = 1:25,
   skipAgeSelex10 = TRUE,
   plot = TRUE,
   print = FALSE,
@@ -39,7 +39,8 @@ SSplotSelex(
   mainTitle = TRUE,
   mar = NULL,
   plotdir = "default",
-  verbose = TRUE
+  verbose = TRUE,
+  subplot = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -76,7 +77,7 @@ multi-line plot (default = 1).}
 \item{selexlines}{Vector to select which lines get plotted. values are 1.
 Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.}
 
-\item{subplot}{Vector controlling which subplots to create.
+\item{subplots}{Vector controlling which subplots to create.
 Numbering of subplots is as follows,
 
 \emph{Plots with all fleets grouped together}
@@ -152,8 +153,9 @@ the x and y dimensions, respectively. See \code{help("legend")} for more info on
 the string options.}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.
-#' @param pheight Height of plots printed to png files in units of \code{punits}.
+\code{punits}. The default is \code{pwidth=6.5}.}
+
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
 
@@ -179,6 +181,8 @@ The default is \code{cex.main=1}.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{subplot}{Deprecated. Use subplots instead.}
 }
 \description{
 Plot selectivity, including retention and other quantities, with additional

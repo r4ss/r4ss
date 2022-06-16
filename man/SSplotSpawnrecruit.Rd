@@ -6,7 +6,7 @@
 \usage{
 SSplotSpawnrecruit(
   replist,
-  subplot = 1:3,
+  subplots = 1:3,
   add = FALSE,
   plot = TRUE,
   print = FALSE,
@@ -38,13 +38,14 @@ SSplotSpawnrecruit(
   show_env = TRUE,
   virg = TRUE,
   init = TRUE,
-  forecast = FALSE
+  forecast = FALSE,
+  subplot = lifecycle::deprecated()
 )
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{subplot}{vector of which subplots to show.  1=plot without labels,
+\item{subplots}{Vector of which subplots to show.  1=plot without labels,
 2=plot with year labels.}
 
 \item{add}{add to existing plot?}
@@ -67,8 +68,9 @@ models}
 \item{plotdir}{Directory where PNG files will be written.}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.
-#' @param pheight Height of plots printed to png files in units of \code{punits}.
+\code{punits}. The default is \code{pwidth=6.5}.}
+
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
 
@@ -128,6 +130,8 @@ variability}
 if this point differs from virgin values}
 
 \item{forecast}{include forecast years in the curve?}
+
+\item{subplot}{Deprecated - use subplots.}
 }
 \description{
 Plot spawner-recruit curve based on output from Stock Synthesis model.
