@@ -10,9 +10,9 @@
 #' @author Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readpar_3.30()],
-#' [SS_readctl()], 
+#' [SS_readctl()],
 #' [SS_readdat()]
-#' [SS_readstarter()], 
+#' [SS_readstarter()],
 #' [SS_readforecast()],
 #' [SS_writectl()],
 #' [SS_writedat()],

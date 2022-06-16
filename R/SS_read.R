@@ -98,26 +98,28 @@ SS_read <- function(dir = getwd(),
   }
 
   par <- NULL
-  if(file.exists(file.path(dir, "ss.par"))){
+  if (file.exists(file.path(dir, "ss.par"))) {
     try(
       {
-        if(ctl[["ReadVersion"]]=="3.24"){
+        if (ctl[["ReadVersion"]] == "3.24") {
           par <- r4ss::SS_readpar_3.24(file.path(dir, "ss.par"),
-                                    datsource = dat,
-                                    ctlsource = ctl,
-                                    verbose = verbose)
-        }else{
+            datsource = dat,
+            ctlsource = ctl,
+            verbose = verbose
+          )
+        } else {
           par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
-                                       datsource = dat,
-                                       ctlsource = ctl,
-                                       verbose = verbose)  
+            datsource = dat,
+            ctlsource = ctl,
+            verbose = verbose
+          )
         }
       },
       silent = !verbose
     )
   }
-  
-  
+
+
   # return a list of the lists for each file
   invisible(list(
     dir = dir,
