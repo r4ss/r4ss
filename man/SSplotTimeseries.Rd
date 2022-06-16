@@ -103,7 +103,7 @@ output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).}
 \item{labels}{Vector of labels for plots (titles and axis labels)}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used

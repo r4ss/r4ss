@@ -19,7 +19,8 @@
 #' @param col4 fourth color used
 #' @template legendloc
 #' @template labels
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template res
 #' @template ptsize

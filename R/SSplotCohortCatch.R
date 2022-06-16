@@ -27,7 +27,8 @@
 #' @template plotdir
 #' @param xlab x-label for all plots
 #' @template labels
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template res
 #' @template ptsize

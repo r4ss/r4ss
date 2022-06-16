@@ -55,7 +55,8 @@
 #' @param type Line type (see ?plot for more info).
 #' @param legend Include legend?
 #' @template legendloc
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template res
 #' @template ptsize

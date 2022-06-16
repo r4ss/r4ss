@@ -27,7 +27,7 @@ SSunavailableSpawningOutput(
 \item{plotdir}{Directory where PNG files will be written.}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used

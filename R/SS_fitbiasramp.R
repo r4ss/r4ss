@@ -49,7 +49,8 @@
 #' or "psoptim". If not equal to either of these, then optim is used.
 #' @param exclude_forecast Exclude forecast values in the estimation of
 #' alternative bias adjustment inputs?
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template ptsize
 #' @template res

@@ -23,7 +23,8 @@
 #' @param lty line type (only applied to equilibrium yield plot at this time)
 #' @template lwd
 #' @template cex.main
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template res
 #' @template ptsize

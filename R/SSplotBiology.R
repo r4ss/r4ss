@@ -54,7 +54,8 @@
 #' @template legendloc
 #' @template plotdir
 #' @template labels
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template res
 #' @template ptsize

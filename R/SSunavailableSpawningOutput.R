@@ -8,7 +8,8 @@
 #' @template plot
 #' @template print
 #' @template plotdir
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template res
 #' @template ptsize

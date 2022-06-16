@@ -41,7 +41,8 @@
 #' @param meanlines add lines for mean age or length on top of bubble plots
 #' @param add add to existing plot? (not yet implemented)
 #' @template labels
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template ptsize
 #' @template res

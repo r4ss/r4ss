@@ -21,7 +21,8 @@
 #' Default=2.6
 #' @param minnbubble minimum number of years below which blank years will be
 #' added to bubble plots to avoid cropping
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template ptsize
 #' @template res

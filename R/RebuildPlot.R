@@ -35,7 +35,8 @@
 #' Default="default".
 #' @param pdf Option to send figures to pdf file instead of plot window in
 #' Rgui. Default=FALSE.
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template lwd
 #' @author Andre Punt, Ian Taylor
 #' @export

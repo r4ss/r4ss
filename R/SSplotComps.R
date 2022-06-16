@@ -85,7 +85,8 @@
 #' transparent red)
 #' @param blue What color to use for males in bubble plots (default is slightly
 #' transparent blue)
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template ptsize
 #' @template res

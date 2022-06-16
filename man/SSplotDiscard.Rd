@@ -63,7 +63,7 @@ discard amounts are very high)}
 \item{col2}{Second color to use in plot (for observations and intervals)}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used

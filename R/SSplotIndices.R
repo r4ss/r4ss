@@ -55,7 +55,8 @@
 #' @template legendloc
 #' @param seasnames optional vector of names for each season to replace
 #' defaults if a legend is used
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template res
 #' @template ptsize

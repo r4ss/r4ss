@@ -35,7 +35,8 @@
 #' initial value, prior, posterior, and median of the posterior.
 #' @template plot
 #' @template print
-#' @template pwidth_pheight
+#' @template pwidth
+#' @template pheight
 #' @template punits
 #' @template ptsize
 #' @template res
