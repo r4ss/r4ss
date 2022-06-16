@@ -13,7 +13,8 @@ SS_doRetro(
   overwrite = TRUE,
   exefile = "ss",
   extras = "-nox",
-  intern = FALSE,
+  show_in_console = TRUE,
+  intern = lifecycle::deprecated(),
   CallType = "system",
   RemoveBlocks = FALSE
 )
@@ -44,8 +45,10 @@ the executable is in your path and doesn't need copying.}
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
 will reduce the amount of command-line output.}
 
-\item{intern}{Display runtime information from SS in the R console (vs.
-saving to a file).}
+\item{show_in_console}{Show output in the R console? If FALSE,
+then it is saved to a file.}
+
+\item{intern}{Deprecated. Use \code{show_in_console} instead.}
 
 \item{CallType}{Either "system" or "shell" (choice depends on how you're running
 R. Default is "system".}
