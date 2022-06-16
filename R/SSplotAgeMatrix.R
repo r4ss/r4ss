@@ -32,7 +32,7 @@
 #' @template res
 #' @template ptsize
 #' @template cex.main
-#' @param mainTitle Logical indicating if a title should be included at the top
+#' @template mainTitle
 #' @template plotdir
 #' @author Ian G. Taylor
 #' @export

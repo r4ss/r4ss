@@ -44,7 +44,7 @@
 #' @param alphasize The transparency of the bubbles in the datasize
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
-#' @param mainTitle TRUE/FALSE switch to turn on/off the title on the plot.
+#' @template mainTitle
 #' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
 #' @seealso [SS_plots()], [SS_output()],

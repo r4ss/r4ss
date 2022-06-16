@@ -48,7 +48,7 @@
 #' @template res
 #' @template cex.main
 #' @template plotdir
-#' @param mainTitle Logical indicating if a title should be included at the top
+#' @template mainTitle
 #' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export

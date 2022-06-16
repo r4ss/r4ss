@@ -61,7 +61,7 @@
 #' @template res
 #' @template ptsize
 #' @template cex.main
-#' @param mainTitle switch which allows the plot title to be left off
+#' @template mainTitle
 #' @template plotdir
 #' @param minyr First year to show in plot (for zooming in on a subset of
 #' values)
