@@ -17,7 +17,7 @@
 #' @param do.sqrt Should size be based on the area? (Diameter proportional to
 #' sqrt(z)). Default=TRUE.
 #' @param bg.open background color for open bubbles (border will equal 'col')
-#' @param legend Add a legend to the plot?
+#' @template legend
 #' @template legendloc
 #' @param legend.z If a legend is added, what z values will be shown. Default
 #' is c(-3,-2,-1,.1,1,2,3) for Pearson-like quantities and a smaller range for

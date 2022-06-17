@@ -46,7 +46,7 @@
 #' @param yaxs The style of axis interval calculation to be used for the y-axis
 #' (see ?par for more info).
 #' @param type Line type (see ?plot for more info).
-#' @param legend Include legend?
+#' @template legend
 #' @template legendloc
 #' @template pwidth
 #' @template pheight

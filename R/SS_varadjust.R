@@ -15,7 +15,7 @@
 #' (may need to increase from default if you have a huge number of fleets)
 #' @param maxrows Maximum number of rows to search among in 3.30 models
 #' (may need to increase from default if you have a huge number of fleets)
-#' @param overwrite Overwrite file if it exists?
+#' @template overwrite
 #' @template version
 #' @template verbose
 #' @author Ian G. Taylor, Gwladys I. Lambert

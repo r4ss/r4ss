@@ -17,8 +17,7 @@
 #'
 #' @param ctlfile File name of control file including path.
 #' @template dir
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
+#' @template version
 #' @template verbose
 #' @param active Should only active parameters (those with positive phase) be
 #' output? Default=FALSE.

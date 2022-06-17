@@ -8,7 +8,7 @@
 #' @param ctllist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new control file.
 #' @template version
-#' @param overwrite Should existing files be overwritten? Defaults to FALSE.
+#' @template overwrite
 #' @template verbose
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn L.
 #' Doering, Nathan R. Vaughan

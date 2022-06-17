@@ -66,7 +66,7 @@
 #' the image plot text is rounded. Defaults to 0, meaning whole numbers. If
 #' all your values are small and there's no contrast in the text, you might
 #' want to make this 1 or 2.
-#' @param mainTitle Logical indicating if a title should be included at the top
+#' @template mainTitle
 #' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export

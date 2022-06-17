@@ -32,7 +32,7 @@
 #' @param ptcol vector or single value for the color of the points, "default"
 #' will by replaced by a vector of colors of length equal to
 #' `nrow(replist[["recruit"]])`
-#' @param legend add a legend to the figure?
+#' @template legend
 #' @template legendloc
 #' @param minyr minimum year of recruitment deviation to show in plot
 #' @param textmindev minimum recruitment deviation for label to be added so

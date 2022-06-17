@@ -42,7 +42,7 @@
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of years of data
 #' @template verbose
-#' @param mainTitle Logical indicating if a title for the plot should be produced
+#' @template mainTitle
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Cole Monnahan, Ian Taylor
 #' @export

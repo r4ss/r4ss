@@ -131,7 +131,7 @@
 #' work correctly in all cases.
 #' @param addMeans Add parameter means in addition to medians for MCMC
 #' posterior distributions in which the median and mean differ.
-#' @param mainTitle Logical indicating if a title for the plot should be produced
+#' @template mainTitle
 #' @param \dots additional arguments that will be passed to
 #' the `par` command in the [make_multifig()] function.
 #' @author Ian Taylor

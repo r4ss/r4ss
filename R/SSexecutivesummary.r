@@ -40,7 +40,7 @@
 #' @param match_digits TRUE/FALSE switch on whether the low and high interval values
 #' in e_ReferencePoints_ES will be reported with the same number of decimal digits
 #' as the estimate.
-#' @param verbose Return updates of function progress to the R console?
+#' @template verbose
 #'
 #' @return Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).
 #' @author Chantel Wetzel

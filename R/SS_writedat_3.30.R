@@ -7,7 +7,7 @@
 #'
 #' @param datlist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new data file.
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @template overwrite
 #' @param faster Deprecated. Speed up writing by writing length and age comps without aligning
 #' the columns (by using write.table instead of print.data.frame)
 #' @template verbose
