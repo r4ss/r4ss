@@ -150,7 +150,7 @@ run_SS_models <- function(dirvec = NULL,
         if (OS == "windows" & !systemcmd) {
           console.output <- shell(cmd = command, intern = !show_in_console)
         } else {
-          console.output <- system(command, intern = !show_in_console, show.output.on.console = verbose)
+          console.output <- system(command, intern = !show_in_console, show.output.on.console = show_in_console)
         }
         if (!show_in_console) {
           writeLines(c(
