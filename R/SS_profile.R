@@ -3,7 +3,7 @@
 #' Iteratively changes the control file using SS_changepars.
 #'
 #'
-#' @param dir Directory where input files and executable are located.
+#' @template dir
 #' @param masterctlfile Source control file. Default = "control.ss_new"
 #' @param newctlfile Destination for new control files (must match entry in
 #' starter file). Default = "control_modified.ss".
@@ -48,8 +48,7 @@
 #' @param read_like Read the table of likelihoods from each model as it finishes.
 #' Default = TRUE. Changing to FALSE should allow the function to play through
 #' even if something is wrong with reading the table.
-#' @param verbose Controls amount of info output to command line.  Default =
-#' TRUE.
+#' @template verbose
 #' @note The starting values used in this profile are not ideal and some models
 #' may not converge. Care should be taken in using an automated tool like this,
 #' and some models are likely to require rerunning with alternate starting

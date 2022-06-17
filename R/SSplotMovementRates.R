@@ -6,26 +6,26 @@
 #' is available in the Report.sso file)
 #'
 #' @template replist
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template plot
+#' @template print
 #' @param subplots which subplots to create.
-#' @param plotdir where to put the plots (uses model directory by default)
+#' @template plotdir
 #' @param colvec vector of colors for each movement rate in the plot
 #' @param ylim optional input for y range of the plot. By default plot ranges
 #' from 0 to 10% above highest movement rate (not including fish staying in an
 #' area).
 #' @param legend add a legend designating which color goes with which pair of
 #' areas?
-#' @param legendloc location passed to legend function (if used)
+#' @template legendloc
 #' @param moveseas choice of season for which movement rates are shown
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main Character expansion parameter for plot titles
-#' @param verbose Print information on function progress.
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()], [SSplotMovementRates()],

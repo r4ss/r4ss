@@ -9,7 +9,7 @@
 #' @param dir.new New location to which the files should be copied,
 #' either an absolute path or relative to the working directory.
 #' @param create.dir Create dir.new directory if it doesn't exist already?
-#' @param overwrite Overwrite existing files with matching names?
+#' @template overwrite
 #' @param recursive logical. Should elements of the path other than the last be
 #'        created?
 #' @param use_ss_new Use .ss_new files instead of original inputs?
@@ -17,7 +17,7 @@
 #' dir.exe (if provided)?
 #' @param copy_par Copy any .par files found in dir.old to dir.new?
 #' @param dir.exe Path to executable to copy instead of any in dir.old
-#' @param verbose Return updates of function progress to the R console?
+#' @template verbose
 #' @return Logical indicating whether all input files were copied successfully.
 #' @author Ian Taylor
 #' @export

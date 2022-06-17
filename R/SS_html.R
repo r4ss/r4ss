@@ -6,7 +6,7 @@
 #'
 #'
 #' @template replist
-#' @param plotdir Directory where PNG files are located.
+#' @template plotdir
 #' @param plotInfoTable CSV file with info on PNG files. By default, the
 #' `plotdir` directory will be searched for files with name beginning
 #' 'plotInfoTable*'
@@ -16,7 +16,7 @@
 #' @param multimodel Override errors associated with plots from multiple model
 #' runs. Only do this if you know what you're doing.
 #' @param filenotes Add additional notes to home page.
-#' @param verbose Display more info while running this function?
+#' @template verbose
 #' @note By default, this function will look in the directory where PNG files
 #' were created for CSV files with the name 'plotInfoTable...' written by
 #' 'SS_plots. HTML files are written to link to these plots and put in the same

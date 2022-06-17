@@ -5,16 +5,15 @@
 #' too big to be selected
 #'
 #' @template replist
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template plot
+#' @template print
+#' @template plotdir
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
+#' @template ptsize
+#' @template cex.main
 #' @author Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 #' @export
 

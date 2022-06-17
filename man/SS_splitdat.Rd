@@ -32,8 +32,8 @@ Default="Data.SS_New".}
 \item{number}{Append bootstrap number to the file name chosen in
 \code{outpattern}? Default=F.}
 
-\item{verbose}{Provide richer command line info of function progress?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{fillblank}{Replace blank lines with "#". Helps with running on linux.
 Default=TRUE.}

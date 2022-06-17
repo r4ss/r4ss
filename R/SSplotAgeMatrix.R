@@ -23,18 +23,17 @@
 #' the polygon up.
 #' @param shift_lo A numeric value specifying the amount to shift the bottom
 #' of the polygon up.
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
-#' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template plot
+#' @template print
+#' @template labels
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
-#' @param mainTitle Logical indicating if a title should be included at the top
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template ptsize
+#' @template cex.main
+#' @template mainTitle
+#' @template plotdir
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [SSplotNumbers()]

@@ -18,8 +18,7 @@ included in the model.}
 
 \item{Nfleets}{Number of fleets in the model}
 
-\item{fleetnames}{Name of the fleets. Defaults to fleet numbers, in the order
-defined in the model.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 }
 \value{
 A dataframe of 3.24 variance adjustments.

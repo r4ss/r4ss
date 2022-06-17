@@ -27,8 +27,8 @@
 #' hardwired to Version = 1.
 #' @param StartFromPar Logical flag (TRUE or FALSE) saying whether to start each
 #' round of optimization from a ".par" file (I recommend TRUE)
-#' @param Intern Logical flag saying whether to display all ss3 runtime output
-#' in the R terminal
+#' @template show_in_console
+#' @param Intern Deprecated. Use `show_in_console` instead.
 #' @param ReDoBiasRamp Logical flag saying whether to re-do the bias ramp
 #' (using [SS_fitbiasramp()]) each time Stock Synthesis is run.
 #' @param BiasRamp_linenum_Vec Vector giving the line numbers from the CTL file
@@ -75,10 +75,21 @@
 NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
                          CTL_linenum_List, ESTPAR_num_List,
                          PAR_num_Vec, Int_Group_List = list(1),
-                         StartFromPar = TRUE, Intern = TRUE,
+                         StartFromPar = TRUE, show_in_console = FALSE,
+                         Intern = lifecycle::deprecated(),
                          ReDoBiasRamp = FALSE, BiasRamp_linenum_Vec = NULL,
                          CTL_linenum_Type = NULL, systemcmd = FALSE,
                          exe = "ss") {
+    # deprecated variable warnings -----
+    # soft deprecated for now, but fully deprecate in the future.                     
+    if (lifecycle::is_present(Intern)) {
+      lifecycle::deprecate_warn(
+        when = "1.45.1",
+        what = "NegLogInt_Fn(Intern)",
+        details = "Please use show_in_console instead"
+      )
+      show_in_console <- !Intern
+    }
   # test exe input
   if (!(exe == "ss" | exe == "ss3")) {
     # turns out 3.30 != "3.30" in R
@@ -229,9 +240,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     command <- paste0("./", command)
   }
   if (OS == "Windows" & !systemcmd) {
-    shell(cmd = command, intern = Intern)
+    shell(cmd = command, intern = !show_in_console)
   } else {
-    system(command, intern = Intern)
+    system(command, intern = !show_in_console)
   }
   Sys.sleep(1)
 
@@ -296,9 +307,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
         command <- paste0("./", command)
       }
       if (OS == "Windows" & !systemcmd) {
-        shell(cmd = command, intern = Intern)
+        shell(cmd = command, intern = !show_in_console)
       } else {
-        system(command, intern = Intern)
+        system(command, intern = !show_in_console)
       }
       Sys.sleep(1)
       # Check convergence
@@ -357,9 +368,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
       command <- paste0("./", command)
     }
     if (OS == "Windows" & !systemcmd) {
-      shell(cmd = command, intern = Intern)
+      shell(cmd = command, intern = !show_in_console)
     } else {
-      system(command, intern = Intern)
+      system(command, intern = !show_in_console)
     }
     Sys.sleep(1)
 
@@ -382,9 +393,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
           command <- paste0("./", command)
         }
         if (OS == "Windows" & !systemcmd) {
-          shell(cmd = command, intern = Intern)
+          shell(cmd = command, intern = !show_in_console)
         } else {
-          system(command, intern = Intern)
+          system(command, intern = !show_in_console)
         }
         Sys.sleep(1)
       }

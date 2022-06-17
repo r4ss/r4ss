@@ -10,12 +10,8 @@ SS_write(inputlist, dir = "", overwrite = FALSE, verbose = FALSE)
 \item{inputlist}{list created by \code{\link[=SS_read]{SS_read()}}}
 
 \item{dir}{A file path to the directory of interest.
-Typically used with \code{file}, an additional input argument,
-to specify input and output file paths.
 The default value is \code{dir = NULL}, which leads to using
-the current working directory, and thus, full file paths should
-not be specified for other arguments as they will be appended
-to \code{dir}.}
+the current working directory.}
 
 \item{overwrite}{A logical value specifying if the existing file(s)
 should be overwritten. The default value is \code{overwrite = FALSE}.}

@@ -26,7 +26,7 @@
 #' }
 #'
 #' @template replist
-#' @param verbose Controls the amount of output to the screen.  Default=FALSE.
+#' @template verbose
 #' @param startvalues A vector of 5 values for the starting points in the
 #' minimization. Default=NULL.
 #' @param method A method to apply to the 'optim' function. See ?optim for
@@ -36,10 +36,9 @@
 #' uncertainty, or just the second panel in the set?  Default=TRUE.
 #' @param transform An experimental option to treat the transform the 5
 #' quantities to improve minimization. Doesn't work well. Default=FALSE.
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. By default it will
-#' be the directory where the model was run.
+#' @template plot
+#' @template print
+#' @template plotdir
 #' @param shownew Include new estimated bias adjustment values on top of values
 #' used in the model? (TRUE/FALSE)
 #' @param oldctl Optional name of existing control file to modify.

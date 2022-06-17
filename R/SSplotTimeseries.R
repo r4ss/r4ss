@@ -40,24 +40,23 @@
 #' scaling is done automatically by SS.
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param plotdir directory where PNG or PDF files will be written. by default
-#' it will be the directory where the model was run.
-#' @param verbose report progress to R GUI?
+#' @template plot
+#' @template print
+#' @template plotdir
+#' @template verbose
 #' @param btarg Target depletion to be used in plots showing depletion. May be
 #' omitted by setting to 0. "default" chooses value based on modeloutput.
 #' @param minbthresh Threshold depletion to be used in plots showing depletion.
 #' May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
 #' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
 #' @param xlab x axis label for all plots
-#' @param labels vector of labels for plots (titles and axis labels)
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template labels
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
+#' @template ptsize
+#' @template cex.main
 #' @template mainTitle
 #' @template mar
 #' @author Ian Taylor, Ian Stewart

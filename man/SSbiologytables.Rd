@@ -22,16 +22,11 @@ The directory will be created if it doesn not exist.
 If 'printfolder' is set to "", it is ignored and the PNG files will
 be located in the directory specified by 'dir'.}
 
-\item{dir}{The directory in which a PDF file (if requested) will be created
-and within which the printfolder sub-directory (see above) will be created
-if png=TRUE. By default it will be the same directory that the report file
-was read from by the \code{SS_output} function. Alternatives to the default
-can be either relative (to the working directory) or absolute paths.
-The function will attempt to create the directory it does not exist, but it
-does not do so recursively.}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
-\item{fleetnames}{Either the string "default", or a vector of characters
-strings to use for each fleet name. Default="default".}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{selexyr}{The year to summarize selectivity, the default is the final
 model yr strings to use for each fleet name. Default="default".}

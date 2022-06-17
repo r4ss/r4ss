@@ -2,7 +2,7 @@
 #'
 #' Function has not been fully tested yet
 #'
-#' @param dir Directory with control file to change.
+#' @template dir
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #' Default="control_modified.ss".
@@ -15,10 +15,9 @@
 #' (may need to increase from default if you have a huge number of fleets)
 #' @param maxrows Maximum number of rows to search among in 3.30 models
 #' (may need to increase from default if you have a huge number of fleets)
-#' @param overwrite Overwrite file if it exists?
+#' @template overwrite
 #' @template version
-#' @param verbose TRUE/FALSE switch for amount of detail produced by function.
-#' Default=TRUE.
+#' @template verbose
 #' @author Ian G. Taylor, Gwladys I. Lambert
 #' @seealso [SS_tune_comps()], [SS_parlines()], [SS_changepars()]
 #' @export

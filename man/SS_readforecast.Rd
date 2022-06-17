@@ -33,7 +33,8 @@ The default is \code{version = "3.30"}.}
 \item{readAll}{Should the function continue even if Forecast = 0 or -1
 (at which point SS stops reading)?}
 
-\item{verbose}{Should there be verbose output while running the file?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 read Stock Synthesis forecast file into list object in R

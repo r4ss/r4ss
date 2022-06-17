@@ -4,11 +4,12 @@
 #'
 #'
 #' @template replist
-#' @param subplot vector of which subplots to show.  1=plot without labels,
+#' @param subplots Vector of which subplots to show.  1=plot without labels,
 #' 2=plot with year labels.
+#' @param subplot Deprecated - use subplots.
 #' @param add add to existing plot?
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template plot
+#' @template print
 #' @param xlim optional control of x range
 #' @param ylim optional control of y range
 #' @param labels vector containing x-axis label for models with spawning biomass
@@ -16,14 +17,13 @@
 #' relationship making spawning output not equal to spawning biomass.
 #' @param bioscale multiplier on spawning biomass, set to 0.5 for single-sex
 #' models
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template plotdir
 #' @template pwidth
 #' @template pheight
 #' @template punits
 #' @template ptsize
 #' @template res
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points
 #' (where the 4th value for the points is the color of the circle around the
 #' background color provided by `ptcol`
@@ -32,11 +32,8 @@
 #' @param ptcol vector or single value for the color of the points, "default"
 #' will by replaced by a vector of colors of length equal to
 #' `nrow(replist[["recruit"]])`
-#' @param legend add a legend to the figure?
-#' @param legendloc location of legend. By default it is chosen as the first
-#' value in the set of "topleft", "topright", "bottomright" that results in no
-#' overlap with the points in the plot, but the user can override this with their
-#' choice of location. See ?legend for more info on the options.
+#' @template legend
+#' @template legendloc
 #' @param minyr minimum year of recruitment deviation to show in plot
 #' @param textmindev minimum recruitment deviation for label to be added so
 #' only extreme devs are labeled (labels are added to first and last years as
@@ -57,7 +54,7 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotSpawnrecruit <-
-  function(replist, subplot = 1:3, add = FALSE, plot = TRUE, print = FALSE,
+  function(replist, subplots = 1:3, add = FALSE, plot = TRUE, print = FALSE,
            xlim = NULL, ylim = NULL,
            labels = c(
              "Spawning biomass (mt)",
@@ -78,7 +75,19 @@ SSplotSpawnrecruit <-
            # line1="blue",line2="green3",line3="black",ptcol="red",
            minyr = "default", textmindev = 0.5, relative = FALSE,
            expected = TRUE, estimated = TRUE, bias_adjusted = TRUE,
-           show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE) {
+           show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE, 
+           subplot = lifecycle::deprecated()) {
+
+    # warn about soft deprecated arguments
+    if (lifecycle::is_present(subplot)) {
+      lifecycle::deprecate_warn(
+        when = "1.45.1",
+        what = "SSplotSpawnrecruit(subplot)",
+        details = "Please use subplots instead. Assigning subplot to subplots."
+      )
+      subplots <- subplot
+    }
+
     # plot of spawner recruit curve
 
     # table to store information on each plot
@@ -89,8 +98,8 @@ SSplotSpawnrecruit <-
       message("Skipping stock-recruit plots: no recruitment information available")
       return()
     } else {
-      if (3 %in% subplot && max(abs(recruit[["dev"]]), na.rm = TRUE) < 1e-6) {
-        subplot <- setdiff(subplot, 3)
+      if (3 %in% subplots && max(abs(recruit[["dev"]]), na.rm = TRUE) < 1e-6) {
+        subplots <- setdiff(subplots, 3)
       }
     }
     nsexes <- replist[["nsexes"]]
@@ -352,18 +361,18 @@ SSplotSpawnrecruit <-
       ## }
     }
     if (plot) {
-      if (1 %in% subplot) {
+      if (1 %in% subplots) {
         StockRecruitCurve.fn()
       }
-      if (2 %in% subplot) {
+      if (2 %in% subplots) {
         StockRecruitCurve.fn(text = TRUE)
       }
-      if (3 %in% subplot) {
+      if (3 %in% subplots) {
         stock_vs_devs.fn(text = TRUE)
       }
     }
     if (print) {
-      if (1 %in% subplot) {
+      if (1 %in% subplots) {
         file <- "SR_curve.png"
         caption <- paste("Stock-recruit curve.", color.caption)
         plotinfo <- save_png(
@@ -374,7 +383,7 @@ SSplotSpawnrecruit <-
         StockRecruitCurve.fn()
         dev.off()
       }
-      if (2 %in% subplot) {
+      if (2 %in% subplots) {
         file <- "SR_curve2.png"
         caption <- paste0(
           "Stock-recruit curve with labels on first, last, and ",
@@ -389,7 +398,7 @@ SSplotSpawnrecruit <-
         StockRecruitCurve.fn(text = TRUE)
         dev.off()
       }
-      if (3 %in% subplot) {
+      if (3 %in% subplots) {
         file <- "SR_resids.png"
         caption <- paste0(
           "Deviations around the stock-recruit curve. ",

@@ -8,6 +8,7 @@
 #' default values.
 #'
 #' @template file
+#' @template verbose
 #' @template readctl_vars
 #' @template version
 #' @param N_CPUE_obs Number of CPUE observations. Used only in control file 3.24

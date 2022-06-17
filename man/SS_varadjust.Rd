@@ -20,7 +20,9 @@ SS_varadjust(
 )
 }
 \arguments{
-\item{dir}{Directory with control file to change.}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{ctlfile}{Control file name. Default="control.ss_new".}
 
@@ -49,8 +51,8 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).
 \code{version = NULL} is no longer the default or an allowed entry.
 The default is \code{version = "3.30"}.}
 
-\item{verbose}{TRUE/FALSE switch for amount of detail produced by function.
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Function has not been fully tested yet

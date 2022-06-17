@@ -11,8 +11,8 @@
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be ran,
 #'   else `1:Njitter` will be executed.
-#' @param Intern Show command line info in R console or keep hidden. The default,
-#'   `TRUE`, keeps the executable hidden.
+#' @template show_in_console
+#' @param Intern Deprecated. Use `show_in_console` instead.
 #' @param systemcmd Option to switch between 'shell' and 'system'. The default,
 #'   `FALSE`, facilitates using the shell command on Windows.
 #' @param printlikes A logical value specifying if the likelihood values should
@@ -54,12 +54,23 @@ SS_RunJitter <- function(mydir,
                          model = "ss",
                          extras = "-nohess",
                          Njitter,
-                         Intern = TRUE,
+                         show_in_console = FALSE,
+                         Intern = lifecycle::deprecated(),
                          systemcmd = FALSE,
                          printlikes = TRUE,
                          verbose = FALSE,
                          jitter_fraction = NULL,
                          init_values_src = NULL) {
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.                     
+  if (lifecycle::is_present(Intern)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.1",
+      what = "SS_RunJitter(Intern)", 
+      details = "Please use show_in_console instead"
+    )
+    how_in_console <- !Intern
+  }                        
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
@@ -125,9 +136,10 @@ SS_RunJitter <- function(mydir,
       )
     }
     if (.Platform[["OS.type"]] == "windows" & !systemcmd) {
-      shell(cmd = command, intern = Intern)
+      shell(cmd = command, intern = !show_in_console)
     } else {
-      system(command, intern = Intern, show.output.on.console = !Intern)
+      system(command, intern = !show_in_console,
+        show.output.on.console = show_in_console)
     }
     # Only save stuff if it converged
     if ("Report.sso" %in% list.files()) {

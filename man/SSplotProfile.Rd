@@ -99,7 +99,7 @@ Default=TRUE.}
 
 \item{pch}{Optional vector of plot characters for the points.}
 
-\item{lty}{Line total for the likelihood components.}
+\item{lty}{Line type for the likelihood components.}
 
 \item{lty.total}{Line type for the total likelihood.}
 
@@ -129,23 +129,32 @@ plotted.}
 
 \item{legend}{Include legend?}
 
-\item{legendloc}{Location of legend (see ?legend for more info).}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
-\item{pwidth}{Width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}.}
 
-\item{pheight}{Height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{Units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{Point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
-\item{cex.main}{Character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
-\item{plotdir}{Directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{add_cutoff}{Add dashed line at ~1.92 to indicate 95\% confidence interval
 based on common cutoff of half of chi-squared of p=.95 with 1 degree of
@@ -154,8 +163,8 @@ can be adjusted using the \code{cutoff_prob} below.}
 
 \item{cutoff_prob}{Probability associated with \code{add_cutoff} above.}
 
-\item{verbose}{Return updates of function progress to the R GUI? (Doesn't do
-anything yet.)}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{\dots}{Additional arguments passed to the \code{plot} command.}
 }

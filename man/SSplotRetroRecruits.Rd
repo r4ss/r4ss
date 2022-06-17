@@ -35,7 +35,7 @@ show for each model.}
 \item{uncertainty}{Show uncertainty intervals around lines? (This can get a
 bit busy.)}
 
-\item{labels}{Vector of plot labels.}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{main}{Title for plot.}
 

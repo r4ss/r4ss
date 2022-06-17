@@ -4,8 +4,8 @@
 #' mean weight, maturity, fecundity, and spawning output.
 #'
 #' @template replist
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template plot
+#' @template print
 #' @param add add to existing plot
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:
@@ -51,24 +51,23 @@
 #' values can be applied to other plots in the future
 #' @param shadealpha Transparency parameter used to make default shadecol
 #' values (see ?rgb for more info)
-#' @param legendloc Location of legend (see ?legend for more info)
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template legendloc
+#' @template plotdir
+#' @template labels
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
+#' @template ptsize
+#' @template cex.main
 #' @param imageplot_text Whether to add numerical text to the image plots
 #' when using weight at age. Defaults to FALSE.
 #' @param imageplot_text_round The number of significant digits to which
 #' the image plot text is rounded. Defaults to 0, meaning whole numbers. If
 #' all your values are small and there's no contrast in the text, you might
 #' want to make this 1 or 2.
-#' @param mainTitle Logical indicating if a title should be included at the top
-#' @param verbose Return updates of function progress to the R GUI?
+#' @template mainTitle
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

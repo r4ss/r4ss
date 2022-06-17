@@ -11,7 +11,7 @@
 #' @param ylim Limits of y-axis.
 #' @param uncertainty Show uncertainty intervals around lines? (This can get a
 #' bit busy.)
-#' @param labels Vector of plot labels.
+#' @template labels
 #' @param main Title for plot.
 #' @param mcmcVec Either vector of TRUE/FALSE values indicating which models
 #' use MCMC.  Or single value applied to all models.

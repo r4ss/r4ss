@@ -38,10 +38,10 @@
 #' conditional age-at-length data will be produced for all years.  Useful to
 #' see if growth curves are ok, or to see the information on year classes move
 #' through the conditional data. Default=-1.
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param fleets optional vector to subset fleets for which plots will be made
-#' @param fleetnames optional vector of fleet names to put in the labels
+#' @template plot
+#' @template print
+#' @template fleets
+#' @template fleetnames
 #' @param sexes which sexes to show plots for. Default="all" which will include
 #' males, females, and unsexed. This option is not fully implemented for all
 #' plots.
@@ -90,9 +90,8 @@
 #' @template punits
 #' @template ptsize
 #' @template res
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param cex.main character expansion parameter for plot titles
+#' @template plotdir
+#' @template cex.main
 #' @param linepos should lines be added before points (linepos=1) or after
 #' (linepos=2)?
 #' @param fitbar show fit to bars instead of points
@@ -102,7 +101,7 @@
 #' input vs. effective sample size?
 #' @param cohortlines optional vector of birth years for cohorts for which to
 #' add growth curves to numbers at length bubble plots
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param printmkt show market categories in plot titles?
 #' @param printsex show sex in plot titles?
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
@@ -126,13 +125,13 @@
 #' sample size. Occasionally a calculation of effective N blows up to very
 #' large numbers, rendering it impossible to observe the relationship for other
 #' data. Default=5000.
-#' @param verbose return updates of function progress to the R GUI?
+#' @template verbose
 #' @param scalebins Rescale expected and observed proportions by dividing by
 #' bin width for models where bins have different widths? Caution!: May not
 #' work correctly in all cases.
 #' @param addMeans Add parameter means in addition to medians for MCMC
 #' posterior distributions in which the median and mean differ.
-#' @param mainTitle Logical indicating if a title for the plot should be produced
+#' @template mainTitle
 #' @param \dots additional arguments that will be passed to
 #' the `par` command in the [make_multifig()] function.
 #' @author Ian Taylor

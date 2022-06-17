@@ -14,8 +14,7 @@
 #' and memory). Default=TRUE.
 #' @param forecast Choice to read or not read forecast quantities.
 #' Default=FALSE.
-#' @param verbose Print various messages to the command line as the function
-#' runs? Default=TRUE.
+#' @template verbose
 #' @param ncols Maximum number of columns in Report.sso (same input as for
 #' [SS_output()]).  Default=210.
 #' @param listlists Save output from each model as a element of a list (i.e.

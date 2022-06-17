@@ -17,12 +17,8 @@ SS_writewtatage(
 \item{mylist}{Object created by \code{\link[=SS_readwtatage]{SS_readwtatage()}}.}
 
 \item{dir}{A file path to the directory of interest.
-Typically used with \code{file}, an additional input argument,
-to specify input and output file paths.
 The default value is \code{dir = NULL}, which leads to using
-the current working directory, and thus, full file paths should
-not be specified for other arguments as they will be appended
-to \code{dir}.}
+the current working directory.}
 
 \item{file}{Filename for new weight-at-age file, which
 will be appended to \code{dir} to create a full file path.

@@ -17,8 +17,7 @@
 #' @param outpattern File name of output data file. Default="BootData".
 #' @param number Append bootstrap number to the file name chosen in
 #' `outpattern`? Default=F.
-#' @param verbose Provide richer command line info of function progress?
-#' Default=TRUE.
+#' @template verbose
 #' @param fillblank Replace blank lines with "#". Helps with running on linux.
 #' Default=TRUE.
 #' @param MLE Grab the maximum likelihood values from the second block in

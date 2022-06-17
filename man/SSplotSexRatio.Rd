@@ -50,13 +50,14 @@ SSplotSexRatio(
 
 \item{CI}{confidence interval for uncertainty}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
-\item{fleets}{optional vector to subset fleets for which plots will be made}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
-\item{fleetnames}{optional vector of fleet names to put in the labels}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{yupper}{upper limit on ymax (only applies for sexratio.option == 1)}
 
@@ -64,7 +65,7 @@ SSplotSexRatio(
 
 \item{linescol}{Color for line showing expected value (default is purple).}
 
-\item{lwd}{line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{showsampsize}{add sample sizes to plot}
 
@@ -74,27 +75,29 @@ SSplotSexRatio(
 
 \item{axis2}{position of left size axis values}
 
-\item{pwidth}{default width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}.}
 
-\item{pheight}{default height width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
-\item{ptsize}{point size for plotted text in plots printed to files (see
-help("png") in R for details). Default=12.}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
-\item{cex.main}{character expansion parameter for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{maxrows}{maximum (or fixed) number or rows of panels in the plot}
 
@@ -110,7 +113,8 @@ for single plots}
 \item{fixdims}{fix the dimensions at maxrows by maxcols or resize based on
 number of years of data}
 
-\item{verbose}{return updates of function progress to the R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{mainTitle}{Logical indicating if a title for the plot should be produced}
 

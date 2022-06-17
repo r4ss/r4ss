@@ -17,7 +17,7 @@ SSplotSelex(
   season = 1,
   sexes = "all",
   selexlines = 1:6,
-  subplot = 1:25,
+  subplots = 1:25,
   skipAgeSelex10 = TRUE,
   plot = TRUE,
   print = FALSE,
@@ -39,7 +39,8 @@ SSplotSelex(
   mainTitle = TRUE,
   mar = NULL,
   plotdir = "default",
-  verbose = TRUE
+  verbose = TRUE,
+  subplot = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -49,9 +50,10 @@ SSplotSelex(
 plot and legend. Is produced as output and can be modified and entered as
 input.}
 
-\item{fleets}{Optional vector to subset fleets for which to make plots}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
-\item{fleetnames}{Optional replacement for fleenames used in data file}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{sizefactors}{Which elements of the factors column of SIZE_SELEX should
 be included in plot of selectivity across multiple fleets?}
@@ -75,7 +77,7 @@ multi-line plot (default = 1).}
 \item{selexlines}{Vector to select which lines get plotted. values are 1.
 Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.}
 
-\item{subplot}{Vector controlling which subplots to create.
+\item{subplots}{Vector controlling which subplots to create.
 Numbering of subplots is as follows,
 
 \emph{Plots with all fleets grouped together}
@@ -130,13 +132,13 @@ from length-based, "Asel2". You can choose only one using
 
 \item{add}{Add to existing plot (not yet implemented)}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{col1}{color for female growth curve}
 
 \item{col2}{color for male growth curve}
 
-\item{lwd}{Line widths for plots}
+\item{lwd}{Line width for plot elements.}
 
 \item{spacepoints}{number of years between points shown on top of lines (for
 long timeseries, points every year get mashed together)}
@@ -145,10 +147,13 @@ long timeseries, points every year get mashed together)}
 \code{spacepoints > 1}) for each line (so that adjacent lines have points in
 different years)}
 
-\item{legendloc}{location of legend. See ?legend for more info.}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
@@ -164,18 +169,20 @@ The default is \code{res = 300}.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 \code{help("png")} in R for details).}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top
 (not yet implemented for all plots)}
 
 \item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
 
-\item{plotdir}{Directory where PNG files will be written. By default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{subplot}{Deprecated. Use subplots instead.}
 }
 \description{
 Plot selectivity, including retention and other quantities, with additional

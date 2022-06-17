@@ -4,8 +4,8 @@
 #'
 #' @template replist
 #' @param add add to existing plot (not yet implemented)
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template plot
+#' @template print
 #' @param uncertainty include plots showing uncertainty?
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:
@@ -28,16 +28,15 @@
 #' sprtarg input here will cause no horizontal line to be plotted.
 #' @param btarg target depletion to be used in plots showing depletion. May be
 #' omitted by setting to NA. "default" chooses based on model output.
-#' @param labels vector of labels for plots (titles and axis labels)
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template labels
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param verbose report progress to R GUI?
+#' @template ptsize
+#' @template cex.main
+#' @template plotdir
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

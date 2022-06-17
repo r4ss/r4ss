@@ -8,8 +8,8 @@
 #' @template replist
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template plot
+#' @template print
 #' @param cohortcols Vector of colors to show for each cohort. Default is range
 #' of colors shade indicating time period.
 #' @param cohortfrac What fraction of the cohorts to include in plot. If value
@@ -23,19 +23,17 @@
 #' `cohortlabvec`.
 #' @param cohortlabvec Optional vector of birth years for cohorts to label in
 #' plot. Value overrides `cohortlabfrac`.
-#' @param lwd Line width
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template lwd
+#' @template plotdir
 #' @param xlab x-label for all plots
-#' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template labels
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main Character expansion for plot titles (no titles in this
-#' function yet)
-#' @param verbose Report progress to R console?
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

@@ -1,16 +1,16 @@
-##' Convert a matrix of natural mortality values into
-##' inputs for Stock Synthesis
-##'
-##' Inspired by Valerio Bartolino and North Sea herring
-##'
-##' @param  mat             a matrix of natural mortality by year and age, starting with age 0
-##' @param  startyr         the first year of the natural mortality values (no missing years)
-##' @param  outfile         optional file to which the results will be written
-##' @param  overwrite       if 'outfile' is provided and exists, option to overwrite or not
-##' @param  yrs.in.columns  an indicator of whether the matrix has years in columns or rows
-##' @return Prints inputs with option to write to chosen file
-##' @author Ian Taylor
-##' @export
+#' Convert a matrix of natural mortality values into
+#' inputs for Stock Synthesis
+#'
+#' Inspired by Valerio Bartolino and North Sea herring
+#'
+#' @param  mat             a matrix of natural mortality by year and age, starting with age 0
+#' @param  startyr         the first year of the natural mortality values (no missing years)
+#' @param  outfile         optional file to which the results will be written
+#' @param  overwrite       if 'outfile' is provided and exists, option to overwrite or not
+#' @param  yrs.in.columns  an indicator of whether the matrix has years in columns or rows
+#' @return Prints inputs with option to write to chosen file
+#' @author Ian Taylor
+#' @export
 SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
                           overwrite = FALSE, yrs.in.columns = TRUE) {
   # A function for converting a matrix of natural mortality values

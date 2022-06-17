@@ -5,15 +5,13 @@
 #'
 #'
 #' @param mylist List object created by [SS_readforecast()].
-#' @param dir Directory for new forecast file. Default=NULL (working
-#' directory).
+#' @template dir
 #' @param file Filename for new forecast file. Default="forecast.ss".
 #' @param writeAll Should the function continue even if Forecast=0
 #' (at which point SS stops reading, and remaining elements in list may not be
 #' available, depending on settings used in SS_readforecast)
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template overwrite
+#' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readstarter()], [SS_readforecast()],

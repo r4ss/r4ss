@@ -13,8 +13,7 @@
 #'  either as character or numeric values (noting that numeric 3.30  = 3.3). If
 #'  version is NULL, the version (3.24 or 3.30) will be looked for on the first
 #'  line of the file.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template verbose
 #' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values

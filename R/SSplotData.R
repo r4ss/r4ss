@@ -6,16 +6,16 @@
 #'
 #'
 #' @template replist
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param subplot vector controlling which subplots to create
+#' @template plot
+#' @template print
+#' @template plotdir
+#' @param subplots vector controlling which subplots to create
 #' Currently there are only 2 subplots:
 #' \itemize{
 #'   \item 1 equal size points showing presence/absence of data type by year/fleet
 #'   \item 2 points scaled to indicate quantity or precision of data
 #' }
+#' @param subplot Deprecated. Use subplots instead.
 #' @param fleetcol Either the string "default", or a vector of colors to use
 #' for each fleet. If tagging data is included, an additional color needs to be
 #' added for the tag releases which are not assigned to a fleet.
@@ -23,30 +23,28 @@
 #' of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 #' "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
 #' "wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".
-#' @param fleets Either the string "all", or a vector of numerical values, like
-#' c(1,3), listing fleets or surveys to be included in the plot.
-#' @param fleetnames A vector of alternative names to use in the plot. By
-#' default the parameter names in the data file are used.
+#' @template fleets
+#' @template fleetnames
 #' @param ghost TRUE/FALSE indicator for whether to show presence of
 #' composition data from ghost fleets (data for which the fit is shown, but is
 #' not included in the likelihood calculations).
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
+#' @template ptsize
+#' @template cex.main
 #' @param margins margins of plot (passed to par() function), which may need to
 #' be increased if fleet names run off right-hand margin
 #' @param cex Character expansion for points showing isolated years of data
-#' @param lwd Line width for lines showing ranges of years of data
-#' @param verbose report progress to R GUI?
+#' @template lwd
+#' @template verbose
 #' @param maxsize The size (cex) of the largest bubble in the datasize
 #' plot. Default is 1.
 #' @param alphasize The transparency of the bubbles in the datasize
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
-#' @param mainTitle TRUE/FALSE switch to turn on/off the title on the plot.
+#' @template mainTitle
 #' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
 #' @seealso [SS_plots()], [SS_output()],
@@ -54,7 +52,7 @@
 SSplotData <- function(replist,
                        plot = TRUE, print = FALSE,
                        plotdir = "default",
-                       subplot = 1:2,
+                       subplots = 1:2,
                        fleetcol = "default",
                        datatypes = "all", fleets = "all", fleetnames = "default", ghost = FALSE,
                        pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
@@ -63,7 +61,18 @@ SSplotData <- function(replist,
                        maxsize = 1.0,
                        alphasize = 1,
                        mainTitle = FALSE,
-                       verbose = TRUE) {
+                       verbose = TRUE, 
+                       subplot = lifecycle::deprecated()) {
+      # Warning about deprecated arguments. Should be removed after 1 release.
+        # warn about soft deprecated arguments
+    if (lifecycle::is_present(subplot)) {
+      lifecycle::deprecate_warn(
+        when = "1.45.1",
+        what = "SSplotData(subplot)",
+        details = "Please use subplots instead. Assigning subplot to subplots."
+      )
+      subplots <- subplot
+    }
   # table to store information on each plot
   plotinfo <- NULL
 
@@ -421,7 +430,7 @@ SSplotData <- function(replist,
   }
 
   ## Make the plot with no scaling on circles
-  if (1 %in% subplot) {
+  if (1 %in% subplots) {
     if (plot) {
       plotdata(datasize = FALSE)
     }
@@ -439,7 +448,7 @@ SSplotData <- function(replist,
   }
 
   ## Make second data plot
-  if (2 %in% subplot) {
+  if (2 %in% subplots) {
     if (plot) {
       plotdata(datasize = TRUE)
     }

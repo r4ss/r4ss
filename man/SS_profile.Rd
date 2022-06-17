@@ -31,7 +31,9 @@ SS_profile(
 )
 }
 \arguments{
-\item{dir}{Directory where input files and executable are located.}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{masterctlfile}{Source control file. Default = "control.ss_new"}
 
@@ -101,8 +103,8 @@ the prior likelihood contribution in the total likelihood.  Default = TRUE.}
 Default = TRUE. Changing to FALSE should allow the function to play through
 even if something is wrong with reading the table.}
 
-\item{verbose}{Controls amount of info output to command line.  Default =
-TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Iteratively changes the control file using SS_changepars.

@@ -24,15 +24,15 @@
 #'   \item 12  index deviations (independent of index uncertainty)
 #' }
 #'
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param fleets optional vector to subset fleets for which plots will be made
-#' @param fleetnames optional replacement for fleenames used in data file
+#' @template plot
+#' @template print
+#' @template fleets
+#' @template fleetnames
 #' @param smooth add smoothed line to plots of observed vs. expected sample
 #' sizes
 #' @param add add to existing plot (not yet implemented)
 #' @param datplot make plot of data only?
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param fleetcols vector of colors for all fleets (including those
 #' with no index data)
 #' @param col1 vector of colors for points in each season for time series plot.
@@ -52,18 +52,17 @@
 #' Default=1.
 #' @param bg Background color for points with pch=21.
 #' @param legend add a legend to seasonal colors (only for seasonal models)
-#' @param legendloc add a legend to seasonal colors (default is "topright")
+#' @template legendloc
 #' @param seasnames optional vector of names for each season to replace
 #' defaults if a legend is used
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
-#' @param mainTitle switch which allows the plot title to be left off
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template ptsize
+#' @template cex.main
+#' @template mainTitle
+#' @template plotdir
 #' @param minyr First year to show in plot (for zooming in on a subset of
 #' values)
 #' @param maxyr Last year to show in plot (for zooming in on a subset of
@@ -76,7 +75,7 @@
 #' the total uncertainty which may result from estimating a parameter for
 #' extra standard deviations. This is only added for the plots with index
 #' fit included (the data-only plots only show the input uncertainty).
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @param \dots Extra arguments to pass to calls to `plot`
 #' @author Ian Stewart, Ian Taylor, James Thorson
 #' @export

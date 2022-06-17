@@ -67,13 +67,14 @@ provided first:
 \item 12  index deviations (independent of index uncertainty)
 }}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
-\item{fleets}{optional vector to subset fleets for which plots will be made}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
-\item{fleetnames}{optional replacement for fleenames used in data file}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{smooth}{add smoothed line to plots of observed vs. expected sample
 sizes}
@@ -82,7 +83,7 @@ sizes}
 
 \item{datplot}{make plot of data only?}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{fleetcols}{vector of colors for all fleets (including those
 with no index data)}
@@ -113,28 +114,37 @@ Default=1.}
 
 \item{legend}{add a legend to seasonal colors (only for seasonal models)}
 
-\item{legendloc}{add a legend to seasonal colors (default is "topright")}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{seasnames}{optional vector of names for each season to replace
 defaults if a legend is used}
 
-\item{pwidth}{width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}.}
 
-\item{pheight}{height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{mainTitle}{switch which allows the plot title to be left off}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{minyr}{First year to show in plot (for zooming in on a subset of
 values)}
@@ -152,7 +162,8 @@ the total uncertainty which may result from estimating a parameter for
 extra standard deviations. This is only added for the plots with index
 fit included (the data-only plots only show the input uncertainty).}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{\dots}{Extra arguments to pass to calls to \code{plot}}
 }

@@ -27,9 +27,8 @@
 #'   \item 16  densities
 #'   \item 17  cumulative densities
 #' }
-#' @param plot Plot to active plot device?
-#' @param print Send plots to PNG files in directory specified by
-#' `plotdir`?
+#' @template plot
+#' @template print
 #' @param png Has same result as `print`, included for consistency with
 #' `SS_plots`.
 #' @param pdf Write output to PDF file? Can't be used in conjunction with
@@ -65,7 +64,7 @@
 #' models described above.
 #' @param indexPlotEach TRUE plots the observed index for each model with
 #' colors, or FALSE just plots observed once in black dots.
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param col Optional vector of colors to be used for lines. Input NULL
 #' makes use of `rich.colors.short` function.
 #' @param shadecol Optional vector of colors to be used for shading uncertainty
@@ -119,8 +118,7 @@
 #' @template punits
 #' @template res
 #' @template ptsize
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template plotdir
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
 #' It will be separated from default name by an underscore.
 #' @param densitynames Vector of names (or subset of names) of parameters or
@@ -153,7 +151,7 @@
 #' added.
 #' @param par list of graphics parameter values passed to the `par`
 #' function
-#' @param verbose Report progress to R GUI?
+#' @template verbose
 #' @param mcmcVec Vector of TRUE/FALSE values (or single value) indicating
 #' whether input values are from MCMC or to use normal distribution around
 #' MLE

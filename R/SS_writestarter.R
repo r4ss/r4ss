@@ -5,11 +5,10 @@
 #'
 #'
 #' @param mylist List object created by [SS_readstarter()].
-#' @param dir Directory for new starter file. Default=NULL (working directory).
+#' @template dir
 #' @param file Filename for new starter file. Default="starter.ss".
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template overwrite
+#' @template verbose
 #' @param warn Deprecated.
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 #' @export

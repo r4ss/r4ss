@@ -41,9 +41,7 @@ SSplotPars(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plotdir}{A path to the folder where the plots will be saved. The default
-is \code{NULL}, which leads to the plots being created in the folder that
-contains the results.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{xlab}{Label on horizontal axis.}
 
@@ -74,7 +72,8 @@ Otherwise, limits are based on the model results.}
 \item{ylim}{Optional y-axis limits to be applied to all plots.
 Otherwise, limits are based on the model results.}
 
-\item{verbose}{Controls amount of text output (maybe).}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{debug}{Provide additional messages to help with debugging when the
 function fails.}
@@ -96,16 +95,18 @@ initial value, prior, posterior, and median of the posterior.}
 \item{print}{Print to PNG files?}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. Default=7.}
+\code{punits}.}
 
-\item{pheight}{Default height width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
 \item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{ptsize}{Point size for plotted text in plots printed to files (see
-help("png") in R for details). Default=12.}
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}

@@ -13,8 +13,8 @@ SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose = FALSE)
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 write Stock Synthesis control file from list object in R which was created

@@ -37,16 +37,15 @@
 #' }
 #' @param add Add to existing plot? (not yet implemented)
 #' @param areas Optional subset of areas to plot for spatial models
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template plot
+#' @template print
 #' @param type Type parameter passed to plot function. Default "l" is lines
 #' only.  Other options include "o" for overplotting points on lines.
 #' @param fleetlty Vector of line type by fleet
 #' @param fleetpch Vector of plot character by fleet
 #' @param fleetcols Vector of colors by fleet
-#' @param fleetnames Optional replacement for fleenames used in data file,
-#' should include all fleets (not just those with catch)
-#' @param lwd Line width
+#' @template fleetnames
+#' @template lwd
 #' @param areacols Vector of colors by area. Default uses rich.colors by Arni
 #' Magnusson
 #' @param areanames Names for areas. Default is to use Area1, Area2,...
@@ -55,13 +54,12 @@
 #' @param annualcatch Include plot of catch aggregated across seasons within
 #' each year
 #' @param forecastplot Add points from forecast years
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template plotdir
 #' @param showlegend Put legend on plot
-#' @param legendloc Location of legend (see ?legend for more info)
+#' @template legendloc
 #' @param order Optional input to change the order of fleets in stacked plots.
 #' @param xlab x-label for all plots
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param catchasnumbers Is catch in numbers instead of biomass? Should be set
 #' automatically if set to NULL. If fleets include a mix of biomass and
 #' numbers, then catch plots should be interpreted carefully.
@@ -70,13 +68,13 @@
 #' @param addmax Add a point on the y-axis for the maximum catch (default=TRUE)
 #' @param ymax Optional input for ymax value (can be used to add or subtract
 #' white space at the top of the figure)
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main Character expansion for plot titles
-#' @param verbose Report progress to R console?
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

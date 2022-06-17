@@ -7,6 +7,7 @@
 #'
 #'
 #' @template file
+#' @template verbose
 #' @template readctl_vars
 #' @param Nfleet number of fisheries in the model. This information is also not
 #'  explicitly available in control file

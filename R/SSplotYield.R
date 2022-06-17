@@ -15,22 +15,21 @@
 #' @param refpoints character vector of which reference points to display in
 #' subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.
 #' @param add add to existing plot? (not yet implemented)
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template plot
+#' @template print
+#' @template labels
 #' @param col line color for equilibrium plot
 #' @param col2 line color for dynamic surplus production plot
 #' @param lty line type (only applied to equilibrium yield plot at this time)
-#' @param lwd line width (only applied to equilibrium yield plot at this time)
-#' @param cex.main character expansion for plot titles
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template lwd
+#' @template cex.main
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param verbose report progress to R GUI?
+#' @template ptsize
+#' @template plotdir
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

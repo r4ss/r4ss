@@ -21,7 +21,7 @@
 #' @param csv write resulting table to CSV file?
 #' @param csvdir directory for optional CSV file
 #' @param csvfile filename for CSV file
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @param mcmc summarize MCMC output in table?
 #' @author Ian Taylor
 #' @export

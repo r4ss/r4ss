@@ -21,8 +21,8 @@
 #'   \item 9: no plot yet
 #'   \item 10: Distribution of observed age at true age by ageing error type
 #' }
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template plot
+#' @template print
 #' @param numbers.unit Units for numbers. Default (based on typical Stock Synthesis
 #' setup) is thousands (numbers.unit=1000).
 #' @param areas optional subset of areas to plot for spatial models
@@ -40,17 +40,16 @@
 #' with SSv3.11)
 #' @param meanlines add lines for mean age or length on top of bubble plots
 #' @param add add to existing plot? (not yet implemented)
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @template pwidth
 #' @template pheight
 #' @template punits
 #' @template ptsize
 #' @template res
-#' @param cex.main character expansion for plot titles
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param mainTitle Logical indicating if a title should be included at the top
-#' @param verbose report progress to R GUI?
+#' @template cex.main
+#' @template plotdir
+#' @template mainTitle
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_output()], [SS_plots()]

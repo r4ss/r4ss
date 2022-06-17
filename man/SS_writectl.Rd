@@ -24,8 +24,8 @@ The default is \code{version = "3.30"}.}
 
 \item{overwrite}{Should existing files be overwritten? Defaults to FALSE.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Write Stock Synthesis control file from list object in R which was probably

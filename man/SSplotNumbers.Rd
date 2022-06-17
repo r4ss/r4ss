@@ -56,9 +56,9 @@ included in this group but now replaced by better distribution plots)
 \item 10: Distribution of observed age at true age by ageing error type
 }}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{numbers.unit}{Units for numbers. Default (based on typical Stock Synthesis
 setup) is thousands (numbers.unit=1000).}
@@ -87,10 +87,10 @@ with SSv3.11)}
 
 \item{add}{add to existing plot? (not yet implemented)}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
@@ -106,14 +106,15 @@ The default is \code{res = 300}.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 \code{help("png")} in R for details).}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot numbers-at-age related data and fits from Stock Synthesis output.

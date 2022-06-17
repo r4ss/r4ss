@@ -7,7 +7,7 @@
 #' Used by [SS_profile()] and the \pkg{ss3sim} package.
 #'
 #'
-#' @param dir Directory with control file to change.
+#' @template dir
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #'   Default="control_modified.ss".
@@ -67,7 +67,7 @@
 #'   value to the given parameter but change the remaining parameters, where
 #'   the vector of values needs to be in the same order as either
 #'   `linenums` or `strings`.
-#' @param verbose More detailed output to command line. Default=TRUE.
+#' @template verbose
 #' @author Ian Taylor, Christine Stawitz, Chantel Wetzel
 #' @seealso [SS_parlines()], [SS_profile()]
 #' @export

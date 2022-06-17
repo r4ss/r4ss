@@ -40,7 +40,8 @@ dir.exe (if provided)?}
 
 \item{dir.exe}{Path to executable to copy instead of any in dir.old}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
 Logical indicating whether all input files were copied successfully.

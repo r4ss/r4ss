@@ -5,9 +5,7 @@
 #'
 #'
 #' @template replist
-#' @param plotdir A path to the folder where the plots will be saved. The default
-#' is `NULL`, which leads to the plots being created in the folder that
-#' contains the results.
+#' @template plotdir
 #' @param xlab Label on horizontal axis.
 #' @param ylab Label on vertical axis.
 #' @param showmle Show MLE estimate and asymptotic variance estimate with blue
@@ -26,7 +24,7 @@
 #' Otherwise, limits are based on the model results.
 #' @param ylim Optional y-axis limits to be applied to all plots.
 #' Otherwise, limits are based on the model results.
-#' @param verbose Controls amount of text output (maybe).
+#' @template verbose
 #' @param debug Provide additional messages to help with debugging when the
 #' function fails.
 #' @param nrows How many rows in multi-figure plot.
@@ -35,16 +33,12 @@
 #' distributions and the median of the posterior distribution.
 #' @param colvec Vector of colors used for lines and polygons showing MLE,
 #' initial value, prior, posterior, and median of the posterior.
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
-#' @param pwidth Default width of plots printed to files in units of
-#' `punits`. Default=7.
-#' @param pheight Default height width of plots printed to files in units of
-#' `punits`. Default=7.
-#' @param punits Units for `pwidth` and `pheight`. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize Point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
+#' @template plot
+#' @template print
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template ptsize
 #' @template res
 #' @param strings Subset parameters included in the plot using substring from
 #' parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both

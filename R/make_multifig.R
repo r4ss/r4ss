@@ -27,7 +27,7 @@
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of elements in `yr` input.
 #' @param main title of plot
-#' @param cex.main character expansion for title
+#' @template cex.main
 #' @param xlab x-axis label
 #' @param ylab y-axis label
 #' @param size vector of bubbles sizes if making a bubble plot
@@ -72,7 +72,7 @@
 #' @param colvec Vector of length 3 with colors for females, males, unsexed fish
 #' @param linescol color for lines
 #' @param lty line type
-#' @param lwd line width
+#' @template lwd
 #' @param pch point character type
 #' @param nlegends number of lines of text to add as legends in each plot
 #' @param legtext text in legend, a list of length=nlegends. values may be any
