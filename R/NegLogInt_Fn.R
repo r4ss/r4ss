@@ -80,16 +80,16 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
                          ReDoBiasRamp = FALSE, BiasRamp_linenum_Vec = NULL,
                          CTL_linenum_Type = NULL, systemcmd = FALSE,
                          exe = "ss") {
-    # deprecated variable warnings -----
-    # soft deprecated for now, but fully deprecate in the future.                     
-    if (lifecycle::is_present(Intern)) {
-      lifecycle::deprecate_warn(
-        when = "1.45.1",
-        what = "NegLogInt_Fn(Intern)",
-        details = "Please use show_in_console instead"
-      )
-      show_in_console <- !Intern
-    }
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(Intern)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.1",
+      what = "NegLogInt_Fn(Intern)",
+      details = "Please use show_in_console instead"
+    )
+    show_in_console <- !Intern
+  }
   # test exe input
   if (!(exe == "ss" | exe == "ss3")) {
     # turns out 3.30 != "3.30" in R

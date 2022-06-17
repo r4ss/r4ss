@@ -26,7 +26,8 @@ either an absolute path or relative to the working directory.}
 
 \item{create.dir}{Create dir.new directory if it doesn't exist already?}
 
-\item{overwrite}{Overwrite existing files with matching names?}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{recursive}{logical. Should elements of the path other than the last be
 created?}

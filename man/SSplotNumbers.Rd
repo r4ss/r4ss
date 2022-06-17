@@ -111,7 +111,8 @@ The default is \code{cex.main=1}.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 
-\item{mainTitle}{Logical indicating if a title should be included at the top}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

@@ -127,7 +127,7 @@ plotted.}
 
 \item{type}{Line type (see ?plot for more info).}
 
-\item{legend}{Include legend?}
+\item{legend}{Add a legend?}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in

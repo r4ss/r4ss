@@ -11,7 +11,8 @@ SS_writectl_3.24(ctllist, outfile, overwrite = FALSE, verbose = FALSE)
 
 \item{outfile}{Filename for where to write new data file.}
 
-\item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

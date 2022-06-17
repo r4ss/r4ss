@@ -76,7 +76,8 @@ the tables from being formatted further since the objects are no longer numeric.
 in e_ReferencePoints_ES will be reported with the same number of decimal digits
 as the estimate.}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
 Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).

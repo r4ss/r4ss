@@ -281,7 +281,8 @@ work correctly in all cases.}
 \item{addMeans}{Add parameter means in addition to medians for MCMC
 posterior distributions in which the median and mean differ.}
 
-\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
 \item{\dots}{additional arguments that will be passed to
 the \code{par} command in the \code{\link[=make_multifig]{make_multifig()}} function.}

@@ -44,7 +44,8 @@ variance adjustments}
 \item{maxrows}{Maximum number of rows to search among in 3.30 models
 (may need to increase from default if you have a huge number of fleets)}
 
-\item{overwrite}{Overwrite file if it exists?}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{version}{SS version number. Currently "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).

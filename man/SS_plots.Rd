@@ -295,7 +295,7 @@ The default is \code{punits="in"}.}
 The default is \code{res = 300}.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top
-(not yet implemented for all plots)}
+(not yet implemented for all plots).}
 
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}

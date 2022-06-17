@@ -142,7 +142,8 @@ The default is \code{res = 300}.}
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}
 
-\item{mainTitle}{switch which allows the plot title to be left off}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
 \item{plotdir}{Directory where PNG files will be written.}
 

@@ -99,7 +99,8 @@ plot. Default is 1.}
 plot. Defaults to 1 (no transparency). Useful for models with lots of
 overlapping points.}
 
-\item{mainTitle}{TRUE/FALSE switch to turn on/off the title on the plot.}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
