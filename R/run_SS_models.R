@@ -44,10 +44,10 @@ run_SS_models <- function(dirvec = NULL,
                           systemcmd = FALSE,
                           skipfinished = TRUE,
                           show_in_console = TRUE,
-                          intern =  lifecycle::deprecated(),
+                          intern = lifecycle::deprecated(),
                           verbose = TRUE,
                           exe_in_path = FALSE) {
-# deprecated variable warnings -----
+  # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(intern)) {
     lifecycle::deprecate_warn(

@@ -17,7 +17,8 @@ SS_writedat_3.24(
 
 \item{outfile}{Filename for where to write new data file.}
 
-\item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{faster}{Deprecated. Speed up writing by writing length and age comps without aligning
 the columns (by using write.table instead of print.data.frame)}

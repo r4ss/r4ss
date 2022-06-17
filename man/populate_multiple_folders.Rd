@@ -25,7 +25,8 @@ should be created.}
 
 \item{create.dir}{Create new outer directory if it doesn't exist already?}
 
-\item{overwrite}{Overwrite existing files with matching names?}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{use_ss_new}{Use .ss_new files instead of original inputs?}
 

@@ -62,20 +62,20 @@
 #'
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                       exefile = "ss", extras = "-nox", show_in_console = TRUE, 
+                       exefile = "ss", extras = "-nox", show_in_console = TRUE,
                        intern = lifecycle::deprecated(), CallType = "system",
                        RemoveBlocks = FALSE) {
 
   # deprecated variable warnings -----
-  # soft deprecated for now, but fully deprecate in the future.                     
+  # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(intern)) {
     lifecycle::deprecate_warn(
       when = "1.45.1",
-      what = "SS_doRetro(intern)", 
+      what = "SS_doRetro(intern)",
       details = "Please use show_in_console instead"
     )
     show_in_console <- !intern
-  }  
+  }
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
   OS <- .Platform[["OS.type"]]

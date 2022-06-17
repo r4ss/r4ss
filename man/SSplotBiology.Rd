@@ -135,7 +135,8 @@ The default is \code{res = 300}.}
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}
 
-\item{mainTitle}{Logical indicating if a title should be included at the top}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

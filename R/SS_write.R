@@ -17,7 +17,7 @@
 #' @seealso
 #' * [SS_read()] creates the list that is used by this function.
 #' * [SS_writestarter()], [SS_writedat()], [SS_writectl()],
-#' [SS_writeforecast()], [SS_writewtatage()], [SS_writepar_3.30()], 
+#' [SS_writeforecast()], [SS_writewtatage()], [SS_writepar_3.30()],
 #' and [SS_writepar_3.24()] are used to write the
 #' input files.
 
@@ -118,27 +118,29 @@ SS_write <- function(inputlist,
       verbose = verbose
     )
   }
-  
-  
-  if ("par" %in% names(inputlist)){
-    if(!is.null(inputlist[["par"]])){
+
+
+  if ("par" %in% names(inputlist)) {
+    if (!is.null(inputlist[["par"]])) {
       try(
         {
-          if(inputlist[["ctl"]][["ReadVersion"]]=="3.24"){
-            par <- r4ss::SS_writepar_3.24(inputlist[["par"]], 
-                                          outfile = file.path(dir, "ss.par"), 
-                                          verbose = verbose)
-          }else{
-            par <- r4ss::SS_writepar_3.30(inputlist[["par"]], 
-                                          outfile = file.path(dir, "ss.par"), 
-                                          verbose = verbose)  
+          if (inputlist[["ctl"]][["ReadVersion"]] == "3.24") {
+            par <- r4ss::SS_writepar_3.24(inputlist[["par"]],
+              outfile = file.path(dir, "ss.par"),
+              verbose = verbose
+            )
+          } else {
+            par <- r4ss::SS_writepar_3.30(inputlist[["par"]],
+              outfile = file.path(dir, "ss.par"),
+              verbose = verbose
+            )
           }
         },
         silent = !verbose
       )
     }
   }
-  
+
   # message noting that all files have been written
   if (verbose) {
     message("Wrote all input files to ", dir)

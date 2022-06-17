@@ -98,7 +98,7 @@ of points, where the points are disconnected (lty=NA) by default}
 will by replaced by a vector of colors of length equal to
 \code{nrow(replist[["recruit"]])}}
 
-\item{legend}{add a legend to the figure?}
+\item{legend}{Add a legend?}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in

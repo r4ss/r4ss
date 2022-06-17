@@ -19,8 +19,10 @@ SS_parlines(
 The default value is \code{dir = NULL}, which leads to using
 the current working directory.}
 
-\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
+\item{version}{SS version number. Currently "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).
+\code{version = NULL} is no longer the default or an allowed entry.
+The default is \code{version = "3.30"}.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

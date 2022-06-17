@@ -116,7 +116,8 @@ number of years of data}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
 \item{\dots}{additional arguments that will be passed to the plotting.}
 }

@@ -52,7 +52,7 @@ sqrt(z)). Default=TRUE.}
 
 \item{bg.open}{background color for open bubbles (border will equal 'col')}
 
-\item{legend}{Add a legend to the plot?}
+\item{legend}{Add a legend?}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in

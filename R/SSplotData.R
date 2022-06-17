@@ -61,18 +61,18 @@ SSplotData <- function(replist,
                        maxsize = 1.0,
                        alphasize = 1,
                        mainTitle = FALSE,
-                       verbose = TRUE, 
+                       verbose = TRUE,
                        subplot = lifecycle::deprecated()) {
-      # Warning about deprecated arguments. Should be removed after 1 release.
-        # warn about soft deprecated arguments
-    if (lifecycle::is_present(subplot)) {
-      lifecycle::deprecate_warn(
-        when = "1.45.1",
-        what = "SSplotData(subplot)",
-        details = "Please use subplots instead. Assigning subplot to subplots."
-      )
-      subplots <- subplot
-    }
+  # Warning about deprecated arguments. Should be removed after 1 release.
+  # warn about soft deprecated arguments
+  if (lifecycle::is_present(subplot)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.1",
+      what = "SSplotData(subplot)",
+      details = "Please use subplots instead. Assigning subplot to subplots."
+    )
+    subplots <- subplot
+  }
   # table to store information on each plot
   plotinfo <- NULL
 

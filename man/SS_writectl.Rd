@@ -22,7 +22,8 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).
 \code{version = NULL} is no longer the default or an allowed entry.
 The default is \code{version = "3.30"}.}
 
-\item{overwrite}{Should existing files be overwritten? Defaults to FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

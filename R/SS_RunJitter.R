@@ -62,15 +62,15 @@ SS_RunJitter <- function(mydir,
                          jitter_fraction = NULL,
                          init_values_src = NULL) {
   # deprecated variable warnings -----
-  # soft deprecated for now, but fully deprecate in the future.                     
+  # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
     lifecycle::deprecate_warn(
       when = "1.45.1",
-      what = "SS_RunJitter(Intern)", 
+      what = "SS_RunJitter(Intern)",
       details = "Please use show_in_console instead"
     )
     how_in_console <- !Intern
-  }                        
+  }
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
@@ -138,8 +138,10 @@ SS_RunJitter <- function(mydir,
     if (.Platform[["OS.type"]] == "windows" & !systemcmd) {
       shell(cmd = command, intern = !show_in_console)
     } else {
-      system(command, intern = !show_in_console,
-        show.output.on.console = show_in_console)
+      system(command,
+        intern = !show_in_console,
+        show.output.on.console = show_in_console
+      )
     }
     # Only save stuff if it converged
     if ("Report.sso" %in% list.files()) {

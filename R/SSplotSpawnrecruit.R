@@ -75,7 +75,7 @@ SSplotSpawnrecruit <-
            # line1="blue",line2="green3",line3="black",ptcol="red",
            minyr = "default", textmindev = 0.5, relative = FALSE,
            expected = TRUE, estimated = TRUE, bias_adjusted = TRUE,
-           show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE, 
+           show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE,
            subplot = lifecycle::deprecated()) {
 
     # warn about soft deprecated arguments
