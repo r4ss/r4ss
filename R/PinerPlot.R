@@ -237,13 +237,13 @@ PinerPlot <-
     change.fraction <- column.max / max(prof.table[, 3], na.rm = TRUE)
     include <- change.fraction >= minfraction
     message(
-      "Fleets-specific likelihoods showing max change as fraction of total change.\n",
+      "Fleet-specific likelihoods showing max change as fraction of total change.\n",
       "To change which components are included, change input 'minfraction'."
     )
-    paste0(output.console(data.frame(
+    print(data.frame(
       frac_change = round(change.fraction, 4),
       include = include
-    )), collapse = ", ")
+    ))
 
     # subset values and reorder values
     # Note: first 3 columns are "model", "Label", and "ALL", and
