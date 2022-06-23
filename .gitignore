@@ -38,7 +38,7 @@ CumReport.sso
 ParmTrace.sso
 ss.cor
 ss.rep
-ss.par
+#ss.par
 *.exe
 *.bat
 ignored
