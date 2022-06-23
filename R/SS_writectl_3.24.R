@@ -345,10 +345,12 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   # Density dependant Q(Q-power)
   if (sum(ctllist[["Q_setup"]][, 1]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)) {
-      prob_flts <- 
+      prob_flts <-
         which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)
-      stop("must create base Q parm to use Q_power for fleet(s): ", 
-      paste0(prob_flts, collapse = ", "))
+      stop(
+        "must create base Q parm to use Q_power for fleet(s): ",
+        paste0(prob_flts, collapse = ", ")
+      )
     }
     printdf("Q_power", header = header)
     header <- FALSE
@@ -356,8 +358,10 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   # Q-env
   if (sum(ctllist[["Q_setup"]][, 2]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)) {
-      stop("must create base Q parm to use Q_env for fleet: ", 
-        which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2))
+      stop(
+        "must create base Q parm to use Q_env for fleet: ",
+        which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)
+      )
     }
     printdf("Q_env", header = header)
     header <- FALSE

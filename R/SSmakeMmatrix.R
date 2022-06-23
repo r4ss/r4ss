@@ -68,7 +68,8 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
 
   message(
     "Calculating inputs to Stock Synthesis for a matrix of natural mortality values",
-    "\n over the range of ages:", min(ages), "to", maxage)
+    "\n over the range of ages:", min(ages), "to", maxage
+  )
 
   Msetup <- c(
     "# three lines to paste near top of control file:\n",
@@ -106,8 +107,10 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   Mparams[["comment"]] <- paste("# M parameter for age", ages)
   Mparams[["comment"]][maxage + 1] <- paste(Mparams[["comment"]][maxage + 1], "+", sep = "")
 
-  message("Mortality params to paste into the first block of parameter lines:\n", 
-  paste0(capture.output(Mparams), collapse = "\n"))
+  message(
+    "Mortality params to paste into the first block of parameter lines:\n",
+    paste0(capture.output(Mparams), collapse = "\n")
+  )
   printdf(Mparams)
 
   # create data frame of environmental link parameters
@@ -128,9 +131,11 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   # modify final comment to make clear as a plus group
   Mlinks[["comment"]][maxage + 1] <- paste(Mlinks[["comment"]][maxage + 1], "+", sep = "")
 
-  message("\n# stuff to paste below the line labeled 'CohortGrowDev'\n", 
-      "1 #_custom mortality/growth environmental setup\n", 
-      paste0(capture.output(Mlinks), collapse = "\n"))
+  message(
+    "\n# stuff to paste below the line labeled 'CohortGrowDev'\n",
+    "1 #_custom mortality/growth environmental setup\n",
+    paste0(capture.output(Mlinks), collapse = "\n")
+  )
 
   # create a data frame of environmental variables
   Menv <- NULL
@@ -148,10 +153,11 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 
-  message("Environmental variables to paste into the bottom of the data file:\n", 
-   maxage + 1, " # N environmental variables\n", 
-   nrow(Menv), " # N environmental observations\n", 
-   paste0(capture.output(Menv), collapse = "\n")
+  message(
+    "Environmental variables to paste into the bottom of the data file:\n",
+    maxage + 1, " # N environmental variables\n",
+    nrow(Menv), " # N environmental observations\n",
+    paste0(capture.output(Menv), collapse = "\n")
   )
 
   # restore things to how they were

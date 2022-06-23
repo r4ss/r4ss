@@ -103,8 +103,9 @@ SS_readctl_3.24 <- function(file,
     }
     if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
     if (verbose) {
-      message(name, ", i = ", ctllist$".i", "\n", paste0(ctllist[name], 
-        collapse = "\n"))
+      message(name, ", i = ", ctllist$".i", "\n", paste0(ctllist[name],
+        collapse = "\n"
+      ))
     }
     return(ctllist)
   }
@@ -128,8 +129,10 @@ SS_readctl_3.24 <- function(file,
     ctllist$".i" <- i
     if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
     if (verbose) {
-      message(name, ", i = ", ctllist$".i", "\n", 
-        paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n"))
+      message(
+        name, ", i = ", ctllist$".i", "\n",
+        paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n")
+      )
     }
     return(ctllist)
   }

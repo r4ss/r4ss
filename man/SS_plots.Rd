@@ -7,7 +7,6 @@
 SS_plots(
   replist = NULL,
   plot = 1:26,
-  print = NULL,
   pdf = FALSE,
   png = TRUE,
   html = png,
@@ -130,9 +129,6 @@ Current grouping of plots is as follows:
 \item Parameter distributions
 \item Diagnostic tables
 }}
-
-\item{print}{Deprecated input for backward compatibility, now replaced by
-\code{png = TRUE/FALSE}.}
 
 \item{pdf}{Send plots to PDF file instead of R GUI?}
 

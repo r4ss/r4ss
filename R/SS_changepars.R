@@ -145,9 +145,10 @@ SS_changepars <-
         }
         goodnames <- unique(unlist(goodnames))
         if (verbose) {
-          message("Parameter names in control file matching input vector \n", 
-          "'strings' (n=", length(goodnames), "): ", 
-          paste0(goodnames, collapse = ", ")
+          message(
+            "Parameter names in control file matching input vector \n",
+            "'strings' (n=", length(goodnames), "): ",
+            paste0(goodnames, collapse = ", ")
           )
         }
         if (length(goodnames) == 0) {
@@ -328,8 +329,10 @@ SS_changepars <-
       newvals <- NA
     }
     if (verbose) {
-      message("Wrote new file to ", newctlfile, " with the following changes:\n",
-      paste0(capture.output(results), collapse = "\n"))
+      message(
+        "Wrote new file to ", newctlfile, " with the following changes:\n",
+        paste0(capture.output(results), collapse = "\n")
+      )
     }
     return(invisible(results))
   } # end function

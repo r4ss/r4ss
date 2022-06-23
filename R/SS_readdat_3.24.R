@@ -140,12 +140,12 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     message("areas:", areas)
     message("fleet info:\n", paste0(capture.output(
       data.frame(
-      fleet = 1:Ntypes,
-      name = fleetnames,
-      area = areas,
-      timing = surveytiming,
-      type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
-    )
+        fleet = 1:Ntypes,
+        name = fleetnames,
+        area = areas,
+        timing = surveytiming,
+        type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+      )
     ), collapse = "\n"))
   }
   # fleet info
@@ -273,7 +273,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     i <- i + 1
     datlist[["maximum_size"]] <- allnums[i]
     i <- i + 1
-
   } else {
     datlist[["binwidth"]] <- NA
     datlist[["minimum_size"]] <- NA
@@ -284,7 +283,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     i <- i + 1
     datlist[["lbin_vector_pop"]] <- allnums[i:(i + N_lbinspop - 1)]
     i <- i + N_lbinspop
-
   } else {
     datlist[["N_lbinspop"]] <- NA
     datlist[["lbin_vector_pop"]] <- NA

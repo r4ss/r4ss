@@ -1476,7 +1476,7 @@ SSplotBiology <-
     if (is.null(growthvaries)) {
       if (verbose) {
         message(
-          "No check for time-varying growth because starter file set to produce\n", 
+          "No check for time-varying growth because starter file set to produce\n",
           "limited report detail."
         )
       }

@@ -138,7 +138,8 @@ SSplotMovementRates <-
             nmoves <- nrow(moveinfo)
             if (verbose) message("N movement rates:", nmoves)
             if (nareas > 2) {
-              warning("Time-varying movement plots not yet configured",
+              warning(
+                "Time-varying movement plots not yet configured",
                 "for models with N areas > 2"
               )
             } else {

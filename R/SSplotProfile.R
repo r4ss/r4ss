@@ -205,8 +205,10 @@ SSplotProfile <-
     }
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
     message("Parameter matching profile.string=", profile.string, ": ", parlabel)
-    message("Parameter values (after subsetting based on input 'models'): ", 
-      paste0(parvec, collapse = ", "))
+    message(
+      "Parameter values (after subsetting based on input 'models'): ",
+      paste0(parvec, collapse = ", ")
+    )
     if (xlim[1] == "default") xlim <- range(parvec)
 
     # rearange likelihoods to be in columns by type
