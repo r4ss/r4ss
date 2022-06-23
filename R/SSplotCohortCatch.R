@@ -80,7 +80,7 @@ SSplotCohortCatch <-
 
     if (is.null(wtatage)) {
       warning(
-        "Nno weight-at-age data in replist[['wtatage']]\n",
+        "No weight-at-age data in replist[['wtatage']]\n",
         "plots of cohort contributions will be in numbers only"
       )
       subplots <- setdiff(subplots, 2) # removing subplot 2 from the list
