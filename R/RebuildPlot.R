@@ -209,8 +209,10 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     for (Ifile in 1:length(FileN)) NOpts <- NOpts + length(Options[[Ifile]])
 
     if (NOpts > 8) {
-      warning("There are a large number of lines. Consider creating separate", 
-      " plots\nfor subsets.")
+      warning(
+        "There are a large number of lines. Consider creating separate",
+        " plots\nfor subsets."
+      )
     }
 
     Files <- NULL

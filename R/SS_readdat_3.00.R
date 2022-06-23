@@ -142,13 +142,13 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     message("areas:", areas)
     message("fleet info:\n", paste0(capture.output(
       data.frame(
-      fleet = 1:Ntypes,
-      name = fleetnames,
-      area = areas,
-      timing = surveytiming,
-      type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
-      )), collapse = "\n")
-    )
+        fleet = 1:Ntypes,
+        name = fleetnames,
+        area = areas,
+        timing = surveytiming,
+        type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+      )
+    ), collapse = "\n"))
   }
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming, areas))
@@ -280,7 +280,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     i <- i + 1
     datlist[["maximum_size"]] <- allnums[i]
     i <- i + 1
-
   } else {
     datlist[["binwidth"]] <- NA
     datlist[["minimum_size"]] <- NA

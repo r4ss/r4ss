@@ -143,8 +143,10 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   options(warn = old_warn)
 
   if (verbose) {
-    message("Existing table of variance adjustments:\n", 
-    paste0(capture.output(ctl), collapse = "\n"))
+    message(
+      "Existing table of variance adjustments:\n",
+      paste0(capture.output(ctl), collapse = "\n")
+    )
   }
 
   if (is.null(newrow) & is.null(newtable)) {
@@ -172,8 +174,10 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   }
 
   if (verbose) {
-    message("New table of variance adjustments:\n", 
-      paste0(capture.output(ctl), collapse = "\n"))
+    message(
+      "New table of variance adjustments:\n",
+      paste0(capture.output(ctl), collapse = "\n")
+    )
   }
 
   # absolute position of the rows to change

@@ -293,8 +293,10 @@ SS_profile <-
         if (!is.null(string)) {
           profilevec_df <- data.frame(profilevec)
           names(profilevec_df) <- string
-          message("Profiling over ", npars, " parameters\n", 
-          paste0(profilevec_df, collapse = "\n"))
+          message(
+            "Profiling over ", npars, " parameters\n",
+            paste0(profilevec_df, collapse = "\n")
+          )
         }
       }
     }
@@ -307,15 +309,18 @@ SS_profile <-
         stop("input whichruns should be NULL or a subset of 1:", n, "\n", sep = "")
       }
     }
-    message("Doing runs: ", paste(whichruns, collapse = ", "), 
-      ",\n  out of n = ", n)
+    message(
+      "Doing runs: ", paste(whichruns, collapse = ", "),
+      ",\n  out of n = ", n
+    )
 
 
     converged <- rep(NA, n)
     totallike <- rep(NA, n)
     liketable <- NULL
 
-    message("Changing working directory to ", dir, ",\n",
+    message(
+      "Changing working directory to ", dir, ",\n",
       " but will be changed back on exit from function."
     )
     setwd(dir) # change working directory
@@ -358,7 +363,8 @@ SS_profile <-
       # then don't bother running anything
       newrepfile <- paste("Report", i, ".sso", sep = "")
       if (!overwrite & file.exists(newrepfile)) {
-        message("skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
+        message(
+          "skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
           "  and file exists: ", newrepfile
         )
       } else {

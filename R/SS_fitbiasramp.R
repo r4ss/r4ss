@@ -130,8 +130,12 @@ SS_fitbiasramp <-
     if (transform) {
       startvalues <- makeoffsets(startvalues)
     }
-    if (verbose & transform) message("transformed startvalues =",
-     paste(startvalues, collapse = ", "))
+    if (verbose & transform) {
+      message(
+        "transformed startvalues =",
+        paste(startvalues, collapse = ", ")
+      )
+    }
 
     biasadjfit <- function(pars, yr, std, sigmaR, transform,
                            is.forecast, eps = .1) {

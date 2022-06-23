@@ -523,8 +523,10 @@ SSplotComparisons <-
       }
       # check for mismatched lengths of list elements
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
-        warning("Skipping index plots;\n",
-          "Fleets have different numbers of indices listed in 'indexfleets'.")
+        warning(
+          "Skipping index plots;\n",
+          "Fleets have different numbers of indices listed in 'indexfleets'."
+        )
         indexfleets <- NULL
       }
 
@@ -1919,8 +1921,9 @@ SSplotComparisons <-
           if (length(mcmcColumn) > 1) {
             warning(
               "Too many columns selected from MCMC for model ",
-              imodel, ":", paste0(names(mcmc[[imodel]])[mcmcColumn], 
-              collapse = ", "), 
+              imodel, ":", paste0(names(mcmc[[imodel]])[mcmcColumn],
+                collapse = ", "
+              ),
               ". Please specify a unique label in the mcmc dataframe",
               "or specify mcmcVec = FALSE for model ",
               imodel, " (or mcmcVec = FALSE applying to all models). "
@@ -2517,8 +2520,10 @@ SSplotComparisons <-
         if (length(expandednames) == 0) {
           warning("No parameter/quantity names matching 'densitynames' input.")
         } else {
-          message("Parameter/quantity names matching 'densitynames' input:\n",
-            paste0(expandednames, collapse = ", "))
+          message(
+            "Parameter/quantity names matching 'densitynames' input:\n",
+            paste0(expandednames, collapse = ", ")
+          )
           ndensities <- length(expandednames)
           # make a table to store associated x-labels
           densitytable <- data.frame(

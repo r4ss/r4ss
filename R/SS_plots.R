@@ -237,7 +237,6 @@ SS_plots <-
            scalebubbles = FALSE, tslabels = NULL, catlabels = NULL, maxsize = 1.0,
            showmle = TRUE, showpost = TRUE, showprior = TRUE, showinit = TRUE, showdev = FALSE,
            fitrange = FALSE, ...) {
-
     flush.console()
 
     # label table is a step toward internationalization of the code

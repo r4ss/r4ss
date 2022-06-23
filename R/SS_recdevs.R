@@ -105,8 +105,10 @@ SS_recdevs <-
     # check for keyword at start of following section
     key2 <- grep("Fishing Mortality info", ctl)
     if (length(key2) == 0) {
-      warning("The phrase 'Fishing Mortality info' does not occur after the\n", 
-      "recdev section; Format of control file may be messy.")
+      warning(
+        "The phrase 'Fishing Mortality info' does not occur after the\n",
+        "recdev section; Format of control file may be messy."
+      )
     } else {
       key2 == key2[1]
     }
@@ -128,8 +130,10 @@ SS_recdevs <-
         scaleyrs <- yrs %in% scaleyrs
       }
       if (verbose) {
-        message("Rescaling recdevs vector so yrs ", min(yrs[scaleyrs]), ":",
-          max(yrs[scaleyrs]), " have mean 0 and std. dev. = sigmaR = ", sigmaR)
+        message(
+          "Rescaling recdevs vector so yrs ", min(yrs[scaleyrs]), ":",
+          max(yrs[scaleyrs]), " have mean 0 and std. dev. = sigmaR = ", sigmaR
+        )
       }
       newdevs <- sigmaR * (newdevs - mean(newdevs[scaleyrs])) / sd(newdevs[scaleyrs])
     }
