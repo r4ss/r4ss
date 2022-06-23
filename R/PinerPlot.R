@@ -186,7 +186,8 @@ PinerPlot <-
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
     message(
       "Parameter matching profile.string = '", profile.string, "': '",
-      parlabel, "Parameter values (after subsetting based on input 'models'):",
+      parlabel,
+      "\nParameter values (after subsetting based on input 'models'): ",
       paste0(parvec, collase = ", ")
     )
     if (xlim[1] == "default") xlim <- range(parvec)
@@ -238,12 +239,12 @@ PinerPlot <-
     include <- change.fraction >= minfraction
     message(
       "Fleet-specific likelihoods showing max change as fraction of total change.\n",
-      "To change which components are included, change input 'minfraction'."
+      "To change which components are included, change input 'minfraction'.\n",
+      paste0(utils::capture.output(print(data.frame(
+        frac_change = round(change.fraction, 4),
+        include = include
+      ))), collapse = "\n")
     )
-    print(data.frame(
-      frac_change = round(change.fraction, 4),
-      include = include
-    ))
 
     # subset values and reorder values
     # Note: first 3 columns are "model", "Label", and "ALL", and
