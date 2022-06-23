@@ -145,21 +145,16 @@ SS_changepars <-
         }
         goodnames <- unique(unlist(goodnames))
         if (verbose) {
-          cat("parameter names in control file matching input vector 'strings' (n=",
-            length(goodnames), "):\n",
-            sep = ""
+          message("Parameter names in control file matching input vector \n", 
+          "'strings' (n=", length(goodnames), "): ", 
+          paste0(goodnames, collapse = ", ")
           )
-          print(goodnames)
         }
         if (length(goodnames) == 0) {
           stop("No parameters names match input vector 'strings'")
         }
       }
       nvals <- length(goodnames)
-      if (verbose) {
-        cat("These are the ctl file lines as they currently exist:\n")
-        print(ctltable[ctltable[["Label"]] %in% goodnames, ])
-      }
       for (i in 1:nvals) {
         linenums[i] <- ctltable[["Linenum"]][ctltable[["Label"]] == goodnames[i]]
       }
@@ -301,9 +296,7 @@ SS_changepars <-
     newctl <- ctl
     newctl[linenums] <- newctlsubset
     writeLines(newctl, file.path(dir, newctlfile))
-    if (verbose) {
-      cat("\nwrote new file to", newctlfile, "with the following changes:\n")
-    }
+
 
     # if no changed made, repeat old values in output
     if (is.null(newvals)) {
@@ -335,7 +328,8 @@ SS_changepars <-
       newvals <- NA
     }
     if (verbose) {
-      print(results)
+      message("Wrote new file to ", newctlfile, " with the following changes:\n",
+      paste0(capture.output(results), collapse = "\n"))
     }
     return(invisible(results))
   } # end function

@@ -109,9 +109,6 @@ SS_readctl <- function(file,
 
   nver <- as.numeric(substring(version, 1, 4))
 
-  if (verbose) cat("Char version is ", version, "\n")
-  if (verbose) cat("Numeric version is ", nver, "\n")
-
   # call function for SS version 2.00
   if (nver < 3) {
     stop("Function SS_readctl_2.00 has not been written yet")

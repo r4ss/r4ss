@@ -677,7 +677,7 @@ make_multifig <-
     # par(mfcol=c(rows,cols), mar=c(5,4,4,2)+.1, oma=rep(0,4))
 
     if (anyscaled) {
-      cat("Note: compositions have been rescaled by dividing by binwidth\n")
+      message("Compositions have been rescaled by dividing by binwidth")
     }
     # return information on what was plotted
     return(list(npages = npages, npanels = npanels, ipage = ipage))

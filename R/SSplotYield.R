@@ -173,10 +173,10 @@ SSplotYield <-
             }
           }
         } else {
-          cat("Skipped equilibrium yield plots: equil_yield has all NA values\n")
+          message("Skipped equilibrium yield plots: equil_yield has all NA values")
         }
       } else {
-        cat("Skipped equilibrium yield plots: no equil_yield results in this model\n")
+        message("Skipped equilibrium yield plots: no equil_yield results in this model")
       }
     }
 

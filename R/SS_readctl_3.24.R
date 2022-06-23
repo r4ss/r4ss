@@ -103,8 +103,8 @@ SS_readctl_3.24 <- function(file,
     }
     if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
     if (verbose) {
-      message(name, ", i = ", ctllist$".i", "\n")
-      print(ctllist[name])
+      message(name, ", i = ", ctllist$".i", "\n", paste0(ctllist[name], 
+        collapse = "\n"))
     }
     return(ctllist)
   }
@@ -128,8 +128,8 @@ SS_readctl_3.24 <- function(file,
     ctllist$".i" <- i
     if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
     if (verbose) {
-      message(name, ", i = ", ctllist$".i", "\n")
-      print(ctllist[[which(names(ctllist) == name)]])
+      message(name, ", i = ", ctllist$".i", "\n", 
+        paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n"))
     }
     return(ctllist)
   }
@@ -1048,12 +1048,7 @@ SS_readctl_3.24 <- function(file,
       }
   }
   if (verbose) {
-    message("size_selex_Nparms\n")
-    print(size_selex_Nparms)
-  }
-  if (verbose) {
-    message("age_selex_Nparms\n")
-    print(age_selex_Nparms)
+    message("Read size and age selectivity setup")
   }
   # Selex parlines ----
   # _LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn

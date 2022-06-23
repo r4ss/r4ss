@@ -60,7 +60,7 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   rm(raw)
   ctl <- ctl[!grepl("blocks_per_pattern", ctl[, 8]), ]
   nrows <- nrow(ctl)
-  # print(nrows)
+
   ctl_num <- matrix(NA, nrows, ncol(ctl)) # copy of ctl converted to numerical values or NA
   num_cnt <- rep(NA, nrows) # count of number of numerical values in each row
   num_cnt7 <- rep(NA, nrows) # count of number of numerical values in first 7 values of each row

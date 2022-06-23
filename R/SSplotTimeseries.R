@@ -448,7 +448,7 @@ SSplotTimeseries <-
         file <- paste("ts", subplot, "_", file, ".png", sep = "")
         # replace any spaces with underscores
         file <- gsub(pattern = " ", replacement = "_", x = file, fixed = TRUE)
-        # if(verbose) cat("printing plot to file:", file, "\n")
+
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,

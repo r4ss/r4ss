@@ -121,7 +121,9 @@ mcmc.out <- function(directory = "c:/mydirectory/",
   }
 
   if (!is.null(colNames)) {
-    if (length(colNames) != numparams) cat("numparams argument overidden by length of colNames argument\n")
+    if (length(colNames) != numparams) {
+      warning("numparams argument overidden by length of colNames argument")
+    }
     numparams <- length(colNames)
     mcmcdata <- mcmcdata[, colNames]
     if (length(colNames) == 1) {

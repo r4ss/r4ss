@@ -41,8 +41,6 @@
 #'   \item Diagnostic tables
 #' }
 #'
-#' @param print Deprecated input for backward compatibility, now replaced by
-#' `png = TRUE/FALSE`.
 #' @param pdf Send plots to PDF file instead of R GUI?
 #' @param png Send plots to PNG files instead of R GUI?
 #' @param html Run [SS_html()] on completion? By default has same
@@ -216,7 +214,7 @@
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.
 SS_plots <-
-  function(replist = NULL, plot = 1:26, print = NULL, pdf = FALSE, png = TRUE, html = png,
+  function(replist = NULL, plot = 1:26, pdf = FALSE, png = TRUE, html = png,
            printfolder = "plots", dir = "default", fleets = "all", areas = "all",
            fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
            lwd = 1, areacols = "default", areanames = "default",
@@ -239,12 +237,7 @@ SS_plots <-
            scalebubbles = FALSE, tslabels = NULL, catlabels = NULL, maxsize = 1.0,
            showmle = TRUE, showpost = TRUE, showprior = TRUE, showinit = TRUE, showdev = FALSE,
            fitrange = FALSE, ...) {
-    if (!is.null(print)) {
-      stop(
-        "The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
-        "  which is combined with the vector of numbers input to 'plot'"
-      )
-    }
+
     flush.console()
 
     # label table is a step toward internationalization of the code

@@ -58,7 +58,9 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
 
   # function to read Stock Synthesis data files
 
-  if (verbose) cat("running SS_readctl_3.30\n")
+  if (verbose) {
+    message("running SS_readctl_3.30")
+  }
   dat <- readLines(file, warn = FALSE)
   ctl_with_cmts <- dat # save original read in file with commemts
   Comments <- get_comments(dat)
@@ -101,8 +103,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     }
     if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
     if (verbose) {
-      cat(name, ",i=", ctllist$".i", "\n")
-      print(ctllist[name])
+      message(name, ", i=", ctllist$".i")
     }
     return(ctllist)
   }
@@ -159,8 +160,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     ctllist$".i" <- i
     if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
     if (verbose) {
-      cat(name, ",i=", ctllist$".i", "\n")
-      print(ctllist[[which(names(ctllist) == name)]])
+      message(name, ",i=", ctllist$".i")
     }
     return(ctllist)
   }
@@ -173,7 +173,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     ctllist[["temp"]] <- dat[i]
     ctllist$".i" <- i + 1
     if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
-    if (verbose) cat(name, ",i=", ctllist$".i", " ;", ctllist[[which(names(ctllist) == name)]], "\n")
+    if (verbose) message(name, ",i=", ctllist$".i", " ;", ctllist[[which(names(ctllist) == name)]])
     return(ctllist)
   }
 
@@ -188,7 +188,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     }
     ctllist$".i" <- i
     if (!is.null(name)) names(ctllist)[names(ctllist) == "temp"] <- name
-    if (verbose) cat(name, ",i=", ctllist$".i", "\n")
+    if (verbose) message(name, ",i=", ctllist$".i")
     return(ctllist)
   }
 
@@ -270,7 +270,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
 
   ctllist[["eof"]] <- FALSE
 
-  if (verbose) cat("SS_readctl_3.30 - read version = ", ctllist[["ReadVersion"]], "\n")
+  if (verbose) message("SS_readctl_3.30 - read version = ", ctllist[["ReadVersion"]])
   # beginning of ctl ----
   # weight at age option
   ctllist <- add_elem(ctllist, "EmpiricalWAA")
@@ -728,7 +728,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     # Ricker SRR reparam beta
     c("SR_LN(R0)", "SR_Ricker_re_steep", "SR_Ricker_re_power", "SR_sigmaR", "SR_regime", "SR_autocorr")
   } else {
-    cat("SR_function=", ctllist[["SR_function"]], " is not supported yet.")
+    message("SR_function=", ctllist[["SR_function"]], " is not supported yet.")
     return(ctllist)
   }
 
@@ -1277,10 +1277,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     }
   }
   if (verbose) {
-    cat("size_selex_Nparms\n")
-    print(unlist(lapply(size_selex_label, function(x) length(x))))
-    cat("age_selex_Nparms\n")
-    print(unlist(lapply(age_selex_label, function(x) length(x))))
+    message("Read size and age selectivity setup.")
   }
   # Selex parameters
   if (sum(length(unlist(size_selex_label))) > 0) {

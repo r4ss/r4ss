@@ -116,8 +116,6 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
 
   if (length(startfile) == 0) stop("No starter.ss file found in ", olddir)
 
-  ## print(getwd())
-  ## print(startfile)
   startfile <- file.path(olddir, startfile)
 
   message("Getting input file names from starter file:\n", startfile)

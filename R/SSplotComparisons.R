@@ -282,7 +282,7 @@ SSplotComparisons <-
     }
 
     if (png & is.null(plotdir)) {
-      stop("to print PNG files, you must supply a directory as 'plotdir'")
+      stop("To print PNG files, you must supply a directory as 'plotdir'")
     }
 
     # check for internal consistency
@@ -291,7 +291,7 @@ SSplotComparisons <-
     }
     if (pdf) {
       if (is.null(plotdir)) {
-        stop("to write to a PDF, you must supply a directory as 'plotdir'")
+        stop("To write to a PDF, you must supply a directory as 'plotdir'")
       }
       pdffile <- file.path(
         plotdir,
@@ -523,12 +523,8 @@ SSplotComparisons <-
       }
       # check for mismatched lengths of list elements
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
-        message("indexfleets:")
-        print(indexfleets)
-        warning(
-          "Skipping index plots:\n",
-          "Fleets have different numbers of indices listed in 'indexfleets'."
-        )
+        warning("Skipping index plots;\n",
+          "Fleets have different numbers of indices listed in 'indexfleets'.")
         indexfleets <- NULL
       }
 
@@ -1921,15 +1917,13 @@ SSplotComparisons <-
           }
           # warn if too many columns
           if (length(mcmcColumn) > 1) {
-            message(
-              "Too many columns selected from MCMC for model ",
-              imodel, ":"
-            )
-            print(names(mcmc[[imodel]])[mcmcColumn])
             warning(
-              "Please specify a unique label in the mcmc dataframe",
-              "or specify mcmcVec=FALSE for model ",
-              imodel, " (or mcmcVec=FALSE applying to all models)."
+              "Too many columns selected from MCMC for model ",
+              imodel, ":", paste0(names(mcmc[[imodel]])[mcmcColumn], 
+              collapse = ", "), 
+              ". Please specify a unique label in the mcmc dataframe",
+              "or specify mcmcVec = FALSE for model ",
+              imodel, " (or mcmcVec = FALSE applying to all models). "
             )
             good[iline] <- FALSE
           }
@@ -2521,10 +2515,10 @@ SSplotComparisons <-
           expandednames <- c(expandednames, matchingnames)
         }
         if (length(expandednames) == 0) {
-          warning("  No parameter/quantity names matching 'densitynames' input.")
+          warning("No parameter/quantity names matching 'densitynames' input.")
         } else {
-          message("  parameter/quantity names matching 'densitynames' input:")
-          print(expandednames)
+          message("Parameter/quantity names matching 'densitynames' input:\n",
+            paste0(expandednames, collapse = ", "))
           ndensities <- length(expandednames)
           # make a table to store associated x-labels
           densitytable <- data.frame(

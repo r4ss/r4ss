@@ -213,7 +213,7 @@ SSMethod.Cond.TA1.8 <-
           # 0 sample sizes caused problems with ylim, override with wide range
           # plot may not make sense but will help users note that a problem exists
           # (as opposed to skipping the plot)
-          cat("NaN values in Francis calculations, plot may not make sense\n")
+          warning("NaN values in Francis calculations, plot may not make sense")
           ylim <- c(0, fit[["accuage"]])
         }
         # make empty plot (unless adding to existing plot)

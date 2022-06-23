@@ -184,9 +184,9 @@ PinerPlot <-
       )
     }
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
-    cat("Parameter matching profile.string='", profile.string, "': '", parlabel, "'\n", sep = "")
-    cat("Parameter values (after subsetting based on input 'models'):\n")
-    print(parvec)
+    message("Parameter matching profile.string = '", profile.string, "': '", 
+    parlabel, "Parameter values (after subsetting based on input 'models'):", 
+    paste0(parvec, collase = ", "))
     if (xlim[1] == "default") xlim <- range(parvec)
 
     # rearange likelihoods to be in columns by type
@@ -234,11 +234,10 @@ PinerPlot <-
     column.max <- apply(data.frame(prof.table[, -c(1:3)]), 2, max, na.rm = TRUE)
     change.fraction <- column.max / max(prof.table[, 3], na.rm = TRUE)
     include <- change.fraction >= minfraction
-    cat("\nFleets-specific likelihoods showing max change as fraction of total change.\n",
-      "To change which components are included, change input 'minfraction'.\n\n",
-      sep = ""
-    )
-    print(data.frame(frac_change = round(change.fraction, 4), include = include))
+    message("Fleets-specific likelihoods showing max change as fraction of total change.\n",
+      "To change which components are included, change input 'minfraction'.")
+    paste0(output.console(data.frame(frac_change = round(change.fraction, 4),
+     include = include)), collapse = ", ")
 
     # subset values and reorder values
     # Note: first 3 columns are "model", "Label", and "ALL", and

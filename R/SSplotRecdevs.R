@@ -65,7 +65,7 @@ SSplotRecdevs <-
     recdevLate <- parameters[substring(parameters[["Label"]], 1, 12) == "Late_RecrDev", ]
 
     if (nrow(recdev) == 0 || max(recdev[["Value"]]) == 0) {
-      if (verbose) cat("Skipped SSplotrecdevs - no rec devs estimated\n")
+      if (verbose) message("Skipped SSplotrecdevs - no rec devs estimated")
     } else {
       if (nrow(recdev) > 0) {
         # early

@@ -76,16 +76,15 @@ SSplotCohortCatch <-
     growdat <- replist[["endgrowth"]]
     SS_versionshort <- toupper(substr(replist[["SS_version"]], 1, 8))
 
-    #  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
     if (is.null(wtatage)) {
-      cat(
-        "Warning: no weight-at-age data in replist[['wtatage']]\n",
-        "        plots of cohort contributions will be in numbers only\n"
+      warning(
+        "No weight-at-age data in replist[['wtatage']]\n",
+        "plots of cohort contributions will be in numbers only"
       )
       subplots <- setdiff(subplots, 2) # removing subplot 2 from the list
     } else {
       if (nseasons > 1) {
-        cat("Warning: plots of catch by cohort might not work for seasonal models.\n")
+        warning("Plots of catch by cohort might not work for seasonal models.")
       }
     }
 
@@ -117,8 +116,6 @@ SSplotCohortCatch <-
           for (ifleet in 1:nfishfleets) { # loop over fleets
             f <- ifleet # index = fleet number in current SS but making general
             for (isex in 1:nsexes) { # loop over sexes
-              ### testing:
-              ##   cat('y=',y,' a=',a,' f=',f,' isex=',isex,' cohort=',cohort,'\n',sep='')
 
               # copy values from catage to catcohort_fltsex
               # summation could include multiple seasons or morphs within a year

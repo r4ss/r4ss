@@ -206,8 +206,6 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
     # grid lines
     abline(h = ybins, v = 0:accuage, col = col.grid, lwd = 0.5)
     for (iage in nages:1) {
-      # print(iage)
-      # print(dim(mat))
       a <- agevec[iage] # actual age
       yvec <- rev(mat[, iage]) # vector of values
       for (iybin in 1:nybins) {

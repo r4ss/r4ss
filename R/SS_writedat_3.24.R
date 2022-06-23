@@ -257,8 +257,6 @@ SS_writedat_3.24 <- function(datlist,
   wl("N_agebins")
   if (datlist[["N_agebins"]] > 0) {
     writeComment("#_agebin_vector")
-    # writeLines(paste(datlist[["agebin_vector"]],collapse=" "))
-    #  cat("L232 in SS_writedat\n")
     wl.vector("agebin_vector")
   }
   wl("N_ageerror_definitions")

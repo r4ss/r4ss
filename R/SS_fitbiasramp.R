@@ -104,7 +104,7 @@ SS_fitbiasramp <-
         .7
       )
     }
-    if (verbose) cat("startvalues =", paste(startvalues, collapse = ", "), "\n")
+    if (verbose) message("startvalues =", paste(startvalues, collapse = ", "))
 
     makeoffsets <- function(values) {
       # a function to transform parameters into offsets from adjacent values
@@ -130,7 +130,8 @@ SS_fitbiasramp <-
     if (transform) {
       startvalues <- makeoffsets(startvalues)
     }
-    if (verbose & transform) cat("transformed startvalues =", paste(startvalues, collapse = ", "), "\n")
+    if (verbose & transform) message("transformed startvalues =",
+     paste(startvalues, collapse = ", "))
 
     biasadjfit <- function(pars, yr, std, sigmaR, transform,
                            is.forecast, eps = .1) {
@@ -250,7 +251,7 @@ SS_fitbiasramp <-
 
     # test for presence of estimated recruitment deviations
     if (max(val) == 0 | length(val) == 0) {
-      if (verbose) cat("no rec devs estimated in this model\n")
+      if (verbose) message("No rec devs estimated in this model")
       return()
     }
 
@@ -258,7 +259,7 @@ SS_fitbiasramp <-
     recdev_lo <- val - 1.96 * std
 
     ylim <- range(recdev_hi, recdev_lo)
-    if (verbose) cat("Now estimating alternative recruitment bias adjustment fraction...\n")
+    if (verbose) message("Now estimating alternative recruitment bias adjustment fraction...")
     newbias <- optimfun(
       yr = yr, std = std,
       startvalues = startvalues, is.forecast = is.forecast
@@ -314,14 +315,10 @@ SS_fitbiasramp <-
 
     if (verbose) {
       if (newbias[["convergence"]] != 0) {
-        cat("Problem with convergence, here is output from 'optim':\n")
-        cat("##############################\n")
+        warning("Problem with convergence, here is output from 'optim':\n")
         print(newbias)
-        cat("##############################\n")
       }
-
-      cat("Estimated values:\n")
-      print(format(df, justify = "left"), row.names = FALSE)
+      message("Estimated values: \n", paste0(capture.output(df), collpase = "\n"))
     }
 
     if (plot) {
@@ -382,7 +379,7 @@ SS_fitbiasramp <-
       ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
       # write new file
       writeLines(ctlfile, newctl)
-      if (verbose) cat("wrote new file to", newctl, "with values", paste(newvals, collapse = " "), "\n")
+      if (verbose) message("wrote new file to ", newctl, " with values", paste(newvals, collapse = ", "))
     }
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "RecDev"
     return(invisible(list(newbias = newbias, df = df, plotinfo = plotinfo)))

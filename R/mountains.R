@@ -36,15 +36,10 @@ mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
   # stock assessment of southern bluefin tuna with temporal changes in selectivity.
   # South African Journal of Marine Science 25:331-362.
 
-  errors <- FALSE
   for (icol in 1:ncol(zmat)) {
     if (!is.numeric(zmat[, icol])) {
-      errors <- TRUE
-      print(paste("error: column", icol, "of zmat is not numeric"))
+      stop("Column", icol, "of zmat is not numeric")
     }
-  }
-  if (errors) {
-    return(invisible())
   }
 
   if (rev) yvec <- -yvec

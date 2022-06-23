@@ -395,6 +395,7 @@ SS_readdat_3.30 <-
           )
         }
       }
+
       if (verbose) {
         message("Read Length composition data.")
       }
@@ -475,6 +476,7 @@ SS_readdat_3.30 <-
           )
         }
       }
+
       if (verbose) {
         message("Read age composition data.")
       }
@@ -558,6 +560,7 @@ SS_readdat_3.30 <-
             NULL
           }
         )
+
       # The formatting of the mean size at age in data.ss_new has sample sizes
       # on a separate line below the mean size values, and this applies to the
       # -9999 line as well. The lines below is an attempt to work around this
@@ -579,6 +582,7 @@ SS_readdat_3.30 <-
     if (datlist[["N_environ_variables"]]) {
       datlist[["envdat"]] <- get.df(dat, ind)
       colnames(datlist[["envdat"]]) <- c("Yr", "Variable", "Value")
+
       if (verbose) {
         message("Read environmental variable data.")
       }
