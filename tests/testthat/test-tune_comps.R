@@ -41,7 +41,7 @@ test_that(" SS_tune_comps() works when just want to return the Francis table", {
   # write new table to file
   table <- SS_varadjust(
     dir = file.path(runs_path, "simple_small"),
-    ctlfile = "simple_control.ss",
+    ctlfile = "control.ss",
     newctlfile = "new_control_varadjust.ss",
     newtable = test, overwrite = FALSE
   )
@@ -49,7 +49,7 @@ test_that(" SS_tune_comps() works when just want to return the Francis table", {
     runs_path, "simple_small",
     "new_control_varadjust.ss"
   )))
-  dat <- SS_readdat(file.path(runs_path, "simple_small", "simple_data.ss"),
+  dat <- SS_readdat(file.path(runs_path, "simple_small", "data.ss"),
     verbose = FALSE
   )
   ctl_varadjust <- SS_readctl(
@@ -108,10 +108,10 @@ test_that("SS_tune_comps() works with DM", {
   )
   expect_length(test, 2)
   # add check that varaiance adjustment is gone
-  dat <- SS_readdat(file.path(runs_path, "simple_small", "simple_data.ss"),
+  dat <- SS_readdat(file.path(runs_path, "simple_small", "data.ss"),
     verbose = FALSE
   )
-  ctl <- SS_readctl(file.path(runs_path, "simple_small", "simple_control.ss"),
+  ctl <- SS_readctl(file.path(runs_path, "simple_small", "control.ss"),
     use_datlist = TRUE,
     datlist = dat,
     verbose = FALSE
