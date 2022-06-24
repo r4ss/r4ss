@@ -18,7 +18,7 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
 test_that("SS_Sensi_plot runs", {
   # read model output
-  simple3.30.13 <- SS_output(file.path(example_path, "simple_3.30.13"),
+  simple_small <- SS_output(file.path(example_path, "simple_small"),
     verbose = FALSE, printstats = FALSE
   )
 
@@ -26,7 +26,7 @@ test_that("SS_Sensi_plot runs", {
   # to match the example in SS_Sensi_plot()
   zz <- list()
   for (i in 1:19) {
-    zz[[i]] <- simple3.30.13
+    zz[[i]] <- simple_small
   }
 
   # Use the summarize function in r4ss to get model summaries
@@ -59,7 +59,7 @@ test_that("SS_Sensi_plot runs", {
   SS_Sensi_plot(
     model.summaries = model.summaries,
     dir = temp_path,
-    current.year = 2001,
+    current.year = 2022,
     mod.names = mod.names, # List the names of the sensitivity runs
     # likelihood.out = c(1, 1, 0),
     Sensi.RE.out = "Sensi_RE_out.DMP", # Saved file of relative errors

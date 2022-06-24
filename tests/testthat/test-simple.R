@@ -10,7 +10,7 @@ example_path <- system.file("extdata", package = "r4ss")
 # creating the temp_path directory and see what temp_path is. R should write
 # to the same location for the same R session (if you restart R, temp_path will)
 # change.
-temp_path <- file.path(tempdir(), "test_simple")
+temp_path <- file.path(tempdir(), "test_simple_small")
 dir.create(temp_path, showWarnings = FALSE)
 # remove all artifacts created from testing. (developers: simply comment out
 # the line below if you want to keep artifacts for troubleshooting purposes)
@@ -23,50 +23,49 @@ simple3.24 <- SS_output(file.path(example_path, "simple_3.24"),
   verbose = FALSE,
   printstats = FALSE
 )
-test_that("SS_output runs on simple_3.24 model", {
+test_that("SS_output() runs on simple_3.24 model", {
   expect_equal(tail(names(simple3.24), 1), "inputs")
 })
 
 simple3.30.01 <- SS_output(file.path(example_path, "simple_3.30.01"),
   verbose = FALSE, printstats = FALSE
 )
-test_that("SS_output runs on simple_3.30.01 model", {
+test_that("SS_output() runs on simple_3.30.01 model", {
   expect_equal(tail(names(simple3.30.01), 1), "inputs")
 })
 
 simple3.30.12 <- SS_output(file.path(example_path, "simple_3.30.12"),
   verbose = FALSE, printstats = FALSE
 )
-test_that("SS_output runs on simple_3.30.12 model", {
+test_that("SS_output() runs on simple_3.30.12 model", {
   expect_equal(tail(names(simple3.30.12), 1), "inputs")
 })
 
 simple3.30.13 <- SS_output(file.path(example_path, "simple_3.30.13"),
   verbose = FALSE, printstats = FALSE
 )
-test_that("SS_output runs on simple_3.30.13 model", {
+test_that("SS_output() runs on simple_3.30.13 model", {
   expect_equal(tail(names(simple3.30.13), 1), "inputs")
+})
+
+simple_small <- SS_output(file.path(example_path, "simple_small"),
+  verbose = FALSE, printstats = FALSE
+)
+test_that("SS_output() runs on simple_small model", {
+  expect_equal(tail(names(simple_small), 1), "inputs")
 })
 
 # tests where stuff is missing
 # missing MCMC folder
-test_that("SS_output generates warning when MCMC folder is missing", {
+test_that("SS_output() generates warning when MCMC folder is missing", {
   expect_warning(SS_output(
     dir = tail(dir(example_path, full.names = TRUE), 1),
     dir.mcmc = "mcmc", warn = FALSE, printstats = FALSE, hidewarn = TRUE, verbose = FALSE
   ))
 })
 
-# skipping CompReport file
-simple3.30.13 <- SS_output(file.path(example_path, "simple_3.30.13"),
-  verbose = FALSE, printstats = FALSE,
-  compfile = NULL
-)
-test_that("SS_output runs on simple_3.30.13 model", {
-  expect_equal(tail(names(simple3.30.13), 1), "inputs")
-})
 # missing a bunch of files
-simple3.30.13 <- SS_output(file.path(example_path, "simple_3.30.13"),
+simple_small <- SS_output(file.path(example_path, "simple_small"),
   verbose = FALSE, printstats = FALSE,
   compfile = "wrong file",
   covarfile = "wrong file",
@@ -74,8 +73,8 @@ simple3.30.13 <- SS_output(file.path(example_path, "simple_3.30.13"),
   wtfile = "wrong file",
   warnfile = "wrong file"
 )
-test_that("SS_output runs on simple_3.30.13 model", {
-  expect_equal(tail(names(simple3.30.13), 1), "inputs")
+test_that("SS_output() runs when lots of inputs are unavailable", {
+  expect_equal(tail(names(simple_small), 1), "inputs")
 })
 
 ###############################################################################
@@ -90,18 +89,19 @@ test_that("get_ncol finds the correct number of columns for SS_output", {
   expect_true(is.atomic(results))
   expect(
     all(results %in% c(55:56,61)),
-    "Optimum width of Report.sso wasn't 55 or 56."
+    "Optimum width of Report.sso wasn't 55, 56, or 61"
   )
 })
 
 ###############################################################################
 # specific tests for elements in the list created by SS_output
 ###############################################################################
-test_that("SS_output list: Kobe looks right", {
+test_that("SS_output() list: Kobe looks right", {
   expect_true(all(simple3.24$Kobe$Year %in% 1950:2050))
   expect_true(all(simple3.30.01$Kobe$Year %in% 1950:2050))
   expect_true(all(simple3.30.12$Kobe$Year %in% 1950:2050))
   expect_true(all(simple3.30.13$Kobe$Year %in% 1950:2050))
+  expect_true(all(simple_small$Kobe$Year %in% 2011:2032))
 })
 
 ###############################################################################
@@ -140,6 +140,14 @@ test_that("SS_plots runs on simple_3.30.13 model", {
   expect_equal(tail(plots3.30.13$file, 1), "parameterchecks.html")
 })
 
+test_that("SS_plots runs on simple_small model", {
+  plots_simple_small <- SS_plots(simple_small,
+    dir = temp_path,
+    printfolder = "plots_simple_small", verbose = FALSE
+  )
+  expect_equal(tail(plots_simple_small$file, 1), "parameterchecks.html")
+})
+
 ###############################################################################
 # testing SSsummarize, SSplotComparisons, and SStableComparisons
 ###############################################################################
@@ -148,7 +156,8 @@ test_that("SSsummarize and SSplotComparisons both work", {
   # run summarize function
   simple_summary <- SSsummarize(list(
     simple3.24, simple3.30.01,
-    simple3.30.12, simple3.30.13
+    simple3.30.12, simple3.30.13, 
+    simple_simple_small
   ))
 
   # plot comparisons of results
@@ -171,7 +180,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
 # testing read/write dat functions for 3.24
 ###############################################################################
 
-test_that("SS_readdat and SS_writedat both work for 3.24", {
+test_that("SS_readdat() and SS_writedat() both work for 3.24", {
   # read data file
   simple3.24_dat <- SS_readdat(
     file = file.path(example_path, "simple_3.24/simple.dat"),
@@ -190,13 +199,13 @@ test_that("SS_readdat and SS_writedat both work for 3.24", {
 # testing read/write dat functions for 3.30.01
 ###############################################################################
 
-test_that("SS_readdat and SS_writedat both work for 3.30.01", {
+test_that("SS_readdat() and SS_writedat() both work for 3.30.01", {
   # read data file - supress warnings b/c warning number of columns of results
   # is not a multiple of vector length (arg 2) can be safely ignored
   suppressWarnings(
     simple3.30.01_dat <- SS_readdat(
       file = file.path(example_path, "simple_3.30.01/simple.dat"),
-      version = "3.30", verbose = FALSE
+      verbose = FALSE
     )
   )
   # write data file
@@ -212,11 +221,11 @@ test_that("SS_readdat and SS_writedat both work for 3.30.01", {
 # testing read/write dat functions for 3.30.12
 ###############################################################################
 
-test_that("SS_readdat and SS_writedat both work for 3.30.12", {
+test_that("SS_readdat() and SS_writedat() both work for 3.30.12", {
   # read data file
   simple3.30.12_dat <- SS_readdat(
     file = file.path(example_path, "simple_3.30.12/simple_data.ss"),
-    version = "3.30", verbose = FALSE
+    verbose = FALSE
   )
   # write data file
   SS_writedat(
@@ -231,11 +240,11 @@ test_that("SS_readdat and SS_writedat both work for 3.30.12", {
 # testing read/write dat functions for 3.30.13
 ###############################################################################
 
-test_that("SS_readdat and SS_writedat both work for 3.30.13", {
+test_that("SS_readdat() and SS_writedat() both work for 3.30.13", {
   # read data file
   simple3.30.13_dat <- SS_readdat(
     file = file.path(example_path, "simple_3.30.13/simple_data.ss"),
-    version = "3.30", verbose = FALSE
+    verbose = FALSE
   )
   # write data file
   SS_writedat(
@@ -246,12 +255,31 @@ test_that("SS_readdat and SS_writedat both work for 3.30.13", {
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.13.ss")))
 })
 
-# Note: for blank lines, SS_readdat just warns, while SS_writedat removes.
-test_that("SS_readdat/SS_writedat removes lines of 0 age comps from data file", {
-  datfile <- readLines(file.path(example_path, "simple_3.30.13/simple_data.ss"))
-  comp_lines_age <- grep("^-9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)[1]
+###############################################################################
+# testing read/write dat functions for simple_small
+###############################################################################
+
+test_that("SS_readdat() and SS_writedat() both work for simple_small", {
+  # read data file
+  simple3.30.13_dat <- SS_readdat(
+    file = file.path(example_path, "simple_3.30.13/simple_data.ss"),
+    verbose = FALSE
+  )
+  # write data file
+  SS_writedat(
+    datlist = simple3.30.13_dat,
+    outfile = file.path(temp_path, "testdat_3.30.13.ss"),
+    verbose = FALSE
+  )
+  expect_true(file.exists(file.path(temp_path, "testdat_3.30.13.ss")))
+})
+
+# Note: for blank lines, SS_readdat() just warns, while SS_writedat() removes.
+test_that("SS_readdat()/SS_writedat() removes lines of 0 age comps from data file", {
+  datfile <- readLines(file.path(example_path, "simple_small/data.ss"))
+  comp_lines_age <- grep("^-9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)[1]
   datfile <- append(datfile,
-    values = "2000 7 2 3 0 2 -1 -1 75 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    values = "2022  7 2  3 0 2 1 -1 25  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
     after = comp_lines_age - 1
   )
   writeLines(datfile, file.path(temp_path, "zero_comps.dat"))
@@ -264,11 +292,11 @@ test_that("SS_readdat/SS_writedat removes lines of 0 age comps from data file", 
   expect_true(nrow(dat[["agecomp"]]) == (nrow(dat2[["agecomp"]]) + 1))
 })
 
-test_that("SS_readdat/SS_writedat removes lines of 0 length comps from data file", {
-  datfile <- readLines(file.path(example_path, "simple_3.30.13/simple_data.ss"))
+test_that("SS_readdat()/SS_writedat() removes lines of 0 length comps from data file", {
+  datfile <- readLines(file.path(example_path, "simple_small/data.ss"))
   comp_lines_len <- grep("-9999 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)
   datfile <- append(datfile,
-    values = "2000 7 2 3 0 125 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    values = " 2022 7 2 3 0 50  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
     after = comp_lines_len - 1
   )
   writeLines(datfile, file.path(temp_path, "zero_comps_len.dat"))
@@ -288,27 +316,27 @@ test_that("SS_readdat/SS_writedat removes lines of 0 length comps from data file
 
 
 ###############################################################################
-# testing read/write forecast functions for 3.30.13
+# testing read/write forecast functions
 ###############################################################################
 
-test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
+test_that("SS_readforecast() and SS_writeforecast() both work", {
   # read forecast file
-  simple3.30.13_forecast <-
+  simple_small_forecast <-
     SS_readforecast(
-      file = file.path(example_path, "simple_3.30.13/forecast.ss"),
-      version = "3.30", verbose = FALSE
+      file = file.path(example_path, "simple_small/forecast.ss"),
+      verbose = FALSE
     )
 
   # write forecast file
   suppressWarnings(SS_writeforecast(
-    mylist = simple3.30.13_forecast,
+    mylist = simple_small_forecast,
     dir = temp_path,
-    file = "testforecast_3.30.13.ss",
+    file = "testforecast.ss",
     overwrite = TRUE, verbose = FALSE
   ))
-  expect_true(file.exists(file.path(temp_path, "testforecast_3.30.13.ss")))
+  expect_true(file.exists(file.path(temp_path, "testforecast.ss")))
   # mock a file with forecast option 0
-  fore_0 <- simple3.30.13_forecast
+  fore_0 <- simple_small_forecast
   fore_0[["Forecast"]] <- 0
 
   # write short and long versions (and check that write okay)
@@ -322,11 +350,12 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
   )
   expect_true(file.exists(file.path(temp_path, "fore_0_long.ss")))
   expect_true(file.exists(file.path(temp_path, "fore_0_short.ss")))
+  
   # make sure SS_readforecast can read short and long versions
   fore_0_read_short <-
     SS_readforecast(
       file = file.path(temp_path, "fore_0_short.ss"),
-      version = "3.30", verbose = FALSE, readAll = FALSE
+      verbose = FALSE, readAll = FALSE
     )
   expect_length(fore_0_read_short, 11)
 
@@ -334,7 +363,7 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
     fore_0_read_all_long <-
       SS_readforecast(
         file = file.path(temp_path, "fore_0_long.ss"),
-        version = "3.30", verbose = FALSE, readAll = TRUE
+        verbose = FALSE, readAll = TRUE
       ),
     "Forecast = 0 should always be used with 1 forecast year"
   )
@@ -343,7 +372,7 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
   fore_0_read_some_long <-
     SS_readforecast(
       file = file.path(temp_path, "fore_0_long.ss"),
-      version = "3.30", verbose = FALSE, readAll = FALSE
+      verbose = FALSE, readAll = FALSE
     )
   expect_length(fore_0_read_some_long, 11)
 
@@ -352,7 +381,7 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
     fore_0_read_all_short <-
       SS_readforecast(
         file = file.path(temp_path, "fore_0_short.ss"),
-        version = "3.30", verbose = FALSE, readAll = TRUE
+        verbose = FALSE, readAll = TRUE
       ),
     "readAll selected as TRUE, but lines beyond Forecast are not present"
   )
@@ -376,19 +405,19 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
 # testing read/write starter functions ----
 ###############################################################################
 
-test_that("SS_readstater and SS_writestarter both work for 3.30.13", {
+test_that("SS_readstarter() and SS_writestarter() both work", {
   # read data file
   start <- SS_readstarter(
-    file = file.path(example_path, "simple_3.30.13/starter.ss"),
+    file = file.path(example_path, "simple_small/starter.ss"),
     verbose = FALSE
   )
   # write data file
   SS_writestarter(start,
     dir = temp_path,
-    file = "teststarter_3.30.13.ss",
+    file = "teststarter.ss",
     verbose = FALSE
   )
-  expect_true(file.exists(file.path(temp_path, "teststarter_3.30.13.ss")))
+  expect_true(file.exists(file.path(temp_path, "teststarter.ss")))
 })
 
 test_that("SS_readstater and SS_writestarter both work for 3.24", {
