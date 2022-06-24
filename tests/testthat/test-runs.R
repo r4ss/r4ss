@@ -13,28 +13,6 @@ runs_path <- file.path(tmp_path, "extdata")
 # clean up
 on.exit(unlink(tmp_path, recursive = TRUE))
 
-# testing SS_doRetro
-test_that("SS_doRetro runs on simple_3.24 model", {
-  path_3.24 <- file.path(runs_path, "simple_3.24")
-  skip_if((!file.exists(file.path(path_3.24, "ss"))) &
-    (!file.exists(file.path(path_3.24, "ss.exe"))),
-  message = "skipping test that requires SS executable"
-  )
-  SS_doRetro(
-    masterdir = path_3.24,
-    oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
-  )
-  retro_subdirs <- file.path(
-    path_3.24, "retrospectives",
-    paste0("retro", c("0", "-1", "-2"))
-  )
-  retro_ran <- lapply(
-    retro_subdirs,
-    function(d) file.exists(file.path(d, "Report.sso"))
-  )
-  expect_true(all(unlist(retro_ran) == TRUE))
-})
-
 test_that("SS_doRetro runs on simple_small model", {
   path_simple_small <- file.path(runs_path, "simple_small")
   skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
