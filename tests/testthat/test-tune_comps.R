@@ -1,6 +1,6 @@
 context("Test the ss_tune_comps function")
 # note: to get these to run, please put an ss exe named "ss.exe" in
-# inst/extdata/simple_3.30.13 . Otherwise, most of the tests will be skipped.
+# inst/extdata/simple_small . Otherwise, most of the tests will be skipped.
 
 # do runs in a temporary dir so that the state is not disrupted if tests
 # exit early.
@@ -15,9 +15,9 @@ runs_path <- file.path(tmp_path, "extdata")
 on.exit(unlink(tmp_path, recursive = TRUE))
 
 test_that("get_last_phase works", {
-  start <- r4ss::SS_readstarter(file.path(runs_path, "simple_3.30.13", "starter.ss"), verbose = FALSE)
-  dat <- r4ss::SS_readdat(file.path(runs_path, "simple_3.30.13", start$datfile), verbose = FALSE)
-  ctl <- r4ss::SS_readctl(file.path(runs_path, "simple_3.30.13", start$ctlfile),
+  start <- r4ss::SS_readstarter(file.path(runs_path, "simple_small", "starter.ss"), verbose = FALSE)
+  dat <- r4ss::SS_readdat(file.path(runs_path, "simple_small", start$datfile), verbose = FALSE)
+  ctl <- r4ss::SS_readctl(file.path(runs_path, "simple_small", start$ctlfile),
     use_datlist = TRUE,
     datlist = dat, verbose = FALSE
   )
@@ -25,35 +25,35 @@ test_that("get_last_phase works", {
   expect_true(last_phase == 4) # based on last known value.
 })
 
-test_that(" ss tune comps works when just want to return the Francis table", {
+test_that(" SS_tune_comps() works when just want to return the Francis table", {
   replist <- suppressWarnings(SS_output(
-    dir = file.path(runs_path, "simple_3.30.13"),
+    dir = file.path(runs_path, "simple_small"),
     verbose = FALSE, hidewarn = TRUE, printstats = FALSE
   ))
   test <- SS_tune_comps(
     replist = replist, option = "Francis",
     niters_tuning = 0,
-    dir = file.path(runs_path, "simple_3.30.13"),
+    dir = file.path(runs_path, "simple_small"),
     verbose = FALSE
   )
   expect_true(nrow(test) == 4)
   expect_true(is.data.frame(test))
   # write new table to file
   table <- SS_varadjust(
-    dir = file.path(runs_path, "simple_3.30.13"),
+    dir = file.path(runs_path, "simple_small"),
     ctlfile = "simple_control.ss",
     newctlfile = "new_control_varadjust.ss",
     newtable = test, overwrite = FALSE
   )
   expect_true(file.exists(file.path(
-    runs_path, "simple_3.30.13",
+    runs_path, "simple_small",
     "new_control_varadjust.ss"
   )))
-  dat <- SS_readdat(file.path(runs_path, "simple_3.30.13", "simple_data.ss"),
+  dat <- SS_readdat(file.path(runs_path, "simple_small", "simple_data.ss"),
     verbose = FALSE
   )
   ctl_varadjust <- SS_readctl(
-    file.path(runs_path, "simple_3.30.13", "new_control_varadjust.ss"),
+    file.path(runs_path, "simple_small", "new_control_varadjust.ss"),
     use_datlist = TRUE,
     datlist = dat,
     verbose = FALSE
@@ -63,55 +63,55 @@ test_that(" ss tune comps works when just want to return the Francis table", {
 })
 
 
-test_that("ss tune comps works with francis", {
-  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) &
-    (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))),
+test_that("SS_tune_comps() works with francis", {
+  skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
+    (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "Francis", niters_tuning = 1,
-    init_run = FALSE, dir = file.path(runs_path, "simple_3.30.13"),
+    init_run = FALSE, dir = file.path(runs_path, "simple_small"),
     model = "ss", allow_up_tuning = FALSE,
     exe_in_path = FALSE, verbose = FALSE, extras = "-nohess"
   )
   expect_length(test, 2)
 })
 
-test_that(" ss tune comps works with MI and up tuning", {
-  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) &
-    (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))),
+test_that("SS_tune_comps() works with MI and up tuning", {
+  skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
+    (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 1,
-    init_run = FALSE, dir = file.path(runs_path, "simple_3.30.13"),
+    init_run = FALSE, dir = file.path(runs_path, "simple_small"),
     model = "ss", allow_up_tuning = TRUE,
     exe_in_path = FALSE, verbose = FALSE
   )
   expect_length(test, 2)
 })
 
-test_that(" ss tune comps works with DM", {
-  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) &
-    (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))),
+test_that("SS_tune_comps() works with DM", {
+  skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
+    (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "DM", niters_tuning = 1,
     init_run = FALSE,
-    dir = file.path(runs_path, "simple_3.30.13"),
+    dir = file.path(runs_path, "simple_small"),
     model = "ss", extras = "-nohess",
     exe_in_path = FALSE, verbose = FALSE
   )
   expect_length(test, 2)
   # add check that varaiance adjustment is gone
-  dat <- SS_readdat(file.path(runs_path, "simple_3.30.13", "simple_data.ss"),
+  dat <- SS_readdat(file.path(runs_path, "simple_small", "simple_data.ss"),
     verbose = FALSE
   )
-  ctl <- SS_readctl(file.path(runs_path, "simple_3.30.13", "simple_control.ss"),
+  ctl <- SS_readctl(file.path(runs_path, "simple_small", "simple_control.ss"),
     use_datlist = TRUE,
     datlist = dat,
     verbose = FALSE
@@ -120,14 +120,14 @@ test_that(" ss tune comps works with DM", {
   expect_null(ctl[["Variance_adjustment_list"]])
 })
 
-test_that("ss tune comps works with none", {
-  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) &
-    (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))),
+test_that("SS_tune_comps() works with none", {
+  skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
+    (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   test <- SS_tune_comps(
     option = "none",
-    dir = file.path(runs_path, "simple_3.30.13"),
+    dir = file.path(runs_path, "simple_small"),
     verbose = FALSE
   )
   # make sure includes both Francis and MI weighting
@@ -135,15 +135,15 @@ test_that("ss tune comps works with none", {
   expect_true(length(grep("MI", colnames(test))) > 0)
 })
 
-test_that(" ss tune comps works with multiple iterations", {
-  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) &
-    (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))),
+test_that("SS_tune_comps() works with multiple iterations", {
+  skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
+    (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 2,
-    init_run = FALSE, dir = file.path(runs_path, "simple_3.30.13"),
+    init_run = FALSE, dir = file.path(runs_path, "simple_small"),
     model = "ss", allow_up_tuning = TRUE,
     exe_in_path = FALSE, verbose = FALSE
   )
