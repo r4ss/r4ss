@@ -59,9 +59,11 @@ test_that("get_ncol() finds the correct number of columns for SS_output()", {
   )
   results <- mapply(r4ss:::get_ncol, reportfiles)
   expect_true(is.atomic(results))
+  # 55 and 56 are values for simple_3.24 and simple_3.30.XX models
+  # 61 is the value for simple_small
   expect(
-    all(results %in% c(61)),
-    "Optimum width of Report.sso wasn't 61"
+    all(results %in% c(55, 56, 61)),
+    "Optimum width of Report.sso wasn't 55, 56, or 61"
   )
 })
 
@@ -117,7 +119,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
 test_that("SS_readdat() and SS_writedat() both work for simple_small", {
   # read data file
   simple_small_dat <- SS_readdat(
-    file = file.path(example_path, "simple_small/simple_data.ss"),
+    file = file.path(example_path, "simple_small/data.ss"),
     verbose = FALSE
   )
   # write data file
