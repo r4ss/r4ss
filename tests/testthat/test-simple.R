@@ -157,7 +157,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
   simple_summary <- SSsummarize(list(
     simple3.24, simple3.30.01,
     simple3.30.12, simple3.30.13, 
-    simple_simple_small
+    simple_small
   ))
 
   # plot comparisons of results
