@@ -83,8 +83,9 @@ write_fwf4 <- function(x,
   # Process by column
   for (i in seq_len(nCol)) {
     vect0 <- x[, i]
-    if (is.factor(vect0))
+    if (is.factor(vect0)) {
       vect0 <- type.convert(as.character(vect0), as.is = TRUE)
+    }
     if (!is.null(width) && length(width) != nCol) {
       if (length(width) == 1) {
         width1 <- width
