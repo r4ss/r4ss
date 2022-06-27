@@ -83,6 +83,7 @@ jobs:
           sudo chmod a+x ss
           cp ss inst/extdata/simple_3.30.12/ss
           cp ss inst/extdata/simple_3.30.13/ss
+          cp ss inst/extdata/simple_small/ss
           rm ss
 
       - name: Get a 3.24 SS executable
