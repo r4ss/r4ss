@@ -17,10 +17,9 @@
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted.
 #' @template show_in_console
-#' @param intern Deprecated. Use `show_in_console` instead.
+#' @param console_output_file File to store console output (if
+#' show_in_console = FALSE)
 #' @template verbose
-#' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
-#' will look for exe in the model folders. Default = FALSE.
 #' @return Returns table showing which directories had model run and which
 #' had errors like missing executable or Report.sso already present
 #' @author Ian Taylor, Kathryn Doering
@@ -29,35 +28,24 @@
 #' [populate_multiple_folders()]
 #' @examples
 #' \dontrun{
-#' extdata_mods <- system.file("extdata", package = "r4ss")
-#' dir <- c(
-#'   file.path(extdata_mods, "simple_3.30.12"),
-#'   file.path(extdata_mods, "simple_3.30.13")
+#' dir <- file.path(
+#'   system.file("extdata", package = "r4ss"),
+#'   "simple_3.30.13"
 #' )
-#' # if ss or ss.exe is available in both directories:
-#' run_SS_models(dir = dir)
+#' # if the ss executable is available in the directory:
+#' r4ss::run(dir = dir)
+#' # if the ss executable is available in the user's path:
+#' r4ss::run(dir = dir, exe_in_path = TRUE)
 #' }
 #'
-run_SS_models <- function(dir = NULL,
-                          exe = "ss",
-                          extras = "-nox",
-                          exe_in_path = FALSE,
-                          skipfinished = TRUE,
-                          show_in_console = TRUE,
-                          intern = lifecycle::deprecated(),
-                          verbose = TRUE,
-                          exe_in_path = FALSE) {
-  # deprecated variable warnings -----
-  # soft deprecated for now, but fully deprecate in the future.
-  if (lifecycle::is_present(intern)) {
-    lifecycle::deprecate_warn(
-      when = "1.45.1",
-      what = "run_SS_models(intern)",
-      details = "Please use show_in_console instead"
-    )
-    show_in_console <- !intern
-  }
-
+run <- function(dir = NULL,
+                exe = "ss",
+                extras = "-nox",
+                exe_in_path = FALSE,
+                skipfinished = TRUE,
+                show_in_console = TRUE,
+                console_output_file = "console.output.txt",
+                verbose = TRUE) {
   # check to make sure the first input is in the correct format
   if (is.null(dir)) {
     dir <- getwd()
@@ -68,10 +56,10 @@ run_SS_models <- function(dir = NULL,
   if (!is.logical(show_in_console)) {
     stop("Input 'show_in_console' should be TRUE or FALSE")
   }
-  if (!show_in_console & !is.character(console_output_file) ) {
+  if (!show_in_console & !is.character(console_output_file)) {
     stop("Input 'console_output_file' should be a character string")
   }
-  
+
   wd_orig <- getwd()
   on.exit(setwd(wd_orig), add = TRUE)
 
@@ -90,7 +78,6 @@ run_SS_models <- function(dir = NULL,
     exe <- paste(exe, ifelse(OS == "windows", ".exe", ""), sep = "")
   }
   if (exe_in_path == TRUE) {
-    browser()
     tmp_exe <- Sys.which(exe)[[1]] # get 1st ss exe with name exe that is in your path
     if (tmp_exe == "") {
       stop("Exe named ", exe, " was not found in your PATH.")
@@ -120,13 +107,17 @@ run_SS_models <- function(dir = NULL,
     if (!all(unlist(all_exes_in_folder) == TRUE)) {
       exe_exists_abs_path <- file.exists(normalizePath(exe))
       if (exe_exists_abs_path) {
-        message("Assuming path to the exe is provided in the input 'exe'")
+        if (verbose) {
+          message("Assuming path to the exe is provided in the input 'exe'")
+        }
         exe <- (normalizePath(exe))
       } else {
-        message(
-          "Assuming executable is in each dir folder, but missing from ",
-          "some folders"
-        )
+        if (verbose) {
+          message(
+            "Assuming executable is in each dir folder, but missing from ",
+            "some folders"
+          )
+        }
       }
     }
   }
@@ -143,33 +134,48 @@ run_SS_models <- function(dir = NULL,
     } else {
       if (skipfinished & "Report.sso" %in% dir(dir)) {
         # skip directories that have results in them
-        message("Skipping ", dir, " since it contains",
-                " a Report.sso file and skipfinished = TRUE")
+        message(
+          "Skipping ", dir, " since it contains",
+          " a Report.sso file and skipfinished = TRUE"
+        )
         results[idir] <- "contained Report.sso"
       } else {
         # run model
-        message("changing working directory to ", dir)
+        if (verbose) {
+          message("changing working directory to ", dir)
+        }
         setwd(dir) # change working directory
 
         command <- exe
         if (OS != "windows" & !exe_in_path & (basename(exe) == exe)) {
           command <- paste0("./", exe)
         }
-        message("Running model in directory: ", getwd())
-        message("Using the command: ", command, " ", extras)
+        if (verbose) {
+          message(
+            "Running model in directory: ", getwd(), "\n",
+            "Using the command: ", command, " ", extras
+          )
+        }
         if (!show_in_console) {
-          message("Input 'show_in_console' = FALSE, ",
-                  "so writing console output to ",
-                  console_output_file)
+          if (verbose) {
+            message(
+              "Input 'show_in_console' = FALSE, ",
+              "so writing console output to ",
+              console_output_file
+            )
+          }
         }
         console_output <- system2(command,
-                                  args = extras,
-                                  stdout = ifelse(show_in_console,
-                                                  "",
-                                                  TRUE),
-                                  stderr = ifelse(show_in_console,
-                                                  "",
-                                                  TRUE))
+          args = extras,
+          stdout = ifelse(show_in_console,
+            "",
+            TRUE
+          ),
+          stderr = ifelse(show_in_console,
+            "",
+            TRUE
+          )
+        )
         if (!show_in_console) {
           writeLines(c(
             "###",
@@ -181,7 +187,9 @@ run_SS_models <- function(dir = NULL,
           ),
           con = console_output_file
           )
-          message("console output written to ", console_output_file)
+          if (verbose) {
+            message("console output written to ", console_output_file)
+          }
         }
         if (isTRUE(console_output > 0)) {
           results[idir] <- "model run failed"
