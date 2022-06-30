@@ -131,7 +131,7 @@ test_that("profile functions run on simple_small model", {
   # run profile
   prof.table <- SS_profile(
     dir = dir.prof,
-    masterctlfile = "simple_control.ss",
+    masterctlfile = "control.ss",
     string = "R0", profilevec = c(8.5, 9)
   )
   # read model output
