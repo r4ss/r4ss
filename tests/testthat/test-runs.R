@@ -182,7 +182,7 @@ test_that("Run an SS3 model and read the hessian", {
     dir.new = file.path(tmp_path, "test_mod_run"), copy_exe = TRUE
   )
   expect_true(copy_results)
-  run_results <- run_SS_models(dirvec = file.path(tmp_path, "test_mod_run"))
+  run_results <- run(dir = file.path(tmp_path, "test_mod_run"))
   expect_true(run_results[["results"]] == "ran model")
   hes <- getADMBHessian(
     File = file.path(tmp_path, "test_mod_run"),

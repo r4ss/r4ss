@@ -6,15 +6,9 @@
 #'
 #' @param mydir Directory where model files are located.
 #' @template model
-#' @param extras Additional command line arguments passed to the executable.
-#'   The default, `"-nohess"`, runs each jittered model without the hessian.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be ran,
 #'   else `1:Njitter` will be executed.
-#' @template show_in_console
-#' @param Intern Deprecated. Use `show_in_console` instead.
-#' @param systemcmd Option to switch between 'shell' and 'system'. The default,
-#'   `FALSE`, facilitates using the shell command on Windows.
 #' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
 #' @template verbose
@@ -26,6 +20,8 @@
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   The default is `NULL`, which will leave the starter file unchanged.
+#' @param ... Additional arguments passed to r4ss::run(), such as
+#' `exe`, `exe_in_path`, `extras`, and `show_in_console`.
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
@@ -52,15 +48,12 @@
 #'
 SS_RunJitter <- function(mydir,
                          model = "ss",
-                         extras = "-nohess",
                          Njitter,
-                         show_in_console = FALSE,
-                         Intern = lifecycle::deprecated(),
-                         systemcmd = FALSE,
                          printlikes = TRUE,
                          verbose = FALSE,
                          jitter_fraction = NULL,
-                         init_values_src = NULL) {
+                         init_values_src = NULL,
+                         ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
@@ -117,31 +110,16 @@ SS_RunJitter <- function(mydir,
   }
   likesaved <- rep(NA, length(Njitter))
   for (i in Njitter) {
-    if (verbose) message("Jitter=", i, ", ", date())
+    if (verbose) {
+      message("Jitter=", i, ", ", date())
+    }
     # check for use of .par file and replace original if needed
     if (starter[["init_values_src"]] == 1) {
       if (verbose) message("Replacing .par file with original")
       file.copy(from = "ss.par_0.sso", to = "ss.par", overwrite = TRUE)
     }
     # run model
-    command <- paste(model, extras)
-    if (.Platform[["OS.type"]] != "windows") {
-      command <- paste0("./", command)
-    }
-
-    if (i == 1 & verbose) {
-      message(
-        "Running SS jitter in directory: ", getwd(),
-        "\nUsing the command: ", command
-      )
-    }
-    if (.Platform[["OS.type"]] == "windows" & !systemcmd) {
-      shell(cmd = command, intern = !show_in_console)
-    } else {
-      system(command,
-        intern = !show_in_console,
-        show.output.on.console = show_in_console
-      )
+    run(dir = mydir, verbose = verbose, ...)
     }
     # Only save stuff if it converged
     if ("Report.sso" %in% list.files()) {

@@ -38,7 +38,7 @@
 #' Default = TRUE. Changing to FALSE should allow the function to play through
 #' even if something is wrong with reading the table.
 #' @template verbose
-#' @param \dots Additional arguments passed to r4ss::run(), such as
+#' @param ... Additional arguments passed to r4ss::run(), such as
 #' `exe`, `exe_in_path`, `extras`, and `show_in_console`.
 #' @note The starting values used in this profile are not ideal and some models
 #' may not converge. Care should be taken in using an automated tool like this,
@@ -140,7 +140,7 @@
 #'   newctlfile = "control_modified.ss",
 #'   string = c("Zfrac", "Beta"),
 #'   profilevec = par_table,
-#'   extras = "-nohess"
+#'   extras = "-nohess" # argument passed to run()
 #' )
 #'
 #' # get model output
@@ -182,7 +182,8 @@ SS_profile <-
            whichruns = NULL,
            prior_check = TRUE,
            read_like = TRUE,
-           verbose = TRUE) {
+           verbose = TRUE,
+           ...) {
     # Ensure wd is not changed by the function
     orig_wd <- getwd()
     on.exit(setwd(orig_wd))

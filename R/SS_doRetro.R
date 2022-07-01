@@ -18,20 +18,15 @@
 #' retrospective year. Should be zero or negative values.
 #' @param overwrite Overwrite any input files with matching names in the
 #' subdirectories where models will be run.
-#' @param exefile Executable file found in directory with model files.
-#' On Windows systems, this value will be automatically updated if a single
-#' executable exists in the directory of model files. Input exefile=NULL if
-#' the executable is in your path and doesn't need copying.
-#' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amount of command-line output.
 #' @template show_in_console
-#' @param intern Deprecated. Use `show_in_console` instead.
-#' @param CallType Either "system" or "shell" (choice depends on how you're running
-#' R. Default is "system".
 #' @param RemoveBlocks Logical switch determining whether specifications of
 #' blocks is removed from top of control file. Blocks can cause problems for
 #' retrospective analyses, but the method for removing them is overly
 #' simplistic and probably won't work in most cases. Default=FALSE.
+#' @template verbose
+#' @param ... Additional arguments passed to r4ss::run(), such as
+#' `exe`, `exe_in_path`, `extras`, and `show_in_console`.
+#' 
 #' @author Ian Taylor, Jim Thorson
 #' @export
 #' @seealso [SSgetoutput()]
@@ -62,20 +57,7 @@
 #'
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                       exefile = "ss", extras = "-nox", show_in_console = TRUE,
-                       intern = lifecycle::deprecated(), CallType = "system",
                        RemoveBlocks = FALSE) {
-
-  # deprecated variable warnings -----
-  # soft deprecated for now, but fully deprecate in the future.
-  if (lifecycle::is_present(intern)) {
-    lifecycle::deprecate_warn(
-      when = "1.45.1",
-      what = "SS_doRetro(intern)",
-      details = "Please use show_in_console instead"
-    )
-    show_in_console <- !intern
-  }
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
   OS <- .Platform[["OS.type"]]
@@ -90,23 +72,6 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
   newdir <- file.path(masterdir, newsubdir)
 
   # make directories, modify starter file, and start retrospective analyses
-
-  # for Windows users, automatically determine executable
-  if (!is.null(exefile) & OS == "windows") {
-    exefiles <- dir(olddir)[grep(".exe", dir(olddir))]
-    # if exactly one executable found in model directory, use that instead
-    if (length(exefiles) == 1) {
-      exefile <- exefiles
-    }
-    # for cases where there is more than one exe and the file name is
-    # "ss" by default, add the exe automatically
-    if (exefile == "ss") {
-      exefile <- "ss.exe"
-    }
-    if (!exefile %in% exefiles) {
-      stop("Missing executable file ", exefile, " in ", olddir)
-    }
-  }
 
   # get model file names from olddir
   startfile <- dir(olddir)[tolower(dir(olddir)) == "starter.ss"]
@@ -126,7 +91,6 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
   filenames <- c(exefile, forefile, ctlfile, datfile, wtatagefile, testfile)
   message("copying model files from\n", olddir, "\n  to\n", newdir)
   message("model files to copy:\n ", paste(filenames, collapse = "\n "))
-
 
   if (!file.exists(newdir)) dir.create(newdir)
 
@@ -162,45 +126,15 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
     file.remove(ctlfile)
     writeLines(ctl, ctlfile)
 
-    # if spaces in exe file, then put the filename in quotes
-    if (length(grep(" ", exefile)) > 0) {
-      exefile_to_run <- paste0('"', exefile, '"')
-    } else {
-      # but avoid otherwise in case they mess something up
-      exefile_to_run <- exefile
+    if (file.exists("covar.sso")) {
+      file.remove("covar.sso")
     }
-    command <- paste0(prefix, exefile_to_run)
-
-    # run model
-    message("Running model in ", getwd(), "\n",
-      "using the command:\n   ", command, " ", extras
-    )
-
-    if (file.exists("covar.sso")) file.remove("covar.sso")
-    if (!show_in_console) {
-      message("ADMB output generated during model run will be written to:\n   ",
-        getwd(), "/ADMBoutput.txt. \n   To change this, set intern=FALSE.",
-      )
-    }
-
-    if (CallType == "system") {
-      ADMBoutput <- system(command, intern = !show_in_console)
-    }
-    if (CallType == "shell") {
-      ADMBoutput <- shell(command, intern = !show_in_console)
-    }
+    run(dir = dir, verbose = verbose, ...)
     # add rough check for if the model ran (although a report file may exist if
     # if the model only ran part of the way through). Warn the user in this case.
     if (!file.exists("Report.sso")) {
       warning("The retrospective model run failed in ", getwd())
     }
-    if (!show_in_console) {
-      writeLines(c(
-        "###", "ADMB output", as.character(Sys.time()),
-        "###", " ", ADMBoutput
-      ), con = "ADMBoutput.txt")
-    }
-    setwd("..")
   }
   setwd(oldwd)
 }
