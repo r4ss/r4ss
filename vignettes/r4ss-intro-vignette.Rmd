@@ -18,14 +18,15 @@ options(tibble.print_min = 4L, tibble.print_max = 4L)
 library(r4ss)
 ```
 
-**r4ss** is an R package containing functions related to the [Stock Synthesis fisheries stock
-assessment modeling framework](https://vlab.noaa.gov/web/stock-synthesis). This vignette covers installing the package and an overview of functions.
+**r4ss** is an R package containing functions related to the 
+[Stock Synthesis fisheries stock assessment modeling framework](https://vlab.noaa.gov/web/stock-synthesis). 
+This vignette covers installing the package and an overview of functions.
 
 ## Installing the r4ss R package
 
 ### Basic installation
 The package can be run on OS X, Windows, or Linux.
-The CRAN version of r4ss is not regularly updated and therefore likely out of
+The CRAN version of r4ss is not as regularly updated and therefore may be out of
 date. Instead, it is recommended to install from GitHub:
 
 ```{r, install-and-load, eval=FALSE}
@@ -50,24 +51,33 @@ help(package = "r4ss")
 
 ### Alternative versions
 
-Although we've made an effort to maintain backward compatibility to at least Stock Synthesis version 3.24S (from July 2013), there 
-may be cases where it's necessary to install either an older version of r4ss, such as when a recent change to the package causes something to fail, or a development version of the package that isn't in the `main` branch yet, such as to test upcoming features.
+Although we've made an effort to maintain backward compatibility to at
+least Stock Synthesis version 3.24S (from July 2013), there may be cases
+where it's necessary to install either an older version of r4ss, such as
+when a recent change to the package causes something to fail, or a
+development version of the package that isn't in the `main` branch yet,
+such as to test upcoming features. 
 
-To install alternative versions of r4ss, provide a reference to the `install_github`, such as 
+To install alternative versions of r4ss, provide a reference to the
+`install_github`, such as  
 ```{r, install-older-version, eval=FALSE}
 remotes::install_github("r4ss/r4ss", ref="1.26.0") # install r4ss version 1.26.0
 
 ```
-where the `ref` input can be a release number, the name of a branch on GitHub, or a git SHA-1 code, which are [listed with all code changes committed](https://github.com/r4ss/r4ss/commits/).
+where the `ref` input can be a release number, the name of a branch on
+GitHub, or a git SHA-1 code, which are [listed with all code changes
+committed](https://github.com/r4ss/r4ss/commits/). 
 
 ## Reading model output and making default plots {#plot}
 
-The most important two functions are `SS_output` and `SS_plots`, the first for reading the output from a Stock Synthesis model and the second for making a large set of plots illustrating that output.
+The most important two functions are `SS_output()` and `SS_plots()`, the
+first for reading the output from a Stock Synthesis model and the second
+for making a large set of plots illustrating that output. 
 
 ```{r, eval=FALSE, echo=TRUE, message=FALSE}
 # it's useful to create a variable for the directory with the model output
 mydir <- file.path(path.package("r4ss"),
-                   file.path("extdata", "simple_3.30.12"))
+                   file.path("extdata", "simple_small"))
 
 # read the model output and print diagnostic messages 
 replist <- SS_output(dir = mydir, 
@@ -78,13 +88,22 @@ replist <- SS_output(dir = mydir,
 SS_plots(replist)
 ```
 
-By default `SS_plots()` creates PNG and HTML files in a new `plots` sub-directory in the same location as the model files. The HTML files (example excerpt below) facilitate exploration of the png figures. The home tab should open in a browser automatically after `SS_plots()` creates all PNG and HTML files.
+By default `SS_plots()` creates PNG and HTML files in a new `plots`
+sub-directory in the same location as the model files. The HTML files
+(example excerpt below) facilitate exploration of the png figures. The
+home tab should open in a browser automatically after `SS_plots()`
+creates all PNG and HTML files. 
 
-![Illustration of the HTML view of the plots created by the `SS_plots()` function.](r4ss_html_capture.png){ width=75% }
+![Illustration of the HTML view of the plots created by the `SS_plots()`
+function.](r4ss_html_capture.png){ width=75% } 
 
 ### Creating select plots
 
-`SS_plots()` runs slowly due to the large number of plots created. If only a few plots are of interest, it is more efficient to plot only the necessary ones. Groups of plots to generate in the call to `SS_plots()` can be specified through the `plot` argument. For example, if only the plots of Catch were desired, call:
+`SS_plots()` runs slowly due to the large number of plots created. If
+only a few plots are of interest, it is more efficient to plot only the
+necessary ones. Groups of plots to generate in the call to `SS_plots()`
+can be specified through the `plot` argument. For example, if only the
+plots of Catch were desired, call: 
 
 ```{r, eval=FALSE}
 SS_plots(replist = replist, plot = 7)
@@ -94,9 +113,18 @@ If only plots of catch and discards were desired, the user could call:
 ```{r, eval=FALSE}
 SS_plots(replist = replist, plot = c(7,9))
 ```
-The documentation for the `plot` argument in the help file for `SS_plots()` lists the corresponding numbers for each group of plots.
+The documentation for the `plot` argument in the help file for
+`SS_plots()` lists the corresponding numbers for each group of plots. 
 
-It is not uncommon to run into bugs with the plotting functions because of the vast number of model configurations available in SS3 and plots created from them. A strategy with for dealing with a bug is to exclude the set of plots where the bug is occurring as a temporary fix. In the long term, bugs typically get attention fairly quickly from maintainers when reported to the [r4ss issue tracker](https://github.com/r4ss/r4ss/issues). For example, if there was a bug in the conditional age-at-length fits (plot set 18), exclude the plot:
+It is not uncommon to run into bugs with the plotting functions because
+of the vast number of model configurations available in SS3 and plots
+created from them. A strategy with for dealing with a bug is to exclude
+the set of plots where the bug is occurring as a temporary fix. In the
+long term, bugs typically get attention fairly quickly from maintainers
+when reported to the [r4ss issue
+tracker](https://github.com/r4ss/r4ss/issues). For example, if there was
+a bug in the conditional age-at-length fits (plot set 18), exclude the
+plot: 
 
 ```{r, eval=FALSE}
 SS_plots(replist, plot = c(1:17, 19:26))
@@ -104,107 +132,120 @@ SS_plots(replist, plot = c(1:17, 19:26))
 
 ## Scripting Stock Synthesis workflows with `r4ss`
 
-Using functions in `r4ss`, a fully scripted workflow for modifying Stock Synthesis files and running Stock Synthesis models is possible.
+Using functions in `r4ss`, a fully scripted workflow for modifying Stock
+Synthesis files and running Stock Synthesis models is possible. 
 
-We'll demonstrate this by creating a new model from a model in the `r4ss` package.
+We'll demonstrate this by creating a new model from a model in the
+`r4ss` package.
 
 ```{r}
 # initial model to modify
-mod_path <- system.file(file.path("extdata", "simple_3.30.13"), package = "r4ss")
+mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
 # create a new directory to put a new, modified version of the model
 new_mod_path <- "simple_new"
 ```
-Use the r4ss utility function to copy over the model files from `mod_path` to `new_mod_path`:
+Use the r4ss utility function to copy over the model files from
+`mod_path` to `new_mod_path`:
 
 ```{r}
 copy_SS_inputs(dir.old = mod_path, dir.new = new_mod_path)
 ```
 
-Note that the function `populate_multiple_folders()` can be used to copy several folders of Stock Synthesis model inputs.
+Note that the function `populate_multiple_folders()` can be used to copy
+several folders of Stock Synthesis model inputs.
 
 ### Read in Stock Synthesis files
 
-Stock Synthesis files can be read in as list objects in R using the `SS_read*()` functions.
+Stock Synthesis files can be read in as list objects in R using the
+`SS_read()` function.
 
 ```{r, eval=TRUE}
-start <- r4ss::SS_readstarter(file = file.path(new_mod_path, "starter.ss"), 
-                              verbose = FALSE)
-# note the data and control file names can vary, so are determined from the 
-# starter file.
-dat <- r4ss::SS_readdat(file = file.path(new_mod_path, start$datfile),
-                        verbose = FALSE)
-# Read in ctl file. Note that the data fileR object is needed so that SS_readctl
-# assumes the correct data structure
-ctl <- r4ss::SS_readctl(file = file.path(new_mod_path, start$ctlfil),
-                        verbose = FALSE,
-                        use_datlist = TRUE, datlist = dat)
-fore <- r4ss::SS_readforecast(file = file.path(new_mod_path, "forecast.ss"),
-                              verbose = FALSE)
-# can also read in wtatage.ss for an empirical wt at age model using
-# r4ss::SS_readwtatage()
+inputs <- r4ss::SS_read(dir = new_mod_path)
+# can also separately run the functions called by SS_read():
+# SS_readstarter(), SS_readdat(), SS_readctl(), SS_readforecast(), 
+# and SS_readwtatage()
 ```
 
 ### Investigate the model
 
-Each of the input files is read into R as a list. The components of the list should be in the same order as they appear in the text file. Use `names()` to see all the list components:
+Each of the input files is read into R as a list which are then grouped
+as a larger list. The components of the
+list should be in the same order as they appear in the text file. Use
+`names()` to see all the list components:
 
 ```{r}
-names(start) # see names of the list components of starter
+names(inputs) # see the elements of the big list
+names(inputs$start) # see names of the list components of starter file
 ```
-Or reference a specific element to see the components. For example, we can look at the mortality and growth parameter section (MG_parms):
+Or reference a specific element to see the components. For example, we
+can look at the mortality and growth parameter section (MG_parms):
 
 ```{r}
-ctl$MG_parms
+inputs$ctl$MG_parms
 ```
 
 ### Modify the model
-You could make basic or large structural changes to your model in R. For example, the initial value of M can be changed:
+You could make basic or large structural changes to your model in R. For
+example, the initial value of M can be changed:
 
 ```{r}
 # view the initial value
-ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
+inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
 #change it to 0.2
-ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"] <- 0.2
+inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"] <- 0.2
 ```
 
-When making large structural changes, additional elements may need to be added that were NULL before. To find out the names in the r4ss list object, it may be necessary to make changes directly to the input files and then read it in again to R, or to look at the source code for the names of the list elements. For example, the source code for `SS_readctl()` when using a SS3.30 file is located at [https://github.com/r4ss/r4ss/blob/main/R/SS_readctl_3.30.R](https://github.com/r4ss/r4ss/blob/main/R/SS_readctl_3.30.R).
+When making large structural changes, additional elements may need to be
+added that were NULL before. To find out the names in the r4ss list
+object, it may be necessary to make changes directly to the input files
+and then read it in again to R, or to look at the source code for the
+names of the list elements. For example, the source code for
+`SS_readctl()` when using a SS3.30 file is located at
+[https://github.com/r4ss/r4ss/blob/main/R/SS_readctl_3.30.R](https://github.com/r4ss/r4ss/blob/main/R/SS_readctl_3.30.R).
 
-Settings in other files can also be modified. For example, the biomass target can be modified in the forecast file
+Settings in other files can also be modified. For example, the biomass
+target can be modified in the forecast file
 ```{r}
-fore$Btarget
-fore$Btarget <- 0.45
-fore$Btarget
+inputs$fore$Btarget
+inputs$fore$Btarget <- 0.45
+inputs$fore$Btarget
 ```
 
 ### Write out the modified models
 
-The `SS_write*()` functions can be used to write out the modified stock synthesis input R objects into input files:
+The `SS_write()` function can be used to write out the modified stock
+synthesis input R objects into input files:
 
 ```{r}
-r4ss::SS_writestarter(start, dir = new_mod_path, overwrite = TRUE, 
-                      verbose = FALSE)
-r4ss::SS_writedat(dat, outfile = file.path(new_mod_path, start$datfile), 
-                  overwrite = TRUE, verbose = FALSE)
-r4ss::SS_writectl(ctl, outfile = file.path(new_mod_path, start$ctlfile),
-                  overwrite = TRUE, verbose = FALSE)
-r4ss::SS_writeforecast(fore, dir = new_mod_path, file = "forecast.ss", 
-                       overwrite = TRUE, verbose = FALSE)
+r4ss::SS_write(inputs, dir = new_mod_path, overwrite = TRUE)
 ```
 
-If you make changes to the input model files that render the file unparsable by Stock Synthesis, the `SS_write*()` functions may throw an error (and hopefully provide an informative message about why). However, it is possible that an invalid Stock Synthesis model file could be written, so the true test is whether or not it is possible to run Stock Synthesis with the modified model files.
+If you make changes to the input model files that render the file
+unparsable by Stock Synthesis, the `SS_write()` functions may throw an
+error (and hopefully provide an informative message about why). However,
+it is possible that an invalid Stock Synthesis model file could be
+written, so the true test is whether or not it is possible to run Stock
+Synthesis with the modified model files.
 
-If you need help troubleshooting `SS_read*()` or `SS_write*()` functions or would like to report a bug, please [post an issue in the r4ss repository](https://github.com/r4ss/r4ss/issues).
+If you need help troubleshooting `SS_read()` or `SS_write()` and the
+associated functions for each model file, or would like to report a bug,
+please [post an issue in the r4ss repository](https://github.com/r4ss/r4ss/issues).
 
 ### Run the modified model
 
-The model can now be run with Stock Synthesis. The call to do this depends on where the Stock Synthesis executable is on your computer. If the Stock Synthesis executable is in the same folder as the model that will be run, `run_SS_models` can be used. Assuming the stock synthesis executable is called ss.exe:
+The model can now be run with Stock Synthesis. The call to do this
+depends on where the Stock Synthesis executable is on your computer. If
+the Stock Synthesis executable is in the same folder as the model that
+will be run, `run()` can be used. Assuming the stock synthesis executable
+is called ss.exe:
 
 ```{r exe-in-same-dir, eval=FALSE}
-r4ss::run_SS_models(dirvec = new_mod_path, model = "ss", 
-                    skipfinished = FALSE)
+r4ss::run(dir = new_mod_path, skipfinished = FALSE)
 ```
 
-Note this is similar to resetting the working directory and running the model with `system()`:
+Note this is similar to resetting the working directory and running the
+model with `system()` or `shell()`, but deals with differences among
+operating systems automatically:
 
 ```{r system-call, eval=FALSE}
 wd <- getwd()
@@ -213,106 +254,179 @@ system("./ss")
 setwd(wd)
 ```
 
-The advantage of `run_SS_models` is that there is no need to change the wd.
+An advantage of `run()` is that there is no need to change the working
+directory.
 
-If the executable in a different folder than the model, specify either the absolute or relative path to the executable. In the situation that the executable is in the working directory, it is necessary to provide the absolute path:
+If the executable in a different folder than the model, specify either
+the absolute or relative path to the executable. In the situation that
+the executable is in the working directory, it is necessary to provide
+the absolute path:
 ```{r exe-in-diff-dir, eval=FALSE}
 # get the absolute exe path
 exe_path <- normalizePath("ss.exe", winslash = "/", mustWork = TRUE)
 # use the absolute exe path in the call.
-run_SS_models(new_mod_path, model = exe_path, skipfinished = FALSE)
+run(dir = new_mod_path, model = exe_path, skipfinished = FALSE)
 ```
 
-Finally, if the stock synthesis executable is in your PATH, then the the `run_SS_models` can be called with `exe_in_path = TRUE`.
+Finally, if the stock synthesis executable is in your PATH, then the the
+`run()` can be called with `exe_in_path = TRUE`.
 
 ```{r run-mult-models, eval=FALSE}
-r4ss::run_SS_models(dirvec = new_mod_path, model = "ss", exe_in_path = TRUE,
-                    skipfinished = FALSE)
+r4ss::run(dir = new_mod_path, exe_in_path = TRUE, skipfinished = FALSE)
 ```
 
 ### Running models in multiple directories
 
-A vector of directories can also be passed to the `dirvec` variable in `run_SS_models()` to run models in multiple directories with one function call.
+A vector of directories can also be passed to the `dir` variable in
+`run()` to run models in multiple directories with one function call.
 
 ### Investigate the model run
 
-As [previously](#plot), `SS_output()` and `SS_plots()` can be used to investigate the model results.
+As [previously](#plot), `SS_output()` and `SS_plots()` can be used to
+investigate the model results.
 
 ### Should I script my whole Stock Synthesis workflow?
 
-Scripting using r4ss functions is one way of developing a reproducible and coherent Stock Synthesis development workflow. However, there are many ways that Stock Synthesis models could be run and modified. What is most important is that you find a workflow that works for you and that you are able to document changes being made to a model. Version control (such as [git](https://git-scm.com/)) is another tool that may help document changes to models.
+Scripting using r4ss functions is one way of developing a reproducible
+and coherent Stock Synthesis development workflow. However, there are
+many ways that Stock Synthesis models could be run and modified. What is
+most important is that you find a workflow that works for you and that
+you are able to document changes being made to a model. Version control
+(such as [git](https://git-scm.com/)) is another tool that may help
+document changes to models.
 
 ## Functions for common stock assessment tasks
 
-While stock assessment processes differ among regions, some modeling workflows and diagnostics are commonly used. Within r4ss, there are functions to perform a retrospective (`SS_doRetro()`), jitter the starting values and reoptimize the stock assessment model a number of times to check for local minima (`SS_run_jitter()`) and tuning composition data (`SS_tune_comps()`).
+While stock assessment processes differ among regions, some modeling
+workflows and diagnostics are commonly used. Within r4ss, there are
+functions to perform a retrospective (`SS_doRetro()`), jitter the
+starting values and reoptimize the stock assessment model a number of
+times to check for local minima (`SS_run_jitter()`) and tuning
+composition data (`SS_tune_comps()`).
 
-Additional model diagnostics for Stock Synthesis models are available as part of the [ss3diags](https://github.com/jabbamodel/ss3diags) package.
+Additional model diagnostics for Stock Synthesis models are available as
+part of the [ss3diags](https://github.com/jabbamodel/ss3diags) package.
 
 ### Running retrospectives
 
-A retrospective analysis removes a certain number of years of the model data and recalculates the fit. This is typically done several times and the results are used to look for retrospective patterns (i.e., non-random deviations in estimated parameters or derived quantities as years of data are removed). If the model results change drastically and non-randomly as data is removed, this is less support for the model. For more on the theory and details behind retrospective analyses, see [Hurtado-Ferro et al. 2015](https://doi.org/10.1093/icesjms/fsu198) and [Legault 2020](https://doi.org/10.1093/icesjms/fsaa184).
+A retrospective analysis removes a certain number of years of the model
+data and recalculates the fit. This is typically done several times and
+the results are used to look for retrospective patterns (i.e.,
+non-random deviations in estimated parameters or derived quantities as
+years of data are removed). If the model results change drastically and
+non-randomly as data is removed, this is less support for the model. For
+more on the theory and details behind retrospective analyses, see
+[Hurtado-Ferro et al. 2015](https://doi.org/10.1093/icesjms/fsu198) and
+[Legault 2020](https://doi.org/10.1093/icesjms/fsaa184).
 
-The function `SS_doRetro()` can be used to run retrospective analyses starting from an existing Stock Synthesis model. Note that it is safest to create a copy of your original Stock Synthesis model that the retrospective is run on, just in case there are problems with the run. For example, a five year retrospective could be done:
+The function `SS_doRetro()` can be used to run retrospective analyses
+starting from an existing Stock Synthesis model. Note that it is safest
+to create a copy of your original Stock Synthesis model that the
+retrospective is run on, just in case there are problems with the run.
+For example, a five year retrospective could be done:
 
 ```{r, eval=FALSE}
+# define a new directory
 retro_dir <-"retro_dir"
-copy_SS_inputs(dir.old = mod_path, dir.new = retro_dir) # copy over the stock synthesis model
+# copy over the stock synthesis model files to the new directory
+copy_SS_inputs(dir.old = mod_path, dir.new = retro_dir) 
 
-## retrospective analyses
-SS_doRetro(masterdir = retro_dir, oldsubdir = "", newsubdir = "retrospectives", 
+# run the retrospective analyses
+SS_doRetro(masterdir = retro_dir, 
+           oldsubdir = "", 
+           newsubdir = "retrospectives", 
            years = 0:-5)
 ```
-After running this retrospective, six new folders would be created within `retro_dir`, where each folder would contain a different run of the retrospective (removing 0 to 5 years of data).
+After running this retrospective, six new folders would be created
+within `retro_dir`, where each folder would contain a different run of
+the retrospective (removing 0 to 5 years of data).
 
-After the retrospective models have run, the results can be used as a diagnostic:
+After the retrospective models have run, the results can be used as a
+diagnostic:
 
 ```{r, eval=FALSE}
+# load the 6 models
 retroModels <- SSgetoutput(dirvec = file.path(retro_dir, "retrospectives", 
                                               paste("retro", 0:-5, sep = "")))
+# summarize the model results
 retroSummary <- SSsummarize(retroModels)
+# create a vector of the ending year of the retrospectives
 endyrvec <- retroSummary[["endyrs"]] + 0:-5
+# make plots comparing the 6 models
 SSplotComparisons(retroSummary, endyrvec = endyrvec,
                   legendlabels = paste("Data", 0:-5, "years"))
 # calculate Mohn's rho, a diagnostic value
-rho_output <- SSmohnsrho(summaryoutput = retroSummary, endyrvec = endyrvec,
-                         startyr = retroSummary[["endyrs"]]-5 , verbose = FALSE)
+rho_output <- SSmohnsrho(summaryoutput = retroSummary, 
+                         endyrvec = endyrvec,
+                         startyr = retroSummary[["endyrs"]]-5, 
+                         verbose = FALSE)
 ```
 
 ### Jittering
 
-Another commonly used diagnostic with Stock Synthesis models is "jittering". Model initial values are changed randomly (by some fraction) and the model is reoptimized. The `SS_RunJitter()` function performs this routine for the number of times specified by the user. For a stock Synthesis model in a folder called `my_model` that also contains a copy of the stock synthesis executable named ss (or ss.exe on Windows), jittering starting values can be run 100 times (note this could take a while, as this is running the model 100 times):
+Another commonly used diagnostic with Stock Synthesis models is
+"jittering". Model initial values are changed randomly (by some
+fraction) and the model is reoptimized. The `SS_RunJitter()` function
+performs this routine for the number of times specified by the user. For
+a stock Synthesis model in a folder called `my_model` that also contains
+a copy of the stock synthesis executable named ss (or ss.exe on
+Windows), jittering starting values can be run 100 times (note this
+could take a while, as this is running the model 100 times):
 
 ```{r, eval=FALSE}
+# define a new directory
 jitter_dir <-"retro_dir"
-copy_SS_inputs(dir.old = mod_path, dir.new = jitter_dir) # copy over the stock synthesis model
-# Note: would also need to add the stock synthesis executable to the jitter_dir
-# folder
+# copy over the stock synthesis model files to the new directory
+copy_SS_inputs(dir.old = mod_path, dir.new = jitter_dir) 
+# run the jitters
 jitter_loglike <- SS_RunJitter(
   mydir = jitter_dir,
   model = "ss", # name of the stock synthesis exe in jitter_dir
   Njitter = 100,
   verbose = FALSE,
   jitter_fraction = 0.1 # a typically used jitter fraction
-             )
+)
 ```
-The output from `SS_RunJitter()` is saved in `jitter_loglike`, which is a table of the different negative log likelihoods produced from jittering. If there are any negative log likelihoods smaller than the original model's log likelihood, this indicates that the original model's log likelihood is a local minimum and not the global minimum. On the other hand, if there are no log likelihoods lower than the original model's log likelihood, then this is evidence (but not proof) that the original model's negative log likelihood could be the global minimum.
+The output from `SS_RunJitter()` is saved in `jitter_loglike`, which is
+a table of the different negative log likelihoods produced from
+jittering. If there are any negative log likelihoods smaller than the
+original model's log likelihood, this indicates that the original
+model's log likelihood is a local minimum and not the global minimum. On
+the other hand, if there are no log likelihoods lower than the original
+model's log likelihood, then this is evidence (but not proof) that the
+original model's negative log likelihood could be the global minimum.
 
-Jittering starting values can also provide evidence about the sensitivity of the model to starting values. If many different likelihood values are arrived at during the jitter analysis, then the model is sensitive to starting values. However, if many of the models converge to the same negative log likelihood value, this indicates the model is less sensitive to starting values.
+Jittering starting values can also provide evidence about the
+sensitivity of the model to starting values. If many different
+likelihood values are arrived at during the jitter analysis, then the
+model is sensitive to starting values. However, if many of the models
+converge to the same negative log likelihood value, this indicates the
+model is less sensitive to starting values.
 
 ### Tuning composition data
 
-Three different routines are available to tune (or weight) composition data in Stock Synthesis. The McAllister-Ianelli (MI) and Francis tuning methods are iterative reweighting routines, while the Dirichlet-multinomial (DM) option incorporates weighting parameters directly in the original model.
+Three different routines are available to tune (or weight) composition
+data in Stock Synthesis. The McAllister-Ianelli (MI) and Francis tuning
+methods are iterative reweighting routines, while the
+Dirichlet-multinomial (DM) option incorporates weighting parameters
+directly in the original model.
 
-Because tuning is commonly used with Stock Synthesis models, and users may be interested in exploring the same model, but  using different tuning methods, `SS_tune_comps()` can start from the same model and transform it into different tuning methods.
+Because tuning is commonly used with Stock Synthesis models, and users
+may be interested in exploring the same model, but  using different
+tuning methods, `SS_tune_comps()` can start from the same model and
+transform it into different tuning methods.
 
-As an example, we will illustrate how to run Francis tuning on an example Stock Synthesis model built into the r4ss package. First, we make a copy of the model to avoid changing the original model files 
+As an example, we will illustrate how to run Francis tuning on an
+example Stock Synthesis model built into the r4ss package. First, we
+make a copy of the model to avoid changing the original model files 
 ```{r}
+# define a new directory in a temporary location
 mod_path <- file.path(tempdir(), "simple_mod")
-# Path to simple model in r4ss and copy files to mod_path
-example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
-# copy model input files
+# Path to simple_small model in r4ss
+example_path <- system.file("extdata", "simple_small", package = "r4ss")
+# copy model input files to new directory
 copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
-# copy over the Report file to provide information about the last run of this model
+# copy over the Report file to provide information about the last run
 file.copy(
   from = file.path(example_path, "Report.sso"),
   to = file.path(mod_path, "Report.sso")
@@ -324,11 +438,13 @@ to = file.path(mod_path, "CompReport.sso")
 )
 ```
 
- The following call to `SS_tune_comps()` runs MI weighting for 1 iteration and allows upweighting. Assume that an ss executable called "ss or ss.exe" is available in the mod_path folder.
+The following call to `SS_tune_comps()` runs Francis weighting for 1
+iteration and allows upweighting. Assume that an executable called
+"ss or ss.exe" is available in the mod_path folder.
  
 ```{r, eval=FALSE}
 tune_info <- SS_tune_comps(
-  option = "MI",
+  option = "Francis",
   niters_tuning = 1,
   dir = mod_path,
   allow_up_tuning = TRUE,
@@ -339,13 +455,19 @@ tune_info <- SS_tune_comps(
 tune_info
 ```
 
-Now, suppose we wanted to run the same model, but using Dirichlet-multinomial parameters to weight. The model can be copied over to a new folder, then the `SS_tune_comps()` function could be used to add Dirichlet-multinomial parameters (1 for each fleet with composition data and for each type of composition data) and re run the model.
+Now, suppose we wanted to run the same model, but using
+Dirichlet-multinomial parameters to weight. The model can be copied over
+to a new folder, then the `SS_tune_comps()` function could be used to
+add Dirichlet-multinomial parameters (1 for each fleet with composition
+data and for each type of composition data) and re-run the model.
 
 ```{r, eval=FALSE}
+# create additional temporary directory
 mod_path_dm <- file.path(tempdir(), "simple_mod_dm")
+# copy model files
 copy_SS_inputs(dir.old = mod_path, dir.new = mod_path_dm, verbose = FALSE,
                copy_exe = TRUE)
-# copy over the Report file to provide information about the last run of this model
+# copy over the Report file to provide information about the last run
 file.copy(
   from = file.path(mod_path, "Report.sso"),
   to = file.path(mod_path_dm, "Report.sso")
@@ -360,7 +482,7 @@ to = file.path(mod_path_dm, "CompReport.sso")
 # Use extras = "-nohess" when running model to speed up run.
 DM_parm_info <- SS_tune_comps(
   option = "DM",
-  niters_tuning = 1, # must be 1 or greater to run, through DM is not an iterative reweighting approach
+  niters_tuning = 1, # must be 1 or greater to run, through DM is not iterative
   dir = mod_path_dm,
   model = "ss",
   extras = "-nohess",
@@ -370,4 +492,6 @@ DM_parm_info <- SS_tune_comps(
 DM_parm_info[["tuning_table_list"]]
 ```
 
-There are many options in the `SS_tune_comps()` function; please see the documentation (`?SS_tune_comps` in the R console) for more details and examples.
+There are many options in the `SS_tune_comps()` function; please see the
+documentation (`?SS_tune_comps` in the R console) for more details and
+examples.
