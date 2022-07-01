@@ -47,28 +47,17 @@
 #' }
 #'
 SS_RunJitter <- function(mydir,
-                         model = "ss",
                          Njitter,
                          printlikes = TRUE,
                          verbose = FALSE,
                          jitter_fraction = NULL,
                          init_values_src = NULL,
                          ...) {
-  # deprecated variable warnings -----
-  # soft deprecated for now, but fully deprecate in the future.
-  if (lifecycle::is_present(Intern)) {
-    lifecycle::deprecate_warn(
-      when = "1.45.1",
-      what = "SS_RunJitter(Intern)",
-      details = "Please use show_in_console instead"
-    )
-    how_in_console <- !Intern
-  }
+  
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
   setwd(mydir)
-  model <- check_model(model = model, mydir = getwd())
 
   if (verbose) {
     message("Temporarily changing working directory to:\n", mydir)
@@ -85,7 +74,7 @@ SS_RunJitter <- function(mydir,
   starter[["parmtrace"]] <- ifelse(starter[["parmtrace"]] == 0, 1, starter[["parmtrace"]])
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
     stop("Change the jitter value in the starter file to be > 0\n",
-      "or change the jitter_fraction argument to be > 0.",
+      "or change the 'jitter_fraction' argument to be > 0.",
       call. = FALSE
     )
   }
@@ -97,12 +86,6 @@ SS_RunJitter <- function(mydir,
   }
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
   file_increment(0, verbose = verbose)
-
-  # create empty ss.dat file to avoid the ADMB message
-  # "Error trying to open data input file ss.dat"
-  if (!file.exists(paste0(model, ".dat"))) {
-    file.create(paste0(model, ".dat"))
-  }
 
   # check length of Njitter input
   if (length(Njitter) == 1) {
@@ -120,7 +103,7 @@ SS_RunJitter <- function(mydir,
     }
     # run model
     run(dir = mydir, verbose = verbose, ...)
-    }
+    
     # Only save stuff if it converged
     if ("Report.sso" %in% list.files()) {
       rep <- SS_read_summary()

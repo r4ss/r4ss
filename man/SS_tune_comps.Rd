@@ -13,9 +13,6 @@ SS_tune_comps(
   niters_tuning = 0,
   init_run = FALSE,
   dir = getwd(),
-  model = "ss",
-  exe_in_path = FALSE,
-  extras = "-nox",
   allow_up_tuning = FALSE,
   verbose = TRUE,
   ...
@@ -51,25 +48,18 @@ Defaults to \code{FALSE}. This run is not counted as an iteration for
 The default value is \code{dir = NULL}, which leads to using
 the current working directory.}
 
-\item{model}{The name of the stock synthesis executable. This model is
-assumed to be either in the same folder as the model files (specified in
-\code{dir}), or in the PATH if \code{exe_in_path = TRUE}. This will not be used if
-\code{init_run = FALSE} and \code{niters_tuning = 0}.}
-
-\item{exe_in_path}{logical. If TRUE, will look for exe in the PATH. If FALSE,
-will look for exe in the model folders. Default = FALSE.}
-
-\item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amount of command-line output. A commonly used option is
-"-nohess" to skip calculating the hessian (and asymptotic uncertainty).}
-
 \item{allow_up_tuning}{Allow tuning values for Francis or MI > 1? Defaults to
 FALSE, which caps tuning values at 1.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments to pass to \link{run_SS_models}.}
+\item{...}{Additional arguments to pass to \code{\link[=run]{run()}}, such as \code{model}
+or \code{exe_in_path}.}
+
+\item{extras}{Additional commands to use when running SS. Default = "-nox"
+will reduce the amount of command-line output. A commonly used option is
+"-nohess" to skip calculating the hessian (and asymptotic uncertainty).}
 }
 \value{
 Returns a table that can be copied into the control file.
@@ -182,14 +172,13 @@ weight_table_fran <- SS_tune_comps(
 )
 weight_table_fran
 
-# Add Dirichlet multinomial tuning parameters to the model, without running it.
+# Add Dirichlet-multinomial tuning parameters to the model,
+# without running it.
 
 DM_parm_info <- SS_tune_comps(
   option = "DM",
   niters_tuning = 0, # 0 means the model will not be run.
   dir = mod_path,
-  model = "ss",
-  extras = "-nohess",
   verbose = FALSE
 )
 # See the Dirichlet parameters added to the model.
@@ -226,7 +215,6 @@ DM_parm_info <- SS_tune_comps(
   option = "DM",
   niters_tuning = 1, # must be 1 or greater to run
   dir = mod_path,
-  model = "ss",
   extras = "-nohess",
   verbose = FALSE
 )

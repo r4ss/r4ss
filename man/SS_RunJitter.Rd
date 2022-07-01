@@ -6,39 +6,20 @@
 \usage{
 SS_RunJitter(
   mydir,
-  model = "ss",
-  extras = "-nohess",
   Njitter,
-  show_in_console = FALSE,
-  Intern = lifecycle::deprecated(),
-  systemcmd = FALSE,
   printlikes = TRUE,
   verbose = FALSE,
   jitter_fraction = NULL,
-  init_values_src = NULL
+  init_values_src = NULL,
+  ...
 )
 }
 \arguments{
 \item{mydir}{Directory where model files are located.}
 
-\item{model}{Name of the Stock Synthesis model file (which has the .exe for
-on Windows) in \code{mydir} without the extension (if any), e.g.,
-\code{"ss"} or \code{"ss_win"}.}
-
-\item{extras}{Additional ADMB command line arguments passed
-to the executable.}
-
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
 If \code{length(Njitter) > 1} only the iterations specified will be ran,
 else \code{1:Njitter} will be executed.}
-
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
-
-\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
-
-\item{systemcmd}{Option to switch between 'shell' and 'system'. The default,
-\code{FALSE}, facilitates using the shell command on Windows.}
 
 \item{printlikes}{A logical value specifying if the likelihood values should
 be printed to the console.}
@@ -55,6 +36,13 @@ will not be overwritten.}
 \item{init_values_src}{Either zero or one, specifying if the initial values to
 jitter should be read from the control file or from the par file, respectively.
 The default is \code{NULL}, which will leave the starter file unchanged.}
+
+\item{...}{Additional arguments passed to r4ss::run(), such as
+\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
+
+\item{model}{Name of the Stock Synthesis model file (which has the .exe for
+on Windows) in \code{mydir} without the extension (if any), e.g.,
+\code{"ss"} or \code{"ss_win"}.}
 }
 \value{
 A vector of likelihoods for each jitter iteration.

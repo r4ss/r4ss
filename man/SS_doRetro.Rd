@@ -6,17 +6,14 @@
 \usage{
 SS_doRetro(
   masterdir,
-  oldsubdir,
+  oldsubdir = "",
   newsubdir = "retrospectives",
   subdirstart = "retro",
   years = 0:-5,
   overwrite = TRUE,
-  exefile = "ss",
-  extras = "-nox",
-  show_in_console = TRUE,
-  intern = lifecycle::deprecated(),
-  CallType = "system",
-  RemoveBlocks = FALSE
+  RemoveBlocks = FALSE,
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -37,26 +34,19 @@ retrospective year. Should be zero or negative values.}
 \item{overwrite}{Overwrite any input files with matching names in the
 subdirectories where models will be run.}
 
-\item{exefile}{Executable file found in directory with model files.
-On Windows systems, this value will be automatically updated if a single
-executable exists in the directory of model files. Input exefile=NULL if
-the executable is in your path and doesn't need copying.}
-
-\item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amount of command-line output.}
-
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
-
-\item{intern}{Deprecated. Use \code{show_in_console} instead.}
-
-\item{CallType}{Either "system" or "shell" (choice depends on how you're running
-R. Default is "system".}
-
 \item{RemoveBlocks}{Logical switch determining whether specifications of
 blocks is removed from top of control file. Blocks can cause problems for
 retrospective analyses, but the method for removing them is overly
 simplistic and probably won't work in most cases. Default=FALSE.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+
+\item{...}{Additional arguments passed to r4ss::run(), such as
+\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
+
+\item{show_in_console}{Show output in the R console? If FALSE,
+then it is saved to a file.}
 }
 \description{
 Do retrospective analyses by creating new directories, copying model files,
@@ -74,8 +64,6 @@ mydir <- "C:/Simple"
 ## retrospective analyses
 SS_doRetro(
   masterdir = mydir,
-  oldsubdir = "",
-  newsubdir = "retrospectives",
   years = 0:-5
 )
 
