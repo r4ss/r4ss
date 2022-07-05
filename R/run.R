@@ -78,6 +78,10 @@ run <- function(dir = NULL,
     exe <- paste(exe, ifelse(OS == "windows", ".exe", ""), sep = "")
   }
   if (exe_in_path == TRUE) {
+    # normalize path if ~ notation is used (e.g. exe = "~/bin/ss_3.30.19/ss")
+    if (exe != basename(exe)) {
+      exe <- normalizePath(exe)
+    }
     tmp_exe <- Sys.which(exe)[[1]] # get 1st ss exe with name exe that is in your path
     if (tmp_exe == "") {
       stop("Exe named ", exe, " was not found in your PATH.")
