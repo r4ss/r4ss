@@ -77,7 +77,7 @@ for making a large set of plots illustrating that output.
 ```{r, eval=FALSE, echo=TRUE, message=FALSE}
 # it's useful to create a variable for the directory with the model output
 mydir <- file.path(path.package("r4ss"),
-                   file.path("extdata", "simple_small"))
+                   file.path("extdata", "simple_3.30.13"))
 
 # read the model output and print diagnostic messages 
 replist <- SS_output(dir = mydir, 
@@ -140,7 +140,7 @@ We'll demonstrate this by creating a new model from a model in the
 
 ```{r}
 # initial model to modify
-mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
+mod_path <- system.file(file.path("extdata", "simple_3.30.13"), package = "r4ss")
 # create a new directory to put a new, modified version of the model
 new_mod_path <- "simple_new"
 ```
@@ -422,8 +422,8 @@ make a copy of the model to avoid changing the original model files
 ```{r}
 # define a new directory in a temporary location
 mod_path <- file.path(tempdir(), "simple_mod")
-# Path to simple_small model in r4ss
-example_path <- system.file("extdata", "simple_small", package = "r4ss")
+# Path to simple_3.30.13 model in r4ss
+example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
 # copy model input files to new directory
 copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
 # copy over the Report file to provide information about the last run
