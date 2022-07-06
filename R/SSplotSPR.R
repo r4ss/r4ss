@@ -343,7 +343,7 @@ SSplotSPR <-
         xaxs = "i",
         yaxs = "i"
       )
-      # deal with warnings
+      # deal with warnings about zero-length arrow
       old_warn <- options()$warn # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
       # add arrows
@@ -471,6 +471,9 @@ SSplotSPR <-
         # )
       }
 
+      # deal with warnings about zero-length arrow
+      old_warn <- options()$warn # previous setting
+      options(warn = -1) # turn off "zero-length arrow" warning
       arrows(
         x0 = phase_df[-nrow(phase_df), "Bratio"],
         y0 = phase_df[-nrow(phase_df), "SPRratio"],
@@ -479,7 +482,8 @@ SSplotSPR <-
         length = 0.09,
         col = phase_df[["col"]][-1]
       )
-
+      options(warn = old_warn) # returning to old value
+      
       # add bigger points for first and final years
       points(
         x = phase_df[1, "Bratio"],
