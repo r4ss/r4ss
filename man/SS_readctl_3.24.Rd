@@ -7,14 +7,11 @@
 SS_readctl_3.24(
   file,
   verbose = FALSE,
-  echoall = lifecycle::deprecated(),
-  version = lifecycle::deprecated(),
   use_datlist = TRUE,
   datlist = "data.ss_new",
   nseas = NULL,
   N_areas = NULL,
   Nages = NULL,
-  Ngenders = lifecycle::deprecated(),
   Nsexes = NULL,
   Npopbins = NA,
   Nfleet = NULL,
@@ -22,7 +19,7 @@ SS_readctl_3.24(
   Do_AgeKey = NULL,
   N_tag_groups = NULL,
   N_CPUE_obs = NULL,
-  ptype = FALSE
+  ptype = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -30,14 +27,8 @@ SS_readctl_3.24(
 
 See the formal arguments for a possible default filename.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
-
-\item{echoall}{Deprecated. Debugging tool (not fully implemented) of echoing
-blocks of values as it is being read.}
-
-\item{version}{Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which
 can not be determined from control file. Defaults to TRUE}
@@ -52,9 +43,6 @@ explicitly available in control file and used only if \code{use_datlist = FALSE}
 explicitly available in control file and used only if if \code{use_datlist = FALSE}.}
 
 \item{Nages}{oldest age in the model. This information is also not
-explicitly available in control file and used only if \code{use_datlist = FALSE}.}
-
-\item{Ngenders}{Deprecated. Number of sexes in the model. This information is also not
 explicitly available in control file and used only if \code{use_datlist = FALSE}.}
 
 \item{Nsexes}{number of sexes in the model. This information is also not
@@ -84,8 +72,7 @@ parameters is enabled (TG_custom=1)}
 \item{N_CPUE_obs}{numeric vector of length=Nfleet+Nsurveys containing number
 of data points of each CPUE time series}
 
-\item{ptype}{include a column in the output indicating parameter type?
-(Can be useful, but causes problems for SS_writectl.) Defaults to FALSE.}
+\item{ptype}{deprecated.}
 }
 \description{
 Read Stock Synthesis (version 3.24) control file into list object in R.
@@ -101,5 +88,6 @@ that calls SS_readctl_3.24 (this function) or SS_readctl_3.30
 \code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
+Yukio Takeuchi, Neil Klaer, Iago Mosqueira, Kathryn L.
+Doering, Nathan R. Vaughan
 }

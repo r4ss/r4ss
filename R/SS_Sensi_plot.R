@@ -5,8 +5,7 @@
 #'
 #' @param model.summaries Output from [SSsummarize()]
 #' summarizing results of models to be included
-#' @param dir Directory where plots will be created, either relative
-#' to working directory or an absolute path
+#' @template dir
 #' @param current.year Year to report output
 #' @param mod.names List the names of the sensitivity runs
 #' @param Sensi.RE.out  Saved file of relative changes

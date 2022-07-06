@@ -30,7 +30,8 @@ SS_fitbiasramp(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{verbose}{Controls the amount of output to the screen.  Default=FALSE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{startvalues}{A vector of 5 values for the starting points in the
 minimization. Default=NULL.}
@@ -49,8 +50,7 @@ quantities to improve minimization. Doesn't work well. Default=FALSE.}
 
 \item{print}{Print to PNG files?}
 
-\item{plotdir}{Directory where PNG files will be written. By default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{shownew}{Include new estimated bias adjustment values on top of values
 used in the model? (TRUE/FALSE)}
@@ -68,7 +68,7 @@ or "psoptim". If not equal to either of these, then optim is used.}
 alternative bias adjustment inputs?}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used

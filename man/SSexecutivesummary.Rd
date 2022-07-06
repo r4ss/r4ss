@@ -36,7 +36,7 @@ The default is the dir location where the Report.sso file is located.}
 will be produced, default is FALSE which will return all executive summary
 tables, historical catches, and numbers-at-ages}
 
-\item{fleetnames}{A vector of user-defined names providing a name for each fleet in the model.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{tables}{Which tables to produce (default is everything). Note: some
 tables depend on calculations related to previous tables, so will fail
@@ -76,7 +76,8 @@ the tables from being formatted further since the objects are no longer numeric.
 in e_ReferencePoints_ES will be reported with the same number of decimal digits
 as the estimate.}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
 Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).

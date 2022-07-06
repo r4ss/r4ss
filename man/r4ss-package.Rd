@@ -57,7 +57,7 @@ Authors:
   \item Watal M. Iwasaki
   \item Kathryn L. Doering
   \item Andrea M. Havron
-  \item Nathan Vaughan
+  \item Nathan R. Vaughan
   \item LaTreese S. Denson
   \item Ashleigh J. Novak
   \item Henning Winker

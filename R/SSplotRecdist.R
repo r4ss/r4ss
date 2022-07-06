@@ -6,8 +6,8 @@
 #'
 #'
 #' @template replist
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template plot
+#' @template print
 #' @param areanames optional vector to replace c("Area1","Area2",...)
 #' @param seasnames optional vector to replace c("Season1","Season2",...)
 #' @param xlab optional x-axis label (if the area names aren\'t informative
@@ -15,15 +15,14 @@
 #' @param ylab optional y-axis label (if the season names aren\'t informative
 #' enough)
 #' @param main title for plot
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template plotdir
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
-#' @param verbose report progress to R GUI?
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SSplotRecdevs()]
@@ -85,9 +84,10 @@ SSplotRecdist <-
 
     rownames(recmat) <- areanames
     colnames(recmat) <- seasnames
-    cat("recruitment distribution by area and season:\n")
-    print(recmat)
-
+    message(
+      "recruitment distribution by area and season:\n",
+      paste0(capture.output(recmat), collapse = "\n")
+    )
     if (plot) recdistfun()
     if (print) {
       file <- "recruitment_distribution.png"

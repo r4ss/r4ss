@@ -4,18 +4,22 @@
 \alias{SS_readdat_3.24}
 \title{read data file from SS version 3.24}
 \usage{
-SS_readdat_3.24(file, verbose = TRUE, echoall = FALSE, section = NULL)
+SS_readdat_3.24(
+  file,
+  verbose = TRUE,
+  echoall = lifecycle::deprecated(),
+  section = NULL
+)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
 See the formal arguments for a possible default filename.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
-\item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
-data as it is being read.}
+\item{echoall}{Deprecated.}
 
 \item{section}{Which data set to read. Only applies for a data.ss_new file
 created by Stock Synthesis. Allows the choice of either expected values
@@ -36,5 +40,5 @@ for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
 }
 \author{
 Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Kelli F. Johnson,
-Chantel R. Wetzel
+Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 }

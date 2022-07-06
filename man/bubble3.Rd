@@ -52,9 +52,12 @@ sqrt(z)). Default=TRUE.}
 
 \item{bg.open}{background color for open bubbles (border will equal 'col')}
 
-\item{legend}{Add a legend to the plot?}
+\item{legend}{Add a legend?}
 
-\item{legendloc}{Location for legend (default='top')}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{legend.z}{If a legend is added, what z values will be shown. Default
 is c(-3,-2,-1,.1,1,2,3) for Pearson-like quantities and a smaller range for
@@ -65,7 +68,8 @@ expanded to make space for it.}
 
 \item{main}{Title of plot. Default="".}
 
-\item{cex.main}{Character expansion for title. Default=1.}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{xlab}{X-axis label.}
 

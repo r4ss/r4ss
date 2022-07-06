@@ -71,7 +71,8 @@ number of elements in \code{yr} input.}
 
 \item{main}{title of plot}
 
-\item{cex.main}{character expansion for title}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{xlab}{x-axis label}
 
@@ -107,7 +108,7 @@ and c(.15, .3) for sexratio.option=2.}
 
 \item{lty}{line type}
 
-\item{lwd}{line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{nlegends}{number of lines of text to add as legends in each plot}
 

@@ -1,22 +1,39 @@
-#' read starter file
-#'
-#' read Stock Synthesis starter file into list object in R
-#'
+#' Read Stock Synthesis starter file as a list
 #'
 #' @template file
-#' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor
+#' @template verbose
+#' @return A list with one element for each line of input values.
+#' List elements containing the name of the control and data file are
+#' particularly helpful, i.e., `ctlfile` and `datfile`, respectively.
+#' @examples
+#' starter_list <- SS_readstarter(
+#'   system.file("extdata", "simple_3.30.13", "starter.ss",
+#'     package = "r4ss"
+#'   ),
+#'   verbose = FALSE
+#' )
+#'
+#' # The following lines should be TRUE and demonstrate how you can know the
+#' # names of the control and data file given information in the starter file.
+#' starter_list[["ctlfile"]] == "simple_control.ss"
+#' starter_list[["datfile"]] == "simple_data.ss"
+#' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 #' @export
-#' @seealso [SS_readforecast()], [SS_readdat()],
-#' [SS_writestarter()],
-#' [SS_writeforecast()], [SS_writedat()]
+#' @seealso
+#' * [SS_readforecast()],
+#' * [SS_readdat()],
+#' * [SS_writestarter()],
+#' * [SS_writeforecast()],
+#' * [SS_writedat()]
 SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
     message("running SS_readstarter")
   }
-  size <- file.info(file)$size
-  if (is.na(size) || size == 0) stop("file empty or missing:", file)
-  starter <- readLines(file, warn = F)
+
+  starter <- readLines(file, warn = FALSE)
+  if (length(starter) == 0) {
+    stop("The following file was empty: ", file)
+  }
   mylist <- list()
 
   mylist[["sourcefile"]] <- file
@@ -141,7 +158,10 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   }
   mylist[["F_report_units"]] <- allnums[i]
   i <- i + 1
-  if (!is.na(mylist[["F_report_units"]]) && mylist[["F_report_units"]] %in% 4:5) {
+  if (
+    !is.na(mylist[["F_report_units"]]) &&
+      mylist[["F_report_units"]] %in% 4:5
+  ) {
     mylist[["F_age_range"]] <- allnums[i]
     i <- i + 1
     mylist[["F_age_range"]][2] <- allnums[i]
@@ -183,9 +203,11 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     if (verbose) message("Reading a random seed value:", mylist[["seed"]])
     mylist[["final"]] <- final <- allnums[i]
     if (!is.na(final) && final %in% c(3.30, 999)) {
-      if (verbose) message("Read of starter file complete. Final value: ", final)
+      if (verbose) {
+        message("Read of starter file complete. Final value: ", final)
+      }
     } else {
-      warning("Final value is ", allnums[i], " but should be either 3.30 or 999")
+      warning("Final value is ", allnums[i], " but should be 3.30 or 999")
     }
   }
   if (final == 3.30) {

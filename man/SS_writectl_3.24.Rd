@@ -4,35 +4,18 @@
 \alias{SS_writectl_3.24}
 \title{write control file}
 \usage{
-SS_writectl_3.24(
-  ctllist,
-  outfile,
-  overwrite = FALSE,
-  verbose = FALSE,
-  nseas = lifecycle::deprecated(),
-  N_areas = lifecycle::deprecated(),
-  Do_AgeKey = lifecycle::deprecated()
-)
+SS_writectl_3.24(ctllist, outfile, overwrite = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{ctllist}{List object created by \code{\link[=SS_readctl]{SS_readctl()}}.}
 
 \item{outfile}{Filename for where to write new data file.}
 
-\item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
-
-\item{nseas}{Deprecated. number of season in the model. This information is not
-explicitly available in control file}
-
-\item{N_areas}{Deprecated. number of spatial areas in the model. This information is also not
-explicitly available in control file}
-
-\item{Do_AgeKey}{Deprecated. Flag to indicate if 7 additional ageing error parameters to be read
-set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
-to disable them. This information is not explicitly available in control file, too.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 write Stock Synthesis control file from list object in R which was probably
@@ -42,5 +25,5 @@ created using \code{\link[=SS_readctl]{SS_readctl()}}
 \code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}},\code{\link[=SS_readstarter]{SS_readstarter()}},
 }
 \author{
-Yukio Takeuchi
+Yukio Takeuchi, Kathryn L. Doering, Nathan R. Vaughan
 }

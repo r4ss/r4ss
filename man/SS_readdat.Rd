@@ -8,7 +8,7 @@ SS_readdat(
   file,
   version = "3.30",
   verbose = TRUE,
-  echoall = FALSE,
+  echoall = lifecycle::deprecated(),
   section = NULL
 )
 }
@@ -23,11 +23,10 @@ either as character or numeric values (noting that numeric 3.30  = 3.3). If
 version is NULL, the version (3.24 or 3.30) will be looked for on the first
 line of the file.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
-\item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
-data as it is being read.}
+\item{echoall}{Deprecated.}
 
 \item{section}{Which data set to read. Only applies for a data.ss_new file
 created by Stock Synthesis. Allows the choice of either expected values
@@ -51,5 +50,5 @@ attempts to do everything. Returned datlist is mostly consistent across versions
 }
 \author{
 Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
-Chantel R. Wetzel
+Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 }

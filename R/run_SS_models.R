@@ -16,8 +16,9 @@
 #' This may be required when running R in Emacs. Default = FALSE.
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted.
-#' @param intern Show output in the R console or save to a file?
-#' @param verbose Return updates of function progress to the R console?
+#' @template show_in_console
+#' @param intern Deprecated. Use `show_in_console` instead.
+#' @template verbose
 #' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
 #' will look for exe in the model folders. Default = FALSE.
 #' @return Returns table showing which directories had model run and which
@@ -42,9 +43,21 @@ run_SS_models <- function(dirvec = NULL,
                           extras = "-nox",
                           systemcmd = FALSE,
                           skipfinished = TRUE,
-                          intern = FALSE,
+                          show_in_console = TRUE,
+                          intern = lifecycle::deprecated(),
                           verbose = TRUE,
                           exe_in_path = FALSE) {
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(intern)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.1",
+      what = "run_SS_models(intern)",
+      details = "Please use show_in_console instead"
+    )
+    show_in_console <- !intern
+  }
+
   # check to make sure the first input is in the correct format
   if (!is.character(dirvec)) {
     stop("Input 'dirvec' should be a character vector")
@@ -135,11 +148,11 @@ run_SS_models <- function(dirvec = NULL,
         message("Running model in directory: ", getwd())
         message("Using the command: ", command)
         if (OS == "windows" & !systemcmd) {
-          console.output <- shell(cmd = command, intern = intern)
+          console.output <- shell(cmd = command, intern = !show_in_console)
         } else {
-          console.output <- system(command, intern = intern, show.output.on.console = verbose)
+          console.output <- system(command, intern = !show_in_console, show.output.on.console = show_in_console)
         }
-        if (intern) {
+        if (!show_in_console) {
           writeLines(c(
             "###",
             "console output",

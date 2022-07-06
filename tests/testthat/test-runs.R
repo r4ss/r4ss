@@ -122,7 +122,7 @@ test_that("SS_RunJitter runs on newest simple model", {
 
 ###############################################################################
 
-test_that("SS_profile runs on simple_3.30.12 model", {
+test_that("profile functions run on simple_3.30.12 model", {
   path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
   skip_if((!file.exists(file.path(path_3.30.12, "ss"))) &
     (!file.exists(file.path(path_3.30.12, "ss.exe"))),
@@ -156,11 +156,19 @@ test_that("SS_profile runs on simple_3.30.12 model", {
     masterctlfile = "simple_control.ss",
     string = "R0", profilevec = c(8.5, 9)
   )
+  # read model output
   prof.out <- SSgetoutput(dirvec = dir.prof, keyvec = 1:2)
-  plotprofile.out <- SSplotProfile(summaryoutput = SSsummarize(prof.out))
+  # summarize output
+  summary.out <- SSsummarize(prof.out)
+  # run plotting functions
+  plotprofile.out <- SSplotProfile(summary.out)
+  pinerplot.out <- PinerPlot(summary.out)
+
   # check that the minimum of the total likelihood is 0
-  # (also serves to indicate that there are no NA values in this column)
+  # (also serves to indicate that the function didn't crash and
+  # there are no NA values in these columns)
   expect_equal(min(plotprofile.out$TOTAL), 0)
+  expect_equal(min(pinerplot.out$ALL), 0)
 })
 
 test_that("Run an SS3 model and read the hessian", {

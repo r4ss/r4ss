@@ -6,7 +6,7 @@
 #'
 #'
 #' @template replist
-#' @param plotdir Directory where PNG files are located.
+#' @template plotdir
 #' @param plotInfoTable CSV file with info on PNG files. By default, the
 #' `plotdir` directory will be searched for files with name beginning
 #' 'plotInfoTable*'
@@ -16,7 +16,7 @@
 #' @param multimodel Override errors associated with plots from multiple model
 #' runs. Only do this if you know what you're doing.
 #' @param filenotes Add additional notes to home page.
-#' @param verbose Display more info while running this function?
+#' @template verbose
 #' @note By default, this function will look in the directory where PNG files
 #' were created for CSV files with the name 'plotInfoTable...' written by
 #' 'SS_plots. HTML files are written to link to these plots and put in the same
@@ -36,7 +36,7 @@ SS_html <- function(replist = NULL,
                     filenotes = NULL,
                     verbose = TRUE) {
   if (verbose) {
-    cat(
+    message(
       "Running 'SS_html':\n",
       "  By default, this function will look in the directory where PNG files were created\n",
       "  for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'\n",
@@ -72,7 +72,7 @@ SS_html <- function(replist = NULL,
             "    Runs:\n"
           )
           for (irun in 1:length(runs)) msg <- c(msg, paste("    ", runs[irun], "\n"))
-          cat(msg)
+          warning(msg)
         } else {
           msg <- c(
             "CSV files with name 'plotInfoTable...' are from multiple model runs.\n",
@@ -88,7 +88,7 @@ SS_html <- function(replist = NULL,
       duplicates <- names(filetable[filetable > 1])
       # loop over duplicates and remove rows for older instance
       if (length(duplicates) > 0) {
-        if (verbose) cat("Removing duplicate rows in combined plotInfoTable based on multiple CSV files\n")
+        if (verbose) message("Removing duplicate rows in combined plotInfoTable based on multiple CSV files")
         for (idup in 1:length(duplicates)) {
           duprows <- grep(duplicates[idup], plotInfoTable[["file"]], fixed = TRUE)
           duptimes <- plotInfoTable[["png_time"]][duprows]
@@ -120,7 +120,7 @@ SS_html <- function(replist = NULL,
       htmlfile <- file.path(plotdir, "_SS_output.html")
       htmlhome <- htmlfile
       if (verbose) {
-        cat("Home HTML file with output will be:\n", htmlhome, "\n")
+        message("Home HTML file with output will be: ", htmlhome)
       }
     } else {
       category <- categories[icat]
@@ -377,7 +377,7 @@ SS_html <- function(replist = NULL,
   # open HTML file automatically:
   # thanks John Wallace for finding the browseURL command
   if (openfile) {
-    if (verbose) cat("Opening HTML file in your default web-browser.\n")
+    if (verbose) message("Opening HTML file in your default web-browser.")
     # check for presence of file
     # alternative location for file in the path is relative to the working directory
     htmlhome2 <- file.path(getwd(), htmlhome)

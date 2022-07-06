@@ -8,7 +8,7 @@
 #' copy step.
 
 #' @param model Output from SS_output
-#' @param dir Directory where the file will be written
+#' @template dir
 #' @param writecsv Write results to a CSV file (where the name will have the
 #' format "\[stock\]_2019_SIS_info.csv" where `stock`
 #' is an additional input

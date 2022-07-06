@@ -15,12 +15,11 @@
 #' deviation = sigmaR? Default=TRUE.
 #' @param scaleyrs Vector of years over which rescaling (if chosen) should
 #' occur.
-#' @param dir Directory where files are located. Default is to use the working
-#' directory in use by R. Default="working_directory".
+#' @template dir
 #' @param ctlfile Name of control file to modify.  Default="control.ss_new".
 #' @param newctlfile Name of new file to output modified control file.
 #' Default="control_modified.ss".
-#' @param verbose Verbose output to R command line? Default=TRUE.
+#' @template verbose
 #' @param writectl Write new file? Default=TRUE.
 #' @param returnctl Return contents ctl file as an object in the R workspace.
 #' Default=FALSE.
@@ -88,10 +87,14 @@ SS_recdevs <-
     Nrecdevs <- lyr - fyr + 1
     phase <- readfun("recdev phase", maxlen = 1)
     advanced <- readfun("advanced options", maxlen = 1)
-    if (advanced != 1) stop("advanced options must be turned on in control file")
+    if (advanced != 1) {
+      stop("advanced options must be turned on in control file")
+    }
     if (phase > 0) {
       newphase <- -abs(phase)
-      if (verbose) print(paste("making recdev phase to negative:", newphase), quote = FALSE)
+      if (verbose) {
+        message("Changing recdev phase to negative: ", newphase)
+      }
       ctl[grep("recdev phase", ctl)] <- paste(newphase, "#_recdev phase")
     }
 
@@ -102,8 +105,10 @@ SS_recdevs <-
     # check for keyword at start of following section
     key2 <- grep("Fishing Mortality info", ctl)
     if (length(key2) == 0) {
-      print("The phrase 'Fishing Mortality info' does not occur after the recdev section.", quote = FALSE)
-      print("Format of control file may be messy.", quote = FALSE)
+      warning(
+        "The phrase 'Fishing Mortality info' does not occur after the\n",
+        "recdev section; Format of control file may be messy."
+      )
     } else {
       key2 == key2[1]
     }
@@ -125,8 +130,10 @@ SS_recdevs <-
         scaleyrs <- yrs %in% scaleyrs
       }
       if (verbose) {
-        print(paste("rescaling recdevs vector so yrs ", min(yrs[scaleyrs]), ":", max(yrs[scaleyrs]), sep = ""), quote = FALSE)
-        print(paste("have mean 0 and std. dev. = sigmaR = ", sigmaR, sep = ""), quote = FALSE)
+        message(
+          "Rescaling recdevs vector so yrs ", min(yrs[scaleyrs]), ":",
+          max(yrs[scaleyrs]), " have mean 0 and std. dev. = sigmaR = ", sigmaR
+        )
       }
       newdevs <- sigmaR * (newdevs - mean(newdevs[scaleyrs])) / sd(newdevs[scaleyrs])
     }
@@ -153,7 +160,9 @@ SS_recdevs <-
     # write and/or return the modified control file
     if (writectl) {
       writeLines(ctl, newctlfile)
-      if (verbose) print(paste("wrote new file:", newctlfile), quote = FALSE)
+      if (verbose) {
+        message("Wrote new file: ", newctlfile)
+      }
     }
     # reset working directory
     setwd(current_wd)

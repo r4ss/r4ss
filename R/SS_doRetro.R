@@ -24,8 +24,8 @@
 #' the executable is in your path and doesn't need copying.
 #' @param extras Additional commands to use when running SS. Default = "-nox"
 #' will reduce the amount of command-line output.
-#' @param intern Display runtime information from SS in the R console (vs.
-#' saving to a file).
+#' @template show_in_console
+#' @param intern Deprecated. Use `show_in_console` instead.
 #' @param CallType Either "system" or "shell" (choice depends on how you're running
 #' R. Default is "system".
 #' @param RemoveBlocks Logical switch determining whether specifications of
@@ -62,8 +62,20 @@
 #'
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                       exefile = "ss", extras = "-nox", intern = FALSE, CallType = "system",
+                       exefile = "ss", extras = "-nox", show_in_console = TRUE,
+                       intern = lifecycle::deprecated(), CallType = "system",
                        RemoveBlocks = FALSE) {
+
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(intern)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.1",
+      what = "SS_doRetro(intern)",
+      details = "Please use show_in_console instead"
+    )
+    show_in_console <- !intern
+  }
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
   OS <- .Platform[["OS.type"]]
@@ -104,8 +116,6 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
 
   if (length(startfile) == 0) stop("No starter.ss file found in ", olddir)
 
-  ## print(getwd())
-  ## print(startfile)
   startfile <- file.path(olddir, startfile)
 
   message("Getting input file names from starter file:\n", startfile)
@@ -168,7 +178,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
     )
 
     if (file.exists("covar.sso")) file.remove("covar.sso")
-    if (intern) {
+    if (!show_in_console) {
       message("ADMB output generated during model run will be written to:\n   ",
         getwd(), "/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",
         "Note: ignore message about 'Error trying to open data input file ss3.dat'\n",
@@ -177,17 +187,17 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
     }
 
     if (CallType == "system") {
-      ADMBoutput <- system(command, intern = intern)
+      ADMBoutput <- system(command, intern = !show_in_console)
     }
     if (CallType == "shell") {
-      ADMBoutput <- shell(command, intern = intern)
+      ADMBoutput <- shell(command, intern = !show_in_console)
     }
     # add rough check for if the model ran (although a report file may exist if
     # if the model only ran part of the way through). Warn the user in this case.
     if (!file.exists("Report.sso")) {
       warning("The retrospective model run failed in ", getwd())
     }
-    if (intern) {
+    if (!show_in_console) {
       writeLines(c(
         "###", "ADMB output", as.character(Sys.time()),
         "###", " ", ADMBoutput

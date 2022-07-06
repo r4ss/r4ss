@@ -10,8 +10,7 @@
 #' @param ctlsource list or character. If list, should be a list produced
 #' from [SS_writectl()]. If character, should be the full file location of an
 #' SS control file.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template verbose
 #' @author Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
@@ -41,7 +40,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   }
 
   # function to read Stock Synthesis parameter files
-  if (verbose) cat("running SS_readpar_3.24\n")
+  if (verbose) message("running SS_readpar_3.24")
   parvals <- readLines(parfile, warn = FALSE)
 
   parlist <- list()

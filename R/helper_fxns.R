@@ -8,7 +8,7 @@
 #' the file new data file was named `data.ss_new`.
 #' `_echo` was added to the name when the file was parsed into three separate
 #' files.
-#' @param dir Relative or absolute path to a directory
+#' @template dir
 #' @return A string with the name of the data .ss_new file. If not found, will
 #'  be NA. Both of strings are searched for using `dir(pattern = )` and
 #'  if both exist, then `data_echo.ss_new` is returned.
@@ -217,7 +217,7 @@ rich.colors.short <- function(n, alpha = 1) {
 #'
 #' @param plotinfo table of information about all plots
 #' @param file filename to write to (including .png extension)
-#' @param plotdir directory where plots will be written
+#' @template plotdir
 #' @template pwidth
 #' @template pheight
 #' @template punits

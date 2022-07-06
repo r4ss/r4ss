@@ -9,7 +9,7 @@ SSplotData(
   plot = TRUE,
   print = FALSE,
   plotdir = "default",
-  subplot = 1:2,
+  subplots = 1:2,
   fleetcol = "default",
   datatypes = "all",
   fleets = "all",
@@ -27,20 +27,20 @@ SSplotData(
   maxsize = 1,
   alphasize = 1,
   mainTitle = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  subplot = lifecycle::deprecated()
 )
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
-\item{subplot}{vector controlling which subplots to create
+\item{subplots}{vector controlling which subplots to create
 Currently there are only 2 subplots:
 \itemize{
 \item 1 equal size points showing presence/absence of data type by year/fleet
@@ -59,32 +59,38 @@ of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}
 
-\item{fleetnames}{A vector of alternative names to use in the plot. By
-default the parameter names in the data file are used.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{ghost}{TRUE/FALSE indicator for whether to show presence of
 composition data from ghost fleets (data for which the fit is shown, but is
 not included in the likelihood calculations).}
 
-\item{pwidth}{width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}.}
 
-\item{pheight}{height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{margins}{margins of plot (passed to par() function), which may need to
 be increased if fleet names run off right-hand margin}
 
 \item{cex}{Character expansion for points showing isolated years of data}
 
-\item{lwd}{Line width for lines showing ranges of years of data}
+\item{lwd}{Line width for plot elements.}
 
 \item{maxsize}{The size (cex) of the largest bubble in the datasize
 plot. Default is 1.}
@@ -93,9 +99,13 @@ plot. Default is 1.}
 plot. Defaults to 1 (no transparency). Useful for models with lots of
 overlapping points.}
 
-\item{mainTitle}{TRUE/FALSE switch to turn on/off the title on the plot.}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+
+\item{subplot}{Deprecated. Use subplots instead.}
 }
 \description{
 Plot shows graphical display of what data is being used in the model.  Some

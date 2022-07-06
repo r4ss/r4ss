@@ -6,26 +6,26 @@
 #' is available in the Report.sso file)
 #'
 #' @template replist
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template plot
+#' @template print
 #' @param subplots which subplots to create.
-#' @param plotdir where to put the plots (uses model directory by default)
+#' @template plotdir
 #' @param colvec vector of colors for each movement rate in the plot
 #' @param ylim optional input for y range of the plot. By default plot ranges
 #' from 0 to 10% above highest movement rate (not including fish staying in an
 #' area).
 #' @param legend add a legend designating which color goes with which pair of
 #' areas?
-#' @param legendloc location passed to legend function (if used)
+#' @template legendloc
 #' @param moveseas choice of season for which movement rates are shown
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main Character expansion parameter for plot titles
-#' @param verbose Print information on function progress.
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()], [SSplotMovementRates()],
@@ -42,7 +42,6 @@ SSplotMovementRates <-
            moveseas = "all", min.move.age = 0.5,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            verbose = TRUE) {
-    # if(verbose) cat("Running SSplotMovementRates function\n")
 
     # table to store information on each plot
     plotinfo <- NULL
@@ -66,7 +65,7 @@ SSplotMovementRates <-
 
     # subplot 1: movement in end year
     if (1 %in% subplots) {
-      if (verbose) cat("  running subplot 1: movement rates in final year\n")
+      if (verbose) message("Running subplot 1: movement rates in final year")
 
       if (moveseas[1] == "all") moveseas <- sort(unique(move[["Seas"]]))
       for (iseas in moveseas) {
@@ -74,7 +73,7 @@ SSplotMovementRates <-
           move[["Source_area"]] != move[["Dest_area"]], ]
 
         if (nrow(move2) == 0) {
-          if (verbose) cat("Skipping movement rate plot: no movement in season", moveseas[iseas], "\n")
+          if (verbose) message("Skipping movement rate plot: no movement in season", moveseas[iseas])
         } else {
           move3 <- move2[, -(1:6)]
 
@@ -129,31 +128,24 @@ SSplotMovementRates <-
         if (time) {
           warning("plot of time-varying movement rates not currently working")
           if (FALSE) {
-            if (verbose) cat("  running subplot 2: time-varying movement rates\n")
+            if (verbose) message("Running subplot 2: time-varying movement rates")
             moveinfo <- move[, 1:6]
             moveinfo[["LabelBase2"]] <- paste("seas_", moveinfo[["Seas"]], "_GP_", moveinfo[["GP"]],
               "from_", moveinfo[["Source"]], "to_", moveinfo[["Dest"]],
               sep = ""
             )
             moveinfo <- moveinfo[moveinfo[["LabelBase2"]] %in% substring(movepars[["Label"]], 12), ]
-            ## print(moveinfo)
             nmoves <- nrow(moveinfo)
-            if (verbose) cat("  N movement rates:", nmoves, "\n")
+            if (verbose) message("N movement rates:", nmoves)
             if (nareas > 2) {
-              cat(
-                "  WARNING: time-varying movement plots not yet configured",
-                "for models with N areas > 2\n"
+              warning(
+                "Time-varying movement plots not yet configured",
+                "for models with N areas > 2"
               )
             } else {
               yrvec <- replist[["startyr"]]:replist[["endyr"]]
               nyrs <- length(yrvec)
 
-              ## if(nmoves*2 != nrow(movepars)){
-              ##   cat("warning!: In SSplotMovementRates function.\n
-              ##                Problem with number of parameters.\n
-              ##                2*nrow(moveinfo)=",2*nrow(moveinfo),"\n,
-              ##                nrow(movepars)  =",nrow(movepars),"\n")
-              ## }
 
               movecalc <- function(min.move.age, accuage, minage, maxage,
                                    valueA, valueB, from, to, seasdur) {
@@ -240,7 +232,6 @@ SSplotMovementRates <-
               } # end loop over years to calculate moveByYr array
 
               # make plots
-              cat("Warning! Time-varying movement plots are experimental and might be totally wrong\n")
               for (imove in 1:nmoves) {
                 Source_area <- moveinfo[["Source_area"]][imove]
                 Dest_area <- moveinfo[["Dest_area"]][imove]

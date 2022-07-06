@@ -9,7 +9,8 @@ SS_RunJitter(
   model = "ss",
   extras = "-nohess",
   Njitter,
-  Intern = TRUE,
+  show_in_console = FALSE,
+  Intern = lifecycle::deprecated(),
   systemcmd = FALSE,
   printlikes = TRUE,
   verbose = FALSE,
@@ -31,8 +32,10 @@ The default, \code{"-nohess"}, runs each jittered model without the hessian.}
 If \code{length(Njitter) > 1} only the iterations specified will be ran,
 else \code{1:Njitter} will be executed.}
 
-\item{Intern}{Show command line info in R console or keep hidden. The default,
-\code{TRUE}, keeps the executable hidden.}
+\item{show_in_console}{Show output in the R console? If FALSE,
+then it is saved to a file.}
+
+\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 
 \item{systemcmd}{Option to switch between 'shell' and 'system'. The default,
 \code{FALSE}, facilitates using the shell command on Windows.}

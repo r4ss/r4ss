@@ -2,7 +2,7 @@
 #'
 #' Function has not been fully tested yet
 #'
-#' @param dir Directory with control file to change.
+#' @template dir
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #' Default="control_modified.ss".
@@ -15,10 +15,9 @@
 #' (may need to increase from default if you have a huge number of fleets)
 #' @param maxrows Maximum number of rows to search among in 3.30 models
 #' (may need to increase from default if you have a huge number of fleets)
-#' @param overwrite Overwrite file if it exists?
+#' @template overwrite
 #' @template version
-#' @param verbose TRUE/FALSE switch for amount of detail produced by function.
-#' Default=TRUE.
+#' @template verbose
 #' @author Ian G. Taylor, Gwladys I. Lambert
 #' @seealso [SS_tune_comps()], [SS_parlines()], [SS_changepars()]
 #' @export
@@ -144,13 +143,15 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   options(warn = old_warn)
 
   if (verbose) {
-    cat("Existing table of variance adjustments:\n")
-    print(ctl)
+    message(
+      "Existing table of variance adjustments:\n",
+      paste0(capture.output(ctl), collapse = "\n")
+    )
   }
 
   if (is.null(newrow) & is.null(newtable)) {
     if (verbose) {
-      cat("No new adjustments provided, so no file written.\n")
+      message("No new adjustments provided, so no file written.")
     }
     return(invisible(ctl))
   }
@@ -173,8 +174,10 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   }
 
   if (verbose) {
-    cat("New table of variance adjustments:\n")
-    print(ctl)
+    message(
+      "New table of variance adjustments:\n",
+      paste0(capture.output(ctl), collapse = "\n")
+    )
   }
 
   # absolute position of the rows to change
@@ -196,7 +199,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   }
 
   # open connection to file
-  if (verbose) cat("opening connection to", newctlfile, "\n")
+  if (verbose) message("opening connection to", newctlfile)
   zz <- file(newctlfile, open = "at")
   sink(zz)
   # change maximum number of columns
@@ -229,7 +232,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   sink()
   close(zz)
   if (verbose) {
-    cat("file written to", newctlfile, "\n")
+    message("file written to", newctlfile)
   }
   # return table of values
   return(invisible(ctl))

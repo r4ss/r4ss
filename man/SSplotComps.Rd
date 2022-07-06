@@ -118,13 +118,14 @@ conditional age-at-length data will be produced for all years.  Useful to
 see if growth curves are ok, or to see the information on year classes move
 through the conditional data. Default=-1.}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
-\item{fleets}{optional vector to subset fleets for which plots will be made}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
-\item{fleetnames}{optional vector of fleet names to put in the labels}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{sexes}{which sexes to show plots for. Default="all" which will include
 males, females, and unsexed. This option is not fully implemented for all
@@ -197,7 +198,7 @@ transparent blue)}
 transparent red)}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
@@ -213,10 +214,10 @@ The default is \code{punits="in"}.}
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
-\item{cex.main}{character expansion parameter for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{linepos}{should lines be added before points (linepos=1) or after
 (linepos=2)?}
@@ -232,7 +233,7 @@ input vs. effective sample size?}
 \item{cohortlines}{optional vector of birth years for cohorts for which to
 add growth curves to numbers at length bubble plots}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{printmkt}{show market categories in plot titles?}
 
@@ -270,7 +271,8 @@ sample size. Occasionally a calculation of effective N blows up to very
 large numbers, rendering it impossible to observe the relationship for other
 data. Default=5000.}
 
-\item{verbose}{return updates of function progress to the R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{scalebins}{Rescale expected and observed proportions by dividing by
 bin width for models where bins have different widths? Caution!: May not
@@ -279,7 +281,8 @@ work correctly in all cases.}
 \item{addMeans}{Add parameter means in addition to medians for MCMC
 posterior distributions in which the median and mean differ.}
 
-\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots).}
 
 \item{\dots}{additional arguments that will be passed to
 the \code{par} command in the \code{\link[=make_multifig]{make_multifig()}} function.}

@@ -7,10 +7,10 @@
 #'
 #' @param datlist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new data file.
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
-#' @param faster Speed up writing by writing length and age comps without aligning
+#' @template overwrite
+#' @param faster Deprecated. Speed up writing by writing length and age comps without aligning
 #' the columns (by using write.table instead of print.data.frame)
-#' @param verbose Should there be verbose output while running the file?
+#' @template verbose
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kelli F. Johnson,
 #' Chantel R. Wetzel
 #' @export
@@ -22,14 +22,22 @@
 SS_writedat_3.24 <- function(datlist,
                              outfile,
                              overwrite = FALSE,
-                             faster = FALSE,
+                             faster = lifecycle::deprecated(),
                              verbose = TRUE) {
   # function to write Stock Synthesis data files
   if (verbose) {
     message("running SS_writedat_3.24")
   }
+  if (lifecycle::is_present(faster)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_writedat_3.24(faster)"
+    )
+  }
+
 
   # check datlist
+
   if (datlist[["type"]] != "Stock_Synthesis_data_file") {
     stop("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
   }
@@ -138,27 +146,16 @@ SS_writedat_3.24 <- function(datlist,
           })
         dataframe[["comments"]] <- rownames(dataframe)
       }
-      if (faster) {
-        write.table(
-          dataframe,
-          file = zz,
-          append = TRUE,
-          col.names = TRUE,
-          row.names = FALSE,
-          quote = FALSE
-        )
-      } else {
-        write_fwf4(
-          file = zz,
-          x = dataframe,
-          append = TRUE,
-          sep = "\t",
-          quote = FALSE,
-          rownames = FALSE,
-          colnames = FALSE,
-          digits = 6
-        )
-      }
+      write_fwf4(
+        file = zz,
+        x = dataframe,
+        append = TRUE,
+        sep = "\t",
+        quote = FALSE,
+        rownames = FALSE,
+        colnames = FALSE,
+        digits = 6
+      )
     }
   }
   ## Function copied from SS_writectl3.24
@@ -195,14 +192,6 @@ SS_writedat_3.24 <- function(datlist,
   wl.vector("units_of_catch", comment = "#_units of catch:  1=bio; 2=num")
   # writeLines(paste(paste(datlist[["se_log_catch"]],collapse=" "),"#_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3"))
   wl.vector("se_log_catch", comment = "#_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3")
-  if (isTRUE(datlist[["Ngenders"]] != datlist[["Nsexes"]])) {
-    warning(
-      "List element `Ngenders` is in the process of being deprecated and ",
-      "replaced by the `Nsexes`. In the meantime, r4ss::SS_writedat_3.24 will",
-      " warn when `Ngenders` and `Nsexes` do not have the same value and",
-      " only Nsexes will be written."
-    )
-  }
   wl("Nsexes")
   wl("Nages")
   # writeLines(paste(paste(datlist[["init_equil"]],collapse=" "),"#_init_equil_catch_for_each_fishery"))
@@ -268,8 +257,6 @@ SS_writedat_3.24 <- function(datlist,
   wl("N_agebins")
   if (datlist[["N_agebins"]] > 0) {
     writeComment("#_agebin_vector")
-    # writeLines(paste(datlist[["agebin_vector"]],collapse=" "))
-    #  cat("L232 in SS_writedat\n")
     wl.vector("agebin_vector")
   }
   wl("N_ageerror_definitions")

@@ -8,8 +8,8 @@
 #' @template replist
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template plot
+#' @template print
 #' @param cohortcols Vector of colors to show for each cohort. Default is range
 #' of colors shade indicating time period.
 #' @param cohortfrac What fraction of the cohorts to include in plot. If value
@@ -23,19 +23,17 @@
 #' `cohortlabvec`.
 #' @param cohortlabvec Optional vector of birth years for cohorts to label in
 #' plot. Value overrides `cohortlabfrac`.
-#' @param lwd Line width
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template lwd
+#' @template plotdir
 #' @param xlab x-label for all plots
-#' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template labels
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main Character expansion for plot titles (no titles in this
-#' function yet)
-#' @param verbose Report progress to R console?
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
@@ -78,16 +76,15 @@ SSplotCohortCatch <-
     growdat <- replist[["endgrowth"]]
     SS_versionshort <- toupper(substr(replist[["SS_version"]], 1, 8))
 
-    #  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
     if (is.null(wtatage)) {
-      cat(
-        "Warning: no weight-at-age data in replist[['wtatage']]\n",
-        "        plots of cohort contributions will be in numbers only\n"
+      warning(
+        "No weight-at-age data in replist[['wtatage']]\n",
+        "plots of cohort contributions will be in numbers only"
       )
       subplots <- setdiff(subplots, 2) # removing subplot 2 from the list
     } else {
       if (nseasons > 1) {
-        cat("Warning: plots of catch by cohort might not work for seasonal models.\n")
+        warning("Plots of catch by cohort might not work for seasonal models.")
       }
     }
 
@@ -119,8 +116,6 @@ SSplotCohortCatch <-
           for (ifleet in 1:nfishfleets) { # loop over fleets
             f <- ifleet # index = fleet number in current SS but making general
             for (isex in 1:nsexes) { # loop over sexes
-              ### testing:
-              ##   cat('y=',y,' a=',a,' f=',f,' isex=',isex,' cohort=',cohort,'\n',sep='')
 
               # copy values from catage to catcohort_fltsex
               # summation could include multiple seasons or morphs within a year

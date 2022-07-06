@@ -49,7 +49,7 @@
 #' calculated from the harmonic mean and input sample sizes.
 #'
 #' @template replist
-#' @param fleets Either the string 'all', or a vector of fleet numbers
+#' @template fleets
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
 #'  The first option, `none`, will only return information about the
 #'  Francis and MI weights that are suggested.
@@ -65,7 +65,7 @@
 #' @param init_run Should the model be run before calculating the tunings?
 #'  Defaults to `FALSE`. This run is not counted as an iteration for
 #'  `niters_tuning` and will not be used if `option = "DM"`.
-#' @param dir The path to the model directory.
+#' @template dir
 #' @param model The name of the stock synthesis executable. This model is
 #'  assumed to be either in the same folder as the model files (specified in
 #'  `dir`), or in the PATH if `exe_in_path = TRUE`. This will not be used if

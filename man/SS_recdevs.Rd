@@ -37,15 +37,17 @@ deviation = sigmaR? Default=TRUE.}
 \item{scaleyrs}{Vector of years over which rescaling (if chosen) should
 occur.}
 
-\item{dir}{Directory where files are located. Default is to use the working
-directory in use by R. Default="working_directory".}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{ctlfile}{Name of control file to modify.  Default="control.ss_new".}
 
 \item{newctlfile}{Name of new file to output modified control file.
 Default="control_modified.ss".}
 
-\item{verbose}{Verbose output to R command line? Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{writectl}{Write new file? Default=TRUE.}
 

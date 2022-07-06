@@ -7,15 +7,14 @@
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If `plotdat = FALSE` then subplot 1 is not created, regardless of
 #' choice of `subplots`.
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param fleets Optional vector to subset fleets for which plots will be made
-#' @param fleetnames Optional replacement for fleenames used in data file
+#' @template plot
+#' @template print
+#' @template plotdir
+#' @template fleets
+#' @template fleetnames
 #' @param datplot Make data-only plot of discards? This can override the choice
 #' of `subplots`.
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param yhi Maximum y-value which will always be included in the plot
 #' (all data included regardless). Default = 1 so that discard fractions are always
 #' plotted on a 0-1 range, but total discard amounts which are greater than this value
@@ -24,13 +23,13 @@
 #' discard amounts are very high)
 #' @param col1 First color to use in plot (for expected values)
 #' @param col2 Second color to use in plot (for observations and intervals)
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
-#' @param verbose Report progress to R GUI?
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
 #' @export
 #' @seealso [SS_plots()]

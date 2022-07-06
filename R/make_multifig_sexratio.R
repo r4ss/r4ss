@@ -19,7 +19,7 @@
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of elements in `yr` input.
 #' @param main title of plot
-#' @param cex.main character expansion for title
+#' @template cex.main
 #' @param xlab x-axis label
 #' @param ylab y-axis label
 #' @param horiz_lab axis labels set horizontal all the time (TRUE), never
@@ -39,7 +39,7 @@
 #' @param ptscol color for points/bars
 #' @param linescol color for fitted model
 #' @param lty line type
-#' @param lwd line width
+#' @template lwd
 #' @param nlegends number of lines of text to add as legends in each plot
 #' @param legtext text in legend, a list of length=nlegends. values may be any
 #' of 1.  "yr", 2. "sampsize", 3. "effN", or a vector of length = ptsx.

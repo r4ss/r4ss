@@ -54,9 +54,7 @@ the adjusted sample sizes (TRUE by default unless datonly = TRUE)}
 
 \item{ShowVersionB}{Report the Version B value in addition to the default?}
 
-\item{fleetnames}{Vector of alternative fleet names to draw from for
-plot titles and captions. It should have length equal to the number
-of fleets in the model, not the number of fleets considered in this function.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{add}{add to existing plot}
 }

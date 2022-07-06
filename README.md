@@ -8,14 +8,21 @@ Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Me
 
 ## Installation
 
-The CRAN version of r4ss is out of date. For now, it is necessary to install the main branch directly from GitHub:
+The CRAN version of r4ss was updated on 26 April 2022 and is available
+via
+
+```S
+install.packages("r4ss")
+```
+
+In general, installing directly from github will get a newer version
+than what's on CRAN. The github version also contains a vignette and
+additional model files that were too large for CRAN:
 
 ```S
 install.packages("remotes")
 remotes::install_github("r4ss/r4ss")
 ```
-
-Ongoing development of r4ss used to take place in the "development" branch, but now is in the "main" branch. Thus, you should no longer need to reference a branch when installing from github unless you are seeking a specific feature that hasn't yet been merged into the main branch.
 
 Once you have installed the r4ss package, it can be loaded using:
 
@@ -25,7 +32,7 @@ library(r4ss)
 
 To get notifications about r4ss, you can watch this GitHub project or follow messages on the [forums on Stock Synthesis VLab](https://vlab.noaa.gov/web/stock-synthesis/public-forums). Note that to subscribe to the Stock Synthesis VLab forums, an account is required, but those without an account may still view and post forum messages.
 
-A basic vignette can be viewed at <https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html> or built locally on your computer using this command to install the package:
+A basic vignette (not available in the CRAN version) can be viewed at <https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html> or built locally on your computer using this command to install the package:
 
 ```S
 remotes::install_github("r4ss/r4ss", build_vignettes = TRUE)

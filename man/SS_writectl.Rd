@@ -22,10 +22,11 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).
 \code{version = NULL} is no longer the default or an allowed entry.
 The default is \code{version = "3.30"}.}
 
-\item{overwrite}{Should existing files be overwritten? Defaults to FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Write Stock Synthesis control file from list object in R which was probably
@@ -40,5 +41,6 @@ wrapper which calls either SS_writectl_3.24 or SS_writectl_3.30
 \code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_writeforecast]{SS_writeforecast()}}
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn Doering
+Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn L.
+Doering, Nathan R. Vaughan
 }

@@ -11,12 +11,11 @@
 #' @param datlist List object created by [SS_readdat()]
 #' (or by [SS_readdat_3.24()] or [SS_readdat_3.24()])
 #' @param outfile Filename for where to write new data file.
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30 = 3.3).
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
-#' @param faster Speed up writing by writing length and age comps without aligning
+#' @template version
+#' @template overwrite
+#' @param faster Deprecated. Speed up writing by writing length and age comps without aligning
 #' the columns (by using write.table instead of print.data.frame)
-#' @param verbose Should there be verbose output while running the file?
+#' @template verbose
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 #' @export
 #' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
@@ -29,9 +28,15 @@ SS_writedat <- function(datlist,
                         outfile,
                         version = "3.30",
                         overwrite = FALSE,
-                        faster = FALSE,
+                        faster = lifecycle::deprecated(),
                         verbose = TRUE) {
   # function to write Stock Synthesis data files
+  if (lifecycle::is_present(faster)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_writedat(faster)"
+    )
+  }
   if (verbose) {
     message("running SS_writedat")
   }
@@ -49,16 +54,14 @@ SS_writedat <- function(datlist,
   # call function for SS version 3.24
   if (version == "3.24") { # should work whether "version" is character or numeric
     SS_writedat_3.24(datlist, outfile,
-      overwrite = overwrite,
-      faster = faster, verbose = verbose
+      overwrite = overwrite, verbose = verbose
     )
   }
 
   # call function for SS version 3.30
   if (version == "3.30" | version == 3.3) { # turns out 3.30 != "3.30" in R
     SS_writedat_3.30(datlist, outfile,
-      overwrite = overwrite,
-      faster = faster, verbose = verbose
+      overwrite = overwrite, verbose = verbose
     )
   }
 }

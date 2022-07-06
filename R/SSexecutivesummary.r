@@ -11,7 +11,7 @@
 #' @param es_only TRUE/FALSE switch to produce only the executive summary tables
 #' will be produced, default is FALSE which will return all executive summary
 #' tables, historical catches, and numbers-at-ages
-#' @param fleetnames A vector of user-defined names providing a name for each fleet in the model.
+#' @template fleetnames
 #' @param tables Which tables to produce (default is everything). Note: some
 #' tables depend on calculations related to previous tables, so will fail
 #' if requested on their own (e.g. Table 'f' can't be created
@@ -40,7 +40,7 @@
 #' @param match_digits TRUE/FALSE switch on whether the low and high interval values
 #' in e_ReferencePoints_ES will be reported with the same number of decimal digits
 #' as the estimate.
-#' @param verbose Return updates of function progress to the R console?
+#' @template verbose
 #'
 #' @return Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).
 #' @author Chantel Wetzel

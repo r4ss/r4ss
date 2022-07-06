@@ -13,32 +13,27 @@
 #' @param cols number or columns of panels for regular plots
 #' @param tagrows number or rows of panels for multi-panel plots
 #' @param tagcols number or columns of panels for multi-panel plots
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
+#' @template plot
+#' @template print
 #' @param pntscalar maximum bubble size for balloon plots; each plot scaled
 #' independently based on this maximum size and the values plotted. Often some
 #' plots look better with one value and others with a larger or smaller value.
 #' Default=2.6
 #' @param minnbubble minimum number of years below which blank years will be
 #' added to bubble plots to avoid cropping
-#' @param pwidth default width of plots printed to files in units of
-#' `punits`. Default=7.
-#' @param pheight default height width of plots printed to files in units of
-#' `punits`. Default=7.
-#' @param punits units for `pwidth` and `pheight`. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template ptsize
 #' @template res
-#' @param cex.main character expansion parameter for plot titles
+#' @template cex.main
 #' @param col1 color for bubbles
 #' @param col2 color for lines with expected values
 #' @param col3 shading color for observations within latency period
 #' @param col4 shading color for observations after latency period
-#' @param labels vector of labels for plots (titles and axis labels)
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param verbose return updates of function progress to the R GUI?
+#' @template labels
+#' @template plotdir
+#' @template verbose
 #' @author Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 #' @import ggplot2
 #' @export

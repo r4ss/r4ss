@@ -6,7 +6,7 @@
 #' @param parlist  List object created by [SS_readpar_3.24()].
 #' @param outfile Filename for where to write new parameter file.
 #' @param overwrite Should existing files be overwritten? Default=TRUE.
-#' @param verbose Should there be verbose output while running the file?
+#' @template verbose
 #' @author Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
@@ -18,11 +18,11 @@
 SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
 
   # function to write Stock Synthesis parameter files
-  if (verbose) cat("running SS_writepar_3.24\n")
+  if (verbose) message("running SS_writepar_3.24")
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cat("File exists and input 'overwrite'=FALSE:", outfile, "\n")
+      message("File exists and input 'overwrite'=FALSE:", outfile)
       return()
     } else {
       file.remove(outfile)

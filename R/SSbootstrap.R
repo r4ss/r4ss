@@ -26,7 +26,7 @@ SSbootstrap <- function() {
   # loop over bootstrap files
   for (iboot in 1:N) {
     # note what's happening
-    cat("\n##### Running bootstrap model number", iboot, " #########\n")
+    message("Running bootstrap model number", iboot)
 
     # change data file name in starter file
     starter[["datfile"]] <- paste("BootData", iboot, ".ss", sep = "")
