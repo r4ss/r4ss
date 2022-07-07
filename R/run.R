@@ -80,7 +80,7 @@ run <- function(dir = NULL,
   if (exe_in_path == TRUE) {
     # normalize path if ~ notation is used (e.g. exe = "~/bin/ss_3.30.19/ss")
     if (exe != basename(exe)) {
-      exe <- normalizePath(exe)
+      exe <- normalizePath(exe, mustWork = FALSE)
     }
     tmp_exe <- Sys.which(exe)[[1]] # get 1st ss exe with name exe that is in your path
     if (tmp_exe == "") {
