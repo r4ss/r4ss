@@ -436,8 +436,6 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     writeComment("no timevary MG parameters")
   }
 
-
-
   # Seasonal effects ----
   writeComment("#")
   writeComment("#_seasonal_effects_on_biology_parms")

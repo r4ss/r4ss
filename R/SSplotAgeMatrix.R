@@ -38,7 +38,6 @@
 #' @export
 #' @seealso [SSplotNumbers()]
 
-
 SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
                             scale = NULL, add = FALSE,
                             col.grid = "grey90",
@@ -56,14 +55,11 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
                             ), # 7
                             pwidth = 6.5, pheight = 5.0, punits = "in",
                             res = 300, ptsize = 10,
-                            cex.main = 1, mainTitle = TRUE, plotdir = "default") {
+                            cex.main = 1, mainTitle = TRUE, plotdir = replist[["inputs"]][["dir"]]) {
   # in-development function to plot matrix of length at age
 
   # table to store information on each plot
   plotinfo <- NULL
-  if (plotdir == "default") {
-    plotdir <- replist[["inputs"]][["dir"]]
-  }
 
   # get stuff form replist created by SS_output
   # matrix of length at age (not really an age-length-key as the name implies, as

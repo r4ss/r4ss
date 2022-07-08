@@ -29,9 +29,7 @@ SS_Sensi_plot(
 \item{model.summaries}{Output from \code{\link[=SSsummarize]{SSsummarize()}}
 summarizing results of models to be included}
 
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{current.year}{Year to report output}
 

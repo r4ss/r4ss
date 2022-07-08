@@ -5,7 +5,7 @@
 \title{Modify variance and sample size adjustments in the control file}
 \usage{
 SS_varadjust(
-  dir = "C:/myfiles/mymodels/myrun/",
+  dir,
   ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   keyword = "variance adjustments",
@@ -20,9 +20,7 @@ SS_varadjust(
 )
 }
 \arguments{
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{ctlfile}{Control file name. Default="control.ss_new".}
 

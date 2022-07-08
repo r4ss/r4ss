@@ -314,7 +314,6 @@ SS_profile <-
       ",\n  out of n = ", n
     )
 
-
     converged <- rep(NA, n)
     totallike <- rep(NA, n)
     liketable <- NULL

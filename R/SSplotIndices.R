@@ -84,7 +84,7 @@ SSplotIndices <-
   function(replist,
            subplots = c(1:10, 12), # IGT 2021/4/15: not sure why 11 is skipped
            plot = TRUE, print = FALSE,
-           fleets = "all", fleetnames = "default",
+           fleets = "all", fleetnames = replist[["FleetNames"]],
            smooth = TRUE, add = FALSE, datplot = TRUE,
            labels = c(
              "Year", # 1
@@ -107,7 +107,7 @@ SSplotIndices <-
            pch1 = 21, pch2 = 16, cex = 1, bg = "white",
            legend = TRUE, legendloc = "topright", seasnames = NULL,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           mainTitle = FALSE, plotdir = "default", minyr = NULL, maxyr = NULL,
+           mainTitle = FALSE, plotdir = replist[["inputs"]][["dir"]], minyr = NULL, maxyr = NULL,
            maximum_ymax_ratio = Inf, show_input_uncertainty = TRUE, verbose = TRUE, ...) {
     # get some quantities from replist
     cpue <- replist[["cpue"]]
@@ -121,7 +121,6 @@ SSplotIndices <-
 
     # table to store information on each plot
     plotinfo <- NULL
-
 
     # define a bunch of internal functions
 
@@ -476,7 +475,6 @@ SSplotIndices <-
       cpue <- cpue[!is.na(cpue[["Dev"]]), ]
     }
 
-    FleetNames <- replist[["FleetNames"]]
     nfleets <- replist[["nfleets"]]
     nseasons <- replist[["nseasons"]]
 
@@ -508,11 +506,7 @@ SSplotIndices <-
       # if no seasons, put at integer year value
       cpue[["YrSeas"]] <- cpue[["Yr"]]
     }
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
 
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
     } else {
@@ -524,14 +518,10 @@ SSplotIndices <-
     # subset fleets as requested
     fleetvec <- intersect(fleets, unique(as.numeric(cpue[["Fleet"]])))
 
-
     # empty data.frame to store data for comparison among indices
     allcpue <- data.frame()
     # keep track of whether any indices with negative observations is excluded
     any_negative <- FALSE
-
-
-
 
     # loop over fleets
     for (ifleet in fleetvec) {

@@ -83,12 +83,12 @@ SSplotCatch <-
            plot = TRUE, print = FALSE,
            type = "l",
            fleetlty = 1, fleetpch = 1,
-           fleetcols = "default", fleetnames = "default",
+           fleetcols = "default", fleetnames = replist[["FleetNames"]],
            lwd = 3, areacols = "default", areanames = "default",
            minyr = -Inf, maxyr = Inf,
            annualcatch = TRUE,
            forecastplot = FALSE,
-           plotdir = "default", showlegend = TRUE,
+           plotdir = replist[["inputs"]][["dir"]], showlegend = TRUE,
            legendloc = "topleft",
            order = "default",
            xlab = "Year",
@@ -191,13 +191,6 @@ SSplotCatch <-
       }
     }
 
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-
     if (catchasnumbers) {
       labels[3] <- paste(labels[3], labels[8])
       labels[4] <- paste(labels[4], labels[8])
@@ -207,7 +200,6 @@ SSplotCatch <-
       labels[4] <- paste(labels[4], labels[7])
       labels[5] <- paste(labels[5], labels[7])
     }
-
 
     # time series quantities used for multiple plots
     if (nseasons > 1) {
@@ -274,7 +266,6 @@ SSplotCatch <-
     }
     totobscatchmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar("obs_cat")) == "obs_cat"])
     Hratemat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar(stringF)) == stringF])
-
 
     # add total across areas
     if (nareas > 1) {

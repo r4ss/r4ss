@@ -25,7 +25,6 @@ SS_read_summary <- function(file = "ss_summary.sso", verbose = FALSE) {
     return(NULL)
   }
 
-
   read_summary_section <- function(start, end, ncol, nonnumeric = NULL, names) {
     # function to read one section at a time
 

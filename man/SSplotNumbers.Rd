@@ -32,7 +32,7 @@ SSplotNumbers(
   res = 300,
   ptsize = 10,
   cex.main = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   mainTitle = FALSE,
   verbose = TRUE
 )

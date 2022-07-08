@@ -51,10 +51,10 @@
 #' [SS_readdat()]
 SSplotData <- function(replist,
                        plot = TRUE, print = FALSE,
-                       plotdir = "default",
+                       plotdir = replist[["inputs"]][["dir"]],
                        subplots = 1:2,
                        fleetcol = "default",
-                       datatypes = "all", fleets = "all", fleetnames = "default", ghost = FALSE,
+                       datatypes = "all", fleets = "all", fleetnames = replist[["FleetNames"]], ghost = FALSE,
                        pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
                        margins = c(5.1, 2.1, 2.1, 8.1),
                        cex = 2, lwd = 12,
@@ -81,13 +81,6 @@ SSplotData <- function(replist,
   startyr <- replist[["startyr"]]
   endyr <- replist[["endyr"]]
   nfleets <- replist[["nfleets"]]
-
-  if (fleetnames[1] == "default") {
-    fleetnames <- replist[["FleetNames"]]
-  }
-  if (plotdir == "default") {
-    plotdir <- replist[["inputs"]][["dir"]]
-  }
 
   # catch
   catch <- replist[["catch"]]

@@ -42,20 +42,19 @@ SSplotRecdevs <-
              "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"
            ), # 4
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
-           cex.main = 1, plotdir = "default",
+           cex.main = 1, plotdir = replist[["inputs"]][["dir"]],
            verbose = TRUE) {
     # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment
 
     # table to store information on each plot
     plotinfo <- NULL
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
 
     parameters <- replist[["parameters"]]
     recruit <- replist[["recruit"]]
     startyr <- replist[["startyr"]]
     endyr <- replist[["endyr"]]
     sigma_R_in <- replist[["sigma_R_in"]]
-
 
     recdevEarly <- parameters[substring(parameters[["Label"]], 1, 13) %in% c("Early_RecrDev"), ]
     early_initage <- parameters[substring(parameters[["Label"]], 1, 13) %in% c("Early_InitAge"), ]

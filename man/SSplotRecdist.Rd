@@ -13,7 +13,7 @@ SSplotRecdist(
   xlab = "",
   ylab = "",
   main = "Distribution of recruitment by area and season",
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   pwidth = 6.5,
   pheight = 5,
   punits = "in",

@@ -91,7 +91,6 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
   wl("Bmark_relF_Basis")
   wl("Forecast")
 
-
   if (mylist[["Forecast"]] > 0 | writeAll) {
     if (mylist[["Forecast"]] <= 0 & is.null(mylist[["eof"]])) {
       # only continue beyond this point if Forecast is not 0 or writeAll==TRUE,

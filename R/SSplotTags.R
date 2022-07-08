@@ -58,12 +58,12 @@ SSplotTags <-
              "Summarized observed and expected numbers of recaptures by fleet", # 9
              "Pearson residuals by tag group"
            ), # 10
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            verbose = TRUE) {
     # table to store information on each plot
     plotinfo <- NULL
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
 
     tagdbase2 <- replist[["tagdbase2"]]
     if (is.null(tagdbase2) || nrow(tagdbase2) == 0) {

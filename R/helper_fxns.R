@@ -1,7 +1,6 @@
 # contains small helper functions that can be used across multiple functions in
 # the r4ss pkg
 
-
 #' Get the name of the data .ss_new file in a directory
 #'
 #' In previous versions of Stock Synthesis,

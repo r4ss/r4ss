@@ -165,7 +165,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     return(ctllist)
   }
 
-
   ## function to add an element to ctllist
   add_elem <- function(ctllist = NA, name) {
     i <- ctllist$".i"

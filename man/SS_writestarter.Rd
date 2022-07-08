@@ -16,9 +16,7 @@ SS_writestarter(
 \arguments{
 \item{mylist}{List object created by \code{\link[=SS_readstarter]{SS_readstarter()}}.}
 
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{file}{Filename for new starter file. Default="starter.ss".}
 

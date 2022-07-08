@@ -857,7 +857,6 @@ SS_readctl_3.24 <- function(file,
   )
   age_selex_pattern_vec <- as.vector(ctllist[["age_selex_types"]][, 1])
 
-
   #                 0 1 2 3 4 5 6 7 8 9 10
   selex_patterns <- c(
     0, 2, 8, 6, 0, 2, 2, 8, 8, 6, 0,

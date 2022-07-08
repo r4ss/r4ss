@@ -33,7 +33,7 @@ SSplotRecdist <-
            xlab = "",
            ylab = "",
            main = "Distribution of recruitment by area and season",
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            verbose = TRUE) {
     # plot of recruitment distribution between seasons and areas
@@ -41,7 +41,7 @@ SSplotRecdist <-
     # table to store information on each plot
     plotinfo <- NULL
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
 
     nareas <- replist[["nareas"]]
     nseasons <- replist[["nseasons"]]

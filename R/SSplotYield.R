@@ -50,7 +50,7 @@ SSplotYield <-
            ),
            col = "blue", col2 = "black", lty = 1, lwd = 2, cex.main = 1,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            verbose = TRUE) {
     # table to store information on each plot
     plotinfo <- NULL

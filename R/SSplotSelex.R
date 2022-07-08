@@ -100,7 +100,7 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotSelex <-
   function(replist, infotable = NULL,
-           fleets = "all", fleetnames = "default",
+           fleets = "all", fleetnames = replist[["FleetNames"]],
            sizefactors = c("Lsel"),
            agefactors = c("Asel", "Asel2"),
            years = "endyr",
@@ -129,7 +129,7 @@ SSplotSelex <-
            cex.main = 1,
            mainTitle = TRUE,
            mar = NULL,
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            verbose = TRUE, subplot = lifecycle::deprecated()) {
 
     # Warning about deprecated arguments. Should be removed after 1 release.
@@ -155,7 +155,6 @@ SSplotSelex <-
     accuage <- replist[["accuage"]]
     startyr <- replist[["startyr"]]
     endyr <- replist[["endyr"]]
-    FleetNames <- replist[["FleetNames"]]
     growdat <- replist[["endgrowth"]]
     growthCVtype <- replist[["growthCVtype"]]
     mainmorphs <- replist[["mainmorphs"]]
@@ -174,10 +173,6 @@ SSplotSelex <-
     # table to store information on each plot
     plotinfo <- NULL
 
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-
     ians_blues <- c(
       "white", "grey", "lightblue", "skyblue", "steelblue1",
       "slateblue", topo.colors(6), "blue", "blue2", "blue3",
@@ -191,9 +186,7 @@ SSplotSelex <-
         return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
       }
     }
-    # note lower-case value is the one used below (either equal to vector from replist, or input by user)
-    if (fleetnames[1] == "default") fleetnames <- FleetNames
-
+    
     if (sexes[1] == "all") {
       sexes <- 1:nsexes
     } else {
@@ -1064,7 +1057,6 @@ SSplotSelex <-
         }
       } # end loop over matrices
     } # end subplots
-
 
     ################################################################################
     ### Selectivity contours over age and length shown with growth curve

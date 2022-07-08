@@ -16,8 +16,9 @@ SSplotSPR(
   col2 = "blue",
   col3 = "green3",
   col4 = "red",
-  sprtarg = "default",
-  btarg = "default",
+  sprtarg = replist[["sprtarg"]],
+  btarg = replist[["btarg"]],
+  minbthresh = replist[["minbthresh"]],
   labels = c("Year", "SPR", "1-SPR", "Relative fishing intensity",
     "Relative spawning output"),
   pwidth = 6.5,
@@ -26,7 +27,7 @@ SSplotSPR(
   res = 300,
   ptsize = 10,
   cex.main = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE
 )
 }
@@ -61,7 +62,7 @@ starter file).
 
 \item{col4}{fourth color used}
 
-\item{sprtarg}{F/SPR proxy target. "default" chooses based on model output,
+\item{sprtarg}{F/SPR proxy target. Default is based on model output,
 where models which have SPR_report_basis = 0 or 1 specified in the starter
 file will use the SPR target specified in the forecast file. Models which
 have SPR_report_basis = 2 will use SPR at MSY for the SPR target
@@ -71,6 +72,10 @@ sprtarg input here will cause no horizontal line to be plotted.}
 
 \item{btarg}{target depletion to be used in plots showing depletion. May be
 omitted by setting to NA. "default" chooses based on model output.}
+
+\item{minbthresh}{minimum biomass threshold to be used in plots
+showing depletion. May be omitted by setting to NA. "default" chooses
+based on model output.}
 
 \item{labels}{Vector of labels for plots (titles and axis labels).}
 

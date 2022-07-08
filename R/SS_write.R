@@ -119,7 +119,6 @@ SS_write <- function(inputlist,
     )
   }
 
-
   if ("par" %in% names(inputlist)) {
     if (!is.null(inputlist[["par"]])) {
       try(

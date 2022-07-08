@@ -84,7 +84,7 @@ SSplotBiology <-
            imageplot_text = FALSE,
            imageplot_text_round = 0,
            legendloc = "topleft",
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            labels = c(
              "Length (cm)", # 1
              "Age (yr)", # 2
@@ -273,7 +273,6 @@ SSplotBiology <-
       ## NatM_std_GP:_1_Fem_A_2      NA       1      Fem   1   2
     }
 
-
     if (!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
 
     if (nseasons > 1) {
@@ -283,9 +282,6 @@ SSplotBiology <-
       )
     }
 
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
     # check dimensions
     if (length(morphs) > nsexes) {
       warning(
@@ -399,7 +395,6 @@ SSplotBiology <-
         }
       }
     }
-
 
     maturity_plot <- function() { # maturity
       if (!wtatage_switch) { # if empirical weight-at-age is not used
@@ -721,7 +716,6 @@ SSplotBiology <-
       dev.off()
     }
 
-
     growth_curve_plus_fn <- function(add_labels = TRUE, option = 1) {
       # function to add panels to growth curve with info on variability in
       # length at age or info on maturity, weight, and fecundity
@@ -818,7 +812,6 @@ SSplotBiology <-
       axis(4, las = 1)
       box()
 
-
       # make empty plot in lower-left position
       plot(0,
         type = "n",
@@ -872,7 +865,6 @@ SSplotBiology <-
       par(mfcol = par_old[["mfcol"]], mar = par_old[["mar"]], oma = par_old[["oma"]])
     } # end growth_curve_plus_fn()
 
-
     # make plots of growth curve with CV and SD of length
     if (plot & 2 %in% subplots & !wtatage_switch) {
       growth_curve_plus_fn(option = 1)
@@ -912,7 +904,6 @@ SSplotBiology <-
       growth_curve_plus_fn(option = 2)
       dev.off()
     }
-
 
     # plot distribution of length at age (by season, sub-season, and morph)
     if (4 %in% subplots & !wtatage_switch) {
@@ -1057,7 +1048,6 @@ SSplotBiology <-
       growth_curve_labeled_fn(option = 2)
       dev.off()
     }
-
 
     # function for illustrating parameterization of CVs around growth curves
     CV_values_labeled_fn <- function(option = 1) { # growth
@@ -1254,7 +1244,6 @@ SSplotBiology <-
       CV_values_labeled_fn(option = 4)
       dev.off()
     }
-
 
     x <- biology[["Mean_Size"]]
     ## NOTE: weight plots are now a special case since they are broken down
@@ -1687,7 +1676,6 @@ SSplotBiology <-
     ##   # Matrix of M-at-age if mortality varies with age and time
     ##   # strip off forecast years in M-at-age matrix
     ##   M_at_age <- M_at_age[M_at_age[["Year"]] <= endyr,]
-
 
     ##   if(any(M_at_age[["Bio_Pattern"]]!=1)){}
 

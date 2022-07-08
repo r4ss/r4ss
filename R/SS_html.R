@@ -225,7 +225,6 @@ SS_html <- function(replist = NULL,
     ## <div class="main">
     ##   <div class="container">
 
-
     cat("<!-- Site navigation menu -->\n",
       '  <ul id="tabnav">\n',
       file = htmlfile, append = TRUE

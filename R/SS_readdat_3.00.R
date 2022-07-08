@@ -94,7 +94,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     message("SS_readdat_3.00 - SS version = ", datlist[["ReadVersion"]])
   }
 
-
   # model dimensions
   datlist[["styr"]] <- allnums[i]
   i <- i + 1
@@ -165,7 +164,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   fleetinfo2[["input"]] <- c("#_units_of_catch", "#_se_log_catch")
   datlist[["fleetinfo2"]] <- fleetinfo2
 
-
   # more dimensions
   datlist[["Nsexes"]] <- allnums[i]
   i <- i + 1
@@ -173,7 +171,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   i <- i + 1
   datlist[["init_equil"]] <- allnums[i:(i + Nfleet - 1)]
   i <- i + Nfleet
-
 
   # catch
   datlist[["N_catch"]] <- N_catch <- allnums[i]
@@ -231,7 +228,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
     datlist[["N_discard_fleets"]] <- N_discard_fleets <- length(unique(discard_data[["Flt"]]))
 
-
     datlist[["discard_fleet_info"]] <- data.frame(matrix(c(
       unique(discard_data[["Flt"]]),
       rep(Dis_type, N_discard_fleets), rep(0, N_discard_fleets)
@@ -244,7 +240,6 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     datlist[["discard_data"]] <- NULL
     datlist[["discard_fleet_info"]] <- NULL
   }
-
 
   # meanbodywt
   datlist[["N_meanbodywt"]] <- N_meanbodywt <- allnums[i]

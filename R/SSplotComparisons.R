@@ -702,7 +702,6 @@ SSplotComparisons <-
     recdevsLower <- recdevsLower[!is.na(recdevsLower[["Yr"]]), ]
     recdevsUpper <- recdevsUpper[!is.na(recdevsUpper[["Yr"]]), ]
 
-
     # change to NA any values beyond endyr
     if (!is.null(endyrvec)) {
       for (iline in 1:nlines) {
@@ -737,7 +736,6 @@ SSplotComparisons <-
         }
       }
     }
-
 
     # function to add shaded uncertainty intervals behind line
     # requires the existence of the TRUE/FALSE vector "uncertainty"
@@ -989,7 +987,6 @@ SSplotComparisons <-
         }
       }
 
-
       yticks <- pretty(par()$yaxp[1:2])
       if (btarg > 0) {
         abline(h = btarg, col = "red", lty = 2)
@@ -1218,7 +1215,6 @@ SSplotComparisons <-
       # return upper y-limit
       return(ylim[2])
     }
-
 
     #### fishing mortality (however it is specified in the models)
     plotF <- function(show_uncertainty = TRUE) {
@@ -1605,7 +1601,6 @@ SSplotComparisons <-
       return(ylim[2])
     }
 
-
     ## xmax <- 1.1*max(reldep)
     ## ymax <- 1.1*max(1,relspr[!is.na(relspr)])
     ## ylab <- managementratiolabels[1,2]
@@ -1681,7 +1676,6 @@ SSplotComparisons <-
       # return upper y-limit
       return(ylim[2])
     }
-
 
     plotIndices <- function(log = FALSE, iindex) {
       # function to plot different fits to a single index of abundance
@@ -2439,7 +2433,6 @@ SSplotComparisons <-
       }
     }
 
-
     # subplot 13: index fits
     if (13 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
       if (verbose) {
@@ -2598,7 +2591,6 @@ SSplotComparisons <-
         }
       }
     }
-
 
     #### unfinished addition of growth comparisons
     ## # subplot 19: growth, females

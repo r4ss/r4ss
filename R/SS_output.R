@@ -1579,7 +1579,6 @@ SS_output <-
       } # end test for whether CompReport.sso info is available
     } # end section related to Dirichlet-Multinomial likelihood
 
-
     # read covar.sso file
     if (covar) {
       CoVar <- read.table(covarfile, header = TRUE, colClasses = c(rep("numeric", 4), rep("character", 4), "numeric"), skip = covarskip)
@@ -2293,7 +2292,6 @@ SS_output <-
       sd = jitter_info[["sigma"]]
     )
 
-
     if (verbose) {
       message("Finished primary run statistics list")
     }
@@ -2878,7 +2876,6 @@ SS_output <-
       depletion_basis <- as.numeric(rawrep[match_report_line("Depletion_method"), 2])
     }
 
-
     if (depletion_basis %in% c(1, 3:4)) {
       starter <- SS_readstarter(
         file = file.path(dir, "starter.ss"),
@@ -3130,7 +3127,6 @@ SS_output <-
     returndat[["Kobe"]] <- Kobe
 
     flush.console()
-
 
     ## variance and sample size tuning information
     INDEX_1 <- match_report_table("INDEX_1", 1, "INDEX_1", (nfleets + 1), header = TRUE)
@@ -3798,7 +3794,6 @@ SS_output <-
 
     # add log file to list that gets returned
     returndat[["logfile"]] <- logfile
-
 
     # return the inputs to this function so they can be used by SS_plots
     # or other functions

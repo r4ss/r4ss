@@ -67,11 +67,12 @@ SSplotTimeseries <-
            areacols = "default", areanames = "default",
            forecastplot = TRUE, uncertainty = TRUE, bioscale = 1,
            minyr = -Inf, maxyr = Inf,
-           plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
-           btarg = "default", minbthresh = "default", xlab = "Year",
+           plot = TRUE, print = FALSE, plotdir = replist[["inputs"]][["dir"]], 
+           verbose = TRUE, btarg = replist[["inputs"]][["btarg"]], 
+           minbthresh = replist[["inputs"]][["minbthresh"]], xlab = "Year",
            labels = NULL,
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           mainTitle = FALSE, mar = NULL) {
+           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, 
+           cex.main = 1, mainTitle = FALSE, mar = NULL) {
     if (missing(subplot)) {
       stop("'subplot' input required")
     }
@@ -124,9 +125,6 @@ SSplotTimeseries <-
     depletion_basis <- replist[["depletion_basis"]]
     depletion_multiplier <- replist[["depletion_multiplier"]]
 
-    if (btarg == "default") btarg <- replist[["btarg"]]
-    if (minbthresh == "default") minbthresh <- replist[["minbthresh"]]
-
     # set default colors if not specified
     if (areacols[1] == "default") {
       areacols <- rich.colors.short(nareas)
@@ -144,9 +142,6 @@ SSplotTimeseries <-
     }
 
     # directory where PNG files will go
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     # check if spawning output rather than spawning biomass is plotted
     if (is.null(replist[["SpawnOutputUnits"]]) ||

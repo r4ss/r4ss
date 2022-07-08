@@ -163,7 +163,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   fleetinfo2[["input"]] <- c("#_units_of_catch", "#_se_log_catch")
   datlist[["fleetinfo2"]] <- fleetinfo2
 
-
   # more dimensions
   datlist[["Nsexes"]] <- allnums[i]
   i <- i + 1

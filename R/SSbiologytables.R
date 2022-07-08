@@ -14,19 +14,20 @@
 #' @template dir
 #' @template fleetnames
 #' @param selexyr The year to summarize selectivity, the default is the final
-#' model yr strings to use for each fleet name. Default="default".
+#' model yr strings to use for each fleet name.
 #'
 #'
 #' @return A csv files containing biology and selectivity tables
 #' @author Chantel Wetzel
 #' @export
 #'
-SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "default", fleetnames = "default", selexyr = "default") {
+SSbiologytables <- function(replist = NULL, printfolder = "tables", 
+  dir = replist[["inputs"]][["dir"]],  fleetnames = replist[["FleetNames"]], 
+  selexyr = replist[["endyr"]]) {
   print.numeric <- function(x, digits) {
     formatC(x, digits = digits, format = "f")
   }
 
-  inputs <- replist[["inputs"]]
   biology <- replist[["endgrowth"]] # biology at length final model year
   nsexes <- replist[["nsexes"]]
   nfleets <- replist[["nfleets"]]
@@ -37,13 +38,6 @@ SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "defau
   accuage <- replist[["accuage"]] # max age
   FleetNames <- replist[["FleetNames"]]
 
-  ### deal with directories in which to create PNG or PDF files
-  if (dir == "default") {
-    # directory within which printfolder will be created
-    # by default it is assumed to be the location of the model files
-    dir <- inputs[["dir"]]
-  }
-
   # figure out path to where PNG files will go
   plotdir <- file.path(dir, printfolder)
   plotdir.isdir <- file.info(plotdir)$isdir
@@ -51,16 +45,6 @@ SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "defau
     dir.create(plotdir)
   }
   message("writing files to ", plotdir)
-
-  # set fleet-specific names, and plotting parameters
-  if (fleetnames[1] == "default") {
-    fleetnames <- FleetNames
-  }
-
-  # determine the year to summarize
-  if (selexyr[1] == "default") {
-    selexyr <- replist[["endyr"]]
-  }
 
   # Table
   # Age: Ave Len - Ave Wgt - % mature (by sex)

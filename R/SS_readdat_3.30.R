@@ -281,7 +281,6 @@ SS_readdat_3.30 <-
       datlist[["CPUE"]] <- NULL
     }
 
-
     ## Discard data ----
     ## fleet.nums.with.catch is defined in the catch section above.
     datlist[["N_discard_fleets"]] <- get.val(dat, ind)
@@ -420,7 +419,6 @@ SS_readdat_3.30 <-
       }
       # echo values
     }
-
 
     ## Age Comp information matrix ----
     if (datlist[["N_agebins"]]) {
@@ -718,7 +716,6 @@ SS_readdat_3.30 <-
     ## Note from IGT 27-March-2020:
     ## Many of the list elements created below are related to the format of SSv3.24
     ## data files and should likely be deprecated at some point in the future
-
 
     datlist[["spawn_seas"]] <- datlist[["spawn_month"]]
     # compatibility: get the old number values

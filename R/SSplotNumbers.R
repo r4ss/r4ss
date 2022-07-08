@@ -90,7 +90,7 @@ SSplotNumbers <-
            ), # 19
            pwidth = 6.5, pheight = 6.5, punits = "in", res = 300, ptsize = 10,
            cex.main = 1,
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            mainTitle = FALSE,
            verbose = TRUE) {
 
@@ -124,10 +124,6 @@ SSplotNumbers <-
       nlbinspop <- replist[["nlbinspop"]]
       mainmorphs <- replist[["mainmorphs"]]
       SS_versionNumeric <- replist[["SS_versionNumeric"]]
-
-      if (plotdir == "default") {
-        plotdir <- replist[["inputs"]][["dir"]]
-      }
 
       if (areas[1] == "all") {
         areas <- 1:nareas
@@ -439,7 +435,6 @@ SSplotNumbers <-
           }
         } # end area loop
       } # end if nsexes>1
-
 
       ##########
       # repeat code above for numbers at length (subplots 6, 7 and 8)

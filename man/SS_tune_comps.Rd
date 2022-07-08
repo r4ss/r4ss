@@ -47,9 +47,7 @@ iterative retuning method).}
 Defaults to \code{FALSE}. This run is not counted as an iteration for
 \code{niters_tuning} and will not be used if \code{option = "DM"}.}
 
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{model}{The name of the stock synthesis executable. This model is
 assumed to be either in the same folder as the model files (specified in

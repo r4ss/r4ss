@@ -501,7 +501,6 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   )
 }
 
-
 #' Get the tuning table
 #'
 #' @template replist

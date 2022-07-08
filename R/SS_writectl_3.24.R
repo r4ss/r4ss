@@ -445,7 +445,6 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   if (is.null(ctllist[["DoVar_adjust"]])) ctllist[["Var_adjust"]] <- 0
   wl("DoVar_adjust", comment = "Variance_adjustments_to_input_values")
 
-
   if (ctllist[["DoVar_adjust"]] > 0) {
     printdf("Variance_adjustments")
   }

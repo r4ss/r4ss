@@ -65,7 +65,7 @@ SSplotSpawnrecruit <-
              "Log recruitment deviation"
            ),
            bioscale = "default",
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            pwidth = 6.5, pheight = 6.5, punits = "in", res = 300, ptsize = 10,
            verbose = TRUE,
            colvec = c("blue", "black", "black", gray(0, 0.7)),
@@ -122,8 +122,7 @@ SSplotSpawnrecruit <-
       if (nsexes == 1) bioscale <- 0.5 else bioscale <- 1
     }
 
-
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
     if (minyr == "default") minyr <- min(recruit[["Yr"]])
 
     recruit <- recruit[recruit[["era"]] %in% c(

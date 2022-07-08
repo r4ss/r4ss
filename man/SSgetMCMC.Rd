@@ -19,9 +19,7 @@ SSgetMCMC(
 )
 }
 \arguments{
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

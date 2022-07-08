@@ -169,7 +169,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   datlist[["Nages"]] <- Nages <- allnums[i]
   i <- i + 1
 
-
   datlist[["init_equil"]] <- allnums[i:(i + Nfleet - 1)]
   i <- i + Nfleet
 
@@ -189,7 +188,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   names(catch) <- c(fleetnames[1:Nfleet], "year", "seas")
   datlist[["catch"]] <- catch
   i <- i + Nvals
-
 
   # CPUE
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
@@ -235,7 +233,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
 
     datlist[["N_discard_fleets"]] <- N_discard_fleets <- length(unique(discard_data[["Flt"]]))
 
-
     datlist[["discard_fleet_info"]] <- data.frame(matrix(c(
       unique(discard_data[["Flt"]]),
       rep(Dis_type, N_discard_fleets), rep(0, N_discard_fleets)
@@ -249,12 +246,10 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     datlist[["discard_fleet_info"]] <- NULL
   }
 
-
   # meanbodywt
   datlist[["N_meanbodywt"]] <- N_meanbodywt <- allnums[i]
   i <- i + 1
   if (verbose) message("N_meanbodywt =", N_meanbodywt)
-
 
   if (N_meanbodywt > 0) {
     Ncols <- 6
@@ -379,7 +374,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     agecomp <- NULL
   }
   datlist[["agecomp"]] <- agecomp
-
 
   # MeanSize_at_Age
   datlist[["N_MeanSize_at_Age_obs"]] <- N_MeanSize_at_Age_obs <- allnums[i]

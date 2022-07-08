@@ -36,7 +36,7 @@
 #'
 SSplotMovementRates <-
   function(replist, plot = TRUE, print = FALSE, subplots = 1:2,
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            colvec = "default", ylim = "default",
            legend = TRUE, legendloc = "topleft",
            moveseas = "all", min.move.age = 0.5,
@@ -46,7 +46,7 @@ SSplotMovementRates <-
     # table to store information on each plot
     plotinfo <- NULL
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
 
     # get values from replist
     accuage <- replist[["accuage"]]
@@ -145,7 +145,6 @@ SSplotMovementRates <-
             } else {
               yrvec <- replist[["startyr"]]:replist[["endyr"]]
               nyrs <- length(yrvec)
-
 
               movecalc <- function(min.move.age, accuage, minage, maxage,
                                    valueA, valueB, from, to, seasdur) {

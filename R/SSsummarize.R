@@ -342,7 +342,6 @@ SSsummarize <- function(biglist,
     }
   } # end loop over models
 
-
   ### format and process info from the models
   names(pars) <- names(parsSD) <- names(parphases) <- modelnames
   names(quants) <- names(quantsSD) <- modelnames
@@ -442,7 +441,6 @@ SSsummarize <- function(biglist,
     p = upperCI, mean = as.matrix(Fvalue[, 1:n]),
     sd = as.matrix(FvalueSD[, 1:n])
   )
-
 
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_", quants[["Label"]]), ]
@@ -545,7 +543,6 @@ SSsummarize <- function(biglist,
   } else {
     recdevs <- recdevsSD <- recdevsLower <- recdevsUpper <- NULL
   }
-
 
   # function to merge duplicate rows caused by different parameter labels
   # that are associated with the same year, such as the recdev for 2016
@@ -700,7 +697,6 @@ SSsummarize <- function(biglist,
       "To avoid printing details above, use 'verbose = FALSE'."
     )
   }
-
 
   return(invisible(mylist))
 } # end function

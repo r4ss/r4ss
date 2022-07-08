@@ -64,16 +64,16 @@
 #' function has not yet been updated for multi-area models). Default="all".
 #' @template fleetnames
 #' @param fleetcols Either the string "default", or a vector of colors to use
-#' for each fleet.  Default="default".
+#' for each fleet.
 #' @param fleetlty Vector of line types used for each fleet in some plots.
 #' Default=1.
 #' @param fleetpch Vector of point types used for each fleet in some plots.
 #' Default=1.
 #' @template lwd
 #' @param areacols Either the string "default", or a vector of colors to use
-#' for each area. Default="default".
-#' @param areanames Optional vector of names for each area used in titles.
-#' Default="default".
+#' for each area.
+#' @param areanames Either the string "default", or a vector of names
+#' for each area used in titles. 
 #' @template verbose
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
@@ -215,13 +215,14 @@
 #' Sci. 65: 2536-2551.
 SS_plots <-
   function(replist = NULL, plot = 1:26, pdf = FALSE, png = TRUE, html = png,
-           printfolder = "plots", dir = "default", fleets = "all", areas = "all",
-           fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
+           printfolder = "plots", dir = replist[["inputs"]][["dir"]], 
+           fleets = "all", areas = "all",
+           fleetnames = replist[["FleetNames"]], fleetcols = "default", fleetlty = 1, fleetpch = 1,
            lwd = 1, areacols = "default", areanames = "default",
            verbose = TRUE, uncertainty = TRUE, forecastplot = FALSE,
            datplot = TRUE, Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
            comp.yupper = 0.4,
-           sprtarg = "default", btarg = "default", minbthresh = "default", pntscalar = NULL,
+           sprtarg = replist[["sprtarg"]], btarg = replist[["btarg"]], minbthresh = replist[["minbthresh"]], pntscalar = NULL,
            bub.scale.pearson = 1.5, bub.scale.dat = 3, pntscalar.nums = 2.6,
            pntscalar.tags = 2.6, minnbubble = 8, aalyear = -1, aalbin = -1, aalresids = TRUE,
            maxneff = 5000, cohortlines = c(), smooth = TRUE, showsampsize = TRUE,
@@ -249,7 +250,6 @@ SS_plots <-
         " the function 'SS_output'."
       )
     }
-
 
     # get quantities from the big list
     nfleets <- replist[["nfleets"]]
@@ -304,10 +304,7 @@ SS_plots <-
       message("Finished defining objects")
     }
 
-    # set fleet-specific names, and plotting parameters
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
+    # set fleet-specific plotting parameters
     if (fleetcols[1] == "default") {
       fleetcols <- rich.colors.short(nfishfleets)
       if (nfishfleets > 2) fleetcols <- rich.colors.short(nfishfleets + 1)[-1]
@@ -336,9 +333,6 @@ SS_plots <-
 
     # make plot window (hopefully no-longer operating system specific)
     if (nplots > 0 & !png & !pdf & new) {
-      ### Note: the following line has been commented out because it was identified
-      ###       by Brian Ripley as "against CRAN policies".
-      # if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
       dev.new(width = pwidth, height = pheight, pointsize = ptsize, record = TRUE)
     }
     if (nplots > 0 & !new) {
@@ -348,11 +342,6 @@ SS_plots <-
     }
 
     ### deal with directories in which to create PNG or PDF files
-    if (dir == "default") {
-      # directory within which printfolder will be created
-      # by default it is assumed to be the location of the model files
-      dir <- inputs[["dir"]]
-    }
     if (png | pdf) {
       # get info on directory where subfolder will go
       # (typically folder with model output files)
@@ -372,7 +361,7 @@ SS_plots <-
       }
     }
 
-    plotdir <- "default" # dummy value passed to functions that ignore it if png=FALSE
+    plotdir <- NULL # dummy value passed to functions that ignore it if png=FALSE
     if (png) {
       # add subdirectory for PNG and HTML files if that option is chosen
 
@@ -841,7 +830,6 @@ SS_plots <-
         }
       }
     } # end if igroup in plot or print
-
 
     ##########################################
     # Index plots
@@ -1543,7 +1531,6 @@ SS_plots <-
         )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
     } # end if igroup in plot or print
-
 
     ##########################################
     # Movement rate plots

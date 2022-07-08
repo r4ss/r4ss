@@ -31,9 +31,7 @@ SS_profile(
 )
 }
 \arguments{
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{masterctlfile}{Source control file. Default = "control.ss_new"}
 

@@ -145,7 +145,6 @@ SS_readforecast <- function(file = "forecast.ss",
     return(forelist)
   }
 
-
   ## function to add an element to forelist
   add_elem <- function(forelist = NA, name) {
     i <- forelist$".i"

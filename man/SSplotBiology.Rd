@@ -21,7 +21,7 @@ SSplotBiology(
   imageplot_text = FALSE,
   imageplot_text_round = 0,
   legendloc = "topleft",
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   labels = c("Length (cm)", "Age (yr)", "Maturity", "Mean weight (kg) in last year",
     "Spawning output", "Length (cm, beginning of the year)", "Natural mortality",
     "Female weight (kg)", "Female length (cm)", "Fecundity", "Default fecundity label",

@@ -149,7 +149,6 @@ SS_Sensi_plot <- function(model.summaries,
     survey.like[, survey.lk[["model"]] + 1] <- t(survey.lk[, 3:ncol(survey.lk)])
     survey.like[["Label"]] <- "Survey_likelihood"
 
-
     #    syrvlambda_index <- c(1:num.likes)[subset(model.summaries[["likelihoods_by_fleet"]], model == 1)$Label == "Surv_lambda"]
     #    survey.lambda <- data.frame(rownames(t(model.summaries[["likelihoods_by_fleet"]]))[-1:-2], t(model.summaries[["likelihoods_by_fleet"]][seq(3, dim(model.summaries[["likelihoods_by_fleet"]])[1], num.likes), ][-1:-2]), "Survey_lambda")
     #    syrvlike_index <- c(1:num.likes)[subset(model.summaries[["likelihoods_by_fleet"]], model == 1)$Label == "Surv_like"]
@@ -296,7 +295,6 @@ SS_Sensi_plot <- function(model.summaries,
       no = "F(tgt SPR)"
     )
   }
-
 
   # Begin plots
   pt.dodge <- 0.3

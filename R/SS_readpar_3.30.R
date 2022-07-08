@@ -423,7 +423,5 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     }
   }
 
-
-
   return(parlist)
 }

@@ -49,7 +49,6 @@ SSmohnsrho <-
       startyr <- summaryoutput[["startyrs"]][1]
     }
 
-
     mohnSSB <- mohnRec <- mohnBratio <- mohnF <- numeric()
     mohnSSB.all <- mohnRec.all <- mohnBratio.all <- mohnF.all <- numeric()
 

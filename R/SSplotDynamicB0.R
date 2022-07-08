@@ -45,7 +45,7 @@ SSplotDynamicB0 <- function(replist,
                             equilibrium = TRUE,
                             forecast = FALSE,
                             yrs = "all",
-                            plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
+                            plot = TRUE, print = FALSE, plotdir = replist[["inputs"]][["dir"]], verbose = TRUE,
                             uncertainty = TRUE,
                             legend = TRUE,
                             legendlabels = c("equilibrium", "without fishing", "with fishing"),
@@ -99,11 +99,7 @@ SSplotDynamicB0 <- function(replist,
   }
 
   plotinfo <- NULL
-  # set plot directory
-  if (plotdir == "default") {
-    plotdir <- replist[["inputs"]][["dir"]]
-  }
-
+ 
   # set default range of years
   if (yrs[1] == "all") {
     yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
@@ -210,7 +206,6 @@ SSplotDynamicB0 <- function(replist,
       )
     }
     sub <- Dynamic_Bzero[["Yr"]] %in% yrs & Dynamic_Bzero[["Era"]] != "VIRG"
-
 
     if (uncertainty) {
       # add intervals to plot

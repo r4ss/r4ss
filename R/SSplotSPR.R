@@ -19,7 +19,7 @@
 #' @param col2 second color used
 #' @param col3 third color used
 #' @param col4 fourth color used
-#' @param sprtarg F/SPR proxy target. "default" chooses based on model output,
+#' @param sprtarg F/SPR proxy target. Default is based on model output,
 #' where models which have SPR_report_basis = 0 or 1 specified in the starter
 #' file will use the SPR target specified in the forecast file. Models which
 #' have SPR_report_basis = 2 will use SPR at MSY for the SPR target
@@ -48,7 +48,7 @@ SSplotSPR <-
            uncertainty = TRUE,
            subplots = 1:4, forecastplot = FALSE,
            col1 = "black", col2 = "blue", col3 = "green3", col4 = "red",
-           sprtarg = "default", btarg = "default", minbthresh = "default",
+           sprtarg = replist[["sprtarg"]], btarg = replist[["btarg"]], minbthresh = replist[["minbthresh"]],
            labels = c(
              "Year", # 1
              "SPR", # 2
@@ -57,15 +57,11 @@ SSplotSPR <-
              "Relative spawning output" # 5
            ),
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            verbose = TRUE) {
 
     # table to store information on each plot
     plotinfo <- NULL
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     sprseries <- replist[["sprseries"]]
     derived_quants <- replist[["derived_quants"]]
@@ -82,8 +78,7 @@ SSplotSPR <-
     # get SPR target and associated label based on forecast specified SPR target or
     # the denominator of the SPR ratio as specified in the starter file
     sprtarg_label <- "SPR target"
-    if (sprtarg == "default") {
-      sprtarg <- replist[["sprtarg"]]
+    if (sprtarg == replist[["sprtarg"]]) {
       if (grepl("SPR_MSY", SPRratioLabel)) {
         sprtarg <- replist[["derived_quants"]]["SPR_MSY", "Value"]
         sprtarg_label <- "SPR at MSY"
@@ -96,13 +91,7 @@ SSplotSPR <-
         )
       }
     }
-    if (btarg == "default") {
-      btarg <- replist[["btarg"]]
-    }
-    if (minbthresh == "default") {
-      minbthresh <- replist[["minbthresh"]]
-    }
-
+    
     # choose which points to plot
     good <- sprseries[["Yr"]] <= endyr
     if (forecastplot) good <- rep(TRUE, nrow(sprseries))
@@ -298,7 +287,6 @@ SSplotSPR <-
         dev.off()
       }
     }
-
 
     make.phase.plot.MLE <- function(x.max = 1.3,
                                     y.max = 1.3,

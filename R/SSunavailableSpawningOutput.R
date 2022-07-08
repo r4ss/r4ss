@@ -20,7 +20,7 @@
 SSunavailableSpawningOutput <-
   function(replist,
            plot = TRUE, print = FALSE,
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1) {
     # table to store information on each plot
     plotinfo <- NULL
@@ -46,7 +46,7 @@ SSunavailableSpawningOutput <-
       )
     }
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
 
     # Run the code for each area
     for (area in 1:replist[["nareas"]]) {

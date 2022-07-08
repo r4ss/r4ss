@@ -37,9 +37,7 @@ deviation = sigmaR? Default=TRUE.}
 \item{scaleyrs}{Vector of years over which rescaling (if chosen) should
 occur.}
 
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{ctlfile}{Name of control file to modify.  Default="control.ss_new".}
 

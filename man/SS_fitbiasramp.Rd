@@ -13,7 +13,7 @@ SS_fitbiasramp(
   transform = FALSE,
   plot = TRUE,
   print = FALSE,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   shownew = TRUE,
   oldctl = NULL,
   newctl = NULL,

@@ -72,14 +72,11 @@ Default=c(2,2).}
 
 \item{BioScalar}{Scalar for biomass plot. Default=1.}
 
-\item{ColorsUsed}{Optional vector for alternative line colors.
-Default="default".}
+\item{ColorsUsed}{Optional vector for alternative line colors.}
 
-\item{Labels}{Optional vector for alternative legend labels.
-Default="default".}
+\item{Labels}{Optional vector for alternative legend labels.}
 
-\item{pdf}{Option to send figures to pdf file instead of plot window in
-Rgui. Default=FALSE.}
+\item{pdf}{Option to send figures to pdf file.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}.}

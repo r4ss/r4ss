@@ -68,7 +68,6 @@ SS_splitdat <-
     if (length(MLEstart) == 0) inputend <- length(filelines) else inputend <- MLEstart - 1
     if (length(inputstart) == 0) stop("no values in ", inname, "\n  change 'N bootstrap datafiles' in starter.ss to 1 or greater")
 
-
     if (!MLE & !inputs) {
       if (length(starts) == 0) stop("no bootstrap values in ", inname, "\n  change 'N bootstrap datafiles' in starter.ss to 3 or greater")
       for (i in 1:length(starts)) {

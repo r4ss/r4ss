@@ -15,9 +15,7 @@ SS_parlines(
 \arguments{
 \item{ctlfile}{File name of control file including path.}
 
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{version}{SS version number. Currently "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).

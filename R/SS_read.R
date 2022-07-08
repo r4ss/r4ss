@@ -119,7 +119,6 @@ SS_read <- function(dir = getwd(),
     )
   }
 
-
   # return a list of the lists for each file
   invisible(list(
     dir = dir,

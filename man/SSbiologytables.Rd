@@ -8,9 +8,9 @@ length, weight, \% mature, fecundity, and selectivity}
 SSbiologytables(
   replist = NULL,
   printfolder = "tables",
-  dir = "default",
-  fleetnames = "default",
-  selexyr = "default"
+  dir = replist[["inputs"]][["dir"]],
+  fleetnames = replist[["FleetNames"]],
+  selexyr = replist[["endyr"]]
 )
 }
 \arguments{
@@ -22,14 +22,12 @@ The directory will be created if it doesn not exist.
 If 'printfolder' is set to "", it is ignored and the PNG files will
 be located in the directory specified by 'dir'.}
 
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{A file path to the directory of interest.}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{selexyr}{The year to summarize selectivity, the default is the final
-model yr strings to use for each fleet name. Default="default".}
+model yr strings to use for each fleet name.}
 }
 \value{
 A csv files containing biology and selectivity tables

@@ -40,7 +40,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     dir <- model[["inputs"]][["dir"]]
   }
 
-
   if (is.null(data_year)) {
     data_year <- model[["endyr"]]
   }
@@ -101,7 +100,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   # if(ts_tab[["Total_Bio"]][ts_tab[["Year"]] == final_year] == 0){
   #  ts_tab[["Total_Bio"]][ts_tab[["Year"]] == final_year] <- NA
   # }
-
 
   # calculate total dead catch (aggregated across fleets)
   dead_bio_columns <- grep("dead(B)", names(model[["timeseries"]]), fixed = TRUE)
@@ -317,7 +315,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     F_msy_basis <- paste0("F", 100 * model[["btarg"]], "% as Proxy")
   }
 
-
   if (model[["btarg"]] == -999) {
     Btarg_text <- "BXX%"
     model[["btarg"]] <- NA
@@ -398,8 +395,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   } else {
     stock_level_to_MSY <- "UNKNOWN"
   }
-
-
 
 
   # make big 2-column table of info about each model

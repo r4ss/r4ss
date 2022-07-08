@@ -35,7 +35,6 @@ SS_writedat_3.24 <- function(datlist,
     )
   }
 
-
   # check datlist
 
   if (datlist[["type"]] != "Stock_Synthesis_data_file") {

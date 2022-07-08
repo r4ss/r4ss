@@ -46,7 +46,7 @@ SSplotCohortCatch <-
            cohortlabfrac = 0.1,
            cohortlabvec = NULL,
            lwd = 3,
-           plotdir = "default",
+           plotdir = replist[["inputs"]][["dir"]],
            xlab = "Year",
            labels = c(
              "Age",
@@ -88,7 +88,7 @@ SSplotCohortCatch <-
       }
     }
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
 
     # vector of cohort birth years
     yrs <- startyr:endyr
@@ -105,7 +105,6 @@ SSplotCohortCatch <-
     )
     # same dimension array to store biomass values
     wtatage_fltsex <- catcohort_fltsex
-
 
     for (icohort in 1:ncohorts) { # loop over cohorts (designated birth year)
       cohort <- cohorts[icohort]
@@ -144,7 +143,6 @@ SSplotCohortCatch <-
     catcohortB <- apply(catcohort_fltsex * wtatage_fltsex, 1:2, sum)
     rownames(catcohortN) <- cohorts
     colnames(catcohortN) <- ages
-
 
     ### calculate cumulative cohort contributions
     # make temporary matrices with NAs replaced by zeros to do calculations

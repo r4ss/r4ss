@@ -134,7 +134,5 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
     }
   }
 
-
-
   return(parlist)
 }

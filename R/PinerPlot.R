@@ -81,7 +81,7 @@ PinerPlot <-
            main = "Changes in length-composition likelihoods by fleet",
            models = "all",
            fleets = "all",
-           fleetnames = "default",
+           fleetnames = replist[["FleetNames"]],
            profile.string = "R0",
            profile.label = expression(log(italic(R)[0])),
            exact = FALSE,
@@ -145,9 +145,6 @@ PinerPlot <-
         paste("    ", component_options, "\n")
       )
     }
-
-
-    if (fleetnames[1] == "default") fleetnames <- FleetNames # note lower-case value is the one used below (either equal to vector from replist, or input by user)
 
     # check number of models to be plotted
     if (models[1] == "all") {

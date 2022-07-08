@@ -9,7 +9,7 @@ SSplotMovementRates(
   plot = TRUE,
   print = FALSE,
   subplots = 1:2,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   colvec = "default",
   ylim = "default",
   legend = TRUE,

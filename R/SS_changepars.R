@@ -298,7 +298,6 @@ SS_changepars <-
     newctl[linenums] <- newctlsubset
     writeLines(newctl, file.path(dir, newctlfile))
 
-
     # if no changed made, repeat old values in output
     if (is.null(newvals)) {
       newvals <- oldvals

@@ -347,7 +347,5 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     dev_parm_labels <- NULL
   }
 
-
-
   return(parlist)
 }

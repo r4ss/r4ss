@@ -23,7 +23,7 @@
 #' @export
 #' @seealso [SSplotTimeseries()]
 SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fishing Mortality",
-                           plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
+                           plot = TRUE, print = FALSE, plotdir = replist[["inputs"]][["dir"]], verbose = TRUE,
                            uncertainty = TRUE,
                            add = FALSE,
                            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
@@ -37,10 +37,6 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
   # set default plot margins (repeated from SSplotTimeseries()
   if (is.null(mar)) {
     mar <- c(5, 4, 2, 2) + 0.1
-  }
-
-  if (plotdir == "default") {
-    plotdir <- replist[["inputs"]][["dir"]]
   }
 
   if (yrs[1] == "all") {

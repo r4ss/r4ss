@@ -127,7 +127,6 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
   message("copying model files from\n", olddir, "\n  to\n", newdir)
   message("model files to copy:\n ", paste(filenames, collapse = "\n "))
 
-
   if (!file.exists(newdir)) dir.create(newdir)
 
   subdirnames <- paste0(subdirstart, years)
@@ -207,7 +206,6 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
   }
   setwd(oldwd)
 }
-
 
 ## if(FALSE){
 ##   #### example use

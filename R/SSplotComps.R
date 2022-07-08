@@ -142,7 +142,7 @@ SSplotComps <-
            subplots = c(1:10, 21, 24),
            kind = "LEN", sizemethod = 1, aalyear = -1, aalbin = -1,
            plot = TRUE, print = FALSE,
-           fleets = "all", fleetnames = "default", sexes = "all",
+           fleets = "all", fleetnames = replist[["FleetNames"]], sexes = "all",
            yupper = 0.4,
            datonly = FALSE, samplesizeplots = TRUE,
            compresidplots = TRUE, bub = FALSE,
@@ -157,7 +157,7 @@ SSplotComps <-
            axis1 = NULL, axis2 = NULL, axis1labs = NULL, sizebinlabs = NULL,
            blue = rgb(0, 0, 1, 0.7), red = rgb(1, 0, 0, 0.7),
            pwidth = 6.5, pheight = 6.5, punits = "in", ptsize = 10, res = 300,
-           plotdir = "default", cex.main = 1, linepos = 1, fitbar = FALSE,
+           plotdir = replist[["inputs"]][["dir"]], cex.main = 1, linepos = 1, fitbar = FALSE,
            do.sqrt = TRUE, smooth = TRUE, cohortlines = c(),
            labels = c(
              "Length (cm)", # 1
@@ -228,7 +228,6 @@ SSplotComps <-
     nfleets <- replist[["nfleets"]]
     nseasons <- replist[["nseasons"]]
     seasfracs <- replist[["seasfracs"]]
-    FleetNames <- replist[["FleetNames"]]
     nsexes <- replist[["nsexes"]]
     accuage <- replist[["accuage"]]
 
@@ -237,9 +236,6 @@ SSplotComps <-
     # define a variety of titles and labels
     titles <- NULL
     titlemkt <- ""
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     # sort out which fleets will be included
     if (fleets[1] == "all") {
@@ -249,10 +245,7 @@ SSplotComps <-
         stop("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
       }
     }
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
-
+    
     # sort out which sexes will be included, and associated labels
     if (sexes[1] == "all") {
       sexes <- 0:nsexes # this can be used to subset stuff below
@@ -445,7 +438,6 @@ SSplotComps <-
       }
     }
 
-
     # Add asterix to indicate super periods and then remove rows labeled "skip".
     # It would be better to somehow show the range of years, but that seems difficult.
     if (any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")) {
@@ -460,8 +452,6 @@ SSplotComps <-
 
     # subset data based on requested range of fleets and sexes
     dbase_kind <- dbase_kind[dbase_kind[["Fleet"]] %in% fleets & dbase_kind[["sex"]] %in% sexes, ]
-
-
 
     ### subplot 21: by fleet aggregating across years
     if (21 %in% subplots & kind != "cond") # for age or length comps, but not conditional AAL
@@ -1175,7 +1165,6 @@ SSplotComps <-
             ### (probably not as good once the partition has been added)
             # mtext(namesvec[ipanel],side=2,line=4.5,cex=par()$cex)
 
-
             # add lines for growth of individual cohorts if requested
             if (length(cohortlines) > 0) {
               for (icohort in 1:length(cohortlines)) {
@@ -1264,7 +1253,6 @@ SSplotComps <-
       par(mfcol = c(rows, cols), mar = c(5, 4, 4, 2) + .1, oma = rep(0, 4))
     } # end subplot 24
 
-
     # loop over fleets
     for (f in fleets) {
       # check for the presence of data
@@ -1289,7 +1277,6 @@ SSplotComps <-
         if (kind %in% c("LEN", "GSTLEN")) {
           data_info <- replist[["len_data_info"]]
         }
-
 
         # loop over partitions (discard, retain, total)
         for (j in unique(dbasef[["Part"]])) {

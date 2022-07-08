@@ -62,7 +62,7 @@
 #'
 SS_fitbiasramp <-
   function(replist, verbose = FALSE, startvalues = NULL, method = "BFGS", twoplots = TRUE,
-           transform = FALSE, plot = TRUE, print = FALSE, plotdir = "default", shownew = TRUE,
+           transform = FALSE, plot = TRUE, print = FALSE, plotdir = replist[["inputs"]][["dir"]], shownew = TRUE,
            oldctl = NULL, newctl = NULL, altmethod = "nlminb", exclude_forecast = FALSE,
            pwidth = 6.5, pheight = 5.0, punits = "in", ptsize = 10, res = 300, cex.main = 1) {
 
@@ -83,7 +83,7 @@ SS_fitbiasramp <-
     recruit <- replist[["recruit"]]
     sigma_R_in <- replist[["sigma_R_in"]]
     rmse_table <- replist[["rmse_table"]]
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    
     if (print && !dir.exists(plotdir)) dir.create(plotdir, recursive = TRUE)
 
     if (!is.numeric(rmse_table[["RMSE"]])) {
@@ -370,7 +370,6 @@ SS_fitbiasramp <-
       )
       dev.off()
     }
-
 
     if (!is.null(oldctl) & !is.null(newctl)) {
       # modify a control file to include estimates if file names are provided

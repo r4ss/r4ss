@@ -16,7 +16,7 @@ SSplotCohortCatch(
   cohortlabfrac = 0.1,
   cohortlabvec = NULL,
   lwd = 3,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   xlab = "Year",
   labels = c("Age", "Cumulative catch by cohort (in numbers x1000)",
     "Cumulative catch by cohort (x1000 mt)"),

@@ -37,7 +37,7 @@
 #' )
 #' }
 #'
-SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
+SS_varadjust <- function(dir,
                          ctlfile = "control.ss_new",
                          newctlfile = "control_modified.ss",
                          keyword = "variance adjustments",
@@ -114,7 +114,6 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
       }
     }
 
-
     # subset numeric columns only
     ctl <- ctl[, 1:nfleets]
     # add header
@@ -163,7 +162,6 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
       ctl[rownumber, ] <- newrow
     }
   }
-
 
   if (!is.null(newtable)) {
     if (version == "3.24" & ncol(newtable) != ncol(ctl)) {

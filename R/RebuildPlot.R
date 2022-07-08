@@ -30,11 +30,8 @@
 #' @param BioUnit Units of biomass. Default="(mt)".
 #' @param BioScalar Scalar for biomass plot. Default=1.
 #' @param ColorsUsed Optional vector for alternative line colors.
-#' Default="default".
 #' @param Labels Optional vector for alternative legend labels.
-#' Default="default".
-#' @param pdf Option to send figures to pdf file instead of plot window in
-#' Rgui. Default=FALSE.
+#' @param pdf Option to send figures to pdf file.
 #' @template pwidth
 #' @template pheight
 #' @template lwd
@@ -622,15 +619,3 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   OutputList[["ind.list"]] <- ind.list
   return(invisible(OutputList))
 }
-
-# ================================================================================================================
-
-
-## # Plots - set to get specific plots
-## # Options - set to get specific strategies in the trajectory plots
-
-## Titles <- c("Res1","Res2","Res3")
-## Plots <- list(c(1:9),c(6:7))
-## Options = list(c(7:9,3),c(5,7))
-## DoProjectPlots(fileN=c("res1.csv","res2.csv"),Titles=Titles,Plots=Plots,Options=Options,LegLoc="bottomleft",yearmax=-1,Outlines=c(2,2),OutlineMulti=c(3,3),AllTraj=c(1:4),AllInd=c(1:7),
-##                BioType="Spawning numbers",BioUnit="(lb)",BioScalar=1000,CatchUnit="(lb)",ColorsUse=rep(c("red","blue"),5),Labels=c("A","B","C","D","E","F"))
