@@ -28,7 +28,7 @@
 #' sprtarg input here will cause no horizontal line to be plotted.
 #' @param btarg target depletion to be used in plots showing depletion. May be
 #' omitted by setting to NA. "default" chooses based on model output.
-#' @param minbthresh minimum biomass thresholdto be used in plots
+#' @param minbthresh minimum biomass threshold to be used in plots
 #' showing depletion. May be omitted by setting to NA. "default" chooses
 #' based on model output.
 #' @template labels
@@ -464,11 +464,6 @@ SSplotSPR <-
           lty = 2,
           col = rgb(0, 0, 0, 0.4)
         )
-        # caption <- paste0(
-        #   caption,
-        #   ". Horizontal line is at 1 - ", sprtarg_label, ": ",
-        #   "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3)
-        # )
       }
 
       # deal with warnings about zero-length arrow
@@ -531,6 +526,7 @@ SSplotSPR <-
             ". "
           )
         }
+        # expand caption if ref point lines present
         if (replist[["Bratio_label"]] == "B/B_0" & btarg > 0) {
           caption <- paste0(
             caption,
@@ -538,18 +534,28 @@ SSplotSPR <-
             btarg,
             " indicates the reference point as defined in the forecast.ss ",
             "which can be removed from the plot via ",
-            "<code>SS_plots(..., btarg = -1)</code>."
+            "<code>SS_plots(..., btarg = -1)</code>. "
           )
-
-          plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
-            caption = caption
-          )
-          make.phase.plot.MLE()
-          dev.off()
         }
-      } # end test for making phase plot
+        # expand caption if SPR target line present
+        if (sprtarg > 0 & SPRratioLabel == "1-SPR") {
+          caption <- paste0(
+            caption,
+            "The horizontal line is at 1 - ", sprtarg_label, ": ",
+            "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3),
+            ". "
+          )
+        }
+
+        # save to png
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
+        make.phase.plot.MLE()
+        dev.off()
+      } # end if print
     } # end if 4 %in% subplots
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "SPR"
     return(invisible(plotinfo))
