@@ -478,7 +478,7 @@ SSplotSPR <-
         col = phase_df[["col"]][-1]
       )
       options(warn = old_warn) # returning to old value
-      
+
       # add bigger points for first and final years
       points(
         x = phase_df[1, "Bratio"],

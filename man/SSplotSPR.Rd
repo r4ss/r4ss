@@ -18,6 +18,7 @@ SSplotSPR(
   col4 = "red",
   sprtarg = "default",
   btarg = "default",
+  minbthresh = "default",
   labels = c("Year", "SPR", "1-SPR", "Relative fishing intensity",
     "Relative spawning output"),
   pwidth = 6.5,
@@ -71,6 +72,10 @@ sprtarg input here will cause no horizontal line to be plotted.}
 
 \item{btarg}{target depletion to be used in plots showing depletion. May be
 omitted by setting to NA. "default" chooses based on model output.}
+
+\item{minbthresh}{minimum biomass threshold to be used in plots
+showing depletion. May be omitted by setting to NA. "default" chooses
+based on model output.}
 
 \item{labels}{Vector of labels for plots (titles and axis labels).}
 
