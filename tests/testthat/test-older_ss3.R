@@ -80,4 +80,4 @@ test_that("SSsummarize and SSplotComparisons work to compare 3.24 to 3.30", {
 })
 
 # clean up
-unlink(tmp_path, recursive = TRUE)
+unlink(temp_path, recursive = TRUE)
