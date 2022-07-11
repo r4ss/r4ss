@@ -30,7 +30,7 @@ six model input files.
 \dontrun{
 # read inputlist to modify the data file
 inputlist <- SS_read(
-  dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
+  dir = system.file("extdata", "simple_small", package = "r4ss")
 )
 
 # modify the starter file (use the par file)
