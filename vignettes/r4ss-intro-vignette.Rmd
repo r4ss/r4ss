@@ -67,7 +67,7 @@ The most important two functions are `SS_output` and `SS_plots`, the first for r
 ```{r, eval=FALSE, echo=TRUE, message=FALSE}
 # it's useful to create a variable for the directory with the model output
 mydir <- file.path(path.package("r4ss"),
-                   file.path("extdata", "simple_3.30.12"))
+                   file.path("extdata", "simple_small"))
 
 # read the model output and print diagnostic messages 
 replist <- SS_output(dir = mydir, 
@@ -110,7 +110,7 @@ We'll demonstrate this by creating a new model from a model in the `r4ss` packag
 
 ```{r}
 # initial model to modify
-mod_path <- system.file(file.path("extdata", "simple_3.30.13"), package = "r4ss")
+mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
 # create a new directory to put a new, modified version of the model
 new_mod_path <- "simple_new"
 ```
@@ -309,7 +309,7 @@ As an example, we will illustrate how to run Francis tuning on an example Stock 
 ```{r}
 mod_path <- file.path(tempdir(), "simple_mod")
 # Path to simple model in r4ss and copy files to mod_path
-example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+example_path <- system.file("extdata", "simple_small", package = "r4ss")
 # copy model input files
 copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
 # copy over the Report file to provide information about the last run of this model
