@@ -52,14 +52,15 @@ test_that("SS_plots runs on simple_3.24 model", {
 # testing SSsummarize, SSplotComparisons, and SStableComparisons
 ###############################################################################
 
-test_that("SSsummarize and SSplotComparisons both work", {
-  # run summarize function
+test_that("SSsummarize and SSplotComparisons work to compare 3.24 to 3.30", {
+  # first read current model (different configuration)
   simple_small <- SS_output(file.path(example_path, "simple_small"),
-
-  simple_summary <- SSsummarize(list(
-    simple3.24,
-    simple_small
-  ))
+    verbose = FALSE,
+    printstats = FALSE
+  )
+  
+  # summarize results
+  simple_summary <- SSsummarize(list(simple3.24, simple_small))
 
   # plot comparisons of results
   comparison_plots <- SSplotComparisons(simple_summary,
@@ -67,6 +68,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
     plotdir = temp_path, verbose = FALSE,
     indexUncertainty = TRUE
   )
+
   # confirm that function finished
   expect_equal(length(comparison_plots), 17)
 
@@ -75,25 +77,6 @@ test_that("SSsummarize and SSplotComparisons both work", {
   # confirm that output produces a data.frame
   # with 3 variables (label, model1, model2)
   expect_output(str(simple_table), "variables")
-})
-
-###############################################################################
-# testing read/write dat functions for 3.24
-###############################################################################
-
-test_that("SS_readdat() and SS_writedat() both work for 3.24", {
-  # read data file
-  simple3.24_dat <- SS_readdat(
-    file = file.path(example_path, "simple_3.24/simple.dat"),
-    version = "3.24", verbose = FALSE
-  )
-  # write data file
-  SS_writedat(
-    datlist = simple3.24_dat,
-    outfile = file.path(temp_path, "testdat_3.24.ss"),
-    version = "3.24", verbose = FALSE
-  )
-  expect_true(file.exists(file.path(temp_path, "testdat_3.24.ss")))
 })
 
 # clean up
