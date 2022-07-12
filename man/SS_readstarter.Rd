@@ -24,7 +24,7 @@ Read Stock Synthesis starter file as a list
 }
 \examples{
 starter_list <- SS_readstarter(
-  system.file("extdata", "simple_3.30.13", "starter.ss",
+  system.file("extdata", "simple_small", "starter.ss",
     package = "r4ss"
   ),
   verbose = FALSE

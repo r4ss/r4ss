@@ -42,7 +42,7 @@
 #' @examples
 #' # Read in the 'simple' example model stored in {r4ss}
 #' inputs <- SS_read(
-#'   dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
+#'   dir = system.file("extdata", "simple_small", package = "r4ss")
 #' )
 #' # Read in an example from GitHub stored in user-examples,
 #' # wrapped in `dontrun` because it requires an Internet connection

@@ -1655,6 +1655,7 @@ SSplotBiology <-
         }
         if (print) {
           plotinfo <- save_png(
+            plotinfo = plotinfo,
             file = "bio31_hermaphrodite_transition.png",
             plotdir = plotdir, pwidth = pwidth, pheight = pheight,
             punits = punits, res = res, ptsize = ptsize,
@@ -1670,6 +1671,7 @@ SSplotBiology <-
         }
         if (print) {
           plotinfo <- save_png(
+            plotinfo = plotinfo,
             file = "bio32_hermaphrodite_cumulative.png",
             plotdir = plotdir, pwidth = pwidth, pheight = pheight,
             punits = punits, res = res, ptsize = ptsize,

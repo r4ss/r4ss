@@ -91,7 +91,7 @@
 #' # Create a temporary directory, feel free to change this location
 #' mod_path <- file.path(tempdir(), "simple_mod")
 #' # Path to simple model in r4ss and copy files to mod_path
-#' example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+#' example_path <- system.file("extdata", "simple_small", package = "r4ss")
 #' # copy model input files
 #' copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
 #' # copy over the Report file

@@ -14,18 +14,11 @@ docs
 ^\.covrignore$
 ^\.vscode/
 ^CRAN-SUBMISSION$
+^inst/extdata/simple_3.30.01/
+^inst/extdata/simple_3.30.12/
+^inst/extdata/simple_3.30.13/
 # # temporary additions for CRAN submission
 # ^tests/
 # ^inst/extdata/models/
 # ^inst/extdata/simple_3.24/
-# ^inst/extdata/simple_3.30.01/
-# ^inst/extdata/simple_3.30.12/
-# ^inst/extdata/simple_3.30.13/CompReport.sso$
-# ^inst/extdata/simple_3.30.13/covar.sso$
-# ^inst/extdata/simple_3.30.13/Forecast-report.sso$
-# ^inst/extdata/simple_3.30.13/Report.sso$
-# ^inst/extdata/simple_3.30.13/ss.exe$
-# ^inst/extdata/simple_3.30.13/ss_summary.sso$
-# ^inst/extdata/simple_3.30.13/ss3.par$
-# ^inst/extdata/simple_3.30.13/warning.sso$
 # ^vignettes/

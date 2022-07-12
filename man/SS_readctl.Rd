@@ -129,7 +129,7 @@ default values.
 \examples{
 # Read in the 'simple' example SS model stored in r4ss
 # Find the directory
-dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+dirsimple <- system.file("extdata", "simple_small", package = "r4ss")
 # Read in the dat file to define the structure of the control file so that
 # you don't have to specify things in the function call such as 'Nfleet'
 datfilename <- dir(dirsimple, pattern = "data\\\\.ss", full.names = TRUE)
