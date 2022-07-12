@@ -1,11 +1,12 @@
-#' read control file from SS version 3.24
+#' Deprecated: read control file from SS version 3.24
 #'
 #' Read Stock Synthesis (version 3.24) control file into list object in R.
 #' This function comes with its wrapper function SS_readctl
 #' that calls SS_readctl_3.24 (this function) or SS_readctl_3.30
-#' (to be available in future).
 #'
-#'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30. 
+#' 
 #' @template file
 #' @template verbose
 #' @template readctl_vars
@@ -46,6 +47,12 @@ SS_readctl_3.24 <- function(file,
                             N_CPUE_obs = NULL,
                             ##################################
                             ptype = lifecycle::deprecated()) {
+  # deprecate. Remove code upon next release.
+  deprecate_warn(
+    when = "1.45.3",
+    what = "SS_readctl_3.24()",
+    details = "Please update model to version 3.30."
+  )
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(ptype)) {

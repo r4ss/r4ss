@@ -1,10 +1,12 @@
-#' read data file from SS version 2.00
+#' Deprecated: read data file from SS version 2.00
 #'
 #' Read Stock Synthesis (version 2.00) data file into list object in R.
 #' This function was formerly called SS_readdat. That name is now used
 #' for a wrapper function that calls either SS_readdat_2.00 SS_readdat_3.00
 #' SS_readdat_3.24 or SS_readdat_3.30 (and potentially additional functions in the future).
 #'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30. 
 #'
 #' @template file
 #' @template verbose
@@ -21,6 +23,12 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_2.00 <- function(file, verbose = TRUE,
                             echoall = lifecycle::deprecated(), section = NULL) {
+  # deprecate. Remove code upon next release.
+  deprecate_warn(
+    when = "1.45.3",
+    what = "SS_readdat_2.00()",
+    details = "Please update model to version 3.30."
+  )
   # function to read Stock Synthesis data files
   if (lifecycle::is_present(echoall)) {
     lifecycle::deprecate_warn(
