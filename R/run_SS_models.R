@@ -30,10 +30,8 @@
 #' @examples
 #' \dontrun{
 #' extdata_mods <- system.file("extdata", package = "r4ss")
-#' dirvec <- c(
-#'   file.path(extdata_mods, "simple_3.30.12"),
-#'   file.path(extdata_mods, "simple_3.30.13")
-#' )
+#' dirvec <- file.path(extdata_mods, "simple_small")
+#'
 #' # if ss or ss.exe is available in both directories:
 #' run_SS_models(dirvec = dirvec)
 #' }
