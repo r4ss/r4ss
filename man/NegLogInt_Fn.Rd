@@ -17,8 +17,8 @@ NegLogInt_Fn(
   ReDoBiasRamp = FALSE,
   BiasRamp_linenum_Vec = NULL,
   CTL_linenum_Type = NULL,
-  exe = "ss",
-  extras = "-nohess"
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -71,13 +71,11 @@ Default is NULL, and if not explicitly specified the program will attempt to
 detect these automatically based on the length of relevant lines from the CTL
 file.}
 
-\item{exe}{SS executable name (excluding extension), either "ss" or "ss3".
-This string is used for both calling the executable and also finding the
-output files like ss.par. For 3.30, it should always be "ss" since the
-output file names are hardwired in the TPL code.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
-\item{extras}{Additional ADMB command line arguments passed
-to the executable.}
+\item{...}{Additional arguments passed to r4ss::run(), such as
+\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation

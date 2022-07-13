@@ -13,21 +13,16 @@ SS_profile(
   profilevec = NULL,
   usepar = FALSE,
   globalpar = FALSE,
-  parfile = "ss.par",
   parlinenum = NULL,
   parstring = NULL,
   dircopy = TRUE,
-  exe.delete = FALSE,
-  model = "ss",
-  extras = "-nox",
-  systemcmd = FALSE,
   saveoutput = TRUE,
   overwrite = TRUE,
   whichruns = NULL,
-  version = "3.30",
   prior_check = TRUE,
   read_like = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -58,10 +53,6 @@ matrix with a column for each parameter.}
 automatically copied from original \code{parfile}) for all runs instead
 of the par file from each successive run}
 
-\item{parfile}{Name of par file to use (for 3.30 models, this needs to
-remain 'ss.par'). When \code{globalpar=TRUE}, the backup copy of this
-is used for all runs.}
-
 \item{parlinenum}{Line number in par file to change (if usepar = TRUE).
 Can be a vector if you are profiling multiple parameters at the same time.}
 
@@ -69,30 +60,15 @@ Can be a vector if you are profiling multiple parameters at the same time.}
 an alternative to parlinenum (only needed if usepar = TRUE).
 Can be a vector if you are profiling multiple parameters at the same time.}
 
-\item{dircopy}{Copy directories for each run? NOT IMPLEMENTED YET.}
+\item{saveoutput}{Copy output .sso files to unique names.  Default = TRUE.}
 
-\item{exe.delete}{Delete exe files in each directory?  NOT IMPLEMENTED YET.}
-
-\item{model}{Executable name of the \code{.exe} file in \code{mydir}
-without the extension, e.g., \code{"ss"}.}
-
-\item{extras}{Additional ADMB command line arguments passed
-to the executable.}
-
-\item{saveoutput}{Copy output .SSO files to unique names.  Default = TRUE.}
-
-\item{overwrite}{Overwrite any existing .SSO files. Default = TRUE. If FALSE,
+\item{overwrite}{Overwrite any existing .sso files. Default = TRUE. If FALSE,
 then some runs may be skipped.}
 
 \item{whichruns}{Optional vector of run indices to do. This can be used to
 re-run a subset of the cases in situations where the function was
 interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 is the length of profilevec.}
-
-\item{version}{SS version number. Currently "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).
-\code{version = NULL} is no longer the default or an allowed entry.
-The default is \code{version = "3.30"}.}
 
 \item{prior_check}{Check to make sure the starter file is set to include
 the prior likelihood contribution in the total likelihood.  Default = TRUE.}
@@ -103,6 +79,9 @@ even if something is wrong with reading the table.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{...}{Additional arguments passed to r4ss::run(), such as
+\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
 }
 \description{
 Iteratively changes the control file using SS_changepars.
@@ -199,15 +178,13 @@ head(par_table)
 ## 6   0.2 0.75
 
 # run SS_profile command
-# requires modified version of SS_profile available via
-# remotes::install_github("r4ss/r4ss@profile_issue_224")
 profile <- SS_profile(
   dir = dir_profile_SR, # directory
   masterctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   string = c("Zfrac", "Beta"),
   profilevec = par_table,
-  extras = "-nohess"
+  extras = "-nohess" # argument passed to run()
 )
 
 # get model output

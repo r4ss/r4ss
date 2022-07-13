@@ -39,10 +39,9 @@
 #' Default is NULL, and if not explicitly specified the program will attempt to
 #' detect these automatically based on the length of relevant lines from the CTL
 #' file.
-#' @param exe SS executable name (excluding extension), either "ss" or "ss3".
-#' This string is used for both calling the executable and also finding the
-#' output files like ss.par. For 3.30, it should always be "ss" since the
-#' output file names are hardwired in the TPL code.
+#' @template verbose
+#' @param ... Additional arguments passed to r4ss::run(), such as
+#' `exe`, `exe_in_path`, `extras`, and `show_in_console`.
 #' @seealso [read.admbFit()], [getADMBHessian()]
 #' @author James Thorson
 #' @export
@@ -76,8 +75,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
                          StartFromPar = TRUE, show_in_console = FALSE,
                          Intern = lifecycle::deprecated(),
                          ReDoBiasRamp = FALSE, BiasRamp_linenum_Vec = NULL,
-                         CTL_linenum_Type = NULL, systemcmd = FALSE,
-                         exe = "ss") {
+                         CTL_linenum_Type = NULL,
+                         verbose = FALSE,
+                         ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
@@ -88,15 +88,10 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     )
     show_in_console <- !Intern
   }
-  # test exe input
-  if (!(exe == "ss" | exe == "ss3")) {
-    # turns out 3.30 != "3.30" in R
-    warning('exe inputs other than "ss" and "ss3" may not work')
-  }
   # frequently used files
-  parfile <- paste0(exe, ".par")
-  stdfile <- paste0(exe, ".std")
-  corfile <- paste0(exe, ".cor")
+  parfile <- "ss.par"
+  stdfile <- "ss.std"
+  corfile <- "ss.cor"
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
   OS <- .Platform[["OS.type"]]
@@ -162,9 +157,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
   # If .par is availabile from the last iteration then use it as starting point
   STARTER <- SS_readstarter(file.path(File, "starter.ss"), verbose = FALSE)
   if (StartFromPar == TRUE &&
-    paste0(exe, "_", Iteration - 1, ".par") %in% list.files(File)) {
+    paste0("ss_", Iteration - 1, ".par") %in% list.files(File)) {
     STARTER[["init_values_src"]] <- 1
-    PAR_0 <- scan(file.path(File, paste0(exe, "_", Iteration - 1, ".par")),
+    PAR_0 <- scan(file.path(File, paste0("ss_", Iteration - 1, ".par")),
       comment.char = "#", quiet = TRUE
     )
   } else {
@@ -230,16 +225,7 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
   }
 
   # Run SS
-  setwd(File)
-  command <- exe
-  if (OS != "Windows") {
-    command <- paste0("./", command)
-  }
-  if (OS == "Windows" & !systemcmd) {
-    shell(cmd = command, intern = !show_in_console)
-  } else {
-    system(command, intern = !show_in_console)
-  }
+  run(dir = File, verbose = verbose, ...)
   Sys.sleep(1)
 
   # Check convergence
@@ -248,10 +234,10 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     # Move PAR files
     file.rename(
       from = ParFile,
-      to = file.path(File, paste0(exe, "_", Iteration, "-first.par"))
+      to = file.path(File, paste0("ss_", Iteration, "-first.par"))
     )
     # Read and check
-    PAR <- scan(file.path(File, paste0(exe, "_", Iteration, "-first.par")),
+    PAR <- scan(file.path(File, paste0("ss_", Iteration, "-first.par")),
       what = "character", quiet = TRUE
     )
     if (ifelse(is.na(as.numeric(PAR[11])), FALSE, as.numeric(PAR[16]) < 1)) {
@@ -274,17 +260,17 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     while (Converged == FALSE & PreviousIteration <= Iteration) {
       # Read in original estimate
       if (PreviousIteration == 0) {
-        PAR_0 <- scan(file.path(File, paste0(exe, "_", PreviousIteration, ".par")),
+        PAR_0 <- scan(file.path(File, paste0("ss_", PreviousIteration, ".par")),
           comment.char = "#", quiet = TRUE
         )
       }
       if (PreviousIteration >= 1 & PreviousIteration < Iteration) {
-        PAR_0 <- scan(file.path(File, paste0(exe, "_", PreviousIteration, "-first.par")),
+        PAR_0 <- scan(file.path(File, paste0("ss_", PreviousIteration, "-first.par")),
           comment.char = "#", quiet = TRUE
         )
       }
-      if (PreviousIteration == Iteration & paste0(exe, "_init.par") %in% list.files(File)) {
-        PAR_0 <- scan(file.path(File, paste0(exe, "_init.par")), comment.char = "#", quiet = TRUE)
+      if (PreviousIteration == Iteration & paste0("ss_init.par") %in% list.files(File)) {
+        PAR_0 <- scan(file.path(File, paste0("ss_init.par")), comment.char = "#", quiet = TRUE)
       }
       # Modify values of PAR file for short-line values
       for (ParI in 1:length(SD_Group_Vec)) {
@@ -298,27 +284,19 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
         write(PAR_0, file = ParFile, ncolumns = 10)
       }
       # Run SS
-      command <- paste0(exe, " -nohess -cbs 500000000 -gbs 500000000")
-      if (OS != "Windows") {
-        command <- paste0("./", command)
-      }
-      if (OS == "Windows" & !systemcmd) {
-        shell(cmd = command, intern = !show_in_console)
-      } else {
-        system(command, intern = !show_in_console)
-      }
+      run(dir = File, verbose = verbose, ...)
       Sys.sleep(1)
       # Check convergence
       if (parfile %in% list.files(File)) {
         # Move PAR files
         file.copy(
           from = ParFile,
-          to = file.path(File, paste0(exe, "_", Iteration, "-first.par")),
+          to = file.path(File, paste0("ss_", Iteration, "-first.par")),
           overwrite = TRUE
         )
         file.remove(ParFile)
         # Read and check
-        PAR <- scan(file.path(File, paste0(exe, "_", Iteration, "-first.par")),
+        PAR <- scan(file.path(File, paste0("ss_", Iteration, "-first.par")),
           what = "character", quiet = TRUE
         )
         if (ifelse(is.na(as.numeric(PAR[11])), FALSE, as.numeric(PAR[16]) < 1)) {
@@ -353,21 +331,13 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
       verbose = FALSE
     )
     file.copy(
-      from = file.path(File, paste0(exe, "_", Iteration, "-first.par")),
+      from = file.path(File, paste0("ss_", Iteration, "-first.par")),
       to = ParFile, overwrite = TRUE
     )
     if (file.exists(file.path(File, stdfile))) {
       file.remove(file.path(File, stdfile))
     }
-    command <- paste0(exe, " -maxfn 0 -cbs 500000000 -gbs 500000000")
-    if (OS != "Windows") {
-      command <- paste0("./", command)
-    }
-    if (OS == "Windows" & !systemcmd) {
-      shell(cmd = command, intern = !show_in_console)
-    } else {
-      system(command, intern = !show_in_console)
-    }
+    run(dir = File, verbose = verbose, ...)
     Sys.sleep(1)
 
     # Estimate new bias ramp
@@ -384,15 +354,7 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
         CTL[BiasRamp_linenum_Vec] <- apply(BiasRamp[["df"]], MARGIN = 1, FUN = paste, collapse = " ")
         writeLines(CTL, file.path(File, STARTER[["ctlfile"]]))
         # Re-run to get Hessian
-        command <- "ss3 -cbs 500000000 -gbs 500000000"
-        if (OS != "Windows") {
-          command <- paste0("./", command)
-        }
-        if (OS == "Windows" & !systemcmd) {
-          shell(cmd = command, intern = !show_in_console)
-        } else {
-          system(command, intern = !show_in_console)
-        }
+        run(dir = File, verbose = verbose, ...)
         Sys.sleep(1)
       }
     }
@@ -409,15 +371,15 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     # Save objects for replicating analysis
     file.rename(
       from = ParFile,
-      to = file.path(File, paste0(exe, "_", Iteration, ".par"))
+      to = file.path(File, paste0("ss_", Iteration, ".par"))
     )
     file.rename(
       from = file.path(File, stdfile),
-      to = file.path(File, paste0(exe, "_", Iteration, ".std"))
+      to = file.path(File, paste0("ss_", Iteration, ".std"))
     )
     file.rename(
       from = file.path(File, corfile),
-      to = file.path(File, paste0(exe, "_", Iteration, ".cor"))
+      to = file.path(File, paste0("ss_", Iteration, ".cor"))
     )
     file.rename(
       from = file.path(File, "admodel.hes"),
@@ -437,16 +399,16 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     )
 
     # Read in some stuff
-    STD <- scan(file.path(File, paste0(exe, "_", Iteration, ".std")),
+    STD <- scan(file.path(File, paste0("ss_", Iteration, ".std")),
       what = "character", quiet = TRUE
     )
     STD <- data.frame(matrix(STD[-c(1:(which(STD == "1")[1] - 1))], ncol = 4, byrow = TRUE),
       stringsAsFactors = FALSE
     )
-    PAR <- scan(file.path(File, paste0(exe, "_", Iteration, ".par")),
+    PAR <- scan(file.path(File, paste0("ss_", Iteration, ".par")),
       comment.char = "#", quiet = TRUE
     )
-    DIAG <- read.admbFit(file.path(File, paste0(exe, "_", Iteration)))
+    DIAG <- read.admbFit(file.path(File, paste0("ss_", Iteration)))
     HESS <- getADMBHessian(File = File, FileName = paste0("admodel_", Iteration, ".hes"))
     # Calculate Hessian
     cov <- corpcor::pseudoinverse(HESS[["hes"]])
@@ -512,9 +474,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     RecDevPen["Forecast", "negative-Rick"] <- 0
     # Add into NLL and record
     NLL <- NLL + sum(RecDevPen)
-    write.table(RecDevPen, file = file.path(File, paste0(exe, "_", Iteration, ".pen")))
+    write.table(RecDevPen, file = file.path(File, paste0("ss_", Iteration, ".pen")))
     write(c("", "sum(RecDevPen) = ", sum(RecDevPen)),
-      file = file.path(File, paste0(exe, "_", Iteration, ".pen")), append = TRUE
+      file = file.path(File, paste0("ss_", Iteration, ".pen")), append = TRUE
     )
 
     # Approximate integral using Laplace Approximation
