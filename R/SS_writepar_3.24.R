@@ -19,7 +19,7 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
   # deprecate. Remove code upon next release.
-  deprecate_warn(
+  lifecycle::deprecate_warn(
     when = "1.45.3",
     what = "SS_writepar_3.24()",
     details = "Please update model to version 3.30."

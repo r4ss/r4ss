@@ -109,7 +109,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
 
   message(
     "Mortality params to paste into the first block of parameter lines:\n",
-    paste0(capture.output(Mparams), collapse = "\n")
+    paste0(utils::capture.output(Mparams), collapse = "\n")
   )
   printdf(Mparams)
 
@@ -134,7 +134,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   message(
     "\n# stuff to paste below the line labeled 'CohortGrowDev'\n",
     "1 #_custom mortality/growth environmental setup\n",
-    paste0(capture.output(Mlinks), collapse = "\n")
+    paste0(utils::capture.output(Mlinks), collapse = "\n")
   )
 
   # create a data frame of environmental variables
@@ -157,7 +157,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
     "Environmental variables to paste into the bottom of the data file:\n",
     maxage + 1, " # N environmental variables\n",
     nrow(Menv), " # N environmental observations\n",
-    paste0(capture.output(Menv), collapse = "\n")
+    paste0(utils::capture.output(Menv), collapse = "\n")
   )
 
   # restore things to how they were

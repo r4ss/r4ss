@@ -27,7 +27,7 @@ SS_writedat_3.24 <- function(datlist,
                              faster = lifecycle::deprecated(),
                              verbose = TRUE) {
                                 # deprecate. Remove code upon next release.
-  deprecate_warn(
+  lifecycle::deprecate_warn(
     when = "1.45.3",
     what = "SS_writedat_3.24()",
     details = "Please update model to version 3.30."

@@ -19,7 +19,7 @@
 SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
                              verbose = FALSE) {
                                 # deprecate. Remove code upon next release.
-  deprecate_warn(
+  lifecycle::deprecate_warn(
     when = "1.45.3",
     what = "SS_writectl_3.24()",
     details = "Please update model to version 3.30."

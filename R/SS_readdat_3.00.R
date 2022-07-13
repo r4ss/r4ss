@@ -25,7 +25,7 @@
 SS_readdat_3.00 <- function(file, verbose = TRUE,
                             echoall = lifecycle::deprecated(), section = NULL) {
                                 # deprecate. Remove code upon next release.
-  deprecate_warn(
+  lifecycle::deprecate_warn(
     when = "1.45.3",
     what = "SS_readdat_3.00()",
     details = "Please update model to version 3.30."
@@ -149,7 +149,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   i <- i + Ntypes
   if (verbose) {
     message("areas:", areas)
-    message("fleet info:\n", paste0(capture.output(
+    message("fleet info:\n", paste0(utils::capture.output(
       data.frame(
         fleet = 1:Ntypes,
         name = fleetnames,

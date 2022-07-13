@@ -23,7 +23,7 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   # deprecate. Remove code upon next release.
-  deprecate_warn(
+  lifecycle::deprecate_warn(
     when = "1.45.3",
     what = "SS_readpar_3.24()",
     details = "Please update model to version 3.30."
