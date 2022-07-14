@@ -83,9 +83,9 @@ test_that("SS_RunJitter runs on simple_small model", {
       mydir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
       printlikes = FALSE, verbose = TRUE,
     ))
-    # starter file changed before check for exe
+    # starter file shouldn't have changed if exe check failed
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
-    expect_equal(starter$jitter_fraction, 0.1) 
+    expect_equal(starter$jitter_fraction, 0) 
   } else {
     likesaved <- SS_RunJitter(
       mydir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
