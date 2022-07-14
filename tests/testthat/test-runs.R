@@ -78,19 +78,23 @@ test_that("SS_RunJitter runs on simple_small model", {
   }
   # run jitters
   if (skipexe) {
+    # error expected when no exe found
     expect_error(SS_RunJitter(
       mydir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = FALSE
+      printlikes = FALSE, verbose = TRUE,
     ))
+    # starter file changed before check for exe
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
-    expect_equal(starter$jitter_fraction, 0)
+    expect_equal(starter$jitter_fraction, 0.1) 
   } else {
     likesaved <- SS_RunJitter(
       mydir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = FALSE
+      printlikes = FALSE, verbose = TRUE, show_in_console = FALSE
     )
+    # confirm that likelihoods were returned by function
     expect_true(is.vector(likesaved) & length(likesaved) == 2)
     expect_equal(likesaved[1], likesaved[2])
+    # confirm starter file change
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
     expect_equal(starter$jitter_fraction, 0.1)
   }

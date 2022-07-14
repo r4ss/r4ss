@@ -58,6 +58,7 @@ SS_RunJitter <- function(mydir,
   startdir <- getwd()
   on.exit(setwd(startdir))
   setwd(mydir)
+  model <- check_model(model = model, mydir = getwd())
 
   if (verbose) {
     message("Temporarily changing working directory to:\n", mydir)
