@@ -2400,6 +2400,11 @@ SS_output <-
       adjust1 = ifelse(custom, 2, 1),
       header = TRUE, type.convert = TRUE
     )
+    # updated BIOLOGY table names based on change July 2022 change
+    # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/348
+    biology <- df.rename(biology,
+        oldnames = c("Low",    "Mean_Size", "Wt_len_F", "Mat_len", "Spawn",   "Wt_len_M", "Fecundity"),
+        newnames = c("Len_lo", "Len_mean",  "Wt_F",     "Mat",     "Mat*Fec", "Wt_M",     "Fec"))
 
     # determine fecundity type
     FecType <- 0
@@ -2437,7 +2442,7 @@ SS_output <-
       FecPar2name <- pl[FecGrep5[1]]
     }
     if (is.na(lbinspop[1])) {
-      lbinspop <- biology[["Low"]][biology[["GP"]] == 1]
+      lbinspop <- biology[["Len_lo"]][biology[["GP"]] == 1]
     }
 
     # warning for 3.30 models with multiple growth patterns that have
@@ -2456,29 +2461,20 @@ SS_output <-
       # fix for extra header associated with extra column header
       # for single sex models that got fixed in 3.30.16
       if (nsexes == 1 &&
-        is.na(biology[["Fecundity"]][1]) &&
-        "Wt_len_M" %in% names(biology)) {
+        is.na(biology[["Fec"]][1]) &&
+        "Wt_M" %in% names(biology)) {
         # copy Wt_len_M to Fecundity
-        biology[["Fecundity"]] <- biology[["Wt_len_M"]]
+        biology[["Fec"]] <- biology[["Wt_M"]]
         # remove Wt_len_M
-        biology <- biology[, !names(biology) %in% "Wt_len_M"]
+        biology <- biology[, !names(biology) %in% "Wt_M"]
       }
 
       # test to figure out if fecundity is proportional to spawning biomass
-
-      # first get weight-at-length column (Wt_len_F for 2-sex models,
-      # Wt_len for 1-sex models starting with 3.30.16)
-      if ("Wt_len" %in% names(biology)) {
-        Wt_len_F <- biology[["Wt_len"]]
-      } else {
-        Wt_len_F <- biology[["Wt_len_F"]]
-      }
-
       # check for any mismatch between weight-at-length and fecundity
       returndat[["SpawnOutputUnits"]] <-
-        ifelse(!is.null(biology[["Fecundity"]][1]) &&
-          !is.na(biology[["Fecundity"]][1]) &&
-          any(Wt_len_F != biology[["Fecundity"]]),
+        ifelse(!is.null(biology[["Fec"]][1]) &&
+          !is.na(biology[["Fec"]][1]) &&
+          any(biology[["Wt_F"]] != biology[["Fec"]]),
         "numbers", "biomass"
         )
     }
