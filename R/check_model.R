@@ -6,10 +6,11 @@
 #'
 #' @template model
 #' @param mydir The directory where `model` is located.
-#' @author Kelli F. Johnson
+#' @template exe_in_path
+#' @author Kelli F. Johnson, Ian G. Taylor
 #' @return A cleaned `model` name based on the input argument.
 
-check_model <- function(model, mydir = getwd()) {
+check_model <- function(model, mydir = getwd(), exe_in_path = FALSE) {
   modelnoexe <- gsub("\\.exe$", "", model)
 
   # Check that the file exists
@@ -23,8 +24,14 @@ check_model <- function(model, mydir = getwd()) {
       linux = ""
     )
   )
-  if (!file.exists(file.path(mydir, exename))) {
-    stop(exename, " does not exist in ", mydir)
+  if (exe_in_path) {
+    if (Sys.which(exename)[[1]] == "") {
+      stop(exename, " does not exist in the path")
+    }
+  } else {
+    if (!file.exists(file.path(mydir, exename))) {
+      stop(exename, " does not exist in ", mydir)
+    }
   }
 
   return(modelnoexe)

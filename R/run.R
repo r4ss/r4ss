@@ -12,16 +12,19 @@
 #'  the executable. Note that if there is an exe in your PATH with the same
 #'  name, this will be used even if \code{exe_in_path} is FALSE.
 #' @template extras
-#' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
-#' will look for exe in the model folders. Default = FALSE.
+#' @template exe_in_path
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted.
 #' @template show_in_console
 #' @param console_output_file File to store console output (if
 #' show_in_console = FALSE)
 #' @template verbose
+#' 
 #' @return Returns table showing which directories had model run and which
-#' had errors like missing executable or Report.sso already present
+#' had errors like missing executable or Report.sso already present. 
+#' The three possible messages are "model run failed", "ran model", and
+#' "unknown run status".
+#'
 #' @author Ian Taylor, Kathryn Doering
 #' @export
 #' @seealso [copy_SS_inputs()],
@@ -69,14 +72,7 @@ run <- function(dir = NULL,
   # this should always be "windows" or "unix" (includes Mac and Linux)
   OS <- .Platform[["OS.type"]]
 
-  # figure out name of executable based on 'exe' input which may contain .exe
-  if (length(grep(".exe", tolower(exe))) == 1) {
-    # if input 'exe' includes .exe then assume it's Windows and just use the name
-    exe <- exe
-  } else {
-    # if 'exe' doesn't include .exe then append it (for Windows computers only)
-    exe <- paste(exe, ifelse(OS == "windows", ".exe", ""), sep = "")
-  }
+  # sort out path
   if (exe_in_path == TRUE) {
     # normalize path if ~ notation is used (e.g. exe = "~/bin/ss_3.30.19/ss")
     if (exe != basename(exe)) {
