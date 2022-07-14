@@ -64,7 +64,7 @@ SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "defau
 
   # Table
   # Age: Ave Len - Ave Wgt - % mature (by sex)
-  # "Mat*Fecund" is = biology[["Fecundity"]] %*% alk (mat = 1, fecundity = fecundity_l * ALK)
+  # "Mat*Fecund" is = biology[["Fec"]] %*% alk (mat = 1, fecundity = fecundity_l * ALK)
   bio <- data.frame(
     Age = biology[biology[["Sex"]] == 1, "Age_Beg"],
     Ave_Length_f = print(biology[biology[["Sex"]] == 1, "Len_Beg"], digits = 1),
