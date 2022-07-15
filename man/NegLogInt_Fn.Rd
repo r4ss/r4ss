@@ -13,11 +13,11 @@ NegLogInt_Fn(
   PAR_num_Vec,
   Int_Group_List = list(1),
   StartFromPar = TRUE,
-  show_in_console = FALSE,
   Intern = lifecycle::deprecated(),
   ReDoBiasRamp = FALSE,
   BiasRamp_linenum_Vec = NULL,
   CTL_linenum_Type = NULL,
+  exe = "ss",
   verbose = FALSE,
   ...
 )
@@ -55,9 +55,6 @@ hardwired to Version = 1.}
 \item{StartFromPar}{Logical flag (TRUE or FALSE) saying whether to start each
 round of optimization from a ".par" file (I recommend TRUE)}
 
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
-
 \item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 
 \item{ReDoBiasRamp}{Logical flag saying whether to re-do the bias ramp
@@ -73,14 +70,17 @@ Default is NULL, and if not explicitly specified the program will attempt to
 detect these automatically based on the length of relevant lines from the CTL
 file.}
 
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
+
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments passed to r4ss::run(), such as
-\code{extras}, and \code{show_in_console}.}
+\item{show_in_console}{Show output in the R console? If FALSE,
+then it is saved to a file.}
 
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{extras}{Additional ADMB command line arguments passed
+to the executable, such as "-nohess"}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation

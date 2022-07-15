@@ -6,6 +6,7 @@
 \usage{
 SS_doRetro(
   dir = getwd(),
+  masterdir = lifecycle::deprecated(),
   oldsubdir = "",
   newsubdir = "retrospectives",
   subdirstart = "retro",
@@ -19,6 +20,8 @@ SS_doRetro(
 }
 \arguments{
 \item{dir}{Directory where everything takes place.}
+
+\item{masterdir}{Deprecated. Use \code{dir} instead.}
 
 \item{oldsubdir}{Subdirectory within \code{masterdir} with existing model
 files.}
@@ -48,8 +51,6 @@ executable if not in the specified directory or in the path.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
 \code{extras}, and \code{show_in_console}.}
-
-\item{masterdir}{Deprecated. Use \code{dir} instead.}
 }
 \description{
 Do retrospective analyses by creating new directories, copying model files,

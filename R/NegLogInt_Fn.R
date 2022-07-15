@@ -41,8 +41,7 @@
 #' file.
 #' @template exe
 #' @template verbose
-#' @param ... Additional arguments passed to r4ss::run(), such as
-#' `extras`, and `show_in_console`.
+#' @template extras
 #' @seealso [read.admbFit()], [getADMBHessian()]
 #' @author James Thorson
 #' @export
@@ -75,10 +74,11 @@ NegLogInt_Fn <- function(dir = getwd(),
                          Input_SD_Group_Vec,
                          CTL_linenum_List, ESTPAR_num_List,
                          PAR_num_Vec, Int_Group_List = list(1),
-                         StartFromPar = TRUE, show_in_console = FALSE,
+                         StartFromPar = TRUE,
                          Intern = lifecycle::deprecated(),
                          ReDoBiasRamp = FALSE, BiasRamp_linenum_Vec = NULL,
                          CTL_linenum_Type = NULL,
+                         exe = "ss",
                          verbose = FALSE,
                          ...) {
   # deprecated variable warnings -----

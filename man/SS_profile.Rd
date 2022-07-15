@@ -15,12 +15,12 @@ SS_profile(
   globalpar = FALSE,
   parlinenum = NULL,
   parstring = NULL,
-  dircopy = TRUE,
   saveoutput = TRUE,
   overwrite = TRUE,
   whichruns = NULL,
   prior_check = TRUE,
   read_like = TRUE,
+  exe = "ss",
   verbose = TRUE,
   ...
 )
@@ -77,14 +77,14 @@ the prior likelihood contribution in the total likelihood.  Default = TRUE.}
 Default = TRUE. Changing to FALSE should allow the function to play through
 even if something is wrong with reading the table.}
 
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
+
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
 \code{extras}, and \code{show_in_console}.}
-
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
 }
 \description{
 Iteratively changes the control file using SS_changepars.

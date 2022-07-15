@@ -7,6 +7,7 @@
 run(
   dir = getwd(),
   exe = "ss",
+  extras = "",
   skipfinished = TRUE,
   show_in_console = TRUE,
   console_output_file = "console.output.txt",
@@ -20,6 +21,9 @@ model input files.}
 \item{exe}{Executable name, optionally including the path to the
 executable if not in the specified directory or in the path.}
 
+\item{extras}{Additional ADMB command line arguments passed
+to the executable, such as "-nohess"}
+
 \item{skipfinished}{Skip any folders that already contain a Report.sso file.
 This can be helpful if the function is interrupted.}
 
@@ -31,9 +35,6 @@ show_in_console = FALSE)}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
-
-\item{extras}{Additional ADMB command line arguments passed
-to the executable.}
 }
 \value{
 Returns table showing which directories had model run and which

@@ -176,12 +176,12 @@ SS_profile <-
            globalpar = FALSE,
            parlinenum = NULL,
            parstring = NULL,
-           dircopy = TRUE,
            saveoutput = TRUE,
            overwrite = TRUE,
            whichruns = NULL,
            prior_check = TRUE,
            read_like = TRUE,
+           exe = "ss",
            verbose = TRUE,
            ...) {
     # Ensure wd is not changed by the function
@@ -285,7 +285,7 @@ SS_profile <-
     totallike <- rep(NA, n)
     liketable <- NULL
 
-    # std file name is independent of executable name
+    # note: std file name is independent of executable name
     stdfile <- file.path(dir, "ss.std")
 
     # read starter file to get input file names and check various things

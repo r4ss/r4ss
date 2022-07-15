@@ -70,10 +70,8 @@
 #' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
 #'  FALSE, which caps tuning values at 1.
 #' @template exe
-#' @param extras Additional commands to use when running SS. Default = "-nox"
-#'  will reduce the amount of command-line output. A commonly used option is
-#'  "-nohess" to skip calculating the hessian (and asymptotic uncertainty).
-#' @template show_in_console
+#' @param ... Additional arguments passed to r4ss::run(), such as
+#' `extras`, and `show_in_console`.
 #'
 #' @return Returns a table that can be copied into the control file.
 #' If `write=TRUE` then will write the values to a file
@@ -186,7 +184,7 @@
 SS_tune_comps <- function(replist = NULL, fleets = "all",
                           option = c("Francis", "MI", "none", "DM"),
                           digits = 6, write = TRUE, niters_tuning = 0,
-                          init_run = FALSE, dir = getwd(),
+                          init_run = FALSE, dir = getwd(), exe = "ss",
                           allow_up_tuning = FALSE,
                           verbose = TRUE, ...) {
   # check inputs
@@ -282,9 +280,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         dir = dir,
         exe = exe,
         skipfinished = FALSE,
-        extras = extras,
-        show_in_console = show_in_console,
-        verbose = verbose
+        verbose = verbose,
+        ...
       )
       suppressWarnings(
         replist <- SS_output(
@@ -381,9 +378,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           dir = dir,
           exe = exe,
           skipfinished = FALSE,
-          extras = extras,
-          show_in_console = show_in_console,
-          verbose = verbose
+          verbose = verbose,
+          ...
         )
         # save the weights from the run to a list
         weights[[it]] <- var_adj
@@ -476,9 +472,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         dir = dir,
         exe = exe,
         skipfinished = FALSE,
-        extras = extras,
-        show_in_console = show_in_console,
-        verbose = verbose
+        verbose = verbose,
+        ...
       )
       suppressWarnings(
         out <- SS_output(dir,

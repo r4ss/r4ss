@@ -53,7 +53,8 @@
 #' )
 #' }
 #'
-SS_doRetro <- function(dir = getwd(), oldsubdir = "", newsubdir = "retrospectives",
+SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
+                       oldsubdir = "", newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
                        RemoveBlocks = FALSE, verbose = FALSE, exe = "ss", ...) {
   # deprecated variable warnings -----

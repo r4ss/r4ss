@@ -30,6 +30,7 @@
 #'
 run <- function(dir = getwd(),
                 exe = "ss",
+                extras = "",
                 skipfinished = TRUE,
                 show_in_console = TRUE,
                 console_output_file = "console.output.txt",

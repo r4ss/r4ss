@@ -18,10 +18,12 @@ test_that("check_exe() fails or succeeds as expected", {
   # skip if no executable in model path
   skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
+  message = "skipping test that requires SS executable"
+  )
   # error when no exe found
   expect_error(check_exe())
   # returns path (along with exe name) when exe found
-  check_exe_results <- check_exe(path_simple_small)
+  check_exe_results <- check_exe(dir = path_simple_small)
   expect_equal(check_exe_results[["path"]], path_simple_small)
 })
 
@@ -97,7 +99,7 @@ test_that("SS_RunJitter runs on simple_small model", {
     ))
     # starter file shouldn't have changed if exe check failed
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
-    expect_equal(starter$jitter_fraction, 0) 
+    expect_equal(starter$jitter_fraction, 0)
   } else {
     likesaved <- SS_RunJitter(
       mydir = dir.jit, Njitter = 2, jitter_fraction = 0.1,

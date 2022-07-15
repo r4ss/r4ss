@@ -5,6 +5,7 @@
 #' in the format Report1.sso, Report2.sso, etc.
 #'
 #' @param dir Directory where model files are located.
+#' @param mydir Deprecated. Use `dir` instead.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be ran,
 #'   else `1:Njitter` will be executed.
@@ -18,6 +19,7 @@
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   The default is `NULL`, which will leave the starter file unchanged.
+#' @template exe
 #' @template verbose
 #' @param ... Additional arguments passed to r4ss::run(), such as
 #' `extras`, and `show_in_console`.

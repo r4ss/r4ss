@@ -19,6 +19,8 @@ SS_RunJitter(
 \arguments{
 \item{dir}{Directory where model files are located.}
 
+\item{mydir}{Deprecated. Use \code{dir} instead.}
+
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
 If \code{length(Njitter) > 1} only the iterations specified will be ran,
 else \code{1:Njitter} will be executed.}
@@ -35,6 +37,9 @@ will not be overwritten.}
 \item{init_values_src}{Either zero or one, specifying if the initial values to
 jitter should be read from the control file or from the par file, respectively.
 The default is \code{NULL}, which will leave the starter file unchanged.}
+
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
