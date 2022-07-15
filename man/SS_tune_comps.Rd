@@ -54,12 +54,15 @@ FALSE, which caps tuning values at 1.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments to pass to \code{\link[=run]{run()}}, such as \code{model}
-or \code{exe_in_path}.}
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
 
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
 will reduce the amount of command-line output. A commonly used option is
 "-nohess" to skip calculating the hessian (and asymptotic uncertainty).}
+
+\item{show_in_console}{Show output in the R console? If FALSE,
+then it is saved to a file.}
 }
 \value{
 Returns a table that can be copied into the control file.

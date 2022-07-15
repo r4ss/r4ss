@@ -5,17 +5,19 @@
 \title{Iteratively apply the jitter option in SS}
 \usage{
 SS_RunJitter(
-  mydir,
+  dir = getwd(),
+  mydir = lifecycle::deprecated(),
   Njitter,
   printlikes = TRUE,
-  verbose = FALSE,
   jitter_fraction = NULL,
   init_values_src = NULL,
+  exe = "ss",
+  verbose = FALSE,
   ...
 )
 }
 \arguments{
-\item{mydir}{Directory where model files are located.}
+\item{dir}{Directory where model files are located.}
 
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
 If \code{length(Njitter) > 1} only the iterations specified will be ran,
@@ -23,9 +25,6 @@ else \code{1:Njitter} will be executed.}
 
 \item{printlikes}{A logical value specifying if the likelihood values should
 be printed to the console.}
-
-\item{verbose}{A logical value specifying if output should be printed
-to the screen.}
 
 \item{jitter_fraction}{The value, typically 0.1, used to define a uniform
 distribution in cumulative normal space to generate new initial parameter values.
@@ -37,12 +36,11 @@ will not be overwritten.}
 jitter should be read from the control file or from the par file, respectively.
 The default is \code{NULL}, which will leave the starter file unchanged.}
 
-\item{...}{Additional arguments passed to r4ss::run(), such as
-\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
-\item{model}{Name of the Stock Synthesis model file (which has the .exe for
-on Windows) in \code{mydir} without the extension (if any), e.g.,
-\code{"ss"} or \code{"ss_win"}.}
+\item{...}{Additional arguments passed to r4ss::run(), such as
+\code{extras}, and \code{show_in_console}.}
 }
 \value{
 A vector of likelihoods for each jitter iteration.
@@ -58,7 +56,7 @@ in the format Report1.sso, Report2.sso, etc.
 modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE), 1)
 numjitter <- 25
 jit.likes <- SS_RunJitter(
-  mydir = modeldir, Njitter = numjitter,
+  dir = modeldir, Njitter = numjitter,
   jitter_fraction = 0.1, init_value_src = 1
 )
 

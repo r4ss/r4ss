@@ -5,7 +5,7 @@
 \title{Run a likelihood profile in Stock Synthesis.}
 \usage{
 SS_profile(
-  dir = "C:/myfiles/mymodels/myrun/",
+  dir,
   masterctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   linenum = NULL,
@@ -81,7 +81,10 @@ even if something is wrong with reading the table.}
 to the screen.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
-\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
+\code{extras}, and \code{show_in_console}.}
+
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
 }
 \description{
 Iteratively changes the control file using SS_changepars.

@@ -5,7 +5,8 @@
 \title{Perform SS implementation of Laplace Approximation}
 \usage{
 NegLogInt_Fn(
-  File = NA,
+  dir = getwd(),
+  File = lifecycle::deprecated(),
   Input_SD_Group_Vec,
   CTL_linenum_List,
   ESTPAR_num_List,
@@ -22,8 +23,9 @@ NegLogInt_Fn(
 )
 }
 \arguments{
-\item{File}{Directory containing Stock Synthesis files
-(e.g., "C:/Users/James Thorson/Desktop/")}
+\item{dir}{Directory containing Stock Synthesis files.}
+
+\item{File}{Deprecated. Use \code{dir} instead.}
 
 \item{Input_SD_Group_Vec}{Vector where each element is the standard deviation
 for a group of random effects (e.g., a model with a single group of random
@@ -75,7 +77,10 @@ file.}
 to the screen.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
-\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
+\code{extras}, and \code{show_in_console}.}
+
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation
@@ -92,7 +97,7 @@ Opt <- optimize(
   f = NegLogInt_Fn,
   interval = c(0.001, 0.12),
   maximum = FALSE,
-  File = direc,
+  dir = direc,
   Input_SD_Group_Vec = 1,
   CTL_linenum_List = list(127:131),
   ESTPAR_num_List = list(86:205),

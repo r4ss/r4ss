@@ -5,10 +5,8 @@
 \title{Run multiple Stock Synthesis models}
 \usage{
 run(
-  dir = NULL,
+  dir = getwd(),
   exe = "ss",
-  extras = "-nox",
-  exe_in_path = FALSE,
   skipfinished = TRUE,
   show_in_console = TRUE,
   console_output_file = "console.output.txt",
@@ -17,21 +15,10 @@ run(
 }
 \arguments{
 \item{dir}{Directory, or vector of directories, containing the
-model input files. NULL will run the model in the working directory.}
+model input files.}
 
-\item{exe}{Executable name or path to executable (absolute path, or relative
-to the working directory). First, if \code{exe_in_path} is
-FALSE, The function will look an executable with the same name in each
-element of dir. Then, if it is not found in each, the function will
-assume that exe is the path to the executable and there is only 1 copy of
-the executable. Note that if there is an exe in your PATH with the same
-name, this will be used even if \code{exe_in_path} is FALSE.}
-
-\item{extras}{Additional ADMB command line arguments passed
-to the executable.}
-
-\item{exe_in_path}{logical. If TRUE, will look for exe in the PATH. If FALSE,
-will look for exe in the model folders. Default = FALSE.}
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
 
 \item{skipfinished}{Skip any folders that already contain a Report.sso file.
 This can be helpful if the function is interrupted.}
@@ -44,24 +31,23 @@ show_in_console = FALSE)}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{extras}{Additional ADMB command line arguments passed
+to the executable.}
 }
 \value{
 Returns table showing which directories had model run and which
-had errors like missing executable or Report.sso already present
+had errors like missing executable or Report.sso already present.
+The three possible messages are "model run failed", "ran model", and
+"unknown run status".
 }
 \description{
 Loops over a vector of directories and iteratively runs SS in each one
 }
 \examples{
 \dontrun{
-dir <- file.path(
-  system.file("extdata", package = "r4ss"),
-  "simple_3.30.13"
-)
-# if the ss executable is available in the directory:
+dir <- file.path(system.file("extdata", package = "r4ss"), "simple_small")
 r4ss::run(dir = dir)
-# if the ss executable is available in the user's path:
-r4ss::run(dir = dir, exe_in_path = TRUE)
 }
 
 }

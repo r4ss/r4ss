@@ -5,7 +5,7 @@
 \title{Run retrospective analyses}
 \usage{
 SS_doRetro(
-  masterdir,
+  dir = getwd(),
   oldsubdir = "",
   newsubdir = "retrospectives",
   subdirstart = "retro",
@@ -13,11 +13,12 @@ SS_doRetro(
   overwrite = TRUE,
   RemoveBlocks = FALSE,
   verbose = FALSE,
+  exe = "ss",
   ...
 )
 }
 \arguments{
-\item{masterdir}{Directory where everything takes place.}
+\item{dir}{Directory where everything takes place.}
 
 \item{oldsubdir}{Subdirectory within \code{masterdir} with existing model
 files.}
@@ -42,11 +43,13 @@ simplistic and probably won't work in most cases. Default=FALSE.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments passed to r4ss::run(), such as
-\code{exe}, \code{exe_in_path}, \code{extras}, and \code{show_in_console}.}
+\item{exe}{Executable name, optionally including the path to the
+executable if not in the specified directory or in the path.}
 
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
+\item{...}{Additional arguments passed to r4ss::run(), such as
+\code{extras}, and \code{show_in_console}.}
+
+\item{masterdir}{Deprecated. Use \code{dir} instead.}
 }
 \description{
 Do retrospective analyses by creating new directories, copying model files,
@@ -83,5 +86,5 @@ SSplotComparisons(retroSummary,
 \code{\link[=SSgetoutput]{SSgetoutput()}}
 }
 \author{
-Ian Taylor, Jim Thorson
+Ian G. Taylor, James T. Thorson
 }
