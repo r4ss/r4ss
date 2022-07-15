@@ -2,7 +2,6 @@
 #'
 #' Iteratively changes the control file using SS_changepars.
 #'
-#'
 #' @template dir
 #' @param masterctlfile Source control file. Default = "control.ss_new"
 #' @param newctlfile Destination for new control files (must match entry in
@@ -37,9 +36,10 @@
 #' @param read_like Read the table of likelihoods from each model as it finishes.
 #' Default = TRUE. Changing to FALSE should allow the function to play through
 #' even if something is wrong with reading the table.
+#' @template exe
 #' @template verbose
 #' @param ... Additional arguments passed to r4ss::run(), such as
-#' `exe`, `exe_in_path`, `extras`, and `show_in_console`.
+#' `extras`, and `show_in_console`.
 #' @note The starting values used in this profile are not ideal and some models
 #' may not converge. Care should be taken in using an automated tool like this,
 #' and some models are likely to require rerunning with alternate starting
@@ -166,7 +166,7 @@
 #' }
 #'
 SS_profile <-
-  function(dir = "C:/myfiles/mymodels/myrun/",
+  function(dir,
            masterctlfile = "control.ss_new",
            newctlfile = "control_modified.ss", # must match entry in starter file
            linenum = NULL,
@@ -187,6 +187,9 @@ SS_profile <-
     # Ensure wd is not changed by the function
     orig_wd <- getwd()
     on.exit(setwd(orig_wd))
+
+    # check for executable
+    check_exe(exe = exe, dir = dir, verbose = verbose)
 
     # figure out which line to change in control file
     # if not using parfile, info still needed to set phase negative in control file
@@ -277,11 +280,13 @@ SS_profile <-
       )
     }
 
+    # places to store convergence and likelihood info
     converged <- rep(NA, n)
     totallike <- rep(NA, n)
     liketable <- NULL
 
-    stdfile <- file.path(dir, paste0(model, ".std"))
+    # std file name is independent of executable name
+    stdfile <- file.path(dir, "ss.std")
 
     # read starter file to get input file names and check various things
     starter.file <- dir()[tolower(dir()) == "starter.ss"]
@@ -312,8 +317,9 @@ SS_profile <-
       )
     }
 
+    # back up par file
     if (usepar) {
-      file.copy(parfile, "parfile_original_backup.sso")
+      file.copy("ss.par", "parfile_original_backup.sso")
     }
 
     # run loop over profile values
@@ -364,7 +370,7 @@ SS_profile <-
           if (globalpar) {
             par <- readLines("parfile_original_backup.sso")
           } else {
-            par <- readLines(parfile)
+            par <- readLines("ss.par")
           }
           # loop over the number of parameters (typically just 1)
           for (ipar in 1:npars) {
@@ -397,8 +403,8 @@ SS_profile <-
           par <- c(par, "#", note)
           message(paste0(note, collapse = "\n"))
           # write new par file
-          writeLines(par, paste0(parfile, "_input_", i, ".ss"))
-          writeLines(par, parfile)
+          writeLines(par, paste0("ss_input_par", i, ".ss"))
+          writeLines(par, "ss.par")
         }
         if (file.exists(stdfile)) {
           file.remove(stdfile)
@@ -410,11 +416,11 @@ SS_profile <-
         # run model
         run(dir = dir, verbose = verbose, ...)
 
-        # check for convergence        
+        # check for convergence
         converged[i] <- file.exists(stdfile)
         onegood <- FALSE
         if (read_like && file.exists("Report.sso") &
-            file.info("Report.sso")$size > 0) {
+          file.info("Report.sso")$size > 0) {
           onegood <- TRUE
           Rep <- readLines("Report.sso", n = 200)
           like <- read.table("Report.sso", skip = grep("LIKELIHOOD", Rep)[2] + 0, nrows = 11, header = TRUE, fill = TRUE)

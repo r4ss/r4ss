@@ -10,11 +10,23 @@ file.copy(example_path, tmp_path, recursive = TRUE)
 # runs_path avoids repeated use of "extdata" that would have to be added
 # if using tmp_path directly
 runs_path <- file.path(tmp_path, "extdata")
+path_simple_small <- file.path(runs_path, "simple_small")
 # clean up
 on.exit(unlink(tmp_path, recursive = TRUE))
 
-test_that("SS_doRetro runs on simple_small model", {
-  path_simple_small <- file.path(runs_path, "simple_small")
+test_that("check_exe() fails or succeeds as expected", {
+  # skip if no executable in model path
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+    (!file.exists(file.path(path_simple_small, "ss.exe"))),
+  # error when no exe found
+  expect_error(check_exe())
+  # returns path (along with exe name) when exe found
+  check_exe_results <- check_exe(path_simple_small)
+  expect_equal(check_exe_results[["path"]], path_simple_small)
+})
+
+test_that("SS_doRetro() runs on simple_small model", {
+  # skip if no executable in model path
   skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
@@ -57,7 +69,7 @@ test_that("SS_doRetro runs on simple_small model", {
 
 
 test_that("SS_RunJitter runs on simple_small model", {
-  path_simple_small <- file.path(runs_path, "simple_small")
+  # skip if no executable in model path
   skipexe <- (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe")))
   dir.jit <- file.path(path_simple_small, "jitter")
@@ -105,7 +117,7 @@ test_that("SS_RunJitter runs on simple_small model", {
 ###############################################################################
 
 test_that("profile functions run on simple_small model", {
-  path_simple_small <- file.path(runs_path, "simple_small")
+  # skip if no executable in model path
   skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
@@ -154,7 +166,7 @@ test_that("profile functions run on simple_small model", {
 })
 
 test_that("Run an SS3 model and read the hessian", {
-  path_simple_small <- file.path(runs_path, "simple_small")
+  # skip if no executable in model path
   skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"

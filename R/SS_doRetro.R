@@ -6,8 +6,8 @@
 #' the user should update their model to a newer version of Stock Synthesis to
 #' run retrospectives
 #'
-#'
-#' @param masterdir Directory where everything takes place.
+#' @param dir Directory where everything takes place.
+#' @param masterdir Deprecated. Use `dir` instead.
 #' @param oldsubdir Subdirectory within `masterdir` with existing model
 #' files.
 #' @param newsubdir Subdirectory within `masterdir` where retrospectives
@@ -18,16 +18,16 @@
 #' retrospective year. Should be zero or negative values.
 #' @param overwrite Overwrite any input files with matching names in the
 #' subdirectories where models will be run.
-#' @template show_in_console
 #' @param RemoveBlocks Logical switch determining whether specifications of
 #' blocks is removed from top of control file. Blocks can cause problems for
 #' retrospective analyses, but the method for removing them is overly
 #' simplistic and probably won't work in most cases. Default=FALSE.
+#' @template exe
 #' @template verbose
 #' @param ... Additional arguments passed to r4ss::run(), such as
-#' `exe`, `exe_in_path`, `extras`, and `show_in_console`.
-#' 
-#' @author Ian Taylor, Jim Thorson
+#' `extras`, and `show_in_console`.
+#'
+#' @author Ian G. Taylor, James T. Thorson
 #' @export
 #' @seealso [SSgetoutput()]
 #' @examples
@@ -53,13 +53,23 @@
 #' )
 #' }
 #'
-SS_doRetro <- function(masterdir, oldsubdir = "", newsubdir = "retrospectives",
+SS_doRetro <- function(dir = getwd(), oldsubdir = "", newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                       RemoveBlocks = FALSE, verbose = FALSE, ...) {
+                       RemoveBlocks = FALSE, verbose = FALSE, exe = "ss", ...) {
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(masterdir)) {
+    lifecycle::deprecate_warn(
+      when = "1.46.0",
+      what = "SS_doRetro(masterdir)",
+      details = "Please use 'dir' instead"
+    )
+    dir <- masterdir
+  }
 
-  olddir <- file.path(masterdir, oldsubdir)
-  newdir <- file.path(masterdir, newsubdir)
-  
+  olddir <- file.path(dir, oldsubdir)
+  newdir <- file.path(dir, newsubdir)
+
   # get model file names from olddir
   startfile <- dir(olddir)[tolower(dir(olddir)) == "starter.ss"]
   if (length(startfile) == 0) {
@@ -71,13 +81,17 @@ SS_doRetro <- function(masterdir, oldsubdir = "", newsubdir = "retrospectives",
   starter <- SS_readstarter(startfile, verbose = FALSE)
   subdirnames <- paste0(subdirstart, years)
 
+  # check for executable
+  check_exe(exe = exe, dir = subdirnames, verbose = verbose)
+
   # loop over retrospective years
   for (iyr in 1:length(years)) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
     message("Running retrospective in ", newdir_iyr)
-    
+
     # copy original input files to retro folder
-    copy_SS_inputs(dir.old = olddir,
+    copy_SS_inputs(
+      dir.old = olddir,
       dir.new = newdir_iyr,
       create.dir = TRUE,
       recursive = TRUE,
@@ -88,10 +102,11 @@ SS_doRetro <- function(masterdir, oldsubdir = "", newsubdir = "retrospectives",
     # change starter file to do retrospectives
     starter[["retro_yr"]] <- years[iyr]
     starter[["init_values_src"]] <- 0
-    SS_writestarter(starter, 
-                    dir = newdir_iyr, 
-                    verbose = FALSE, 
-                    overwrite = TRUE)
+    SS_writestarter(starter,
+      dir = newdir_iyr,
+      verbose = FALSE,
+      overwrite = TRUE
+    )
 
     # delete covar file to avoid using file from previous model run
     # (not sure if this is necessary)

@@ -4,14 +4,12 @@
 #' parameter values based on the jitter fraction. Output files are renamed
 #' in the format Report1.sso, Report2.sso, etc.
 #'
-#' @param mydir Directory where model files are located.
-#' @template model
+#' @param dir Directory where model files are located.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be ran,
 #'   else `1:Njitter` will be executed.
 #' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
-#' @template verbose
 #' @param jitter_fraction The value, typically 0.1, used to define a uniform
 #'   distribution in cumulative normal space to generate new initial parameter values.
 #'   The default of `NULL` forces the user to specify the jitter_fraction
@@ -20,9 +18,12 @@
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   The default is `NULL`, which will leave the starter file unchanged.
+#' @template verbose
 #' @param ... Additional arguments passed to r4ss::run(), such as
-#' `exe`, `exe_in_path`, `extras`, and `show_in_console`.
+#' `extras`, and `show_in_console`.
+#'
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
+#'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
 #' @examples
@@ -31,7 +32,7 @@
 #' modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE), 1)
 #' numjitter <- 25
 #' jit.likes <- SS_RunJitter(
-#'   mydir = modeldir, Njitter = numjitter,
+#'   dir = modeldir, Njitter = numjitter,
 #'   jitter_fraction = 0.1, init_value_src = 1
 #' )
 #'
@@ -46,26 +47,40 @@
 #' profilesummary[["pars"]]
 #' }
 #'
-SS_RunJitter <- function(mydir,
+SS_RunJitter <- function(dir = getwd(),
+                         mydir = lifecycle::deprecated(),
                          Njitter,
                          printlikes = TRUE,
-                         verbose = FALSE,
                          jitter_fraction = NULL,
                          init_values_src = NULL,
+                         exe = "ss",
+                         verbose = FALSE,
                          ...) {
-  
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(mydir)) {
+    lifecycle::deprecate_warn(
+      when = "1.46.0",
+      what = "SS_RunJitter(mydir)",
+      details = "Please use 'dir' instead"
+    )
+    dir <- mydir
+  }
+
+  # check for executable and keep cleaned name of executable file
+  exe <- check_exe(exe = exe, dir = dir, verbose = verbose)[["exe"]]
+
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
-  setwd(mydir)
-  model <- check_model(model = model, mydir = getwd())
+  setwd(dir)
 
   if (verbose) {
-    message("Temporarily changing working directory to:\n", mydir)
+    message("Temporarily changing working directory to:\n", dir)
     if (!file.exists("Report.sso")) {
       message(
         "Copy output files from a converged run into\n",
-        mydir, "\nprior to running SS_RunJitter to enable easier comparisons."
+        dir, "\nprior to running SS_RunJitter to enable easier comparisons."
       )
     }
     message("Checking starter file")
@@ -103,8 +118,8 @@ SS_RunJitter <- function(mydir,
       file.copy(from = "ss.par_0.sso", to = "ss.par", overwrite = TRUE)
     }
     # run model
-    run(dir = mydir, verbose = verbose, ...)
-    
+    run(dir = dir, exe = exe, verbose = verbose, ...)
+
     # Only save stuff if it converged
     if ("Report.sso" %in% list.files()) {
       rep <- SS_read_summary()
