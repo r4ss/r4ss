@@ -40,8 +40,10 @@
 #' detect these automatically based on the length of relevant lines from the CTL
 #' file.
 #' @template exe
+#' @template show_in_console
 #' @template verbose
-#' @template extras
+#' @param ... Additional arguments passed to r4ss::run(), such as
+#' `extras`.
 #' @seealso [read.admbFit()], [getADMBHessian()]
 #' @author James Thorson
 #' @export

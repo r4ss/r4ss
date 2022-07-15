@@ -76,11 +76,11 @@ executable if not in the specified directory or in the path.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
+\item{...}{Additional arguments passed to r4ss::run(), such as
+\code{extras}.}
+
 \item{show_in_console}{Show output in the R console? If FALSE,
 then it is saved to a file.}
-
-\item{extras}{Additional ADMB command line arguments passed
-to the executable, such as "-nohess"}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation
