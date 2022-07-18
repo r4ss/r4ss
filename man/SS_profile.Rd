@@ -6,7 +6,8 @@
 \usage{
 SS_profile(
   dir,
-  masterctlfile = "control.ss_new",
+  oldctlfile = "control.ss_new",
+  masterctlfile = lifecycle::deprecated(),
   newctlfile = "control_modified.ss",
   linenum = NULL,
   string = NULL,
@@ -30,7 +31,7 @@ SS_profile(
 The default value is \code{dir = NULL}, which leads to using
 the current working directory.}
 
-\item{masterctlfile}{Source control file. Default = "control.ss_new"}
+\item{oldctlfile}{Source control file. Default = "control.ss_new"}
 
 \item{newctlfile}{Destination for new control files (must match entry in
 starter file). Default = "control_modified.ss".}
@@ -128,7 +129,7 @@ profile <- SS_profile(
   # "NatM" is a subset of one of the
   # parameter labels in control.ss_new
   model = "ss",
-  masterctlfile = "control.ss_new",
+  oldctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   string = "steep",
   profilevec = h.vec
@@ -183,7 +184,7 @@ head(par_table)
 # run SS_profile command
 profile <- SS_profile(
   dir = dir_profile_SR, # directory
-  masterctlfile = "control.ss_new",
+  oldctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   string = c("Zfrac", "Beta"),
   profilevec = par_table,

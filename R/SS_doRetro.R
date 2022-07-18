@@ -83,7 +83,7 @@ SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
   subdirnames <- paste0(subdirstart, years)
 
   # check for executable
-  check_exe(exe = exe, dir = subdirnames, verbose = verbose)
+  check_exe(exe = exe, dir = olddir, verbose = verbose)
 
   # loop over retrospective years
   for (iyr in 1:length(years)) {
@@ -97,6 +97,7 @@ SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
       create.dir = TRUE,
       recursive = TRUE,
       overwrite = TRUE,
+      copy_exe = TRUE,
       verbose = verbose
     )
 

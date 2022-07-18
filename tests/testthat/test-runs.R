@@ -34,7 +34,7 @@ test_that("SS_doRetro() runs on simple_small model", {
   message = "skipping test that requires SS executable"
   )
   SS_doRetro(
-    masterdir = path_simple_small,
+    dir = path_simple_small,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
   retro_subdirs <- file.path(
@@ -181,7 +181,7 @@ test_that("Run an SS3 model and read the hessian", {
   run_results <- run(dir = file.path(tmp_path, "test_mod_run"))
   expect_true(run_results[["results"]] == "ran model")
   hes <- getADMBHessian(
-    File = file.path(tmp_path, "test_mod_run"),
+    dir = file.path(tmp_path, "test_mod_run"),
     FileName = "admodel.hes"
   )
   expect_length(hes, 4)

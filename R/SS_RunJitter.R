@@ -6,6 +6,7 @@
 #'
 #' @param dir Directory where model files are located.
 #' @param mydir Deprecated. Use `dir` instead.
+#' @param Intern Deprecated. Use `show_in_console` instead.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be ran,
 #'   else `1:Njitter` will be executed.
@@ -60,6 +61,13 @@ SS_RunJitter <- function(dir = getwd(),
                          ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(Intern)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.1",
+      what = "SS_RunJitter(Intern)",
+      details = "Please use 'show_in_console' instead"
+    )
+  }
   if (lifecycle::is_present(mydir)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",

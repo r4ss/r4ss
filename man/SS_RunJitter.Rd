@@ -46,6 +46,8 @@ to the screen.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
 \code{extras}, and \code{show_in_console}.}
+
+\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 }
 \value{
 A vector of likelihoods for each jitter iteration.

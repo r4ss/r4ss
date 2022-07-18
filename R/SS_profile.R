@@ -3,7 +3,7 @@
 #' Iteratively changes the control file using SS_changepars.
 #'
 #' @template dir
-#' @param masterctlfile Source control file. Default = "control.ss_new"
+#' @param oldctlfile Source control file. Default = "control.ss_new"
 #' @param newctlfile Destination for new control files (must match entry in
 #' starter file). Default = "control_modified.ss".
 #' @param linenum Line number of parameter to be changed. Can be used instead
@@ -81,7 +81,7 @@
 #'   # "NatM" is a subset of one of the
 #'   # parameter labels in control.ss_new
 #'   model = "ss",
-#'   masterctlfile = "control.ss_new",
+#'   oldctlfile = "control.ss_new",
 #'   newctlfile = "control_modified.ss",
 #'   string = "steep",
 #'   profilevec = h.vec
@@ -136,7 +136,7 @@
 #' # run SS_profile command
 #' profile <- SS_profile(
 #'   dir = dir_profile_SR, # directory
-#'   masterctlfile = "control.ss_new",
+#'   oldctlfile = "control.ss_new",
 #'   newctlfile = "control_modified.ss",
 #'   string = c("Zfrac", "Beta"),
 #'   profilevec = par_table,
@@ -167,7 +167,8 @@
 #'
 SS_profile <-
   function(dir,
-           masterctlfile = "control.ss_new",
+           oldctlfile = "control.ss_new",
+           masterctlfile = lifecycle::deprecated(),
            newctlfile = "control_modified.ss", # must match entry in starter file
            linenum = NULL,
            string = NULL,
@@ -187,6 +188,17 @@ SS_profile <-
     # Ensure wd is not changed by the function
     orig_wd <- getwd()
     on.exit(setwd(orig_wd))
+
+    # deprecated variable warnings
+    # soft deprecated for now, but fully deprecate in the future.
+    if (lifecycle::is_present(masterctlfile)) {
+      lifecycle::deprecate_warn(
+        when = "1.46.0",
+        what = "SS_profile(masterctlfile)",
+        details = "Please use 'oldctlfile' instead"
+      )
+      oldctlfile <- masterctlfile
+    }
 
     # check for executable
     check_exe(exe = exe, dir = dir, verbose = verbose)
@@ -347,7 +359,7 @@ SS_profile <-
           newvals <- as.numeric(profilevec[i, ])
         }
         SS_changepars(
-          dir = NULL, ctlfile = masterctlfile, newctlfile = newctlfile,
+          dir = NULL, ctlfile = oldctlfile, newctlfile = newctlfile,
           linenums = linenum, strings = string,
           newvals = newvals, estimate = FALSE,
           verbose = TRUE, repeat.vals = TRUE
