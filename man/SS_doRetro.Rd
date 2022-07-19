@@ -23,10 +23,10 @@ SS_doRetro(
 
 \item{masterdir}{Deprecated. Use \code{dir} instead.}
 
-\item{oldsubdir}{Subdirectory within \code{masterdir} with existing model
+\item{oldsubdir}{Subdirectory within \code{dir} with existing model
 files.}
 
-\item{newsubdir}{Subdirectory within \code{masterdir} where retrospectives
+\item{newsubdir}{Subdirectory within \code{dir} where retrospectives
 will be run. Default is 'retrospectives'.}
 
 \item{subdirstart}{First part of the pattern of names for the directories in
@@ -67,7 +67,7 @@ mydir <- "C:/Simple"
 
 ## retrospective analyses
 SS_doRetro(
-  masterdir = mydir,
+  dir = mydir,
   years = 0:-5
 )
 

@@ -8,9 +8,9 @@
 #'
 #' @param dir Directory where everything takes place.
 #' @param masterdir Deprecated. Use `dir` instead.
-#' @param oldsubdir Subdirectory within `masterdir` with existing model
+#' @param oldsubdir Subdirectory within `dir` with existing model
 #' files.
-#' @param newsubdir Subdirectory within `masterdir` where retrospectives
+#' @param newsubdir Subdirectory within `dir` where retrospectives
 #' will be run. Default is 'retrospectives'.
 #' @param subdirstart First part of the pattern of names for the directories in
 #' which the models will actually be run.
@@ -38,7 +38,7 @@
 #'
 #' ## retrospective analyses
 #' SS_doRetro(
-#'   masterdir = mydir,
+#'   dir = mydir,
 #'   years = 0:-5
 #' )
 #'
