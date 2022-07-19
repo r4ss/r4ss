@@ -65,8 +65,3 @@ test_that(
   ))
 )
 unlink(file.path(dirname(ctlfile), "control_change.ss"))
-
-# writeLines("dummy", con = ss3file)
-# SS_profile(dir = dirname(ctlfile),
-#   masterctlfile = basename(ctlfile),
-#   newctlfile = "test_ctl.ss", string = "NatM")
