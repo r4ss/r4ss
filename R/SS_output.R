@@ -3,7 +3,7 @@
 #' Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
 #' other files produced by Stock Synthesis and formats the important
 #' content of these files into a list in the R workspace. A few statistics
-#' unavailable elsewhere are taken from the .par and .cor files. Summary
+#' unavailable elsewhere are taken from the .par file. Summary
 #' information and statistics can be returned to the R console or just
 #' contained within the list produced by this function.
 #'
@@ -308,16 +308,7 @@ SS_output <-
       message("Report file time:", repfiletime)
     }
 
-    corfile <- NA
     if (covar) {
-      # .cor file
-      if (!is.na(parfile)) {
-        corfile <- sub(".par", ".cor", parfile, fixed = TRUE)
-        if (!file.exists(corfile)) {
-          warning("Some stats skipped because the .cor file not found:", corfile, "\n")
-          corfile <- NA
-        }
-      }
       # CoVar.sso file
       covarfile <- file.path(dir, covarfile)
       if (!file.exists(covarfile)) {
@@ -1902,10 +1893,13 @@ SS_output <-
       }
     }
 
-    # gradient
-    if (covar & !is.na(corfile)) {
-      stats[["log_det_hessian"]] <- read.table(corfile, nrows = 1)[1, 10]
-    }
+    # log determinant of the Hessian (previously was from ss.cor file)
+    stats[["log_det_hessian"]] <- 
+      as.numeric(match_report_table("Hessian", 0,
+        "Hessian", 0,
+        cols = 2
+      ))
+    # max gradient
     stats[["maximum_gradient_component"]] <-
       as.numeric(match_report_table("Convergence_Level", 0,
         "Convergence_Level", 0,
