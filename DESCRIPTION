@@ -45,9 +45,10 @@ Imports:
     dplyr,
     forcats,
     ggplot2,
+    kableExtra,
     lifecycle,
     stringr,
-    kableExtra
+    tidyr
 Suggests: 
     gtools,
     gplots,

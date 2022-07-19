@@ -573,21 +573,29 @@ SS_output <-
     if (length(logfile) == 1 && file.info(file.path(dir, logfile))$size > 0) {
       logfile <- readLines(file.path(dir, logfile))
       logfile <- grep("^size", logfile, value = TRUE)
-      if (!length(logfile)) {
-        stop("Error reading ss.log. Check the file, it should contain 4 rows starting with 'size'")
-      }
-      names(logfile) <- c("TempFile", "Size")
-      maxtemp <- max(logfile[["Size"]])
-      if (maxtemp == 0) {
-        if (verbose) {
-          message(
-            "Got log file. There were NO temporary files were written",
-            " in this run."
-          )
-        }
+      if (length(logfile) == 0) {
+        warning("Error reading ss.log. Check the file, it should contain rows starting with 'size'")
+        logfile <- NA
       } else {
-        if (verbose) {
-          message("Temporary files were written in this run.")
+        logfile <- tidyr::separate(as.data.frame(logfile),
+          col = 1,
+          into = c("File", "Size"),
+          sep = " = "
+        )
+        names(logfile) <- c("TempFile", "Size")
+        logfile[["Size"]] <- as.numeric(logfile[["Size"]])
+        maxtemp <- max(logfile[["Size"]])
+        if (maxtemp == 0) {
+          if (verbose) {
+            message(
+              "Got log file. There were NO temporary files were written",
+              " in this run."
+            )
+          }
+        } else {
+          if (verbose) {
+            message("Temporary files were written in this run.")
+          }
         }
       }
     } else {

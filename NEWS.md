@@ -1,3 +1,11 @@
+# r4ss 1.46.0 (XX July 2022)
+* Major revamp of all functions that run the SS3 executable (see Pull
+  Request #XXX)
+* Adds dependency on 'tidyr'
+* Deprecates functions that relate to 3.24 models
+* Introduces new "simple_small" example model but removes older
+  examples, reducing total package size
+
 # r4ss 1.44.0 (23 May 2022)
 * Minor improvements and bug fixes
 * Compatibility with SS3 version 3.30.19
