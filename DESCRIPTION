@@ -75,6 +75,6 @@ Encoding: UTF-8
 LazyLoad: yes
 URL: https://github.com/r4ss/r4ss
 BugReports: https://github.com/r4ss/r4ss/issues
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
