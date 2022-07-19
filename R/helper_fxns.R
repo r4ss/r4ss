@@ -260,11 +260,6 @@ save_png <- function(plotinfo,
     pointsize = ptsize
   )
 
-  # change graphics parameters to input value
-  if (!is.null(par)) {
-    par(par)
-  }
-
   # assemble and return info
   invisible(rbind(plotinfo, data.frame(
     file = file,
