@@ -6,7 +6,7 @@
 #' SS_readdat_3.24 or SS_readdat_3.30 (and potentially additional functions in the future).
 #'
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
-#' functions is ending, so please update models to 3.30. 
+#' functions is ending, so please update models to 3.30.
 #'
 #' @template file
 #' @template verbose

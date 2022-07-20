@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_writectl_3.24.R
 \name{SS_writectl_3.24}
 \alias{SS_writectl_3.24}
-\title{write control file}
+\title{Deprecated: write 3.24 control file}
 \usage{
 SS_writectl_3.24(ctllist, outfile, overwrite = FALSE, verbose = FALSE)
 }
@@ -20,6 +20,10 @@ to the screen.}
 \description{
 write Stock Synthesis control file from list object in R which was probably
 created using \code{\link[=SS_readctl]{SS_readctl()}}
+}
+\details{
+Support for 3.24 models within the r4ss \verb{SS_read*} and \verb{SS_write*()}
+functions is ending, so please update models to 3.30.
 }
 \seealso{
 \code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}},\code{\link[=SS_readstarter]{SS_readstarter()}},

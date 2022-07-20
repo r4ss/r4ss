@@ -5,8 +5,8 @@
 #' [SS_readdat_3.24()]).
 #'
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
-#' functions is ending, so please update models to 3.30. 
-#' 
+#' functions is ending, so please update models to 3.30.
+#'
 #' @param datlist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new data file.
 #' @template overwrite
@@ -26,7 +26,7 @@ SS_writedat_3.24 <- function(datlist,
                              overwrite = FALSE,
                              faster = lifecycle::deprecated(),
                              verbose = TRUE) {
-                                # deprecate. Remove code upon next release.
+  # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
     what = "SS_writedat_3.24()",

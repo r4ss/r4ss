@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readctl_3.24.R
 \name{SS_readctl_3.24}
 \alias{SS_readctl_3.24}
-\title{read control file from SS version 3.24}
+\title{Deprecated: read control file from SS version 3.24}
 \usage{
 SS_readctl_3.24(
   file,
@@ -78,7 +78,10 @@ of data points of each CPUE time series}
 Read Stock Synthesis (version 3.24) control file into list object in R.
 This function comes with its wrapper function SS_readctl
 that calls SS_readctl_3.24 (this function) or SS_readctl_3.30
-(to be available in future).
+}
+\details{
+Support for 3.24 models within the r4ss \verb{SS_read*} and \verb{SS_write*()}
+functions is ending, so please update models to 3.30.
 }
 \seealso{
 \code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readdat]{SS_readdat()}}

@@ -3,7 +3,7 @@
 #' Read Stock Synthesis (version 3.24) parameter file into list object in R.
 #'
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
-#' functions is ending, so please update models to 3.30. 
+#' functions is ending, so please update models to 3.30.
 #'
 #' @param parfile Filename either with full path or relative to working directory.
 #' @param datsource list or character. If list, should be a list produced

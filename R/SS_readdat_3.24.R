@@ -1,9 +1,9 @@
 #' Deprecated: read data file from SS version 3.24
 #'
 #' Read Stock Synthesis (version 3.24) data file into list object in R.
-#' 
+#'
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
-#' functions is ending, so please update models to 3.30. 
+#' functions is ending, so please update models to 3.30.
 #'
 #' @template file
 #' @template verbose
