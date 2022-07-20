@@ -1,7 +1,11 @@
-#' write control file
+#' Deprecated: write 3.24 control file
 #'
 #' write Stock Synthesis control file from list object in R which was probably
 #' created using [SS_readctl()]
+#' 
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30. 
+#'
 #' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
 #' @template overwrite
@@ -14,6 +18,12 @@
 # ' \code{\link{SS_writedat}}
 SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
                              verbose = FALSE) {
+                                # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_writectl_3.24()",
+    details = "Please update model to version 3.30."
+  )
   # Add msgs for deprecated args ----
   # these should be removed after 1 release version.
 

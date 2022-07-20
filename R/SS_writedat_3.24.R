@@ -1,10 +1,12 @@
-#' write data file for SS version 3.24
+#' Deprecated: write data file for SS version 3.24
 #'
 #' Write Stock Synthesis data file from list object in R which was probably
 #' created using [SS_readdat()] (which would have called on
 #' [SS_readdat_3.24()]).
 #'
-#'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30. 
+#' 
 #' @param datlist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new data file.
 #' @template overwrite
@@ -24,6 +26,12 @@ SS_writedat_3.24 <- function(datlist,
                              overwrite = FALSE,
                              faster = lifecycle::deprecated(),
                              verbose = TRUE) {
+                                # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_writedat_3.24()",
+    details = "Please update model to version 3.30."
+  )
   # function to write Stock Synthesis data files
   if (verbose) {
     message("running SS_writedat_3.24")

@@ -145,7 +145,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   if (verbose) {
     message(
       "Existing table of variance adjustments:\n",
-      paste0(capture.output(ctl), collapse = "\n")
+      paste0(utils::capture.output(ctl), collapse = "\n")
     )
   }
 
@@ -176,7 +176,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   if (verbose) {
     message(
       "New table of variance adjustments:\n",
-      paste0(capture.output(ctl), collapse = "\n")
+      paste0(utils::capture.output(ctl), collapse = "\n")
     )
   }
 
