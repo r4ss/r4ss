@@ -322,7 +322,7 @@ SS_fitbiasramp <-
         warning("Problem with convergence, here is output from 'optim':\n")
         print(newbias)
       }
-      message("Estimated values: \n", paste0(capture.output(df), collpase = "\n"))
+      message("Estimated values: \n", paste0(utils::capture.output(df), collpase = "\n"))
     }
 
     if (plot) {

@@ -331,7 +331,7 @@ SS_changepars <-
     if (verbose) {
       message(
         "Wrote new file to ", newctlfile, " with the following changes:\n",
-        paste0(capture.output(results), collapse = "\n")
+        paste0(utils::capture.output(results), collapse = "\n")
       )
     }
     return(invisible(results))

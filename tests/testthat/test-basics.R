@@ -92,7 +92,7 @@ test_that("SS_plots runs on simple_small model", {
 test_that("SSsummarize and SSplotComparisons both work", {
   # run summarize function (repeating same model twice)
   simple_summary <- SSsummarize(list(
-    simple_small, 
+    simple_small,
     simple_small
   ))
 
@@ -207,7 +207,7 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
   )
   expect_true(file.exists(file.path(temp_path, "fore_0_long.ss")))
   expect_true(file.exists(file.path(temp_path, "fore_0_short.ss")))
-  
+
   # make sure SS_readforecast can read short and long versions
   fore_0_read_short <-
     SS_readforecast(
@@ -259,7 +259,7 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
 })
 
 ###############################################################################
-# testing read/write starter functions 
+# testing read/write starter functions
 ###############################################################################
 
 test_that("SS_readstarter() and SS_writestarter() both work", {

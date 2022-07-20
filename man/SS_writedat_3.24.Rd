@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_writedat_3.24.R
 \name{SS_writedat_3.24}
 \alias{SS_writedat_3.24}
-\title{write data file for SS version 3.24}
+\title{Deprecated: write data file for SS version 3.24}
 \usage{
 SS_writedat_3.24(
   datlist,
@@ -30,6 +30,10 @@ to the screen.}
 Write Stock Synthesis data file from list object in R which was probably
 created using \code{\link[=SS_readdat]{SS_readdat()}} (which would have called on
 \code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}}).
+}
+\details{
+Support for 3.24 models within the r4ss \verb{SS_read*} and \verb{SS_write*()}
+functions is ending, so please update models to 3.30.
 }
 \seealso{
 \code{\link[=SS_writedat]{SS_writedat()}}, \code{\link[=SS_writedat_3.30]{SS_writedat_3.30()}},

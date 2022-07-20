@@ -78,7 +78,7 @@ SS_readctl <- function(file,
                        version = "3.30",
                        verbose = FALSE,
                        use_datlist = TRUE,
-                       datlist = "data.ss_new",
+                       datlist = file.path(dirname(file), "data_echo.ss_new"),
                        ## Parameters that are not defined in control file
                        nseas = NULL,
                        N_areas = NULL,

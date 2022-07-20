@@ -86,7 +86,7 @@ SSplotRecdist <-
     colnames(recmat) <- seasnames
     message(
       "recruitment distribution by area and season:\n",
-      paste0(capture.output(recmat), collapse = "\n")
+      paste0(utils::capture.output(recmat), collapse = "\n")
     )
     if (plot) recdistfun()
     if (print) {

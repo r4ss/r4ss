@@ -58,7 +58,7 @@ test_that("SSsummarize and SSplotComparisons work to compare 3.24 to 3.30", {
     verbose = FALSE,
     printstats = FALSE
   )
-  
+
   # summarize results
   simple_summary <- SSsummarize(list(simple3.24, simple_small))
 

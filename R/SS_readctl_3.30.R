@@ -38,7 +38,7 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.30 <- function(file, verbose = FALSE,
                             use_datlist = TRUE,
-                            datlist = "data.ss_new",
+                            datlist = file.path(dirname(file), "data_echo.ss_new"),
                             ## Parameters that are not defined in control file
                             nseas = NULL,
                             N_areas = NULL,
@@ -441,39 +441,11 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
         cnt <- cnt + 1
         MGparmLabel[cnt] <- paste0("Mat_slope_", GenderLabel[1], "_GP_", j)
         cnt <- cnt + 1
-        if (ctllist[["maturity_option"]] == 1) {
-          MGparmLabel[cnt] <- paste0("Eggs/kg_inter_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-          MGparmLabel[cnt] <- paste0("Eggs/kg_slope_wt_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-        } else if (ctllist[["maturity_option"]] == 2) {
-          MGparmLabel[cnt] <- paste0("Eggs_scalar_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-          MGparmLabel[cnt] <- paste0("Eggs_exp_len_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-        } else if (ctllist[["maturity_option"]] == 3) {
-          MGparmLabel[cnt] <- paste0("Eggs_scalar_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-          MGparmLabel[cnt] <- paste0("Eggs_exp_wt_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-        } else if (ctllist[["maturity_option"]] == 4) {
-          MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-          MGparmLabel[cnt] <- paste0("Eggs_slope_len_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-        } else if (ctllist[["maturity_option"]] == 5) {
-          MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-          MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-        } else if (ctllist[["maturity_option"]] == 6) { # check what to do with option 6
-          MGparmLabel[cnt] <- paste0("Eggs_intercept_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-          MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", GenderLabel[1], "_GP_", j)
-          cnt <- cnt + 1
-        } else {
-          stop("Maturity option : ", ctllist[["maturity_option"]], " is not supported")
-        }
+        # Egg parameters, there are always 2, but what they are depends on the fecundity option
+        MGparmLabel[cnt] <- paste0("Eggs_alpha_", GenderLabel[1], "_GP_", j)
+        cnt <- cnt + 1
+        MGparmLabel[cnt] <- paste0("Eggs_beta_", GenderLabel[1], "_GP_", j)
+        cnt <- cnt + 1
       }
     }
   }
