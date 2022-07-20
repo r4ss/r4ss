@@ -3,7 +3,7 @@
 #' Write Stock Synthesis (version 3.24) parameter file from list object in R to file.
 #'
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
-#' functions is ending, so please update models to 3.30. 
+#' functions is ending, so please update models to 3.30.
 #'
 #' @param parlist  List object created by [SS_readpar_3.24()].
 #' @param outfile Filename for where to write new parameter file.

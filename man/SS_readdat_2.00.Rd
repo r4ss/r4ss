@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readdat_2.00.R
 \name{SS_readdat_2.00}
 \alias{SS_readdat_2.00}
-\title{read data file from SS version 2.00}
+\title{Deprecated: read data file from SS version 2.00}
 \usage{
 SS_readdat_2.00(
   file,
@@ -31,6 +31,10 @@ Read Stock Synthesis (version 2.00) data file into list object in R.
 This function was formerly called SS_readdat. That name is now used
 for a wrapper function that calls either SS_readdat_2.00 SS_readdat_3.00
 SS_readdat_3.24 or SS_readdat_3.30 (and potentially additional functions in the future).
+}
+\details{
+Support for 3.24 models within the r4ss \verb{SS_read*} and \verb{SS_write*()}
+functions is ending, so please update models to 3.30.
 }
 \seealso{
 \code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_readdat_3.30]{SS_readdat_3.30()}}

@@ -6,7 +6,7 @@
 #' (and potentially additional functions in the future).
 #'
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
-#' functions is ending, so please update models to 3.30. 
+#' functions is ending, so please update models to 3.30.
 #'
 #'
 #' @template file
@@ -24,7 +24,7 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_3.00 <- function(file, verbose = TRUE,
                             echoall = lifecycle::deprecated(), section = NULL) {
-                                # deprecate. Remove code upon next release.
+  # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
     what = "SS_readdat_3.00()",
