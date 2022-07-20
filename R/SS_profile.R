@@ -297,6 +297,15 @@ SS_profile <-
     totallike <- rep(NA, n)
     liketable <- NULL
 
+    # change working directory
+    if (verbose) {
+      message(
+        "Changing working directory to ", dir, ",\n",
+        " but will be changed back on exit from function."
+      )
+    }
+    setwd(dir)
+   
     # note: std file name is independent of executable name
     stdfile <- file.path(dir, "ss.std")
 
