@@ -21,34 +21,51 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
   exe_no_extension <- gsub("\\.exe$", "", exe)
 
   # Check that the file exists
-  os <- ifelse(grepl("windows", .Platform[["OS.type"]], ignore.case = TRUE),
-    "windows", "linux"
-  )
   exename <- paste0(
     exe_no_extension,
-    switch(os,
+    switch(.Platform[["OS.type"]],
       windows = ".exe",
-      linux = ""
+      unix = ""
     )
   )
   # look for exe in path
   path_to_exe <- Sys.which(exename)[[1]]
-  if (path_to_exe != "") {
-    # if exe not found in path
+  # set flag for exe in path
+  exe_in_path <- path_to_exe != ""
+    
+  if (exe_in_path) {
+    # if exe is found in path
+    # make sure it has a size that makes sense for Stock Synthesis
+    # (linux systems have a command line tool called "ss" in a location
+    # like /usr/sbin/ but it's size is much smaller (about 100k vs 7MB)
+    if (file.info(path_to_exe)[["size"]] < 1e6) {
+      if (verbose) {
+        message("Executable found in path that isn't Stock Synthesis:",
+          path_to_exe
+        )
+      }
+      exe_in_path <- FALSE
+    }
     # normalize path and remove exe name from the end
     # e.g. convert "C:\SS\SSB672~1.01_\ss.exe" to "C:/SS/SSv3.30.19.01_Apr15"
     path_to_exe <- dirname(normalizePath(path_to_exe))
     if (verbose) {
       message("Executable found in path at ", path_to_exe)
     }
-  } else {
-    # if not found in path then
-    # check for exe in specified directory (or directories)
+  }
+
+  if (!exe_in_path) {
+    # if exe not found in path then check for exe in specified directory
+    # (or directories)
     for (idir in seq_along(dir)) {
       if (file.exists(file.path(dir[idir], exename))) {
         path_to_exe[idir] <- dir[idir]
         if (verbose) {
           message("Executable found in directory ", path_to_exe)
+        }
+        # add ./ to exename so it knows to run in the current directory
+        if (.Platform[["OS.type"]] == "unix") {
+          exename <- paste0("./", exename)
         }
       } else {
         # if not in path or specified directory, create error

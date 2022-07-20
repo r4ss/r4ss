@@ -11,16 +11,19 @@ file.copy(example_path, tmp_path, recursive = TRUE)
 # if using tmp_path directly
 runs_path <- file.path(tmp_path, "extdata")
 path_simple_small <- file.path(runs_path, "simple_small")
+
 # clean up
 on.exit(unlink(tmp_path, recursive = TRUE))
 
 test_that("check_exe() fails or succeeds as expected", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   # error when no exe found
+  if (.)
   expect_error(check_exe())
   # returns path (along with exe name) when exe found
   check_exe_results <- check_exe(dir = path_simple_small)
@@ -29,7 +32,8 @@ test_that("check_exe() fails or succeeds as expected", {
 
 test_that("SS_doRetro() runs on simple_small model", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
@@ -72,7 +76,8 @@ test_that("SS_doRetro() runs on simple_small model", {
 
 test_that("SS_RunJitter runs on simple_small model", {
   # skip if no executable in model path
-  skipexe <- (!file.exists(file.path(path_simple_small, "ss"))) &
+  skipexe <- (!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe")))
   dir.jit <- file.path(path_simple_small, "jitter")
   expect_true(copy_SS_inputs(
@@ -84,12 +89,6 @@ test_that("SS_RunJitter runs on simple_small model", {
     copy_par = FALSE,
     verbose = FALSE
   ))
-  if (!skipexe & .Platform[["OS.type"]] == "unix") {
-    file.copy(
-      from = file.path(path_simple_small, "ss"),
-      to = file.path(dir.jit, "ss")
-    )
-  }
   # run jitters
   if (skipexe) {
     # error expected when no exe found
@@ -120,7 +119,8 @@ test_that("SS_RunJitter runs on simple_small model", {
 
 test_that("profile functions run on simple_small model", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
@@ -134,13 +134,6 @@ test_that("profile functions run on simple_small model", {
     copy_par = TRUE,
     verbose = TRUE
   )
-  # b/c current copy ss inputs wont copy the exe for mac or linux
-  if (.Platform[["OS.type"]] == "unix") {
-    file.copy(
-      from = file.path(path_simple_small, "ss"),
-      to = file.path(dir.prof, "ss")
-    )
-  }
   starter <- SS_readstarter(file.path(dir.prof, "starter.ss"))
   # Make use the par file as a starting point
   starter$ctlfile <- "control_modified.ss"
@@ -169,7 +162,8 @@ test_that("profile functions run on simple_small model", {
 
 test_that("Run an SS3 model and read the hessian", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
