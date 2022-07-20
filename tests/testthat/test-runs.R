@@ -23,8 +23,7 @@ test_that("check_exe() fails or succeeds as expected", {
   message = "skipping test that requires SS executable"
   )
   # error when no exe found
-  if (.)
-  expect_error(check_exe())
+  expect_error(check_exe("bad_exe_name"))
   # returns path (along with exe name) when exe found
   check_exe_results <- check_exe(dir = path_simple_small)
   expect_equal(check_exe_results[["path"]], path_simple_small)

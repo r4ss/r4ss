@@ -14,6 +14,7 @@ SS_tune_comps(
   init_run = FALSE,
   dir = getwd(),
   exe = "ss",
+  extras = "",
   allow_up_tuning = FALSE,
   verbose = TRUE,
   ...
@@ -52,6 +53,9 @@ the current working directory.}
 \item{exe}{Executable name, optionally including the path to the
 executable if not in the specified directory or in the path.}
 
+\item{extras}{Additional ADMB command line arguments passed
+to the executable, such as "-nohess"}
+
 \item{allow_up_tuning}{Allow tuning values for Francis or MI > 1? Defaults to
 FALSE, which caps tuning values at 1.}
 
@@ -59,7 +63,7 @@ FALSE, which caps tuning values at 1.}
 to the screen.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
-\code{extras}, and \code{show_in_console}.}
+\code{show_in_console}.}
 }
 \value{
 Returns a table that can be copied into the control file.

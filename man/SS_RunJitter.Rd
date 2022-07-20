@@ -7,6 +7,7 @@
 SS_RunJitter(
   dir = getwd(),
   mydir = lifecycle::deprecated(),
+  Intern = lifecycle::deprecated(),
   Njitter,
   printlikes = TRUE,
   jitter_fraction = NULL,
@@ -20,6 +21,8 @@ SS_RunJitter(
 \item{dir}{Directory where model files are located.}
 
 \item{mydir}{Deprecated. Use \code{dir} instead.}
+
+\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
 If \code{length(Njitter) > 1} only the iterations specified will be ran,
@@ -46,8 +49,6 @@ to the screen.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
 \code{extras}, and \code{show_in_console}.}
-
-\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 }
 \value{
 A vector of likelihoods for each jitter iteration.

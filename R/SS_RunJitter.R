@@ -52,6 +52,7 @@
 #'
 SS_RunJitter <- function(dir = getwd(),
                          mydir = lifecycle::deprecated(),
+                         Intern = lifecycle::deprecated(),
                          Njitter,
                          printlikes = TRUE,
                          jitter_fraction = NULL,
