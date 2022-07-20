@@ -13,8 +13,8 @@
 #' be used instead of `linenum` or left as NULL. Can be a vector if you are
 #' profiling multiple parameters at the same time.
 #' @param usepar Use PAR file from previous profile step for starting values?
-#' @param globalpar Use global par file ("parfile_original_backup.sso", which is
-#' automatically copied from original `parfile`) for all runs instead
+#' @param globalpar Use global par file (`parfile_original_backup.sso`, which is
+#' automatically copied from original `ss.par`) for all runs instead
 #' of the par file from each successive run
 #' @param parlinenum Line number in par file to change (if usepar = TRUE).
 #' Can be a vector if you are profiling multiple parameters at the same time.
@@ -204,14 +204,14 @@ SS_profile <-
     check_exe(exe = exe, dir = dir, verbose = verbose)
 
     # figure out which line to change in control file
-    # if not using parfile, info still needed to set phase negative in control file
+    # if not using par file, info still needed to set phase negative in control file
     if (is.null(linenum) & is.null(string)) {
       stop("You should input either 'linenum' or 'string' (but not both)")
     }
     if (!is.null(linenum) & !is.null(string)) {
       stop("You should input either 'linenum' or 'string' (but not both)")
     }
-    if (usepar) { # if using parfile
+    if (usepar) { # if using par file
       if (is.null(parlinenum) & is.null(parstring)) {
         stop(
           "Using par file. You should input either 'parlinenum' or ",
@@ -456,7 +456,7 @@ SS_profile <-
           file.copy("covar.sso", paste("covar", i, ".sso", sep = ""), overwrite = overwrite)
           file.copy("warning.sso", paste("warning", i, ".sso", sep = ""), overwrite = overwrite)
           file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""), overwrite = overwrite)
-          file.copy(parfile, paste(model, ".par_", i, ".sso", sep = ""), overwrite = overwrite)
+          file.copy("ss.par", paste(model, ".par_", i, ".sso", sep = ""), overwrite = overwrite)
         }
       } # end running stuff
     } # end loop of whichruns
