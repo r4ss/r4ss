@@ -38,7 +38,7 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.30 <- function(file, verbose = FALSE,
                             use_datlist = TRUE,
-                            datlist = "data.ss_new",
+                            datlist = file.path(dirname(file), "data_echo.ss_new"),
                             ## Parameters that are not defined in control file
                             nseas = NULL,
                             N_areas = NULL,
