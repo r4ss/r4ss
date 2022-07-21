@@ -2403,8 +2403,8 @@ SS_output <-
     # updated BIOLOGY table names based on change July 2022 change
     # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/348
     biology <- df.rename(biology,
-      oldnames = c("Low", "Mean_Size", "Wt_len_F", "Mat_len", "Spawn", "Wt_len_M", "Fecundity"),
-      newnames = c("Len_lo", "Len_mean", "Wt_F", "Mat", "Mat*Fec", "Wt_M", "Fec")
+      oldnames = c("Low", "Mean_Size", "Wt_len", "Wt_len_F", "Mat_len", "Spawn", "Wt_len_M", "Fecundity"),
+      newnames = c("Len_lo", "Len_mean", "Wt_F", "Wt_F", "Mat", "Mat*Fec", "Wt_M", "Fec")
     )
 
     # determine fecundity type
