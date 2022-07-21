@@ -80,7 +80,6 @@
 #'   dir = mydir, # directory
 #'   # "NatM" is a subset of one of the
 #'   # parameter labels in control.ss_new
-#'   model = "ss",
 #'   oldctlfile = "control.ss_new",
 #'   newctlfile = "control_modified.ss",
 #'   string = "steep",

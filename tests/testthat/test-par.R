@@ -10,7 +10,6 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 
 # paths to the model files
 sim_small <- file.path(tmp_path, "extdata", "simple_small")
-sim_3.24 <- file.path(tmp_path, "extdata", "simple_3.24")
 
 test_that("SS_readpars functions work ", {
   par_3.30 <- SS_readpar_3.30(
@@ -33,24 +32,7 @@ test_that("SS_readpars functions work ", {
     verbose = FALSE
   )
   expect_equal(par_3.30, par_3.30_read_2)
-  par_3.24 <- SS_readpar_3.24(
-    parfile = file.path(sim_3.24, "ss3.par"),
-    datsource = file.path(sim_3.24, "simple.dat"),
-    ctlsource = file.path(sim_3.24, "simple.ctl"),
-    verbose = FALSE
-  )
-  SS_writepar_3.24(par_3.24, file.path(sim_3.24, "ss_test.par"),
-    verbose = FALSE
-  )
-  expect_true(file.exists(file.path(sim_3.24, "ss_test.par")))
-  par_3.24_read_2 <- SS_readpar_3.24(
-    parfile = file.path(sim_3.24, "ss_test.par"),
-    datsource = file.path(sim_3.24, "simple.dat"),
-    ctlsource = file.path(sim_3.24, "simple.ctl"),
-    verbose = FALSE
-  )
-  expect_equal(par_3.24, par_3.24_read_2)
-})
+  })
 
 # clean up
 unlink(tmp_path, recursive = TRUE)

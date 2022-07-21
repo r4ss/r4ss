@@ -276,7 +276,7 @@ SS_plots <-
       stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
     }
     if (uncertainty & !inputs[["covar"]]) {
-      warning("covar information unavailable, changing 'uncertainty' to FALSE")
+      message("covar information unavailable, changing 'uncertainty' to FALSE")
       uncertainty <- FALSE
     }
     if (forecastplot & max(timeseries[["Yr"]] > endyr + 1) == 0) {

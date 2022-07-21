@@ -312,7 +312,7 @@ SS_output <-
       # CoVar.sso file
       covarfile <- file.path(dir, covarfile)
       if (!file.exists(covarfile)) {
-        warning("covar file not found, input 'covar' changed to FALSE")
+        message("covar file not found, input 'covar' changed to FALSE")
         covar <- FALSE
       } else {
 

@@ -50,8 +50,8 @@ matrix with a column for each parameter.}
 
 \item{usepar}{Use PAR file from previous profile step for starting values?}
 
-\item{globalpar}{Use global par file ("parfile_original_backup.sso", which is
-automatically copied from original \code{parfile}) for all runs instead
+\item{globalpar}{Use global par file (\code{parfile_original_backup.sso}, which is
+automatically copied from original \code{ss.par}) for all runs instead
 of the par file from each successive run}
 
 \item{parlinenum}{Line number in par file to change (if usepar = TRUE).
@@ -128,7 +128,6 @@ profile <- SS_profile(
   dir = mydir, # directory
   # "NatM" is a subset of one of the
   # parameter labels in control.ss_new
-  model = "ss",
   oldctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   string = "steep",
