@@ -31,9 +31,9 @@ download_models <- function(dir = file.path("inst", "extdata"),
   if("simpleError" %in% class(result)) {
     stop("The test models could not be downloaded. Does the branch exist?")
   }
-  list_files <- unzip(list = TRUE, zipfile = zip_file_path)
+  list_files <- utils::unzip(list = TRUE, zipfile = zip_file_path)
   save_files <- list_files[grep("/models/", list_files$Name, fixed = TRUE), ]
-  unzip(zipfile = zip_file_path, files = save_files[["Name"]], 
+  utils::unzip(zipfile = zip_file_path, files = save_files[["Name"]], 
     exdir = dir)
   if (dir.exists(file.path(dir, "models")) & overwrite == FALSE) {
     warning("The model directory ", file.path(dir, "models"),  " already exists ",
