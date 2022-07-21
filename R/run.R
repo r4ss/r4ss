@@ -18,6 +18,16 @@
 #' The three possible messages are "model run failed", "ran model", and
 #' "unknown run status".
 #'
+#' @description First searches path for the specified executable name
+#' and returns the location of that file if found. If not found in path
+#' it then searches the specified directory. Linux systems have an
+#' existing executable utility `/usr/sbin/ss` in the path. If `exe =
+#' "ss"` and this file is found by this function, it will be ignored
+#' based on the smaller file size relative to the SS3 executable. Linux
+#' users who want to use the workflow of having an SS3 executable in
+#' their path should name the file something else, such as `ss3` or
+#' `ss_linux`. 
+
 #' @author Ian Taylor, Kathryn Doering
 #' @export
 #' @seealso [copy_SS_inputs()],

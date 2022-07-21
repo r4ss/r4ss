@@ -4,7 +4,8 @@
   * `run_SS_models()` is now `run()` and has easier defaults and better
     support for having the Stock Synthesis executable in your path
   * Functions have more consistent inputs (e.g. always `dir` instead of `dir`,
-    `mydir`, or `File`, and now defaulting to current working directory)
+    `mydir`, `File`, or `masterdir` and now defaulting to current
+    working directory) 
   * Input `show_in_console = FALSE` will pipe output to a text file
     keeping R console cleaner while models run
 * Deprecates functions that relate to 3.24 models (although
@@ -14,6 +15,7 @@
 * Uses new columns names in BIOLOGY output https://github.com/r4ss/r4ss/pull/711
 * Numerous bug fixes
 * Adds dependency on 'tidyr'
+* Removes never-completed function `SSbootstrap()`
 
 # r4ss 1.44.0 (23 May 2022)
 * Minor improvements and bug fixes
