@@ -121,8 +121,8 @@ SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
 
     # add rough check for if the model ran (although a report file may exist if
     # if the model only ran part of the way through). Warn the user in this case.
-    if (!file.exists("Report.sso")) {
-      warning("The retrospective model run failed in ", getwd())
+    if (!file.exists(file.path(newdir_iyr, "Report.sso"))) {
+      warning("The retrospective model run failed in ", newdir_iyr)
     }
   }
 }

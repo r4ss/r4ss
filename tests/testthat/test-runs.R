@@ -38,7 +38,8 @@ test_that("SS_doRetro() runs on simple_small model", {
   )
   SS_doRetro(
     dir = path_simple_small,
-    oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
+    oldsubdir = "", newsubdir = "retrospectives", years = 0:-2,
+    show_in_console = FALSE
   )
   retro_subdirs <- file.path(
     path_simple_small, "retrospectives",
