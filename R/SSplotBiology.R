@@ -1636,7 +1636,7 @@ SSplotBiology <-
         abline(h = c(0, 1), col = "grey")
       }
       herma_func2 <- function() {
-        plot(growdatF[["Age_Beg"]], growdatF[["Herma_Cum"]],
+        plot(growdatF[["Age_Beg"]], growdatF[["sex_ratio"]],
           xaxs = "i", ylim = c(0, 1), las = 1,
           xlab = labels[2], ylab = labels[14], type = "l", lwd = 3, col = colvec[2]
         )
