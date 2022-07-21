@@ -455,7 +455,7 @@ SS_profile <-
           file.copy("covar.sso", paste("covar", i, ".sso", sep = ""), overwrite = overwrite)
           file.copy("warning.sso", paste("warning", i, ".sso", sep = ""), overwrite = overwrite)
           file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""), overwrite = overwrite)
-          file.copy("ss.par", paste(model, ".par_", i, ".sso", sep = ""), overwrite = overwrite)
+          file.copy("ss.par", paste("ss.par_", i, ".sso", sep = ""), overwrite = overwrite)
         }
       } # end running stuff
     } # end loop of whichruns
