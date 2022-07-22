@@ -50,7 +50,7 @@ SS_readdat_3.30 <-
     ## Run some checks to ensure that only the section break 999's are being captured
     ## and not things such as year 999 or a catch of 999mt etc
     incorr.secs <- NULL
-    for (i in 1:length(sec.end.inds)) {
+    for (i in seq_along(sec.end.inds)) {
       check_section <- dat[sec.end.inds[i]]
       check_section <- strsplit(check_section, "#")[[1]][1]
       check_section <- unlist(strsplit(unlist(strsplit(check_section, "\t")), " "))
@@ -518,7 +518,7 @@ SS_readdat_3.30 <-
             "on separate lines than other inputs."
           )
         }
-        xx <- paste(xx[1:length(xx) %% 2 == 1], xx[1:length(xx) %% 2 == 0])
+        xx <- paste(xx[seq_along(xx) %% 2 == 1], xx[seq_along(xx) %% 2 == 0])
       }
       datlist[["MeanSize_at_Age_obs"]] <- data.frame(do.call("rbind", strsplit(xx, "\\s+")),
         stringsAsFactors = FALSE

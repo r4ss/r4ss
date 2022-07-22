@@ -129,14 +129,14 @@ SSMethod.Cond.TA1.8 <-
 
     # Find the wieghting factor for this combination of factors
     AllRes <- NULL
-    for (i in 1:length(uindx)) { # each row of pldat is an individual comp
+    for (i in seq_along(uindx)) { # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
 
       Lbins <- unique(subdbase[["Lbin_lo"]])
       Intermediate <- matrix(0, length(Lbins), 5,
         dimnames = list(Lbins, c("Obsmn", "Varn", "Expmn", "N", "Resid"))
       )
-      for (j in 1:length(Lbins)) {
+      for (j in seq_along(Lbins)) {
         ILbin <- Lbins[j]
         subsubdbase <- subdbase[subdbase[["Lbin_lo"]] == ILbin, ]
         if (length(subsubdbase[["Yr"]]) > 0) {
@@ -157,7 +157,7 @@ SSMethod.Cond.TA1.8 <-
       AbarNObs <- 0
       AbarNPre <- 0
       AbarVarn <- 0
-      for (j in 1:length(Lbins)) {
+      for (j in seq_along(Lbins)) {
         AbarNObs <- AbarNObs + as.double(Intermediate[j, "Obsmn"] * Weights[j])
         AbarNPre <- AbarNPre + as.double(Intermediate[j, "Expmn"] * Weights[j])
         AbarVarn <- AbarVarn + as.double(Weights[j]^2 * Intermediate[j, "Varn"]) /
@@ -180,7 +180,7 @@ SSMethod.Cond.TA1.8 <-
     Nmult <- 1 / var(pldat[, "Std.res"], na.rm = TRUE)
 
     # Find the adjusted confidence intervals
-    for (i in 1:length(uindx)) {
+    for (i in seq_along(uindx)) {
       pldat[i, "ObsloAdj"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"] / sqrt(Nmult)
       pldat[i, "ObshiAdj"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"] / sqrt(Nmult)
     }

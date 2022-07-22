@@ -205,7 +205,7 @@ SS_output <-
       # added to clean up adaptation to more consistent
       # syntax in Report.sso as of SS version 3.30.01.15.
       if (!is.null(df)) {
-        for (iname in 1:length(oldnames)) {
+        for (iname in seq_along(oldnames)) {
           names(df)[names(df) == oldnames[iname]] <- newnames[iname]
         }
       }
@@ -1205,7 +1205,7 @@ SS_output <-
     labs <- likelihoods_by_fleet[["Label"]]
 
     # removing ":" at the end of likelihood components
-    for (irow in 1:length(labs)) {
+    for (irow in seq_along(labs)) {
       labs[irow] <- substr(labs[irow], 1, nchar(labs[irow]) - 1)
     }
     likelihoods_by_fleet[["Label"]] <- labs
@@ -1328,7 +1328,7 @@ SS_output <-
     )
     # look for rows in table of parameters that have label indicating deviation
     devrows <- NULL
-    for (iname in 1:length(devnames)) {
+    for (iname in seq_along(devnames)) {
       devrows <- unique(c(devrows, grep(
         devnames[iname],
         rownames(estimated_non_dev_parameters)
@@ -1640,7 +1640,7 @@ SS_output <-
         lowcor <- 0
         if (nrow(lowcortestlist) > 0) {
           lowcortestlist[["max"]] <- NA
-          for (i in 1:length(lowcortestlist[, 1]))
+          for (i in seq_along(lowcortestlist[, 1]))
           {
             lowcortestlist[["max"]][i] <- max(corfilter[["corr"]][corfilter[["label.i"]] == lowcortestlist[["name"]][i]], corfilter[["corr"]][corfilter[["label.j"]] == lowcortestlist[["name"]][i]])
           }
@@ -2218,7 +2218,7 @@ SS_output <-
           tune_lines <- grep("Factor", fit_size_comps[, 1])
           sizentune <- NULL
           # loop over methods to fill in new columns
-          for (imethod in 1:length(method_lines)) {
+          for (imethod in seq_along(method_lines)) {
             start <- method_lines[imethod]
             if (imethod != length(method_lines)) {
               end <- method_lines[imethod + 1] - 1

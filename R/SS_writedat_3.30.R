@@ -229,7 +229,7 @@ SS_writedat_3.30 <- function(datlist,
   #  v.names = "catch",
   #  sep = ""),
   #  data.frame(
-  #    "fleet" = 1:length(d[["se_log_catch"]]),
+  #    "fleet" = seq_along(d[["se_log_catch"]]),
   #    "catch_se" = d[["se_log_catch"]]),
   #  all.x = TRUE)
   catch.out <- catch.out[, c("year", "seas", "fleet", "catch", "catch_se")]

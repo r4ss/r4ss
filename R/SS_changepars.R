@@ -127,7 +127,7 @@ SS_changepars <-
       # if strings are provided, look for matching subset of labels
       if (!is.null(strings)) {
         # loop over vector of strings to add to goodnames vector
-        for (i in 1:length(strings)) {
+        for (i in seq_along(strings)) {
           # fixed matching on string
           goodnames[[i]] <- allnames[grep(strings[i], allnames, fixed = TRUE)]
         }

@@ -161,7 +161,7 @@ SSsummarize <- function(biglist,
         sizeselfactor <- unique(sizeseltemp[["Factor"]])
       }
       # loop over factor(s) input by user or taken from table
-      for (iselfactor in 1:length(sizeselfactor)) {
+      for (iselfactor in seq_along(sizeselfactor)) {
         seltemp_i <- sizeseltemp[sizeseltemp[["Factor"]] == sizeselfactor[iselfactor], ]
         seltemp_i[["imodel"]] <- imodel
         seltemp_i[["name"]] <- modelnames[imodel]
@@ -193,7 +193,7 @@ SSsummarize <- function(biglist,
         ageselfactor <- unique(ageseltemp[["Factor"]])
       }
       # loop over factor(s) input by user or taken from table
-      for (iselfactor in 1:length(ageselfactor)) {
+      for (iselfactor in seq_along(ageselfactor)) {
         seltemp_i <- ageseltemp[ageseltemp[["Factor"]] == ageselfactor[iselfactor], ]
         seltemp_i[["imodel"]] <- imodel
         seltemp_i[["name"]] <- modelnames[imodel]

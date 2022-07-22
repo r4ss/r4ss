@@ -164,7 +164,7 @@ SSplotBiology <-
     ians_contour <- c("white", rep("blue", 100))
     # convert colvec to semi-transparent colors for shading polygons
     shadecolvec <- rep(NA, length(colvec))
-    for (icol in 1:length(colvec)) {
+    for (icol in seq_along(colvec)) {
       tmp <- col2rgb(colvec[icol]) / 255
       shadecolvec[icol] <- rgb(
         red = tmp[1], green = tmp[2], blue = tmp[3],

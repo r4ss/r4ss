@@ -151,7 +151,7 @@ SSplotData <- function(replist,
   ## now loop over typenames looking for presence of this data type
   ### --- 11/2015 Cole added a "size" column to this data so that relative
   ### uncertainties can be used for cex values in a new plot below.
-  for (itype in 1:length(typenames)) {
+  for (itype in seq_along(typenames)) {
     dat <- get(typenames[itype])
     typename <- typenames[itype]
     # confirm that there is non-NA data of this type

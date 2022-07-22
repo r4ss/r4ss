@@ -90,7 +90,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     # Build parameter deviations list
     parlist[["MG_parm_devs"]] <- list()
     # Read in the values for parameter deviations for each vector
-    for (i in 1:length(dev_parm_labels))
+    for (i in seq_along(dev_parm_labels))
     {
       years_temp <- dev_parm_start[i]:dev_parm_end[i]
       dev_temp <- as.numeric(strsplit(parvals[(grep("MGparm_dev", parvals) + i)], " ")[[1]])
@@ -341,7 +341,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     # Build parameter deviations list
     parlist[["sel_parm_devs"]] <- list()
     # Read in the values for parameter deviations for each vector
-    for (i in 1:length(dev_parm_labels))
+    for (i in seq_along(dev_parm_labels))
     {
       years_temp <- dev_parm_start[i]:dev_parm_end[i]
       dev_temp <- as.numeric(strsplit(parvals[(grep("selparm_dev", parvals) + i)], " ")[[1]])

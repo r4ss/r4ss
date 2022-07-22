@@ -86,7 +86,7 @@ SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
   check_exe(exe = exe, dir = olddir, verbose = verbose)
 
   # loop over retrospective years
-  for (iyr in 1:length(years)) {
+  for (iyr in seq_along(years)) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
     message("Running retrospective in ", newdir_iyr)
 

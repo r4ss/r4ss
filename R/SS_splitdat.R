@@ -71,7 +71,7 @@ SS_splitdat <-
 
     if (!MLE & !inputs) {
       if (length(starts) == 0) stop("no bootstrap values in ", inname, "\n  change 'N bootstrap datafiles' in starter.ss to 3 or greater")
-      for (i in 1:length(starts)) {
+      for (i in seq_along(starts)) {
         outfile <- paste(outpath, "/", outpattern, ifelse(number, i, ""), ".ss", sep = "")
         outline <- paste("# Data file created from", infile, "to", outfile)
         if (verbose) message(outline)

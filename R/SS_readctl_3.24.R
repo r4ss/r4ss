@@ -73,7 +73,7 @@ SS_readctl_3.24 <- function(file,
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
-  for (i in 1:length(dat)) {
+  for (i in seq_along(dat)) {
     # split along blank spaces
     mysplit <- strsplit(dat[i], split = "[[:blank:]]+")[[1]]
     mysplit <- mysplit[mysplit != ""]
@@ -84,7 +84,7 @@ SS_readctl_3.24 <- function(file,
     # convert to numeric
     nums <- suppressWarnings(as.numeric(mysplit))
     if (sum(is.na(nums)) > 0) {
-      maxcol <- min((1:length(nums))[is.na(nums)]) - 1
+      maxcol <- min((seq_along(nums))[is.na(nums)]) - 1
     } else {
       maxcol <- length(nums)
     }

@@ -154,7 +154,7 @@ add_legend <- function(legendlabels,
                        lwd = 2,
                        type = "l") {
   if (is.null(legendorder)) {
-    legendorder <- 1:length(legendlabels)
+    legendorder <- seq_along(legendlabels)
   }
   if (is.numeric(legendloc)) {
     Usr <- par()$usr

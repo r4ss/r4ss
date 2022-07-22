@@ -73,7 +73,7 @@ populate_multiple_folders <- function(outerdir.old = NULL,
   # figure out the inner directories
   innerdirs <- dir(outerdir.old)
   # loop over possibilities
-  for (idir in 1:length(innerdirs)) {
+  for (idir in seq_along(innerdirs)) {
     # directory in question
     dir <- innerdirs[idir]
     # check to make sure it's a directory

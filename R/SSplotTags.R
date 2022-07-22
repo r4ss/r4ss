@@ -112,11 +112,11 @@ SSplotTags <-
           dplyr::select(.data[["Value"]]) # grabs the overdispersion parms for each Tag Group
         tau <- overdispersion[["Value"]][1]
 
-        k <- c(1:length(tagdbase2[["Exp"]]))
-        for (i in 1:length(tagdbase2[["Exp"]])) {
+        k <- c(seq_along(tagdbase2[["Exp"]]))
+        for (i in seq_along(tagdbase2[["Exp"]])) {
           k[i] <- mu[i] / (tau - 1) # variance
         }
-        i <- c(1:length(tagdbase2[["Exp"]]))
+        i <- c(seq_along(tagdbase2[["Exp"]]))
         CI_down <- stats::qnbinom(c(0.975), size = k[i], mu = mu[i])
         CI_up <- stats::qnbinom(c(0.025), size = k[i], mu = mu[i])
         new_tagdbase2 <- cbind(tagdbase2, CI_up, CI_down)

@@ -179,8 +179,8 @@ NegLogInt_Fn <- function(dir = getwd(),
   # Read CTL
   CTL <- readLines(file.path(dir, STARTER[["ctlfile"]]))
   # Modify CTL
-  for (ParI in 1:length(SD_Group_Vec)) {
-    for (CtlLineI in 1:length(CTL_linenum_List[[ParI]])) {
+  for (ParI in seq_along(SD_Group_Vec)) {
+    for (CtlLineI in seq_along(CTL_linenum_List[[ParI]])) {
       Temp <- as.vector(unlist(sapply(CTL[CTL_linenum_List[[ParI]][CtlLineI]],
         FUN = function(Char) {
           strsplit(Char, " ")[[1]]
@@ -282,7 +282,7 @@ NegLogInt_Fn <- function(dir = getwd(),
         PAR_0 <- scan(file.path(dir, paste0("ss_init.par")), comment.char = "#", quiet = TRUE)
       }
       # Modify values of PAR file for short-line values
-      for (ParI in 1:length(SD_Group_Vec)) {
+      for (ParI in seq_along(SD_Group_Vec)) {
         if (length(Temp) == 7) {
           if ("PAR_0" %in% ls()) {
             PAR_0[PAR_num_Vec[ParI]] <- SD_Group_Vec[ParI]
@@ -432,7 +432,7 @@ NegLogInt_Fn <- function(dir = getwd(),
       write("RECORD FOR PARAMETERS IN INTEGRAL",
         file = OptRecord, append = TRUE
       )
-      for (IntI in 1:length(Int_Group_List)) {
+      for (IntI in seq_along(Int_Group_List)) {
         Temp <- unlist(ESTPAR_num_List[Int_Group_List[[IntI]]])
         write(paste("Group", IntI),
           file = OptRecord,
@@ -447,7 +447,7 @@ NegLogInt_Fn <- function(dir = getwd(),
 
     # Calculate NLL (while adding in constant of integration for random-walk coefficients)
     NLL <- DIAG[["nloglike"]]
-    for (ParI in 1:length(SD_Group_Vec)) {
+    for (ParI in seq_along(SD_Group_Vec)) {
       # Add in constant of integration for "Long_Penalty" parameters
       if (CTL_linenum_Type[ParI] == "Long_Penalty") {
         NLL <- NLL + -1 * (-log(2 * pi) / 2 - log(SD_Group_Vec[ParI])) * length(ESTPAR_num_List[[ParI]])
@@ -491,7 +491,7 @@ NegLogInt_Fn <- function(dir = getwd(),
     # Approximate integral using Laplace Approximation
     Int_num_List <- vector("list", length = length(Int_Group_List))
     LnDet <- rep(0, length(Int_Group_List))
-    for (IntI in 1:length(Int_Group_List)) {
+    for (IntI in seq_along(Int_Group_List)) {
       # Only calculate if necessary
       if (length(unlist(ESTPAR_num_List[Int_Group_List[[IntI]]])) > 0) {
         # Determine indices for integral

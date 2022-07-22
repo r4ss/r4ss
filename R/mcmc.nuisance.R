@@ -80,7 +80,7 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
 
   if (header & labelstrings[1] != "all") {
     labels <- NULL
-    for (istring in 1:length(labelstrings)) {
+    for (istring in seq_along(labelstrings)) {
       labels <- c(labels, names(mcmcdata)[grep(labelstrings[istring], names(mcmcdata))])
     }
     message(
