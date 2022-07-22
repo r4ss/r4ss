@@ -4,6 +4,7 @@
 #'
 #' @template dir
 #' @param oldctlfile Source control file. Default = "control.ss_new"
+#' @param masterctlfile Deprecated. Use `oldctlfile` instead.
 #' @param newctlfile Destination for new control files (must match entry in
 #' starter file). Default = "control_modified.ss".
 #' @param linenum Line number of parameter to be changed. Can be used instead

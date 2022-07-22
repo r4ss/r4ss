@@ -33,6 +33,8 @@ the current working directory.}
 
 \item{oldctlfile}{Source control file. Default = "control.ss_new"}
 
+\item{masterctlfile}{Deprecated. Use \code{oldctlfile} instead.}
+
 \item{newctlfile}{Destination for new control files (must match entry in
 starter file). Default = "control_modified.ss".}
 

@@ -55,7 +55,8 @@ hardwired to Version = 1.}
 \item{StartFromPar}{Logical flag (TRUE or FALSE) saying whether to start each
 round of optimization from a ".par" file (I recommend TRUE)}
 
-\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
+\item{Intern}{Deprecated. Use \code{show_in_console} instead. See
+\code{\link[=run]{run()}} for details.}
 
 \item{ReDoBiasRamp}{Logical flag saying whether to re-do the bias ramp
 (using \code{\link[=SS_fitbiasramp]{SS_fitbiasramp()}}) each time Stock Synthesis is run.}
@@ -79,10 +80,7 @@ directory.}
 to the screen.}
 
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
-\code{extras}.}
-
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
+\code{extras} and \code{show_in_console}.}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation

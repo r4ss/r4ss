@@ -27,8 +27,8 @@
 #' hardwired to Version = 1.
 #' @param StartFromPar Logical flag (TRUE or FALSE) saying whether to start each
 #' round of optimization from a ".par" file (I recommend TRUE)
-#' @template show_in_console
-#' @param Intern Deprecated. Use `show_in_console` instead.
+#' @param Intern Deprecated. Use `show_in_console` instead. See
+#' [r4ss::run()] for details.
 #' @param ReDoBiasRamp Logical flag saying whether to re-do the bias ramp
 #' (using [SS_fitbiasramp()]) each time Stock Synthesis is run.
 #' @param BiasRamp_linenum_Vec Vector giving the line numbers from the CTL file
@@ -40,10 +40,9 @@
 #' detect these automatically based on the length of relevant lines from the CTL
 #' file.
 #' @template exe
-#' @template show_in_console
 #' @template verbose
 #' @param ... Additional arguments passed to [r4ss::run()], such as
-#' `extras`.
+#' `extras` and `show_in_console`.
 #' @seealso [read.admbFit()], [getADMBHessian()]
 #' @author James Thorson
 #' @export
@@ -91,7 +90,6 @@ NegLogInt_Fn <- function(dir = getwd(),
       what = "NegLogInt_Fn(Intern)",
       details = "Please use 'show_in_console' instead"
     )
-    show_in_console <- !Intern
   }
   if (lifecycle::is_present(File)) {
     lifecycle::deprecate_warn(
@@ -234,7 +232,7 @@ NegLogInt_Fn <- function(dir = getwd(),
   }
 
   # Run SS
-  run(dir = dir, verbose = verbose, ...)
+  run(dir = dir, exe = exe, verbose = verbose, ...)
   Sys.sleep(1)
 
   # Check convergence
