@@ -1,11 +1,14 @@
 #' Download SS3 test models
 #'  
-#' Function to download the models folder within the 
-#' nmfs-stock-synthesis/test-models repsitory
-#' @param dir The folder where the models subfolder should be written to.
-#' @param branch The name of the github branch to download.
+#' Download and unzip the models folder stored on GitHub within the 
+#' nmfs-stock-synthesis/test-models repository.
+#' @param dir A file path where the downloaded `"models"` subfolder will be written to.
+#' @param branch A string specifying the desired branch of
+#' [nmfs-stock-synthesis/test-models repository](https://github.com/nmfs-stock-synthesis/test-models#test-models)
+#' that you want to download. The default is `"main"`, which is the 
+#' stable/default branch.
 #' @template overwrite
-#' @return Invisibly return a value revealing whether the files were copied 
+#' @return Invisibly return a logical revealing whether the files were copied 
 #'  (TRUE) or not (FALSE). This function is used for its side effects of
 #'  downling SS3 test models.
 #' @examples
@@ -20,7 +23,7 @@ download_models <- function(dir = file.path("inst", "extdata"),
   branch = "main", overwrite = FALSE) {
   # checks
   if (!dir.exists(dir)) {
-    stop("dir ", dir, " does not exist")
+    dir.create(dir, recursive = TRUE)
   }
   zip_file_path <- file.path(dir, "test-models.zip")
   result <- tryCatch(utils::download.file(
@@ -37,7 +40,7 @@ download_models <- function(dir = file.path("inst", "extdata"),
     exdir = dir)
   if (dir.exists(file.path(dir, "models")) & overwrite == FALSE) {
     warning("The model directory ", file.path(dir, "models"),  " already exists ",
-      "\nand overwrite is FALSE, so no new files will be written." )
+      "\nand overwrite is FALSE. So, no new files will be written.")
   }
   dir.create(file.path(dir, "models"), showWarnings = FALSE)
   copy_status <- file.copy(from = file.path(dir, paste0("test-models-", branch), "models"), 
