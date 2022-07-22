@@ -418,7 +418,7 @@ NegLogInt_Fn <- function(dir = getwd(),
       comment.char = "#", quiet = TRUE
     )
     DIAG <- read.admbFit(file.path(dir, paste0("ss_", Iteration)))
-    HESS <- getADMBHessian(dir = dir, FileName = paste0("admodel_", Iteration, ".hes"))
+    HESS <- getADMBHessian(file.path(dir, paste0("admodel_", Iteration, ".hes")))
     # Calculate Hessian
     cov <- corpcor::pseudoinverse(HESS[["hes"]])
     scale <- HESS[["scale"]]
