@@ -221,7 +221,7 @@ r4ss::SS_write(inputs, dir = new_mod_path, overwrite = TRUE)
 ```
 
 If you make changes to the input model files that render the file
-unparsable by Stock Synthesis, the `SS_write()` functions may throw an
+unparsable by Stock Synthesis, the `SS_write()` function may throw an
 error (and hopefully provide an informative message about why). However,
 it is possible that an invalid Stock Synthesis model file could be
 written, so the true test is whether or not it is possible to run Stock

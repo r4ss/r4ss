@@ -70,8 +70,10 @@ Default is NULL, and if not explicitly specified the program will attempt to
 detect these automatically based on the length of relevant lines from the CTL
 file.}
 
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

@@ -1,8 +1,8 @@
 #' Find location of executable within path or specified directory
 #'
-#' Check that the executable name provided in `model`,
-#' an input argument to numerous `r4ss` functions,
-#' does not contain the extension and is available.
+#' Check that the Stock Synthesis executable name provided in `exe`,
+#' an input argument to numerous `r4ss` functions is available in the
+#' location specified by `dir` or in the path.
 #'
 #' @template exe
 #' @param dir The directory where `exe` is located (if not in path). Can
@@ -11,6 +11,17 @@
 #' @author Kelli F. Johnson, Ian G. Taylor
 #' @return A list containing the cleaned `exe` name based on the input
 #' argument and the path (or paths if `dir` is a vector) to where it is found.
+#' 
+#' @description The `check_exe()` function first checks the PATH for the
+#' specified SS3 executable name and returns the file's location if
+#' found. If the SS3 executable is not found in the PATH, then it is
+#' assumed the that executable exists in the specified directory. Linux
+#' systems have an existing executable utility `/usr/sbin/ss` in the
+#' path. If `exe = "ss"` and this file is found by `check_exe()``, it
+#' will be ignored based on the smaller file size relative to the SS3
+#' executable. Linux users who want to use the workflow of having SS3 in
+#' their PATH should name the SS3 file something besides `ss`, such as
+#' `ss3` or `ss_linux`.
 
 check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
   # check to make sure the first input is in the correct format

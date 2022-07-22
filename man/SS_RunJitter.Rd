@@ -41,8 +41,10 @@ will not be overwritten.}
 jitter should be read from the control file or from the par file, respectively.
 The default is \code{NULL}, which will leave the starter file unchanged.}
 
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

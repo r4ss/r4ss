@@ -7,8 +7,10 @@
 check_exe(exe = "ss", dir = getwd(), verbose = FALSE)
 }
 \arguments{
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory.}
 
 \item{dir}{The directory where \code{exe} is located (if not in path). Can
 also be a vector of directories.}
@@ -21,9 +23,17 @@ A list containing the cleaned \code{exe} name based on the input
 argument and the path (or paths if \code{dir} is a vector) to where it is found.
 }
 \description{
-Check that the executable name provided in \code{model},
-an input argument to numerous \code{r4ss} functions,
-does not contain the extension and is available.
+The \code{check_exe()} function first checks the PATH for the
+specified SS3 executable name and returns the file's location if
+found. If the SS3 executable is not found in the PATH, then it is
+assumed the that executable exists in the specified directory. Linux
+systems have an existing executable utility \verb{/usr/sbin/ss} in the
+path. If \code{exe = "ss"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
+}
+\details{
+Check that the Stock Synthesis executable name provided in \code{exe},
+an input argument to numerous \code{r4ss} functions is available in the
+location specified by \code{dir} or in the path.
 }
 \author{
 Kelli F. Johnson, Ian G. Taylor

@@ -78,8 +78,10 @@ the prior likelihood contribution in the total likelihood.  Default = TRUE.}
 Default = TRUE. Changing to FALSE should allow the function to play through
 even if something is wrong with reading the table.}
 
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

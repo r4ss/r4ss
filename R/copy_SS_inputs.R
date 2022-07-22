@@ -150,7 +150,9 @@ copy_SS_inputs <- function(dir.old = NULL,
         full.names = TRUE
       ))[["isdir"]]]
       exefiles <- grep(pattern = "^[^.]+$", x = exefiles, value = TRUE)
-      message("Unix binaries are: ", paste0(exefiles, collapse = ", "))
+      if (verbose) {
+        message("Unix binaries are: ", paste0(exefiles, collapse = ", "))
+      }
     }
     if (length(exefiles) == 0) {
       warning("No executable files found in ", dir.exe)

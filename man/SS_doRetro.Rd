@@ -46,8 +46,10 @@ simplistic and probably won't work in most cases. Default=FALSE.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory.}
 
 \item{...}{Additional arguments passed to r4ss::run(), such as
 \code{extras}, and \code{show_in_console}.}

@@ -14,6 +14,7 @@ SS_tune_comps(
   init_run = FALSE,
   dir = getwd(),
   exe = "ss",
+  model = lifecycle::deprecated(),
   extras = "",
   allow_up_tuning = FALSE,
   verbose = TRUE,
@@ -50,8 +51,12 @@ Defaults to \code{FALSE}. This run is not counted as an iteration for
 The default value is \code{dir = NULL}, which leads to using
 the current working directory.}
 
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory.}
+
+\item{model}{Deprecated. Use \code{exe} instead.}
 
 \item{extras}{Additional ADMB command line arguments passed
 to the executable, such as "-nohess"}
@@ -206,7 +211,7 @@ tune_info <- SS_tune_comps(
   niters_tuning = 1,
   dir = mod_path,
   allow_up_tuning = TRUE,
-  model = "ss",
+  exe = "ss",
   verbose = FALSE
 )
 # see the tuning table, and the weights applied to the model.

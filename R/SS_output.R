@@ -576,15 +576,13 @@ SS_output <-
         names(logfile) <- c("TempFile", "Size")
         logfile[["Size"]] <- as.numeric(logfile[["Size"]])
         maxtemp <- max(logfile[["Size"]])
-        if (maxtemp == 0) {
-          if (verbose) {
+        if (verbose) {
+          if (maxtemp == 0) {
             message(
               "Got log file. There were NO temporary files were written",
               " in this run."
             )
-          }
-        } else {
-          if (verbose) {
+          } else {
             message("Temporary files were written in this run.")
           }
         }

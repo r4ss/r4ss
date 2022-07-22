@@ -70,6 +70,7 @@
 #' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
 #'  FALSE, which caps tuning values at 1.
 #' @template exe
+#' @param model Deprecated. Use `exe` instead.
 #' @template extras
 #' @param ... Additional arguments passed to r4ss::run(), such as
 #' `show_in_console`.
@@ -160,7 +161,7 @@
 #'   niters_tuning = 1,
 #'   dir = mod_path,
 #'   allow_up_tuning = TRUE,
-#'   model = "ss",
+#'   exe = "ss",
 #'   verbose = FALSE
 #' )
 #' # see the tuning table, and the weights applied to the model.
@@ -186,9 +187,21 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
                           option = c("Francis", "MI", "none", "DM"),
                           digits = 6, write = TRUE, niters_tuning = 0,
                           init_run = FALSE, dir = getwd(), exe = "ss",
+                          model = lifecycle::deprecated(),
                           extras = "",
                           allow_up_tuning = FALSE,
                           verbose = TRUE, ...) {
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(model)) {
+    lifecycle::deprecate_warn(
+      when = "1.46.0",
+      what = "SS_tune_comps(model)",
+      details = "Please use 'exe' instead"
+    )
+    exe <- model
+  }
+
   # check inputs
   option <- match.arg(option, several.ok = FALSE)
   # try to read in rep list, if it is null.

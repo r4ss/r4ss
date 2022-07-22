@@ -2,7 +2,7 @@
 % Please edit documentation in R/run.R
 \name{run}
 \alias{run}
-\title{Run multiple Stock Synthesis models}
+\title{Run one or more Stock Synthesis models}
 \usage{
 run(
   dir = getwd(),
@@ -18,8 +18,10 @@ run(
 \item{dir}{Directory, or vector of directories, containing the
 model input files.}
 
-\item{exe}{Executable name, optionally including the path to the
-executable if not in the specified directory or in the path.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory.}
 
 \item{extras}{Additional ADMB command line arguments passed
 to the executable, such as "-nohess"}
@@ -37,23 +39,25 @@ show_in_console = FALSE)}
 to the screen.}
 }
 \value{
-Returns table showing which directories had model run and which
+Returns table showing which directories had models run and which
 had errors like missing executable or Report.sso already present.
 The three possible messages are "model run failed", "ran model", and
 "unknown run status".
 }
 \description{
-First searches path for the specified executable name
-and returns the location of that file if found. If not found in path
-it then searches the specified directory. Linux systems have an
-existing executable utility \verb{/usr/sbin/ss} in the path. If \code{exe = "ss"} and this file is found by this function, it will be ignored
-based on the smaller file size relative to the SS3 executable. Linux
-users who want to use the workflow of having an SS3 executable in
-their path should name the file something else, such as \code{ss3} or
-\code{ss_linux}.
+The \code{run()} function checks for the executable via
+\code{r4ss::check_exe()}. This involves first checking the PATH for the
+specified SS3 executable name and returns the file's location if
+found. If the SS3 executable is not found in the PATH, then it is
+assumed the that executable exists in the specified directory. Linux
+systems have an existing executable utility \verb{/usr/sbin/ss} in the
+path. If \code{exe = "ss"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
 }
 \details{
-Loops over a vector of directories and iteratively runs SS in each one
+Checks for presence of a Stock Synthesis executable and then runs the
+model with any additional arguments specificied by \code{extras}. If input
+\code{dir} is a vector, it iteratively runs the SS3 model in each one.
+Parallelization is not available at this time.
 }
 \examples{
 \dontrun{
