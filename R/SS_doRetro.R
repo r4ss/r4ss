@@ -24,8 +24,8 @@
 #' simplistic and probably won't work in most cases. Default=FALSE.
 #' @template exe
 #' @template verbose
-#' @param ... Additional arguments passed to r4ss::run(), such as
-#' `extras`, and `show_in_console`.
+#' @param ... Additional arguments passed to [r4ss::run()], such as
+#' `extras`, `show_in_console`, and `skipfinished`.
 #'
 #' @author Ian G. Taylor, James T. Thorson
 #' @export

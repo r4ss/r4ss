@@ -22,8 +22,8 @@
 #'   The default is `NULL`, which will leave the starter file unchanged.
 #' @template exe
 #' @template verbose
-#' @param ... Additional arguments passed to r4ss::run(), such as
-#' `extras`, and `show_in_console`.
+#' @param ... Additional arguments passed to [r4ss::run()], such as
+#' `extras`, `show_in_console`, and `skipfinished`.
 #'
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
 #'

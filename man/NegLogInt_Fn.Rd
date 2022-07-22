@@ -78,7 +78,7 @@ directory.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments passed to r4ss::run(), such as
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
 \code{extras}.}
 
 \item{show_in_console}{Show output in the R console? If FALSE,

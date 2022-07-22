@@ -49,8 +49,8 @@ directory.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments passed to r4ss::run(), such as
-\code{extras}, and \code{show_in_console}.}
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
+\code{extras}, \code{show_in_console}, and \code{skipfinished}.}
 }
 \value{
 A vector of likelihoods for each jitter iteration.

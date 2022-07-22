@@ -51,8 +51,8 @@ file if it is in the specified directory or in the user's PATH. Can
 also include the absolute path or a path relative to the specified
 directory.}
 
-\item{...}{Additional arguments passed to r4ss::run(), such as
-\code{extras}, and \code{show_in_console}.}
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
+\code{extras}, \code{show_in_console}, and \code{skipfinished}.}
 }
 \description{
 Do retrospective analyses by creating new directories, copying model files,

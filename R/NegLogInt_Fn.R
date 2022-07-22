@@ -42,7 +42,7 @@
 #' @template exe
 #' @template show_in_console
 #' @template verbose
-#' @param ... Additional arguments passed to r4ss::run(), such as
+#' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`.
 #' @seealso [read.admbFit()], [getADMBHessian()]
 #' @author James Thorson

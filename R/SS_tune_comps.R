@@ -72,7 +72,7 @@
 #' @template exe
 #' @param model Deprecated. Use `exe` instead.
 #' @template extras
-#' @param ... Additional arguments passed to r4ss::run(), such as
+#' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `show_in_console`.
 #'
 #' @return Returns a table that can be copied into the control file.

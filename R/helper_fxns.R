@@ -52,7 +52,7 @@ sspar <- function(mfrow = c(1, 1),
 #'
 #' Function to convert non-annual into annual time-steps for retros and cpue residuals
 #'
-#' @param ss3out outputs from r4ss::SS_output() or r4ss::SSsummarize()
+#' @param ss3out outputs from [r4ss::SS_output()] or [r4ss::SSsummarize()]
 #' @param time.steps  time steps behind yrs e.g. 0.25 for quarterly
 #' @param end.time last time step e.g. 2018.75 with a cpue observation
 #'

@@ -67,7 +67,7 @@ FALSE, which caps tuning values at 1.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments passed to r4ss::run(), such as
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
 \code{show_in_console}.}
 }
 \value{

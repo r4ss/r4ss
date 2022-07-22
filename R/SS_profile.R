@@ -38,8 +38,8 @@
 #' even if something is wrong with reading the table.
 #' @template exe
 #' @template verbose
-#' @param ... Additional arguments passed to r4ss::run(), such as
-#' `extras`, and `show_in_console`.
+#' @param ... Additional arguments passed to [r4ss::run()], such as
+#' `extras`, `show_in_console`, and `skipfinished`.
 #' @note The starting values used in this profile are not ideal and some models
 #' may not converge. Care should be taken in using an automated tool like this,
 #' and some models are likely to require rerunning with alternate starting
