@@ -12,23 +12,33 @@ file if it is in the specified directory or in the user's PATH. Can
 also include the absolute path or a path relative to the specified
 directory.}
 
-\item{dir}{The directory where \code{exe} is located (if not in path). Can
-also be a vector of directories.}
+\item{dir}{The directory where \code{exe} is located (if not in path).
+Defaults to \code{getwd()} but can be an absolute path, a path relative to
+the working directory or a path relative to a directory that's in the
+PATH. Can also be a vector of directories.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
 \value{
-A list containing the cleaned \code{exe} name based on the input
-argument and the path (or paths if \code{dir} is a vector) to where it is found.
+A list containing \verb{$exe} and \verb{$path}.
+\verb{$exe} is the cleaned \code{exe} input file. Windows systems will include
+".exe" in the returned value. On Linux and Mac systems, the returned
+\verb{$exe} will include "./" if the executable was found in the specified
+directory \code{dir}.
+The \verb{$path} element of the list includes the normalized path (or
+paths if \code{dir} is a vector) where the executable was found. If \code{dir}
+is a vector and the executable is missing from a subset of those
+directories, NA is returned for those elements of \verb{$path}.
+If the specified \code{exe} input is not found in any of the \code{dir} input
+values nor in the PATH, then the function stops with an error.
 }
 \description{
-The \code{check_exe()} function first checks the PATH for the
-specified SS3 executable name and returns the file's location if
-found. If the SS3 executable is not found in the PATH, then it is
-assumed the that executable exists in the specified directory. Linux
-systems have an existing executable utility \verb{/usr/sbin/ss} in the
-path. If \code{exe = "ss"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
+The \code{check_exe()} function first checks the specified
+directory \code{dir} for the specified SS3 executable name and returns the
+file's location if found. If it is not found in the specified
+directory, then it checks the PATH. Linux systems may have an
+existing executable utility \verb{/usr/sbin/ss} in the path. If \code{exe = "ss"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
 }
 \details{
 Check that the Stock Synthesis executable name provided in \code{exe},

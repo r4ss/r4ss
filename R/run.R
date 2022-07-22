@@ -16,24 +16,25 @@
 #' show_in_console = FALSE)
 #' @template verbose
 #'
-#' @return Returns table showing which directories had models run and which
+#' @return Returns a table showing which directories had models run and which
 #' had errors like missing executable or Report.sso already present.
 #' The three possible messages are "model run failed", "ran model", and
 #' "unknown run status".
 #'
 #' @description The `run()` function checks for the executable via
-#' `r4ss::check_exe()`. This involves first checking the PATH for the
-#' specified SS3 executable name and returns the file's location if
-#' found. If the SS3 executable is not found in the PATH, then it is
-#' assumed the that executable exists in the specified directory. Linux
-#' systems have an existing executable utility `/usr/sbin/ss` in the
-#' path. If `exe = "ss"` and this file is found by `check_exe()``, it
-#' will be ignored based on the smaller file size relative to the SS3
-#' executable. Linux users who want to use the workflow of having SS3 in
-#' their PATH should name the SS3 file something besides `ss`, such as
-#' `ss3` or `ss_linux`.
-
-#' @author Ian Taylor, Kathryn Doering
+#' [r4ss::check_exe()]. This involves first checking first checking the
+#' specified 
+#' directory `dir` for the specified SS3 executable name. If it is not
+#' found in the specified
+#' directory, then it checks the PATH. Linux systems may have an
+#' existing executable utility `/usr/sbin/ss` in the path. If `exe =
+#' "ss"` and this file is found by [check_exe()], it will be ignored
+#' based on the smaller file size relative to the SS3 executable. Linux
+#' users who want to use the workflow of having SS3 in their PATH should
+#' name the SS3 file something besides `ss`, such as `ss3` or
+#' `ss_linux`.
+#' 
+#' @author Ian G. Taylor, Kathryn I. Doering
 #' @export
 #' @seealso [copy_SS_inputs()],
 #' [populate_multiple_folders()]
