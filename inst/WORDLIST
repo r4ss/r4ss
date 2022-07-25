@@ -57,6 +57,7 @@ Nfleet
 Nsexes
 Nsurveys
 OFL
+Parallelization
 Param
 Pebesma
 Piner
@@ -145,7 +146,7 @@ faq
 fileN
 filenaming
 fishres
-fleenames
+fleetnames
 forecastplot
 fsu
 fwf
@@ -160,6 +161,7 @@ grey
 groundfish
 gstat
 hermaphroditism
+hesfile
 http
 https
 icesjms
@@ -258,6 +260,7 @@ sampsizeline
 sd
 se
 selex
+selsex
 sep
 sexratio
 shadecol
@@ -280,6 +283,7 @@ tagrelease
 tcl
 tgt
 th
+tidyr
 timeseries
 tk
 tolerace

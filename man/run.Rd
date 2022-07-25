@@ -59,7 +59,7 @@ name the SS3 file something besides \code{ss}, such as \code{ss3} or
 }
 \details{
 Checks for presence of a Stock Synthesis executable and then runs the
-model with any additional arguments specificied by \code{extras}. If input
+model with any additional arguments specified by \code{extras}. If input
 \code{dir} is a vector, it iteratively runs the SS3 model in each one.
 Parallelization is not available at this time.
 }

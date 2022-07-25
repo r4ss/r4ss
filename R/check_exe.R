@@ -82,7 +82,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
       if (file.info(path_to_exe)[["size"]] < 1e6) {
         if (verbose) {
           message(
-            "Executable found in PATH that isn't Stock Synthesis:",
+            "Executable found in PATH that isn't Stock Synthesis: ",
             path_to_exe
           )
         }

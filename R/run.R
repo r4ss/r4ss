@@ -1,7 +1,7 @@
 #' Run one or more Stock Synthesis models
 #'
 #' Checks for presence of a Stock Synthesis executable and then runs the
-#' model with any additional arguments specificied by `extras`. If input
+#' model with any additional arguments specified by `extras`. If input
 #' `dir` is a vector, it iteratively runs the SS3 model in each one.
 #' Parallelization is not available at this time.
 #'
