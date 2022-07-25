@@ -76,30 +76,40 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
 
     # if exe is found in PATH
     if (path_to_exe != "") {
-      if (verbose) {
-        message("Executable found in PATH at ", path_to_exe)
-      }
       # make sure it has a size that makes sense for Stock Synthesis
       # (linux systems have a command line tool called "ss" in a location
       # like /usr/sbin/ but it's size is much smaller (about 100k vs 7MB)
       if (file.info(path_to_exe)[["size"]] < 1e6) {
         if (verbose) {
-          message("Executable found in PATH that isn't Stock Synthesis:",
+          message(
+            "Executable found in PATH that isn't Stock Synthesis:",
             path_to_exe
           )
         }
+        path_to_exe <- ""
+      } else {
+        if (verbose) {
+          message("Executable found in PATH at ", path_to_exe)
+        }
+        # if found in PATH and file size is large enough,
+        # then normalize path and remove exe name from the end
+        # e.g. convert "C:\SS\SSB672~1.01_\ss.exe" to "C:/SS/SSv3.30.19.01_Apr15"
+        path_to_exe <- dirname(normalizePath(path_to_exe))
       }
-      # normalize path and remove exe name from the end
-      # e.g. convert "C:\SS\SSB672~1.01_\ss.exe" to "C:/SS/SSv3.30.19.01_Apr15"
-      path_to_exe <- dirname(normalizePath(path_to_exe))
-    } else {
+    }
+    if (path_to_exe == "") {
       # if not in path or specified directory, create error
-      stop(exename, " not found in ", 
-      ifelse(length(dir) == 1, dir, "any of the input 'dir' values"),
-      " nor in the path.")
+      stop(
+        exename, " not found in ",
+        ifelse(test = length(dir) == 1,
+          yes = dir, # spell out directory in error if `dir` isn't a vector
+          no = "any of the input 'dir' values"
+        ), # generic if it's a vector
+        " nor in the path."
+      )
     }
   } # end check for is.null(path_to_exe)
-    
+
   # return list of exe name and path to exe
   list(
     exe = exename,
