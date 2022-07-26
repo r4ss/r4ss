@@ -13,7 +13,7 @@
 #' @author Kelli F. Johnson, Ian G. Taylor
 #' @return A list containing `$exe` and `$path`.
 #' `$exe` is the cleaned version of the `exe` file name input. Windows
-#' systems will include 
+#' systems will include
 #' ".exe" in the returned value. On Linux and Mac systems, the returned
 #' `$exe` will include "./" if the executable was found in the specified
 #' directory `dir`. This will be a single character string, unlike `$path` which

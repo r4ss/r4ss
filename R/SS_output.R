@@ -1892,7 +1892,7 @@ SS_output <-
     }
 
     # log determinant of the Hessian (previously was from ss.cor file)
-    stats[["log_det_hessian"]] <- 
+    stats[["log_det_hessian"]] <-
       as.numeric(match_report_table("Hessian", 0,
         "Hessian", 0,
         cols = 2

@@ -37,7 +37,7 @@ getADMBHessian <- function(hesfile = "admodel.hes",
   if (lifecycle::is_present(File) & lifecycle::is_present(FileName)) {
     hesfile <- file.path(File, FileName)
   }
-  
+
   filename <- file(hesfile, "rb")
   on.exit(close(filename))
   num.pars <- readBin(filename, "integer", 1)

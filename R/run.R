@@ -23,7 +23,7 @@
 #'
 #' @description The `run()` function checks for the executable via
 #' [r4ss::check_exe()]. This involves first checking the
-#' specified 
+#' specified
 #' directory `dir` for the specified SS3 executable name. If it is not
 #' found in the specified
 #' directory, then it checks the PATH. Linux systems may have an
@@ -33,7 +33,7 @@
 #' users who want to use the workflow of having SS3 in their PATH should
 #' name the SS3 file something besides `ss`, such as `ss3` or
 #' `ss_linux`.
-#' 
+#'
 #' @author Ian G. Taylor, Kathryn L. Doering
 #' @export
 #' @seealso [copy_SS_inputs()],

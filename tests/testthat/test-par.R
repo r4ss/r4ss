@@ -32,7 +32,7 @@ test_that("SS_readpars functions work ", {
     verbose = FALSE
   )
   expect_equal(par_3.30, par_3.30_read_2)
-  })
+})
 
 # clean up
 unlink(tmp_path, recursive = TRUE)
