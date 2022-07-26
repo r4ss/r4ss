@@ -1,22 +1,18 @@
-##' Read admodel.hes file
-##'
-##' This function reads in all of the information contained in the
-##' admodel.hes file. Some of this is needed for relaxing the
-##' covariance matrix, and others just need to be recorded and
-##' rewritten to file so ADMB "sees" what it's expecting.
-##' @param File Directory in which .hes file is located.
-##' @param FileName Name of .hes file.
-##' @return A list with elements num.pars, hes, hybrid_bounded_flag, and scale.
-##' @author Cole Monnahan
-##' @export
-##' @seealso [read.admbFit()], [NegLogInt_Fn()]
-##' @note Explanation of the methods (in PDF form) published here:
-##' <https://github.com/admb-project/admb-examples/blob/master/admb-tricks/covariance-calculations/ADMB_Covariance_Calculations.pdf>
-getADMBHessian <- function(File, FileName) {
-  ## This function reads in all of the information contained in the
-  ## admodel.hes file. Some of this is needed for relaxing the
-  ## covariance matrix, and others just need to be recorded and
-  ## rewritten to file so ADMB "sees" what it's expecting.
+#' Read admodel.hes file
+#'
+#' This function reads in all of the information contained in the
+#' .hes file. Some is needed for relaxing the covariance matrix, while the rest
+#' is recorded and rewritten to file as ADMB expects.
+#' @param File Directory in which .hes file is located. Defaults to the working
+#'  directory.
+#' @param FileName Name of .hes file. Defaults to admodel.hes.
+#' @return A list with elements num.pars, hes, hybrid_bounded_flag, and scale.
+#' @author Cole Monnahan
+#' @export
+#' @seealso [read.admbFit()], [NegLogInt_Fn()]
+#' @note Explanation of the methods (in PDF form):
+#' <https://github.com/admb-project/admb-examples/blob/master/admb-tricks/covariance-calculations/ADMB_Covariance_Calculations.pdf>
+getADMBHessian <- function(File = getwd(), FileName = "admodel.hes") {
   filename <- file(file.path(File, FileName), "rb")
   on.exit(close(filename))
   num.pars <- readBin(filename, "integer", 1)

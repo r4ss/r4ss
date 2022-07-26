@@ -8,10 +8,7 @@
 #' contained within the list produced by this function.
 #'
 #'
-#' @param dir Directory containing the Stock Synthesis model output.
-#' Forward slashes or double backslashes and quotes are necessary.
-#' This can also either be an absolute path or relative to the working
-#' directory.
+#' @template dir
 #' @param dir.mcmc Optional directory containing MCMC output. This can either be
 #' relative to `dir`, such that `file.path(dir, dir.mcmc)`
 #' will end up in the right place, or an absolute path.
@@ -554,7 +551,7 @@ SS_output <-
     if (!is.na(btarg) & btarg == 0.25) {
       if (verbose) {
         message(
-          "Setting minimum biomass threshhold to 0.25",
+          "Setting minimum biomass threshhold to 0.125",
           "  based on US west coast assumption associated with flatfish target of 0.25.",
           "  (can replace or override in SS_plots by setting 'minbthresh')"
         )
@@ -593,8 +590,7 @@ SS_output <-
         }
       } else {
         if (verbose) {
-          message("!warning: temporary files were written in this run:")
-          print(logfile)
+          message("Temporary files were written in this run.")
         }
       }
     } else {
@@ -1882,6 +1878,11 @@ SS_output <-
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_endyr", 1,
             header = TRUE, type.convert = TRUE
           )
+          # fix needed for 3.30.19 and 3.30.19.01 (fixed in future versions of SS3)
+          if (length(grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]])) == 1) {
+            tmp_brk_line <- grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]]) - 1
+            recruit_dist_endyr <- recruit_dist_endyr[seq_len(tmp_brk_line), ]
+          }
         }
         # bundle original and extra tables into a list
         recruitment_dist <- list(
@@ -2398,6 +2399,12 @@ SS_output <-
       adjust1 = ifelse(custom, 2, 1),
       header = TRUE, type.convert = TRUE
     )
+    # updated BIOLOGY table names based on change July 2022 change
+    # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/348
+    biology <- df.rename(biology,
+      oldnames = c("Low", "Mean_Size", "Wt_len", "Wt_len_F", "Mat_len", "Spawn", "Wt_len_M", "Fecundity"),
+      newnames = c("Len_lo", "Len_mean", "Wt_F", "Wt_F", "Mat", "Mat*Fec", "Wt_M", "Fec")
+    )
 
     # determine fecundity type
     FecType <- 0
@@ -2435,7 +2442,7 @@ SS_output <-
       FecPar2name <- pl[FecGrep5[1]]
     }
     if (is.na(lbinspop[1])) {
-      lbinspop <- biology[["Low"]][biology[["GP"]] == 1]
+      lbinspop <- biology[["Len_lo"]][biology[["GP"]] == 1]
     }
 
     # warning for 3.30 models with multiple growth patterns that have
@@ -2454,29 +2461,20 @@ SS_output <-
       # fix for extra header associated with extra column header
       # for single sex models that got fixed in 3.30.16
       if (nsexes == 1 &&
-        is.na(biology[["Fecundity"]][1]) &&
-        "Wt_len_M" %in% names(biology)) {
+        is.na(biology[["Fec"]][1]) &&
+        "Wt_M" %in% names(biology)) {
         # copy Wt_len_M to Fecundity
-        biology[["Fecundity"]] <- biology[["Wt_len_M"]]
+        biology[["Fec"]] <- biology[["Wt_M"]]
         # remove Wt_len_M
-        biology <- biology[, !names(biology) %in% "Wt_len_M"]
+        biology <- biology[, !names(biology) %in% "Wt_M"]
       }
 
       # test to figure out if fecundity is proportional to spawning biomass
-
-      # first get weight-at-length column (Wt_len_F for 2-sex models,
-      # Wt_len for 1-sex models starting with 3.30.16)
-      if ("Wt_len" %in% names(biology)) {
-        Wt_len_F <- biology[["Wt_len"]]
-      } else {
-        Wt_len_F <- biology[["Wt_len_F"]]
-      }
-
       # check for any mismatch between weight-at-length and fecundity
       returndat[["SpawnOutputUnits"]] <-
-        ifelse(!is.null(biology[["Fecundity"]][1]) &&
-          !is.na(biology[["Fecundity"]][1]) &&
-          any(Wt_len_F != biology[["Fecundity"]]),
+        ifelse(!is.null(biology[["Fec"]][1]) &&
+          !is.na(biology[["Fec"]][1]) &&
+          any(biology[["Wt_F"]] != biology[["Fec"]]),
         "numbers", "biomass"
         )
     }
@@ -2882,7 +2880,7 @@ SS_output <-
         file = file.path(dir, "starter.ss"),
         verbose = verbose
       )
-      depletion_multiplier <- starter$depl_denom_frac
+      depletion_multiplier <- starter[["depl_denom_frac"]]
     } else {
       depletion_multiplier <- 1
     }

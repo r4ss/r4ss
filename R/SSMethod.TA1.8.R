@@ -16,7 +16,7 @@
 #' notes might help anyone wanting to check or correct the code.
 #' \enumerate{
 #'   \item The code first takes the appropriate database (lendbase, sizedbase,
-#'         agedbase, or condbase) and removes un-needed rows.
+#'         agedbase, or condbase) and removes unneeded rows.
 #'   \item The remaining rows of the database are grouped into individual
 #'         comps (indexed by vector indx) and relevant statistics (e.g.,
 #'         observed and expected mean length or age), and ancillary data,
@@ -35,9 +35,7 @@
 #' @param fleet vector of one or more fleet numbers whose data are to
 #' be analysed simultaneously (the output N multiplier applies
 #' to all fleets combined)
-#' @param fleetnames Vector of alternative fleet names to draw from for
-#' plot titles and captions. It should have length equal to the number
-#' of fleets in the model, not the number of fleets considered in this function.
+#' @template fleetnames
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).

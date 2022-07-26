@@ -10,22 +10,25 @@ SS_writestarter(
   file = "starter.ss",
   overwrite = FALSE,
   verbose = TRUE,
-  warn = TRUE
+  warn = lifecycle::deprecated()
 )
 }
 \arguments{
 \item{mylist}{List object created by \code{\link[=SS_readstarter]{SS_readstarter()}}.}
 
-\item{dir}{Directory for new starter file. Default=NULL (working directory).}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{file}{Filename for new starter file. Default="starter.ss".}
 
-\item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
-\item{warn}{Print warning if overwriting file?}
+\item{warn}{Deprecated.}
 }
 \description{
 write Stock Synthesis starter file from list object in R which was probably
@@ -37,5 +40,5 @@ created using \code{\link[=SS_readstarter]{SS_readstarter()}}
 \code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readpar_3.24.R
 \name{SS_readpar_3.24}
 \alias{SS_readpar_3.24}
-\title{read ss.par file from SS version 3.24}
+\title{Deprecated: read ss.par file from SS version 3.24}
 \usage{
 SS_readpar_3.24(parfile, datsource, ctlsource, verbose = TRUE)
 }
@@ -17,11 +17,15 @@ SS data file.}
 from \code{\link[=SS_writectl]{SS_writectl()}}. If character, should be the full file location of an
 SS control file.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Read Stock Synthesis (version 3.24) parameter file into list object in R.
+}
+\details{
+Support for 3.24 models within the r4ss \verb{SS_read*} and \verb{SS_write*()}
+functions is ending, so please update models to 3.30.
 }
 \seealso{
 \code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readdat]{SS_readdat()}}

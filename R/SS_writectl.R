@@ -1,4 +1,4 @@
-#' Srite Stock Synthesis control file
+#' Write Stock Synthesis control file
 #'
 #' Write Stock Synthesis control file from list object in R which was probably
 #' created using [SS_readctl()]. This function is a
@@ -8,10 +8,10 @@
 #' @param ctllist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new control file.
 #' @template version
-#' @param overwrite Should existing files be overwritten? Defaults to FALSE.
-#' @param verbose Should there be verbose output while running the file?
-#' Defaults to FALSE.
-#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn Doering
+#' @template overwrite
+#' @template verbose
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn L.
+#' Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
 #' [SS_readdat()],
@@ -35,9 +35,10 @@ SS_writectl <- function(ctllist,
   }
   if (is.null(version)) {
     lifecycle::deprecate_stop(
-      when = "1.43.2",
+      when = "1.44.1",
       what = "SS_readctl(version = 'must be 3.24 or 3.30')"
     )
+    version <- "3.30"
   }
   if (ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
     stop(

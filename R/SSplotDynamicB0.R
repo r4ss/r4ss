@@ -10,10 +10,9 @@
 #' @param forecast Show forecast years in plot? Only applies if yrs = "all".
 #' @param yrs Which years to include. Default "all" will show startyr to endyr + 1
 #' modified by the arguments `forecast`.
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. By default it will
-#' be the directory where the model was run.
+#' @template plot
+#' @template print
+#' @template plotdir
 #' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' These intervals will only appear when uncertainty in the dynamic B0
@@ -28,8 +27,8 @@
 #' (single value will apply to both lines).
 #' @param lty Optional vector of line types to be used for the two lines
 #' (single value will apply to both lines).
-#' @param lwd Optional vector of line widths to be used for the two lines
-#' (single value will apply to both lines).
+#' @param lwd Optional vector of line widths to be used for the two lines.
+#'  Single value will apply to both lines.
 #' @param add add to existing plot
 #' @template pwidth
 #' @template pheight
@@ -61,6 +60,10 @@ SSplotDynamicB0 <- function(replist,
   Dynamic_Bzero <- replist[["Dynamic_Bzero"]]
   if (is.null(Dynamic_Bzero)) {
     warning('No element "Dynamic_Bzero" in replist input')
+    return()
+  }
+  if (!"SSB_nofishing" %in% names(replist[["Dynamic_Bzero"]])) {
+    warning("Skipping Dynamic B0 plot (not yet working for this model configuration)")
     return()
   }
 

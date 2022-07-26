@@ -40,24 +40,23 @@
 #' scaling is done automatically by SS.
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param plotdir directory where PNG or PDF files will be written. by default
-#' it will be the directory where the model was run.
-#' @param verbose report progress to R GUI?
+#' @template plot
+#' @template print
+#' @template plotdir
+#' @template verbose
 #' @param btarg Target depletion to be used in plots showing depletion. May be
 #' omitted by setting to 0. "default" chooses value based on modeloutput.
 #' @param minbthresh Threshold depletion to be used in plots showing depletion.
 #' May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
 #' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
 #' @param xlab x axis label for all plots
-#' @param labels vector of labels for plots (titles and axis labels)
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template labels
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
+#' @template ptsize
+#' @template cex.main
 #' @template mainTitle
 #' @template mar
 #' @author Ian Taylor, Ian Stewart
@@ -232,7 +231,12 @@ SSplotTimeseries <-
       # subplot9&10 = relative spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
-        yvals <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", "Value"]
+        yvals <- NA * ts[["SpawnBio"]] # placeholder to ensure the correct length
+        # get derived quantities for Bratio
+        quants <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", ]
+        # get year for each row
+        quants[["Yr"]] <- as.numeric(substring(quants[["Label"]], 8))
+        yvals[ts[["Yr"]] %in% quants[["Yr"]]] <- quants[["Value"]]
         ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
       }
 
@@ -431,12 +435,10 @@ SSplotTimeseries <-
         caption <- main
         file <- main
         if (subplot %in% 9:10 & grepl(":", main)) {
-          # remove extra stuff like "B/B_0" from filename
-          filename <- strsplit(main, split = ":")[[1]][1]
+          # remove extra stuff like "B/B_0" from file
+          file <- strsplit(main, split = ":")[[1]][1]
         }
-        file <- gsub(",", "", file, fixed = TRUE)
-        file <- gsub("~", "", file, fixed = TRUE)
-        file <- gsub("%", "", file, fixed = TRUE)
+        file <- gsub("[,~%*]", "", file)
         if (forecastplot) {
           file <- paste(file, "forecast")
         }
@@ -446,7 +448,7 @@ SSplotTimeseries <-
         file <- paste("ts", subplot, "_", file, ".png", sep = "")
         # replace any spaces with underscores
         file <- gsub(pattern = " ", replacement = "_", x = file, fixed = TRUE)
-        # if(verbose) cat("printing plot to file:", file, "\n")
+
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
@@ -535,7 +537,12 @@ SSplotTimeseries <-
           }
           if (subplot %in% 9:10) {
             plot1 <- NULL
-            plot2[3] <- FALSE
+            # remove the start year if Bratio_[startyr] is not in
+            # derived quantities (which will be the case for any model
+            # without initial equilibrium catch)
+            if (uncertainty && !paste0("Bratio_", startyr) %in% derived_quants[["Label"]]) {
+              plot2[3] <- FALSE
+            }
           }
           mycol <- areacols[iarea]
           mytype <- "o" # overplotting points on lines for most time series

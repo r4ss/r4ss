@@ -10,7 +10,8 @@ run_SS_models(
   extras = "-nox",
   systemcmd = FALSE,
   skipfinished = TRUE,
-  intern = FALSE,
+  show_in_console = TRUE,
+  intern = lifecycle::deprecated(),
   verbose = TRUE,
   exe_in_path = FALSE
 )
@@ -35,9 +36,13 @@ This may be required when running R in Emacs. Default = FALSE.}
 \item{skipfinished}{Skip any folders that already contain a Report.sso file.
 This can be helpful if the function is interrupted.}
 
-\item{intern}{Show output in the R console or save to a file?}
+\item{show_in_console}{Show output in the R console? If FALSE,
+then it is saved to a file.}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{intern}{Deprecated. Use \code{show_in_console} instead.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{exe_in_path}{logical. If TRUE, will look for exe in the PATH. If FALSE,
 will look for exe in the model folders. Default = FALSE.}
@@ -52,10 +57,8 @@ Loops over a vector of directories and iteratively runs SS in each one
 \examples{
 \dontrun{
 extdata_mods <- system.file("extdata", package = "r4ss")
-dirvec <- c(
-  file.path(extdata_mods, "simple_3.30.12"),
-  file.path(extdata_mods, "simple_3.30.13")
-)
+dirvec <- file.path(extdata_mods, "simple_small")
+
 # if ss or ss.exe is available in both directories:
 run_SS_models(dirvec = dirvec)
 }

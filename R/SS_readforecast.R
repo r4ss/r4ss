@@ -10,8 +10,8 @@
 #' @template version
 #' @param readAll Should the function continue even if Forecast = 0 or -1
 #' (at which point SS stops reading)?
-#' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor + Nathan Vaughan
+#' @template verbose
+#' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readstarter()], [SS_readdat()],
 #' [SS_writestarter()],
@@ -37,7 +37,7 @@ SS_readforecast <- function(file = "forecast.ss",
     }
   }
 
-  if (verbose) cat("running SS_readforecast\n")
+  if (verbose) message("running SS_readforecast")
   dat <- readLines(file, warn = FALSE)
 
   nver <- as.numeric(substring(version, 1, 4))
@@ -77,8 +77,10 @@ SS_readforecast <- function(file = "forecast.ss",
     }
     if (!is.na(name)) names(forelist)[names(forelist) == "temp"] <- name
     if (verbose) {
-      cat(name, ",i=", forelist$".i", "\n")
-      print(forelist[name])
+      message(
+        name, ",i=", forelist$".i", "\n",
+        paste0(forelist[[name]], collapse = "\n")
+      )
     }
     return(forelist)
   }
@@ -135,8 +137,10 @@ SS_readforecast <- function(file = "forecast.ss",
     forelist$".i" <- i
     if (!is.na(name)) names(forelist)[names(forelist) == "temp"] <- name
     if (verbose) {
-      cat(name, ",i=", forelist$".i", "\n")
-      print(forelist[[which(names(forelist) == name)]])
+      message(
+        name, ",i=", forelist$".i", "\n",
+        paste0(forelist[[which(names(forelist) == name)]], collapse = "\n")
+      )
     }
     return(forelist)
   }
@@ -149,7 +153,7 @@ SS_readforecast <- function(file = "forecast.ss",
     forelist[["temp"]] <- dat[i]
     forelist$".i" <- i + 1
     if (!is.na(name)) names(forelist)[names(forelist) == "temp"] <- name
-    if (verbose) cat(name, ",i=", forelist$".i", " ;", forelist[[which(names(forelist) == name)]], "\n")
+    if (verbose) message(name, ",i=", forelist$".i", " ;", forelist[[which(names(forelist) == name)]])
     return(forelist)
   }
 
@@ -164,7 +168,7 @@ SS_readforecast <- function(file = "forecast.ss",
     }
     forelist$".i" <- i
     if (!is.null(name)) names(forelist)[names(forelist) == "temp"] <- name
-    if (verbose) cat(name, ",i=", forelist$".i", "\n")
+    if (verbose) message(name, ",i=", forelist$".i")
     return(forelist)
   }
 
@@ -209,7 +213,7 @@ SS_readforecast <- function(file = "forecast.ss",
     forelist <- add_vec(forelist, length = 10, name = "Bmark_years")
   }
   if (verbose) {
-    cat("Benchmark years: ", forelist[["Bmark_years"]], "\n")
+    message("Benchmark years: ", forelist[["Bmark_years"]])
   }
   forelist <- add_elem(forelist, "Bmark_relF_Basis")
   forelist <- add_elem(forelist, "Forecast")
@@ -258,13 +262,13 @@ SS_readforecast <- function(file = "forecast.ss",
       forelist <- add_vec(forelist, length = 6, name = "Fcast_years")
     }
     if (verbose) {
-      cat("Forecast years: ", forelist[["Fcast_years"]], "\n")
+      message("Forecast years: ", forelist[["Fcast_years"]])
     }
 
     if (version == "3.30" | version == 3.3) {
       forelist <- add_elem(forelist, "Fcast_selex")
       if (verbose) {
-        cat("Forecast selectivity option: ", forelist[["Fcast_selex"]], "\n")
+        message("Forecast selectivity option: ", forelist[["Fcast_selex"]])
       }
     } else {
       forelist[["Fcast_selex"]] <- NA

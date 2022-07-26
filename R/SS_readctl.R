@@ -8,6 +8,7 @@
 #' default values.
 #'
 #' @template file
+#' @template verbose
 #' @template readctl_vars
 #' @template version
 #' @param N_CPUE_obs Number of CPUE observations. Used only in control file 3.24
@@ -39,13 +40,9 @@
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet-Multinomial
 #'  parameters. Defaults to 0. Used only in control file 3.30 syntax if
 #'  `use_datlist = FALSE`.
-#' @param ptype LOGICAL if `TRUE`, which is the default,
-#'  a column will be included in the output indicating parameter type.
-#'  Using `TRUE` can be useful, but causes problems for [SS_writectl],
-#'  and therefore is not recommended if you intend to write the list
-#'  back out into a file.
-#'  Used only in control file 3.24 syntax.
-#' @author Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
+#' @param ptype Deprecated.
+#' @author Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer, Kelli F.
+#' Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @md
 #' @return
@@ -60,7 +57,7 @@
 #' @examples
 #' # Read in the 'simple' example SS model stored in r4ss
 #' # Find the directory
-#' dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+#' dirsimple <- system.file("extdata", "simple_small", package = "r4ss")
 #' # Read in the dat file to define the structure of the control file so that
 #' # you don't have to specify things in the function call such as 'Nfleet'
 #' datfilename <- dir(dirsimple, pattern = "data\\.ss", full.names = TRUE)
@@ -80,14 +77,12 @@
 SS_readctl <- function(file,
                        version = "3.30",
                        verbose = FALSE,
-                       echoall = lifecycle::deprecated(),
                        use_datlist = TRUE,
-                       datlist = "data.ss_new",
+                       datlist = file.path(dirname(file), "data_echo.ss_new"),
                        ## Parameters that are not defined in control file
                        nseas = NULL,
                        N_areas = NULL,
                        Nages = NULL,
-                       Ngenders = lifecycle::deprecated(),
                        Nsexes = NULL,
                        Npopbins = NA,
                        Nfleets = NULL,
@@ -101,29 +96,18 @@ SS_readctl <- function(file,
                        Ntag_fleets = NULL,
                        N_rows_equil_catch = NULL,
                        N_dirichlet_parms = NULL,
-                       ptype = FALSE) {
+                       ptype = lifecycle::deprecated()) {
 
   # warn about soft deprecated arguments ----
-  # echoall warning will occur in in SS_readctl_3.24 and SS_readctl_3.30
-  if (lifecycle::is_present(Ngenders)) {
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(ptype)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_readctl(Ngenders)",
-      details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
-    )
-    Nsexes <- Ngenders
-  }
-  if (is.null(version)) {
-    lifecycle::deprecate_stop(
-      when = "1.43.2",
-      what = "SS_readctl(version = 'must be 3.24 or 3.30')"
+      when = "1.45.0",
+      what = "SS_readctl(ptype)"
     )
   }
 
   nver <- as.numeric(substring(version, 1, 4))
-
-  if (verbose) cat("Char version is ", version, "\n")
-  if (verbose) cat("Numeric version is ", nver, "\n")
 
   # call function for SS version 2.00
   if (nver < 3) {
@@ -142,7 +126,6 @@ SS_readctl <- function(file,
     }
     ctllist <- SS_readctl_3.24(
       file = file,
-      echoall = echoall,
       verbose = verbose,
       nseas = nseas,
       N_areas = N_areas,
@@ -155,8 +138,7 @@ SS_readctl <- function(file,
       N_tag_groups = N_tag_groups,
       N_CPUE_obs = N_CPUE_obs,
       use_datlist = use_datlist,
-      datlist = datlist,
-      ptype = ptype
+      datlist = datlist
     )
   }
 
@@ -168,7 +150,6 @@ SS_readctl <- function(file,
     ctllist <- SS_readctl_3.30(
       file = file,
       verbose = verbose,
-      echoall = echoall,
       nseas = nseas,
       N_areas = N_areas,
       Nages = Nages,

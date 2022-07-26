@@ -1,81 +1,79 @@
-##' Make plot of likelihood contributions by fleet
-##'
-##' This style of plot was officially named a "Piner Plot" at the
-##' CAPAM Selectivity Workshop, La Jolla March 2013. This is in
-##' honor of Kevin Piner's contributions to interpreting likelihood
-##' profiles. He's surely not the first person to make such a plot
-##' but the name seems to have stuck.
-##' @param summaryoutput List created by the function
-##' [SSsummarize()].
-##' @param plot Plot to active plot device?
-##' @param print Print to PNG files?
-##' @param component Which likelihood component to plot. Default is "Length_like".
-##' @param main Title for plot. Should match component.
-##' @param models Optional subset of the models described in
-##' `summaryoutput`.  Either "all" or a vector of numbers indicating
-##' columns in summary tables.
-##' @param fleets Optional vector of fleet numbers to include.
-##' @param fleetnames Optional character vector of names for each fleet.
-##' @param profile.string Character string used to find parameter over which the
-##' profile was conducted. If `exact=FALSE`, this can be a substring of
-##' one of the SS parameter labels found in the Report.sso file.
-##' For instance, the default input 'R0'
-##' matches the parameter 'SR_LN(R0)'. If `exact=TRUE`, then
-##' profile.string needs to be an exact match to the parameter label.
-##' @param profile.label Label for x-axis describing the parameter over which
-##' the profile was conducted.
-##' @param exact Should the `profile.string` have to match the parameter
-##' label exactly, or is a substring OK.
-##' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
-##' @param col Optional vector of colors for each line.
-##' @param pch Optional vector of plot characters for the points.
-##' @param lty Line total for the likelihood components.
-##' @param lty.total Line type for the total likelihood.
-##' @param lwd Line width for the likelihood components.
-##' @param lwd.total Line width for the total likelihood.
-##' @param cex Character expansion for the points representing the likelihood
-##' components.
-##' @param cex.total Character expansion for the points representing the total
-##' likelihood.
-##' @param xlim Range for x-axis. Change in likelihood is calculated relative to
-##' values within this range.
-##' @param ymax Maximum y-value. Default is 10\% greater than largest value
-##' plotted.
-##' @param xaxs The style of axis interval calculation to be used for the x-axis
-##' (see ?par for more info)
-##' @param yaxs The style of axis interval calculation to be used for the y-axis
-##' (see ?par for more info).
-##' @param type Line type (see ?plot for more info).
-##' @param legend Include legend?
-##' @param legendloc Location of legend (see ?legend for more info).
-##' @param pwidth Width of plot
-##' @param pheight Height of plot
-##' @param punits Units for PNG file
-##' @template res
-##' @param ptsize Point size for PNG file
-##' @param cex.main Character expansion for plot titles
-##' @param plotdir Directory where PNG files will be written. by default it will
-##' be the directory where the model was run.
-##' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
-##' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
-##' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
-##' can be adjusted using the `cutoff_prob` below.
-##' @param cutoff_prob Probability associated with `add_cutoff` above.
-##' @param verbose Return updates of function progress to the R GUI? (Doesn't do
-##' anything yet.)
-##' @param fleetgroups Optional character vector, with length equal to
-##' the number of declared fleets, where fleets with the same value are
-##' aggregated
-##' @param likelihood_type choice of "raw" or "raw_times_lambda" (the default)
-##' determines whether or not likelihoods plotted are adjusted by lambdas
-##' (likelihood weights)
-##' @param minfraction Minimum change in likelihood (over range considered) as a
-##' fraction of change in total likelihood for a component to be included in the
-##' figure.
-##' @references Kevin Piner says that he's not the originator of this idea so
-##' Athol Whitten is going to add a reference here.
-##' @author Ian Taylor, Kevin Piner, Jim Thorson
-##' @export
+#' Make plot of likelihood contributions by fleet
+#'
+#' This style of plot was officially named a "Piner Plot" at the
+#' CAPAM Selectivity Workshop, La Jolla March 2013. This is in
+#' honor of Kevin Piner's contributions to interpreting likelihood
+#' profiles. He's surely not the first person to make such a plot
+#' but the name seems to have stuck.
+#' @param summaryoutput List created by the function
+#' [SSsummarize()].
+#' @template plot
+#' @template print
+#' @param component Which likelihood component to plot. Default is "Length_like".
+#' @param main Title for plot. Should match component.
+#' @param models Optional subset of the models described in
+#' `summaryoutput`.  Either "all" or a vector of numbers indicating
+#' columns in summary tables.
+#' @template fleets
+#' @template fleetnames
+#' @param profile.string Character string used to find parameter over which the
+#' profile was conducted. If `exact=FALSE`, this can be a substring of
+#' one of the SS parameter labels found in the Report.sso file.
+#' For instance, the default input 'R0'
+#' matches the parameter 'SR_LN(R0)'. If `exact=TRUE`, then
+#' profile.string needs to be an exact match to the parameter label.
+#' @param profile.label Label for x-axis describing the parameter over which
+#' the profile was conducted.
+#' @param exact Should the `profile.string` have to match the parameter
+#' label exactly, or is a substring OK.
+#' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
+#' @param col Optional vector of colors for each line.
+#' @param pch Optional vector of plot characters for the points.
+#' @param lty Line total for the likelihood components.
+#' @param lty.total Line type for the total likelihood.
+#' @template lwd
+#' @param lwd.total Line width for the total likelihood.
+#' @param cex Character expansion for the points representing the likelihood
+#' components.
+#' @param cex.total Character expansion for the points representing the total
+#' likelihood.
+#' @param xlim Range for x-axis. Change in likelihood is calculated relative to
+#' values within this range.
+#' @param ymax Maximum y-value. Default is 10\% greater than largest value
+#' plotted.
+#' @param xaxs The style of axis interval calculation to be used for the x-axis
+#' (see ?par for more info)
+#' @param yaxs The style of axis interval calculation to be used for the y-axis
+#' (see ?par for more info).
+#' @param type Line type (see ?plot for more info).
+#' @template legend
+#' @template legendloc
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template res
+#' @template ptsize
+#' @template cex.main
+#' @template plotdir
+#' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
+#' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
+#' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
+#' can be adjusted using the `cutoff_prob` below.
+#' @param cutoff_prob Probability associated with `add_cutoff` above.
+#' @template verbose
+#' @param fleetgroups Optional character vector, with length equal to
+#' the number of declared fleets, where fleets with the same value are
+#' aggregated
+#' @param likelihood_type choice of "raw" or "raw_times_lambda" (the default)
+#' determines whether or not likelihoods plotted are adjusted by lambdas
+#' (likelihood weights)
+#' @param minfraction Minimum change in likelihood (over range considered) as a
+#' fraction of change in total likelihood for a component to be included in the
+#' figure.
+#' @references Kevin Piner says that he's not the originator of this idea so
+#' Athol Whitten is going to add a reference here.
+#' @author Ian Taylor, Kevin Piner, Jim Thorson
+#' @export
 PinerPlot <-
   function(summaryoutput,
            plot = TRUE, print = FALSE,
@@ -186,9 +184,12 @@ PinerPlot <-
       )
     }
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
-    cat("Parameter matching profile.string='", profile.string, "': '", parlabel, "'\n", sep = "")
-    cat("Parameter values (after subsetting based on input 'models'):\n")
-    print(parvec)
+    message(
+      "Parameter matching profile.string = '", profile.string, "': '",
+      parlabel,
+      "\nParameter values (after subsetting based on input 'models'): ",
+      paste0(parvec, collase = ", ")
+    )
     if (xlim[1] == "default") xlim <- range(parvec)
 
     # rearange likelihoods to be in columns by type
@@ -236,11 +237,14 @@ PinerPlot <-
     column.max <- apply(data.frame(prof.table[, -c(1:3)]), 2, max, na.rm = TRUE)
     change.fraction <- column.max / max(prof.table[, 3], na.rm = TRUE)
     include <- change.fraction >= minfraction
-    cat("\nFleets-specific likelihoods showing max change as fraction of total change.\n",
-      "To change which components are included, change input 'minfraction'.\n\n",
-      sep = ""
+    message(
+      "Fleet-specific likelihoods showing max change as fraction of total change.\n",
+      "To change which components are included, change input 'minfraction'.\n",
+      paste0(utils::capture.output(print(data.frame(
+        frac_change = round(change.fraction, 4),
+        include = include
+      ))), collapse = "\n")
     )
-    print(data.frame(frac_change = round(change.fraction, 4), include = include))
 
     # subset values and reorder values
     # Note: first 3 columns are "model", "Label", and "ALL", and

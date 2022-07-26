@@ -9,13 +9,13 @@
 #' @param outerdir.new New outer directory into which the subfolders
 #' should be created.
 #' @param create.dir Create new outer directory if it doesn't exist already?
-#' @param overwrite Overwrite existing files with matching names?
+#' @template overwrite
 #' @param use_ss_new Use .ss_new files instead of original inputs?
 #' @param exe.dir Path to executable to copy into all the subfolders.
 #' @param exe.file Filename of executable to copy into all the subfolders.
 #' A value of NULL will skip copying the executable.
 #' @param exe.only Only copy exe files from exe.dir, don't copy input files
-#' @param verbose Return updates of function progress to the R console?
+#' @template verbose
 #' @return Returns table of results indicating which directories were
 #' successfully populated with the model input files and/or executables
 #' @author Ian Taylor

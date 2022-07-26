@@ -12,7 +12,8 @@ NegLogInt_Fn(
   PAR_num_Vec,
   Int_Group_List = list(1),
   StartFromPar = TRUE,
-  Intern = TRUE,
+  show_in_console = FALSE,
+  Intern = lifecycle::deprecated(),
   ReDoBiasRamp = FALSE,
   BiasRamp_linenum_Vec = NULL,
   CTL_linenum_Type = NULL,
@@ -52,8 +53,10 @@ hardwired to Version = 1.}
 \item{StartFromPar}{Logical flag (TRUE or FALSE) saying whether to start each
 round of optimization from a ".par" file (I recommend TRUE)}
 
-\item{Intern}{Logical flag saying whether to display all ss3 runtime output
-in the R terminal}
+\item{show_in_console}{Show output in the R console? If FALSE,
+then it is saved to a file.}
+
+\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 
 \item{ReDoBiasRamp}{Logical flag saying whether to re-do the bias ramp
 (using \code{\link[=SS_fitbiasramp]{SS_fitbiasramp()}}) each time Stock Synthesis is run.}

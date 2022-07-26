@@ -13,74 +13,18 @@ runs_path <- file.path(tmp_path, "extdata")
 # clean up
 on.exit(unlink(tmp_path, recursive = TRUE))
 
-# testing SS_doRetro
-test_that("SS_doRetro runs on simple_3.24 model", {
-  path_3.24 <- file.path(runs_path, "simple_3.24")
-  skip_if((!file.exists(file.path(path_3.24, "ss"))) &
-    (!file.exists(file.path(path_3.24, "ss.exe"))),
+test_that("SS_doRetro runs on simple_small model", {
+  path_simple_small <- file.path(runs_path, "simple_small")
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+    (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   SS_doRetro(
-    masterdir = path_3.24,
+    masterdir = path_simple_small,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
   retro_subdirs <- file.path(
-    path_3.24, "retrospectives",
-    paste0("retro", c("0", "-1", "-2"))
-  )
-  retro_ran <- lapply(
-    retro_subdirs,
-    function(d) file.exists(file.path(d, "Report.sso"))
-  )
-  expect_true(all(unlist(retro_ran) == TRUE))
-})
-
-# test commented out b/c there seems to be a bug for retrospectives in 3.30.01;
-# the user should update their model to a newer version of Stock synthesis to
-# run retrospectives
-# test_that("SS_doRetro runs on simple_3.30.01 model", {
-#   path_3.30.01 <- file.path(runs_path, "simple_3.30.01")
-#   skip_if((!file.exists(file.path(path_3.30.01, "ss"))) &
-#             (!file.exists(file.path(path_3.30.01, "ss.exe"))),
-#           message = "skipping test that requires SS executable")
-#   SS_doRetro(
-#     masterdir = path_3.30.01,
-#     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
-#   )
-#   retro_subdirs <- file.path(path_3.30.01, "retrospectives", paste0("retro", c("0", "-1", "-2")))
-#   retro_ran <- lapply(retro_subdirs,
-#          function(d) file.exists(file.path(d, "Report.sso")))
-#   expect_true(all(unlist(retro_ran) == TRUE))
-#
-#   # read model output from the retrospectives
-#   retroModels <- SSgetoutput(
-#     dirvec = file.path(path_3.30.01,
-#       "retrospectives",
-#       paste0("retro", 0:-2)
-#     )
-#   )
-#   # summarize the model output
-#   retroSummary <- SSsummarize(retroModels)
-#   # set the fector of ending years
-#   endyrvec <- retroSummary$endyrs + 0:-2
-#   SSplotComparisons(retroSummary,
-#     endyrvec = endyrvec,
-#     legendlabels = paste("Data", 0:-2, "years")
-#   )
-# })
-
-test_that("SS_doRetro runs on simple_3.30.12 model", {
-  path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
-  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) &
-    (!file.exists(file.path(path_3.30.12, "ss.exe"))),
-  message = "skipping test that requires SS executable"
-  )
-  SS_doRetro(
-    masterdir = path_3.30.12,
-    oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
-  )
-  retro_subdirs <- file.path(
-    path_3.30.12, "retrospectives",
+    path_simple_small, "retrospectives",
     paste0("retro", c("0", "-1", "-2"))
   )
   retro_ran <- lapply(
@@ -92,7 +36,7 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
   # read model output from the retrospectives
   retroModels <- SSgetoutput(
     dirvec = file.path(
-      path_3.30.12, "retrospectives",
+      path_simple_small, "retrospectives",
       paste0("retro", 0:-2)
     )
   )
@@ -104,15 +48,21 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
     endyrvec = endyrvec,
     legendlabels = paste("Data", 0:-2, "years")
   )
+  # calculate Mohn's rho values
+  # TODO: add better tests for mohns rho. Some values aren't calcualted b/c they
+  # are missing in the summaries for this model run.
+  mohns_rho <- SSmohnsrho(retroSummary)
+  expect_length(mohns_rho, 12)
 })
 
-test_that("SS_RunJitter runs on newest simple model", {
-  path_simple <- tail(dir(runs_path, full.names = TRUE), 1)
-  skipexe <- (!file.exists(file.path(path_simple, "ss"))) &
-    (!file.exists(file.path(path_simple, "ss.exe")))
-  dir.jit <- file.path(path_simple, "jitter")
+
+test_that("SS_RunJitter runs on simple_small model", {
+  path_simple_small <- file.path(runs_path, "simple_small")
+  skipexe <- (!file.exists(file.path(path_simple_small, "ss"))) &
+    (!file.exists(file.path(path_simple_small, "ss.exe")))
+  dir.jit <- file.path(path_simple_small, "jitter")
   expect_true(copy_SS_inputs(
-    dir.old = path_simple,
+    dir.old = path_simple_small,
     dir.new = dir.jit,
     create.dir = TRUE,
     overwrite = TRUE,
@@ -122,7 +72,7 @@ test_that("SS_RunJitter runs on newest simple model", {
   ))
   if (!skipexe & .Platform[["OS.type"]] == "unix") {
     file.copy(
-      from = file.path(path_simple, "ss"),
+      from = file.path(path_simple_small, "ss"),
       to = file.path(dir.jit, "ss")
     )
   }
@@ -150,15 +100,15 @@ test_that("SS_RunJitter runs on newest simple model", {
 
 ###############################################################################
 
-test_that("SS_profile runs on simple_3.30.12 model", {
-  path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
-  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) &
-    (!file.exists(file.path(path_3.30.12, "ss.exe"))),
+test_that("profile functions run on simple_small model", {
+  path_simple_small <- file.path(runs_path, "simple_small")
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+    (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
-  dir.prof <- file.path(path_3.30.12, "profile")
+  dir.prof <- file.path(path_simple_small, "profile")
   copy_SS_inputs(
-    dir.old = path_3.30.12,
+    dir.old = path_simple_small,
     dir.new = dir.prof,
     create.dir = TRUE,
     overwrite = TRUE,
@@ -169,7 +119,7 @@ test_that("SS_profile runs on simple_3.30.12 model", {
   # b/c current copy ss inputs wont copy the exe for mac or linux
   if (.Platform[["OS.type"]] == "unix") {
     file.copy(
-      from = file.path(path_3.30.12, "ss"),
+      from = file.path(path_simple_small, "ss"),
       to = file.path(dir.prof, "ss")
     )
   }
@@ -181,15 +131,45 @@ test_that("SS_profile runs on simple_3.30.12 model", {
   # run profile
   prof.table <- SS_profile(
     dir = dir.prof,
-    masterctlfile = "simple_control.ss",
+    masterctlfile = "control.ss",
     string = "R0", profilevec = c(8.5, 9)
   )
+  # read model output
   prof.out <- SSgetoutput(dirvec = dir.prof, keyvec = 1:2)
-  plotprofile.out <- SSplotProfile(summaryoutput = SSsummarize(prof.out))
+  # summarize output
+  summary.out <- SSsummarize(prof.out)
+  # run plotting functions
+  plotprofile.out <- SSplotProfile(summary.out)
+  pinerplot.out <- PinerPlot(summary.out)
+
   # check that the minimum of the total likelihood is 0
-  # (also serves to indicate that there are no NA values in this column)
+  # (also serves to indicate that the function didn't crash and
+  # there are no NA values in these columns)
   expect_equal(min(plotprofile.out$TOTAL), 0)
+  expect_equal(min(pinerplot.out$ALL), 0)
 })
+
+test_that("Run an SS3 model and read the hessian", {
+  path_simple_small <- file.path(runs_path, "simple_small")
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+    (!file.exists(file.path(path_simple_small, "ss.exe"))),
+  message = "skipping test that requires SS executable"
+  )
+  copy_results <- copy_SS_inputs(
+    dir.old = path_simple_small,
+    dir.new = file.path(tmp_path, "test_mod_run"), copy_exe = TRUE
+  )
+  expect_true(copy_results)
+  run_results <- run_SS_models(dirvec = file.path(tmp_path, "test_mod_run"))
+  expect_true(run_results[["results"]] == "ran model")
+  hes <- getADMBHessian(
+    File = file.path(tmp_path, "test_mod_run"),
+    FileName = "admodel.hes"
+  )
+  expect_length(hes, 4)
+  expect_true(is.matrix(hes[["hes"]]))
+})
+
 
 # clean up (should delete the temporary directory in which everything was run)
 unlink(tmp_path, recursive = TRUE)

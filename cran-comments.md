@@ -1,27 +1,26 @@
-* This is a new release
+## Release summary
 
-## Test environments
-* Ubuntu Linux 16.04.6 LTS (release on Travis CI)
-* Windows 10 (local, R 4.0.2)
-* win-builder (devel)
+This is a resubmission. In this version I have:
+
+* Added single quotes around the package name in the Description section
+  of DESCRIPTION to avoid a false positive spell check error.
+
+* Removed the VignetteBuilder field from DESCRIPTION
+
+* Removed the URLs which caused a NOTE about "(possibly) invalid URLs".
+  The URLs worked fine for me, so I'm not sure the source of the error.
+
+* Removed the URLs which caused a NOTE about "should use \doi" because I
+  can't get \doi to work and don't see it documented anywhere.
+
+Checking with winbuilder, I get "Status: OK"
 
 ## R CMD check results
 0 errors | 0 warnings | 0 notes
 
-### Error
-None
+## revdepcheck results
 
-### Warning
-None
+We checked 2 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
-### Note
-None
-
-## Downstream dependencies
-I have checked the 2 downstream dependencies:
-
-* ss3sim: There were no issues.
-
-* MSEtool: There were no issues.
-
-
+ * We saw 0 new problems
+ * We failed to check 0 packages

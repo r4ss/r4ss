@@ -49,8 +49,7 @@ modified by the arguments \code{forecast}.}
 
 \item{print}{Print to PNG files?}
 
-\item{plotdir}{Directory where PNG files will be written. By default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
@@ -77,13 +76,13 @@ the string options.}
 \item{lty}{Optional vector of line types to be used for the two lines
 (single value will apply to both lines).}
 
-\item{lwd}{Optional vector of line widths to be used for the two lines
-(single value will apply to both lines).}
+\item{lwd}{Optional vector of line widths to be used for the two lines.
+Single value will apply to both lines.}
 
 \item{add}{add to existing plot}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
@@ -100,7 +99,7 @@ The default is \code{res = 300}.}
 \code{help("png")} in R for details).}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top
-(not yet implemented for all plots)}
+(not yet implemented for all plots).}
 
 \item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
 }

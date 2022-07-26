@@ -7,16 +7,14 @@
 #'
 #'
 #' @template file
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is being read.
+#' @template verbose
+#' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
 #' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Chris J. Grandin,
-#' Kelli F. Johnson, Chantel R. Wetzel
+#' Kelli F. Johnson, Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @importFrom utils type.convert
 #' @seealso [SS_readdat()], [SS_readdat_3.30()]
@@ -24,16 +22,17 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_3.30 <-
-  function(file, verbose = TRUE, echoall = FALSE, section = NULL) {
+  function(file, verbose = TRUE, echoall = lifecycle::deprecated(), section = NULL) {
+    if (lifecycle::is_present(echoall)) {
+      lifecycle::deprecate_warn(
+        when = "1.45.0",
+        what = "SS_readdat_3.30(echoall)",
+        details = "Please use verbose = TRUE instead"
+      )
+    }
+
     if (verbose) {
       message("Running SS_readdat_3.30")
-    }
-    if (echoall) {
-      message("Echoing blocks of data as it's being read")
-      if (!verbose) {
-        message("Changing input 'verbose' to TRUE")
-        verbose <- TRUE
-      }
     }
     dat <- readLines(file, warn = FALSE)
     if (length(dat) < 20) {
@@ -46,7 +45,6 @@ SS_readdat_3.30 <-
     }
 
     Comments <- get_comments(dat)
-    ###############################################################################
     ## Divide data file into sections ----
     sec.end.inds <- grep("^999\\b", dat)
     ## Run some checks to ensure that only the section break 999's are being captured
@@ -97,7 +95,6 @@ SS_readdat_3.30 <-
       }
       dat <- dat[start:end]
     }
-    ###############################################################################
     ## Internally defined functions ----
     find.index <- function(dat, ind, str) {
       ## Find the first line at position ind or later that
@@ -167,7 +164,6 @@ SS_readdat_3.30 <-
       return(df)
     }
 
-    ###############################################################################
     ## Set up the data lines for parsing ----
     ## Remove any preceeding whitespace on all lines.
     dat <- gsub("^[[:blank:]]+", "", dat)
@@ -181,11 +177,8 @@ SS_readdat_3.30 <-
     datlist[["sourcefile"]] <- file
     datlist[["type"]] <- "Stock_Synthesis_data_file"
     datlist[["ReadVersion"]] <- "3.30"
-    if (verbose) {
-      message("SS_readdat_3.30 - read version = ", datlist[["ReadVersion"]])
-    }
     datlist[["Comments"]] <- Comments
-    ##############################################################################
+
     ## Get general model information ----
     ind <- 1
     datlist[["styr"]] <- get.val(dat, ind)
@@ -194,14 +187,13 @@ SS_readdat_3.30 <-
     datlist[["months_per_seas"]] <- get.vec(dat, ind)
     datlist[["Nsubseasons"]] <- get.val(dat, ind)
     datlist[["spawn_month"]] <- get.val(dat, ind)
-    datlist[["Ngenders"]] <- get.val(dat, ind)
-    # Keep both Nsexes and Ngenders for now, but get rid of Ngenders in the future.
-    datlist[["Nsexes"]] <- datlist[["Ngenders"]]
+    datlist[["Nsexes"]] <- get.val(dat, ind)
     datlist[["Nages"]] <- get.val(dat, ind)
     datlist[["N_areas"]] <- get.val(dat, ind)
     datlist[["Nfleets"]] <- get.val(dat, ind)
-
-    ###############################################################################
+    if (verbose) {
+      message("Read general model dimensions.")
+    }
     ## Fleet data ----
     datlist[["fleetinfo"]] <- get.df(dat, ind, datlist[["Nfleets"]])
     colnames(datlist[["fleetinfo"]]) <- c(
@@ -225,9 +217,8 @@ SS_readdat_3.30 <-
         " in fleet info."
       )
     }
-    if (echoall) {
-      message("Fleet information:")
-      print(datlist[["fleetinfo"]])
+    if (verbose) {
+      message("Read Fleet information.")
     }
 
     datlist[["fleetnames"]] <- datlist[["fleetinfo"]][["fleetname"]]
@@ -235,7 +226,6 @@ SS_readdat_3.30 <-
     datlist[["units_of_catch"]] <- as.numeric(datlist[["fleetinfo"]][["units"]])
     datlist[["areas"]] <- as.numeric(datlist[["fleetinfo"]][["area"]])
 
-    ##############################################################################
     ### Bycatch Data (only added for fleets with type = 2) ----
     if (any(datlist[["fleetinfo"]][["type"]] == 2)) {
       nbycatch <- length(datlist[["fleetinfo"]][["type"]][datlist[["fleetinfo"]][["type"]] == 2])
@@ -254,8 +244,11 @@ SS_readdat_3.30 <-
         datlist[["bycatch_fleet_info"]],
         datlist[["fleetinfo"]][datlist[["fleetinfo"]][["type"]] == 2, "fleetname", drop = FALSE]
       )
+      if (verbose) {
+        message("Read bycatch data.")
+      }
     }
-    ###############################################################################
+
     ## Catch data ----
     datlist[["catch"]] <- get.df(dat, ind)
     colnames(datlist[["catch"]]) <- c(
@@ -265,17 +258,18 @@ SS_readdat_3.30 <-
       "catch",
       "catch_se"
     )
-
-    ###############################################################################
+    if (verbose) {
+      message("Read catches.")
+    }
     ## CPUE data  ----
     datlist[["CPUEinfo"]] <- get.df(dat, ind, datlist[["Nfleets"]])
     # note SD_Report column wasn't present in early 3.30 versions of SS
     CPUEinfo_names <- c("Fleet", "Units", "Errtype", "SD_Report")
     colnames(datlist[["CPUEinfo"]]) <- CPUEinfo_names[1:ncol(datlist[["CPUEinfo"]])]
     rownames(datlist[["CPUEinfo"]]) <- datlist[["fleetnames"]]
-    if (echoall) {
-      message("CPUE information:")
-      print(datlist[["CPUEinfo"]])
+
+    if (verbose) {
+      message("Read CPUE data.")
     }
 
     ## CPUE data matrix
@@ -286,12 +280,8 @@ SS_readdat_3.30 <-
     } else {
       datlist[["CPUE"]] <- NULL
     }
-    if (echoall) {
-      message("CPUE data:")
-      print(datlist[["CPUE"]])
-    }
 
-    ###############################################################################
+
     ## Discard data ----
     ## fleet.nums.with.catch is defined in the catch section above.
     datlist[["N_discard_fleets"]] <- get.val(dat, ind)
@@ -305,42 +295,33 @@ SS_readdat_3.30 <-
       ## Discard data
       datlist[["discard_data"]] <- get.df(dat, ind)
       colnames(datlist[["discard_data"]]) <- c("Yr", "Seas", "Flt", "Discard", "Std_in")
+      if (verbose) {
+        message("Read discards.")
+      }
     } else {
       datlist[["discard_fleet_info"]] <- NULL
       datlist[["discard_data"]] <- NULL
     }
-    if (echoall & !is.null(datlist[["discard_fleet_info"]])) {
-      message("Discard fleet information:")
-      print(datlist[["discard_fleet_info"]])
-    }
-    if (echoall & !is.null(datlist[["discard_data"]])) {
-      message("Discard data:")
-      print(datlist[["discard_data"]])
-    }
 
-    ###############################################################################
-    ## Mean body weight data ----
+    ## Mean body weight data ----""
     datlist[["use_meanbodywt"]] <- get.val(dat, ind)
     if (datlist[["use_meanbodywt"]]) {
       datlist[["DF_for_meanbodywt"]] <- get.val(dat, ind)
       datlist[["meanbodywt"]] <- get.df(dat, ind)
-      colnames(datlist[["meanbodywt"]]) <- c(
-        "Year", "Seas", "Fleet", "Partition", "Type",
-        "Value", "Std_in"
-      )
+      if (!is.null(datlist[["meanbodywt"]])) {
+        colnames(datlist[["meanbodywt"]]) <- c(
+          "Year", "Seas", "Fleet", "Partition", "Type",
+          "Value", "Std_in"
+        )
+      }
+      if (verbose) {
+        message("Read mean body weight.")
+      }
     } else {
       datlist[["DF_for_meanbodywt"]] <- NULL
       datlist[["meanbodywt"]] <- NULL
     }
-    if (verbose) {
-      message("use_meanbodywt (0/1): ", datlist[["use_meanbodywt"]])
-    }
-    if (echoall & !is.null(datlist[["meanbodywt"]])) {
-      message("meanbodywt:")
-      print(datlist[["meanbodywt"]])
-    }
 
-    ###############################################################################
     ## Population size structure - Length ----
     datlist[["lbin_method"]] <- get.val(dat, ind)
     if (datlist[["lbin_method"]] == 2) {
@@ -368,14 +349,8 @@ SS_readdat_3.30 <-
       datlist[["N_lbinspop"]] <- NULL
       datlist[["lbin_vector_pop"]] <- NULL
     }
-    if (verbose) {
-      message("N_lbinspop: ", datlist[["N_lbinspop"]])
-    }
     ## Length Comp information matrix (new for 3.30)
     datlist[["use_lencomp"]] <- get.val(dat, ind)
-    if (verbose) {
-      message("use_lencomp (0/1): ", datlist[["use_lencomp"]])
-    }
     # only read all the stuff related to length comps if switch above = 1
     if (datlist[["use_lencomp"]]) {
       # note: minsamplesize column not present in early 3.30 versions of SS
@@ -386,15 +361,8 @@ SS_readdat_3.30 <-
         "minsamplesize"
       )[1:ncol(datlist[["len_info"]])]
       rownames(datlist[["len_info"]]) <- datlist[["fleetnames"]]
-      if (echoall) {
-        message("\nlen_info:")
-        print(datlist[["len_info"]])
-      }
       ## Length comp data
       datlist[["N_lbins"]] <- get.val(dat, ind)
-      if (verbose) {
-        message("N_lbins: ", datlist[["N_lbins"]])
-      }
       datlist[["lbin_vector"]] <- get.vec(dat, ind)
       datlist[["lencomp"]] <- get.df(dat, ind)
       if (!is.null(datlist[["lencomp"]])) {
@@ -422,33 +390,21 @@ SS_readdat_3.30 <-
         if (any(zero_lencomp == TRUE)) {
           warning(
             "Lines of all zero length comp found. SS will exit on error if",
-            " a line of comps is all zeros. Line(s) ",
+            " a line of comps is all zeroes and year is positive. Line(s) ",
             paste0(which(zero_lencomp), collapse = ", ")
           )
         }
       }
-      # echo values
-      if (echoall) {
-        message("\nFirst 2 rows of lencomp:")
-        print(head(datlist[["lencomp"]], 2))
-        message("\nLast 2 rows of lencomp:")
-        print(tail(datlist[["lencomp"]], 2))
-        cat("\n")
+
+      if (verbose) {
+        message("Read Length composition data.")
       }
     }
 
-    ###############################################################################
     ## Population size structure - Age ----
     datlist[["N_agebins"]] <- get.val(dat, ind)
-    if (verbose) {
-      message("N_agebins: ", datlist[["N_agebins"]])
-    }
     if (datlist[["N_agebins"]]) {
       datlist[["agebin_vector"]] <- get.vec(dat, ind)
-      if (echoall) {
-        message("agebin_vector:")
-        print(datlist[["agebin_vector"]])
-      }
     } else {
       datlist[["agebin_vector"]] <- NULL
     }
@@ -463,16 +419,9 @@ SS_readdat_3.30 <-
         datlist[["ageerror"]] <- NULL
       }
       # echo values
-      if (echoall) {
-        message("\nN_ageerror_definitions:")
-        print(datlist[["N_ageerror_definitions"]])
-        message("\nageerror:")
-        print(datlist[["ageerror"]])
-      }
     }
 
 
-    ###############################################################################
     ## Age Comp information matrix ----
     if (datlist[["N_agebins"]]) {
       datlist[["age_info"]] <- get.df(dat, ind, datlist[["Nfleets"]])
@@ -492,13 +441,7 @@ SS_readdat_3.30 <-
       # conditional age-at-length data and differs from lbin_method for the length
       # data read above
       datlist[["Lbin_method"]] <- get.val(dat, ind)
-      if (echoall) {
-        message("\nage_info:")
-        print(datlist[["age_info"]])
-      }
     }
-
-    ###############################################################################
     ## Age comp matrix ----
     if (datlist[["N_agebins"]]) {
       datlist[["agecomp"]] <- get.df(dat, ind)
@@ -522,7 +465,6 @@ SS_readdat_3.30 <-
             }
           )
       }
-      # echo values
       # warn if any 0 values in the agecomp:
       if (!is.null(datlist[["agecomp"]])) {
         zero_agecomp <- apply(datlist[["agecomp"]][, -(1:9)], MARGIN = 1, FUN = sum) == 0
@@ -535,16 +477,8 @@ SS_readdat_3.30 <-
         }
       }
 
-      if (echoall) {
-        message("\nFirst 2 rows of agecomp:")
-        print(head(datlist[["agecomp"]], 2))
-        message("\nLast 2 rows of agecomp:")
-        print(tail(datlist[["agecomp"]], 2))
-        cat("\n")
-      }
-    } else {
       if (verbose) {
-        message("N_agebins = 0, skipping read remaining age-related stuff")
+        message("Read age composition data.")
       }
     }
     # check DM pars ----)
@@ -571,12 +505,8 @@ SS_readdat_3.30 <-
         }
       }
     }
-    ###############################################################################
     ## Mean size-at-age data ----
     datlist[["use_MeanSize_at_Age_obs"]] <- get.val(dat, ind)
-    if (verbose) {
-      message("use_MeanSize_at_Age_obs (0/1): ", datlist[["use_MeanSize_at_Age_obs"]])
-    }
     if (datlist[["use_MeanSize_at_Age_obs"]]) {
       ind.tmp <- ind # save current position in case necessary to re-read
       endmwa <- ind - 2 + grep("-9999", dat[ind:length(dat)])[1]
@@ -630,14 +560,7 @@ SS_readdat_3.30 <-
             NULL
           }
         )
-      # echo values
-      if (echoall) {
-        message("\nFirst 2 rows of MeanSize_at_Age_obs:")
-        print(head(datlist[["MeanSize_at_Age_obs"]], 2))
-        message("\nLast 2 rows of MeanSize_at_Age_obs:")
-        print(tail(datlist[["MeanSize_at_Age_obs"]], 2))
-        cat("\n")
-      }
+
       # The formatting of the mean size at age in data.ss_new has sample sizes
       # on a separate line below the mean size values, and this applies to the
       # -9999 line as well. The lines below is an attempt to work around this
@@ -646,35 +569,27 @@ SS_readdat_3.30 <-
       if (length(test) == 1) {
         ind <- ind - 1
       }
+      if (verbose) {
+        "Read Mean Size at Age observations."
+      }
     } else {
       datlist[["MeanSize_at_Age_obs"]] <- NULL
     }
 
-    ###############################################################################
     ## Environment variables ----
     datlist[["N_environ_variables"]] <- get.val(dat, ind)
-
-    if (verbose) {
-      message("N_environ_variables: ", datlist[["N_environ_variables"]])
-    }
 
     if (datlist[["N_environ_variables"]]) {
       datlist[["envdat"]] <- get.df(dat, ind)
       colnames(datlist[["envdat"]]) <- c("Yr", "Variable", "Value")
 
-      # echo values
-      if (echoall) {
-        message("\nFirst 2 rows of envdat:")
-        print(head(datlist[["envdat"]], 2))
-        message("\nLast 2 rows of envdat:")
-        print(tail(datlist[["envdat"]], 2))
-        cat("\n")
+      if (verbose) {
+        message("Read environmental variable data.")
       }
     } else {
       datlist[["envdat"]] <- NULL
     }
 
-    ###############################################################################
     ## Size frequency methods ----
     datlist[["N_sizefreq_methods"]] <- get.val(dat, ind)
     if (datlist[["N_sizefreq_methods"]]) {
@@ -684,17 +599,6 @@ SS_readdat_3.30 <-
       datlist[["scale_per_method"]] <- get.vec(dat, ind)
       datlist[["mincomp_per_method"]] <- get.vec(dat, ind)
       datlist[["Nobs_per_method"]] <- get.vec(dat, ind)
-      if (echoall) {
-        message("Details of generalized size frequency methods:")
-        print(data.frame(
-          method = 1:datlist[["N_sizefreq_methods"]],
-          nbins = datlist[["nbins_per_method"]],
-          units = datlist[["units_per_method"]],
-          scale = datlist[["scale_per_method"]],
-          mincomp = datlist[["mincomp_per_method"]],
-          nobs = datlist[["Nobs_per_method"]]
-        ))
-      }
       ## get list of bin vectors
       datlist[["sizefreq_bins_list"]] <- list()
       for (imethod in seq_len(datlist[["N_sizefreq_methods"]])) {
@@ -724,10 +628,6 @@ SS_readdat_3.30 <-
               NULL
             }
           )
-        if (echoall) {
-          message("Method ", imethod, " (first two rows, ten columns):")
-          print(datlist[["sizefreq_data_list"]][[imethod]][1:min(Nrows, 2), 1:min(Ncols, 10)])
-        }
         if (any(datlist[["sizefreq_data_list"]][[imethod]][, "Method"] != imethod)) {
           stop(
             "Problem with method in size frequency data:\n",
@@ -736,6 +636,9 @@ SS_readdat_3.30 <-
             paste(unique(datlist[["sizefreq_data_list"]][["Method"]]), collapse = ", ")
           )
         }
+      }
+      if (verbose) {
+        message("Read size frequency data.")
       }
     } else {
       datlist[["nbins_per_method"]] <- NULL
@@ -747,14 +650,16 @@ SS_readdat_3.30 <-
       datlist[["sizefreq_data_list"]] <- NULL
     }
 
-    ###############################################################################
     ## Tag data ----
     datlist[["do_tags"]] <- get.val(dat, ind)
-    if (datlist[["do_tags"]]) {
+    if (datlist[["do_tags"]] > 0) {
       datlist[["N_tag_groups"]] <- get.val(dat, ind)
       datlist[["N_recap_events"]] <- get.val(dat, ind)
       datlist[["mixing_latency_period"]] <- get.val(dat, ind)
       datlist[["max_periods"]] <- get.val(dat, ind)
+      if (datlist[["do_tags"]] == 2) {
+        datlist[["TG_min_recap"]] <- get.val(dat, ind)
+      }
       ## Read tag release data
       if (datlist[["N_tag_groups"]] > 0) {
         Ncols <- 8
@@ -763,10 +668,6 @@ SS_readdat_3.30 <-
           "TG", "Area", "Yr", "Season",
           "tfill", "Gender", "Age", "Nrelease"
         )
-        if (echoall) {
-          message("Head of tag release data:")
-          print(head(datlist[["tag_releases"]]))
-        }
       } else {
         datlist[["tag_releases"]] <- NULL
       }
@@ -775,16 +676,14 @@ SS_readdat_3.30 <-
         Ncols <- 5
         datlist[["tag_recaps"]] <- get.df(dat, ind, datlist[["N_recap_events"]])
         colnames(datlist[["tag_recaps"]]) <- c("TG", "Yr", "Season", "Fleet", "Nrecap")
-        if (echoall) {
-          message("Head of tag recapture data:")
-          print(head(datlist[["tag_recaps"]]))
+        if (verbose) {
+          message("Read tag recapture data.")
         }
       } else {
         datlist[["tag_recaps"]] <- NULL
       }
     }
 
-    ###############################################################################
     ## Morphometrics composition data ----
     datlist[["morphcomp_data"]] <- get.val(dat, ind)
     if (datlist[["morphcomp_data"]]) {
@@ -796,11 +695,9 @@ SS_readdat_3.30 <-
       )
     }
 
-    ###############################################################################
     ## Selectivity priors ----
     datlist[["use_selectivity_priors"]] <- get.val(dat, ind)
 
-    ###############################################################################
     ## End of file ----
     eof <- get.val(dat, ind)
     if (verbose) {
@@ -816,8 +713,7 @@ SS_readdat_3.30 <-
     datlist[["eof"]] <- FALSE
     if (eof == 999) datlist[["eof"]] <- TRUE
 
-    ###############################################################################
-    ## Fixes pulled in from SS_readdat wrapper
+    ## Fixes pulled in from SS_readdat wrapper ----
     ##
     ## Note from IGT 27-March-2020:
     ## Many of the list elements created below are related to the format of SSv3.24

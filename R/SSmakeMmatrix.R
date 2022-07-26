@@ -1,16 +1,16 @@
-##' Convert a matrix of natural mortality values into
-##' inputs for Stock Synthesis
-##'
-##' Inspired by Valerio Bartolino and North Sea herring
-##'
-##' @param  mat             a matrix of natural mortality by year and age, starting with age 0
-##' @param  startyr         the first year of the natural mortality values (no missing years)
-##' @param  outfile         optional file to which the results will be written
-##' @param  overwrite       if 'outfile' is provided and exists, option to overwrite or not
-##' @param  yrs.in.columns  an indicator of whether the matrix has years in columns or rows
-##' @return Prints inputs with option to write to chosen file
-##' @author Ian Taylor
-##' @export
+#' Convert a matrix of natural mortality values into
+#' inputs for Stock Synthesis
+#'
+#' Inspired by Valerio Bartolino and North Sea herring
+#'
+#' @param  mat             a matrix of natural mortality by year and age, starting with age 0
+#' @param  startyr         the first year of the natural mortality values (no missing years)
+#' @param  outfile         optional file to which the results will be written
+#' @param  overwrite       if 'outfile' is provided and exists, option to overwrite or not
+#' @param  yrs.in.columns  an indicator of whether the matrix has years in columns or rows
+#' @return Prints inputs with option to write to chosen file
+#' @author Ian Taylor
+#' @export
 SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
                           overwrite = FALSE, yrs.in.columns = TRUE) {
   # A function for converting a matrix of natural mortality values
@@ -35,7 +35,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   # check for existing file
   if (!is.null(outfile) && file.exists(outfile)) {
     if (!overwrite) {
-      cat("File exists and input 'overwrite'=FALSE:", outfile, "\n")
+      message("File exists and input 'overwrite'=FALSE:", outfile)
       return()
     } else {
       file.remove(outfile)
@@ -55,7 +55,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
 
   # open file connection if requested
   if (!is.null(outfile)) {
-    cat("opening connection to", outfile, "\n")
+    message("opening connection to", outfile)
     zz <- file(outfile, open = "at")
     sink(zz)
   }
@@ -66,9 +66,9 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   maxage <- nrow(mat) - 1 # maximum age (assuming first age=0)
   ages <- 0:maxage # vector of ages
 
-  cat(
-    "#### Calculating inputs to Stock Synthesis for a matrix of natural mortality values",
-    paste("\n#### over the range of ages:", min(ages), "to", maxage, "\n\n")
+  message(
+    "Calculating inputs to Stock Synthesis for a matrix of natural mortality values",
+    "\n over the range of ages:", min(ages), "to", maxage
   )
 
   Msetup <- c(
@@ -78,7 +78,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
     paste(paste(ages, collapse = " "), "# NatM_breakages (required when using natM_type=1)\n")
   )
 
-  cat(Msetup)
+  message(Msetup)
 
   # create data frame of parameter lines
   HI <- ceiling(max(mat) * 10) / 10
@@ -107,7 +107,10 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   Mparams[["comment"]] <- paste("# M parameter for age", ages)
   Mparams[["comment"]][maxage + 1] <- paste(Mparams[["comment"]][maxage + 1], "+", sep = "")
 
-  cat("\n# stuff to paste into the first block of parameter lines\n")
+  message(
+    "Mortality params to paste into the first block of parameter lines:\n",
+    paste0(utils::capture.output(Mparams), collapse = "\n")
+  )
   printdf(Mparams)
 
   # create data frame of environmental link parameters
@@ -128,9 +131,11 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   # modify final comment to make clear as a plus group
   Mlinks[["comment"]][maxage + 1] <- paste(Mlinks[["comment"]][maxage + 1], "+", sep = "")
 
-  cat("\n# stuff to paste below the line labeled 'CohortGrowDev'\n")
-  cat("1 #_custom mortality/growth environmental setup\n")
-  printdf(Mlinks)
+  message(
+    "\n# stuff to paste below the line labeled 'CohortGrowDev'\n",
+    "1 #_custom mortality/growth environmental setup\n",
+    paste0(utils::capture.output(Mlinks), collapse = "\n")
+  )
 
   # create a data frame of environmental variables
   Menv <- NULL
@@ -148,12 +153,12 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 
-  cat("\n# Environmental variables to paste into the bottom of the data file\n")
-
-  cat(paste(maxage + 1, "# N environmental variables\n"))
-  cat(paste(nrow(Menv), "# N environmental observations\n"))
-
-  printdf(Menv)
+  message(
+    "Environmental variables to paste into the bottom of the data file:\n",
+    maxage + 1, " # N environmental variables\n",
+    nrow(Menv), " # N environmental observations\n",
+    paste0(utils::capture.output(Menv), collapse = "\n")
+  )
 
   # restore things to how they were
   options(width = oldwidth, max.print = oldmax.print)
@@ -161,5 +166,5 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
     sink()
     close(zz)
   }
-  if (!is.null(outfile)) cat("file written to", outfile, "\n")
+  if (!is.null(outfile)) message("file written to", outfile)
 }

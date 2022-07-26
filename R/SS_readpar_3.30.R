@@ -5,22 +5,23 @@
 #'
 #' @param parfile Filename either with full path or relative to working directory.
 #' @param datsource list or character. If list, should be a list produced
-#' from [SS_writedat()]. If character, should be the full file location of an
+#' from [SS_readdat()]. If character, should be the full file location of an
 #' SS data file.
 #' @param ctlsource list or character. If list, should be a list produced
 #' from [SS_writectl()]. If character, should be the full file location of an
 #' SS control file.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template verbose
 #' @author Nathan R. Vaughan
 #' @export
-#' @seealso [SS_readctl()],
+#' @seealso [SS_writepar_3.30()],
+#' [SS_readctl()],
 #' [SS_readdat()],
 #' [SS_readstarter()],
 #' [SS_readforecast()],
+#' [SS_writectl()],
+#' [SS_writedat()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()],
-#' [SS_writedat()]
 SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   if (is.character(datsource)) {
     datlist <- SS_readdat(file = datsource, version = "3.30", verbose = FALSE)
@@ -42,7 +43,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   }
 
   # function to read Stock Synthesis parameter files
-  if (verbose) cat("running SS_readpar_3.30\n")
+  if (verbose) message("running SS_readpar_3.30")
   parvals <- readLines(parfile, warn = FALSE)
 
   parlist <- list()
@@ -331,6 +332,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         dev_parm_labels <- c(dev_parm_labels, paste0(rownames(dev_temp), "_dev_seq"))
       }
     }
+
     # Add 2DAR selectivity parameters if they exist
     if (!is.null(ctllist[["pars_2D_AR"]])) {
       if (!is.null(parlist[["S_parms"]])) {
@@ -339,6 +341,17 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         parlist[["S_parms"]] <- ctllist[["pars_2D_AR"]][, 3:4]
       }
     }
+
+    # Add 2DAR devs if they exist
+    if (!is.null(ctllist[["specs_2D_AR"]])) {
+      dev_temp <- ctllist[["specs_2D_AR"]]
+      if (length(dev_temp[, 1]) > 0) {
+        dev_parm_start <- c(dev_parm_start, rep(1, length(dev_temp[, 1])))
+        dev_parm_end <- c(dev_parm_end, (dev_temp[, 3] - dev_temp[, 2] + 1) * (dev_temp[, 5] - dev_temp[, 4] + 1))
+        dev_parm_labels <- c(dev_parm_labels, paste0(rownames(dev_temp), "_dev_seq"))
+      }
+    }
+
     colnames(parlist[["S_parms"]]) <- c("INIT", "ESTIM")
     # Read in values for selectivity parameters and add to list
     S_seq <- as.numeric(parvals[(grep("selparm", parvals) + 1)])

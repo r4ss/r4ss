@@ -9,24 +9,23 @@
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If `plotdat = FALSE` then subplot 1 is not created, regardless of
 #' choice of `subplots`.
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param fleets optional vector to subset fleets for which plots will be made
-#' @param fleetnames optional replacement for fleenames used in data file
+#' @template plot
+#' @template print
+#' @template plotdir
+#' @template fleets
+#' @template fleetnames
 #' @param datplot Make data-only plot of discards? This can override the choice
 #' of `subplots`.
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param col1 first color to use in plot (for expected values)
 #' @param col2 second color to use in plot (for observations and intervals)
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize point size for PNG file
-#' @param cex.main character expansion for plot titles
-#' @param verbose report progress to R GUI?
+#' @template ptsize
+#' @template cex.main
+#' @template verbose
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
@@ -134,9 +133,6 @@ SSplotMnwt <-
           } # end loop over subplots
         } # end loop over market categories
       } # end loop over fleets
-      ##   if(verbose) cat("Finished mean body weight plot\n")
-      ## }else{ # if mean weight data exists
-      ##   if(verbose) cat("No mean body weight data to plot\n")
     }
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "Mnwt"
     return(invisible(plotinfo))

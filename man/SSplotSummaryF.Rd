@@ -36,17 +36,17 @@ SSplotSummaryF(
 
 \item{print}{Print to PNG files?}
 
-\item{plotdir}{Directory where PNG files will be written. By default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
-\item{verbose}{Verbose output to R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{uncertainty}{Show 95\% uncertainty intervals around point estimates?}
 
 \item{add}{add to existing plot}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used

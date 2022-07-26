@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readstarter.R
 \name{SS_readstarter}
 \alias{SS_readstarter}
-\title{read starter file}
+\title{Read Stock Synthesis starter file as a list}
 \usage{
 SS_readstarter(file = "starter.ss", verbose = TRUE)
 }
@@ -11,16 +11,39 @@ SS_readstarter(file = "starter.ss", verbose = TRUE)
 
 See the formal arguments for a possible default filename.}
 
-\item{verbose}{Should there be verbose output while running the file?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+}
+\value{
+A list with one element for each line of input values.
+List elements containing the name of the control and data file are
+particularly helpful, i.e., \code{ctlfile} and \code{datfile}, respectively.
 }
 \description{
-read Stock Synthesis starter file into list object in R
+Read Stock Synthesis starter file as a list
+}
+\examples{
+starter_list <- SS_readstarter(
+  system.file("extdata", "simple_small", "starter.ss",
+    package = "r4ss"
+  ),
+  verbose = FALSE
+)
+
+# The following lines should be TRUE and demonstrate how you can know the
+# names of the control and data file given information in the starter file.
+starter_list[["ctlfile"]] == "simple_control.ss"
+starter_list[["datfile"]] == "simple_data.ss"
 }
 \seealso{
-\code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_readdat]{SS_readdat()}},
-\code{\link[=SS_writestarter]{SS_writestarter()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
+\itemize{
+\item \code{\link[=SS_readforecast]{SS_readforecast()}},
+\item \code{\link[=SS_readdat]{SS_readdat()}},
+\item \code{\link[=SS_writestarter]{SS_writestarter()}},
+\item \code{\link[=SS_writeforecast]{SS_writeforecast()}},
+\item \code{\link[=SS_writedat]{SS_writedat()}}
+}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 }

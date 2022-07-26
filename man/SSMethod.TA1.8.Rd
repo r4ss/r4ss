@@ -67,9 +67,7 @@ the adjusted sample sizes (TRUE by default unless datonly = TRUE)}
 
 \item{maxpanel}{maximum number of panels within a plot}
 
-\item{fleetnames}{Vector of alternative fleet names to draw from for
-plot titles and captions. It should have length equal to the number
-of fleets in the model, not the number of fleets considered in this function.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{label.part}{Include labels indicating which partitions are included?}
 
@@ -98,7 +96,7 @@ appropriate for all combinations of options.  The following
 notes might help anyone wanting to check or correct the code.
 \enumerate{
 \item The code first takes the appropriate database (lendbase, sizedbase,
-agedbase, or condbase) and removes un-needed rows.
+agedbase, or condbase) and removes unneeded rows.
 \item The remaining rows of the database are grouped into individual
 comps (indexed by vector indx) and relevant statistics (e.g.,
 observed and expected mean length or age), and ancillary data,

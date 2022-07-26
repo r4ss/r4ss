@@ -16,8 +16,9 @@ SS_writeforecast(
 \arguments{
 \item{mylist}{List object created by \code{\link[=SS_readforecast]{SS_readforecast()}}.}
 
-\item{dir}{Directory for new forecast file. Default=NULL (working
-directory).}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{file}{Filename for new forecast file. Default="forecast.ss".}
 
@@ -25,10 +26,11 @@ directory).}
 (at which point SS stops reading, and remaining elements in list may not be
 available, depending on settings used in SS_readforecast)}
 
-\item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 write Stock Synthesis forecast file from list object in R which was probably
@@ -40,5 +42,5 @@ created using \code{\link[=SS_readforecast]{SS_readforecast()}}
 \code{\link[=SS_writestarter]{SS_writestarter()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 }

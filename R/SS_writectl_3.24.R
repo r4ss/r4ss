@@ -1,62 +1,34 @@
-#' write control file
+#' Deprecated: write 3.24 control file
 #'
 #' write Stock Synthesis control file from list object in R which was probably
 #' created using [SS_readctl()]
 #'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30.
 #'
 #' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
-#' @param overwrite Should existing files be overwritten? Default=FALSE.
-#' @param verbose Should there be verbose output while running the file?
-#'  Defaults to FALSE.
-#' @param nseas Deprecated. number of season in the model. This information is not
-#'  explicitly available in control file
-#' @param N_areas Deprecated. number of spatial areas in the model. This information is also not
-#'  explicitly available in control file
-#' @param Do_AgeKey Deprecated. Flag to indicate if 7 additional ageing error parameters to be read
-#'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
-#'  to disable them. This information is not explicitly available in control file, too.
-#' @author Yukio Takeuchi
+#' @template overwrite
+#' @template verbose
+#' @author Yukio Takeuchi, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readctl_3.24()],[SS_readstarter()],
 # ' \code{\link{SS_readforecast}},
 # ' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 # ' \code{\link{SS_writedat}}
-SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALSE,
-                             ## Parameters that are not defined in control file
-                             ## if ctllist is an output of SS_readctl these three inputs will be overriden by
-                             ## nseas,N_areas and Do_AgeKey in ctllist
-                             nseas = lifecycle::deprecated(),
-                             N_areas = lifecycle::deprecated(),
-                             Do_AgeKey = lifecycle::deprecated()) {
+SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
+                             verbose = FALSE) {
+  # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_writectl_3.24()",
+    details = "Please update model to version 3.30."
+  )
   # Add msgs for deprecated args ----
   # these should be removed after 1 release version.
-  if (lifecycle::is_present(nseas)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_writectl_3.24(nseas)",
-      details = "nseas is not used. ctllist[['nseas']] is used instead."
-    )
-  }
-
-  if (lifecycle::is_present(N_areas)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_writectl_3.24(N_areas)",
-      details = "nseas is not used. ctllist[['N_areas']] is used instead."
-    )
-  }
-
-  if (lifecycle::is_present(Do_AgeKey)) {
-    lifecycle::deprecate_warn(
-      when = "1.41.1",
-      what = "SS_writectl_3.24(Do_AgeKey)",
-      details = "Do_AgeKey is not used. ctllist[['Do_AgeKey']] is used instead."
-    )
-  }
 
   # function to write Stock Synthesis ctl files
-  if (verbose) cat("running SS_writectl\n")
+  if (verbose) message("running SS_writectl")
 
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
     stop("input 'ctllist' should be a list with $type=='Stock_Synthesis_control_file'")
@@ -64,7 +36,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cat("File exists and input 'overwrite'=FALSE:", outfile, "\n")
+      message("File exists and input 'overwrite'=FALSE: ", outfile)
       return()
     } else {
       file.remove(outfile)
@@ -75,7 +47,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   oldmax.print <- options()$max.print
   options(width = 5000, max.print = 9999999)
 
-  if (verbose) cat("opening connection to", outfile, "\n")
+  if (verbose) message("opening connection to", outfile)
   zz <- file(outfile, open = "at")
   #  on.exit({if(sink.number()>0) sink();close(zz)})
   on.exit(close(zz))
@@ -136,25 +108,27 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     }
     if (!is.null(dataframe)) {
       if (header) {
-        dataframe[["PType"]] <- NULL
+        if (isTRUE(!is.null(dataframe[["PType"]]))) {
+          warning(
+            "Please remove PType column in parameter dataframe, ",
+            "which was deprecated as of r4ss 1.45.0."
+          )
+          dataframe[["PType"]] <- NULL
+        }
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
         writeLines(paste(names(dataframe), collapse = "\t"), con = zz)
       }
       if (!is.na(headerLine)) xxx <- 2
-      #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
       if (!is.null(rownames(dataframe))) {
         rownames(dataframe) <- sapply(rownames(dataframe), function(z) {
           ifelse(length(grep(x = z, pattern = "^#")) == 1, z, paste0("#_", z))
         })
         dataframe[["comments"]] <- rownames(dataframe)
       }
-      #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
-      #                 row.names=FALSE,col.names=FALSE)
       write_fwf4(
         file = zz, x = dataframe, append = TRUE, sep = "\t", quote = FALSE,
         rownames = FALSE, colnames = FALSE, digits = 6
       )
-      #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
     }
   }
 
@@ -199,7 +173,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   }
   wl("fracfemale") # _fracfemale
   wl("natM_type", comment = "#_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate")
-  writeComment("#_Age_natmort_by gender x growthpattern")
+  writeComment("#_Age_natmort_by sex x growthpattern")
   if (ctllist[["natM_type"]] == 1) {
     wl("N_natM", comment = "#_Number of M_segments")
     wl.vector("M_ageBreakPoints", comment = "# age(real) at M breakpoints")
@@ -301,7 +275,6 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   # SRR
   writeComment("#_Spawner-Recruitment")
   wl("SR_function", comment = "#_SR_function: 2=Ricker; 3=std_B-H; 4=SCAA; 5=Hockey; 6=B-H_flattop; 7=survival_3Parm; 8=Shepard_3Parm")
-  # writeComment("#_LO HI INIT PRIOR PR_type SD PHASE")
   printdf("SR_parms")
   wl("SR_env_link")
   wl("SR_env_target")
@@ -311,7 +284,6 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   wl("recdev_phase", comment = "recdev phase")
   wl("recdev_adv", comment = "(0/1) to read 13 advanced options")
   if (ctllist[["recdev_adv"]]) {
-    #  cat("writing 13 advanced SRR options\n")
     wl("recdev_early_start", comment = "#_recdev_early_start (0=none; neg value makes relative to recdev_start)")
     wl("recdev_early_phase", comment = "#_recdev_early_phase")
     wl("Fcast_recr_phase", comment = "#_forecast_recruitment phase (incl. late recr) (0 value resets to maxphase+1)")
@@ -383,8 +355,12 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   # Density dependant Q(Q-power)
   if (sum(ctllist[["Q_setup"]][, 1]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)) {
-      cat("must create base Q parm to use Q_power for fleet: ", which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2))
-      stop()
+      prob_flts <-
+        which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)
+      stop(
+        "must create base Q parm to use Q_power for fleet(s): ",
+        paste0(prob_flts, collapse = ", ")
+      )
     }
     printdf("Q_power", header = header)
     header <- FALSE
@@ -392,8 +368,10 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   # Q-env
   if (sum(ctllist[["Q_setup"]][, 2]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)) {
-      cat("must create base Q parm to use Q_env for fleet: ", which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2))
-      stop()
+      stop(
+        "must create base Q parm to use Q_env for fleet: ",
+        which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)
+      )
     }
     printdf("Q_env", header = header)
     header <- FALSE
@@ -522,7 +500,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   writeComment("#")
   writeLines("999", con = zz)
   options(width = oldwidth, max.print = oldmax.print)
-  # sink()
-  # close(zz)
-  if (verbose) cat("file written to", outfile, "\n")
+  if (verbose) {
+    message("File written to ", outfile)
+  }
 }

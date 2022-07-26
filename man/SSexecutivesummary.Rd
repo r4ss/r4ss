@@ -36,7 +36,7 @@ The default is the dir location where the Report.sso file is located.}
 will be produced, default is FALSE which will return all executive summary
 tables, historical catches, and numbers-at-ages}
 
-\item{fleetnames}{A vector of user-defined names providing a name for each fleet in the model.}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{tables}{Which tables to produce (default is everything). Note: some
 tables depend on calculations related to previous tables, so will fail
@@ -50,13 +50,13 @@ TRUE will divide by 2.}
 \item{endyr}{Optional input to choose a different ending year for tables
 (could be useful for catch-only updates)}
 
-\item{adopted_ofl}{Vector of adopted ofl values to be printed in the mangagement performance
+\item{adopted_ofl}{Vector of adopted ofl values to be printed in the management performance
 table. This should be a vector of 10 values.}
 
-\item{adopted_abc}{Vector of adopted abc values to be printed in the mangagement performance
+\item{adopted_abc}{Vector of adopted abc values to be printed in the management performance
 table. This should be a vector of 10 values.}
 
-\item{adopted_acl}{Vector of adopted acl values to be printed in the mangagement performance
+\item{adopted_acl}{Vector of adopted acl values to be printed in the management performance
 table. This should be a vector of 10 values.}
 
 \item{forecast_ofl}{Optional input vector for management adopted OFL values for table g. These values
@@ -67,16 +67,17 @@ OFL values. Example input: c(1500, 1300)}
 will be overwrite the ABC values in the projection table, rather than the model estimated
 ABC values. Example input: c(1500, 1300)}
 
-\item{format}{Logical. Option to control whether tables are formatted (e.g. commas added, CIs separeted with "-"). The
+\item{format}{Logical. Option to control whether tables are formatted (e.g. commas added, CIs separated with "-"). The
 formatting is intended to create tables that can be cut and pasted easily into a word document without additional formatting
 work. If the tables are being used by LaTex/Markdown or other documenting software, having formatting turned on prevents
 the tables from being formatted further since the objects are no longer numeric.}
 
 \item{match_digits}{TRUE/FALSE switch on whether the low and high interval values
 in e_ReferencePoints_ES will be reported with the same number of decimal digits
-as the estaimte.}
+as the estimate.}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
 Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).

@@ -18,7 +18,9 @@ get_SIS_info(
 \arguments{
 \item{model}{Output from SS_output}
 
-\item{dir}{Directory where the file will be written}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{writecsv}{Write results to a CSV file (where the name will have the
 format "[stock]_2019_SIS_info.csv" where \code{stock}
@@ -33,7 +35,8 @@ is an additional input}
 
 \item{sciencecenter}{Origin of assessment report}
 
-\item{Mgt_Council}{Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (\code{"GM"})}
+\item{Mgt_Council}{Council jurisdiction. Currently the only option
+outside of the default is Gulf of Mexico (\code{"GM"})}
 }
 \description{
 Processes model results contained in the list created by
@@ -46,7 +49,7 @@ copy step.
 \examples{
 \dontrun{
 # directory with the model output
-mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")
+mydir <- file.path(path.package("r4ss"), "extdata/simple_small")
 # read the model output
 model <- SS_output(dir = mydir)
 # run get_SIS_info:
@@ -58,5 +61,5 @@ info <- get_SIS_info(model, stock = "SimpleExample")
 \code{\link[=SS_output]{SS_output()}}
 }
 \author{
-Ian G. Taylor, Andi Stephens
+Ian G. Taylor, Andi Stephens, LaTreese S. Denson
 }

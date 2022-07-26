@@ -6,7 +6,7 @@
 \usage{
 SSplotSpawnrecruit(
   replist,
-  subplot = 1:3,
+  subplots = 1:3,
   add = FALSE,
   plot = TRUE,
   print = FALSE,
@@ -38,20 +38,21 @@ SSplotSpawnrecruit(
   show_env = TRUE,
   virg = TRUE,
   init = TRUE,
-  forecast = FALSE
+  forecast = FALSE,
+  subplot = lifecycle::deprecated()
 )
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{subplot}{vector of which subplots to show.  1=plot without labels,
+\item{subplots}{Vector of which subplots to show.  1=plot without labels,
 2=plot with year labels.}
 
 \item{add}{add to existing plot?}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{xlim}{optional control of x range}
 
@@ -64,11 +65,10 @@ relationship making spawning output not equal to spawning biomass.}
 \item{bioscale}{multiplier on spawning biomass, set to 0.5 for single-sex
 models}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
@@ -84,7 +84,8 @@ The default is \code{res = 300}.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 \code{help("png")} in R for details).}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{colvec}{vector of length 4 with colors for 3 lines and 1 set of points
 (where the 4th value for the points is the color of the circle around the
@@ -97,12 +98,12 @@ of points, where the points are disconnected (lty=NA) by default}
 will by replaced by a vector of colors of length equal to
 \code{nrow(replist[["recruit"]])}}
 
-\item{legend}{add a legend to the figure?}
+\item{legend}{Add a legend?}
 
-\item{legendloc}{location of legend. By default it is chosen as the first
-value in the set of "topleft", "topright", "bottomright" that results in no
-overlap with the points in the plot, but the user can override this with their
-choice of location. See ?legend for more info on the options.}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{minyr}{minimum year of recruitment deviation to show in plot}
 
@@ -129,6 +130,8 @@ variability}
 if this point differs from virgin values}
 
 \item{forecast}{include forecast years in the curve?}
+
+\item{subplot}{Deprecated - use subplots.}
 }
 \description{
 Plot spawner-recruit curve based on output from Stock Synthesis model.

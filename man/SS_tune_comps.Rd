@@ -24,7 +24,8 @@ SS_tune_comps(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{fleets}{Either the string 'all', or a vector of fleet numbers}
+\item{fleets}{Either the string "all", or a vector of numerical values, like
+c(1,3), listing fleets or surveys to be included in the plot.}
 
 \item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
 The first option, \code{none}, will only return information about the
@@ -46,7 +47,9 @@ iterative retuning method).}
 Defaults to \code{FALSE}. This run is not counted as an iteration for
 \code{niters_tuning} and will not be used if \code{option = "DM"}.}
 
-\item{dir}{The path to the model directory.}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{model}{The name of the stock synthesis executable. This model is
 assumed to be either in the same folder as the model files (specified in
@@ -139,7 +142,7 @@ calculated from the harmonic mean and input sample sizes.
 # Create a temporary directory, feel free to change this location
 mod_path <- file.path(tempdir(), "simple_mod")
 # Path to simple model in r4ss and copy files to mod_path
-example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+example_path <- system.file("extdata", "simple_small", package = "r4ss")
 # copy model input files
 copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
 # copy over the Report file

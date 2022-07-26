@@ -95,10 +95,9 @@ only.  Other options include "o" for overplotting points on lines.}
 
 \item{fleetcols}{Vector of colors by fleet}
 
-\item{fleetnames}{Optional replacement for fleenames used in data file,
-should include all fleets (not just those with catch)}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
-\item{lwd}{Line width}
+\item{lwd}{Line width for plot elements.}
 
 \item{areacols}{Vector of colors by area. Default uses rich.colors by Arni
 Magnusson}
@@ -114,18 +113,20 @@ each year}
 
 \item{forecastplot}{Add points from forecast years}
 
-\item{plotdir}{Directory where PNG or PDF files will be written. By default
-it will be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{showlegend}{Put legend on plot}
 
-\item{legendloc}{Location of legend (see ?legend for more info)}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{order}{Optional input to change the order of fleets in stacked plots.}
 
 \item{xlab}{x-label for all plots}
 
-\item{labels}{Vector of labels for plots (titles and axis labels)}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{catchasnumbers}{Is catch in numbers instead of biomass? Should be set
 automatically if set to NULL. If fleets include a mix of biomass and
@@ -139,20 +140,28 @@ numbers, then catch plots should be interpreted carefully.}
 \item{ymax}{Optional input for ymax value (can be used to add or subtract
 white space at the top of the figure)}
 
-\item{pwidth}{Width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}.}
 
-\item{pheight}{Height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{Units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
-\item{cex.main}{Character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
-\item{verbose}{Report progress to R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot catch related quantities from Stock Synthesis output. Plots include

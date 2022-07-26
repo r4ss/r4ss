@@ -1,15 +1,15 @@
 #' Estimate bias adjustment for recruitment deviates
 #'
 #' Uses standard error of estimated recruitment deviates to estimate the 5
-#' controls ([Methot and Taylor, 2011](https://doi.org/10.1139/f2011-092))
+#' controls (Methot and Taylor, 2011)
 #' for bias adjustment in Stock Synthesis.
 #'
 #' @details
 #' Implementation of the bias adjustment ramp within Stock Synthesis increases
-#' the likelihood that the estimated recruitmente events, which are
+#' the likelihood that the estimated recruitment events, which are
 #' log-normally distributed, are mean unbiased and comparable to results from
-#' Markov chain Mone Carlo estimation routines
-#' ([Methot and Taylor, 2011](https://doi.org/10.1139/f2011-092)).
+#' Markov chain Monte Carlo estimation routines
+#' (Methot and Taylor, 2011).
 #' Options to account for the fact that data typically do not equally represent
 #' all modelled time periods are as follows:
 #' \enumerate{
@@ -26,7 +26,7 @@
 #' }
 #'
 #' @template replist
-#' @param verbose Controls the amount of output to the screen.  Default=FALSE.
+#' @template verbose
 #' @param startvalues A vector of 5 values for the starting points in the
 #' minimization. Default=NULL.
 #' @param method A method to apply to the 'optim' function. See ?optim for
@@ -36,10 +36,9 @@
 #' uncertainty, or just the second panel in the set?  Default=TRUE.
 #' @param transform An experimental option to treat the transform the 5
 #' quantities to improve minimization. Doesn't work well. Default=FALSE.
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
-#' @param plotdir Directory where PNG files will be written. By default it will
-#' be the directory where the model was run.
+#' @template plot
+#' @template print
+#' @template plotdir
 #' @param shownew Include new estimated bias adjustment values on top of values
 #' used in the model? (TRUE/FALSE)
 #' @param oldctl Optional name of existing control file to modify.
@@ -105,7 +104,7 @@ SS_fitbiasramp <-
         .7
       )
     }
-    if (verbose) cat("startvalues =", paste(startvalues, collapse = ", "), "\n")
+    if (verbose) message("startvalues =", paste(startvalues, collapse = ", "))
 
     makeoffsets <- function(values) {
       # a function to transform parameters into offsets from adjacent values
@@ -131,7 +130,12 @@ SS_fitbiasramp <-
     if (transform) {
       startvalues <- makeoffsets(startvalues)
     }
-    if (verbose & transform) cat("transformed startvalues =", paste(startvalues, collapse = ", "), "\n")
+    if (verbose & transform) {
+      message(
+        "transformed startvalues =",
+        paste(startvalues, collapse = ", ")
+      )
+    }
 
     biasadjfit <- function(pars, yr, std, sigmaR, transform,
                            is.forecast, eps = .1) {
@@ -251,7 +255,7 @@ SS_fitbiasramp <-
 
     # test for presence of estimated recruitment deviations
     if (max(val) == 0 | length(val) == 0) {
-      if (verbose) cat("no rec devs estimated in this model\n")
+      if (verbose) message("No rec devs estimated in this model")
       return()
     }
 
@@ -259,7 +263,7 @@ SS_fitbiasramp <-
     recdev_lo <- val - 1.96 * std
 
     ylim <- range(recdev_hi, recdev_lo)
-    if (verbose) cat("Now estimating alternative recruitment bias adjustment fraction...\n")
+    if (verbose) message("Now estimating alternative recruitment bias adjustment fraction...")
     newbias <- optimfun(
       yr = yr, std = std,
       startvalues = startvalues, is.forecast = is.forecast
@@ -315,14 +319,10 @@ SS_fitbiasramp <-
 
     if (verbose) {
       if (newbias[["convergence"]] != 0) {
-        cat("Problem with convergence, here is output from 'optim':\n")
-        cat("##############################\n")
+        warning("Problem with convergence, here is output from 'optim':\n")
         print(newbias)
-        cat("##############################\n")
       }
-
-      cat("Estimated values:\n")
-      print(format(df, justify = "left"), row.names = FALSE)
+      message("Estimated values: \n", paste0(utils::capture.output(df), collpase = "\n"))
     }
 
     if (plot) {
@@ -383,7 +383,7 @@ SS_fitbiasramp <-
       ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
       # write new file
       writeLines(ctlfile, newctl)
-      if (verbose) cat("wrote new file to", newctl, "with values", paste(newvals, collapse = " "), "\n")
+      if (verbose) message("wrote new file to ", newctl, " with values", paste(newvals, collapse = ", "))
     }
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "RecDev"
     return(invisible(list(newbias = newbias, df = df, plotinfo = plotinfo)))

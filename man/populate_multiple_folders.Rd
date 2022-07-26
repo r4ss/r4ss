@@ -25,7 +25,8 @@ should be created.}
 
 \item{create.dir}{Create new outer directory if it doesn't exist already?}
 
-\item{overwrite}{Overwrite existing files with matching names?}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{use_ss_new}{Use .ss_new files instead of original inputs?}
 
@@ -36,7 +37,8 @@ A value of NULL will skip copying the executable.}
 
 \item{exe.only}{Only copy exe files from exe.dir, don't copy input files}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
 Returns table of results indicating which directories were

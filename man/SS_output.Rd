@@ -31,10 +31,9 @@ SS_output(
 )
 }
 \arguments{
-\item{dir}{Directory containing the Stock Synthesis model output.
-Forward slashes or double backslashes and quotes are necessary.
-This can also either be an absolute path or relative to the working
-directory.}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{dir.mcmc}{Optional directory containing MCMC output. This can either be
 relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}

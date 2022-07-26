@@ -35,7 +35,7 @@ show for each model.}
 \item{uncertainty}{Show uncertainty intervals around lines? (This can get a
 bit busy.)}
 
-\item{labels}{Vector of plot labels.}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{main}{Title for plot.}
 
@@ -94,8 +94,7 @@ dev.off()
 \references{
 Ianelli et al. (2011) Assessment of the walleye pollock stock in
 the Eastern Bering Sea.
-\url{http://www.afsc.noaa.gov/REFM/docs/2011/EBSpollock.pdf}. (Figure 1.31,
-which is on an absolute, rather than log scale.)
+(Figure 1.31, which is on an absolute, rather than log scale.)
 }
 \seealso{
 \code{\link[=SSsummarize]{SSsummarize()}}

@@ -4,16 +4,11 @@
 \alias{SS_read}
 \title{Read all Stock Synthesis input files for a model}
 \usage{
-SS_read(dir = NULL, ss_new = FALSE, verbose = FALSE)
+SS_read(dir = getwd(), ss_new = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{dir}{A file path to the directory of interest.
-Typically used with \code{file}, an additional input argument,
-to specify input and output file paths.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory, and thus, full file paths should
-not be specified for other arguments as they will be appended
-to \code{dir}.}
+\item{dir}{A file path to the directory of interest or a raw github URL (see
+example). The default is the current working directory, \code{dir = getwd()}.}
 
 \item{ss_new}{A logical that controls if the \code{.ss_new} files or
 the original input files are read in.
@@ -27,7 +22,7 @@ An invisible list is returned.
 The first element is the directory that was provided in the argument \code{dir}.
 The second element is the result of \code{normalizePath(dir)},
 which gives the full path.
-The remaining four elements are list objects from reading in
+The remaining four to six elements are list objects from reading in
 the following input files:
 \itemize{
 \item data
@@ -35,6 +30,7 @@ the following input files:
 \item starter
 \item forecast
 \item wtatage (will be NULL if not required by the model)
+\item par (will be null if control and par do not match)
 }
 }
 \description{
@@ -43,22 +39,35 @@ These files will be in a single directory on your machine, i.e., \code{dir}.
 Functionality comes from the \verb{r4ss::SS_read*()} functions.
 This function simplifies the number of lines of code you need to write by
 using all of the read functions to read in the
-starter, control, data, and forecast files.
-The starter file is helpful because it provides names for the
-control and data files.
+starter, control, data, and forecast files and if requested, the
+weight-at-age file. The starter file is helpful because it provides names for
+the control and data files.
 }
 \examples{
 # Read in the 'simple' example model stored in {r4ss}
 inputs <- SS_read(
-  dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
+  dir = system.file("extdata", "simple_small", package = "r4ss")
 )
+# Read in an example from GitHub stored in user-examples,
+# wrapped in `dontrun` because it requires an Internet connection
+\dontrun{
+webexample <- SS_read(dir = file.path(
+  "https://raw.githubusercontent.com",
+  "nmfs-stock-synthesis",
+  "user-examples",
+  "main",
+  "model_files",
+  "simple_long_wtatage"
+))
+}
 }
 \seealso{
 \itemize{
 \item \code{\link[=SS_write]{SS_write()}} can be used to write the input files using the list
 created by this function.
 \item \code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_readctl]{SS_readctl()}},
-\code{\link[=SS_readforecast]{SS_readforecast()}}, and \code{\link[=SS_readwtatage]{SS_readwtatage()}} are used by this
+\code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_readwtatage]{SS_readwtatage()}},
+\code{\link[=SS_readpar_3.30]{SS_readpar_3.30()}}, and \code{\link[=SS_readpar_3.24]{SS_readpar_3.24()}} used by this
 function to read in the input files.
 \item \code{\link[=SS_output]{SS_output()}} to read in equivalent SS3 output files.
 }

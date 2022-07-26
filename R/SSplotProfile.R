@@ -6,8 +6,8 @@
 #'
 #'
 #' @param summaryoutput List created by the function [SSsummarize()].
-#' @param plot Plot to active plot device?
-#' @param print Print to PNG files?
+#' @template plot
+#' @template print
 #' @param models Optional subset of the models described in
 #' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
@@ -36,7 +36,7 @@
 #' Default=TRUE.
 #' @param col Optional vector of colors for each line.
 #' @param pch Optional vector of plot characters for the points.
-#' @param lty Line total for the likelihood components.
+#' @param lty Line type for the likelihood components.
 #' @param lty.total Line type for the total likelihood.
 #' @param lwd Line width for the likelihood components.
 #' @param lwd.total Line width for the total likelihood.
@@ -53,23 +53,21 @@
 #' @param yaxs The style of axis interval calculation to be used for the y-axis
 #' (see ?par for more info).
 #' @param type Line type (see ?plot for more info).
-#' @param legend Include legend?
-#' @param legendloc Location of legend (see ?legend for more info).
-#' @param pwidth Width of plot
-#' @param pheight Height of plot
-#' @param punits Units for PNG file
+#' @template legend
+#' @template legendloc
+#' @template pwidth
+#' @template pheight
+#' @template punits
 #' @template res
-#' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
-#' @param plotdir Directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
+#' @template ptsize
+#' @template cex.main
+#' @template plotdir
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 #' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
 #' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
 #' can be adjusted using the `cutoff_prob` below.
 #' @param cutoff_prob Probability associated with `add_cutoff` above.
-#' @param verbose Return updates of function progress to the R GUI? (Doesn't do
-#' anything yet.)
+#' @template verbose
 #' @param \dots Additional arguments passed to the `plot` command.
 #' @note Someday the function [SS_profile()] will be improved and
 #' made to work directly with this plotting function, but they don't yet work
@@ -159,7 +157,7 @@ SSplotProfile <-
       }
       # create directory if it's missing
       if (!file.exists(plotdir)) {
-        if (verbose) cat("creating directory:", plotdir, "\n")
+        if (verbose) message("creating directory:", plotdir)
         dir.create(plotdir, recursive = TRUE)
       }
     }
@@ -206,9 +204,11 @@ SSplotProfile <-
       )
     }
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
-    cat("Parameter matching profile.string='", profile.string, "': '", parlabel, "'\n", sep = "")
-    cat("Parameter values (after subsetting based on input 'models'):\n")
-    print(parvec)
+    message("Parameter matching profile.string=", profile.string, ": ", parlabel)
+    message(
+      "Parameter values (after subsetting based on input 'models'): ",
+      paste0(parvec, collapse = ", ")
+    )
     if (xlim[1] == "default") xlim <- range(parvec)
 
     # rearange likelihoods to be in columns by type
@@ -303,6 +303,7 @@ SSplotProfile <-
     if (plot) plotprofile()
     if (print) {
       save_png(
+        plotinfo = NULL,
         file = "profile_plot_likelihood.png",
         plotdir = plotdir, pwidth = pwidth,
         pheight = pheight, punits = punits, res = res, ptsize = ptsize

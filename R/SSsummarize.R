@@ -17,8 +17,9 @@
 #' @param selyr String or vector of years for which selectivity will be
 #' summarized.  NOTE: NOT CURRENTLY WORKING.  Options: NULL=all years,
 #' "startyr" = first year.
-#' @param selgender Vector of genders (1 and/or 2) for which selectivity will
-#' be summarized. NULL=all genders. Default=NULL.
+#' @param selgender Deprecated. Use selsex instead.
+#' @param selsex Vector of sexes (1 and/or 2) for which selectivity will
+#' be summarized. NULL=all sexes. Default=NULL.
 #' @param SpawnOutputUnits Optional single value or vector of "biomass" or
 #' "numbers" giving units of spawning for each model.
 #' @param lowerCI Quantile for lower bound on calculated intervals. Default =
@@ -34,11 +35,20 @@ SSsummarize <- function(biglist,
                         ageselfactor = "Asel",
                         selfleet = NULL,
                         selyr = "startyr",
-                        selgender = 1,
+                        selgender = lifecycle::deprecated(),
+                        selsex = 1,
                         SpawnOutputUnits = NULL,
                         lowerCI = 0.025,
                         upperCI = 0.975,
                         verbose = TRUE) {
+  if (lifecycle::is_present(selgender)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SSsummarize(selgender)",
+      details = "Please use selsex instead. Ability to use selgender will be dropped in next release."
+    )
+    selsex <- selgender
+  }
   # confirm that biglist is a list of lists, each created by SS_output()
   # this could be improved with the use of S3 classes in the future
   if (!is.list(biglist) | # if whole thing is not a list
@@ -75,7 +85,7 @@ SSsummarize <- function(biglist,
     allyears <- union(allyears, stats[["timeseries"]][["Yr"]])
     likenames <- union(likenames, rownames(stats[["likelihoods_used"]]))
     # accumulator age for each model
-    accuages[imodel] <- stats$accuage
+    accuages[imodel] <- stats[["accuage"]]
   }
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
@@ -210,7 +220,7 @@ SSsummarize <- function(biglist,
         # subset for the female main morph
         imorphf <- stats[["morph_indexing"]][["Index"]][
           stats[["morph_indexing"]][["Sex"]] == 1 &
-            stats[["morph_indexing"]][["Platoon"]] %in% stats$mainmorphs
+            stats[["morph_indexing"]][["Platoon"]] %in% stats[["mainmorphs"]]
         ]
         growthtemp <- growthtemp[growthtemp[["Morph"]] == imorphf, -(1:4)]
         # remove any rows with all zeros (not sure why these occur)

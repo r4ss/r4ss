@@ -33,8 +33,8 @@ and memory). Default=TRUE.}
 \item{forecast}{Choice to read or not read forecast quantities.
 Default=FALSE.}
 
-\item{verbose}{Print various messages to the command line as the function
-runs? Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{ncols}{Maximum number of columns in Report.sso (same input as for
 \code{\link[=SS_output]{SS_output()}}).  Default=210.}

@@ -9,7 +9,7 @@
 #' @param dir.new New location to which the files should be copied,
 #' either an absolute path or relative to the working directory.
 #' @param create.dir Create dir.new directory if it doesn't exist already?
-#' @param overwrite Overwrite existing files with matching names?
+#' @template overwrite
 #' @param recursive logical. Should elements of the path other than the last be
 #'        created?
 #' @param use_ss_new Use .ss_new files instead of original inputs?
@@ -17,8 +17,8 @@
 #' dir.exe (if provided)?
 #' @param copy_par Copy any .par files found in dir.old to dir.new?
 #' @param dir.exe Path to executable to copy instead of any in dir.old
-#' @param verbose Return updates of function progress to the R console?
-#' @return Logical indicating whether all input files were copied succesfully.
+#' @template verbose
+#' @return Logical indicating whether all input files were copied successfully.
 #' @author Ian Taylor
 #' @export
 #' @examples
@@ -137,11 +137,14 @@ copy_SS_inputs <- function(dir.old = NULL,
     # figure out which files are executables
     is.exe <- file.info(dir(dir.exe, full.names = TRUE))$exe
     exefiles <- dir(dir.exe)[is.exe != "no"]
+    if (.Platform[["OS.type"]] == "unix") {
+      # Anything without an extension is listed (may need to make this more
+      # specific??)
+      exefiles <- list.files(dir.exe, pattern = "^[^.]+$")
+      message("Unix binaries are: ", paste0(exefiles, collapse = ", "))
+    }
     if (length(exefiles) == 0) {
       warning("No executable files found in ", dir.exe)
-      if (.Platform[["OS.type"]] == "unix") {
-        warning("Stock Synthesis executables cannot yet be copied for Mac or Linux")
-      }
     }
     if (length(exefiles) > 1) {
       warning("Copying multiple executable files")

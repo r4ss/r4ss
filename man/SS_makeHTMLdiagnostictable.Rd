@@ -9,8 +9,7 @@ SS_makeHTMLdiagnostictable(replist, plotdir = NULL, gradmax = 0.001)
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plotdir}{Directory where the text files containing the tables will be written.
-By default it will be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{gradmax}{the largest gradient value for estimated parameter; the default is 1E-3}
 }

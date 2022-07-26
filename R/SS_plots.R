@@ -41,8 +41,6 @@
 #'   \item Diagnostic tables
 #' }
 #'
-#' @param print Deprecated input for backward compatibility, now replaced by
-#' `png = TRUE/FALSE`.
 #' @param pdf Send plots to PDF file instead of R GUI?
 #' @param png Send plots to PNG files instead of R GUI?
 #' @param html Run [SS_html()] on completion? By default has same
@@ -59,28 +57,24 @@
 #' can be either relative (to the working directory) or absolute paths.
 #' The function will attempt to create the directory it doesn't exist, but it
 #' does not do so recursively.
-#' @param fleets Either the string "all", or a vector of numerical values, like
-#' c(1,3), listing fleets or surveys for which plots should be made. By
-#' default, plots will be made for all fleets and surveys.  Default="all".
+#' @template fleets
 #' @param areas Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing areas for which plots should be made in a multi-area model.
 #' By default, plots will be made for all areas (excepting cases where the
 #' function has not yet been updated for multi-area models). Default="all".
-#' @param fleetnames Either the string "default", or a vector of characters
-#' strings to use for each fleet name. Default="default".
+#' @template fleetnames
 #' @param fleetcols Either the string "default", or a vector of colors to use
 #' for each fleet.  Default="default".
 #' @param fleetlty Vector of line types used for each fleet in some plots.
 #' Default=1.
 #' @param fleetpch Vector of point types used for each fleet in some plots.
 #' Default=1.
-#' @param lwd Line width for some plots. Default=1.
+#' @template lwd
 #' @param areacols Either the string "default", or a vector of colors to use
 #' for each area. Default="default".
 #' @param areanames Optional vector of names for each area used in titles.
 #' Default="default".
-#' @param verbose Return updates of function progress to the R GUI?
-#' Default=TRUE.
+#' @template verbose
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the timeseries plots and
@@ -149,8 +143,7 @@
 #' @template ptsize
 #' @template res
 #' @template mainTitle
-#' @param cex.main Character expansion parameter for plot titles (not yet
-#' implemented for all plots). Default=1.
+#' @template cex.main
 #' @param selexlines Vector controlling which lines should be shown on
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.
@@ -179,7 +172,7 @@
 #' Default=F.
 #' @param catchbars show catch by fleet as barplot instead of stacked polygons
 #' (default=TRUE)
-#' @param legendloc Location for all legends. Default="topleft".
+#' @template legendloc
 #' @param minyr First year to show in time-series and time-varying plots
 #' @param maxyr Last year to show in time-series and time-varying plots. This
 #' can either be an alternative to, or redundant with, the forecastplot input.
@@ -221,7 +214,7 @@
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.
 SS_plots <-
-  function(replist = NULL, plot = 1:26, print = NULL, pdf = FALSE, png = TRUE, html = png,
+  function(replist = NULL, plot = 1:26, pdf = FALSE, png = TRUE, html = png,
            printfolder = "plots", dir = "default", fleets = "all", areas = "all",
            fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
            lwd = 1, areacols = "default", areanames = "default",
@@ -244,12 +237,6 @@ SS_plots <-
            scalebubbles = FALSE, tslabels = NULL, catlabels = NULL, maxsize = 1.0,
            showmle = TRUE, showpost = TRUE, showprior = TRUE, showinit = TRUE, showdev = FALSE,
            fitrange = FALSE, ...) {
-    if (!is.null(print)) {
-      stop(
-        "The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
-        "  which is combined with the vector of numbers input to 'plot'"
-      )
-    }
     flush.console()
 
     # label table is a step toward internationalization of the code
@@ -629,24 +616,28 @@ SS_plots <-
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
 
       ### add plot of Dynamic B0
-      # first get vector of years
-      yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
-      yrs <- yrs[yrs >= minyr & yrs <= maxyr]
-      # check for uncertainty in Dynamic B0 estimates
-      Dyn_Bzero_uncertainty <-
-        any(grepl("Dyn_Bzero", replist[["derived_quants"]][["Label"]]))
-      # now run plot function
-      plotinfo <- SSplotDynamicB0(
-        replist = replist,
-        yrs = yrs,
-        uncertainty = (uncertainty & Dyn_Bzero_uncertainty),
-        plot = !png, print = png,
-        verbose = verbose,
-        pwidth = pwidth, pheight = pheight, punits = punits,
-        ptsize = ptsize, res = res,
-        plotdir = plotdir
-      )
-      if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      if (is.null(replist[["Dynamic_Bzero"]])) {
+        message("Skipping dynamic B0 plot because output not available")
+      } else {
+        # first get vector of years
+        yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
+        yrs <- yrs[yrs >= minyr & yrs <= maxyr]
+        # check for uncertainty in Dynamic B0 estimates
+        Dyn_Bzero_uncertainty <-
+          any(grepl("Dyn_Bzero", replist[["derived_quants"]][["Label"]]))
+        # now run plot function
+        plotinfo <- SSplotDynamicB0(
+          replist = replist,
+          yrs = yrs,
+          uncertainty = (uncertainty & Dyn_Bzero_uncertainty),
+          plot = !png, print = png,
+          verbose = verbose,
+          pwidth = pwidth, pheight = pheight, punits = punits,
+          ptsize = ptsize, res = res,
+          plotdir = plotdir
+        )
+        if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      }
     } # end if igroup in plot or print
 
     ##########################################

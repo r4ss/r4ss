@@ -2,13 +2,13 @@
 % Please edit documentation in R/SS_writedat_3.24.R
 \name{SS_writedat_3.24}
 \alias{SS_writedat_3.24}
-\title{write data file for SS version 3.24}
+\title{Deprecated: write data file for SS version 3.24}
 \usage{
 SS_writedat_3.24(
   datlist,
   outfile,
   overwrite = FALSE,
-  faster = FALSE,
+  faster = lifecycle::deprecated(),
   verbose = TRUE
 )
 }
@@ -17,17 +17,23 @@ SS_writedat_3.24(
 
 \item{outfile}{Filename for where to write new data file.}
 
-\item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
-\item{faster}{Speed up writing by writing length and age comps without aligning
+\item{faster}{Deprecated. Speed up writing by writing length and age comps without aligning
 the columns (by using write.table instead of print.data.frame)}
 
-\item{verbose}{Should there be verbose output while running the file?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Write Stock Synthesis data file from list object in R which was probably
 created using \code{\link[=SS_readdat]{SS_readdat()}} (which would have called on
 \code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}}).
+}
+\details{
+Support for 3.24 models within the r4ss \verb{SS_read*} and \verb{SS_write*()}
+functions is ending, so please update models to 3.30.
 }
 \seealso{
 \code{\link[=SS_writedat]{SS_writedat()}}, \code{\link[=SS_writedat_3.30]{SS_writedat_3.30()}},

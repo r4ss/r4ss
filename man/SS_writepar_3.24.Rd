@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_writepar_3.24.R
 \name{SS_writepar_3.24}
 \alias{SS_writepar_3.24}
-\title{write ss.par file from SS version 3.24}
+\title{Deprecated: write ss.par file from SS version 3.24}
 \usage{
 SS_writepar_3.24(parlist, outfile, overwrite = TRUE, verbose = FALSE)
 }
@@ -13,10 +13,15 @@ SS_writepar_3.24(parlist, outfile, overwrite = TRUE, verbose = FALSE)
 
 \item{overwrite}{Should existing files be overwritten? Default=TRUE.}
 
-\item{verbose}{Should there be verbose output while running the file?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Write Stock Synthesis (version 3.24) parameter file from list object in R to file.
+}
+\details{
+Support for 3.24 models within the r4ss \verb{SS_read*} and \verb{SS_write*()}
+functions is ending, so please update models to 3.30.
 }
 \seealso{
 \code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readdat]{SS_readdat()}}

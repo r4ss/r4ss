@@ -35,9 +35,9 @@
 #' Default="default".
 #' @param pdf Option to send figures to pdf file instead of plot window in
 #' Rgui. Default=FALSE.
-#' @param pwidth Width of the plot window or PDF file (in inches). Default=7.
-#' @param pheight Height of the plot window or PDF file (in inches). Default=7.
-#' @param lwd Line width for many of the plot elements. Default=2.
+#' @template pwidth
+#' @template pheight
+#' @template lwd
 #' @author Andre Punt, Ian Taylor
 #' @export
 #' @examples
@@ -76,7 +76,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   if (pdf) {
     pdffile <- paste(dirn[1], "/rebuild_plots_", format(Sys.time(), "%d-%b-%Y_%H.%M"), ".pdf", sep = "")
     pdf(file = pdffile, width = pwidth, height = pheight)
-    cat("PDF file with plots will be:", pdffile, "\n")
+    message("Name of PDF file with plots: ", pdffile)
   } else {
 
     ### Note: the following line has been commented out because it was identified
@@ -208,7 +208,12 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     NOpts <- 0
     for (Ifile in 1:length(FileN)) NOpts <- NOpts + length(Options[[Ifile]])
 
-    if (NOpts > 8) cat("WARNING - you have a large number of lines - perhaps create separate plots for subsets\n")
+    if (NOpts > 8) {
+      warning(
+        "There are a large number of lines. Consider creating separate",
+        " plots\nfor subsets."
+      )
+    }
 
     Files <- NULL
     Opts <- NULL
@@ -377,8 +382,8 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
         B0 <- as.double(UUUs[[1]][Jpnt, 1])
         abline(h = 0.4 * B0 / BioScalar, lwd = 1, lty = 2)
         abline(h = 0.25 * B0 / BioScalar, lwd = 1, lty = 2)
-        cat("40% line at", 0.4 * B0 / BioScalar, "\n")
-        cat("25% line at", 0.25 * B0 / BioScalar, "\n")
+        message("40% line at ", 0.4 * B0 / BioScalar)
+        message("25% line at ", 0.25 * B0 / BioScalar)
       }
 
       if (ii == AllTraj[1]) title(Title)
@@ -447,7 +452,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
         ind[["sb"]][["B0"]] <- B0 / BioScalar
         abline(h = 0.4 * B0 / BioScalar, lwd = 1, lty = 2)
         abline(h = 0.25 * B0 / BioScalar, lwd = 1, lty = 2)
-        cat("Making spawning biomass plot for run", ii, "\n")
+        message("Making spawning biomass plot for run ", ii)
       }
 
       if (ii == AllInd[1]) title(Title)
@@ -558,7 +563,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   for (Ifile in 1:Nfiles)
   {
     FileName <- file.path(dirn[Ifile], fileN[Ifile])
-    cat("FileName:", FileName, "\n")
+    message("FileName: ", FileName)
     UUU <- read.table(
       file = FileName, col.names = 1:ncols, fill = T,
       colClasses = "character", comment.char = "$", sep = ","
@@ -589,7 +594,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     # Individual plots
     if (6 %in% Plots[[Ifile]]) {
       ind.list[[Ifile]] <- IndividualPlots(UUU, Titles[Ifile], yearmax)
-      cat("Running IndividualPlots for file", Ifile, "\n")
+      message("Running IndividualPlots for file ", Ifile)
     } else {
       ind.list[[Ifile]] <- NULL
     }

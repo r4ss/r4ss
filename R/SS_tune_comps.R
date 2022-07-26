@@ -49,7 +49,7 @@
 #' calculated from the harmonic mean and input sample sizes.
 #'
 #' @template replist
-#' @param fleets Either the string 'all', or a vector of fleet numbers
+#' @template fleets
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
 #'  The first option, `none`, will only return information about the
 #'  Francis and MI weights that are suggested.
@@ -65,7 +65,7 @@
 #' @param init_run Should the model be run before calculating the tunings?
 #'  Defaults to `FALSE`. This run is not counted as an iteration for
 #'  `niters_tuning` and will not be used if `option = "DM"`.
-#' @param dir The path to the model directory.
+#' @template dir
 #' @param model The name of the stock synthesis executable. This model is
 #'  assumed to be either in the same folder as the model files (specified in
 #'  `dir`), or in the PATH if `exe_in_path = TRUE`. This will not be used if
@@ -96,7 +96,7 @@
 #' # Create a temporary directory, feel free to change this location
 #' mod_path <- file.path(tempdir(), "simple_mod")
 #' # Path to simple model in r4ss and copy files to mod_path
-#' example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+#' example_path <- system.file("extdata", "simple_small", package = "r4ss")
 #' # copy model input files
 #' copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
 #' # copy over the Report file

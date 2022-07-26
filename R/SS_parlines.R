@@ -16,12 +16,9 @@
 #'
 #'
 #' @param ctlfile File name of control file including path.
-#' @param dir Alternative input of path, where file is assumed to be
-#' "control.ss_new". Default=NULL.
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#' either as character or numeric values (noting that numeric 3.30  = 3.3).
-#' @param verbose TRUE/FALSE switch for amount of detail produced by function.
-#' Default=TRUE.
+#' @template dir
+#' @template version
+#' @template verbose
 #' @param active Should only active parameters (those with positive phase) be
 #' output? Default=FALSE.
 #' @author Ian Taylor
@@ -63,7 +60,7 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   rm(raw)
   ctl <- ctl[!grepl("blocks_per_pattern", ctl[, 8]), ]
   nrows <- nrow(ctl)
-  # print(nrows)
+
   ctl_num <- matrix(NA, nrows, ncol(ctl)) # copy of ctl converted to numerical values or NA
   num_cnt <- rep(NA, nrows) # count of number of numerical values in each row
   num_cnt7 <- rep(NA, nrows) # count of number of numerical values in first 7 values of each row

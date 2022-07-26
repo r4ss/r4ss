@@ -24,7 +24,7 @@
 #' combinations of options. The following notes (for version A) might help anyone
 #' wanting to check or correct the code.
 #' \enumerate{
-#'   \item The code first removes un-needed rows
+#'   \item The code first removes unneeded rows
 #' from database condbase.
 #'   \item The remaining rows of the database are grouped
 #' (indexed by vector indx) and relevant statistics (e.g., observed and expected
@@ -40,9 +40,7 @@
 #' @param fleet vector of one or more fleet numbers whose data are to
 #' be analysed simultaneously (the output N multiplier applies
 #' to all fleets combined)
-#' @param fleetnames Vector of alternative fleet names to draw from for
-#' plot titles and captions. It should have length equal to the number
-#' of fleets in the model, not the number of fleets considered in this function.
+#' @template fleetnames
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).
@@ -69,7 +67,7 @@
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 #'
 #' Punt, A.E. (2015). Some insights into data weighting in integrated stock assessments.
-#' Fish. Res. <http://dx.doi.org/10.1016/j.fishres.2015.12.006>
+#' Fish. Res.
 #'
 SSMethod.Cond.TA1.8 <-
   function(fit, fleet, part = 0:2, seas = NULL,
@@ -215,7 +213,7 @@ SSMethod.Cond.TA1.8 <-
           # 0 sample sizes caused problems with ylim, override with wide range
           # plot may not make sense but will help users note that a problem exists
           # (as opposed to skipping the plot)
-          cat("NaN values in Francis calculations, plot may not make sense\n")
+          warning("NaN values in Francis calculations, plot may not make sense")
           ylim <- c(0, fit[["accuage"]])
         }
         # make empty plot (unless adding to existing plot)

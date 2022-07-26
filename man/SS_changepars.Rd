@@ -23,7 +23,9 @@ SS_changepars(
 )
 }
 \arguments{
-\item{dir}{Directory with control file to change.}
+\item{dir}{A file path to the directory of interest.
+The default value is \code{dir = NULL}, which leads to using
+the current working directory.}
 
 \item{ctlfile}{Control file name. Default="control.ss_new".}
 
@@ -86,7 +88,8 @@ the vector of values needs to be in the same order as either
 parameters are to be estimated. Changes sign of phase to be positive or
 negative. Default \code{NULL} causes no change to phase.}
 
-\item{verbose}{More detailed output to command line. Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{newphs}{Vector of new phases. Can be a single value, which will be
 repeated for each parameter, the same length as newvals, where each

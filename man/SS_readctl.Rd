@@ -8,13 +8,11 @@ SS_readctl(
   file,
   version = "3.30",
   verbose = FALSE,
-  echoall = lifecycle::deprecated(),
   use_datlist = TRUE,
-  datlist = "data.ss_new",
+  datlist = file.path(dirname(file), "data_echo.ss_new"),
   nseas = NULL,
   N_areas = NULL,
   Nages = NULL,
-  Ngenders = lifecycle::deprecated(),
   Nsexes = NULL,
   Npopbins = NA,
   Nfleets = NULL,
@@ -28,7 +26,7 @@ SS_readctl(
   Ntag_fleets = NULL,
   N_rows_equil_catch = NULL,
   N_dirichlet_parms = NULL,
-  ptype = FALSE
+  ptype = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -41,11 +39,8 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).
 \code{version = NULL} is no longer the default or an allowed entry.
 The default is \code{version = "3.30"}.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
-
-\item{echoall}{Deprecated. Debugging tool (not fully implemented) of echoing
-blocks of values as it is being read.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{use_datlist}{LOGICAL. If TRUE, use datlist to derive parameters which
 can not be determined from control file. Defaults to TRUE.}
@@ -60,9 +55,6 @@ explicitly available in control file and used only if \code{use_datlist = FALSE}
 explicitly available in control file and used only if if \code{use_datlist = FALSE}.}
 
 \item{Nages}{oldest age in the model. This information is also not
-explicitly available in control file and used only if \code{use_datlist = FALSE}.}
-
-\item{Ngenders}{Deprecated. Number of sexes in the model. This information is also not
 explicitly available in control file and used only if \code{use_datlist = FALSE}.}
 
 \item{Nsexes}{number of sexes in the model. This information is also not
@@ -121,12 +113,7 @@ control file comments. Used only in control file 3.30 syntax if
 parameters. Defaults to 0. Used only in control file 3.30 syntax if
 \code{use_datlist = FALSE}.}
 
-\item{ptype}{LOGICAL if \code{TRUE}, which is the default,
-a column will be included in the output indicating parameter type.
-Using \code{TRUE} can be useful, but causes problems for \link{SS_writectl},
-and therefore is not recommended if you intend to write the list
-back out into a file.
-Used only in control file 3.24 syntax.}
+\item{ptype}{Deprecated.}
 }
 \value{
 A list structure where each element is a section of the control file.
@@ -142,7 +129,7 @@ default values.
 \examples{
 # Read in the 'simple' example SS model stored in r4ss
 # Find the directory
-dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+dirsimple <- system.file("extdata", "simple_small", package = "r4ss")
 # Read in the dat file to define the structure of the control file so that
 # you don't have to specify things in the function call such as 'Nfleet'
 datfilename <- dir(dirsimple, pattern = "data\\\\.ss", full.names = TRUE)
@@ -162,17 +149,13 @@ ctl <- r4ss::SS_readctl(
 }
 \seealso{
 See the following for version-specific SS_readctl functions:
-SS_readctl_3.24
-SS_readctl_3.30.
+SS_readctl_3.24, SS_readctl_3.30.
 The returned list structure can be written back to the disk using
 \link{SS_writectl}.\cr
 See the following for other \code{SS_read} functions:
-SS_readctl
-SS_readdat
-SS_readforecast
-SS_readstarter
-SS_readwtatage.\cr
+SS_readctl, SS_readdat, SS_readforecast, SS_readstarter, SS_readwtatage.\cr
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
+Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer, Kelli F.
+Johnson, Kathryn L. Doering, Nathan R. Vaughan
 }

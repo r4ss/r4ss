@@ -26,7 +26,8 @@ either an absolute path or relative to the working directory.}
 
 \item{create.dir}{Create dir.new directory if it doesn't exist already?}
 
-\item{overwrite}{Overwrite existing files with matching names?}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{recursive}{logical. Should elements of the path other than the last be
 created?}
@@ -40,10 +41,11 @@ dir.exe (if provided)?}
 
 \item{dir.exe}{Path to executable to copy instead of any in dir.old}
 
-\item{verbose}{Return updates of function progress to the R console?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
-Logical indicating whether all input files were copied succesfully.
+Logical indicating whether all input files were copied successfully.
 }
 \description{
 Reads the starter.ss file to figure out the names of the control and

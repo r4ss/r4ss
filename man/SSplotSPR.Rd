@@ -18,6 +18,7 @@ SSplotSPR(
   col4 = "red",
   sprtarg = "default",
   btarg = "default",
+  minbthresh = "default",
   labels = c("Year", "SPR", "1-SPR", "Relative fishing intensity",
     "Relative spawning output"),
   pwidth = 6.5,
@@ -35,9 +36,9 @@ SSplotSPR(
 
 \item{add}{add to existing plot (not yet implemented)}
 
-\item{plot}{plot to active plot device?}
+\item{plot}{Plot to active plot device?}
 
-\item{print}{print to PNG files?}
+\item{print}{Print to PNG files?}
 
 \item{uncertainty}{include plots showing uncertainty?}
 
@@ -72,25 +73,36 @@ sprtarg input here will cause no horizontal line to be plotted.}
 \item{btarg}{target depletion to be used in plots showing depletion. May be
 omitted by setting to NA. "default" chooses based on model output.}
 
-\item{labels}{vector of labels for plots (titles and axis labels)}
+\item{minbthresh}{minimum biomass threshold to be used in plots
+showing depletion. May be omitted by setting to NA. "default" chooses
+based on model output.}
 
-\item{pwidth}{width of plot}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
-\item{pheight}{height of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}.}
 
-\item{punits}{units for PNG file}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
+
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
-\item{cex.main}{character expansion for plot titles}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
-\item{plotdir}{directory where PNG files will be written. by default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot time series of SPR, 1-SPR, the chosen SPR ratio and the phase plot.

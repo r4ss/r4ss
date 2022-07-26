@@ -45,7 +45,8 @@ is 'model1','model2',etc.}
 
 \item{csvfile}{filename for CSV file}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{mcmc}{summarize MCMC output in table?}
 }

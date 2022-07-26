@@ -30,7 +30,8 @@ SS_fitbiasramp(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{verbose}{Controls the amount of output to the screen.  Default=FALSE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{startvalues}{A vector of 5 values for the starting points in the
 minimization. Default=NULL.}
@@ -49,8 +50,7 @@ quantities to improve minimization. Doesn't work well. Default=FALSE.}
 
 \item{print}{Print to PNG files?}
 
-\item{plotdir}{Directory where PNG files will be written. By default it will
-be the directory where the model was run.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{shownew}{Include new estimated bias adjustment values on top of values
 used in the model? (TRUE/FALSE)}
@@ -68,7 +68,7 @@ or "psoptim". If not equal to either of these, then optim is used.}
 alternative bias adjustment inputs?}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
@@ -89,15 +89,15 @@ The default is \code{cex.main=1}.}
 }
 \description{
 Uses standard error of estimated recruitment deviates to estimate the 5
-controls (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011})
+controls (Methot and Taylor, 2011)
 for bias adjustment in Stock Synthesis.
 }
 \details{
 Implementation of the bias adjustment ramp within Stock Synthesis increases
-the likelihood that the estimated recruitmente events, which are
+the likelihood that the estimated recruitment events, which are
 log-normally distributed, are mean unbiased and comparable to results from
-Markov chain Mone Carlo estimation routines
-(\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}).
+Markov chain Monte Carlo estimation routines
+(Methot and Taylor, 2011).
 Options to account for the fact that data typically do not equally represent
 all modelled time periods are as follows:
 \enumerate{
@@ -117,7 +117,6 @@ not recommended because it will lead to biased results.}
 Methot, R.D. and Taylor, I.G., 2011.
 Adjusting for bias due to variability of estimated recruitments in fishery assessment models.
 Can. J. Fish. Aquat. Sci., 68:1744-1760.
-\href{https://doi.org/10.1139/f2011-092}{10.1139/f2011-092}.
 }
 \seealso{
 \code{\link[=SS_output]{SS_output()}}

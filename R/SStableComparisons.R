@@ -21,7 +21,7 @@
 #' @param csv write resulting table to CSV file?
 #' @param csvdir directory for optional CSV file
 #' @param csvfile filename for CSV file
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @param mcmc summarize MCMC output in table?
 #' @author Ian Taylor
 #' @export
@@ -55,7 +55,7 @@ SStableComparisons <- function(summaryoutput,
                                csvfile = "parameter_comparison_table.csv",
                                verbose = TRUE,
                                mcmc = FALSE) {
-  if (verbose) cat("running SStableComparisons\n")
+  if (verbose) message("running SStableComparisons")
 
   # get stuff from summary output
   n <- summaryoutput[["n"]]
@@ -91,15 +91,14 @@ SStableComparisons <- function(summaryoutput,
     for (iname in 1:nnames) {
       name <- names[iname]
       if (!is.null(digits)) digit <- digits[iname]
-      if (verbose) cat("name=", name, ": ", sep = "")
+      if (verbose) message("name=", name, ";")
       if (name == "BLANK") {
-        if (verbose) cat("added a blank row to the table\n")
+        if (verbose) message("added a blank row to the table")
         # add to table
         tab <- rbind(tab, " ")
       } else {
         # get values
         vals <- bigtable[grep(name, bigtable[["Label"]], fixed = TRUE), ]
-        #      cat("labels found:\n",bigtable[["Label"]][grep(name, bigtable[["Label"]])],"\n")
         # scale recruits into billions, or millions, or thousands
         if (substring(name, 1, 4) == "Recr" & length(grep("like", name)) == 0) {
           median.value <- median(as.numeric(vals[1, -1]), na.rm = TRUE)
@@ -120,7 +119,6 @@ SStableComparisons <- function(summaryoutput,
 
         if (name %in% c("Q", "Q_calc")) {
           Calc_Q <- aggregate(Calc_Q ~ name + Fleet, data = indices, FUN = mean)
-          cat("\n")
           fleetvec <- sort(as.numeric(unique(Calc_Q[["Fleet"]])))
           vals <- data.frame(matrix(NA, nrow = length(fleetvec), ncol = ncol(bigtable)))
           names(vals) <- names(bigtable)
@@ -130,9 +128,9 @@ SStableComparisons <- function(summaryoutput,
             vals[ifleet, -1] <- Calc_Q[["Calc_Q"]][Calc_Q[["Fleet"]] == f]
           }
         }
-        if (verbose) cat("added ", nrow(vals), " row", ifelse(nrow(vals) != 1, "s", ""), "\n", sep = "")
+        if (verbose) message("added ", nrow(vals), " row", ifelse(nrow(vals) != 1, "s", ""))
         if (!is.null(digits)) {
-          if (verbose) cat("rounded to", digit, "digits\n")
+          if (verbose) message("rounded to", digit, "digits")
           vals[, -1] <- round(vals[, -1], digit)
         }
         # add to table
@@ -147,9 +145,9 @@ SStableComparisons <- function(summaryoutput,
     for (iname in 1:nnames) {
       name <- names[iname]
       if (!is.null(digits)) digit <- digits[iname]
-      if (verbose) cat("name=", name, ": ", sep = "")
+      if (verbose) message("name=", name, "; ", sep = "")
       if (name == "BLANK") {
-        if (verbose) cat("added a blank row to the table\n")
+        if (verbose) message("added a blank row to the table")
         # add to table
         tab <- rbind(tab, " ")
       } else {
@@ -160,7 +158,6 @@ SStableComparisons <- function(summaryoutput,
           # get values
           # for future functionality grabbing more than one column
           tmp <- mcmcTable[, grep(name, names(mcmcTable), fixed = TRUE)]
-          #        cat("labels found: ",names(mcmcTable)[grep(name, names(mcmcTable))],"\n")
           if (!is.null(dim(tmp))) {
             if (ncol(tmp) > 0) {
               stop("This only works with a single column from the mcmc. Use a specific name")
@@ -190,11 +187,11 @@ SStableComparisons <- function(summaryoutput,
           vals[1, 1] <- paste(vals[1, 1], "thousand_mt", sep = "_")
         }
         if (!is.null(digits)) {
-          if (verbose) cat("rounded to", digit, "digits\n")
+          if (verbose) message("rounded to", digit, "digits")
           vals[, -1] <- round(vals[, -1], digit)
         }
 
-        if (verbose) cat("added an mcmc row\n")
+        if (verbose) message("added an mcmc row")
         # add to table
         tab <- rbind(tab, vals)
       } # end if not blank
@@ -213,7 +210,7 @@ SStableComparisons <- function(summaryoutput,
   if (csv) {
     if (csvdir == "workingdirectory") csvdir <- getwd()
     fullpath <- paste(csvdir, csvfile, sep = "/")
-    cat("writing table to:\n  ", fullpath, "\n")
+    message("writing table to: ", fullpath)
     write.csv(tab, fullpath, row.names = FALSE)
   }
   # return table

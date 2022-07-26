@@ -27,9 +27,8 @@
 #'   \item 16  densities
 #'   \item 17  cumulative densities
 #' }
-#' @param plot Plot to active plot device?
-#' @param print Send plots to PNG files in directory specified by
-#' `plotdir`?
+#' @template plot
+#' @template print
 #' @param png Has same result as `print`, included for consistency with
 #' `SS_plots`.
 #' @param pdf Write output to PDF file? Can't be used in conjunction with
@@ -65,7 +64,7 @@
 #' models described above.
 #' @param indexPlotEach TRUE plots the observed index for each model with
 #' colors, or FALSE just plots observed once in black dots.
-#' @param labels Vector of labels for plots (titles and axis labels)
+#' @template labels
 #' @param col Optional vector of colors to be used for lines. Input NULL
 #' makes use of `rich.colors.short` function.
 #' @param shadecol Optional vector of colors to be used for shading uncertainty
@@ -119,8 +118,7 @@
 #' @template punits
 #' @template res
 #' @template ptsize
-#' @param plotdir Directory where PNG or PDF files will be written. By default
-#' it will be the directory where the model was run.
+#' @template plotdir
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
 #' It will be separated from default name by an underscore.
 #' @param densitynames Vector of names (or subset of names) of parameters or
@@ -153,7 +151,7 @@
 #' added.
 #' @param par list of graphics parameter values passed to the `par`
 #' function
-#' @param verbose Report progress to R GUI?
+#' @template verbose
 #' @param mcmcVec Vector of TRUE/FALSE values (or single value) indicating
 #' whether input values are from MCMC or to use normal distribution around
 #' MLE
@@ -284,7 +282,7 @@ SSplotComparisons <-
     }
 
     if (png & is.null(plotdir)) {
-      stop("to print PNG files, you must supply a directory as 'plotdir'")
+      stop("To print PNG files, you must supply a directory as 'plotdir'")
     }
 
     # check for internal consistency
@@ -293,7 +291,7 @@ SSplotComparisons <-
     }
     if (pdf) {
       if (is.null(plotdir)) {
-        stop("to write to a PDF, you must supply a directory as 'plotdir'")
+        stop("To write to a PDF, you must supply a directory as 'plotdir'")
       }
       pdffile <- file.path(
         plotdir,
@@ -525,10 +523,8 @@ SSplotComparisons <-
       }
       # check for mismatched lengths of list elements
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
-        message("indexfleets:")
-        print(indexfleets)
         warning(
-          "Skipping index plots:\n",
+          "Skipping index plots;\n",
           "Fleets have different numbers of indices listed in 'indexfleets'."
         )
         indexfleets <- NULL
@@ -1078,9 +1074,9 @@ SSplotComparisons <-
       par(par)
       # make plot
       if (!add) {
-        if (!is.na(SPRratioLabel) &&
+        if (isTRUE(!is.na(SPRratioLabel) &&
           SPRratioLabel ==
-            paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)")) {
+            paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)"))) {
 
           # add to right-hand outer margin to make space
           # for second vertical axis
@@ -1129,7 +1125,7 @@ SSplotComparisons <-
       }
       abline(h = 0, col = "grey")
       if (sprtarg > 0) {
-        if (SPRratioLabel == "1-SPR") {
+        if (isTRUE(SPRratioLabel == "1-SPR")) {
           # if starter file chooses raw SPR as the option for reporting,
           # don't show ratio
           abline(h = sprtarg, col = "red", lty = 2)
@@ -1143,11 +1139,11 @@ SSplotComparisons <-
         } else {
           # draw line at sprtarg
           yticks <- pretty(ylim)
-          if (!is.na(SPRratioLabel) &&
+          if (isTRUE(!is.na(SPRratioLabel) &&
             SPRratioLabel == paste0(
               "(1-SPR)/(1-SPR_",
               floor(100 * sprtarg), "%)"
-            )) {
+            ))) {
             # add right-hand vertical axis showing 1-SPR
             abline(h = 1, col = "red", lty = 2)
             text(SPRratio[["Yr"]][1] + 4, 1 + 0.03, labels[10], adj = 0)
@@ -1923,15 +1919,14 @@ SSplotComparisons <-
           }
           # warn if too many columns
           if (length(mcmcColumn) > 1) {
-            message(
-              "Too many columns selected from MCMC for model ",
-              imodel, ":"
-            )
-            print(names(mcmc[[imodel]])[mcmcColumn])
             warning(
-              "Please specify a unique label in the mcmc dataframe",
-              "or specify mcmcVec=FALSE for model ",
-              imodel, " (or mcmcVec=FALSE applying to all models)."
+              "Too many columns selected from MCMC for model ",
+              imodel, ":", paste0(names(mcmc[[imodel]])[mcmcColumn],
+                collapse = ", "
+              ),
+              ". Please specify a unique label in the mcmc dataframe",
+              "or specify mcmcVec = FALSE for model ",
+              imodel, " (or mcmcVec = FALSE applying to all models). "
             )
             good[iline] <- FALSE
           }
@@ -2523,10 +2518,12 @@ SSplotComparisons <-
           expandednames <- c(expandednames, matchingnames)
         }
         if (length(expandednames) == 0) {
-          warning("  No parameter/quantity names matching 'densitynames' input.")
+          warning("No parameter/quantity names matching 'densitynames' input.")
         } else {
-          message("  parameter/quantity names matching 'densitynames' input:")
-          print(expandednames)
+          message(
+            "Parameter/quantity names matching 'densitynames' input:\n",
+            paste0(expandednames, collapse = ", ")
+          )
           ndensities <- length(expandednames)
           # make a table to store associated x-labels
           densitytable <- data.frame(

@@ -1,16 +1,42 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.43.2
-Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
-    Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
-    Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
-    Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
-    Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
-    Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
-    Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron,
-    Nathan Vaughan, LaTreese S. Denson, Ashleigh J. Novak, and Henning Winker
-Maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
+Version: 1.45.3
+Authors@R: c(person(given = "Ian G.", family = "Taylor",
+  email = "Ian.Taylor@noaa.gov", role = c("aut","cre")),
+  person(given = "Ian J.", family = "Stewart", role = "aut"),
+  person(given = "Allan C.", family = "Hicks", role = "aut"),
+  person(given = "Tommy M.", family = "Garrison", role = "aut"),
+  person(given = "Andre E.", family = "Punt", role = "aut"),
+  person(given = "John R.", family = "Wallace", role = "aut"),
+  person(given = "Chantel R.", family = "Wetzel", role = "aut"),
+  person(given = "James T.", family = "Thorson", role = "aut"),
+  person(given = "Yukio", family = "Takeuchi", role = "aut"),
+  person(given = "Kotaro", family = "Ono", role = "aut"),
+  person(given = "Cole C.", family = "Monnahan", role = "aut"),
+  person(given = "Christine C.", family = "Stawitz", role = "aut"),
+  person(given = "Z. Teresa", family = "A'mar", role = "aut"),
+  person(given = "Athol R.", family = "Whitten", role = "aut"),
+  person(given = "Kelli F.", family = "Johnson", role = "aut"),
+  person(given = "Robbie L.", family = "Emmet", role = "aut"),
+  person(given = "Sean C.", family = "Anderson", role = "aut"),
+  person(given = "Gwladys I.", family = "Lambert", role = "aut"),
+  person(given = "Megan M.", family = "Stachura", role = "aut"),
+  person(given = "Andrew B.", family = "Cooper", role = "aut"),
+  person(given = "Andi", family = "Stephens", role = "aut"),
+  person(given = "Neil L.", family = "Klaer", role = "aut"),
+  person(given = "Carey R.", family = "McGilliard", role = "aut"),
+  person(given = "Iago", family = "Mosqueira", role = "aut"),
+  person(given = "Watal M.", family = "Iwasaki", role = "aut"),
+  person(given = "Kathryn L.", family = "Doering", role = "aut"),
+  person(given = "Andrea M.", family = "Havron", role = "aut"),
+  person(given = "Nathan R.", family = "Vaughan", role = "aut"),
+  person(given = "LaTreese S.", family = "Denson", role = "aut"),
+  person(given = "Ashleigh J.", family = "Novak", role = "aut"),
+  person(given = "Henning", family = "Winker", role = "aut"),
+  person(given = "Lee", family = "Qi", role = "aut"),
+  person(given = "Megumi", family = "Oshima", role = "aut"),
+  person(given = "Eric", family = "Fletcher", role = "aut"))
 Depends:
     R (>= 3.5.0)
 Imports:
@@ -41,11 +67,14 @@ Description: A collection of R functions for use with Stock Synthesis, a
     include tools for summarizing and plotting results, manipulating files,
     visualizing model parameterizations, and various other common stock
     assessment tasks.
+    This version of '{r4ss}' is compatible with Stock Synthesis versions
+    3.24 through 3.30 (specifically version 3.30.19.01, from April
+    2022).
 License: GPL-3
 Encoding: UTF-8
 LazyLoad: yes
 URL: https://github.com/r4ss/r4ss
 BugReports: https://github.com/r4ss/r4ss/issues
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

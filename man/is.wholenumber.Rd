@@ -3,9 +3,9 @@
 \name{is.wholenumber}
 \alias{is.wholenumber}
 \title{Utility function to test if x is "numerically" integer wrt machine epsilon
-taken from exaple section of help of is.integer}
+taken from example section of help of is.integer}
 \usage{
-is.wholenumber(x, tol = .Machine$double.eps^0.5)
+is.wholenumber(x, tol = .Machine[["double.eps"]]^0.5)
 }
 \arguments{
 \item{x}{value to check if it is "integer"}
@@ -14,5 +14,5 @@ is.wholenumber(x, tol = .Machine$double.eps^0.5)
 }
 \description{
 Utility function to test if x is "numerically" integer wrt machine epsilon
-taken from exaple section of help of is.integer
+taken from example section of help of is.integer
 }

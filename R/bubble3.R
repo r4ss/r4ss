@@ -17,15 +17,15 @@
 #' @param do.sqrt Should size be based on the area? (Diameter proportional to
 #' sqrt(z)). Default=TRUE.
 #' @param bg.open background color for open bubbles (border will equal 'col')
-#' @param legend Add a legend to the plot?
-#' @param legendloc Location for legend (default='top')
+#' @template legend
+#' @template legendloc
 #' @param legend.z If a legend is added, what z values will be shown. Default
 #' is c(-3,-2,-1,.1,1,2,3) for Pearson-like quantities and a smaller range for
 #' proportions that are all less than 1.
 #' @param legend.yadj If a legend is added, how much should the y-axis be
 #' expanded to make space for it.
 #' @param main Title of plot. Default="".
-#' @param cex.main Character expansion for title. Default=1.
+#' @template cex.main
 #' @param xlab X-axis label.
 #' @param ylab Y-axis label.
 #' @param minnbubble Minimum number of unique x values below which extra space

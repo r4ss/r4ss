@@ -7,7 +7,7 @@
 #' Used by [SS_profile()] and the \pkg{ss3sim} package.
 #'
 #'
-#' @param dir Directory with control file to change.
+#' @template dir
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #'   Default="control_modified.ss".
@@ -67,7 +67,7 @@
 #'   value to the given parameter but change the remaining parameters, where
 #'   the vector of values needs to be in the same order as either
 #'   `linenums` or `strings`.
-#' @param verbose More detailed output to command line. Default=TRUE.
+#' @template verbose
 #' @author Ian Taylor, Christine Stawitz, Chantel Wetzel
 #' @seealso [SS_parlines()], [SS_profile()]
 #' @export
@@ -116,7 +116,7 @@ SS_changepars <-
       "newprior" = newprior, "newprsd" = newprsd, "newprtype" = newprtype,
       "estimate" = estimate, "newphs" = newphs
     )
-    if (is.null(linenums) & !is.null(strings) & class(strings) == "character") {
+    if (is.null(linenums) & !is.null(strings) & is.character(strings)) {
       # get table of parameter lines
       ctltable <- SS_parlines(ctlfile = fullctlfile)
 
@@ -145,21 +145,17 @@ SS_changepars <-
         }
         goodnames <- unique(unlist(goodnames))
         if (verbose) {
-          cat("parameter names in control file matching input vector 'strings' (n=",
-            length(goodnames), "):\n",
-            sep = ""
+          message(
+            "Parameter names in control file matching input vector \n",
+            "'strings' (n=", length(goodnames), "): ",
+            paste0(goodnames, collapse = ", ")
           )
-          print(goodnames)
         }
         if (length(goodnames) == 0) {
           stop("No parameters names match input vector 'strings'")
         }
       }
       nvals <- length(goodnames)
-      if (verbose) {
-        cat("These are the ctl file lines as they currently exist:\n")
-        print(ctltable[ctltable[["Label"]] %in% goodnames, ])
-      }
       for (i in 1:nvals) {
         linenums[i] <- ctltable[["Linenum"]][ctltable[["Label"]] == goodnames[i]]
       }
@@ -301,9 +297,7 @@ SS_changepars <-
     newctl <- ctl
     newctl[linenums] <- newctlsubset
     writeLines(newctl, file.path(dir, newctlfile))
-    if (verbose) {
-      cat("\nwrote new file to", newctlfile, "with the following changes:\n")
-    }
+
 
     # if no changed made, repeat old values in output
     if (is.null(newvals)) {
@@ -335,7 +329,10 @@ SS_changepars <-
       newvals <- NA
     }
     if (verbose) {
-      print(results)
+      message(
+        "Wrote new file to ", newctlfile, " with the following changes:\n",
+        paste0(utils::capture.output(results), collapse = "\n")
+      )
     }
     return(invisible(results))
   } # end function

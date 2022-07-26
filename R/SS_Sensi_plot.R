@@ -5,8 +5,7 @@
 #'
 #' @param model.summaries Output from [SSsummarize()]
 #' summarizing results of models to be included
-#' @param dir Directory where plots will be created, either relative
-#' to working directory or an absolute path
+#' @template dir
 #' @param current.year Year to report output
 #' @param mod.names List the names of the sensitivity runs
 #' @param Sensi.RE.out  Saved file of relative changes
@@ -132,95 +131,95 @@ SS_Sensi_plot <- function(model.summaries,
   }
 
   # num.likes<-sum(likelihood.out)*2+2
-  num.likes <- length(unique(model.summaries$likelihoods_by_fleet$Label)) # determine how many likelihoods components
-  nummods <- as.data.frame(matrix(NA, ncol(model.summaries$likelihoods_by_fleet) - 2, length(unique(model.summaries$likelihoods_by_fleet$model)) + 2))
-  nummods[, 1] <- colnames(model.summaries$likelihoods_by_fleet)[-c(1, 2)]
+  num.likes <- length(unique(model.summaries[["likelihoods_by_fleet"]][["Label"]])) # determine how many likelihoods components
+  nummods <- as.data.frame(matrix(NA, ncol(model.summaries[["likelihoods_by_fleet"]]) - 2, length(unique(model.summaries[["likelihoods_by_fleet"]][["model"]])) + 2))
+  nummods[, 1] <- colnames(model.summaries[["likelihoods_by_fleet"]])[-c(1, 2)]
   colnames(nummods) <- c("Type", mod.names, "Label")
   survey.lambda <- survey.like <- Lt.lambda <- Lt.like <- Age.lambda <- Age.like <- nummods
 
   if (missing(mod.names)) {
-    mod.names <- paste("model ", 1:model.summaries$n)
+    mod.names <- paste("model ", 1:model.summaries[["n"]])
   }
-  if (any(unique(model.summaries$likelihoods_by_fleet$Label) == "Surv_lambda")) {
-    survey.lb <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Surv_lambda", ]
-    survey.lambda[, survey.lb$model + 1] <- t(survey.lb[, 3:ncol(survey.lb)])
-    survey.lambda$Label <- "Surv_lambda"
+  if (any(unique(model.summaries[["likelihoods_by_fleet"]][["Label"]]) == "Surv_lambda")) {
+    survey.lb <- model.summaries[["likelihoods_by_fleet"]][model.summaries[["likelihoods_by_fleet"]][["Label"]] == "Surv_lambda", ]
+    survey.lambda[, survey.lb[["model"]] + 1] <- t(survey.lb[, 3:ncol(survey.lb)])
+    survey.lambda[["Label"]] <- "Surv_lambda"
 
-    survey.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Surv_like", ]
-    survey.like[, survey.lk$model + 1] <- t(survey.lk[, 3:ncol(survey.lk)])
-    survey.like$Label <- "Survey_likelihood"
+    survey.lk <- model.summaries[["likelihoods_by_fleet"]][model.summaries[["likelihoods_by_fleet"]][["Label"]] == "Surv_like", ]
+    survey.like[, survey.lk[["model"]] + 1] <- t(survey.lk[, 3:ncol(survey.lk)])
+    survey.like[["Label"]] <- "Survey_likelihood"
 
 
-    #    syrvlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_lambda"]
-    #    survey.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(3, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_lambda")
-    #    syrvlike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_like"]
-    #    survey.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(syrvlike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_likelihood")
+    #    syrvlambda_index <- c(1:num.likes)[subset(model.summaries[["likelihoods_by_fleet"]], model == 1)$Label == "Surv_lambda"]
+    #    survey.lambda <- data.frame(rownames(t(model.summaries[["likelihoods_by_fleet"]]))[-1:-2], t(model.summaries[["likelihoods_by_fleet"]][seq(3, dim(model.summaries[["likelihoods_by_fleet"]])[1], num.likes), ][-1:-2]), "Survey_lambda")
+    #    syrvlike_index <- c(1:num.likes)[subset(model.summaries[["likelihoods_by_fleet"]], model == 1)$Label == "Surv_like"]
+    #    survey.like <- data.frame(rownames(t(model.summaries[["likelihoods_by_fleet"]]))[-1:-2], t(model.summaries[["likelihoods_by_fleet"]][seq(syrvlike_index, dim(model.summaries[["likelihoods_by_fleet"]])[1], num.likes), ][-1:-2]), "Survey_likelihood")
   } else {
-    survey.lambda <- survey.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
+    survey.lambda <- survey.like <- data.frame(t(rep(NA, model.summaries[["n"]] + 2)))
   }
-  if (any(unique(model.summaries$likelihoods_by_fleet$Label) == "Length_lambda")) {
-    Lt.lb <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Length_lambda", ]
-    Lt.lambda[, Lt.lb$model + 1] <- t(Lt.lb[, 3:ncol(Lt.lb)])
-    Lt.lambda$Label <- "Length_lambda"
+  if (any(unique(model.summaries[["likelihoods_by_fleet"]][["Label"]]) == "Length_lambda")) {
+    Lt.lb <- model.summaries[["likelihoods_by_fleet"]][model.summaries[["likelihoods_by_fleet"]][["Label"]] == "Length_lambda", ]
+    Lt.lambda[, Lt.lb[["model"]] + 1] <- t(Lt.lb[, 3:ncol(Lt.lb)])
+    Lt.lambda[["Label"]] <- "Length_lambda"
 
-    Lt.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Length_like", ]
-    Lt.like[, Lt.lk$model + 1] <- t(Lt.lk[, 3:ncol(Lt.lk)])
-    Lt.like$Label <- "Length_likelihood"
+    Lt.lk <- model.summaries[["likelihoods_by_fleet"]][model.summaries[["likelihoods_by_fleet"]][["Label"]] == "Length_like", ]
+    Lt.like[, Lt.lk[["model"]] + 1] <- t(Lt.lk[, 3:ncol(Lt.lk)])
+    Lt.like[["Label"]] <- "Length_likelihood"
   } else {
-    Lt.lambda <- Lt.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
+    Lt.lambda <- Lt.like <- data.frame(t(rep(NA, model.summaries[["n"]] + 2)))
   }
-  if (any(unique(model.summaries$likelihoods_by_fleet$Label) == "Age_lambda")) {
-    Age.lb <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Age_lambda", ]
-    Age.lambda[, Age.lb$model + 1] <- t(Age.lb[, 3:ncol(Age.lb)])
-    Age.lambda$Label <- "Age_lambda"
+  if (any(unique(model.summaries[["likelihoods_by_fleet"]][["Label"]]) == "Age_lambda")) {
+    Age.lb <- model.summaries[["likelihoods_by_fleet"]][model.summaries[["likelihoods_by_fleet"]][["Label"]] == "Age_lambda", ]
+    Age.lambda[, Age.lb[["model"]] + 1] <- t(Age.lb[, 3:ncol(Age.lb)])
+    Age.lambda[["Label"]] <- "Age_lambda"
 
-    Age.lk <- model.summaries$likelihoods_by_fleet[model.summaries$likelihoods_by_fleet$Label == "Age_like", ]
-    Age.like[, Age.lk$model + 1] <- t(Age.lk[, 3:ncol(Age.lk)])
-    Age.like$Label <- "Age_likelihood"
+    Age.lk <- model.summaries[["likelihoods_by_fleet"]][model.summaries[["likelihoods_by_fleet"]][["Label"]] == "Age_like", ]
+    Age.like[, Age.lk[["model"]] + 1] <- t(Age.lk[, 3:ncol(Age.lk)])
+    Age.like[["Label"]] <- "Age_likelihood"
   } else {
-    Age.lambda <- Age.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
+    Age.lambda <- Age.like <- data.frame(t(rep(NA, model.summaries[["n"]] + 2)))
   }
 
-  parms <- model.summaries$pars
-  # rownames(parms)<-parms$Label
-  parms <- data.frame(parms$Label, parms[, 1:(dim(parms)[2] - 3)], "Parameters")
-  if (any(model.summaries$nsexes == 1)) {
+  parms <- model.summaries[["pars"]]
+  # rownames(parms)<-parms[["Label"]]
+  parms <- data.frame(parms[["Label"]], parms[, 1:(dim(parms)[2] - 3)], "Parameters")
+  if (any(model.summaries[["nsexes"]] == 1)) {
     dev.quants <- rbind(
-      model.summaries$quants[model.summaries$quants$Label == "SSB_Virgin", 1:(dim(model.summaries$quants)[2] - 2)] / 2,
-      (model.summaries$quants[model.summaries$quants$Label == paste0("SSB_", current.year), 1:(dim(model.summaries$quants)[2] - 2)]) / 2,
-      model.summaries$quants[model.summaries$quants$Label == paste0("Bratio_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
-      model.summaries$quants[model.summaries$quants$Label == "Dead_Catch_SPR", 1:(dim(model.summaries$quants)[2] - 2)] / 2,
-      model.summaries$quants[model.summaries$quants$Label %in% c("Fstd_SPR", "annF_SPR"), 1:(dim(model.summaries$quants)[2] - 2)]
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == "SSB_Virgin", 1:(dim(model.summaries[["quants"]])[2] - 2)] / 2,
+      (model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == paste0("SSB_", current.year), 1:(dim(model.summaries[["quants"]])[2] - 2)]) / 2,
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == paste0("Bratio_", current.year), 1:(dim(model.summaries[["quants"]])[2] - 2)],
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == "Dead_Catch_SPR", 1:(dim(model.summaries[["quants"]])[2] - 2)] / 2,
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] %in% c("Fstd_SPR", "annF_SPR"), 1:(dim(model.summaries[["quants"]])[2] - 2)]
     )
     # Extract SDs for use in the ggplots
     dev.quants.SD <- c(
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "SSB_Virgin", 1] / 2,
-      (model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("SSB_", current.year), 1]) / 2,
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("Bratio_", current.year), 1],
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "Dead_Catch_SPR", 1] / 2,
-      model.summaries$quantsSD[model.summaries$quantsSD$Label %in% c("Fstd_SPR", "annF_SPR"), 1]
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == "SSB_Virgin", 1] / 2,
+      (model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == paste0("SSB_", current.year), 1]) / 2,
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == paste0("Bratio_", current.year), 1],
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == "Dead_Catch_SPR", 1] / 2,
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] %in% c("Fstd_SPR", "annF_SPR"), 1]
     )
   }
-  if (any(model.summaries$nsexes == 2)) {
+  if (any(model.summaries[["nsexes"]] == 2)) {
     dev.quants <- rbind(
-      model.summaries$quants[model.summaries$quants$Label == "SSB_Virgin", 1:(dim(model.summaries$quants)[2] - 2)],
-      model.summaries$quants[model.summaries$quants$Label == paste0("SSB_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
-      model.summaries$quants[model.summaries$quants$Label == paste0("Bratio_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
-      model.summaries$quants[model.summaries$quants$Label == "Dead_Catch_SPR", 1:(dim(model.summaries$quants)[2] - 2)],
-      model.summaries$quants[model.summaries$quants$Label %in% c("Fstd_SPR", "annF_SPR"), 1:(dim(model.summaries$quants)[2] - 2)]
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == "SSB_Virgin", 1:(dim(model.summaries[["quants"]])[2] - 2)],
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == paste0("SSB_", current.year), 1:(dim(model.summaries[["quants"]])[2] - 2)],
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == paste0("Bratio_", current.year), 1:(dim(model.summaries[["quants"]])[2] - 2)],
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] == "Dead_Catch_SPR", 1:(dim(model.summaries[["quants"]])[2] - 2)],
+      model.summaries[["quants"]][model.summaries[["quants"]][["Label"]] %in% c("Fstd_SPR", "annF_SPR"), 1:(dim(model.summaries[["quants"]])[2] - 2)]
     )
     # Extract SDs for use in the ggplots
     dev.quants.SD <- c(
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "SSB_Virgin", 1],
-      (model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("SSB_", current.year), 1]),
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("Bratio_", current.year), 1],
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "Dead_Catch_SPR", 1],
-      model.summaries$quantsSD[model.summaries$quantsSD$Label %in% c("Fstd_SPR", "annF_SPR"), 1]
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == "SSB_Virgin", 1],
+      (model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == paste0("SSB_", current.year), 1]),
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == paste0("Bratio_", current.year), 1],
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] == "Dead_Catch_SPR", 1],
+      model.summaries[["quantsSD"]][model.summaries[["quantsSD"]][["Label"]] %in% c("Fstd_SPR", "annF_SPR"), 1]
     )
   }
 
   dev.quants.labs <- data.frame(c("SB0", paste0("SSB_", current.year), paste0("Bratio_", current.year), "MSY_SPR", "F_SPR"), dev.quants, "Derived quantities")
-  AICs <- 2 * model.summaries$npars + (2 * as.numeric(model.summaries$likelihoods[1, 1:model.summaries$n]))
+  AICs <- 2 * model.summaries[["npars"]] + (2 * as.numeric(model.summaries[["likelihoods"]][1, 1:model.summaries[["n"]]]))
   deltaAICs <- AICs - AICs[1]
   AIC.out <- data.frame(cbind(c("AIC", "deltaAIC"), rbind.data.frame(AICs, deltaAICs), c("AIC")))
   colnames(AIC.out) <- colnames(survey.lambda) <- colnames(survey.like) <- colnames(Lt.lambda) <- colnames(Lt.like) <- colnames(Age.lambda) <- colnames(Age.like) <- colnames(parms) <- colnames(dev.quants.labs) <- c("Type", mod.names, "Label")
@@ -244,7 +243,7 @@ SS_Sensi_plot <- function(model.summaries,
   colnames(Dev.quants.temp) <- c("Metric", mod.names[-1])
   Dev.quants.ggplot <- data.frame(reshape2::melt(Dev.quants.temp, id.vars = c("Metric")), RE[, 2:3], logRE[, 2:3])
   colnames(Dev.quants.ggplot) <- c("Metric", "Model_name", "Value", "Model_num_plot", "RE", "Model_num_plot_log", "logRE")
-  Dev.quants.ggplot$Metric <- factor(Dev.quants.ggplot$Metric, levels = unique(Dev.quants.ggplot$Metric))
+  Dev.quants.ggplot[["Metric"]] <- factor(Dev.quants.ggplot[["Metric"]], levels = unique(Dev.quants.ggplot[["Metric"]]))
   save(Dev.quants.ggplot, file = file.path(dir, Sensi.RE.out))
 
   # Calculate RE values for reference model boxes
@@ -274,7 +273,7 @@ SS_Sensi_plot <- function(model.summaries,
     anno.lab <- c("", "")
   }
   if (is.na(spawn.lab)) {
-    spawn.lab <- ifelse(all(model.summaries$SpawnOutputUnits == "biomass"),
+    spawn.lab <- ifelse(all(model.summaries[["SpawnOutputUnits"]] == "biomass"),
       "SB", "SO"
     )
   }
@@ -284,15 +283,15 @@ SS_Sensi_plot <- function(model.summaries,
   spawn.lab.ratio <- as.expression(bquote(frac(.(spawn.lab)[.(current.year)], .(spawn.lab)[.(0)])))
 
   if (is.na(yield.lab)) {
-    sprtarg <- model.summaries$sprtargs[1]
-    yield.lab <- ifelse(test = all(model.summaries$sprtargs == sprtarg),
+    sprtarg <- model.summaries[["sprtargs"]][1]
+    yield.lab <- ifelse(test = all(model.summaries[["sprtargs"]] == sprtarg),
       yes = paste0("Yield(SPR=", sprtarg, ")"),
       no = "Yield(tgt SPR)"
     )
   }
   if (is.na(F.lab)) {
-    sprtarg <- model.summaries$sprtargs[1]
-    F.lab <- ifelse(test = all(model.summaries$sprtargs == sprtarg),
+    sprtarg <- model.summaries[["sprtargs"]][1]
+    F.lab <- ifelse(test = all(model.summaries[["sprtargs"]] == sprtarg),
       yes = paste0("F(SPR=", sprtarg, ")"),
       no = "F(tgt SPR)"
     )
@@ -303,15 +302,15 @@ SS_Sensi_plot <- function(model.summaries,
   pt.dodge <- 0.3
   if (plot.figs[1] == 1) {
     # RE plot
-    ggplot(Dev.quants.ggplot, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
+    ggplot(Dev.quants.ggplot, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(shape = .data[["Metric"]], color = .data[["Metric"]]), position = position_dodge(pt.dodge)) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       geom_hline(yintercept = c(TRP, LRP, 0), lty = c(2, 2, 1), color = c("darkgreen", "darkred", "gray")) +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[1:2])+
       coord_cartesian(ylim = ylims.in[1:2]) +
       theme(
@@ -343,20 +342,20 @@ SS_Sensi_plot <- function(model.summaries,
       ) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
-      annotate("text", x = c((model.summaries$n + 2), (model.summaries$n + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
     ggsave(file.path(dir, "Sensi_REplot_all.png"))
 
     # log plot
-    ggplot(Dev.quants.ggplot, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
+    ggplot(Dev.quants.ggplot, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(shape = .data[["Metric"]], color = .data[["Metric"]]), position = position_dodge(pt.dodge)) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       geom_hline(yintercept = c(logTRP, logLRP, 0), lty = c(2, 2, 1), color = c("darkgreen", "darkred", "gray")) +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[1:2])+
       coord_cartesian(ylim = ylims.in[1:2]) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), legend.text.align = 0, panel.grid.minor = element_blank()) +
@@ -384,7 +383,7 @@ SS_Sensi_plot <- function(model.summaries,
       ) +
       labs(x = sensi_xlab, y = "Log relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
-      annotate("text", x = c((model.summaries$n + 2), (model.summaries$n + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
     ggsave(file.path(dir, "Sensi_logREplot_all.png"))
   }
@@ -395,11 +394,11 @@ SS_Sensi_plot <- function(model.summaries,
       Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[1] |
         Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2],
     ]
-    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n)) +
+    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(shape = .data[["Metric"]], color = .data[["Metric"]]), position = position_dodge(pt.dodge)) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]])) +
       coord_cartesian(ylim = ylims.in[1:2]) +
       theme(
         axis.title.x = element_blank(),
@@ -430,10 +429,10 @@ SS_Sensi_plot <- function(model.summaries,
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
       Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[3],
     ]
-    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n)) +
+    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]])) +
       # scale_y_continuous(limits=ylims.in[7:8])+
       coord_cartesian(ylim = ylims.in[7:8]) +
       theme(
@@ -448,7 +447,7 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries$n + 1), (model.summaries$n + 1)), y = c(TRP + 0.1, LRP - 0.1), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 1), (model.summaries[["n"]] + 1)), y = c(TRP + 0.1, LRP - 0.1), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       geom_hline(yintercept = c(TRP, LRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
@@ -457,11 +456,11 @@ SS_Sensi_plot <- function(model.summaries,
         Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[5],
     ]
 
-    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data$Model_num_plot, RE, group = .data$Metric)) +
-      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot$Model_name)) +
+    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data[["Model_num_plot"]], RE, group = .data[["Metric"]])) +
+      geom_point(aes(shape = .data[["Metric"]], color = .data[["Metric"]]), position = position_dodge(pt.dodge)) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[9:10])+
       coord_cartesian(ylim = ylims.in[9:10]) +
       theme(
@@ -496,11 +495,11 @@ SS_Sensi_plot <- function(model.summaries,
         Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2],
     ]
 
-    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n)) +
+    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(shape = .data[["Metric"]], color = .data[["Metric"]]), position = position_dodge(pt.dodge)) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]])) +
       # scale_y_continuous(limits=ylims.in[1:2])+
       coord_cartesian(ylim = ylims.in[1:2]) +
       theme(
@@ -531,12 +530,12 @@ SS_Sensi_plot <- function(model.summaries,
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[3],
     ]
-    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n)) +
+    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]])) +
       # scale_y_continuous(limits=ylims.in[7:8])+
       coord_cartesian(ylim = ylims.in[7:8]) +
       theme(
@@ -551,20 +550,20 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries$n + 1), (model.summaries$n + 1)), y = c(logTRP + 0.08, logLRP - 0.08), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 1), (model.summaries[["n"]] + 1)), y = c(logTRP + 0.08, logLRP - 0.08), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       geom_hline(yintercept = c(logTRP, logLRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
     Dev.quants.ggplot.MSY_FMSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4] |
-        Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[4] |
+        Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[5],
     ]
 
-    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data$Model_num_plot, logRE, group = .data$Metric)) +
-      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot$Model_name)) +
+    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data[["Model_num_plot"]], logRE, group = .data[["Metric"]])) +
+      geom_point(aes(shape = .data[["Metric"]], color = .data[["Metric"]]), position = position_dodge(pt.dodge)) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[9:10])+
       coord_cartesian(ylim = ylims.in[9:10]) +
       theme(
@@ -597,13 +596,13 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[2] == 1) {
     # RE plot
     Dev.quants.ggplot.SB0 <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[1],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[1],
     ]
-    ggplot(Dev.quants.ggplot.SB0, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
+    ggplot(Dev.quants.ggplot.SB0, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.SB0$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.SB0[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[3:4])+
       coord_cartesian(ylim = ylims.in[3:4]) +
       theme(
@@ -623,13 +622,13 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plot
     Dev.quants.ggplot.SB0 <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[1],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[1],
     ]
-    ggplot(Dev.quants.ggplot.SB0, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
+    ggplot(Dev.quants.ggplot.SB0, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.SB0$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.SB0[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[3:4])+
       coord_cartesian(ylim = ylims.in[3:4]) +
       theme(
@@ -651,13 +650,13 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[3] == 1) {
     # RE plots
     Dev.quants.ggplot.SBt <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[2],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2],
     ]
-    ggplot(Dev.quants.ggplot.SBt, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
+    ggplot(Dev.quants.ggplot.SBt, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), minor_breaks = NULL, labels = unique(Dev.quants.ggplot.SBt$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), minor_breaks = NULL, labels = unique(Dev.quants.ggplot.SBt[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[5:6])+
       coord_cartesian(ylim = ylims.in[5:6]) +
       theme(
@@ -677,13 +676,13 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plots
     Dev.quants.ggplot.SBt <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[2],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[2],
     ]
-    ggplot(Dev.quants.ggplot.SBt, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
+    ggplot(Dev.quants.ggplot.SBt, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), minor_breaks = NULL, labels = unique(Dev.quants.ggplot.SBt$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), minor_breaks = NULL, labels = unique(Dev.quants.ggplot.SBt[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[5:6])+
       coord_cartesian(ylim = ylims.in[5:6]) +
       theme(
@@ -705,12 +704,12 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[4] == 1) {
     # RE plots
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[3],
     ]
-    ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.Dep$Model_name)) +
+    ggplot(Dev.quants.ggplot.Dep, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.Dep[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[7:8])+
       coord_cartesian(ylim = ylims.in[7:8]) +
       theme(
@@ -724,7 +723,7 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries$n + 2), (model.summaries$n + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
       geom_hline(yintercept = c(TRP, LRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
@@ -733,12 +732,12 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plots
     Dev.quants.ggplot.Dep <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[3],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[3],
     ]
-    ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.Dep$Model_name)) +
+    ggplot(Dev.quants.ggplot.Dep, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.Dep[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[7:8])+
       coord_cartesian(ylim = ylims.in[7:8]) +
       theme(
@@ -752,7 +751,7 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries$n + 2), (model.summaries$n + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       labs(x = sensi_xlab, y = "Log Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
       geom_hline(yintercept = c(logTRP, logLRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
@@ -763,13 +762,13 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[5] == 1) {
     # RE plots
     Dev.quants.ggplot.MSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[4],
     ]
-    ggplot(Dev.quants.ggplot.MSY, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
+    ggplot(Dev.quants.ggplot.MSY, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.MSY$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.MSY[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[9:10])+
       coord_cartesian(ylim = ylims.in[9:10]) +
       theme(
@@ -787,13 +786,13 @@ SS_Sensi_plot <- function(model.summaries,
     ggsave(file.path(dir, "Sensi_REplot_MSY.png"))
     # Log plots
     Dev.quants.ggplot.MSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[4],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[4],
     ]
-    ggplot(Dev.quants.ggplot.MSY, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
+    ggplot(Dev.quants.ggplot.MSY, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.MSY$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.MSY[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[9:10])+
       coord_cartesian(ylim = ylims.in[9:10]) +
       theme(
@@ -814,13 +813,13 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[6] == 1) {
     # RE plots
     Dev.quants.ggplot.FMSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[5],
     ]
-    ggplot(Dev.quants.ggplot.FMSY, aes(.data$Model_num_plot, RE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
+    ggplot(Dev.quants.ggplot.FMSY, aes(.data[["Model_num_plot"]], RE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.FMSY$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.FMSY[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[11:12])+
       coord_cartesian(ylim = ylims.in[11:12]) +
       theme(
@@ -839,13 +838,13 @@ SS_Sensi_plot <- function(model.summaries,
 
     # RE plots
     Dev.quants.ggplot.FMSY <- Dev.quants.ggplot[
-      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot$Metric)[5],
+      Dev.quants.ggplot[["Metric"]] == unique(Dev.quants.ggplot[["Metric"]])[5],
     ]
-    ggplot(Dev.quants.ggplot.FMSY, aes(.data$Model_num_plot, logRE)) +
-      geom_point(aes(color = .data$Metric)) +
-      geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
+    ggplot(Dev.quants.ggplot.FMSY, aes(.data[["Model_num_plot"]], logRE)) +
+      geom_point(aes(color = .data[["Metric"]])) +
+      geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
-      scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.FMSY$Model_name)) +
+      scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot.FMSY[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[11:12])+
       coord_cartesian(ylim = ylims.in[11:12]) +
       theme(

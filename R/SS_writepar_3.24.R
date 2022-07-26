@@ -1,12 +1,14 @@
-#' write ss.par file from SS version 3.24
+#' Deprecated: write ss.par file from SS version 3.24
 #'
 #' Write Stock Synthesis (version 3.24) parameter file from list object in R to file.
 #'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30.
 #'
 #' @param parlist  List object created by [SS_readpar_3.24()].
 #' @param outfile Filename for where to write new parameter file.
 #' @param overwrite Should existing files be overwritten? Default=TRUE.
-#' @param verbose Should there be verbose output while running the file?
+#' @template verbose
 #' @author Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
@@ -16,13 +18,18 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
-
+  # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_writepar_3.24()",
+    details = "Please update model to version 3.30."
+  )
   # function to write Stock Synthesis parameter files
-  if (verbose) cat("running SS_writepar_3.24\n")
+  if (verbose) message("running SS_writepar_3.24")
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cat("File exists and input 'overwrite'=FALSE:", outfile, "\n")
+      message("File exists and input 'overwrite'=FALSE:", outfile)
       return()
     } else {
       file.remove(outfile)

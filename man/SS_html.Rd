@@ -19,7 +19,7 @@ SS_html(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plotdir}{Directory where PNG files are located.}
+\item{plotdir}{Directory where PNG files will be written.}
 
 \item{plotInfoTable}{CSV file with info on PNG files. By default, the
 \code{plotdir} directory will be searched for files with name beginning
@@ -36,7 +36,8 @@ runs. Only do this if you know what you're doing.}
 
 \item{filenotes}{Add additional notes to home page.}
 
-\item{verbose}{Display more info while running this function?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Writes a set of HTML files with tabbed navigation between them.  Depends on

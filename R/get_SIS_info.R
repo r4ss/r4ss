@@ -8,7 +8,7 @@
 #' copy step.
 
 #' @param model Output from SS_output
-#' @param dir Directory where the file will be written
+#' @template dir
 #' @param writecsv Write results to a CSV file (where the name will have the
 #' format "\[stock\]_2019_SIS_info.csv" where `stock`
 #' is an additional input
@@ -17,14 +17,15 @@
 #' (typically will be `model[["endyr"]] + 1`)
 #' @param data_year Last year of of timeseries data
 #' @param sciencecenter Origin of assessment report
-#' @param Mgt_Council Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)
-#' @author Ian G. Taylor, Andi Stephens
+#' @param Mgt_Council Council jurisdiction. Currently the only option
+#' outside of the default is Gulf of Mexico (`"GM"`)
+#' @author Ian G. Taylor, Andi Stephens, LaTreese S. Denson
 #' @export
 #' @seealso [SS_output()]
 #' @examples
 #' \dontrun{
 #' # directory with the model output
-#' mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")
+#' mydir <- file.path(path.package("r4ss"), "extdata/simple_small")
 #' # read the model output
 #' model <- SS_output(dir = mydir)
 #' # run get_SIS_info:

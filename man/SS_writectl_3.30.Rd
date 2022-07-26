@@ -11,10 +11,11 @@ SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose = FALSE)
 
 \item{outfile}{Filename for where to write new data file.}
 
-\item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+\item{overwrite}{A logical value specifying if the existing file(s)
+should be overwritten. The default value is \code{overwrite = FALSE}.}
 
-\item{verbose}{Should there be verbose output while running the file?
-Defaults to FALSE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 write Stock Synthesis control file from list object in R which was created
@@ -28,5 +29,6 @@ using \code{\link[=SS_writectl]{SS_writectl()}} and should not be called directl
 \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
-Kathryn Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki
+Kathryn L. Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki,
+Nathan R. Vaughan
 }

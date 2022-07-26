@@ -7,7 +7,6 @@
 SS_plots(
   replist = NULL,
   plot = 1:26,
-  print = NULL,
   pdf = FALSE,
   png = TRUE,
   html = png,
@@ -131,9 +130,6 @@ Current grouping of plots is as follows:
 \item Diagnostic tables
 }}
 
-\item{print}{Deprecated input for backward compatibility, now replaced by
-\code{png = TRUE/FALSE}.}
-
 \item{pdf}{Send plots to PDF file instead of R GUI?}
 
 \item{png}{Send plots to PNG files instead of R GUI?}
@@ -156,16 +152,14 @@ The function will attempt to create the directory it doesn't exist, but it
 does not do so recursively.}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
-c(1,3), listing fleets or surveys for which plots should be made. By
-default, plots will be made for all fleets and surveys.  Default="all".}
+c(1,3), listing fleets or surveys to be included in the plot.}
 
 \item{areas}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing areas for which plots should be made in a multi-area model.
 By default, plots will be made for all areas (excepting cases where the
 function has not yet been updated for multi-area models). Default="all".}
 
-\item{fleetnames}{Either the string "default", or a vector of characters
-strings to use for each fleet name. Default="default".}
+\item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
 \item{fleetcols}{Either the string "default", or a vector of colors to use
 for each fleet.  Default="default".}
@@ -176,7 +170,7 @@ Default=1.}
 \item{fleetpch}{Vector of point types used for each fleet in some plots.
 Default=1.}
 
-\item{lwd}{Line width for some plots. Default=1.}
+\item{lwd}{Line width for plot elements.}
 
 \item{areacols}{Either the string "default", or a vector of colors to use
 for each area. Default="default".}
@@ -184,8 +178,8 @@ for each area. Default="default".}
 \item{areanames}{Optional vector of names for each area used in titles.
 Default="default".}
 
-\item{verbose}{Return updates of function progress to the R GUI?
-Default=TRUE.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 
 \item{uncertainty}{Include values in plots showing estimates of uncertainty
 (requires positive definite hessian in model?  Default=TRUE.}
@@ -276,7 +270,7 @@ age-at-length plots (TRUE/FALSE, still in development)}
 \item{showlegend}{Display legends in various plots?}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. The default is \code{pwidth=6.5}.}
+\code{punits}.}
 
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
@@ -297,10 +291,10 @@ The default is \code{punits="in"}.}
 The default is \code{res = 300}.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top
-(not yet implemented for all plots)}
+(not yet implemented for all plots).}
 
-\item{cex.main}{Character expansion parameter for plot titles (not yet
-implemented for all plots). Default=1.}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 
 \item{selexlines}{Vector controlling which lines should be shown on
 selectivity plots if the model includes retention. Default=1:5.}
@@ -348,7 +342,10 @@ Default=F.}
 \item{catchbars}{show catch by fleet as barplot instead of stacked polygons
 (default=TRUE)}
 
-\item{legendloc}{Location for all legends. Default="topleft".}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See \code{help("legend")} for more info on
+the string options.}
 
 \item{minyr}{First year to show in time-series and time-varying plots}
 

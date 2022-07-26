@@ -1,16 +1,16 @@
-#' read data file from SS version 2.00
+#' Deprecated: read data file from SS version 2.00
 #'
 #' Read Stock Synthesis (version 2.00) data file into list object in R.
 #' This function was formerly called SS_readdat. That name is now used
 #' for a wrapper function that calls either SS_readdat_2.00 SS_readdat_3.00
 #' SS_readdat_3.24 or SS_readdat_3.30 (and potentially additional functions in the future).
 #'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30.
 #'
 #' @template file
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is being read.
+#' @template verbose
+#' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
@@ -21,10 +21,24 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NULL) {
+SS_readdat_2.00 <- function(file, verbose = TRUE,
+                            echoall = lifecycle::deprecated(), section = NULL) {
+  # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_readdat_2.00()",
+    details = "Please update model to version 3.30."
+  )
   # function to read Stock Synthesis data files
+  if (lifecycle::is_present(echoall)) {
+    lifecycle::deprecate_warn(
+      when = "1.45.0",
+      what = "SS_readdat_2.00(echoall)",
+      details = "Please use verbose = TRUE instead"
+    )
+  }
 
-  if (verbose) cat("running SS_readdat_2.00\n")
+  if (verbose) message("running SS_readdat_2.00")
   dat <- readLines(file, warn = FALSE)
 
   # split apart any bootstrap or expected value sections in data.ss_new
@@ -131,7 +145,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   } else {
     fleetnames <- "fleet1"
   }
-  # if(verbose) cat("fleetnames:",fleetnames,'\n')
+
   datlist[["fleetnames"]] <- fleetnames
   datlist[["surveytiming"]] <- surveytiming <- allnums[i:(i + Ntypes - 1)]
   i <- i + Ntypes
@@ -139,15 +153,16 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   datlist[["areas"]] <- 1
   areas <- datlist[["areas"]]
   if (verbose) {
-    cat("areas:", areas, "\n")
-    cat("fleet info:\n")
-    print(data.frame(
-      fleet = 1:Ntypes,
-      name = fleetnames,
-      area = areas,
-      timing = surveytiming,
-      type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
-    ))
+    message("areas:", areas)
+    message("fleet info:\n", paste0(utils::capture.output(
+      data.frame(
+        fleet = 1:Ntypes,
+        name = fleetnames,
+        area = areas,
+        timing = surveytiming,
+        type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+      )
+    ), collapse = "\n"))
   }
 
   # fleet info
@@ -155,13 +170,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   names(fleetinfo1) <- fleetnames
   fleetinfo1[["input"]] <- c("#_surveytiming", "#_areas")
   datlist[["fleetinfo1"]] <- fleetinfo1
-  ## if(verbose){
-  ##   cat("fleetinfo1:\n")
-  ##   print(t(fleetinfo1))
-  ## }
 
   # more dimensions
-  datlist[["Ngenders"]] <- Ngenders <- allnums[i]
+  datlist[["Nsexes"]] <- allnums[i]
   i <- i + 1
   datlist[["Nages"]] <- Nages <- allnums[i]
   i <- i + 1
@@ -173,7 +184,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   N_catch <- datlist[["endyr"]] - datlist[["styr"]] + 1
 
   # catch
-  if (verbose) cat("N_catch =", N_catch, "\n")
+  if (verbose) message("N_catch =", N_catch)
   Nvals <- N_catch * (Nfleet)
   catch <- data.frame(matrix(allnums[i:(i + Nvals - 1)],
     nrow = N_catch, ncol = (Nfleet), byrow = TRUE
@@ -186,13 +197,12 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   names(catch) <- c(fleetnames[1:Nfleet], "year", "seas")
   datlist[["catch"]] <- catch
   i <- i + Nvals
-  if (echoall) print(catch)
 
 
   # CPUE
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_cpue =", N_cpue, "\n")
+  if (verbose) message("N_cpue =", N_cpue)
   if (N_cpue > 0) {
     CPUEinfo <- data.frame(matrix(c(1:Ntypes, rep(1, Ntypes), rep(0, Ntypes)),
       nrow = Ntypes, ncol = 3, byrow = FALSE
@@ -211,10 +221,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   }
   datlist[["CPUEinfo"]] <- CPUEinfo
   datlist[["CPUE"]] <- CPUE
-  if (echoall) {
-    print(CPUEinfo)
-    print(CPUE)
-  }
 
   # discards
   # datlist[["discard_units"]] <- discard_units <- allnums[i]; i <- i+1
@@ -223,7 +229,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   datlist[["N_discard"]] <- N_discard <- allnums[i]
   i <- i + 1
 
-  if (verbose) cat("N_discard =", N_discard, "\n")
+  if (verbose) message("N_discard =", N_discard)
   if (N_discard > 0) {
     # discard data
     Ncols <- 5
@@ -255,7 +261,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   # meanbodywt
   datlist[["N_meanbodywt"]] <- N_meanbodywt <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_meanbodywt =", N_meanbodywt, "\n")
+  if (verbose) message("N_meanbodywt =", N_meanbodywt)
 
 
   if (N_meanbodywt > 0) {
@@ -270,14 +276,12 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     # don't know if this is needed for version 2.00
     # datlist[["DF_for_meanbodywt"]] <- allnums[i]
     # i <- i+1
-    # if(echoall) cat("DF_for_meanbodywt =",datlist[["DF_for_meanbodywt"]],"\n")
     datlist[["DF_for_meanbodywt"]] <- NULL
   } else {
     datlist[["DF_for_meanbodywt"]] <- NULL
     meanbodywt <- NULL
   }
   datlist[["meanbodywt"]] <- meanbodywt
-  if (echoall) print(meanbodywt)
 
   datlist[["comp_tail_compression"]] <- allnums[i]
   i <- i + 1
@@ -294,16 +298,14 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   i <- i + 1
   datlist[["lbin_vector"]] <- lbin_vector <- allnums[i:(i + N_lbins - 1)]
   i <- i + N_lbins
-  if (echoall) print(lbin_vector)
 
   datlist[["N_lencomp"]] <- N_lencomp <- allnums[i]
   i <- i + 1
 
-  # if(verbose) cat(datlist[-15:0 + length(datlist)])
-  if (verbose) cat("N_lencomp =", N_lencomp, "\n")
+  if (verbose) message("N_lencomp =", N_lencomp)
 
   if (N_lencomp > 0) {
-    Ncols <- N_lbins * Ngenders + 6
+    Ncols <- N_lbins * datlist[["Nsexes"]] + 6
     lencomp <- data.frame(matrix(
       allnums[i:(i + N_lencomp * Ncols - 1)],
       nrow = N_lencomp, ncol = Ncols, byrow = TRUE
@@ -311,12 +313,12 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + N_lencomp * Ncols
     names(lencomp) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("l", lbin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", lbin_vector, sep = ""), paste("m", lbin_vector, sep = ""))
       } else {
         NULL
@@ -330,7 +332,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   # age data
   datlist[["N_agebins"]] <- N_agebins <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_agebins =", N_agebins, "\n")
+  if (verbose) message("N_agebins =", N_agebins)
   if (N_agebins > 0) {
     agebin_vector <- allnums[i:(i + N_agebins - 1)]
     i <- i + N_agebins
@@ -338,7 +340,6 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     agebin_vector <- NULL
   }
   datlist[["agebin_vector"]] <- agebin_vector
-  if (echoall) print(agebin_vector)
 
   datlist[["N_ageerror_definitions"]] <- N_ageerror_definitions <- allnums[i]
   i <- i + 1
@@ -357,26 +358,26 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
 
   datlist[["N_agecomp"]] <- N_agecomp <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_agecomp =", N_agecomp, "\n")
+  if (verbose) message("N_agecomp =", N_agecomp)
 
   datlist[["Lbin_method"]] <- NULL
   datlist[["max_combined_lbin"]] <- NULL
 
   if (N_agecomp > 0) {
     if (N_agebins == 0) stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
-    Ncols <- N_agebins * Ngenders + 9
+    Ncols <- N_agebins * datlist[["Nsexes"]] + 9
     agecomp <- data.frame(matrix(allnums[i:(i + N_agecomp * Ncols - 1)],
       nrow = N_agecomp, ncol = Ncols, byrow = TRUE
     ))
     i <- i + N_agecomp * Ncols
     names(agecomp) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
       } else {
         NULL
@@ -391,9 +392,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   # MeanSize_at_Age
   datlist[["N_MeanSize_at_Age_obs"]] <- N_MeanSize_at_Age_obs <- allnums[i]
   i <- i + 1
-  if (verbose) cat("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs, "\n")
+  if (verbose) message("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs)
   if (N_MeanSize_at_Age_obs > 0) {
-    Ncols <- 2 * N_agebins * Ngenders + 7
+    Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
     MeanSize_at_Age_obs <- data.frame(matrix(
       allnums[i:(i + N_MeanSize_at_Age_obs * Ncols - 1)],
       nrow = N_MeanSize_at_Age_obs, ncol = Ncols, byrow = TRUE
@@ -401,22 +402,22 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + N_MeanSize_at_Age_obs * Ncols
     names(MeanSize_at_Age_obs) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
       } else {
         NULL
       },
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("N_a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("N_f", agebin_vector, sep = ""), paste("N_m", agebin_vector, sep = ""))
       } else {
         NULL
@@ -446,10 +447,10 @@ SS_readdat_2.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   datlist[["envdat"]] <- envdat
 
   if (allnums[i] == 999) {
-    if (verbose) cat("read of data file 2.00 complete (final value = 999)\n")
+    if (verbose) message("read of data file 2.00 complete (final value = 999)")
     datlist[["eof"]] <- TRUE
   } else {
-    cat("Error: final value is", allnums[i], " but should be 999\n")
+    stop("final value is", allnums[i], " but should be 999")
     datlist[["eof"]] <- FALSE
   }
 

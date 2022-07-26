@@ -1,4 +1,8 @@
 inst/doc
+inst/extdata/models
+inst/extdata/simple_3.30.01/
+inst/extdata/simple_3.30.12/
+inst/extdata/simple_3.30.13/
 *.p0*
 *.b0*
 *.r0*
@@ -37,7 +41,7 @@ CumReport.sso
 ParmTrace.sso
 ss.cor
 ss.rep
-ss.par
+#ss.par
 *.exe
 *.bat
 ignored
@@ -45,3 +49,5 @@ revdep
 \.Rhistory
 *\.Rproj
 .Rproj.user
+
+.vscode/

@@ -1,7 +1,9 @@
-#' read ss.par file from SS version 3.24
+#' Deprecated: read ss.par file from SS version 3.24
 #'
 #' Read Stock Synthesis (version 3.24) parameter file into list object in R.
 #'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30.
 #'
 #' @param parfile Filename either with full path or relative to working directory.
 #' @param datsource list or character. If list, should be a list produced
@@ -10,8 +12,7 @@
 #' @param ctlsource list or character. If list, should be a list produced
 #' from [SS_writectl()]. If character, should be the full file location of an
 #' SS control file.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template verbose
 #' @author Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
@@ -21,6 +22,12 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
+  # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_readpar_3.24()",
+    details = "Please update model to version 3.30."
+  )
   if (is.character(datsource)) {
     datlist <- SS_readdat(file = datsource, version = "3.24", verbose = FALSE)
   } else if (is.list(datsource)) {
@@ -41,7 +48,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   }
 
   # function to read Stock Synthesis parameter files
-  if (verbose) cat("running SS_readpar_3.24\n")
+  if (verbose) message("running SS_readpar_3.24")
   parvals <- readLines(parfile, warn = FALSE)
 
   parlist <- list()

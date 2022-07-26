@@ -43,30 +43,31 @@ harvest control rule into a model representing a different state of nature.
 This is a common task for US west coast groundfish but might be useful elsewhere.
 }
 \examples{
+\dontrun{
+# create table based on average over past 5 years
+SS_ForeCatch(base, # object created by SS_output
+  yrs = 2021:2022, # years with fixed catch
+  average = TRUE, # catch by fleet from average catch
+  avg.yrs = 2014:2018
+) # use average of catches over past 5 years
 
-  \dontrun{
-    # create table based on average over past 5 years
-    SS_ForeCatch(base,                # object created by SS_output
-                 yrs = 2021:2022,     # years with fixed catch
-                 average = TRUE,      # catch by fleet from average catch
-                 avg.yrs = 2014:2018) # use average of catches over past 5 years
+# create table with pre-defined totals where the first 2 years
+# are based on current harvest specifications and the next 10 are set to some
+# new value (with ratio among fleets based on average over past 5 years)
+SS_ForeCatch(base, # object created by SS_output
+  yrs = 2021:2022, # years with fixed catch
+  average = TRUE, # catch by fleet from average catch
+  avg.yrs = 2016:2020, # use average of catches over past 5 years
+  total = c(rep(241.3, 2), rep(300, 10))
+) # total
 
-    # create table with pre-defined totals where the first 2 years
-    # are based on current harvest specifications and the next 10 are set to some
-    # new value (with ratio among fleets based on average over past 5 years)
-    SS_ForeCatch(base,                # object created by SS_output
-                 yrs = 2021:2022,     # years with fixed catch
-                 average = TRUE,      # catch by fleet from average catch
-                 avg.yrs = 2016:2020, # use average of catches over past 5 years
-                 total = c(rep(241.3, 2), rep(300, 10))) # total
-
-    # create table based on harvest control rule projection in SS
-    # that can be mapped into an alternative state of nature
-    SS_ForeCatch(low_state,          # object created by SS_output for low state
-                 yrs=2021:2032,      # forecast period after fixed ACL years
-                 average=FALSE)      # use values forecast in SS, not historic catch
-
-  }
+# create table based on harvest control rule projection in SS
+# that can be mapped into an alternative state of nature
+SS_ForeCatch(low_state, # object created by SS_output for low state
+  yrs = 2021:2032, # forecast period after fixed ACL years
+  average = FALSE
+) # use values forecast in SS, not historic catch
+}
 
 }
 \seealso{

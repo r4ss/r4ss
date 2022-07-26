@@ -10,12 +10,8 @@ SS_write(inputlist, dir = "", overwrite = FALSE, verbose = FALSE)
 \item{inputlist}{list created by \code{\link[=SS_read]{SS_read()}}}
 
 \item{dir}{A file path to the directory of interest.
-Typically used with \code{file}, an additional input argument,
-to specify input and output file paths.
 The default value is \code{dir = NULL}, which leads to using
-the current working directory, and thus, full file paths should
-not be specified for other arguments as they will be appended
-to \code{dir}.}
+the current working directory.}
 
 \item{overwrite}{A logical value specifying if the existing file(s)
 should be overwritten. The default value is \code{overwrite = FALSE}.}
@@ -27,14 +23,14 @@ to the screen.}
 Writes all the input files for a Stock Synthesis model using the list
 created by \code{\link[=SS_read]{SS_read()}}
 (presumably after modification of one or more elements)
-using the \verb{SS_write*()} functions for the four or
-five model input files.
+using the \verb{SS_write*()} functions for the four to
+six model input files.
 }
 \examples{
 \dontrun{
 # read inputlist to modify the data file
 inputlist <- SS_read(
-  dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
+  dir = system.file("extdata", "simple_small", package = "r4ss")
 )
 
 # modify the starter file (use the par file)
@@ -60,7 +56,8 @@ SS_write(
 \itemize{
 \item \code{\link[=SS_read]{SS_read()}} creates the list that is used by this function.
 \item \code{\link[=SS_writestarter]{SS_writestarter()}}, \code{\link[=SS_writedat]{SS_writedat()}}, \code{\link[=SS_writectl]{SS_writectl()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}}, and \code{\link[=SS_writewtatage]{SS_writewtatage()}} are used to write the
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writewtatage]{SS_writewtatage()}}, \code{\link[=SS_writepar_3.30]{SS_writepar_3.30()}},
+and \code{\link[=SS_writepar_3.24]{SS_writepar_3.24()}} are used to write the
 input files.
 }
 }

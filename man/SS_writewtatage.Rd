@@ -10,19 +10,15 @@ SS_writewtatage(
   file = "wtatage.ss",
   overwrite = FALSE,
   verbose = TRUE,
-  warn = TRUE
+  warn = lifecycle::deprecated()
 )
 }
 \arguments{
 \item{mylist}{Object created by \code{\link[=SS_readwtatage]{SS_readwtatage()}}.}
 
 \item{dir}{A file path to the directory of interest.
-Typically used with \code{file}, an additional input argument,
-to specify input and output file paths.
 The default value is \code{dir = NULL}, which leads to using
-the current working directory, and thus, full file paths should
-not be specified for other arguments as they will be appended
-to \code{dir}.}
+the current working directory.}
 
 \item{file}{Filename for new weight-at-age file, which
 will be appended to \code{dir} to create a full file path.
@@ -34,9 +30,7 @@ should be overwritten. The default value is \code{overwrite = FALSE}.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{warn}{A logical value specifying if a warning should be
-generated if overwriting \code{file}.
-The default value is \code{warn = TRUE}.}
+\item{warn}{Deprecated.}
 }
 \description{
 Write Stock Synthesis weight-at-age file from R object that was probably

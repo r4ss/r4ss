@@ -12,31 +12,26 @@
 #' @param sexratio.option code to choose among (1) female:male ratio or
 #' (2) fraction females out of the total
 #' @param CI confidence interval for uncertainty
-#' @param plot plot to active plot device?
-#' @param print print to PNG files?
-#' @param fleets optional vector to subset fleets for which plots will be made
-#' @param fleetnames optional vector of fleet names to put in the labels
+#' @template plot
+#' @template print
+#' @template fleets
+#' @template fleetnames
 #' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
 #' @param datonly make plots of data without fits?
 #' @param linescol Color for line showing expected value (default is purple).
-#' @param lwd line width
+#' @template lwd
 #' @param showsampsize add sample sizes to plot
 #' @param showeffN add effective sample sizes to plot
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
-#' @param pwidth default width of plots printed to files in units of
-#' `punits`. Default=7.
-#' @param pheight default height width of plots printed to files in units of
-#' `punits`. Default=7.
-#' @param punits units for `pwidth` and `pheight`. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template ptsize
 #' @template res
-#' @param plotdir directory where PNG files will be written. by default it will
-#' be the directory where the model was run.
-#' @param cex.main character expansion parameter for plot titles
-#' @param labels vector of labels for plots (titles and axis labels)
+#' @template plotdir
+#' @template cex.main
+#' @template labels
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
 #' plots
@@ -46,8 +41,8 @@
 #' for single plots
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of years of data
-#' @param verbose return updates of function progress to the R GUI?
-#' @param mainTitle Logical indicating if a title for the plot should be produced
+#' @template verbose
+#' @template mainTitle
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Cole Monnahan, Ian Taylor
 #' @export
@@ -145,9 +140,9 @@ SSplotSexRatio <-
     ## Add asterix to indicate super periods and then remove rows labeled "skip".
     ## It would be better to somehow show the range of years, but that seems difficult.
     if (any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")) {
-      cat(
-        "Note: removing super-period composition values labeled 'skip'\n",
-        "     and designating super-period values with a '*'\n"
+      message(
+        "Removing super-period composition values labeled 'skip'\n",
+        "     and designating super-period values with a '*'"
       )
       dbase_kind <- dbase_kind[dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip", ]
       dbase_kind[["YrSeasName"]] <- paste(dbase_kind[["YrSeasName"]], ifelse(dbase_kind[["SuprPer"]] == "Sup", "*", ""), sep = "")
@@ -238,8 +233,8 @@ SSplotSexRatio <-
             }
           }
         } # end loop over partitions (index j)
-        ##        } # end test for whether gender in vector of requested sexes
-        ##      } # end loop over combined/not-combined genders
+        ##        } # end test for whether sex in vector of requested sexes
+        ##      } # end loop over combined/not-combined sexes
       } # end if data
     } # end loop over fleets
 
