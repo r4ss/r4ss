@@ -305,7 +305,7 @@ SS_profile <-
       )
     }
     setwd(dir)
-   
+
     # note: std file name is independent of executable name
     stdfile <- file.path(dir, "ss.std")
 
