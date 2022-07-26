@@ -95,7 +95,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
         }
         # if found in PATH and file size is large enough,
         # then normalize path and remove exe name from the end
-        # e.g. convert "C:\SS\SSB672~1.01_\ss.exe" to "C:/SS/SSv3.30.19.01_Apr15"
+        # e.g. convert "C:\\SS\\SSB672~1.01_\\ss.exe" to "C:/SS/SSv3.30.19.01_Apr15"
         path_to_exe <- dirname(normalizePath(path_to_exe))
       }
     }
