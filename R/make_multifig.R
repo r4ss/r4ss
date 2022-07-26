@@ -332,7 +332,7 @@ make_multifig <-
         getwidths <- function(ptsx) {
           if (length(ptsx) > 0) {
             widths <- rep(NA, length(ptsx))
-            for (ibin in 1:length(ptsx)) {
+            for (ibin in seq_along(ptsx)) {
               widths[ibin] <- bin.width.table[["width"]][bin.width.table[["bin"]] == ptsx[ibin]]
             }
           } else {

@@ -276,7 +276,7 @@ SS_plots <-
       stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
     }
     if (uncertainty & !inputs[["covar"]]) {
-      warning("covar information unavailable, changing 'uncertainty' to FALSE")
+      message("covar information unavailable, changing 'uncertainty' to FALSE")
       uncertainty <- FALSE
     }
     if (forecastplot & max(timeseries[["Yr"]] > endyr + 1) == 0) {
@@ -395,7 +395,7 @@ SS_plots <-
       csv.files <- grep("plotInfoTable.+csv", dir(plotdir), value = TRUE)
       if (length(csv.files) > 0) {
         StartTimes.old <- NULL
-        for (ifile in 1:length(csv.files)) {
+        for (ifile in seq_along(csv.files)) {
           plotInfo.old <- read.csv(file.path(plotdir, csv.files[ifile]),
             stringsAsFactors = FALSE
           )
@@ -461,7 +461,7 @@ SS_plots <-
       if (!is.null(filenotes)) {
         y <- y + ystep
         text(0, y, "Notes:", pos = 4)
-        for (i in 1:length(filenotes)) {
+        for (i in seq_along(filenotes)) {
           y <- y + ystep
           text(0, y, filenotes[i], pos = 4)
         }

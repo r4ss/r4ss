@@ -32,7 +32,7 @@ read.admbFit <- function(file) {
   ret[["est"]] <- as.numeric(unlist(lapply(sublin, function(x) x[3])))
   ret[["std"]] <- as.numeric(unlist(lapply(sublin, function(x) x[4])))
   ret[["cor"]] <- matrix(NA, ret[["totPar"]], ret[["totPar"]])
-  corvec <- unlist(sapply(1:length(sublin), function(i) sublin[[i]][5:(4 + i)]))
+  corvec <- unlist(sapply(seq_along(sublin), function(i) sublin[[i]][5:(4 + i)]))
   ret[["cor"]][upper.tri(ret[["cor"]], diag = TRUE)] <- as.numeric(corvec)
   ret[["cor"]][lower.tri(ret[["cor"]])] <- t(ret[["cor"]])[lower.tri(ret[["cor"]])]
   # covariance matrix

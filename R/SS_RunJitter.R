@@ -4,20 +4,14 @@
 #' parameter values based on the jitter fraction. Output files are renamed
 #' in the format Report1.sso, Report2.sso, etc.
 #'
-#' @param mydir Directory where model files are located.
-#' @template model
-#' @param extras Additional command line arguments passed to the executable.
-#'   The default, `"-nohess"`, runs each jittered model without the hessian.
+#' @param dir Directory where model files are located.
+#' @param mydir Deprecated. Use `dir` instead.
+#' @param Intern Deprecated. Use `show_in_console` instead.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be ran,
 #'   else `1:Njitter` will be executed.
-#' @template show_in_console
-#' @param Intern Deprecated. Use `show_in_console` instead.
-#' @param systemcmd Option to switch between 'shell' and 'system'. The default,
-#'   `FALSE`, facilitates using the shell command on Windows.
 #' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
-#' @template verbose
 #' @param jitter_fraction The value, typically 0.1, used to define a uniform
 #'   distribution in cumulative normal space to generate new initial parameter values.
 #'   The default of `NULL` forces the user to specify the jitter_fraction
@@ -26,7 +20,13 @@
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   The default is `NULL`, which will leave the starter file unchanged.
+#' @template exe
+#' @template verbose
+#' @param ... Additional arguments passed to [r4ss::run()], such as
+#' `extras`, `show_in_console`, and `skipfinished`.
+#'
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
+#'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
 #' @examples
@@ -35,7 +35,7 @@
 #' modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE), 1)
 #' numjitter <- 25
 #' jit.likes <- SS_RunJitter(
-#'   mydir = modeldir, Njitter = numjitter,
+#'   dir = modeldir, Njitter = numjitter,
 #'   jitter_fraction = 0.1, init_value_src = 1
 #' )
 #'
@@ -50,39 +50,48 @@
 #' profilesummary[["pars"]]
 #' }
 #'
-SS_RunJitter <- function(mydir,
-                         model = "ss",
-                         extras = "-nohess",
-                         Njitter,
-                         show_in_console = FALSE,
+SS_RunJitter <- function(dir = getwd(),
+                         mydir = lifecycle::deprecated(),
                          Intern = lifecycle::deprecated(),
-                         systemcmd = FALSE,
+                         Njitter,
                          printlikes = TRUE,
-                         verbose = FALSE,
                          jitter_fraction = NULL,
-                         init_values_src = NULL) {
+                         init_values_src = NULL,
+                         exe = "ss",
+                         verbose = FALSE,
+                         ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
     lifecycle::deprecate_warn(
       when = "1.45.1",
       what = "SS_RunJitter(Intern)",
-      details = "Please use show_in_console instead"
+      details = "Please use 'show_in_console' instead"
     )
-    how_in_console <- !Intern
   }
+  if (lifecycle::is_present(mydir)) {
+    lifecycle::deprecate_warn(
+      when = "1.46.0",
+      what = "SS_RunJitter(mydir)",
+      details = "Please use 'dir' instead"
+    )
+    dir <- mydir
+  }
+
+  # check for executable and keep cleaned name of executable file
+  exe <- check_exe(exe = exe, dir = dir, verbose = verbose)[["exe"]]
+
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
-  setwd(mydir)
-  model <- check_model(model = model, mydir = getwd())
+  setwd(dir)
 
   if (verbose) {
-    message("Temporarily changing working directory to:\n", mydir)
+    message("Temporarily changing working directory to:\n", dir)
     if (!file.exists("Report.sso")) {
       message(
         "Copy output files from a converged run into\n",
-        mydir, "\nprior to running SS_RunJitter to enable easier comparisons."
+        dir, "\nprior to running SS_RunJitter to enable easier comparisons."
       )
     }
     message("Checking starter file")
@@ -92,7 +101,7 @@ SS_RunJitter <- function(mydir,
   starter[["parmtrace"]] <- ifelse(starter[["parmtrace"]] == 0, 1, starter[["parmtrace"]])
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
     stop("Change the jitter value in the starter file to be > 0\n",
-      "or change the jitter_fraction argument to be > 0.",
+      "or change the 'jitter_fraction' argument to be > 0.",
       call. = FALSE
     )
   }
@@ -105,44 +114,23 @@ SS_RunJitter <- function(mydir,
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
   file_increment(0, verbose = verbose)
 
-  # create empty ss.dat file to avoid the ADMB message
-  # "Error trying to open data input file ss.dat"
-  if (!file.exists(paste0(model, ".dat"))) {
-    file.create(paste0(model, ".dat"))
-  }
-
   # check length of Njitter input
   if (length(Njitter) == 1) {
     Njitter <- 1:Njitter
   }
   likesaved <- rep(NA, length(Njitter))
   for (i in Njitter) {
-    if (verbose) message("Jitter=", i, ", ", date())
+    if (verbose) {
+      message("Jitter=", i, ", ", date())
+    }
     # check for use of .par file and replace original if needed
     if (starter[["init_values_src"]] == 1) {
       if (verbose) message("Replacing .par file with original")
       file.copy(from = "ss.par_0.sso", to = "ss.par", overwrite = TRUE)
     }
     # run model
-    command <- paste(model, extras)
-    if (.Platform[["OS.type"]] != "windows") {
-      command <- paste0("./", command)
-    }
+    run(dir = dir, exe = exe, verbose = verbose, ...)
 
-    if (i == 1 & verbose) {
-      message(
-        "Running SS jitter in directory: ", getwd(),
-        "\nUsing the command: ", command
-      )
-    }
-    if (.Platform[["OS.type"]] == "windows" & !systemcmd) {
-      shell(cmd = command, intern = !show_in_console)
-    } else {
-      system(command,
-        intern = !show_in_console,
-        show.output.on.console = show_in_console
-      )
-    }
     # Only save stuff if it converged
     if ("Report.sso" %in% list.files()) {
       rep <- SS_read_summary()

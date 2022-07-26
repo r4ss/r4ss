@@ -90,7 +90,7 @@ SSunavailableSpawningOutput <-
         nrow = nrow(num.at.age.female), NA
       )
 
-      for (y in 1:length(years.with.catch)) {
+      for (y in seq_along(years.with.catch)) {
         # Get the female selectivity at age in this year for all fleets
         year.get <- years.with.catch[y]
         age.selectivity.female.year <-
@@ -100,7 +100,7 @@ SSunavailableSpawningOutput <-
             ageselex[["Fleet"]] %in% fleets.this.area, ]
         catch.by.fleet.year <- rep(0, length(fleets.this.area))
 
-        for (ifleet in 1:length(fleets.this.area)) {
+        for (ifleet in seq_along(fleets.this.area)) {
           f <- fleets.this.area[ifleet]
           catch.by.fleet.year[ifleet] <- catch[["kill_bio"]][catch[["Fleet"]] == f &
             catch[["Yr"]] == year.get]
@@ -261,7 +261,7 @@ SSunavailableSpawningOutput <-
           3,
           outer = FALSE, line = 0.75
         )
-        for (y in 1:length(years.with.catch)) {
+        for (y in seq_along(years.with.catch)) {
           for (a in 0:accuage) {
 
             # plot circles for small unavailable spawning output

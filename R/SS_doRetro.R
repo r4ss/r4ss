@@ -6,11 +6,11 @@
 #' the user should update their model to a newer version of Stock Synthesis to
 #' run retrospectives
 #'
-#'
-#' @param masterdir Directory where everything takes place.
-#' @param oldsubdir Subdirectory within `masterdir` with existing model
+#' @param dir Directory where everything takes place.
+#' @param masterdir Deprecated. Use `dir` instead.
+#' @param oldsubdir Subdirectory within `dir` with existing model
 #' files.
-#' @param newsubdir Subdirectory within `masterdir` where retrospectives
+#' @param newsubdir Subdirectory within `dir` where retrospectives
 #' will be run. Default is 'retrospectives'.
 #' @param subdirstart First part of the pattern of names for the directories in
 #' which the models will actually be run.
@@ -18,21 +18,16 @@
 #' retrospective year. Should be zero or negative values.
 #' @param overwrite Overwrite any input files with matching names in the
 #' subdirectories where models will be run.
-#' @param exefile Executable file found in directory with model files.
-#' On Windows systems, this value will be automatically updated if a single
-#' executable exists in the directory of model files. Input exefile=NULL if
-#' the executable is in your path and doesn't need copying.
-#' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amount of command-line output.
-#' @template show_in_console
-#' @param intern Deprecated. Use `show_in_console` instead.
-#' @param CallType Either "system" or "shell" (choice depends on how you're running
-#' R. Default is "system".
 #' @param RemoveBlocks Logical switch determining whether specifications of
 #' blocks is removed from top of control file. Blocks can cause problems for
 #' retrospective analyses, but the method for removing them is overly
 #' simplistic and probably won't work in most cases. Default=FALSE.
-#' @author Ian Taylor, Jim Thorson
+#' @template exe
+#' @template verbose
+#' @param ... Additional arguments passed to [r4ss::run()], such as
+#' `extras`, `show_in_console`, and `skipfinished`.
+#'
+#' @author Ian G. Taylor, James T. Thorson
 #' @export
 #' @seealso [SSgetoutput()]
 #' @examples
@@ -43,9 +38,7 @@
 #'
 #' ## retrospective analyses
 #' SS_doRetro(
-#'   masterdir = mydir,
-#'   oldsubdir = "",
-#'   newsubdir = "retrospectives",
+#'   dir = mydir,
 #'   years = 0:-5
 #' )
 #'
@@ -60,184 +53,76 @@
 #' )
 #' }
 #'
-SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
+SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
+                       oldsubdir = "", newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                       exefile = "ss", extras = "-nox", show_in_console = TRUE,
-                       intern = lifecycle::deprecated(), CallType = "system",
-                       RemoveBlocks = FALSE) {
-
+                       RemoveBlocks = FALSE, verbose = FALSE, exe = "ss", ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
-  if (lifecycle::is_present(intern)) {
+  if (lifecycle::is_present(masterdir)) {
     lifecycle::deprecate_warn(
-      when = "1.45.1",
-      what = "SS_doRetro(intern)",
-      details = "Please use show_in_console instead"
+      when = "1.46.0",
+      what = "SS_doRetro(masterdir)",
+      details = "Please use 'dir' instead"
     )
-    show_in_console <- !intern
+    dir <- masterdir
   }
 
-  # this should always be "windows" or "unix" (includes Mac and Linux)
-  OS <- .Platform[["OS.type"]]
-  # prefix applied to start of command to run model
-  prefix <- ifelse(OS == "windows", "", "./")
-
-  # save working directory
-  oldwd <- getwd()
-  on.exit(setwd(oldwd))
-
-  olddir <- file.path(masterdir, oldsubdir)
-  newdir <- file.path(masterdir, newsubdir)
-
-  # make directories, modify starter file, and start retrospective analyses
-
-  # for Windows users, automatically determine executable
-  if (!is.null(exefile) & OS == "windows") {
-    exefiles <- dir(olddir)[grep(".exe", dir(olddir))]
-    # if exactly one executable found in model directory, use that instead
-    if (length(exefiles) == 1) {
-      exefile <- exefiles
-    }
-    # for cases where there is more than one exe and the file name is
-    # "ss" by default, add the exe automatically
-    if (exefile == "ss") {
-      exefile <- "ss.exe"
-    }
-    if (!exefile %in% exefiles) {
-      stop("Missing executable file ", exefile, " in ", olddir)
-    }
-  }
+  olddir <- file.path(dir, oldsubdir)
+  newdir <- file.path(dir, newsubdir)
 
   # get model file names from olddir
   startfile <- dir(olddir)[tolower(dir(olddir)) == "starter.ss"]
-  forefile <- dir(olddir)[tolower(dir(olddir)) == "forecast.ss"]
-  wtatagefile <- dir(olddir)[tolower(dir(olddir)) == "wtatage.ss"]
-  testfile <- dir(olddir)[tolower(dir(olddir)) == "test.ss"]
+  if (length(startfile) == 0) {
+    stop("No starter.ss file found in ", olddir)
+  }
 
-  if (length(startfile) == 0) stop("No starter.ss file found in ", olddir)
-
+  # read original starter (later written to each folder)
   startfile <- file.path(olddir, startfile)
-
-  message("Getting input file names from starter file:\n", startfile)
   starter <- SS_readstarter(startfile, verbose = FALSE)
-  ctlfile <- starter[["ctlfile"]]
-  datfile <- starter[["datfile"]]
-
-  filenames <- c(exefile, forefile, ctlfile, datfile, wtatagefile, testfile)
-  message("copying model files from\n", olddir, "\n  to\n", newdir)
-  message("model files to copy:\n ", paste(filenames, collapse = "\n "))
-
-
-  if (!file.exists(newdir)) dir.create(newdir)
-
   subdirnames <- paste0(subdirstart, years)
 
-  for (iyr in 1:length(years)) {
-    # create directory
-    if (!file.exists(file.path(newdir, subdirnames[iyr]))) {
-      dir.create(file.path(newdir, subdirnames[iyr]))
-    }
-    # copy files
-    copy.test <- file.copy(file.path(olddir, filenames),
-      file.path(newdir, subdirnames[iyr], filenames),
-      overwrite = TRUE
+  # check for executable
+  check_exe(exe = exe, dir = olddir, verbose = verbose)
+
+  # loop over retrospective years
+  for (iyr in seq_along(years)) {
+    newdir_iyr <- file.path(newdir, subdirnames[iyr])
+    message("Running retrospective in ", newdir_iyr)
+
+    # copy original input files to retro folder
+    copy_SS_inputs(
+      dir.old = olddir,
+      dir.new = newdir_iyr,
+      create.dir = TRUE,
+      recursive = TRUE,
+      overwrite = TRUE,
+      copy_exe = TRUE,
+      verbose = verbose
     )
-    # make sure there weren't any errors copying the files
-    if (!all(copy.test)) {
-      stop("error copying file(s): ", filenames[!copy.test])
-    }
+
     # change starter file to do retrospectives
     starter[["retro_yr"]] <- years[iyr]
     starter[["init_values_src"]] <- 0
-    setwd(file.path(newdir, subdirnames[iyr]))
-    SS_writestarter(starter, dir = getwd(), verbose = FALSE, overwrite = TRUE)
-
-    ## # someday the code could be expanded to fix data file if it has blocks
-    ## ctl <- SS_parlines(ctlfile) # doesn't currently read columns with block info
-    ctl <- readLines(ctlfile)
-    if (RemoveBlocks == TRUE) {
-      ctl[grep("block designs", ctl)] <- "0 # Number of block designs for time varying parameters"
-      ctl[grep("blocks per design", ctl) + 0:2] <- "# blocks deleted"
-    }
-    file.remove(ctlfile)
-    writeLines(ctl, ctlfile)
-
-    # if spaces in exe file, then put the filename in quotes
-    if (length(grep(" ", exefile)) > 0) {
-      exefile_to_run <- paste0('"', exefile, '"')
-    } else {
-      # but avoid otherwise in case they mess something up
-      exefile_to_run <- exefile
-    }
-    command <- paste0(prefix, exefile_to_run, " ", extras)
-
-    # run model
-    message("Running model in ", getwd(), "\n",
-      "using the command:\n   ", command,
-      sep = ""
+    SS_writestarter(starter,
+      dir = newdir_iyr,
+      verbose = FALSE,
+      overwrite = TRUE
     )
 
-    if (file.exists("covar.sso")) file.remove("covar.sso")
-    if (!show_in_console) {
-      message("ADMB output generated during model run will be written to:\n   ",
-        getwd(), "/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",
-        "Note: ignore message about 'Error trying to open data input file ss3.dat'\n",
-        sep = ""
-      )
+    # delete covar file to avoid using file from previous model run
+    # (not sure if this is necessary)
+    if (file.exists("covar.sso")) {
+      file.remove("covar.sso")
     }
 
-    if (CallType == "system") {
-      ADMBoutput <- system(command, intern = !show_in_console)
-    }
-    if (CallType == "shell") {
-      ADMBoutput <- shell(command, intern = !show_in_console)
-    }
+    # run model
+    run(dir = newdir_iyr, verbose = verbose, ...)
+
     # add rough check for if the model ran (although a report file may exist if
     # if the model only ran part of the way through). Warn the user in this case.
-    if (!file.exists("Report.sso")) {
-      warning("The retrospective model run failed in ", getwd())
+    if (!file.exists(file.path(newdir_iyr, "Report.sso"))) {
+      warning("The retrospective model run failed in ", newdir_iyr)
     }
-    if (!show_in_console) {
-      writeLines(c(
-        "###", "ADMB output", as.character(Sys.time()),
-        "###", " ", ADMBoutput
-      ), con = "ADMBoutput.txt")
-    }
-    setwd("..")
   }
-  setwd(oldwd)
 }
-
-
-## if(FALSE){
-##   #### example use
-##   # source this file
-##   source('c:/SS/hake/Hake_2012/retro/retro_script.R')
-
-##   # move to directory one level above existing model run
-##   setwd('C:/ss/hake/Hake_2013/runs/')
-
-##   # run the function above
-##   SS_doRetro(olddir='2013hake_12',years=0:-10)
-##   # read in output
-##   retroModels <- SSgetoutput(dirvec=paste('retrospectives/retro',-10:0,sep=''))
-##   # summarize output
-##   retroSummary <- SSsummarize(retroModels)
-
-##   # set the ending year of each model in the set
-##   endyrvec <- retroModels[[1]][["endyr"]]-10:0
-##   # make comparison plot
-##   pdf('retrospectives/retrospective_comparison_plots.pdf')
-##   SSplotComparisons(retroSummary,endyrvec=endyrvec,new=FALSE)
-##   dev.off()
-
-##   # make Ianelli-style plot of recdev retrospectives using a different function
-##   pdf('retrospectives/retrospective_dev_plots.pdf',width=7,height=10)
-##   par(mfrow=c(2,1))
-##   # first scaled relative to most recent estimate
-##   SSplotRetroDevs(retroSummary, endyrvec=endyrvec, cohorts=1999:2012, relative=TRUE, legend=FALSE)
-##   # second without scaling
-##   SSplotRetroDevs(retroSummary, endyrvec=endyrvec, cohorts=1999:2012, relative=FALSE, legend=FALSE)
-##   dev.off()
-
-## }

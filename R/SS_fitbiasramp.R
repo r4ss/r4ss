@@ -220,7 +220,7 @@ SS_fitbiasramp <-
       max_biasadj <- vec2[5]
 
       biasadj <- rep(NA, length(yr))
-      for (i in 1:length(yr)) {
+      for (i in seq_along(yr)) {
         y <- yr[i]
 
         if (y <= last_no) {

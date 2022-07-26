@@ -5,27 +5,28 @@
 \title{Run retrospective analyses}
 \usage{
 SS_doRetro(
-  masterdir,
-  oldsubdir,
+  dir = getwd(),
+  masterdir = lifecycle::deprecated(),
+  oldsubdir = "",
   newsubdir = "retrospectives",
   subdirstart = "retro",
   years = 0:-5,
   overwrite = TRUE,
-  exefile = "ss",
-  extras = "-nox",
-  show_in_console = TRUE,
-  intern = lifecycle::deprecated(),
-  CallType = "system",
-  RemoveBlocks = FALSE
+  RemoveBlocks = FALSE,
+  verbose = FALSE,
+  exe = "ss",
+  ...
 )
 }
 \arguments{
-\item{masterdir}{Directory where everything takes place.}
+\item{dir}{Directory where everything takes place.}
 
-\item{oldsubdir}{Subdirectory within \code{masterdir} with existing model
+\item{masterdir}{Deprecated. Use \code{dir} instead.}
+
+\item{oldsubdir}{Subdirectory within \code{dir} with existing model
 files.}
 
-\item{newsubdir}{Subdirectory within \code{masterdir} where retrospectives
+\item{newsubdir}{Subdirectory within \code{dir} where retrospectives
 will be run. Default is 'retrospectives'.}
 
 \item{subdirstart}{First part of the pattern of names for the directories in
@@ -37,26 +38,24 @@ retrospective year. Should be zero or negative values.}
 \item{overwrite}{Overwrite any input files with matching names in the
 subdirectories where models will be run.}
 
-\item{exefile}{Executable file found in directory with model files.
-On Windows systems, this value will be automatically updated if a single
-executable exists in the directory of model files. Input exefile=NULL if
-the executable is in your path and doesn't need copying.}
-
-\item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amount of command-line output.}
-
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
-
-\item{intern}{Deprecated. Use \code{show_in_console} instead.}
-
-\item{CallType}{Either "system" or "shell" (choice depends on how you're running
-R. Default is "system".}
-
 \item{RemoveBlocks}{Logical switch determining whether specifications of
 blocks is removed from top of control file. Blocks can cause problems for
 retrospective analyses, but the method for removing them is overly
 simplistic and probably won't work in most cases. Default=FALSE.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory. Needs to be a single character string, not a vector.
+On Windows, \code{exe} can optionally have the \code{.exe} extension appended;
+on Unix-based systems (i.e., Mac and Linux), no extension should be
+included.}
+
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
+\code{extras}, \code{show_in_console}, and \code{skipfinished}.}
 }
 \description{
 Do retrospective analyses by creating new directories, copying model files,
@@ -73,9 +72,7 @@ mydir <- "C:/Simple"
 
 ## retrospective analyses
 SS_doRetro(
-  masterdir = mydir,
-  oldsubdir = "",
-  newsubdir = "retrospectives",
+  dir = mydir,
   years = 0:-5
 )
 
@@ -95,5 +92,5 @@ SSplotComparisons(retroSummary,
 \code{\link[=SSgetoutput]{SSgetoutput()}}
 }
 \author{
-Ian Taylor, Jim Thorson
+Ian G. Taylor, James T. Thorson
 }

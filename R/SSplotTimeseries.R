@@ -303,7 +303,7 @@ SSplotTimeseries <-
         if (subplot %in% c(1, 4, 7, 11, 13)) {
           # these plots have sum across areas
           yvals2 <- rep(NA, length(ts[["YrSeas"]]))
-          for (iyr in 1:length(yvals)) {
+          for (iyr in seq_along(yvals)) {
             y <- ts[["YrSeas"]][iyr]
             yvals2[iyr] <- sum(yvals[ts[["YrSeas"]] == y])
           }
@@ -316,7 +316,7 @@ SSplotTimeseries <-
         if (subplot == 9) {
           # sum up total across areas differently for spawning depletion
           yvals2 <- rep(NA, length(ts[["YrSeas"]]))
-          for (iyr in 1:length(yvals)) {
+          for (iyr in seq_along(yvals)) {
             y <- ts[["YrSeas"]][iyr]
             yvals[iyr] <- sum(ts[["SpawnBio"]][ts[["YrSeas"]] == y])
           }

@@ -72,8 +72,8 @@ test_that("SS_tune_comps() works with francis", {
     replist = NULL, fleets = "all",
     option = "Francis", niters_tuning = 1,
     init_run = FALSE, dir = file.path(runs_path, "simple_small"),
-    model = "ss", allow_up_tuning = FALSE,
-    exe_in_path = FALSE, verbose = FALSE, extras = "-nohess"
+    allow_up_tuning = FALSE,
+    verbose = FALSE, extras = "-nohess"
   )
   expect_length(test, 2)
 })
@@ -87,8 +87,8 @@ test_that("SS_tune_comps() works with MI and up tuning", {
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 1,
     init_run = FALSE, dir = file.path(runs_path, "simple_small"),
-    model = "ss", allow_up_tuning = TRUE,
-    exe_in_path = FALSE, verbose = FALSE
+    allow_up_tuning = TRUE,
+    verbose = FALSE
   )
   expect_length(test, 2)
 })
@@ -103,8 +103,8 @@ test_that("SS_tune_comps() works with DM", {
     option = "DM", niters_tuning = 1,
     init_run = FALSE,
     dir = file.path(runs_path, "simple_small"),
-    model = "ss", extras = "-nohess",
-    exe_in_path = FALSE, verbose = FALSE
+    extras = "-nohess",
+    verbose = FALSE
   )
   expect_length(test, 2)
   # add check that varaiance adjustment is gone
@@ -144,8 +144,8 @@ test_that("SS_tune_comps() works with multiple iterations", {
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 2,
     init_run = FALSE, dir = file.path(runs_path, "simple_small"),
-    model = "ss", allow_up_tuning = TRUE,
-    exe_in_path = FALSE, verbose = FALSE
+    allow_up_tuning = TRUE,
+    verbose = FALSE
   )
   expect_length(test, 2)
   expect_length(test$tuning_table_list, 2)

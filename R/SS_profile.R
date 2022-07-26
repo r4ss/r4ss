@@ -2,9 +2,9 @@
 #'
 #' Iteratively changes the control file using SS_changepars.
 #'
-#'
 #' @template dir
-#' @param masterctlfile Source control file. Default = "control.ss_new"
+#' @param oldctlfile Source control file. Default = "control.ss_new"
+#' @param masterctlfile Deprecated. Use `oldctlfile` instead.
 #' @param newctlfile Destination for new control files (must match entry in
 #' starter file). Default = "control_modified.ss".
 #' @param linenum Line number of parameter to be changed. Can be used instead
@@ -14,41 +14,33 @@
 #' be used instead of `linenum` or left as NULL. Can be a vector if you are
 #' profiling multiple parameters at the same time.
 #' @param usepar Use PAR file from previous profile step for starting values?
-#' @param globalpar Use global par file ("parfile_original_backup.sso", which is
-#' automatically copied from original `parfile`) for all runs instead
+#' @param globalpar Use global par file (`parfile_original_backup.sso`, which is
+#' automatically copied from original `ss.par`) for all runs instead
 #' of the par file from each successive run
-#' @param parfile Name of par file to use (for 3.30 models, this needs to
-#' remain 'ss.par'). When `globalpar=TRUE`, the backup copy of this
-#' is used for all runs.
 #' @param parlinenum Line number in par file to change (if usepar = TRUE).
 #' Can be a vector if you are profiling multiple parameters at the same time.
 #' @param parstring String in par file preceding line number to change as
 #' an alternative to parlinenum (only needed if usepar = TRUE).
 #' Can be a vector if you are profiling multiple parameters at the same time.
-#' @param dircopy Copy directories for each run? NOT IMPLEMENTED YET.
-#' @param exe.delete Delete exe files in each directory?  NOT IMPLEMENTED YET.
 #' @param profilevec Vector of values to profile over. If you are profileing
 #' over multiple parameters at the same time this should be a data.frame or
 #' matrix with a column for each parameter.
-#' @param model Name of executable. Default = "ss".
-#' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amount of command-line output.
-#' @param systemcmd Should R call SS using "system" function instead of "shell".
-#' This may be required when running R in Emacs. Default = FALSE.
-#' @param saveoutput Copy output .SSO files to unique names.  Default = TRUE.
-#' @param overwrite Overwrite any existing .SSO files. Default = TRUE. If FALSE,
+#' @param saveoutput Copy output .sso files to unique names.  Default = TRUE.
+#' @param overwrite Overwrite any existing .sso files. Default = TRUE. If FALSE,
 #' then some runs may be skipped.
 #' @param whichruns Optional vector of run indices to do. This can be used to
 #' re-run a subset of the cases in situations where the function was
 #' interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 #' is the length of profilevec.
-#' @template version
 #' @param prior_check Check to make sure the starter file is set to include
 #' the prior likelihood contribution in the total likelihood.  Default = TRUE.
 #' @param read_like Read the table of likelihoods from each model as it finishes.
 #' Default = TRUE. Changing to FALSE should allow the function to play through
 #' even if something is wrong with reading the table.
+#' @template exe
 #' @template verbose
+#' @param ... Additional arguments passed to [r4ss::run()], such as
+#' `extras`, `show_in_console`, and `skipfinished`.
 #' @note The starting values used in this profile are not ideal and some models
 #' may not converge. Care should be taken in using an automated tool like this,
 #' and some models are likely to require rerunning with alternate starting
@@ -89,8 +81,7 @@
 #'   dir = mydir, # directory
 #'   # "NatM" is a subset of one of the
 #'   # parameter labels in control.ss_new
-#'   model = "ss",
-#'   masterctlfile = "control.ss_new",
+#'   oldctlfile = "control.ss_new",
 #'   newctlfile = "control_modified.ss",
 #'   string = "steep",
 #'   profilevec = h.vec
@@ -143,15 +134,13 @@
 #' ## 6   0.2 0.75
 #'
 #' # run SS_profile command
-#' # requires modified version of SS_profile available via
-#' # remotes::install_github("r4ss/r4ss@profile_issue_224")
 #' profile <- SS_profile(
 #'   dir = dir_profile_SR, # directory
-#'   masterctlfile = "control.ss_new",
+#'   oldctlfile = "control.ss_new",
 #'   newctlfile = "control_modified.ss",
 #'   string = c("Zfrac", "Beta"),
 #'   profilevec = par_table,
-#'   extras = "-nohess"
+#'   extras = "-nohess" # argument passed to run()
 #' )
 #'
 #' # get model output
@@ -177,65 +166,52 @@
 #' }
 #'
 SS_profile <-
-  function(dir = "C:/myfiles/mymodels/myrun/",
-           masterctlfile = "control.ss_new",
+  function(dir,
+           oldctlfile = "control.ss_new",
+           masterctlfile = lifecycle::deprecated(),
            newctlfile = "control_modified.ss", # must match entry in starter file
            linenum = NULL,
            string = NULL,
            profilevec = NULL,
            usepar = FALSE,
            globalpar = FALSE,
-           parfile = "ss.par",
            parlinenum = NULL,
            parstring = NULL,
-           dircopy = TRUE,
-           exe.delete = FALSE,
-           model = "ss",
-           extras = "-nox",
-           systemcmd = FALSE,
            saveoutput = TRUE,
            overwrite = TRUE,
            whichruns = NULL,
-           version = "3.30",
            prior_check = TRUE,
            read_like = TRUE,
-           verbose = TRUE) {
+           exe = "ss",
+           verbose = TRUE,
+           ...) {
     # Ensure wd is not changed by the function
     orig_wd <- getwd()
     on.exit(setwd(orig_wd))
 
-    # this should always be "windows" or "unix" (includes Mac and Linux)
-    OS <- .Platform[["OS.type"]]
+    # deprecated variable warnings
+    # soft deprecated for now, but fully deprecate in the future.
+    if (lifecycle::is_present(masterctlfile)) {
+      lifecycle::deprecate_warn(
+        when = "1.46.0",
+        what = "SS_profile(masterctlfile)",
+        details = "Please use 'oldctlfile' instead"
+      )
+      oldctlfile <- masterctlfile
+    }
 
-    # figure out name of executable based on 'model' input which may contain .exe
-    if (length(grep(".exe", tolower(model))) == 1) {
-      # if input 'model' includes .exe then assume it's Windows and just use the name
-      exe <- model
-    } else {
-      # if 'model' doesn't include .exe then append it (for Windows computers only)
-      exe <- paste(model, ifelse(OS == "windows", ".exe", ""), sep = "")
-    }
-    # check whether exe is in directory
-    if (OS == "windows") {
-      if (!tolower(exe) %in% tolower(dir(dir))) {
-        stop("Executable ", exe, " not found in ", dir)
-      }
-    } else {
-      if (!exe %in% dir(dir)) stop("Executable ", exe, " not found in ", dir)
-    }
+    # check for executable
+    check_exe(exe = exe, dir = dir, verbose = verbose)
 
     # figure out which line to change in control file
-    # if not using parfile, info still needed to set phase negative in control file
+    # if not using par file, info still needed to set phase negative in control file
     if (is.null(linenum) & is.null(string)) {
       stop("You should input either 'linenum' or 'string' (but not both)")
     }
     if (!is.null(linenum) & !is.null(string)) {
       stop("You should input either 'linenum' or 'string' (but not both)")
     }
-    if (usepar) { # if using parfile
-      if (parfile != "ss.par" & (version == "3.30" | version == 3.3)) {
-        stop("'parfile' input needs to be 'ss.par' for SS version 3.30 models")
-      }
+    if (usepar) { # if using par file
       if (is.null(parlinenum) & is.null(parstring)) {
         stop(
           "Using par file. You should input either 'parlinenum' or ",
@@ -309,26 +285,35 @@ SS_profile <-
         stop("input whichruns should be NULL or a subset of 1:", n, "\n", sep = "")
       }
     }
-    message(
-      "Doing runs: ", paste(whichruns, collapse = ", "),
-      ",\n  out of n = ", n
-    )
+    if (verbose) {
+      message(
+        "Doing runs: ", paste(whichruns, collapse = ", "),
+        ",\n  out of n = ", n
+      )
+    }
 
-
+    # places to store convergence and likelihood info
     converged <- rep(NA, n)
     totallike <- rep(NA, n)
     liketable <- NULL
 
-    message(
-      "Changing working directory to ", dir, ",\n",
-      " but will be changed back on exit from function."
-    )
-    setwd(dir) # change working directory
-    stdfile <- paste(model, ".std", sep = "")
+    # change working directory
+    if (verbose) {
+      message(
+        "Changing working directory to ", dir, ",\n",
+        " but will be changed back on exit from function."
+      )
+    }
+    setwd(dir)
+   
+    # note: std file name is independent of executable name
+    stdfile <- file.path(dir, "ss.std")
 
     # read starter file to get input file names and check various things
     starter.file <- dir()[tolower(dir()) == "starter.ss"]
-    if (length(starter.file) == 0) stop("starter.ss not found in", dir)
+    if (length(starter.file) == 0) {
+      stop("starter.ss not found in", dir)
+    }
     starter <- SS_readstarter(starter.file, verbose = FALSE)
     # check for new control file
     if (starter[["ctlfile"]] != newctlfile) {
@@ -353,8 +338,9 @@ SS_profile <-
       )
     }
 
+    # back up par file
     if (usepar) {
-      file.copy(parfile, "parfile_original_backup.sso")
+      file.copy("ss.par", "parfile_original_backup.sso")
     }
 
     # run loop over profile values
@@ -382,7 +368,7 @@ SS_profile <-
           newvals <- as.numeric(profilevec[i, ])
         }
         SS_changepars(
-          dir = NULL, ctlfile = masterctlfile, newctlfile = newctlfile,
+          dir = NULL, ctlfile = oldctlfile, newctlfile = newctlfile,
           linenums = linenum, strings = string,
           newvals = newvals, estimate = FALSE,
           verbose = TRUE, repeat.vals = TRUE
@@ -405,7 +391,7 @@ SS_profile <-
           if (globalpar) {
             par <- readLines("parfile_original_backup.sso")
           } else {
-            par <- readLines(parfile)
+            par <- readLines("ss.par")
           }
           # loop over the number of parameters (typically just 1)
           for (ipar in 1:npars) {
@@ -438,8 +424,8 @@ SS_profile <-
           par <- c(par, "#", note)
           message(paste0(note, collapse = "\n"))
           # write new par file
-          writeLines(par, paste0(parfile, "_input_", i, ".ss"))
-          writeLines(par, parfile)
+          writeLines(par, paste0("ss_input_par", i, ".ss"))
+          writeLines(par, "ss.par")
         }
         if (file.exists(stdfile)) {
           file.remove(stdfile)
@@ -449,19 +435,13 @@ SS_profile <-
         }
 
         # run model
-        command <- paste(model, extras)
-        if (OS != "windows") command <- paste("./", command, sep = "")
-        message("Running model in directory:", getwd())
-        message("Using the command: ", command)
-        if (OS == "windows" & !systemcmd) {
-          shell(cmd = command)
-        } else {
-          system(command)
-        }
+        run(dir = dir, verbose = verbose, ...)
 
+        # check for convergence
         converged[i] <- file.exists(stdfile)
         onegood <- FALSE
-        if (read_like && file.exists("Report.sso") & file.info("Report.sso")$size > 0) {
+        if (read_like && file.exists("Report.sso") &
+          file.info("Report.sso")$size > 0) {
           onegood <- TRUE
           Rep <- readLines("Report.sso", n = 200)
           like <- read.table("Report.sso", skip = grep("LIKELIHOOD", Rep)[2] + 0, nrows = 11, header = TRUE, fill = TRUE)
@@ -476,7 +456,7 @@ SS_profile <-
           file.copy("covar.sso", paste("covar", i, ".sso", sep = ""), overwrite = overwrite)
           file.copy("warning.sso", paste("warning", i, ".sso", sep = ""), overwrite = overwrite)
           file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""), overwrite = overwrite)
-          file.copy(parfile, paste(model, ".par_", i, ".sso", sep = ""), overwrite = overwrite)
+          file.copy("ss.par", paste("ss.par_", i, ".sso", sep = ""), overwrite = overwrite)
         }
       } # end running stuff
     } # end loop of whichruns

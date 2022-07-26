@@ -7,7 +7,7 @@
 SSdiagsTime2Year(ss3out, time.steps = 0.25, end.time)
 }
 \arguments{
-\item{ss3out}{outputs from r4ss::SS_output() or r4ss::SSsummarize()}
+\item{ss3out}{outputs from \code{\link[=SS_output]{SS_output()}} or \code{\link[=SSsummarize]{SSsummarize()}}}
 
 \item{time.steps}{time steps behind yrs e.g. 0.25 for quarterly}
 

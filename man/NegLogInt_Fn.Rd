@@ -5,25 +5,27 @@
 \title{Perform SS implementation of Laplace Approximation}
 \usage{
 NegLogInt_Fn(
-  File = NA,
+  dir = getwd(),
+  File = lifecycle::deprecated(),
   Input_SD_Group_Vec,
   CTL_linenum_List,
   ESTPAR_num_List,
   PAR_num_Vec,
   Int_Group_List = list(1),
   StartFromPar = TRUE,
-  show_in_console = FALSE,
   Intern = lifecycle::deprecated(),
   ReDoBiasRamp = FALSE,
   BiasRamp_linenum_Vec = NULL,
   CTL_linenum_Type = NULL,
-  systemcmd = FALSE,
-  exe = "ss"
+  exe = "ss",
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
-\item{File}{Directory containing Stock Synthesis files
-(e.g., "C:/Users/James Thorson/Desktop/")}
+\item{dir}{Directory containing Stock Synthesis files.}
+
+\item{File}{Deprecated. Use \code{dir} instead.}
 
 \item{Input_SD_Group_Vec}{Vector where each element is the standard deviation
 for a group of random effects (e.g., a model with a single group of random
@@ -53,10 +55,8 @@ hardwired to Version = 1.}
 \item{StartFromPar}{Logical flag (TRUE or FALSE) saying whether to start each
 round of optimization from a ".par" file (I recommend TRUE)}
 
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
-
-\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
+\item{Intern}{Deprecated. Use \code{show_in_console} instead. See
+\code{\link[=run]{run()}} for details.}
 
 \item{ReDoBiasRamp}{Logical flag saying whether to re-do the bias ramp
 (using \code{\link[=SS_fitbiasramp]{SS_fitbiasramp()}}) each time Stock Synthesis is run.}
@@ -71,13 +71,19 @@ Default is NULL, and if not explicitly specified the program will attempt to
 detect these automatically based on the length of relevant lines from the CTL
 file.}
 
-\item{systemcmd}{Should R call SS using "system" function instead of "shell".
-This may be required when running R in Emacs on Windows. Default = FALSE.}
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory. Needs to be a single character string, not a vector.
+On Windows, \code{exe} can optionally have the \code{.exe} extension appended;
+on Unix-based systems (i.e., Mac and Linux), no extension should be
+included.}
 
-\item{exe}{SS executable name (excluding extension), either "ss" or "ss3".
-This string is used for both calling the executable and also finding the
-output files like ss.par. For 3.30, it should always be "ss" since the
-output file names are hardwired in the TPL code.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
+\code{extras} and \code{show_in_console}.}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation
@@ -94,7 +100,7 @@ Opt <- optimize(
   f = NegLogInt_Fn,
   interval = c(0.001, 0.12),
   maximum = FALSE,
-  File = direc,
+  dir = direc,
   Input_SD_Group_Vec = 1,
   CTL_linenum_List = list(127:131),
   ESTPAR_num_List = list(86:205),

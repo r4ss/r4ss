@@ -5,29 +5,25 @@
 \title{Run a likelihood profile in Stock Synthesis.}
 \usage{
 SS_profile(
-  dir = "C:/myfiles/mymodels/myrun/",
-  masterctlfile = "control.ss_new",
+  dir,
+  oldctlfile = "control.ss_new",
+  masterctlfile = lifecycle::deprecated(),
   newctlfile = "control_modified.ss",
   linenum = NULL,
   string = NULL,
   profilevec = NULL,
   usepar = FALSE,
   globalpar = FALSE,
-  parfile = "ss.par",
   parlinenum = NULL,
   parstring = NULL,
-  dircopy = TRUE,
-  exe.delete = FALSE,
-  model = "ss",
-  extras = "-nox",
-  systemcmd = FALSE,
   saveoutput = TRUE,
   overwrite = TRUE,
   whichruns = NULL,
-  version = "3.30",
   prior_check = TRUE,
   read_like = TRUE,
-  verbose = TRUE
+  exe = "ss",
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -35,7 +31,9 @@ SS_profile(
 The default value is \code{dir = NULL}, which leads to using
 the current working directory.}
 
-\item{masterctlfile}{Source control file. Default = "control.ss_new"}
+\item{oldctlfile}{Source control file. Default = "control.ss_new"}
+
+\item{masterctlfile}{Deprecated. Use \code{oldctlfile} instead.}
 
 \item{newctlfile}{Destination for new control files (must match entry in
 starter file). Default = "control_modified.ss".}
@@ -54,13 +52,9 @@ matrix with a column for each parameter.}
 
 \item{usepar}{Use PAR file from previous profile step for starting values?}
 
-\item{globalpar}{Use global par file ("parfile_original_backup.sso", which is
-automatically copied from original \code{parfile}) for all runs instead
+\item{globalpar}{Use global par file (\code{parfile_original_backup.sso}, which is
+automatically copied from original \code{ss.par}) for all runs instead
 of the par file from each successive run}
-
-\item{parfile}{Name of par file to use (for 3.30 models, this needs to
-remain 'ss.par'). When \code{globalpar=TRUE}, the backup copy of this
-is used for all runs.}
 
 \item{parlinenum}{Line number in par file to change (if usepar = TRUE).
 Can be a vector if you are profiling multiple parameters at the same time.}
@@ -69,32 +63,15 @@ Can be a vector if you are profiling multiple parameters at the same time.}
 an alternative to parlinenum (only needed if usepar = TRUE).
 Can be a vector if you are profiling multiple parameters at the same time.}
 
-\item{dircopy}{Copy directories for each run? NOT IMPLEMENTED YET.}
+\item{saveoutput}{Copy output .sso files to unique names.  Default = TRUE.}
 
-\item{exe.delete}{Delete exe files in each directory?  NOT IMPLEMENTED YET.}
-
-\item{model}{Name of executable. Default = "ss".}
-
-\item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amount of command-line output.}
-
-\item{systemcmd}{Should R call SS using "system" function instead of "shell".
-This may be required when running R in Emacs. Default = FALSE.}
-
-\item{saveoutput}{Copy output .SSO files to unique names.  Default = TRUE.}
-
-\item{overwrite}{Overwrite any existing .SSO files. Default = TRUE. If FALSE,
+\item{overwrite}{Overwrite any existing .sso files. Default = TRUE. If FALSE,
 then some runs may be skipped.}
 
 \item{whichruns}{Optional vector of run indices to do. This can be used to
 re-run a subset of the cases in situations where the function was
 interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 is the length of profilevec.}
-
-\item{version}{SS version number. Currently "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).
-\code{version = NULL} is no longer the default or an allowed entry.
-The default is \code{version = "3.30"}.}
 
 \item{prior_check}{Check to make sure the starter file is set to include
 the prior likelihood contribution in the total likelihood.  Default = TRUE.}
@@ -103,8 +80,19 @@ the prior likelihood contribution in the total likelihood.  Default = TRUE.}
 Default = TRUE. Changing to FALSE should allow the function to play through
 even if something is wrong with reading the table.}
 
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory. Needs to be a single character string, not a vector.
+On Windows, \code{exe} can optionally have the \code{.exe} extension appended;
+on Unix-based systems (i.e., Mac and Linux), no extension should be
+included.}
+
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
+\code{extras}, \code{show_in_console}, and \code{skipfinished}.}
 }
 \description{
 Iteratively changes the control file using SS_changepars.
@@ -147,8 +135,7 @@ profile <- SS_profile(
   dir = mydir, # directory
   # "NatM" is a subset of one of the
   # parameter labels in control.ss_new
-  model = "ss",
-  masterctlfile = "control.ss_new",
+  oldctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   string = "steep",
   profilevec = h.vec
@@ -201,15 +188,13 @@ head(par_table)
 ## 6   0.2 0.75
 
 # run SS_profile command
-# requires modified version of SS_profile available via
-# remotes::install_github("r4ss/r4ss@profile_issue_224")
 profile <- SS_profile(
   dir = dir_profile_SR, # directory
-  masterctlfile = "control.ss_new",
+  oldctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   string = c("Zfrac", "Beta"),
   profilevec = par_table,
-  extras = "-nohess"
+  extras = "-nohess" # argument passed to run()
 )
 
 # get model output

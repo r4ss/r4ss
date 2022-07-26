@@ -34,7 +34,7 @@ SSplotRetroDevs <- function(retroSummary, endyrvec, cohorts, ylim = c(-3, 3), un
   shadecolvec <- rainbow(length(cohorts), alpha = .1)
   colvec.txt <- colvec
   # make text darker
-  for (i in 1:length(colvec)) {
+  for (i in seq_along(colvec)) {
     tmp <- col2rgb(colvec[i]) / 255
     colvec.txt[i] <- rgb(tmp[1] / 2, tmp[2] / 2, tmp[3] / 2, alpha = .7)
   }
@@ -76,7 +76,7 @@ SSplotRetroDevs <- function(retroSummary, endyrvec, cohorts, ylim = c(-3, 3), un
     }
   }
 
-  for (iy in 1:length(cohorts)) {
+  for (iy in seq_along(cohorts)) {
     y <- cohorts[iy]
     cohortdevs <- recdevs[recdevs[["Yr"]] == y, 1:n]
     cohortdevsLower <- recdevsLower[recdevsLower[["Yr"]] == y, 1:n]

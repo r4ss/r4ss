@@ -1178,7 +1178,7 @@ SSplotComps <-
 
             # add lines for growth of individual cohorts if requested
             if (length(cohortlines) > 0) {
-              for (icohort in 1:length(cohortlines)) {
+              for (icohort in seq_along(cohortlines)) {
                 message("  Adding line for", cohortlines[icohort], "cohort\n")
                 if (kind == "LEN") {
                   lines(growdatF[["Age"]] + cohortlines[icohort],
@@ -1605,7 +1605,7 @@ SSplotComps <-
               )
               # add lines for growth of individual cohorts if requested
               if (length(cohortlines) > 0) {
-                for (icohort in 1:length(cohortlines)) {
+                for (icohort in seq_along(cohortlines)) {
                   message("  Adding line for", cohortlines[icohort], "cohort\n")
                   if (kind == "LEN") {
                     if (nsexes > 1) {
@@ -1748,7 +1748,7 @@ SSplotComps <-
           ###                   conditional age-at-length
           ###                   and Pearson residuals of A-L key for specific years
           if ((4 %in% subplots | 5 %in% subplots) & aalyear[1] > 0 & kind == "cond") {
-            for (y in 1:length(aalyear)) {
+            for (y in seq_along(aalyear)) {
               aalyr <- aalyear[y]
               if (length(dbase[["Obs"]][dbase[["Yr"]] == aalyr]) > 0) {
                 ydbase <- dbase[dbase[["Yr"]] == aalyr, ]
@@ -1876,7 +1876,7 @@ SSplotComps <-
                   "       the following inputs for 'aalbin' are fine:", goodbins, "\n"
                 )
               }
-              for (ibin in 1:length(goodbins)) { # loop over good bins
+              for (ibin in seq_along(goodbins)) { # loop over good bins
                 ilenbin <- goodbins[ibin]
                 abindbase <- dbase[dbase[["Lbin_hi"]] == ilenbin, ]
                 if (nrow(abindbase) > 0) { # check for data associated with this bin

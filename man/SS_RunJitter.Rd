@@ -5,46 +5,31 @@
 \title{Iteratively apply the jitter option in SS}
 \usage{
 SS_RunJitter(
-  mydir,
-  model = "ss",
-  extras = "-nohess",
-  Njitter,
-  show_in_console = FALSE,
+  dir = getwd(),
+  mydir = lifecycle::deprecated(),
   Intern = lifecycle::deprecated(),
-  systemcmd = FALSE,
+  Njitter,
   printlikes = TRUE,
-  verbose = FALSE,
   jitter_fraction = NULL,
-  init_values_src = NULL
+  init_values_src = NULL,
+  exe = "ss",
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
-\item{mydir}{Directory where model files are located.}
+\item{dir}{Directory where model files are located.}
 
-\item{model}{Name of the Stock Synthesis model file (which has the .exe for
-on Windows) in \code{mydir} without the extension (if any), e.g.,
-\code{"ss"} or \code{"ss_win"}.}
+\item{mydir}{Deprecated. Use \code{dir} instead.}
 
-\item{extras}{Additional command line arguments passed to the executable.
-The default, \code{"-nohess"}, runs each jittered model without the hessian.}
+\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
 If \code{length(Njitter) > 1} only the iterations specified will be ran,
 else \code{1:Njitter} will be executed.}
 
-\item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
-
-\item{Intern}{Deprecated. Use \code{show_in_console} instead.}
-
-\item{systemcmd}{Option to switch between 'shell' and 'system'. The default,
-\code{FALSE}, facilitates using the shell command on Windows.}
-
 \item{printlikes}{A logical value specifying if the likelihood values should
 be printed to the console.}
-
-\item{verbose}{A logical value specifying if output should be printed
-to the screen.}
 
 \item{jitter_fraction}{The value, typically 0.1, used to define a uniform
 distribution in cumulative normal space to generate new initial parameter values.
@@ -55,6 +40,20 @@ will not be overwritten.}
 \item{init_values_src}{Either zero or one, specifying if the initial values to
 jitter should be read from the control file or from the par file, respectively.
 The default is \code{NULL}, which will leave the starter file unchanged.}
+
+\item{exe}{Executable name. Can be just the name of the executable
+file if it is in the specified directory or in the user's PATH. Can
+also include the absolute path or a path relative to the specified
+directory. Needs to be a single character string, not a vector.
+On Windows, \code{exe} can optionally have the \code{.exe} extension appended;
+on Unix-based systems (i.e., Mac and Linux), no extension should be
+included.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+
+\item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
+\code{extras}, \code{show_in_console}, and \code{skipfinished}.}
 }
 \value{
 A vector of likelihoods for each jitter iteration.
@@ -70,7 +69,7 @@ in the format Report1.sso, Report2.sso, etc.
 modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE), 1)
 numjitter <- 25
 jit.likes <- SS_RunJitter(
-  mydir = modeldir, Njitter = numjitter,
+  dir = modeldir, Njitter = numjitter,
   jitter_fraction = 0.1, init_value_src = 1
 )
 

@@ -10,18 +10,36 @@ file.copy(example_path, tmp_path, recursive = TRUE)
 # runs_path avoids repeated use of "extdata" that would have to be added
 # if using tmp_path directly
 runs_path <- file.path(tmp_path, "extdata")
+path_simple_small <- file.path(runs_path, "simple_small")
+
 # clean up
 on.exit(unlink(tmp_path, recursive = TRUE))
 
-test_that("SS_doRetro runs on simple_small model", {
-  path_simple_small <- file.path(runs_path, "simple_small")
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+test_that("check_exe() fails or succeeds as expected", {
+  # skip if no executable in model path
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
+    (!file.exists(file.path(path_simple_small, "ss.exe"))),
+  message = "skipping test that requires SS executable"
+  )
+  # error when no exe found
+  expect_error(check_exe("bad_exe_name"))
+  # returns path (along with exe name) when exe found
+  check_exe_results <- check_exe(dir = path_simple_small)
+  expect_equal(check_exe_results[["path"]], path_simple_small)
+})
+
+test_that("SS_doRetro() runs on simple_small model", {
+  # skip if no executable in model path
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
   SS_doRetro(
-    masterdir = path_simple_small,
-    oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
+    dir = path_simple_small,
+    oldsubdir = "", newsubdir = "retrospectives", years = 0:-2,
+    show_in_console = FALSE
   )
   retro_subdirs <- file.path(
     path_simple_small, "retrospectives",
@@ -57,8 +75,9 @@ test_that("SS_doRetro runs on simple_small model", {
 
 
 test_that("SS_RunJitter runs on simple_small model", {
-  path_simple_small <- file.path(runs_path, "simple_small")
-  skipexe <- (!file.exists(file.path(path_simple_small, "ss"))) &
+  # skip if no executable in model path
+  skipexe <- (!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe")))
   dir.jit <- file.path(path_simple_small, "jitter")
   expect_true(copy_SS_inputs(
@@ -70,27 +89,25 @@ test_that("SS_RunJitter runs on simple_small model", {
     copy_par = FALSE,
     verbose = FALSE
   ))
-  if (!skipexe & .Platform[["OS.type"]] == "unix") {
-    file.copy(
-      from = file.path(path_simple_small, "ss"),
-      to = file.path(dir.jit, "ss")
-    )
-  }
   # run jitters
   if (skipexe) {
+    # error expected when no exe found
     expect_error(SS_RunJitter(
-      mydir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = FALSE
+      dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
+      printlikes = FALSE, verbose = TRUE,
     ))
+    # starter file shouldn't have changed if exe check failed
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
     expect_equal(starter$jitter_fraction, 0)
   } else {
     likesaved <- SS_RunJitter(
-      mydir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = FALSE
+      dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
+      printlikes = FALSE, verbose = TRUE, show_in_console = FALSE
     )
+    # confirm that likelihoods were returned by function
     expect_true(is.vector(likesaved) & length(likesaved) == 2)
     expect_equal(likesaved[1], likesaved[2])
+    # confirm starter file change
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
     expect_equal(starter$jitter_fraction, 0.1)
   }
@@ -101,8 +118,9 @@ test_that("SS_RunJitter runs on simple_small model", {
 ###############################################################################
 
 test_that("profile functions run on simple_small model", {
-  path_simple_small <- file.path(runs_path, "simple_small")
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+  # skip if no executable in model path
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
@@ -116,13 +134,6 @@ test_that("profile functions run on simple_small model", {
     copy_par = TRUE,
     verbose = TRUE
   )
-  # b/c current copy ss inputs wont copy the exe for mac or linux
-  if (.Platform[["OS.type"]] == "unix") {
-    file.copy(
-      from = file.path(path_simple_small, "ss"),
-      to = file.path(dir.prof, "ss")
-    )
-  }
   starter <- SS_readstarter(file.path(dir.prof, "starter.ss"))
   # Make use the par file as a starting point
   starter$ctlfile <- "control_modified.ss"
@@ -131,7 +142,7 @@ test_that("profile functions run on simple_small model", {
   # run profile
   prof.table <- SS_profile(
     dir = dir.prof,
-    masterctlfile = "control.ss",
+    oldctlfile = "control.ss",
     string = "R0", profilevec = c(8.5, 9)
   )
   # read model output
@@ -150,8 +161,9 @@ test_that("profile functions run on simple_small model", {
 })
 
 test_that("Run an SS3 model and read the hessian", {
-  path_simple_small <- file.path(runs_path, "simple_small")
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
+  # skip if no executable in model path
+  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) & 
+    (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
@@ -160,11 +172,10 @@ test_that("Run an SS3 model and read the hessian", {
     dir.new = file.path(tmp_path, "test_mod_run"), copy_exe = TRUE
   )
   expect_true(copy_results)
-  run_results <- run_SS_models(dirvec = file.path(tmp_path, "test_mod_run"))
+  run_results <- run(dir = file.path(tmp_path, "test_mod_run"))
   expect_true(run_results[["results"]] == "ran model")
   hes <- getADMBHessian(
-    File = file.path(tmp_path, "test_mod_run"),
-    FileName = "admodel.hes"
+    hesfile = file.path(tmp_path, "test_mod_run", "admodel.hes")
   )
   expect_length(hes, 4)
   expect_true(is.matrix(hes[["hes"]]))

@@ -101,7 +101,7 @@ should probably be created at some point in the future.
 Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
 other files produced by Stock Synthesis and formats the important
 content of these files into a list in the R workspace. A few statistics
-unavailable elsewhere are taken from the .par and .cor files. Summary
+unavailable elsewhere are taken from the .par file. Summary
 information and statistics can be returned to the R console or just
 contained within the list produced by this function.
 }

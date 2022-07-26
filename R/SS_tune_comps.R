@@ -66,19 +66,14 @@
 #'  Defaults to `FALSE`. This run is not counted as an iteration for
 #'  `niters_tuning` and will not be used if `option = "DM"`.
 #' @template dir
-#' @param model The name of the stock synthesis executable. This model is
-#'  assumed to be either in the same folder as the model files (specified in
-#'  `dir`), or in the PATH if `exe_in_path = TRUE`. This will not be used if
-#'  `init_run = FALSE` and `niters_tuning = 0`.
-#' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
-#'  will look for exe in the model folders. Default = FALSE.
-#' @param extras Additional commands to use when running SS. Default = "-nox"
-#'  will reduce the amount of command-line output. A commonly used option is
-#'  "-nohess" to skip calculating the hessian (and asymptotic uncertainty).
 #' @template verbose
 #' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
 #'  FALSE, which caps tuning values at 1.
-#' @param ... Additional arguments to pass to [run_SS_models].
+#' @template exe
+#' @param model Deprecated. Use `exe` instead.
+#' @template extras
+#' @param ... Additional arguments passed to [r4ss::run()], such as
+#' `show_in_console`.
 #'
 #' @return Returns a table that can be copied into the control file.
 #' If `write=TRUE` then will write the values to a file
@@ -136,14 +131,13 @@
 #' )
 #' weight_table_fran
 #'
-#' # Add Dirichlet multinomial tuning parameters to the model, without running it.
+#' # Add Dirichlet-multinomial tuning parameters to the model,
+#' # without running it.
 #'
 #' DM_parm_info <- SS_tune_comps(
 #'   option = "DM",
 #'   niters_tuning = 0, # 0 means the model will not be run.
 #'   dir = mod_path,
-#'   model = "ss",
-#'   extras = "-nohess",
 #'   verbose = FALSE
 #' )
 #' # See the Dirichlet parameters added to the model.
@@ -167,7 +161,7 @@
 #'   niters_tuning = 1,
 #'   dir = mod_path,
 #'   allow_up_tuning = TRUE,
-#'   model = "ss",
+#'   exe = "ss",
 #'   verbose = FALSE
 #' )
 #' # see the tuning table, and the weights applied to the model.
@@ -180,7 +174,6 @@
 #'   option = "DM",
 #'   niters_tuning = 1, # must be 1 or greater to run
 #'   dir = mod_path,
-#'   model = "ss",
 #'   extras = "-nohess",
 #'   verbose = FALSE
 #' )
@@ -193,10 +186,22 @@
 SS_tune_comps <- function(replist = NULL, fleets = "all",
                           option = c("Francis", "MI", "none", "DM"),
                           digits = 6, write = TRUE, niters_tuning = 0,
-                          init_run = FALSE, dir = getwd(), model = "ss",
-                          exe_in_path = FALSE, extras = "-nox",
+                          init_run = FALSE, dir = getwd(), exe = "ss",
+                          model = lifecycle::deprecated(),
+                          extras = "",
                           allow_up_tuning = FALSE,
                           verbose = TRUE, ...) {
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(model)) {
+    lifecycle::deprecate_warn(
+      when = "1.46.0",
+      what = "SS_tune_comps(model)",
+      details = "Please use 'exe' instead"
+    )
+    exe <- model
+  }
+
   # check inputs
   option <- match.arg(option, several.ok = FALSE)
   # try to read in rep list, if it is null.
@@ -286,10 +291,13 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
     }
     # do an init model run if desired, to get a new replist.
     if (init_run) {
-      run_SS_models(
-        dirvec = dir, model = model, extras = extras,
-        skipfinished = FALSE, verbose = verbose,
-        exe_in_path = exe_in_path, ...
+      run(
+        dir = dir,
+        exe = exe,
+        extras = extras,
+        skipfinished = FALSE,
+        verbose = verbose,
+        ...
       )
       suppressWarnings(
         replist <- SS_output(
@@ -382,10 +390,13 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           verbose = FALSE
         )
         # 4. run SS again with reweighting
-        run_SS_models(
-          dirvec = dir, model = model, extras = extras,
-          skipfinished = FALSE, exe_in_path = exe_in_path,
-          verbose = verbose, ...
+        run(
+          dir = dir,
+          exe = exe,
+          extras = extras,
+          skipfinished = FALSE,
+          verbose = verbose,
+          ...
         )
         # save the weights from the run to a list
         weights[[it]] <- var_adj
@@ -474,10 +485,13 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       overwrite = TRUE
     )
     if (niters_tuning > 0) {
-      run_SS_models(
-        dirvec = dir, model = model, extras = extras,
-        skipfinished = FALSE, exe_in_path = exe_in_path,
-        verbose = verbose, ...
+      run(
+        dir = dir,
+        exe = exe,
+        extras = extras,
+        skipfinished = FALSE,
+        verbose = verbose,
+        ...
       )
       suppressWarnings(
         out <- SS_output(dir,

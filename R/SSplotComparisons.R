@@ -534,7 +534,7 @@ SSplotComparisons <-
       index_plot_suffix <- rep("", length(indexfleets))
       # if more than one index is compared, add suffix to filename
       if (length(indexfleets[[1]]) > 1) {
-        for (iindex in 1:length(indexfleets[[1]])) {
+        for (iindex in seq_along(indexfleets[[1]])) {
           fleets <- as.numeric(data.frame(indexfleets)[iindex, ])
           if (length(unique(fleets)) == 1) {
             index_plot_suffix[iindex] <- paste0("_flt", fleets[1])
@@ -1943,7 +1943,7 @@ SSplotComparisons <-
             xmax <- max(xmax, quantile(mcmcVals, 0.995, na.rm = TRUE))
             # density estimate of mcmc sample (posterior)
             z <- density(mcmcVals, cut = 0, adjust = densityadjust)
-            z[["x"]] <- z[["x"]][c(1, 1:length(z[["x"]]), length(z[["x"]]))]
+            z[["x"]] <- z[["x"]][c(1, seq_along(z[["x"]]), length(z[["x"]]))]
             # just to make sure that a good looking polygon is created
             z[["y"]] <- c(0, z[["y"]], 0)
             ymax <- max(ymax, max(z[["y"]])) # update ymax
@@ -2080,8 +2080,8 @@ SSplotComparisons <-
               }
               # really hokey and assumes that the middle value of
               # the vector of quantiles is the median
-              lines(rep(x2[median(1:length(x2))], 2),
-                c(0, y2[median(1:length(x2))]),
+              lines(rep(x2[median(seq_along(x2))], 2),
+                c(0, y2[median(seq_along(x2))]),
                 col = col[iline]
               )
             } else {
@@ -2445,7 +2445,7 @@ SSplotComparisons <-
       if (verbose) {
         message("subplot 13: index fits")
       }
-      for (iindex in 1:length(indexfleets[[1]])) {
+      for (iindex in seq_along(indexfleets[[1]])) {
         if (plot) {
           ymax_vec[13] <- plotIndices(log = FALSE, iindex = iindex)
         }
@@ -2466,7 +2466,7 @@ SSplotComparisons <-
       if (verbose) {
         message("subplot 14: index fits on a log scale")
       }
-      for (iindex in 1:length(indexfleets[[1]])) {
+      for (iindex in seq_along(indexfleets[[1]])) {
         if (plot) {
           ymax_vec[14] <- plotIndices(log = TRUE, iindex = iindex)
         }
@@ -2507,7 +2507,7 @@ SSplotComparisons <-
         # look for all parameters or derived quantities matching
         # the input list of names
         expandednames <- NULL
-        for (i in 1:length(densitynames)) {
+        for (i in seq_along(densitynames)) {
           matchingnames <- c(
             pars[["Label"]],
             quants[["Label"]]

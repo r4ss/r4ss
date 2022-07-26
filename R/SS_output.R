@@ -3,7 +3,7 @@
 #' Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
 #' other files produced by Stock Synthesis and formats the important
 #' content of these files into a list in the R workspace. A few statistics
-#' unavailable elsewhere are taken from the .par and .cor files. Summary
+#' unavailable elsewhere are taken from the .par file. Summary
 #' information and statistics can be returned to the R console or just
 #' contained within the list produced by this function.
 #'
@@ -205,7 +205,7 @@ SS_output <-
       # added to clean up adaptation to more consistent
       # syntax in Report.sso as of SS version 3.30.01.15.
       if (!is.null(df)) {
-        for (iname in 1:length(oldnames)) {
+        for (iname in seq_along(oldnames)) {
           names(df)[names(df) == oldnames[iname]] <- newnames[iname]
         }
       }
@@ -308,20 +308,11 @@ SS_output <-
       message("Report file time:", repfiletime)
     }
 
-    corfile <- NA
     if (covar) {
-      # .cor file
-      if (!is.na(parfile)) {
-        corfile <- sub(".par", ".cor", parfile, fixed = TRUE)
-        if (!file.exists(corfile)) {
-          warning("Some stats skipped because the .cor file not found:", corfile, "\n")
-          corfile <- NA
-        }
-      }
       # CoVar.sso file
       covarfile <- file.path(dir, covarfile)
       if (!file.exists(covarfile)) {
-        warning("covar file not found, input 'covar' changed to FALSE")
+        message("covar file not found, input 'covar' changed to FALSE")
         covar <- FALSE
       } else {
 
@@ -573,21 +564,27 @@ SS_output <-
     if (length(logfile) == 1 && file.info(file.path(dir, logfile))$size > 0) {
       logfile <- readLines(file.path(dir, logfile))
       logfile <- grep("^size", logfile, value = TRUE)
-      if (!length(logfile)) {
-        stop("Error reading ss.log. Check the file, it should contain 4 rows starting with 'size'")
-      }
-      names(logfile) <- c("TempFile", "Size")
-      maxtemp <- max(logfile[["Size"]])
-      if (maxtemp == 0) {
-        if (verbose) {
-          message(
-            "Got log file. There were NO temporary files were written",
-            " in this run."
-          )
-        }
+      if (length(logfile) == 0) {
+        warning("Error reading ss.log. Check the file, it should contain rows starting with 'size'")
+        logfile <- NA
       } else {
+        logfile <- tidyr::separate(as.data.frame(logfile),
+          col = 1,
+          into = c("File", "Size"),
+          sep = " = "
+        )
+        names(logfile) <- c("TempFile", "Size")
+        logfile[["Size"]] <- as.numeric(logfile[["Size"]])
+        maxtemp <- max(logfile[["Size"]])
         if (verbose) {
-          message("Temporary files were written in this run.")
+          if (maxtemp == 0) {
+            message(
+              "Got log file. There were NO temporary files were written",
+              " in this run."
+            )
+          } else {
+            message("Temporary files were written in this run.")
+          }
         }
       }
     } else {
@@ -1206,7 +1203,7 @@ SS_output <-
     labs <- likelihoods_by_fleet[["Label"]]
 
     # removing ":" at the end of likelihood components
-    for (irow in 1:length(labs)) {
+    for (irow in seq_along(labs)) {
       labs[irow] <- substr(labs[irow], 1, nchar(labs[irow]) - 1)
     }
     likelihoods_by_fleet[["Label"]] <- labs
@@ -1329,7 +1326,7 @@ SS_output <-
     )
     # look for rows in table of parameters that have label indicating deviation
     devrows <- NULL
-    for (iname in 1:length(devnames)) {
+    for (iname in seq_along(devnames)) {
       devrows <- unique(c(devrows, grep(
         devnames[iname],
         rownames(estimated_non_dev_parameters)
@@ -1641,7 +1638,7 @@ SS_output <-
         lowcor <- 0
         if (nrow(lowcortestlist) > 0) {
           lowcortestlist[["max"]] <- NA
-          for (i in 1:length(lowcortestlist[, 1]))
+          for (i in seq_along(lowcortestlist[, 1]))
           {
             lowcortestlist[["max"]][i] <- max(corfilter[["corr"]][corfilter[["label.i"]] == lowcortestlist[["name"]][i]], corfilter[["corr"]][corfilter[["label.j"]] == lowcortestlist[["name"]][i]])
           }
@@ -1894,10 +1891,13 @@ SS_output <-
       }
     }
 
-    # gradient
-    if (covar & !is.na(corfile)) {
-      stats[["log_det_hessian"]] <- read.table(corfile, nrows = 1)[1, 10]
-    }
+    # log determinant of the Hessian (previously was from ss.cor file)
+    stats[["log_det_hessian"]] <- 
+      as.numeric(match_report_table("Hessian", 0,
+        "Hessian", 0,
+        cols = 2
+      ))
+    # max gradient
     stats[["maximum_gradient_component"]] <-
       as.numeric(match_report_table("Convergence_Level", 0,
         "Convergence_Level", 0,
@@ -2216,7 +2216,7 @@ SS_output <-
           tune_lines <- grep("Factor", fit_size_comps[, 1])
           sizentune <- NULL
           # loop over methods to fill in new columns
-          for (imethod in 1:length(method_lines)) {
+          for (imethod in seq_along(method_lines)) {
             start <- method_lines[imethod]
             if (imethod != length(method_lines)) {
               end <- method_lines[imethod + 1] - 1

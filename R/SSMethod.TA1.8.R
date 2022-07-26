@@ -204,7 +204,7 @@ SSMethod.TA1.8 <-
     }
 
     # Find the weighting factor for this combination of factors
-    for (i in 1:length(uindx)) { # each row of pldat is an individual comp
+    for (i in seq_along(uindx)) { # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
       xvar <- subdbase[["Bin"]]
       pldat[i, "Obsmn"] <- sum(subdbase[["Obs"]] * xvar) / sum(subdbase[["Obs"]])
@@ -228,7 +228,7 @@ SSMethod.TA1.8 <-
     Nmult <- 1 / var(pldat[, "Std.res"], na.rm = TRUE)
 
     # Find the adjusted confidence intervals
-    for (i in 1:length(uindx)) {
+    for (i in seq_along(uindx)) {
       pldat[i, "ObsloAdj"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"] / sqrt(Nmult)
       pldat[i, "ObshiAdj"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"] / sqrt(Nmult)
     }
