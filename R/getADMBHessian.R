@@ -25,7 +25,6 @@ getADMBHessian <- function(hesfile = "admodel.hes",
       what = "getADMBHessian(File)",
       details = "Please use 'hesfile' instead"
     )
-    File = getwd()
   }
   if (lifecycle::is_present(FileName)) {
     lifecycle::deprecate_warn(
@@ -35,7 +34,10 @@ getADMBHessian <- function(hesfile = "admodel.hes",
     )
     hesfile <- FileName
   }
-
+  if (lifecycle::is_present(File) & lifecycle::is_present(FileName)) {
+    hesfile <- file.path(File, FileName)
+  }
+  
   filename <- file(hesfile, "rb")
   on.exit(close(filename))
   num.pars <- readBin(filename, "integer", 1)

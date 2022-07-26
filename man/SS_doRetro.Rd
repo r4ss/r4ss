@@ -49,7 +49,10 @@ to the screen.}
 \item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can
 also include the absolute path or a path relative to the specified
-directory.}
+directory. Needs to be a single character string, not a vector.
+On Windows, \code{exe} can optionally have the \code{.exe} extension appended;
+on Unix-based systems (i.e., Mac and Linux), no extension should be
+included.}
 
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
 \code{extras}, \code{show_in_console}, and \code{skipfinished}.}

@@ -12,10 +12,12 @@
 #' @template verbose
 #' @author Kelli F. Johnson, Ian G. Taylor
 #' @return A list containing `$exe` and `$path`.
-#' `$exe` is the cleaned `exe` input file. Windows systems will include
+#' `$exe` is the cleaned version of the `exe` file name input. Windows
+#' systems will include 
 #' ".exe" in the returned value. On Linux and Mac systems, the returned
 #' `$exe` will include "./" if the executable was found in the specified
-#' directory `dir`.
+#' directory `dir`. This will be a single character string, unlike `$path` which
+#' will be a vector if the input `dir` is a vector.
 #' The `$path` element of the list includes the normalized path (or
 #' paths if `dir` is a vector) where the executable was found. If `dir`
 #' is a vector and the executable is missing from a subset of those

@@ -10,7 +10,10 @@ check_exe(exe = "ss", dir = getwd(), verbose = FALSE)
 \item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can
 also include the absolute path or a path relative to the specified
-directory.}
+directory. Needs to be a single character string, not a vector.
+On Windows, \code{exe} can optionally have the \code{.exe} extension appended;
+on Unix-based systems (i.e., Mac and Linux), no extension should be
+included.}
 
 \item{dir}{The directory where \code{exe} is located (if not in path).
 Defaults to \code{getwd()} but can be an absolute path, a path relative to
@@ -22,10 +25,12 @@ to the screen.}
 }
 \value{
 A list containing \verb{$exe} and \verb{$path}.
-\verb{$exe} is the cleaned \code{exe} input file. Windows systems will include
+\verb{$exe} is the cleaned version of the \code{exe} file name input. Windows
+systems will include
 ".exe" in the returned value. On Linux and Mac systems, the returned
 \verb{$exe} will include "./" if the executable was found in the specified
-directory \code{dir}.
+directory \code{dir}. This will be a single character string, unlike \verb{$path} which
+will be a vector if the input \code{dir} is a vector.
 The \verb{$path} element of the list includes the normalized path (or
 paths if \code{dir} is a vector) where the executable was found. If \code{dir}
 is a vector and the executable is missing from a subset of those
