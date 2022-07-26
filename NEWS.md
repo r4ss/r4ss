@@ -1,4 +1,4 @@
-# r4ss 1.46.0 (XX July 2022)
+# r4ss 1.46.0 (26 July 2022)
 * Major revamp of all functions that run the Stock Synthesis executable
   https://github.com/r4ss/r4ss/pull/722
   * `run_SS_models()` is now `run()` and has easier defaults and better
