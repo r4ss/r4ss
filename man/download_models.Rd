@@ -2,10 +2,7 @@
 % Please edit documentation in R/download_models.R
 \name{download_models}
 \alias{download_models}
-\title{Download SS3 test models
-
-Function to download the models folder within the
-nmfs-stock-synthesis/test-models repsitory}
+\title{Download SS3 test models}
 \usage{
 download_models(
   dir = file.path("inst", "extdata"),
@@ -14,29 +11,30 @@ download_models(
 )
 }
 \arguments{
-\item{dir}{The folder where the models subfolder should be written to.}
+\item{dir}{A file path where the downloaded \code{"models"} subfolder will be written to.}
 
-\item{branch}{The name of the github branch to download.}
+\item{branch}{A string specifying the desired branch of
+\href{https://github.com/nmfs-stock-synthesis/test-models#test-models}{nmfs-stock-synthesis/test-models repository}
+that you want to download. The default is \code{"main"}, which is the
+stable/default branch.}
 
 \item{overwrite}{A logical value specifying if the existing file(s)
 should be overwritten. The default value is \code{overwrite = FALSE}.}
 }
 \value{
-Invisibly return a value revealing whether the files were copied
+Invisibly return a logical revealing whether the files were copied
 (TRUE) or not (FALSE). This function is used for its side effects of
-downling SS3 test models.
+downloading SS3 test models.
 }
 \description{
-Download SS3 test models
-
-Function to download the models folder within the
-nmfs-stock-synthesis/test-models repsitory
+Download and unzip the models folder stored on GitHub within the
+nmfs-stock-synthesis/test-models repository.
 }
 \examples{
-  download_models(dir = getwd())
-  model_name <- list.files("models") # see the model names
-  # remove files
-  unlink(file.path("models"), recursive = TRUE)
+download_models(dir = getwd())
+model_name <- list.files("models") # see the model names
+# remove files
+unlink(file.path("models"), recursive = TRUE)
 }
 \references{
 \href{https://github.com/nmfs-stock-synthesis/test-models#test-models}{nmfs-stock-synthesis/test-models repository}
