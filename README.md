@@ -1,6 +1,11 @@
 # r4ss: R code for Stock Synthesis
 
-[![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml) [![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r4ss/r4ss)
+[![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml)
+[![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r4ss/r4ss)
+[![cran version](http://www.r-pkg.org/badges/version/r4ss)](https://cran.r-project.org/package=r4ss)
+[![github](https://img.shields.io/github/v/release/r4ss/r4ss?color=brightgreen&label=GitHub)](https://github.com/r4ss/r4ss/releases/latest)
+[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/r4ss?)](https://github.com/metacran/cranlogs.app)
+[![](https://cranlogs.r-pkg.org/badges/r4ss?color=FFD700)](https://www.r-pkg.org/pkg/r4ss)
 
 Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Methot. The Stock Synthesis software and many other associated materials are available on the NOAA Virtual Laboratory at [https://vlab.noaa.gov/web/stock-synthesis/home](https://vlab.noaa.gov/web/stock-synthesis/home). The r4ss package is a collection of R functions for interacting with Stock Synthesis. It is based on the original work of Ian Stewart begun around 2005 and released as an open source R package in 2009. The package has a long list of authors and has benefited from a large community of users making suggestions and reporting issues.
 
@@ -8,7 +13,7 @@ Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Me
 
 ## Installation
 
-The CRAN version of r4ss was updated on 26 April 2022 and is available
+The CRAN version of r4ss was updated on 26 May 2022 and is available
 via
 
 ```S
