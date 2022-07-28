@@ -14,7 +14,7 @@ ss3file <- file.path(dirname(ctlfile), "ss.exe")
 pars <- SS_parlines(ctlfile = ctlfile)
 
 ###############################################################################
-# test r4ss functions used by SS_profile
+# test r4ss functions used by profile
 ###############################################################################
 test_that(
   "blocks_per_pattern not in read pars",

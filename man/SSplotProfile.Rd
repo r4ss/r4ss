@@ -174,14 +174,14 @@ component that contributes more than some minimum fraction of change in
 total.
 }
 \note{
-Someday the function \code{\link[=SS_profile]{SS_profile()}} will be improved and
+Someday the function \code{\link[=profile]{profile()}} will be improved and
 made to work directly with this plotting function, but they don't yet work
-well together. Thus, even if \code{\link[=SS_profile]{SS_profile()}} is used, the output
+well together. Thus, even if \code{\link[=profile]{profile()}} is used, the output
 should be read using \code{\link[=SSgetoutput]{SSgetoutput()}} or by multiple calls to
 \code{\link[=SS_output]{SS_output()}}.
 }
 \seealso{
-\code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=SS_profile]{SS_profile()}},
+\code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=profile]{profile()}},
 \code{\link[=SS_output]{SS_output()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
 }
 \author{

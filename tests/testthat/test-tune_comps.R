@@ -1,4 +1,4 @@
-context("Test the ss_tune_comps function")
+context("Test the tune_comps function")
 # note: to get these to run, please put an ss exe named "ss.exe" in
 # inst/extdata/simple_small . Otherwise, most of the tests will be skipped.
 
@@ -25,12 +25,12 @@ test_that("get_last_phase works", {
   expect_true(last_phase == 4) # based on last known value.
 })
 
-test_that(" SS_tune_comps() works when just want to return the Francis table", {
+test_that(" tune_comps() works when just want to return the Francis table", {
   replist <- suppressWarnings(SS_output(
     dir = file.path(runs_path, "simple_small"),
     verbose = FALSE, hidewarn = TRUE, printstats = FALSE
   ))
-  test <- SS_tune_comps(
+  test <- tune_comps(
     replist = replist, option = "Francis",
     niters_tuning = 0,
     dir = file.path(runs_path, "simple_small"),
@@ -63,12 +63,12 @@ test_that(" SS_tune_comps() works when just want to return the Francis table", {
 })
 
 
-test_that("SS_tune_comps() works with francis", {
+test_that("tune_comps() works with francis", {
   skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
     (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
-  test <- SS_tune_comps(
+  test <- tune_comps(
     replist = NULL, fleets = "all",
     option = "Francis", niters_tuning = 1,
     init_run = FALSE, dir = file.path(runs_path, "simple_small"),
@@ -78,12 +78,12 @@ test_that("SS_tune_comps() works with francis", {
   expect_length(test, 2)
 })
 
-test_that("SS_tune_comps() works with MI and up tuning", {
+test_that("tune_comps() works with MI and up tuning", {
   skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
     (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
-  test <- SS_tune_comps(
+  test <- tune_comps(
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 1,
     init_run = FALSE, dir = file.path(runs_path, "simple_small"),
@@ -93,12 +93,12 @@ test_that("SS_tune_comps() works with MI and up tuning", {
   expect_length(test, 2)
 })
 
-test_that("SS_tune_comps() works with DM", {
+test_that("tune_comps() works with DM", {
   skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
     (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
-  test <- SS_tune_comps(
+  test <- tune_comps(
     replist = NULL, fleets = "all",
     option = "DM", niters_tuning = 1,
     init_run = FALSE,
@@ -120,12 +120,12 @@ test_that("SS_tune_comps() works with DM", {
   expect_null(ctl[["Variance_adjustment_list"]])
 })
 
-test_that("SS_tune_comps() works with none", {
+test_that("tune_comps() works with none", {
   skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
     (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
-  test <- SS_tune_comps(
+  test <- tune_comps(
     option = "none",
     dir = file.path(runs_path, "simple_small"),
     verbose = FALSE
@@ -135,12 +135,12 @@ test_that("SS_tune_comps() works with none", {
   expect_true(length(grep("MI", colnames(test))) > 0)
 })
 
-test_that("SS_tune_comps() works with multiple iterations", {
+test_that("tune_comps() works with multiple iterations", {
   skip_if((!file.exists(file.path(runs_path, "simple_small", "ss"))) &
     (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
-  test <- SS_tune_comps(
+  test <- tune_comps(
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 2,
     init_run = FALSE, dir = file.path(runs_path, "simple_small"),

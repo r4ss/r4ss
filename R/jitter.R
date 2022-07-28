@@ -1,4 +1,21 @@
-#' Iteratively apply the jitter option in SS
+#' Deprecated function to run jitters, renamed to jitter()
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' SS_RunJitter() has been renamed as [jitter()]. See
+#' https://github.com/r4ss/r4ss/issues/723 for more details.
+#' 
+#' @author Ian G. Taylor
+#' @export
+#' @seealso [jitter()]
+SS_RunJitter <-
+  function() {
+    lifecycle::deprecate_stop(when = "4.6.1", 
+                              what = "SS_RunJitter()", 
+                              with = "jitter()")
+  }
+  
+#' Iteratively run Stock Synthesis with jittered starting values
 #'
 #' Iteratively run a Stock Synthesis model with different jittered starting
 #' parameter values based on the jitter fraction. Output files are renamed
@@ -25,7 +42,8 @@
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #'
-#' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
+#' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor, 
+#' Kathryn L. Doering
 #'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
@@ -34,7 +52,7 @@
 #' #### Run jitter from par file with arbitrary, but common, choice of 0.1
 #' modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE), 1)
 #' numjitter <- 25
-#' jit.likes <- SS_RunJitter(
+#' jit.likes <- jitter(
 #'   dir = modeldir, Njitter = numjitter,
 #'   jitter_fraction = 0.1, init_value_src = 1
 #' )
@@ -50,7 +68,7 @@
 #' profilesummary[["pars"]]
 #' }
 #'
-SS_RunJitter <- function(dir = getwd(),
+jitter <- function(dir = getwd(),
                          mydir = lifecycle::deprecated(),
                          Intern = lifecycle::deprecated(),
                          Njitter,
@@ -65,14 +83,14 @@ SS_RunJitter <- function(dir = getwd(),
   if (lifecycle::is_present(Intern)) {
     lifecycle::deprecate_warn(
       when = "1.45.1",
-      what = "SS_RunJitter(Intern)",
+      what = "jitter(Intern)",
       details = "Please use 'show_in_console' instead"
     )
   }
   if (lifecycle::is_present(mydir)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",
-      what = "SS_RunJitter(mydir)",
+      what = "jitter(mydir)",
       details = "Please use 'dir' instead"
     )
     dir <- mydir
@@ -91,7 +109,7 @@ SS_RunJitter <- function(dir = getwd(),
     if (!file.exists("Report.sso")) {
       message(
         "Copy output files from a converged run into\n",
-        dir, "\nprior to running SS_RunJitter to enable easier comparisons."
+        dir, "\nprior to running jitter to enable easier comparisons."
       )
     }
     message("Checking starter file")

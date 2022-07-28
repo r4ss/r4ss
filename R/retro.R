@@ -1,4 +1,21 @@
-#' Run retrospective analyses
+#' Deprecated function to run a retrospective analyses, renamed to retro()
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' SS_doRetro() has been renamed as [retro()]. See
+#' https://github.com/r4ss/r4ss/issues/723 for more details.
+#' 
+#' @author Ian G. Taylor
+#' @export
+#' @seealso [retro()]
+SS_doRetro <-
+  function() {
+    lifecycle::deprecate_stop(when = "4.6.1", 
+                              what = "SS_doRetro()", 
+                              with = "retro()")
+  }
+  
+#' Run a retrospective analyses
 #'
 #' Do retrospective analyses by creating new directories, copying model files,
 #' and iteratively changing the starter file to set the number of years of data
@@ -27,7 +44,7 @@
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #'
-#' @author Ian G. Taylor, James T. Thorson
+#' @author Ian G. Taylor, James T. Thorson, Kathryn L. Doering
 #' @export
 #' @seealso [SSgetoutput()]
 #' @examples
@@ -37,7 +54,7 @@
 #' mydir <- "C:/Simple"
 #'
 #' ## retrospective analyses
-#' SS_doRetro(
+#' retro(
 #'   dir = mydir,
 #'   years = 0:-5
 #' )
@@ -53,7 +70,7 @@
 #' )
 #' }
 #'
-SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
+retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
                        oldsubdir = "", newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
                        RemoveBlocks = FALSE, verbose = FALSE, exe = "ss", ...) {
@@ -62,7 +79,7 @@ SS_doRetro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
   if (lifecycle::is_present(masterdir)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",
-      what = "SS_doRetro(masterdir)",
+      what = "retro(masterdir)",
       details = "Please use 'dir' instead"
     )
     dir <- masterdir

@@ -29,14 +29,14 @@ test_that("check_exe() fails or succeeds as expected", {
   expect_equal(check_exe_results[["path"]], path_simple_small)
 })
 
-test_that("SS_doRetro() runs on simple_small model", {
+test_that("retro() runs on simple_small model", {
   # skip if no executable in model path
   skip_if((!file.exists(file.path(path_simple_small, "ss3"))) &
     (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
   message = "skipping test that requires SS executable"
   )
-  SS_doRetro(
+  retro(
     dir = path_simple_small,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2,
     show_in_console = FALSE
@@ -74,7 +74,7 @@ test_that("SS_doRetro() runs on simple_small model", {
 })
 
 
-test_that("SS_RunJitter runs on simple_small model", {
+test_that("jitter runs on simple_small model", {
   # skip if no executable in model path
   skipexe <- (!file.exists(file.path(path_simple_small, "ss3"))) &
     (!file.exists(file.path(path_simple_small, "ss"))) &
@@ -92,7 +92,7 @@ test_that("SS_RunJitter runs on simple_small model", {
   # run jitters
   if (skipexe) {
     # error expected when no exe found
-    expect_error(SS_RunJitter(
+    expect_error(jitter(
       dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
       printlikes = FALSE, verbose = TRUE,
     ))
@@ -100,7 +100,7 @@ test_that("SS_RunJitter runs on simple_small model", {
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
     expect_equal(starter$jitter_fraction, 0)
   } else {
-    likesaved <- SS_RunJitter(
+    likesaved <- jitter(
       dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
       printlikes = FALSE, verbose = TRUE, show_in_console = FALSE
     )
@@ -140,7 +140,7 @@ test_that("profile functions run on simple_small model", {
   # write modified starter file
   SS_writestarter(starter, dir = dir.prof, overwrite = TRUE)
   # run profile
-  prof.table <- SS_profile(
+  prof.table <- profile(
     dir = dir.prof,
     oldctlfile = "control.ss",
     string = "R0", profilevec = c(8.5, 9)

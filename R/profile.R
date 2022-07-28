@@ -1,6 +1,24 @@
+#' Deprecated function to run a likelihood profile, renamed to profile().
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' SS_profile() has been renamed as [profile()]. See
+#' https://github.com/r4ss/r4ss/issues/723 for more details.
+#' 
+#' @author Ian G. Taylor
+#' @export
+#' @seealso [profile()]
+SS_profile <-
+  function() {
+    lifecycle::deprecate_stop(when = "4.6.1", 
+                              what = "SS_profile()", 
+                              with = "profile()")
+  }
+  
 #' Run a likelihood profile in Stock Synthesis.
 #'
-#' Iteratively changes the control file using SS_changepars.
+#' Iteratively changes the control file for the chosen parameter. This
+#' function was formerly called `SS_profile()`.
 #'
 #' @template dir
 #' @param oldctlfile Source control file. Default = "control.ss_new"
@@ -48,10 +66,11 @@
 #'
 #' Also, someday this function will be improved to work directly with the
 #' plotting function [SSplotProfile()], but they don't yet work well
-#' together. Thus, even if [SS_profile()] is used, the output should
+#' together. Thus, even if [profile()] is used, the output should
 #' be read using [SSgetoutput()] or by multiple calls to
 #' [SS_output()] before sending to [SSplotProfile()].
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson, 
+#' Chantel R. Wetzel, James T. Thorson
 #' @export
 #' @seealso [SSplotProfile()], [SSgetoutput()],
 #' [SS_changepars()], [SS_parlines()]
@@ -76,8 +95,8 @@
 #' h.vec <- seq(0.3, 0.9, .1)
 #' Nprofile <- length(h.vec)
 #'
-#' # run SS_profile command
-#' profile <- SS_profile(
+#' # run profile command
+#' profile <- profile(
 #'   dir = mydir, # directory
 #'   # "NatM" is a subset of one of the
 #'   # parameter labels in control.ss_new
@@ -133,8 +152,8 @@
 #' ## 5   0.6 0.50
 #' ## 6   0.2 0.75
 #'
-#' # run SS_profile command
-#' profile <- SS_profile(
+#' # run profile command
+#' profile <- profile(
 #'   dir = dir_profile_SR, # directory
 #'   oldctlfile = "control.ss_new",
 #'   newctlfile = "control_modified.ss",
@@ -165,7 +184,7 @@
 #' )
 #' }
 #'
-SS_profile <-
+profile <-
   function(dir,
            oldctlfile = "control.ss_new",
            masterctlfile = lifecycle::deprecated(),
@@ -194,7 +213,7 @@ SS_profile <-
     if (lifecycle::is_present(masterctlfile)) {
       lifecycle::deprecate_warn(
         when = "1.46.0",
-        what = "SS_profile(masterctlfile)",
+        what = "profile(masterctlfile)",
         details = "Please use 'oldctlfile' instead"
       )
       oldctlfile <- masterctlfile
@@ -418,7 +437,7 @@ SS_profile <-
           }
           # add new header
           note <- c(
-            paste("# New par file created by SS_profile with the value on line number", linenum),
+            paste("# New par file created by profile with the value on line number", linenum),
             paste("# changed from", parval, "to", profilevec[i])
           )
           par <- c(par, "#", note)

@@ -61,7 +61,7 @@ examine retrospective patterns in estimation of recruitment deviations.
 \examples{
 \dontrun{
 # run retrospective analysis
-SS_doRetro(olddir = "2013hake_12", years = 0:-10)
+retro(olddir = "2013hake_12", years = 0:-10)
 # read in output
 retroModels <- SSgetoutput(dirvec = paste("retrospectives/retro", -10:0, sep = ""))
 # summarize output
