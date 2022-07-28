@@ -1,4 +1,4 @@
-# r4ss 1.46.1 (XX July 2022)
+# r4ss 1.46.1 (29 July 2022)
 * Major revamp of all functions that run the Stock Synthesis executable
   https://github.com/r4ss/r4ss/pull/722
   * Functions that run the executable have been renamed:
