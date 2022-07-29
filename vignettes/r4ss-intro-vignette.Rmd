@@ -1,6 +1,6 @@
 ---
 title: "Introduction to r4ss"
-author: "Ian Taylor and Kathryn Doering"
+author: "Ian Taylor and Kathryn L. Doering"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -299,10 +299,10 @@ document changes to models.
 
 While stock assessment processes differ among regions, some modeling
 workflows and diagnostics are commonly used. Within r4ss, there are
-functions to perform a retrospective (`SS_doRetro()`), jitter the
+functions to perform a retrospective (`retro()`), jitter the
 starting values and reoptimize the stock assessment model a number of
 times to check for local minima (`SS_run_jitter()`) and tuning
-composition data (`SS_tune_comps()`).
+composition data (`tune_comps()`).
 
 Additional model diagnostics for Stock Synthesis models are available as
 part of the [ss3diags](https://github.com/jabbamodel/ss3diags) package.
@@ -319,7 +319,7 @@ more on the theory and details behind retrospective analyses, see
 [Hurtado-Ferro et al. 2015](https://doi.org/10.1093/icesjms/fsu198) and
 [Legault 2020](https://doi.org/10.1093/icesjms/fsaa184).
 
-The function `SS_doRetro()` can be used to run retrospective analyses
+The function `retro()` can be used to run retrospective analyses
 starting from an existing Stock Synthesis model. Note that it is safest
 to create a copy of your original Stock Synthesis model that the
 retrospective is run on, just in case there are problems with the run.
@@ -332,7 +332,7 @@ retro_dir <-"retro_dir"
 copy_SS_inputs(dir.old = mod_path, dir.new = retro_dir) 
 
 # run the retrospective analyses
-SS_doRetro(masterdir = retro_dir, 
+retro(masterdir = retro_dir, 
            oldsubdir = "", 
            newsubdir = "retrospectives", 
            years = 0:-5)
@@ -366,7 +366,7 @@ rho_output <- SSmohnsrho(summaryoutput = retroSummary,
 
 Another commonly used diagnostic with Stock Synthesis models is
 "jittering". Model initial values are changed randomly (by some
-fraction) and the model is reoptimized. The `SS_RunJitter()` function
+fraction) and the model is reoptimized. The `jitter()` function
 performs this routine for the number of times specified by the user. For
 a stock Synthesis model in a folder called `my_model` that also contains
 a copy of the stock synthesis executable named ss (or ss.exe on
@@ -379,7 +379,7 @@ jitter_dir <-"retro_dir"
 # copy over the stock synthesis model files to the new directory
 copy_SS_inputs(dir.old = mod_path, dir.new = jitter_dir) 
 # run the jitters
-jitter_loglike <- SS_RunJitter(
+jitter_loglike <- jitter(
   mydir = jitter_dir,
   model = "ss", # name of the stock synthesis exe in jitter_dir
   Njitter = 100,
@@ -387,7 +387,7 @@ jitter_loglike <- SS_RunJitter(
   jitter_fraction = 0.1 # a typically used jitter fraction
 )
 ```
-The output from `SS_RunJitter()` is saved in `jitter_loglike`, which is
+The output from `jitter()` is saved in `jitter_loglike`, which is
 a table of the different negative log likelihoods produced from
 jittering. If there are any negative log likelihoods smaller than the
 original model's log likelihood, this indicates that the original
@@ -413,7 +413,7 @@ directly in the original model.
 
 Because tuning is commonly used with Stock Synthesis models, and users
 may be interested in exploring the same model, but  using different
-tuning methods, `SS_tune_comps()` can start from the same model and
+tuning methods, `tune_comps()` can start from the same model and
 transform it into different tuning methods.
 
 As an example, we will illustrate how to run Francis tuning on an
@@ -438,12 +438,12 @@ to = file.path(mod_path, "CompReport.sso")
 )
 ```
 
-The following call to `SS_tune_comps()` runs Francis weighting for 1
+The following call to `tune_comps()` runs Francis weighting for 1
 iteration and allows upweighting. Assume that an executable called
 "ss or ss.exe" is available in the mod_path folder.
  
 ```{r, eval=FALSE}
-tune_info <- SS_tune_comps(
+tune_info <- tune_comps(
   option = "Francis",
   niters_tuning = 1,
   dir = mod_path,
@@ -457,7 +457,7 @@ tune_info
 
 Now, suppose we wanted to run the same model, but using
 Dirichlet-multinomial parameters to weight. The model can be copied over
-to a new folder, then the `SS_tune_comps()` function could be used to
+to a new folder, then the `tune_comps()` function could be used to
 add Dirichlet-multinomial parameters (1 for each fleet with composition
 data and for each type of composition data) and re-run the model.
 
@@ -480,7 +480,7 @@ to = file.path(mod_path_dm, "CompReport.sso")
 # Add Dirichlet-multinomial parameters and rerun. The function will 
 # automatically remove the MI weighting and add in the DM parameters.
 # Use extras = "-nohess" when running model to speed up run.
-DM_parm_info <- SS_tune_comps(
+DM_parm_info <- tune_comps(
   option = "DM",
   niters_tuning = 1, # must be 1 or greater to run, through DM is not iterative
   dir = mod_path_dm,
@@ -492,6 +492,6 @@ DM_parm_info <- SS_tune_comps(
 DM_parm_info[["tuning_table_list"]]
 ```
 
-There are many options in the `SS_tune_comps()` function; please see the
-documentation (`?SS_tune_comps` in the R console) for more details and
+There are many options in the `tune_comps()` function; please see the
+documentation (`?tune_comps` in the R console) for more details and
 examples.

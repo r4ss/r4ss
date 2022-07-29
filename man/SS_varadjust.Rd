@@ -64,7 +64,7 @@ Function has not been fully tested yet
 replist <- SS_output(dir = "c:/model/")
 
 # get new variance adjustments (
-varadjust <- SS_tune_comps(replist, option = "Francis")
+varadjust <- tune_comps(replist, option = "Francis")
 print(varadjust)
 
 # write new table to file
@@ -76,7 +76,7 @@ SS_varadjust(
 
 }
 \seealso{
-\code{\link[=SS_tune_comps]{SS_tune_comps()}}, \code{\link[=SS_parlines]{SS_parlines()}}, \code{\link[=SS_changepars]{SS_changepars()}}
+\code{\link[=tune_comps]{tune_comps()}}, \code{\link[=SS_parlines]{SS_parlines()}}, \code{\link[=SS_changepars]{SS_changepars()}}
 }
 \author{
 Ian G. Taylor, Gwladys I. Lambert

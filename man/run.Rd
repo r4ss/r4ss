@@ -74,9 +74,15 @@ r4ss::run(dir = dir)
 
 }
 \seealso{
-\code{\link[=copy_SS_inputs]{copy_SS_inputs()}},
-\code{\link[=populate_multiple_folders]{populate_multiple_folders()}}
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{jitter}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{profile}()},
+\code{\link{retro}()},
+\code{\link{tune_comps}()}
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering
 }
+\concept{run functions}

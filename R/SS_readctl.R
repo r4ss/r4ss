@@ -1,9 +1,10 @@
 #' Read control file from SS
 #'
-#' Read control file from Stock Synthesis (SS) into R as a list object.
-#' This function acts as a wrapper for version-specific SS_readctl_ functions.
-#' For example, if the control file was written using SS 3.24,
-#' then `SS_readctl` will call [SS_readctl_3.24]. Input arguments that do not
+#' Read control file from Stock Synthesis (SS3) into R as a list object.
+#' This function acts as a wrapper for version-specific `SS_readctl_` functions.
+#' But all version-specific functions prior to 3.30 have been
+#' deprecated, so this function primarily calls [SS_readctl_3.30()]. 
+#' Input arguments that do not
 #' pertain to the version of your control file can be left at their
 #' default values.
 #'
@@ -47,13 +48,7 @@
 #' @md
 #' @return
 #' A list structure where each element is a section of the control file.
-#' @seealso
-#' See the following for version-specific SS_readctl functions:
-#' `r ls("package:r4ss", pattern = "SS_readctl_")`.
-#' The returned list structure can be written back to the disk using
-#' [r4ss::SS_writectl].\cr
-#' See the following for other `SS_read` functions:
-#' `r ls("package:r4ss", pattern = "SS_read[a-z]+$")`.\cr
+#' @family read/write functions
 #' @examples
 #' # Read in the 'simple' example SS model stored in r4ss
 #' # Find the directory

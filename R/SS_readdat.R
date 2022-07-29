@@ -1,15 +1,13 @@
 #' read Stock Synthesis data file
 #'
 #' Read Stock Synthesis data file into list object in R. This function is a
-#' wrapper which calls SS_readdat_2.00, SS_readdat_3.00, SS_readdat_3.24, or SS_readdat_3.30
-#' (and potentially additional functions in the future). This setup allows those
-#' functions to be cleaner (if somewhat redundant) than a single function that
-#' attempts to do everything. Returned datlist is mostly consistent across versions.
-#'
+#' wrapper which calls SS_readdat_3.30 (previously additional functions,
+#' but they have been deprecated).
 #'
 #' @template file
 #' @param version SS version number.
-#'  Currently "2.00", "3.00", "3.24" or "3.30" are supported,
+#'  Currently "2.00", "3.00", "3.24" or "3.30" are supported, but all
+#'  versions prior to "3.30" have been deprecated.
 #'  either as character or numeric values (noting that numeric 3.30  = 3.3). If
 #'  version is NULL, the version (3.24 or 3.30) will be looked for on the first
 #'  line of the file.
@@ -22,12 +20,7 @@
 #' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
 #' Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
-#' @seealso [SS_readdat_2.00()], [SS_readdat_3.00()],
-#' [SS_readdat_3.24()], [SS_readdat_3.30()],
-#' [SS_readctl()], [SS_readctl_3.24()]
-#' [SS_readstarter()], [SS_readforecast()],
-#' [SS_writestarter()],
-#' [SS_writeforecast()], [SS_writedat()]
+#' @family read/write functions
 
 SS_readdat <- function(file,
                        version = "3.30",
@@ -45,7 +38,7 @@ SS_readdat <- function(file,
     lifecycle::deprecate_warn(
       when = "1.45.0",
       what = "SS_readdat(echoall)",
-      details = "Please use verbose = TRUE instead"
+      with = "SS_readdat(verbose)"
     )
   }
   nver <- as.numeric(substring(version, 1, 4))

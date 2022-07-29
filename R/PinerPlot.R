@@ -72,8 +72,10 @@
 #' figure.
 #' @references Kevin Piner says that he's not the originator of this idea so
 #' Athol Whitten is going to add a reference here.
-#' @author Ian Taylor, Kevin Piner, Jim Thorson
+#' @author Ian G. Taylor, Kevin R. Piner, James T. Thorson
 #' @export
+#' @family profile functions
+
 PinerPlot <-
   function(summaryoutput,
            plot = TRUE, print = FALSE,

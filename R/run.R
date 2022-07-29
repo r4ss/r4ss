@@ -36,8 +36,7 @@
 #'
 #' @author Ian G. Taylor, Kathryn L. Doering
 #' @export
-#' @seealso [copy_SS_inputs()],
-#' [populate_multiple_folders()]
+#' @family run functions
 #' @examples
 #' \dontrun{
 #' dir <- file.path(system.file("extdata", package = "r4ss"), "simple_small")

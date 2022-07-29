@@ -177,6 +177,12 @@ but the name seems to have stuck.
 Kevin Piner says that he's not the originator of this idea so
 Athol Whitten is going to add a reference here.
 }
-\author{
-Ian Taylor, Kevin Piner, Jim Thorson
+\seealso{
+Other profile functions: 
+\code{\link{SSplotProfile}()},
+\code{\link{profile}()}
 }
+\author{
+Ian G. Taylor, Kevin R. Piner, James T. Thorson
+}
+\concept{profile functions}

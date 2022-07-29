@@ -36,17 +36,22 @@ to the screen.}
 \description{
 Write Stock Synthesis data file from list object in R which was probably
 created using \code{\link[=SS_readdat]{SS_readdat()}}. This function is a
-wrapper which calls either SS_writedat_3.24 or SS_writedat_3.30
-(and potentially additional functions in the future). This setup allows those
-functions to be cleaner (if somewhat redundant) than a single function that
-attempts to do everything.
+wrapper which calls either SS_writedat_3.30()(previously also
+SS_writedat_3.24(), but that function has been deprecated).
 }
 \seealso{
-\code{\link[=SS_writedat_3.24]{SS_writedat_3.24()}}, \code{\link[=SS_writedat_3.30]{SS_writedat_3.30()}},
-\code{\link[=SS_readdat]{SS_readdat()}},
-\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_writestarter]{SS_writestarter()}},
-\code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_writeforecast]{SS_writeforecast()}}
+Other read/write functions: 
+\code{\link{SS_readctl}()},
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_readstarter}()},
+\code{\link{SS_read}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()},
+\code{\link{SS_write}()}
 }
 \author{
 Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 }
+\concept{read/write functions}

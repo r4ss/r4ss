@@ -18,7 +18,8 @@ SS_readdat(
 See the formal arguments for a possible default filename.}
 
 \item{version}{SS version number.
-Currently "2.00", "3.00", "3.24" or "3.30" are supported,
+Currently "2.00", "3.00", "3.24" or "3.30" are supported, but all
+versions prior to "3.30" have been deprecated.
 either as character or numeric values (noting that numeric 3.30  = 3.3). If
 version is NULL, the version (3.24 or 3.30) will be looked for on the first
 line of the file.}
@@ -35,20 +36,23 @@ will read input data, (equivalent to section=1).}
 }
 \description{
 Read Stock Synthesis data file into list object in R. This function is a
-wrapper which calls SS_readdat_2.00, SS_readdat_3.00, SS_readdat_3.24, or SS_readdat_3.30
-(and potentially additional functions in the future). This setup allows those
-functions to be cleaner (if somewhat redundant) than a single function that
-attempts to do everything. Returned datlist is mostly consistent across versions.
+wrapper which calls SS_readdat_3.30 (previously additional functions,
+but they have been deprecated).
 }
 \seealso{
-\code{\link[=SS_readdat_2.00]{SS_readdat_2.00()}}, \code{\link[=SS_readdat_3.00]{SS_readdat_3.00()}},
-\code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}}, \code{\link[=SS_readdat_3.30]{SS_readdat_3.30()}},
-\code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}}
-\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
-\code{\link[=SS_writestarter]{SS_writestarter()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
+Other read/write functions: 
+\code{\link{SS_readctl}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_readstarter}()},
+\code{\link{SS_read}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()},
+\code{\link{SS_write}()}
 }
 \author{
 Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
 Chantel R. Wetzel, Kathryn L. Doering, Nathan R. Vaughan
 }
+\concept{read/write functions}

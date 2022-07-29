@@ -18,9 +18,9 @@
 #' @template verbose
 #' @return Returns table of results indicating which directories were
 #' successfully populated with the model input files and/or executables
-#' @author Ian Taylor
+#' @author Ian G. Taylor
 #' @export
-#' @seealso [copy_SS_inputs()]
+#' @family run functions
 #' @examples
 #' \dontrun{
 #' populate_multiple_folders(

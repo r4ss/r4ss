@@ -19,8 +19,9 @@
 #' @param dir.exe Path to executable to copy instead of any in dir.old
 #' @template verbose
 #' @return Logical indicating whether all input files were copied successfully.
-#' @author Ian Taylor
+#' @author Ian G. Taylor
 #' @export
+#' @family run functions
 #' @examples
 #' \dontrun{
 #' copy_SS_inputs(

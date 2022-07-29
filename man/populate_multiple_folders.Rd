@@ -60,8 +60,15 @@ populate_multiple_folders(
 
 }
 \seealso{
-\code{\link[=copy_SS_inputs]{copy_SS_inputs()}}
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{jitter}()},
+\code{\link{profile}()},
+\code{\link{retro}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
 }
 \author{
-Ian Taylor
+Ian G. Taylor
 }
+\concept{run functions}

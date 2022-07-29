@@ -14,9 +14,8 @@
 #' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
-#' @seealso [SS_readstarter()], [SS_readforecast()],
-#' [SS_readdat()],
-#' [SS_writestarter()], [SS_writedat()]
+#' @family read/write functions
+
 SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
                              writeAll = FALSE, overwrite = FALSE, verbose = TRUE) {
   # function to write Stock Synthesis forecast files

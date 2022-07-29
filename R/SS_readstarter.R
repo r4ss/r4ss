@@ -19,12 +19,7 @@
 #' starter_list[["datfile"]] == "simple_data.ss"
 #' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 #' @export
-#' @seealso
-#' * [SS_readforecast()],
-#' * [SS_readdat()],
-#' * [SS_writestarter()],
-#' * [SS_writeforecast()],
-#' * [SS_writedat()]
+#' @family read/write functions
 SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
     message("running SS_readstarter")

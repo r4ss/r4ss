@@ -4,7 +4,7 @@
 #' Current initial value, lower and upper bounds, and phase can be modified,
 #' but function could be expanded to control other columns.
 #' Depends on [SS_parlines()].
-#' Used by [SS_profile()] and the \pkg{ss3sim} package.
+#' Used by [profile()] and the \pkg{ss3sim} package.
 #'
 #'
 #' @template dir
@@ -69,7 +69,7 @@
 #'   `linenums` or `strings`.
 #' @template verbose
 #' @author Ian Taylor, Christine Stawitz, Chantel Wetzel
-#' @seealso [SS_parlines()], [SS_profile()]
+#' @seealso [SS_parlines()], [profile()]
 #' @export
 #' @examples
 #' \dontrun{

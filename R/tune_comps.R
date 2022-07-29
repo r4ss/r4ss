@@ -1,3 +1,20 @@
+#' Deprecated function to tune composition data, renamed to tune_comps()
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' SS_tune_comps() has been renamed as [tune_comps()]. See
+#' https://github.com/r4ss/r4ss/issues/723 for more details.
+#' 
+#' @author Ian G. Taylor
+#' @export
+#' @seealso [tune_comps()]
+SS_tune_comps <-
+  function() {
+    lifecycle::deprecate_stop(when = "4.6.1", 
+                              what = "SS_tune_comps()", 
+                              with = "tune_comps()")
+  }
+  
 #' Calculate new tunings for length and age compositions and (re)run models
 #'
 #' Creates a table of values that can be copied into the SS control file
@@ -80,9 +97,10 @@
 #' (currently hardwired to go in the directory where the model was run
 #' and called "suggested_tunings.ss").
 #'
-#' @author Ian G. Taylor, Kathryn Doering
+#' @author Ian G. Taylor, Kathryn L. Doering
 #' @export
-#' @seealso [SSMethod.TA1.8()]
+#' @family tuning functions
+#' @family run functions
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 #' @examples
@@ -104,7 +122,7 @@
 #'   from = file.path(example_path, "CompReport.sso"),
 #'   to = file.path(mod_path, "CompReport.sso")
 #' )
-#' # Use the SS_tune_comps function----
+#' # Use the tune_comps function----
 #'
 #' # Examples where a model is not run ----
 #'
@@ -112,7 +130,7 @@
 #' # model in mod_path needs to already have been run with Stock Synthesis, so
 #' # that a report file is available.
 #'
-#' weight_table <- SS_tune_comps(
+#' weight_table <- tune_comps(
 #'   dir = mod_path,
 #'   option = "none",
 #'   verbose = FALSE
@@ -124,7 +142,7 @@
 #' # Get the Francis and MI tables, but with the Francis weights in the
 #' # New_Var_adj column. Note if option = "MI" were used, the output would be
 #' # the same except that the New_Var_adj column would contain the MI weights.
-#' weight_table_fran <- SS_tune_comps(
+#' weight_table_fran <- tune_comps(
 #'   dir = mod_path,
 #'   option = "Francis",
 #'   verbose = FALSE
@@ -134,7 +152,7 @@
 #' # Add Dirichlet-multinomial tuning parameters to the model,
 #' # without running it.
 #'
-#' DM_parm_info <- SS_tune_comps(
+#' DM_parm_info <- tune_comps(
 #'   option = "DM",
 #'   niters_tuning = 0, # 0 means the model will not be run.
 #'   dir = mod_path,
@@ -156,7 +174,7 @@
 #' # If the executable is not available, then the call will exit on error.
 #' # Note that the Dirichlet mulitnomial parameters will be removed, but any
 #' # previous tunings will be retained.
-#' tune_info <- SS_tune_comps(
+#' tune_info <- tune_comps(
 #'   option = "MI",
 #'   niters_tuning = 1,
 #'   dir = mod_path,
@@ -170,7 +188,7 @@
 #' # Add Dirichlet multinomial paramters and rerun. The function will
 #' # automatically remove the MI weighting and add in the DM parameters.
 #' # Use extras = "-nohess" when running model to speed up run.
-#' DM_parm_info <- SS_tune_comps(
+#' DM_parm_info <- tune_comps(
 #'   option = "DM",
 #'   niters_tuning = 1, # must be 1 or greater to run
 #'   dir = mod_path,
@@ -183,7 +201,7 @@
 #' # cleanup ----
 #' unlink(mod_path, recursive = TRUE)
 #' }
-SS_tune_comps <- function(replist = NULL, fleets = "all",
+tune_comps <- function(replist = NULL, fleets = "all",
                           option = c("Francis", "MI", "none", "DM"),
                           digits = 6, write = TRUE, niters_tuning = 0,
                           init_run = FALSE, dir = getwd(), exe = "ss",
@@ -196,8 +214,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   if (lifecycle::is_present(model)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",
-      what = "SS_tune_comps(model)",
-      details = "Please use 'exe' instead"
+      what = "tune_comps(model)",
+      with = "tune_comps(exe)"
     )
     exe <- model
   }
@@ -724,7 +742,7 @@ get_tuning_table <- function(replist, fleets,
 #' Get the highest phase used in the control file
 #'
 #' @param ctl A control file list read in using `r4ss::SS_readctl`.
-#' @author Kathryn Doering
+#' @author Kathryn L. Doering
 get_last_phase <- function(ctl) {
   # read all phases in ctl
   df_vec <- c(

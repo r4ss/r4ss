@@ -61,6 +61,16 @@ copy_SS_inputs(
 }
 
 }
-\author{
-Ian Taylor
+\seealso{
+Other run functions: 
+\code{\link{jitter}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{profile}()},
+\code{\link{retro}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
 }
+\author{
+Ian G. Taylor
+}
+\concept{run functions}
