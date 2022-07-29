@@ -4,17 +4,19 @@
 #' `r lifecycle::badge("deprecated")`
 #' SS_RunJitter() has been renamed as [jitter()]. See
 #' https://github.com/r4ss/r4ss/issues/723 for more details.
-#' 
+#'
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [jitter()]
 SS_RunJitter <-
   function() {
-    lifecycle::deprecate_stop(when = "1.46.1", 
-                              what = "SS_RunJitter()", 
-                              with = "jitter()")
+    lifecycle::deprecate_stop(
+      when = "1.46.1",
+      what = "SS_RunJitter()",
+      with = "jitter()"
+    )
   }
-  
+
 #' Iteratively run Stock Synthesis with jittered starting values
 #'
 #' Iteratively run a Stock Synthesis model with different jittered starting
@@ -42,7 +44,7 @@ SS_RunJitter <-
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #'
-#' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor, 
+#' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
 #' Kathryn L. Doering
 #'
 #' @return A vector of likelihoods for each jitter iteration.
@@ -70,15 +72,15 @@ SS_RunJitter <-
 #' }
 #'
 jitter <- function(dir = getwd(),
-                         mydir = lifecycle::deprecated(),
-                         Intern = lifecycle::deprecated(),
-                         Njitter,
-                         printlikes = TRUE,
-                         jitter_fraction = NULL,
-                         init_values_src = NULL,
-                         exe = "ss",
-                         verbose = FALSE,
-                         ...) {
+                   mydir = lifecycle::deprecated(),
+                   Intern = lifecycle::deprecated(),
+                   Njitter,
+                   printlikes = TRUE,
+                   jitter_fraction = NULL,
+                   init_values_src = NULL,
+                   exe = "ss",
+                   verbose = FALSE,
+                   ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
