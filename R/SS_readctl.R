@@ -3,7 +3,7 @@
 #' Read control file from Stock Synthesis (SS3) into R as a list object.
 #' This function acts as a wrapper for version-specific `SS_readctl_` functions.
 #' But all version-specific functions prior to 3.30 have been
-#' deprecated, so this function primarily calls [SS_readctl_3.30()]. 
+#' deprecated, so this function primarily calls [SS_readctl_3.30()].
 #' Input arguments that do not
 #' pertain to the version of your control file can be left at their
 #' default values.

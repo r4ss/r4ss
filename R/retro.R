@@ -4,17 +4,19 @@
 #' `r lifecycle::badge("deprecated")`
 #' SS_doRetro() has been renamed as [retro()]. See
 #' https://github.com/r4ss/r4ss/issues/723 for more details.
-#' 
+#'
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [retro()]
 SS_doRetro <-
   function() {
-    lifecycle::deprecate_stop(when = "4.6.1", 
-                              what = "SS_doRetro()", 
-                              with = "retro()")
+    lifecycle::deprecate_stop(
+      when = "4.6.1",
+      what = "SS_doRetro()",
+      with = "retro()"
+    )
   }
-  
+
 #' Run a retrospective analyses
 #'
 #' Do retrospective analyses by creating new directories, copying model files,
@@ -72,9 +74,9 @@ SS_doRetro <-
 #' }
 #'
 retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
-                       oldsubdir = "", newsubdir = "retrospectives",
-                       subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                       RemoveBlocks = FALSE, verbose = FALSE, exe = "ss", ...) {
+                  oldsubdir = "", newsubdir = "retrospectives",
+                  subdirstart = "retro", years = 0:-5, overwrite = TRUE,
+                  RemoveBlocks = FALSE, verbose = FALSE, exe = "ss", ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterdir)) {

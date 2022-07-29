@@ -10,7 +10,7 @@
 #' @template version
 #' @template overwrite
 #' @template verbose
-#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, 
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert,
 #' Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @family read/write functions
