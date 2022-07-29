@@ -4,17 +4,19 @@
 #' `r lifecycle::badge("deprecated")`
 #' SS_tune_comps() has been renamed as [tune_comps()]. See
 #' https://github.com/r4ss/r4ss/issues/723 for more details.
-#' 
+#'
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [tune_comps()]
 SS_tune_comps <-
   function() {
-    lifecycle::deprecate_stop(when = "4.6.1", 
-                              what = "SS_tune_comps()", 
-                              with = "tune_comps()")
+    lifecycle::deprecate_stop(
+      when = "4.6.1",
+      what = "SS_tune_comps()",
+      with = "tune_comps()"
+    )
   }
-  
+
 #' Calculate new tunings for length and age compositions and (re)run models
 #'
 #' Creates a table of values that can be copied into the SS control file
@@ -202,13 +204,13 @@ SS_tune_comps <-
 #' unlink(mod_path, recursive = TRUE)
 #' }
 tune_comps <- function(replist = NULL, fleets = "all",
-                          option = c("Francis", "MI", "none", "DM"),
-                          digits = 6, write = TRUE, niters_tuning = 0,
-                          init_run = FALSE, dir = getwd(), exe = "ss",
-                          model = lifecycle::deprecated(),
-                          extras = "",
-                          allow_up_tuning = FALSE,
-                          verbose = TRUE, ...) {
+                       option = c("Francis", "MI", "none", "DM"),
+                       digits = 6, write = TRUE, niters_tuning = 0,
+                       init_run = FALSE, dir = getwd(), exe = "ss",
+                       model = lifecycle::deprecated(),
+                       extras = "",
+                       allow_up_tuning = FALSE,
+                       verbose = TRUE, ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(model)) {

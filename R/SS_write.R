@@ -16,7 +16,7 @@
 #' @export
 #' @seealso [SS_read()] creates the list that is used by this function.
 #' @family read/write functions
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' # read inputlist to modify the data file
