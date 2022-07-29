@@ -33,7 +33,7 @@ download_models <- function(dir = file.path("inst", "extdata"),
         "https://github.com/nmfs-stock-synthesis/test-models/archive/",
         branch,
         ".zip"
-        ),
+      ),
       destfile = zip_file_path
     ),
     error = function(e) {
@@ -45,7 +45,7 @@ download_models <- function(dir = file.path("inst", "extdata"),
     }
   )
   list_files <- utils::unzip(list = TRUE, zipfile = zip_file_path)
-  save_files <- list_files[grep("/models/", list_files$Name, fixed = TRUE), ]
+  save_files <- list_files[grep("/models/", list_files[["Name"]], fixed = TRUE), ]
   utils::unzip(
     zipfile = zip_file_path, files = save_files[["Name"]],
     exdir = dir
