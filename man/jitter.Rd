@@ -85,7 +85,17 @@ profilesummary[["pars"]]
 }
 
 }
+\seealso{
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{profile}()},
+\code{\link{retro}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
+}
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
 Kathryn L. Doering
 }
+\concept{run functions}

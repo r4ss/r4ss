@@ -2011,7 +2011,7 @@ SSplotComps <-
             }
           } # end subplot 7
 
-          ### subplot 8: Chris Francis TA1.8 method for non-conditional data
+          ### subplot 8: R.I.C Chris Francis TA1.8 method for non-conditional data
           if (8 %in% subplots & kind %in% c("LEN", "SIZE", "AGE")) {
             # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
             kind2 <- tolower(kind)
@@ -2098,7 +2098,7 @@ SSplotComps <-
               dev.off() # close device if png
             } # end test for print to PNG option
           } # end subplot 8
-          ### subplot 9: Chris Francis TA1.8 method for conditional data
+          ### subplot 9: R.I.C Chris Francis TA1.8 method for conditional data
           if (9 %in% subplots & kind == "cond" & (f %in% condbase[["Fleet"]])) {
             if (plot) {
               SSMethod.Cond.TA1.8(

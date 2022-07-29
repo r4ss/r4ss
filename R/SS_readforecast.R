@@ -13,9 +13,7 @@
 #' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
-#' @seealso [SS_readstarter()], [SS_readdat()],
-#' [SS_writestarter()],
-#' [SS_writeforecast()], [SS_writedat()],
+#' @family read/write functions
 
 SS_readforecast <- function(file = "forecast.ss",
                             Nfleets = NULL,

@@ -2,21 +2,19 @@
 #'
 #' Write Stock Synthesis control file from list object in R which was probably
 #' created using [SS_readctl()]. This function is a
-#' wrapper which calls either SS_writectl_3.24 or SS_writectl_3.30
-#' (and potentially additional functions in the future).
+#' wrapper which calls SS_writectl_3.30() (previously also SS_writectl_3.24,
+#' but that function has been deprecated).
 #'
 #' @param ctllist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new control file.
 #' @template version
 #' @template overwrite
 #' @template verbose
-#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn L.
-#' Doering, Nathan R. Vaughan
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, 
+#' Kathryn L. Doering, Nathan R. Vaughan
 #' @export
-#' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
-#' [SS_readdat()],
-#' [SS_readstarter()], [SS_writestarter()],
-#' [SS_readforecast()], [SS_writeforecast()]
+#' @family read/write functions
+
 SS_writectl <- function(ctllist,
                         outfile,
                         version = "3.30",

@@ -2,11 +2,8 @@
 #'
 #' Write Stock Synthesis data file from list object in R which was probably
 #' created using [SS_readdat()]. This function is a
-#' wrapper which calls either SS_writedat_3.24 or SS_writedat_3.30
-#' (and potentially additional functions in the future). This setup allows those
-#' functions to be cleaner (if somewhat redundant) than a single function that
-#' attempts to do everything.
-#'
+#' wrapper which calls either SS_writedat_3.30()(previously also
+#' SS_writedat_3.24(), but that function has been deprecated).
 #'
 #' @param datlist List object created by [SS_readdat()]
 #' (or by [SS_readdat_3.24()] or [SS_readdat_3.24()])
@@ -18,12 +15,8 @@
 #' @template verbose
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 #' @export
-#' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
-#' [SS_readdat()],
-#' [SS_readstarter()], [SS_writestarter()],
-#' [SS_readforecast()], [SS_writeforecast()]
-#'
-#'
+#' @family read/write functions
+
 SS_writedat <- function(datlist,
                         outfile,
                         version = "3.30",

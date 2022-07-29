@@ -74,10 +74,11 @@
 #' well together. Thus, even if [profile()] is used, the output
 #' should be read using [SSgetoutput()] or by multiple calls to
 #' [SS_output()].
-#' @author Ian Taylor, Ian Stewart
+#' @author Ian G. Taylor, Ian J. Stewart
 #' @export
-#' @seealso [SSsummarize()], [profile()],
-#' [SS_output()], [SSgetoutput()]
+#' @seealso [SSsummarize()], [SSgetoutput()]
+#' @family profile functions
+
 SSplotProfile <-
   function(summaryoutput,
            plot = TRUE, print = FALSE,

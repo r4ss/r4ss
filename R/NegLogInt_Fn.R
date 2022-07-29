@@ -88,14 +88,14 @@ NegLogInt_Fn <- function(dir = getwd(),
     lifecycle::deprecate_warn(
       when = "1.45.1",
       what = "NegLogInt_Fn(Intern)",
-      details = "Please use 'show_in_console' instead"
+      with = "NegLogInt_Fn(show_in_console)"
     )
   }
   if (lifecycle::is_present(File)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",
       what = "NegLogInt_Fn(File)",
-      details = "Please use 'dir' instead"
+      with = "NegLogInt_Fn(dir)"
     )
     dir <- File
   }

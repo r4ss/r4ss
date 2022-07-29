@@ -60,9 +60,9 @@
 #' @param FullDiagOut Print full diagnostics?
 #' @param ShowVersionB Report the Version B value in addition to the default?
 #' @param add add to existing plot
-#' @author Chris Francis, Andre Punt, Ian Taylor
+#' @author R.I.C Chris Francis, Andre E. Punt, Ian G. Taylor
 #' @export
-#' @seealso [SSMethod.TA1.8()]
+#' @family tuning functions
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 #'

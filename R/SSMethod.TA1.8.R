@@ -65,9 +65,9 @@
 #' Can be set to FALSE in order to add plots form multiple calls to
 #' this function as separate panels in one larger figure.
 #' @param add add to existing plot
-#' @author Chris Francis, Andre Punt, Ian Taylor
+#' @author R.I.C Chris Francis, Andre E. Punt, Ian G. Taylor
 #' @export
-#' @seealso [SSMethod.Cond.TA1.8()]
+#' @family tuning functions
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Canadian Journal of
 #' Fisheries and Aquatic Sciences 68: 1124-1138.

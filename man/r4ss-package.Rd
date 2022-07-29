@@ -35,6 +35,7 @@ Authors:
   \item Allan C. Hicks
   \item Tommy M. Garrison
   \item Andre E. Punt
+  \item R.I.C. Chris Francis
   \item John R. Wallace
   \item Chantel R. Wetzel
   \item James T. Thorson

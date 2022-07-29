@@ -10,7 +10,7 @@
 #' @seealso [jitter()]
 SS_RunJitter <-
   function() {
-    lifecycle::deprecate_stop(when = "4.6.1", 
+    lifecycle::deprecate_stop(when = "1.46.1", 
                               what = "SS_RunJitter()", 
                               with = "jitter()")
   }
@@ -47,6 +47,7 @@ SS_RunJitter <-
 #'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
+#' @family run functions
 #' @examples
 #' \dontrun{
 #' #### Run jitter from par file with arbitrary, but common, choice of 0.1
@@ -84,14 +85,14 @@ jitter <- function(dir = getwd(),
     lifecycle::deprecate_warn(
       when = "1.45.1",
       what = "jitter(Intern)",
-      details = "Please use 'show_in_console' instead"
+      with = "Please use 'show_in_console' instead"
     )
   }
   if (lifecycle::is_present(mydir)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",
       what = "jitter(mydir)",
-      details = "Please use 'dir' instead"
+      with = "Please use 'dir' instead"
     )
     dir <- mydir
   }

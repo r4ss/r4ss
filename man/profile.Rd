@@ -222,10 +222,24 @@ contour(
 
 }
 \seealso{
-\code{\link[=SSplotProfile]{SSplotProfile()}}, \code{\link[=SSgetoutput]{SSgetoutput()}},
+\code{\link[=SSgetoutput]{SSgetoutput()}},
 \code{\link[=SS_changepars]{SS_changepars()}}, \code{\link[=SS_parlines]{SS_parlines()}}
+
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{jitter}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{retro}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
+
+Other profile functions: 
+\code{\link{PinerPlot}()},
+\code{\link{SSplotProfile}()}
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson,
 Chantel R. Wetzel, James T. Thorson
 }
+\concept{profile functions}
+\concept{run functions}

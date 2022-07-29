@@ -23,14 +23,14 @@ getADMBHessian <- function(hesfile = "admodel.hes",
     lifecycle::deprecate_warn(
       when = "1.46.0",
       what = "getADMBHessian(File)",
-      details = "Please use 'hesfile' instead"
+      with = "getADMBHessian(hesfile)"
     )
   }
   if (lifecycle::is_present(FileName)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",
       what = "getADMBHessian(FileName)",
-      details = "Please use 'hesfile' instead"
+      with = "getADMBHessian(hesfile)"
     )
     hesfile <- FileName
   }

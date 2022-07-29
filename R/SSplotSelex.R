@@ -137,7 +137,7 @@ SSplotSelex <-
       lifecycle::deprecate_warn(
         when = "1.45.1",
         what = "SSplotSelex(subplot)",
-        details = "Please use subplots instead. Assigning subplot to subplots."
+        with = "SSplotSelex(subplots)"
       )
       subplots <- subplot
     }

@@ -104,8 +104,11 @@ Punt, A.E. (2015). Some insights into data weighting in integrated stock assessm
 Fish. Res.
 }
 \seealso{
-\code{\link[=SSMethod.TA1.8]{SSMethod.TA1.8()}}
+Other tuning functions: 
+\code{\link{SSMethod.TA1.8}()},
+\code{\link{tune_comps}()}
 }
 \author{
-Chris Francis, Andre Punt, Ian Taylor
+R.I.C Chris Francis, Andre E. Punt, Ian G. Taylor
 }
+\concept{tuning functions}

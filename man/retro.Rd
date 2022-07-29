@@ -90,7 +90,16 @@ SSplotComparisons(retroSummary,
 }
 \seealso{
 \code{\link[=SSgetoutput]{SSgetoutput()}}
+
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{jitter}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{profile}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
 }
 \author{
 Ian G. Taylor, James T. Thorson, Kathryn L. Doering
 }
+\concept{run functions}

@@ -69,7 +69,7 @@ SSplotData <- function(replist,
     lifecycle::deprecate_warn(
       when = "1.45.1",
       what = "SSplotData(subplot)",
-      details = "Please use subplots instead. Assigning subplot to subplots."
+      with = "SSplotData(subplots)"
     )
     subplots <- subplot
   }

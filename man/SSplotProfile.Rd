@@ -181,9 +181,13 @@ should be read using \code{\link[=SSgetoutput]{SSgetoutput()}} or by multiple ca
 \code{\link[=SS_output]{SS_output()}}.
 }
 \seealso{
-\code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=profile]{profile()}},
-\code{\link[=SS_output]{SS_output()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
+\code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
+
+Other profile functions: 
+\code{\link{PinerPlot}()},
+\code{\link{profile}()}
 }
 \author{
-Ian Taylor, Ian Stewart
+Ian G. Taylor, Ian J. Stewart
 }
+\concept{profile functions}

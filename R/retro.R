@@ -47,6 +47,7 @@ SS_doRetro <-
 #' @author Ian G. Taylor, James T. Thorson, Kathryn L. Doering
 #' @export
 #' @seealso [SSgetoutput()]
+#' @family run functions
 #' @examples
 #' \dontrun{
 #' # note: don't run this in your main directory--make a copy in case something
@@ -80,7 +81,7 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
     lifecycle::deprecate_warn(
       when = "1.46.0",
       what = "retro(masterdir)",
-      details = "Please use 'dir' instead"
+      with = "retro(dir)"
     )
     dir <- masterdir
   }

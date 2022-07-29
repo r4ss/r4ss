@@ -99,7 +99,8 @@ SS_tune_comps <-
 #'
 #' @author Ian G. Taylor, Kathryn L. Doering
 #' @export
-#' @seealso [SSMethod.TA1.8()]
+#' @family tuning functions
+#' @family run functions
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 #' @examples
@@ -214,7 +215,7 @@ tune_comps <- function(replist = NULL, fleets = "all",
     lifecycle::deprecate_warn(
       when = "1.46.0",
       what = "tune_comps(model)",
-      details = "Please use 'exe' instead"
+      with = "tune_comps(exe)"
     )
     exe <- model
   }

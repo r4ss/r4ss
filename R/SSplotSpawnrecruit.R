@@ -83,7 +83,7 @@ SSplotSpawnrecruit <-
       lifecycle::deprecate_warn(
         when = "1.45.1",
         what = "SSplotSpawnrecruit(subplot)",
-        details = "Please use subplots instead. Assigning subplot to subplots."
+        with = "SSplotSpawnrecruit(subplots)"
       )
       subplots <- subplot
     }

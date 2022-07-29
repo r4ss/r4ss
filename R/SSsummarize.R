@@ -45,7 +45,7 @@ SSsummarize <- function(biglist,
     lifecycle::deprecate_warn(
       when = "1.45.0",
       what = "SSsummarize(selgender)",
-      details = "Please use selsex instead. Ability to use selgender will be dropped in next release."
+      with = "SSsummarize(selsex)"
     )
     selsex <- selgender
   }

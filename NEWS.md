@@ -3,13 +3,15 @@
   https://github.com/r4ss/r4ss/pull/722
   * Functions that run the executable have been renamed:
     https://github.com/r4ss/r4ss/issues/723:
-    * run_SS_models() -> [run()] (now has easier defaults and better
-      support for having the Stock Synthesis executable in your path)
-    * SS_profile() -> [profile()]
-    * SS_doRetro() -> [retro()]
-    * SS_RunJitter() -> [jitter()]
-    * SS_tune_comps()	-> [tune_comps()]
-  * Functions have more consistent inputs (e.g. always `dir` instead of `dir`,
+    * `run_SS_models()` -> `run()` (now has defaults which allow you to
+      simply call `run()` in the current working directory as well as
+      and better support for having the Stock Synthesis executable in
+      your path)
+    * `SS_profile()` -> `profile()`
+    * `SS_doRetro()` -> `retro()`
+    * `SS_RunJitter()` -> `jitter()`
+    * `SS_tune_comps()` -> `tune_comps()`
+  * Functions have more consistent inputs (e.g., always `dir` instead of
     `mydir`, `File`, or `masterdir`, and now defaulting to the current
     working directory) 
   * Input `show_in_console = FALSE` can be used with all these functions
