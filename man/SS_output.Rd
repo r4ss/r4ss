@@ -13,7 +13,7 @@ SS_output(
   forefile = "Forecast-report.sso",
   wtfile = "wtatage.ss_new",
   warnfile = "warning.sso",
-  ncols = NULL,
+  ncols = lifecycle::deprecated(),
   forecast = TRUE,
   warn = TRUE,
   covar = TRUE,
@@ -51,11 +51,7 @@ will end up in the right place, or an absolute path.}
 
 \item{warnfile}{Name of the file containing warnings.}
 
-\item{ncols}{The maximum number of columns in files being read in.  If this
-value is too big the function runs more slowly, too small and errors will
-occur.  A warning will be output to the R command line if the value is too
-small. It should be bigger than the maximum age + 10 and the number of
-years + 10. The default value is \code{NULL}, which finds the optimum width.}
+\item{ncols}{Deprecated. This value is now calculated automatically.}
 
 \item{forecast}{Read the forecast-report file?}
 

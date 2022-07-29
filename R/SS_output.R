@@ -18,11 +18,7 @@
 #' @param forefile Name of the forecast file.
 #' @param wtfile Name of the file containing weight at age data.
 #' @param warnfile Name of the file containing warnings.
-#' @param ncols The maximum number of columns in files being read in.  If this
-#' value is too big the function runs more slowly, too small and errors will
-#' occur.  A warning will be output to the R command line if the value is too
-#' small. It should be bigger than the maximum age + 10 and the number of
-#' years + 10. The default value is `NULL`, which finds the optimum width.
+#' @param ncols Deprecated. This value is now calculated automatically.
 #' @param forecast Read the forecast-report file?
 #' @param warn Read the Warning.sso file?
 #' @param covar Read covar.sso to get variance information and identify bad
@@ -70,7 +66,7 @@ SS_output <-
            forefile = "Forecast-report.sso",
            wtfile = "wtatage.ss_new",
            warnfile = "warning.sso",
-           ncols = NULL,
+           ncols = lifecycle::deprecated(),
            forecast = TRUE,
            warn = TRUE,
            covar = TRUE,
@@ -210,6 +206,15 @@ SS_output <-
         }
       }
       return(df)
+    }
+
+    # check inputs
+    if (lifecycle::is_present(ncols)) {
+      lifecycle::deprecate_warn(
+        when = "1.46.0",
+        what = "SS_output(ncols)",
+        details = "Input 'ncols' no longer needed."
+      )
     }
 
     # check to make sure the first input is in the corect format
@@ -412,9 +417,7 @@ SS_output <-
     }
     flush.console()
 
-    if (is.null(ncols)) {
-      ncols <- get_ncol(repfile)
-    }
+    ncols <- get_ncol(repfile)
     rawrep <- read.table(
       file = repfile, col.names = 1:ncols, fill = TRUE, quote = "",
       colClasses = "character", nrows = -1, comment.char = "",
@@ -825,11 +828,7 @@ SS_output <-
     if (comp) { # skip this stuff if no CompReport.sso file
       # read header section of file to get bin information
       # first, figure out how many columns are needed
-
-      # IGT 11-Sept-2020: temporarily hardwiring while I figure out how
-      #                   read.table works
-      ncols.compfile <- 300
-      # ncols.compfile <- get_ncol(compfile, skip = 3, nrows = 25)
+      ncols.compfile <- get_ncol(compfile, skip = 3)
 
       # now read table using the appropriate number of columns
       allbins <- read.table(
