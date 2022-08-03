@@ -15,8 +15,7 @@ run(
 )
 }
 \arguments{
-\item{dir}{Directory, or vector of directories, containing the
-model input files.}
+\item{dir}{Directory containing the model input files.}
 
 \item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can
@@ -42,10 +41,8 @@ show_in_console = FALSE)}
 to the screen.}
 }
 \value{
-Returns a table showing which directories had models run and which
-had errors like missing executable or Report.sso already present.
-The three possible messages are "model run failed", "ran model", and
-"unknown run status".
+Returns one of three messages:
+"model run failed", "ran model", and "unknown run status".
 }
 \description{
 The \code{run()} function checks for the executable via
