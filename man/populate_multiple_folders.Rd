@@ -2,7 +2,7 @@
 % Please edit documentation in R/populate_multiple_folders.R
 \name{populate_multiple_folders}
 \alias{populate_multiple_folders}
-\title{Populate multiple Stock Synthesis folders with input files}
+\title{Deprecated function to populate multiple folders with SS3 input files}
 \usage{
 populate_multiple_folders(
   outerdir.old = NULL,
@@ -45,7 +45,13 @@ Returns table of results indicating which directories were
 successfully populated with the model input files and/or executables
 }
 \description{
-Creates a set of multiple folders and populate each with SS input files
+This function has been deprecated to reduce code maintenance.
+Please use r4ss::copy_SS_inputs() along with the {purrr} package or
+other tools to populate multiple folders.
+}
+\details{
+This function
+creates a set of multiple folders and populate each with SS3 input files
 such as for the purpose of running a new version of SS for an existing
 set of test models.
 }
