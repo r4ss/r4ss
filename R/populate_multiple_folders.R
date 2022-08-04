@@ -1,11 +1,6 @@
-#' Deprecated function to populate multiple folders with SS3 input files
+#' Populate multiple Stock Synthesis folders with input files
 #'
-#' This function has been deprecated to reduce code maintenance. 
-#' Please use r4ss::copy_SS_inputs() along with the {purrr} package or
-#' other tools to populate multiple folders. 
-#' 
-#' This function
-#' creates a set of multiple folders and populate each with SS3 input files
+#' Creates a set of multiple folders and populate each with SS input files
 #' such as for the purpose of running a new version of SS for an existing
 #' set of test models.
 #'
@@ -44,15 +39,6 @@ populate_multiple_folders <- function(outerdir.old = NULL,
                                       exe.file = "ss.exe",
                                       exe.only = FALSE,
                                       verbose = TRUE) {
-  lifecycle::deprecate_warn(
-    when = "1.46.2",
-    what = "populate_multiple_folders()",
-    details = paste(
-      "This function has been deprecated.",
-      "Please use r4ss::copy_SS_inputs() along with {purrr} or other tools."
-    )
-  )
-
   # check to make sure the first input is in the correct format
   if (!is.character(outerdir.old) | length(outerdir.old) != 1) {
     stop("Input 'outerdir.old' should be a character string for a directory")
