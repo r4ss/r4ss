@@ -2,14 +2,14 @@
 % Please edit documentation in R/run.R
 \name{run}
 \alias{run}
-\title{Run one or more Stock Synthesis models}
+\title{Run a Stock Synthesis model}
 \usage{
 run(
   dir = getwd(),
   exe = "ss",
   extras = "",
   skipfinished = TRUE,
-  show_in_console = TRUE,
+  show_in_console = FALSE,
   console_output_file = "console.output.txt",
   verbose = TRUE
 )
@@ -29,20 +29,21 @@ included.}
 to the executable, such as "-nohess"}
 
 \item{skipfinished}{Skip any folders that already contain a Report.sso file.
-This can be helpful if the function is interrupted.}
+This can be helpful if the function is interrupted while running iteratively.}
 
 \item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file.}
+then it is saved to a file at the end of the model run.}
 
 \item{console_output_file}{File to store console output (if
-show_in_console = FALSE)}
+show_in_console = FALSE).}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
 \value{
-Returns one of three messages:
-"model run failed", "ran model", and "unknown run status".
+Returns one of five messages:
+"ran model", "model run failed", "unknown run status", "not a
+directory", or "contained Report.sso".
 }
 \description{
 The \code{run()} function checks for the executable via
@@ -59,13 +60,11 @@ name the SS3 file something besides \code{ss}, such as \code{ss3} or
 }
 \details{
 Checks for presence of a Stock Synthesis executable and then runs the
-model with any additional arguments specified by \code{extras}. If input
-\code{dir} is a vector, it iteratively runs the SS3 model in each one.
-Parallelization is not available at this time.
+model with any additional arguments specified by \code{extras}.
 }
 \examples{
 \dontrun{
-dir <- file.path(system.file("extdata", package = "r4ss"), "simple_small")
+dir <- system.file("extdata/simple_small", package = "r4ss")
 r4ss::run(dir = dir)
 }
 
@@ -80,6 +79,6 @@ Other run functions:
 \code{\link{tune_comps}()}
 }
 \author{
-Ian G. Taylor, Kathryn L. Doering
+Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 }
 \concept{run functions}

@@ -1,22 +1,21 @@
-#' Run one or more Stock Synthesis models
+#' Run a Stock Synthesis model
 #'
 #' Checks for presence of a Stock Synthesis executable and then runs the
-#' model with any additional arguments specified by `extras`. If input
-#' `dir` is a vector, it iteratively runs the SS3 model in each one.
-#' Parallelization is not available at this time.
+#' model with any additional arguments specified by `extras`.
 #'
 #' @param dir Directory containing the model input files.
 #' @template exe
 #' @template extras
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
-#' This can be helpful if the function is interrupted.
+#' This can be helpful if the function is interrupted while running iteratively.
 #' @template show_in_console
 #' @param console_output_file File to store console output (if
-#' show_in_console = FALSE)
+#' show_in_console = FALSE).
 #' @template verbose
 #'
-#' @return Returns one of three messages: 
-#' "model run failed", "ran model", and "unknown run status".
+#' @return Returns one of five messages:
+#' "ran model", "model run failed", "unknown run status", "not a
+#' directory", or "contained Report.sso".
 #'
 #' @description The `run()` function checks for the executable via
 #' [r4ss::check_exe()]. This involves first checking the
@@ -31,12 +30,12 @@
 #' name the SS3 file something besides `ss`, such as `ss3` or
 #' `ss_linux`.
 #'
-#' @author Ian G. Taylor, Kathryn L. Doering
+#' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 #' @export
 #' @family run functions
 #' @examples
 #' \dontrun{
-#' dir <- file.path(system.file("extdata", package = "r4ss"), "simple_small")
+#' dir <- system.file("extdata/simple_small", package = "r4ss")
 #' r4ss::run(dir = dir)
 #' }
 #'
@@ -44,12 +43,12 @@ run <- function(dir = getwd(),
                 exe = "ss",
                 extras = "",
                 skipfinished = TRUE,
-                show_in_console = TRUE,
+                show_in_console = FALSE,
                 console_output_file = "console.output.txt",
                 verbose = TRUE) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir)) {
-    stop("Input 'dir' should be a character vector")
+    stop("Input 'dir' should be a character string")
   }
   if (!is.logical(show_in_console)) {
     stop("Input 'show_in_console' should be TRUE or FALSE")
@@ -68,12 +67,6 @@ run <- function(dir = getwd(),
   wd_orig <- getwd()
   on.exit(setwd(wd_orig), add = TRUE)
 
-  # vector of NA values to store results
-  results <- rep(NA, length(dir))
-
-  # this should always be "windows" or "unix" (includes Mac and Linux)
-  OS <- .Platform[["OS.type"]]
-
   # sort out path to executable
   check_exe_results <- check_exe(dir = dir, exe = exe, verbose = verbose)
   command <- check_exe_results[["exe"]]
@@ -86,32 +79,30 @@ run <- function(dir = getwd(),
     if (skipfinished & "Report.sso" %in% dir(dir)) {
       # skip directories that have results in them
       message(
-        "Skipping ", dir, " since it contains",
+        "Skipping ", dir, " because it contains",
         " a Report.sso file and skipfinished = TRUE"
       )
       results <- "contained Report.sso"
     } else {
       # run model
-      if (verbose) {
-        message("changing working directory to ", dir)
-      }
       setwd(dir) # change working directory
+      # provide some messages
       if (verbose) {
         message(
-          "Running model in directory: ", getwd(), "\n",
-          "Using the command: ", command, " ", extras
+          "Changing working directory to ", dir,
+          " and running model using the command: ", command, " ", extras
         )
       }
-      if (!show_in_console) {
-        if (verbose) {
-          message(
-            "Input 'show_in_console' = FALSE, ",
-            "so writing console output to ",
-            console_output_file
-          )
-        }
+      if (!show_in_console && verbose) {
+        message(
+          "Input 'show_in_console' = FALSE, ",
+          "so writing console output to ",
+          console_output_file
+        )
       }
-      console_output <- system2(command,
+      # call system2() to actually run the model
+      console_output <- system2(
+        command = command,
         args = extras,
         stdout = ifelse(show_in_console,
           "",
@@ -122,6 +113,7 @@ run <- function(dir = getwd(),
           TRUE
         )
       )
+      # write console output to file if not shown in console
       if (!show_in_console) {
         writeLines(c(
           "###",
@@ -137,13 +129,18 @@ run <- function(dir = getwd(),
           message("console output written to ", console_output_file)
         }
       }
-      if (isTRUE(console_output > 0)) {
-        results <- "model run failed"
-      } else if (isTRUE(console_output == 0)) {
-        results <- "ran model"
-      } else {
-        results <- "unknown run status"
-      }
+      # determine if run finished
+      # console_output will either be a character vector of all the
+      # lines of output, or a code returned by system2() which will be
+      # 0 if the run completed with no issues
+      # various other possible codes if the run fails
+      results <- dplyr::case_when(
+        grepl("Run has completed", tail(console_output, 1)) ~ "ran model",
+        console_output[1] == 0 ~ "ran model",
+        console_output[1] > 0 ~ "model run failed",
+        TRUE ~ "unknown run status"
+      )
+
       setwd(wd_orig) # needed when using relative paths
     } # end model run
   } # end code for exe present
