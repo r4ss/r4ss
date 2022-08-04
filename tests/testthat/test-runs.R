@@ -73,6 +73,44 @@ test_that("retro() runs on simple_small model", {
   # are missing in the summaries for this model run.
   mohns_rho <- SSmohnsrho(retroSummary)
   expect_length(mohns_rho, 12)
+
+  # Additional tests of populate_multiple_folders()
+  #
+  # These are unrelated to the retro() tests but test
+  # options that require exe and/or model output to run
+  # unlike the tests in test-populate_multiple_folders.R
+
+  # test copy_exe = TRUE and copy_par = TRUE option
+  folders_copied <- populate_multiple_folders(
+    outerdir.old = file.path(path_simple_small, "retrospectives"),
+    outerdir.new = file.path(path_simple_small, "retrospectives_copy"),
+    copy_exe = TRUE,
+    copy_par = TRUE
+  )
+  # confirm files got reported as copied
+  expect_true(all(folders_copied[["results.files"]]))
+  # results.exe is NA when copied by copy_SS_inputs() instead of from a
+  # central location
+  expect_true(all(is.na(folders_copied[["results.exe"]])))
+  # confirm number of subdirectories is correct
+  expect_true(nrow(folders_copied) == length(retro_years))
+  # check for .par file
+  expect_true("ss.par" %in% dir(file.path(
+    path_simple_small,
+    "retrospectives_copy", folders_copied[1, "dir"]
+  )))
+
+  # test exe.dir and use_ss_new
+  folders_copied2 <- populate_multiple_folders(
+    outerdir.old = file.path(path_simple_small, "retrospectives"),
+    outerdir.new = file.path(path_simple_small, "retrospectives_copy2"),
+    use_ss_new = TRUE,
+    copy_exe = FALSE,
+    copy_par = FALSE,
+    exe.dir = path_simple_small
+  )
+  expect_true(all(folders_copied2[["results.files"]]))
+  expect_true(all(folders_copied2[["results.exe"]]))
 })
 
 ###############################################################################
@@ -185,41 +223,6 @@ test_that("Run an SS3 model and read the hessian", {
 
 ###############################################################################
 
-test_that("populate_multiple_folders() works with additional options", {
-  # test copy_par
-  folders_copied <- populate_multiple_folders(
-    outerdir.old = file.path(path_simple_small, "retrospectives"),
-    outerdir.new = file.path(path_simple_small, "retrospectives_copy"),
-    copy_exe = TRUE,
-    copy_par = TRUE
-  )
-  # confirm files got reported as copied
-  expect_true(all(folders_copied[["results.files"]]))
-  # results.exe is NA when copied by copy_SS_inputs() instead of from a
-  # central location
-  expect_true(all(is.na(folders_copied[["results.exe"]])))
-  # confirm number of subdirectories is correct
-  expect_true(nrow(folders_copied) == length(retro_years))
-  # check for .par file
-  expect_true("ss.par" %in% dir(file.path(
-    path_simple_small,
-    "retrospectives_copy", folders_copied[1, "dir"]
-  )))
-
-  # test exe.dir and use_ss_new
-  folders_copied2 <- populate_multiple_folders(
-    outerdir.old = file.path(path_simple_small, "retrospectives"),
-    outerdir.new = file.path(path_simple_small, "retrospectives_copy2"),
-    use_ss_new = TRUE,
-    copy_exe = FALSE,
-    copy_par = FALSE,
-    exe.dir = path_simple_small
-  )
-  expect_true(all(folders_copied2[["results.files"]]))
-  expect_true(all(folders_copied2[["results.exe"]]))
-})
-
-###############################################################################
 
 # clean up (should delete the temporary directory in which everything was run)
 unlink(tmp_path, recursive = TRUE)
