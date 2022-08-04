@@ -29,7 +29,7 @@ SSgetoutput <-
   function(keyvec = NULL, dirvec = NULL, getcovar = TRUE, getcomp = TRUE, forecast = TRUE,
            verbose = TRUE, ncols = lifecycle::deprecated(), listlists = TRUE, underscore = FALSE,
            save.lists = FALSE) {
-    if (lifecycle::is_present(masterdir)) {
+    if (lifecycle::is_present(ncols)) {
       lifecycle::deprecate_warn(
         when = "1.46.2",
         what = "SSgetoutput(ncols)",
