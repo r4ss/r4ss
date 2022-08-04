@@ -87,14 +87,14 @@ jitter <- function(dir = getwd(),
     lifecycle::deprecate_warn(
       when = "1.45.1",
       what = "jitter(Intern)",
-      with = "Please use 'show_in_console' instead"
+      with = "jitter(show_in_console)"
     )
   }
   if (lifecycle::is_present(mydir)) {
     lifecycle::deprecate_warn(
       when = "1.46.0",
       what = "jitter(mydir)",
-      with = "Please use 'dir' instead"
+      with = "jitter(dir)"
     )
     dir <- mydir
   }

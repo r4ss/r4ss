@@ -15,8 +15,7 @@
 #' @param forecast Choice to read or not read forecast quantities.
 #' Default=FALSE.
 #' @template verbose
-#' @param ncols Maximum number of columns in Report.sso (same input as for
-#' [SS_output()]).  Default=210.
+#' @param ncols Deprecated. Value is now calculated automatically.
 #' @param listlists Save output from each model as a element of a list (i.e.
 #' make a list of lists). Default = TRUE.
 #' @param underscore Add an underscore '_' between any file names and any keys
@@ -28,10 +27,15 @@
 #' @seealso [SS_output()] [SSsummarize()]
 SSgetoutput <-
   function(keyvec = NULL, dirvec = NULL, getcovar = TRUE, getcomp = TRUE, forecast = TRUE,
-           verbose = TRUE, ncols = 210, listlists = TRUE, underscore = FALSE,
+           verbose = TRUE, ncols = lifecycle::deprecated(), listlists = TRUE, underscore = FALSE,
            save.lists = FALSE) {
-    # a function to run the function SS_output to create a list in the R workspace
-    # for a Stock Synthesis model with output filenames ending with the same "key"
+    if (lifecycle::is_present(masterdir)) {
+      lifecycle::deprecate_warn(
+        when = "1.46.2",
+        what = "SSgetoutput(ncols)",
+        Details = "ncols now calculated automatically by SS_output()"
+      )
+    }
 
     if (!is.null(keyvec) & verbose) message("length(keyvec) as input to SSgetoutput:", length(keyvec))
     if (!is.null(dirvec) & verbose) message("length(dirvec) as input to SSgetoutput:", length(dirvec))
@@ -91,7 +95,7 @@ SSgetoutput <-
           dir = mydir, repfile = repFileName, covarfile = covarname,
           compfile = compFileName, NoCompOK = NoCompOK,
           warnfile = warnFileName, printstats = FALSE,
-          covar = mycovar, forecast = forecast, verbose = FALSE, ncols = ncols
+          covar = mycovar, forecast = forecast, verbose = FALSE,
         )
         if (is.null(output)) {
           # for some reason covarfile exists, but is old so SS_output rejects
@@ -99,7 +103,7 @@ SSgetoutput <-
           output <- SS_output(
             dir = mydir, repfile = repFileName, covarfile = covarname,
             compfile = compFileName, NoCompOK = NoCompOK, printstats = FALSE,
-            covar = FALSE, forecast = forecast, verbose = FALSE, ncols = ncols
+            covar = FALSE, forecast = forecast, verbose = FALSE,
           )
         }
         output[["key"]] <- as.character(key)
