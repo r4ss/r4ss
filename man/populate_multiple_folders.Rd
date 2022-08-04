@@ -5,14 +5,15 @@
 \title{Populate multiple Stock Synthesis folders with input files}
 \usage{
 populate_multiple_folders(
-  outerdir.old = NULL,
-  outerdir.new = NULL,
+  outerdir.old,
+  outerdir.new,
   create.dir = TRUE,
   overwrite = FALSE,
   use_ss_new = FALSE,
+  copy_exe = FALSE,
+  copy_par = FALSE,
   exe.dir = NULL,
-  exe.file = "ss.exe",
-  exe.only = FALSE,
+  exe.file = "ss",
   verbose = TRUE
 )
 }
@@ -30,12 +31,15 @@ should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{use_ss_new}{Use .ss_new files instead of original inputs?}
 
-\item{exe.dir}{Path to executable to copy into all the subfolders.}
+\item{copy_exe}{Copy any executables found in the individual
+directories or in exe.dir (if provided)? To copy a new executable
+from a central location, use \code{exe.dir} instead.}
 
-\item{exe.file}{Filename of executable to copy into all the subfolders.
-A value of NULL will skip copying the executable.}
+\item{copy_par}{Copy any .par files found in the individual directories?}
 
-\item{exe.only}{Only copy exe files from exe.dir, don't copy input files}
+\item{exe.dir}{Optional path to executable to copy into all the subfolders.}
+
+\item{exe.file}{Filename of executable to copy into all the subfolders.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
@@ -45,7 +49,7 @@ Returns table of results indicating which directories were
 successfully populated with the model input files and/or executables
 }
 \description{
-Creates a set of multiple folders and populate each with SS input files
+Creates a set of multiple folders and populates each with SS input files
 such as for the purpose of running a new version of SS for an existing
 set of test models.
 }
@@ -54,7 +58,16 @@ set of test models.
 populate_multiple_folders(
   outerdir.old = "c:/SS/old_models",
   outerdir.new = "c:/SS/new_models",
-  exe.dir = "c:/SS/SSv3.30.12.00"
+  copy_exe = TRUE
+)
+
+# copy and rename the ss_new files and
+# get an executable file from a central location
+populate_multiple_folders(
+  outerdir.old = "old_models",
+  outerdir.new = "new_models",
+  use_ss_new = TRUE,
+  exe.dir = "c:/SS/SSv3.30.19.01",
 )
 }
 

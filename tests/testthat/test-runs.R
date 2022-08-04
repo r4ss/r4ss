@@ -11,16 +11,17 @@ file.copy(example_path, tmp_path, recursive = TRUE)
 # if using tmp_path directly
 runs_path <- file.path(tmp_path, "extdata")
 path_simple_small <- file.path(runs_path, "simple_small")
-
+retro_years <- 0:-2 # defining here so available in multiple tests
 # clean up
 on.exit(unlink(tmp_path, recursive = TRUE))
 
+###############################################################################
+
 test_that("check_exe() fails or succeeds as expected", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) &
-    (!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS executable"
+  message = "skipping test that requires SS3 executable"
   )
   # error when no exe found
   expect_error(check_exe("bad_exe_name"))
@@ -29,21 +30,22 @@ test_that("check_exe() fails or succeeds as expected", {
   expect_equal(check_exe_results[["path"]], path_simple_small)
 })
 
+###############################################################################
+
 test_that("retro() runs on simple_small model", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) &
-    (!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS executable"
+  message = "skipping test that requires SS3 executable"
   )
   retro(
     dir = path_simple_small,
-    oldsubdir = "", newsubdir = "retrospectives", years = 0:-2,
+    oldsubdir = "", newsubdir = "retrospectives", years = retro_years,
     show_in_console = FALSE
   )
   retro_subdirs <- file.path(
     path_simple_small, "retrospectives",
-    paste0("retro", c("0", "-1", "-2"))
+    paste0("retro", retro_years)
   )
   retro_ran <- lapply(
     retro_subdirs,
@@ -55,16 +57,16 @@ test_that("retro() runs on simple_small model", {
   retroModels <- SSgetoutput(
     dirvec = file.path(
       path_simple_small, "retrospectives",
-      paste0("retro", 0:-2)
+      paste0("retro", retro_years)
     )
   )
   # summarize the model output
   retroSummary <- SSsummarize(retroModels)
   # set the fector of ending years
-  endyrvec <- retroSummary$endyrs + 0:-2
+  endyrvec <- retroSummary$endyrs + retro_years
   SSplotComparisons(retroSummary,
     endyrvec = endyrvec,
-    legendlabels = paste("Data", 0:-2, "years")
+    legendlabels = paste("Data", retro_years, "years")
   )
   # calculate Mohn's rho values
   # TODO: add better tests for mohns rho. Some values aren't calcualted b/c they
@@ -73,11 +75,11 @@ test_that("retro() runs on simple_small model", {
   expect_length(mohns_rho, 12)
 })
 
+###############################################################################
 
 test_that("jitter runs on simple_small model", {
   # skip if no executable in model path
-  skipexe <- (!file.exists(file.path(path_simple_small, "ss3"))) &
-    (!file.exists(file.path(path_simple_small, "ss"))) &
+  skipexe <- (!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe")))
   dir.jit <- file.path(path_simple_small, "jitter")
   expect_true(copy_SS_inputs(
@@ -119,10 +121,9 @@ test_that("jitter runs on simple_small model", {
 
 test_that("profile functions run on simple_small model", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) &
-    (!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS executable"
+  message = "skipping test that requires SS3 executable"
   )
   dir.prof <- file.path(path_simple_small, "profile")
   copy_SS_inputs(
@@ -160,12 +161,13 @@ test_that("profile functions run on simple_small model", {
   expect_equal(min(pinerplot.out$ALL), 0)
 })
 
+###############################################################################
+
 test_that("Run an SS3 model and read the hessian", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss3"))) &
-    (!file.exists(file.path(path_simple_small, "ss"))) &
+  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS executable"
+  message = "skipping test that requires SS3 executable"
   )
   copy_results <- copy_SS_inputs(
     dir.old = path_simple_small,
@@ -181,6 +183,43 @@ test_that("Run an SS3 model and read the hessian", {
   expect_true(is.matrix(hes[["hes"]]))
 })
 
+###############################################################################
+
+test_that("populate_multiple_folders() works with additional options", {
+  # test copy_par
+  folders_copied <- populate_multiple_folders(
+    outerdir.old = file.path(path_simple_small, "retrospectives"),
+    outerdir.new = file.path(path_simple_small, "retrospectives_copy"),
+    copy_exe = TRUE,
+    copy_par = TRUE
+  )
+  # confirm files got reported as copied
+  expect_true(all(folders_copied[["results.files"]]))
+  # results.exe is NA when copied by copy_SS_inputs() instead of from a
+  # central location
+  expect_true(all(is.na(folders_copied[["results.exe"]])))
+  # confirm number of subdirectories is correct
+  expect_true(nrow(folders_copied) == length(retro_years))
+  # check for .par file
+  expect_true("ss.par" %in% dir(file.path(
+    path_simple_small,
+    "retrospectives_copy", folders_copied[1, "dir"]
+  )))
+
+  # test exe.dir and use_ss_new
+  folders_copied2 <- populate_multiple_folders(
+    outerdir.old = file.path(path_simple_small, "retrospectives"),
+    outerdir.new = file.path(path_simple_small, "retrospectives_copy2"),
+    use_ss_new = TRUE,
+    copy_exe = FALSE,
+    copy_par = FALSE,
+    exe.dir = path_simple_small
+  )
+  expect_true(all(folders_copied2[["results.files"]]))
+  expect_true(all(folders_copied2[["results.exe"]]))
+})
+
+###############################################################################
 
 # clean up (should delete the temporary directory in which everything was run)
 unlink(tmp_path, recursive = TRUE)
