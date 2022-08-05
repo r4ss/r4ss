@@ -1,5 +1,6 @@
 #' Deprecated function to run jitters, renamed to jitter()
 #'
+#' @template deprecated_dots
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_RunJitter() has been renamed as [jitter()]. See
@@ -9,7 +10,7 @@
 #' @export
 #' @seealso [jitter()]
 SS_RunJitter <-
-  function() {
+  function(...) {
     lifecycle::deprecate_stop(
       when = "1.46.1",
       what = "SS_RunJitter()",

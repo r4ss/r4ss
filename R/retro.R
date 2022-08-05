@@ -1,5 +1,6 @@
 #' Deprecated function to run a retrospective analyses, renamed to retro()
 #'
+#' @template deprecated_dots
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_doRetro() has been renamed as [retro()]. See

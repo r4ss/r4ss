@@ -4,7 +4,10 @@
 \alias{SS_RunJitter}
 \title{Deprecated function to run jitters, renamed to jitter()}
 \usage{
-SS_RunJitter()
+SS_RunJitter(...)
+}
+\arguments{
+\item{...}{Any arguments associated with the now-deprecated functions.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}

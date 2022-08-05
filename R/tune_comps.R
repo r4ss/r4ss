@@ -1,5 +1,6 @@
 #' Deprecated function to tune composition data, renamed to tune_comps()
 #'
+#' @template deprecated_dots
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_tune_comps() has been renamed as [tune_comps()]. See

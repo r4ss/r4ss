@@ -1,5 +1,6 @@
 #' Deprecated function to run a likelihood profile, renamed to profile().
 #'
+#' @template deprecated_dots
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_profile() has been renamed as [profile()]. See
@@ -8,7 +9,7 @@
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [profile()]
-SS_profile <- function() {
+SS_profile <- function(...) {
   lifecycle::deprecate_stop(
     when = "4.6.1",
     what = "SS_profile()",

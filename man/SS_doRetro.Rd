@@ -6,6 +6,9 @@
 \usage{
 SS_doRetro()
 }
+\arguments{
+\item{...}{Any arguments associated with the now-deprecated functions.}
+}
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 SS_doRetro() has been renamed as \code{\link[=retro]{retro()}}. See
