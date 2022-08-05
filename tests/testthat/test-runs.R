@@ -32,7 +32,7 @@ test_that("check_exe() fails or succeeds as expected", {
 
 ###############################################################################
 
-test_that("retro() runs on simple_small model", {
+test_that("retro() and populate_multiple_folders() both work", {
   # skip if no executable in model path
   skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
     (!file.exists(file.path(path_simple_small, "ss.exe"))),
@@ -80,18 +80,18 @@ test_that("retro() runs on simple_small model", {
   # options that require exe and/or model output to run
   # unlike the tests in test-populate_multiple_folders.R
 
-  # test copy_exe = TRUE and copy_par = TRUE option
+  # test with exe.dir = TRUE and copy_par = TRUE option
   folders_copied <- populate_multiple_folders(
     outerdir.old = file.path(path_simple_small, "retrospectives"),
     outerdir.new = file.path(path_simple_small, "retrospectives_copy"),
-    copy_exe = TRUE,
+    exe.dir = TRUE,
     copy_par = TRUE
   )
   # confirm files got reported as copied
   expect_true(all(folders_copied[["results.files"]]))
   # results.exe is NA when copied by copy_SS_inputs() instead of from a
   # central location
-  expect_true(all(is.na(folders_copied[["results.exe"]])))
+  expect_true(all(folders_copied[["results.exe"]]))
   # confirm number of subdirectories is correct
   expect_true(nrow(folders_copied) == length(retro_years))
   # check for .par file
@@ -100,12 +100,11 @@ test_that("retro() runs on simple_small model", {
     "retrospectives_copy", folders_copied[1, "dir"]
   )))
 
-  # test exe.dir and use_ss_new
+  # test exe.dir as a path and use_ss_new = TRUE
   folders_copied2 <- populate_multiple_folders(
     outerdir.old = file.path(path_simple_small, "retrospectives"),
     outerdir.new = file.path(path_simple_small, "retrospectives_copy2"),
     use_ss_new = TRUE,
-    copy_exe = FALSE,
     copy_par = FALSE,
     exe.dir = path_simple_small
   )

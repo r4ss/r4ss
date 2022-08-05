@@ -8,7 +8,9 @@
 #' @template extras
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted while running iteratively.
-#' @template show_in_console
+#' @param show_in_console Show output in the R console? If FALSE,
+#' then the console output is saved to a file (specified by
+#' `console_output_file`) at the end of the model run.
 #' @param console_output_file File to store console output (if
 #' show_in_console = FALSE).
 #' @template verbose
@@ -35,7 +37,7 @@
 #' @family run functions
 #' @examples
 #' \dontrun{
-#' dir <- system.file("extdata/simple_small", package = "r4ss")
+#' dir <- system.file("extdata", "simple_small", package = "r4ss")
 #' r4ss::run(dir = dir)
 #' }
 #'
@@ -76,7 +78,7 @@ run <- function(dir = getwd(),
     warning("not a directory:", dir)
     results <- "not a directory"
   } else {
-    if (skipfinished & "Report.sso" %in% dir(dir)) {
+    if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
       # skip directories that have results in them
       message(
         "Skipping ", dir, " because it contains",
@@ -140,10 +142,8 @@ run <- function(dir = getwd(),
         console_output[1] > 0 ~ "model run failed",
         TRUE ~ "unknown run status"
       )
-
-      setwd(wd_orig) # needed when using relative paths
     } # end model run
   } # end code for exe present
 
-  return(results = results)
+  return(results)
 }

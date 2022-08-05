@@ -10,7 +10,6 @@ populate_multiple_folders(
   create.dir = TRUE,
   overwrite = FALSE,
   use_ss_new = FALSE,
-  copy_exe = FALSE,
   copy_par = FALSE,
   exe.dir = NULL,
   exe.file = "ss",
@@ -31,13 +30,17 @@ should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{use_ss_new}{Use .ss_new files instead of original inputs?}
 
-\item{copy_exe}{Copy any executables found in the individual
-directories or in exe.dir (if provided)? To copy a new executable
-from a central location, use \code{exe.dir} instead.}
-
 \item{copy_par}{Copy any .par files found in the individual directories?}
 
-\item{exe.dir}{Optional path to executable to copy into all the subfolders.}
+\item{exe.dir}{Where to get executable to copy to each new subfolder.
+Options are
+\itemize{
+\item FALSE to not copy any executables,
+\item TRUE to copy executables found in each existing subfolder to the
+corresponding new subfolder,
+\item a path to a central location containing an executable to copy into
+each new subfolder.
+}}
 
 \item{exe.file}{Filename of executable to copy into all the subfolders.}
 
@@ -45,32 +48,21 @@ from a central location, use \code{exe.dir} instead.}
 to the screen.}
 }
 \value{
-Returns table of results indicating which directories were
-successfully populated with the model input files and/or executables
+Returns a table of results indicating which directories were
+successfully populated with the model input files and/or executables.
 }
 \description{
-Creates a set of multiple folders and populates each with SS input files
-such as for the purpose of running a new version of SS for an existing
+Creates a set of multiple folders and populates each with SS3 input files
+such as for the purpose of running a new version of SS3 for an existing
 set of test models.
 }
 \examples{
 \dontrun{
 populate_multiple_folders(
-  outerdir.old = "c:/SS/old_models",
-  outerdir.new = "c:/SS/new_models",
-  copy_exe = TRUE
-)
-
-# copy and rename the ss_new files and
-# get an executable file from a central location
-populate_multiple_folders(
-  outerdir.old = "old_models",
-  outerdir.new = "new_models",
-  use_ss_new = TRUE,
-  exe.dir = "c:/SS/SSv3.30.19.01",
+  outerdir.old = system.file("extdata", package = "r4ss"),
+  outerdir.new = file.path(tempdir(), "test")
 )
 }
-
 }
 \seealso{
 Other run functions: 
@@ -82,6 +74,6 @@ Other run functions:
 \code{\link{tune_comps}()}
 }
 \author{
-Ian G. Taylor
+Ian G. Taylor, Kelli F. Johnson
 }
 \concept{run functions}

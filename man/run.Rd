@@ -32,7 +32,8 @@ to the executable, such as "-nohess"}
 This can be helpful if the function is interrupted while running iteratively.}
 
 \item{show_in_console}{Show output in the R console? If FALSE,
-then it is saved to a file at the end of the model run.}
+then the console output is saved to a file (specified by
+\code{console_output_file}) at the end of the model run.}
 
 \item{console_output_file}{File to store console output (if
 show_in_console = FALSE).}
@@ -64,7 +65,7 @@ model with any additional arguments specified by \code{extras}.
 }
 \examples{
 \dontrun{
-dir <- system.file("extdata/simple_small", package = "r4ss")
+dir <- system.file("extdata", "simple_small", package = "r4ss")
 r4ss::run(dir = dir)
 }
 
