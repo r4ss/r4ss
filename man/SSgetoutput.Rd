@@ -11,7 +11,7 @@ SSgetoutput(
   getcomp = TRUE,
   forecast = TRUE,
   verbose = TRUE,
-  ncols = 210,
+  ncols = lifecycle::deprecated(),
   listlists = TRUE,
   underscore = FALSE,
   save.lists = FALSE
@@ -36,8 +36,7 @@ Default=FALSE.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{ncols}{Maximum number of columns in Report.sso (same input as for
-\code{\link[=SS_output]{SS_output()}}).  Default=210.}
+\item{ncols}{Deprecated. Value is now calculated automatically.}
 
 \item{listlists}{Save output from each model as a element of a list (i.e.
 make a list of lists). Default = TRUE.}

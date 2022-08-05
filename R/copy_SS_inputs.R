@@ -59,12 +59,22 @@ copy_SS_inputs <- function(dir.old = NULL,
     }
   }
   # read starter file to figure out what other inputs are
-  starter <- SS_readstarter(file.path(
+  starter_file <- file.path(
     dir.old,
     ifelse(use_ss_new, "starter.ss_new", "starter.ss")
-  ),
-  verbose = FALSE
   )
+  if (file.exists(starter_file)) {
+    starter <- SS_readstarter(starter_file, verbose = FALSE)
+  } else {
+    warning("file not found: ", file.path(starter_file))
+    return(FALSE)
+  }
+
+  # check for starter file in new location
+  if (!overwrite && file.exists(file.path(dir.new, "starter.ss"))) {
+    warning("overwrite = FALSE and starter.ss exists in ", dir.new)
+    return(FALSE)
+  }
 
   if (verbose) {
     message("copying files from\n ", dir.old, "\nto\n ", dir.new)
@@ -172,21 +182,11 @@ copy_SS_inputs <- function(dir.old = NULL,
 
   # copy par file(s) if requested
   if (copy_par) {
-    # figure out which files are executables
-    parfiles <- dir(dir.old)[grep(".par$", dir(dir.old))]
-    if (length(parfiles) == 0) {
-      warning("No .par files found in ", dir.old)
-    }
-    if (length(parfiles) > 1) {
-      warning("Copying multiple .par files")
-    }
-    for (file in parfiles) {
-      results[7] <- file.copy(
-        from = file.path(dir.old, file),
-        to = file.path(dir.new, file),
-        overwrite = overwrite
-      )
-    }
+    results[7] <- file.copy(
+      from = file.path(dir.old, "ss.par"),
+      to = file.path(dir.new, "ss.par"),
+      overwrite = overwrite
+    )
   }
 
   # check for successful copying

@@ -14,7 +14,7 @@ test_that("populate_multiple_folders runs", {
   copy_info <- populate_multiple_folders(
     outerdir.old = example_path,
     outerdir.new = temp_path,
-    exe.file = NULL,
+    exe.dir = FALSE,
     verbose = FALSE
   )
   expect_true(all(copy_info[["results.files"]]))

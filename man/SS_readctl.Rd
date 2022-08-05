@@ -137,13 +137,13 @@ datfilename <- dir(dirsimple, pattern = "data\\\\.ss", full.names = TRUE)
 dat <- r4ss::SS_readdat(file = datfilename, verbose = FALSE)
 # Read in the control file using a list object for datlist
 ctl <- r4ss::SS_readctl(
-  file = dir(dirsimple, pattern = "control\\\\.ss", full.names = TRUE),
+  file = dir(dirsimple, pattern = "control\\\\.ss$", full.names = TRUE),
   verbose = FALSE,
   datlist = dat, use_datlist = TRUE
 )
 # Read in the control file using a file name for datlist
 ctl <- r4ss::SS_readctl(
-  file = dir(dirsimple, pattern = "control\\\\.ss", full.names = TRUE),
+  file = dir(dirsimple, pattern = "control\\\\.ss$", full.names = TRUE),
   verbose = FALSE,
   datlist = datfilename, use_datlist = TRUE
 )

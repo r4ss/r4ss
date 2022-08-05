@@ -16,9 +16,10 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 sim_small <- file.path(tmp_path, "extdata", "simple_small")
 
 test_that("SS_readctl() and SS_writectl() work under various conditions", {
-  # check exits on error when no datafile provided
+  # check exits on error when wrong datafile provided
   expect_error(
     SS_readctl(file.path(sim_small, "control.ss"),
+      datlist = "wrong_file.ss",
       verbose = FALSE
     ),
     "Cannot find data file specified in datlist"
