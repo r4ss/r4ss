@@ -33,7 +33,7 @@
 #'   outerdir.new = file.path(tempdir(), "test")
 #' )
 #' }
-
+#'
 populate_multiple_folders <- function(outerdir.old,
                                       outerdir.new,
                                       create.dir = TRUE,
@@ -103,10 +103,10 @@ populate_multiple_folders <- function(outerdir.old,
         )
         # default value if no copying of exe is attempted
         results.exe <- NA
-        # if exe.dir = TRUE, then executable is copied by 
+        # if exe.dir = TRUE, then executable is copied by
         # copy_SS_inputs() and the value returned by that function will
         # reflect whether it was copied successfully along withe other
-        # input files 
+        # input files
         if (isTRUE(exe.dir)) {
           results.exe <- results.files
         }
