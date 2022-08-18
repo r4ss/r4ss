@@ -2080,8 +2080,8 @@ SS_output <-
       lenntune <- match_report_table("Length_Comp_Fit_Summary", 1, header = TRUE)
       if (!is.null(lenntune)) {
         lenntune <- df.rename(lenntune,
-          oldnames = c("FleetName", "Factor"),
-          newnames = c("Fleet_name", "Data_type")
+          oldnames = c("FleetName", "Factor", "HarMean_effN"),
+          newnames = c("Fleet_name", "Data_type", "HarMean")
         )
       if ("Data_type" %in% names(lenntune)) {
           # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
@@ -2159,8 +2159,8 @@ SS_output <-
       }
     } # end 3.30 version
     agentune <- df.rename(agentune,
-      oldnames = c("FleetName", "N", "Factor"),
-      newnames = c("Fleet_name", "Nsamp_adj", "Data_type")
+      oldnames = c("FleetName", "N", "Factor", "HarMean_effN"),
+      newnames = c("Fleet_name", "Nsamp_adj", "Data_type", "HarMean")
     )
 
     if ("Data_type" %in% names(agentune)) {
@@ -2275,8 +2275,8 @@ SS_output <-
           names(sizentune) <- sizentune[1, ]
           # rename Factor to Data_type (changed in 3.30.20)
           sizentune <- df.rename(sizentune,
-            oldnames = c("Factor"),
-            newnames = c("Data_type")
+            oldnames = c("Factor", "HarMean_effN"),
+            newnames = c("Data_type", "HarMean")
           )
           # subset for rows with single-character value for 
           # Data_type (should always be 7 but seems to have been

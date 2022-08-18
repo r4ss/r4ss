@@ -20,8 +20,8 @@ SS_tune_comps <-
 
 #' Calculate new tunings for length and age compositions and (re)run models
 #'
-#' Creates a table of values that can be copied into the SS control file
-#' for SS 3.30 models to adjust the input sample sizes for length and age
+#' Creates a table of values that can be copied into the SS3 control file
+#' for SS3 3.30 models to adjust the input sample sizes for length and age
 #' compositions based on either the Francis or McAllister-Ianelli tuning or
 #' adds the Dirichlet-Multinomial parameters to the necessary files to
 #' tune the model using an integrated method.
@@ -44,30 +44,37 @@ SS_tune_comps <-
 #'
 #' ## Dirichlet-Multinomial (DM)
 #' The Dirichlet-Multinomial likelihood is an alternative approach that allows
-#' the tuning factor to be estimated rather than iteratively tuned.
+#' the tuning data type to be estimated rather than iteratively tuned.
 #' Note that for `option = "DM"` a table of tunings is
 #' not created as the DM is not an iterative reweighting option. Instead, each
 #' of the fleets with length- and age-composition data will be assigned a DM
 #' parameter and the model will be rerun.
 #'
-#' # SS versions
+#' # SS3 versions
 #' ## 3.30.00-3.30.11
 #' Recommended_var_adj and other columns were named differently in these
-#' early version of SS. Calculations are thus done internally based on
+#' early version of SS3. Calculations are thus done internally based on
 #' finding the correct column name.
 #'
 #' ## 3.30.12-3.30.16
-#' Starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
+#' Starting with SS3 version 3.30.12, the "Length_Comp_Fit_Summary"
 #' table in Report.sso is already in the format required to paste into
 #' the control file to apply the McAllister-Ianelli tuning. However, this
 #' function provides the additional option of the Francis tuning and the
 #' ability to compare the two approaches, as well as the functionality to add
 #' tunings and rerun the model. The "Age_Comp_Fit_Summary" table in Report.sso
 #' is formatted similarly though, though the Recommended_var_adj was wrongly
-#' set to 1 for all fleets in SS versions 3.30.12 to 3.30.16. Thus, the
+#' set to 1 for all fleets in SS3 versions 3.30.12 to 3.30.16. Thus, the
 #' MI approach is not taken from this recommended column, instead, it is
 #' calculated from the harmonic mean and input sample sizes.
 #'
+#' ## 3.30.20
+#' Starting with SS3 version 3.30.20, the Dirichlet-multinomial
+#' likelihood was made available for Generalized Size Comp data. As part
+#' of this change, the column names were changed for all fit summary
+#' tables, to both align the notation among them and also facilitate the
+#' future addition of the Multivariate-Tweedie likelihood.
+#' 
 #' @template replist
 #' @template fleets
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
@@ -242,7 +249,6 @@ tune_comps <- function(replist = NULL, fleets = "all",
     )
   }
   # read in model files
-  # get the r4ss files
   start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
   dat <- SS_readdat(file.path(dir, start[["datfile"]]),
     verbose = FALSE, section = 1
@@ -358,7 +364,7 @@ tune_comps <- function(replist = NULL, fleets = "all",
         )
         var_adj_unmodified <- var_adj
         var_adj <- var_adj[, 1:3]
-        colnames(var_adj) <- c("Factor", "Fleet", "Value")
+        colnames(var_adj) <- c("Data_type", "Fleet", "Value")
         if (allow_up_tuning == FALSE) {
           var_adj[["Value"]] <- ifelse(var_adj[["Value"]] > 1, 1, var_adj[["Value"]])
         }
@@ -379,12 +385,12 @@ tune_comps <- function(replist = NULL, fleets = "all",
             # create the list if it does not already exist
             ctl[["Variance_adjustment_list"]] <- var_adj
           } else {
-            # leave all var adj intact, unless they match factor and fleet in var_adj.
+            # leave all var adj intact, unless they match data type and fleet in var_adj.
             cur_var_adj <- ctl[["Variance_adjustment_list"]]
             for (i in seq_len(nrow(var_adj))) {
-              tmp_fac <- var_adj[i, "Factor"]
+              tmp_fac <- var_adj[i, "Data_type"]
               tmp_flt <- var_adj[i, "Fleet"]
-              tmp_row <- which(ctl[["Variance_adjustment_list"]][, "Factor"] == tmp_fac &
+              tmp_row <- which(ctl[["Variance_adjustment_list"]][, "Data_type"] == tmp_fac &
                 ctl[["Variance_adjustment_list"]][, "Fleet"] == tmp_flt)
               if (length(tmp_row) == 1) {
                 ctl[["Variance_adjustment_list"]][tmp_row, ] <- var_adj[i, ]
@@ -395,9 +401,9 @@ tune_comps <- function(replist = NULL, fleets = "all",
               # working as developer intended.
               if (length(tmp_row) > 1) {
                 stop(
-                  "Multiple rows with same factor and fleet in the variance ",
+                  "Multiple rows with same data type and fleet in the variance ",
                   "variance adjustment list, which should not be possible. Please",
-                  " check that the control file will work with SS. If still having",
+                  " check that the control file will work with SS3. If still having",
                   " issues, please report your problem: ",
                   "https://github.com/r4ss/r4ss/issues"
                 )
@@ -484,11 +490,11 @@ tune_comps <- function(replist = NULL, fleets = "all",
     # remove weights specified through variance adjustment for comps, if any
     if (!is.null(ctl[["Variance_adjustment_list"]])) {
       message("removing composition variance adjustments from model")
-      # filter out just factors 4 and 5 for length and age comps
+      # filter out just data types 4, 5, and 7 for length, age, and size comps
       if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
         ctl[["Variance_adjustment_list"]] <-
-          ctl[["Variance_adjustment_list"]][!ctl[["Variance_adjustment_list"]][["Factor"]] %in%
-            c(4:5), ]
+          ctl[["Variance_adjustment_list"]][!ctl[["Variance_adjustment_list"]][["Data_type"]] %in%
+            c(4, 5, 7), ]
       }
       # remove the list if there's nothing left
       if (nrow(ctl[["Variance_adjustment_list"]]) == 0) {
@@ -548,11 +554,10 @@ tune_comps <- function(replist = NULL, fleets = "all",
 get_tuning_table <- function(replist, fleets,
                              option,
                              digits = 6, write = TRUE, verbose = TRUE) {
-
   # check inputs
   # place to store info on data weighting
   tuning_table <- data.frame(
-    Factor = integer(),
+    Data_type = integer(),
     Fleet = integer(),
     Var_adj = double(),
     Hash = character(),
@@ -569,24 +574,31 @@ get_tuning_table <- function(replist, fleets,
     stringsAsFactors = FALSE
   )
   # loop over fleets and modify the values for length data
-  for (type in c("len", "age")) {
+  for (type in c("len", "age", "size")) {
     for (fleet in fleets) {
       if (verbose) {
         message("calculating ", type, " tunings for fleet ", fleet)
       }
       if (type == "len") {
-        # table of info from SS
+        # table of info from SS3
         tunetable <- replist[["Length_Comp_Fit_Summary"]]
-        Factor <- 4 # code for Control file
+        Data_type <- 4 # code for Control file
         has_marginal <- fleet %in% replist[["lendbase"]][["Fleet"]]
         has_conditional <- FALSE
       }
       if (type == "age") {
-        # table of info from SS
+        # table of info from SS3
         tunetable <- replist[["Age_Comp_Fit_Summary"]]
-        Factor <- 5 # code for Control file
+        Data_type <- 5 # code for Control file
         has_marginal <- fleet %in% replist[["agedbase"]][["Fleet"]]
         has_conditional <- fleet %in% replist[["condbase"]][["Fleet"]]
+      }
+      if (type == "size") {
+        # table of info from SS3
+        tunetable <- replist[["Size_Comp_Fit_Summary"]]
+        Data_type <- 7 # code for Control file
+        has_marginal <- fleet %in% replist[["sizedbase"]][["Fleet"]]
+        has_conditional <- FALSE
       }
       if (has_marginal & has_conditional) {
         warning(
@@ -633,7 +645,7 @@ get_tuning_table <- function(replist, fleets,
           Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(Curr_Var_Adj)) {
-          stop("Model output missing required values, perhaps due to an older version of SS")
+          stop("Model output missing required values, perhaps due to an older version of SS3")
         }
 
         # McAllister-Ianelli multiplier
@@ -645,25 +657,25 @@ get_tuning_table <- function(replist, fleets,
         if ("MeaneffN/MeaninputN" %in% names(tunetable)) {
           MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable[["Fleet"]] == fleet]
         }
-        if ("Factor" %in% names(tunetable)) {
+        if ("Data_type" %in% names(tunetable)) {
           # starting with version 3.30.12
           MI_mult <- tunetable[["Recommend_var_adj"]][tunetable[["Fleet"]] == fleet] /
             tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
-        if (all(c("Factor", "HarMean_effN", "mean_Nsamp_adj") %in% names(tunetable))) {
+        if (all(c("Data_type", "HarMean", "mean_Nsamp_adj") %in% names(tunetable))) {
           # starting with version 3.30.16?
           MI_mult <-
-            tunetable[["HarMean_effN"]][tunetable[["Fleet"]] == fleet] /
+            tunetable[["HarMean"]][tunetable[["Fleet"]] == fleet] /
               tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
-          stop("Model output missing required values, perhaps due to an older version of SS")
+          stop("Model output missing required values, perhaps due to an older version of SS3")
         }
 
         # make new row for table
         newrow <-
           data.frame(
-            Factor = Factor,
+            Data_type = Data_type,
             Fleet = fleet,
             New_Var_adj = NA,
             hash = "#",
@@ -699,18 +711,15 @@ get_tuning_table <- function(replist, fleets,
   if (option == "MI") {
     tuning_table[["New_Var_adj"]] <- tuning_table[["New_MI"]]
   }
-  names(tuning_table)[1] <- "#Factor" # add hash to facilitate pasting into Control
+  names(tuning_table)[1] <- "#Data_type" # add hash to facilitate pasting into Control
   rownames(tuning_table) <- 1:nrow(tuning_table)
 
   # stuff related to generalized size frequency data
   tunetable_size <- replist[["Size_Comp_Fit_Summary"]]
-  if (!is.null(tunetable_size)) {
+  if (!is.null(tunetable_size) && "par1" %in% names(tunetable_size)) {
     warning(
-      "Generalized size composition data doesn't have\n",
-      "Francis weighting available and the table of tunings\n",
-      "is formatted differently in both 'suggested_tuning.ss'\n",
-      "and the data.frame returned by this function\n",
-      "(which are also formatted different from each other)."
+      "This function may not work for generalized size composition data ",
+      "in models prior to SS3 version 3.30.20."
     )
   }
 
@@ -723,20 +732,6 @@ get_tuning_table <- function(replist, fleets,
     write.table(tuning_table,
       file = file, quote = FALSE, row.names = FALSE
     )
-    # append generalized size comp table with different columns
-    if (!is.null(tunetable_size)) {
-      names(tunetable_size)[1] <- "#Factor" # add hash to facilitate pasting into Control
-      write.table(tunetable_size,
-        file = file, quote = FALSE, row.names = FALSE, append = TRUE
-      )
-    }
-  }
-  # remove mismatched columns from generalized size comp data to combine
-  # with other data types
-  if (!is.null(tunetable_size)) {
-    tunetable_size[, -(1:4)] <- NA
-    names(tunetable_size) <- names(tuning_table)
-    tuning_table <- rbind(tuning_table, tunetable_size)
   }
   # return the table
   return(tuning_table)
