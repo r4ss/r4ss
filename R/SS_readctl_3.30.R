@@ -958,7 +958,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
       )
     }
   }
-  # selecitivty -----
+  # selectivity -----
   # size setup
   # TODO: make sure that this will work when special fleet types are used
   # (e.g., units 30 fleet)
@@ -1274,9 +1274,14 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   # Dirichlet MN pars -----
   # this is turned on in the data file.
   if (use_datlist == TRUE) {
-    if (any(datlist[["len_info"]][["CompError"]] == 1) |
-      any(datlist[["age_info"]][["CompError"]] == 1)) {
-      N_dirichlet_parms <- max(c(datlist[["len_info"]][["ParmSelect"]], datlist[["age_info"]][["ParmSelect"]]))
+    if (any(datlist[["len_info"]][["CompError"]] > 1) |
+      any(datlist[["age_info"]][["CompError"]] > 1) |
+      any(datlist[["CompError_per_method"]] > 1)) {
+      N_dirichlet_parms <- max(
+        datlist[["len_info"]][["ParmSelect"]],
+        datlist[["age_info"]][["ParmSelect"]],
+        datlist[["ParmSelect_per_method"]]
+      )
     }
   }
   if (isTRUE(N_dirichlet_parms > 0)) {
@@ -1421,7 +1426,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   # Create 3.30 variance adjustments and reset DoVar_adjust if true.
   ctllist <- add_df(ctllist,
     name = "Variance_adjustment_list", nrow = NULL, ncol = 3,
-    col.names = c("Factor", "Fleet", "Value")
+    col.names = c("Data_type", "Fleet", "Value")
   )
   if (!is.null(ctllist[["Variance_adjustment_list"]])) ctllist[["DoVar_adjust"]] <- 1
 
@@ -1721,7 +1726,7 @@ translate_3.30_to_3.24_var_adjust <- function(Variance_adjustment_list = NULL,
     if (nrow(Variance_adjustment_list) > 0) {
       for (j in seq_len(nrow(Variance_adjustment_list))) {
         Variance_adjustments[
-          Variance_adjustment_list[j, ][["Factor"]],
+          Variance_adjustment_list[j, ][["Data_type"]],
           Variance_adjustment_list[j, ][["Fleet"]]
         ] <-
           Variance_adjustment_list[j, ][["Value"]]

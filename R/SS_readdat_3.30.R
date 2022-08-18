@@ -591,15 +591,27 @@ SS_readdat_3.30 <-
     }
 
     ## Size frequency methods ----
-    datlist[["N_sizefreq_methods"]] <- get.val(dat, ind)
-    if (datlist[["N_sizefreq_methods"]]) {
+    datlist[["N_sizefreq_methods_rd"]] <- get.val(dat, ind)
+    if (datlist[["N_sizefreq_methods_rd"]] == -1) {
+      # new code added for 3.30.20 to support D-M likelihood
+      datlist[["N_sizefreq_methods"]] <- get.val(dat, ind)
+    } else {
+      # no additional line to read, just copy over value
+      datlist[["N_sizefreq_methods"]] <- datlist[["N_sizefreq_methods_rd"]]
+    }
+    if (datlist[["N_sizefreq_methods"]] > 0) {
       ## Get details of generalized size frequency methods
       datlist[["nbins_per_method"]] <- get.vec(dat, ind)
       datlist[["units_per_method"]] <- get.vec(dat, ind)
       datlist[["scale_per_method"]] <- get.vec(dat, ind)
       datlist[["mincomp_per_method"]] <- get.vec(dat, ind)
       datlist[["Nobs_per_method"]] <- get.vec(dat, ind)
-      ## get list of bin vectors
+      ## Get additional info on composition error distribution (likelihood)
+      if (datlist[["N_sizefreq_methods_rd"]] == -1) {
+        datlist[["Comp_Error_per_method"]] <- get.vec(dat, ind)
+        datlist[["ParmSelect_per_method"]] <- get.vec(dat, ind)
+      }
+      ## Get list of bin vectors
       datlist[["sizefreq_bins_list"]] <- list()
       for (imethod in seq_len(datlist[["N_sizefreq_methods"]])) {
         datlist[["sizefreq_bins_list"]][[imethod]] <- get.vec(dat, ind)
