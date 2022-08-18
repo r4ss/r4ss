@@ -25,10 +25,10 @@
 #'   \item Mean weight
 #'   \item Indices
 #'   \item Numbers at age
-#'   \item Length comp data
+#'   \item Length comp data (and generalized size comp data)
 #'   \item Age comp data
 #'   \item Conditional age-at-length data
-#'   \item Length comp fits
+#'   \item Length comp fits (and generalized size comp fits)
 #'   \item Age comp fits
 #'   \item Conditional age-at-length fits
 #'   \item Francis and Punt conditional age-at-length comp fits
@@ -1153,30 +1153,6 @@ SS_plots <-
           )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
 
-        # loop over size methods for generalized size comp data
-        if (nrow(replist[["sizedbase"]]) > 0) {
-          for (sizemethod in sort(unique(replist[["sizedbase"]][["method"]]))) {
-            plotinfo <-
-              SSplotComps(
-                replist = replist, datonly = FALSE, kind = "SIZE", sizemethod = sizemethod,
-                bub = TRUE, verbose = verbose, fleets = fleets, fleetnames = fleetnames,
-                samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-                minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
-                bublegend = showlegend,
-                maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-                plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-                maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-                cohortlines = cohortlines,
-                sexes = sexes, yupper = comp.yupper,
-                scalebins = scalebins,
-                pwidth = pwidth, pheight = pheight_tall, punits = punits,
-                ptsize = ptsize, res = res,
-                ...
-              )
-            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
-          }
-        }
-
         # length comp sex ratios (for 2-sex models only)
         if (replist[["nsexes"]] == 2) {
           plotinfo <-
@@ -1200,9 +1176,37 @@ SS_plots <-
             )
           if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
         }
-
+        # assign plots to LenComp tab in HTML view
         if (!is.null(plotInfoTable)) {
           plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "LenComp"
+        }
+
+        # loop over size methods for generalized size comp data
+        if (nrow(replist[["sizedbase"]]) > 0) {
+          for (sizemethod in sort(unique(replist[["sizedbase"]][["method"]]))) {
+            plotinfo <-
+              SSplotComps(
+                replist = replist, datonly = FALSE, kind = "SIZE", sizemethod = sizemethod,
+                bub = TRUE, verbose = verbose, fleets = fleets, fleetnames = fleetnames,
+                samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
+                minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+                bublegend = showlegend,
+                maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
+                plot = !png, print = png, smooth = smooth, plotdir = plotdir,
+                maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
+                cohortlines = cohortlines,
+                sexes = sexes, yupper = comp.yupper,
+                scalebins = scalebins,
+                pwidth = pwidth, pheight = pheight_tall, punits = punits,
+                ptsize = ptsize, res = res,
+                ...
+              )
+            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
+        }
+        # assign plots to SizeComp tab in HTML view
+        if (!is.null(plotInfoTable)) {
+          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "SizeComp"
         }
       }
 
