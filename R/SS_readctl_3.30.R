@@ -1271,12 +1271,17 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
       comments = unlist(age_selex_label)
     )
   }
-  # Dirichlet MN pars -----
+  # Dirichlet-multinomial pars -----
   # this is turned on in the data file.
   if (use_datlist == TRUE) {
-    if (any(datlist[["len_info"]][["CompError"]] > 1) |
-      any(datlist[["age_info"]][["CompError"]] > 1) |
-      any(datlist[["CompError_per_method"]] > 1)) {
+    # first check for CompError > 1
+    # 1 = Dirichlet option 1
+    # 2 = Dirichlet option 2
+    # 3 = MV-Tweedie (not yet implemented here or in SS3)
+    if (any(datlist[["len_info"]][["CompError"]] > 0) |
+      any(datlist[["age_info"]][["CompError"]] > 0) |
+      any(datlist[["CompError_per_method"]] > 0)) {
+      # now get the parameter count
       N_dirichlet_parms <- max(
         datlist[["len_info"]][["ParmSelect"]],
         datlist[["age_info"]][["ParmSelect"]],
@@ -1364,7 +1369,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     }
     ctllist <- add_2dar(x = ctllist)
   }
-
+  
   # tagging ----
   # TG_custom:  0=no read; 1=read if tags exist
   ctllist <- add_elem(ctllist, name = "TG_custom")
