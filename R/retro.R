@@ -138,7 +138,7 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
     }
 
     # run model
-    run(dir = newdir_iyr, verbose = verbose, ...)
+    run(dir = newdir_iyr, exe = exe, verbose = verbose, ...)
 
     # add rough check for if the model ran (although a report file may exist if
     # if the model only ran part of the way through). Warn the user in this case.
