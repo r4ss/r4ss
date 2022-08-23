@@ -1106,28 +1106,28 @@ SS_output <-
 
     # log determinant of the Hessian (previously was from ss.cor file)
     log_det_hessian <- match_report_table("Hessian", 0,
-        "Hessian", 0,
-        cols = 2
-      )
-    if(log_det_hessian == "Not") { # first part of "Not requested."
+      "Hessian", 0,
+      cols = 2
+    )
+    if (log_det_hessian == "Not") { # first part of "Not requested."
       covar <- FALSE
       log_det_hessian <- NA
     }
     # as.numeric() doesn't give warning if value is NA
     stats[["log_det_hessian"]] <- as.numeric(log_det_hessian)
-    
-    # two additional outputs added in 3.30.20 
+
+    # two additional outputs added in 3.30.20
     # (also "total_LogL" which is redundant with value in LIKELIHOOD
     # table read later)
     stats[["Final_phase"]] <- match_report_table("Final_phase", 0,
-        "Final_phase", 0,
-        cols = 2
-      )
+      "Final_phase", 0,
+      cols = 2
+    )
     stats[["N_iterations"]] <- match_report_table("N_iterations", 0,
-        "N_iterations", 0,
-        cols = 2
-      )
-    
+      "N_iterations", 0,
+      cols = 2
+    )
+
     # check warnings
     stats[["Nwarnings"]] <- nwarn
     if (length(warn) > 20) {
@@ -1557,7 +1557,7 @@ SS_output <-
       } # end test for whether CompReport.sso info is available
     } # end section related to Dirichlet-Multinomial likelihood
 
-    # check the covar.sso file 
+    # check the covar.sso file
     # this section moved down within SS_output for 3.30.20 to avoid
     # reading covar if -nohess used
     if (covar) {
@@ -1914,7 +1914,7 @@ SS_output <-
         )
       }
     }
-    
+
     # max gradient
     stats[["maximum_gradient_component"]] <-
       as.numeric(match_report_table("Convergence_Level", 0,
@@ -2083,7 +2083,7 @@ SS_output <-
           oldnames = c("FleetName", "Factor", "HarMean_effN"),
           newnames = c("Fleet_name", "Data_type", "HarMean")
         )
-      if ("Data_type" %in% names(lenntune)) {
+        if ("Data_type" %in% names(lenntune)) {
           # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
           # ("Factor", introduced in 3.30.12, was renamed "Data_type" in 3.30.20)
           lenntune <- type.convert(lenntune, as.is = TRUE)
@@ -2242,7 +2242,7 @@ SS_output <-
           } else {
             tune_lines <- grep("Factor", fit_size_comps[, 1])
           }
-     
+
           # place to store fit summary which is split across methods
           sizentune <- NULL
           # loop over methods to fill in new columns
@@ -2257,7 +2257,7 @@ SS_output <-
             fit_size_comps[["Units"]][start:end] <- method_info[imethod, 4]
             fit_size_comps[["Scale"]][start:end] <- method_info[imethod, 6]
             fit_size_comps[["Add_to_comp"]][start:end] <- method_info[imethod, 8]
-            
+
             # split out rows with info on tuning
             sizentune <- rbind(sizentune, fit_size_comps[tune_lines[imethod]:end, ])
           }
@@ -2278,7 +2278,7 @@ SS_output <-
             oldnames = c("Factor", "HarMean_effN"),
             newnames = c("Data_type", "HarMean")
           )
-          # subset for rows with single-character value for 
+          # subset for rows with single-character value for
           # Data_type (should always be 7 but seems to have been
           # 6 in some earlier models)
           # this should filter out extra header rows
@@ -2286,7 +2286,7 @@ SS_output <-
           # convert to numeric values as needed
           sizentune <- type.convert(sizentune, as.is = TRUE)
           stats[["Size_Comp_Fit_Summary"]] <- sizentune
-          # remove extra summary rows of fit_size_comps 
+          # remove extra summary rows of fit_size_comps
           fit_size_comps <- fit_size_comps[fit_size_comps[["Fleet_Name"]] %in% FleetNames, ]
         } # end check for non-empty fit_size_comps
       } else {
@@ -2541,7 +2541,7 @@ SS_output <-
       replacement = "\\1",
       x = M_type
     ))
-    
+
     # in SS 3.30 the number of rows of Natural_Mortality is the product of
     # the number of sexes, growth patterns, settlement events but settlement
     # events didn't exist in 3.24
