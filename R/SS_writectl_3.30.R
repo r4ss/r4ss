@@ -769,7 +769,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   writeComment("# Input variance adjustments factors: ")
   if (ctllist[["DoVar_adjust"]] == 0) {
     ctllist[["tmp_var"]] <- c(-9999, 1, 0)
-    writeComment("#_Factor Fleet Value")
+    writeComment("#_Data_type Fleet Value")
     wl.vector("tmp_var", comment = "# terminator")
   } else if (ctllist[["DoVar_adjust"]] == 1) {
     printdf("Variance_adjustment_list", terminate = TRUE)

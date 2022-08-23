@@ -67,6 +67,7 @@ Rebuilder
 ReferencePoints
 Rescale
 Rgui
+RunJitter
 SELEX
 SHA
 SPR
@@ -117,6 +118,7 @@ condbase
 containg
 covar
 cpue
+cran
 csv
 ctl
 ctlfile
@@ -135,6 +137,7 @@ dir
 dirvec
 doesn
 doi
+doRetro
 effN
 effNline
 endyr
@@ -203,6 +206,7 @@ newrow
 newvals
 nlegends
 nlminb
+nmfs
 noaa
 nohess
 nox
@@ -255,6 +259,7 @@ retuning
 reweighting
 r4ss
 rgb
+rstudio
 sampsize
 sampsizeline
 sd
@@ -276,6 +281,7 @@ stackpoly
 staggerpoints
 startyr
 stddev
+subfolder
 subfolders
 subfunctions
 tagdbase

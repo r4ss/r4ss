@@ -313,48 +313,6 @@ SS_output <-
       message("Report file time:", repfiletime)
     }
 
-    if (covar) {
-      # CoVar.sso file
-      covarfile <- file.path(dir, covarfile)
-      if (!file.exists(covarfile)) {
-        message("covar file not found, input 'covar' changed to FALSE")
-        covar <- FALSE
-      } else {
-
-        # time check for CoVar file
-        covarhead <- readLines(con = covarfile, n = 10)
-        covarskip <- grep("active-i", covarhead) - 1
-        covartime <- findtime(covarhead)
-        # the conversion to R time class below may no longer be necessary as strings should match
-        if (is.null(covartime) || is.null(repfiletime)) {
-          message(
-            "problem comparing the file creation times:\n",
-            "  Report.sso:", repfiletime, "\n",
-            "  covar.sso:", covartime
-          )
-        } else {
-          if (covartime != repfiletime) {
-            message("covar time:", covartime)
-            stop(
-              shortrepfile, " and ", covarfile,
-              " were from different model runs. Change input to covar=FALSE"
-            )
-          }
-        }
-
-        # covar file exists, but has problems
-        nowrite <- grep("do not write", covarhead)
-        if (length(nowrite) > 0) {
-          warning(
-            "covar file contains the warning\n",
-            "     '", covarhead[nowrite], "'\n",
-            "  input 'covar' changed to FALSE.\n"
-          )
-          covar <- FALSE
-        }
-      }
-    }
-
     # time check for CompReport file
     comp <- FALSE
     if (is.null(compfile)) {
@@ -1146,6 +1104,30 @@ SS_output <-
     returndat[["Data_File"]] <- tempfiles[1, 2]
     returndat[["Control_File"]] <- tempfiles[2, 2]
 
+    # log determinant of the Hessian (previously was from ss.cor file)
+    log_det_hessian <- match_report_table("Hessian", 0,
+        "Hessian", 0,
+        cols = 2
+      )
+    if(log_det_hessian == "Not") { # first part of "Not requested."
+      covar <- FALSE
+      log_det_hessian <- NA
+    }
+    # as.numeric() doesn't give warning if value is NA
+    stats[["log_det_hessian"]] <- as.numeric(log_det_hessian)
+    
+    # two additional outputs added in 3.30.20 
+    # (also "total_LogL" which is redundant with value in LIKELIHOOD
+    # table read later)
+    stats[["Final_phase"]] <- match_report_table("Final_phase", 0,
+        "Final_phase", 0,
+        cols = 2
+      )
+    stats[["N_iterations"]] <- match_report_table("N_iterations", 0,
+        "N_iterations", 0,
+        cols = 2
+      )
+    
     # check warnings
     stats[["Nwarnings"]] <- nwarn
     if (length(warn) > 20) {
@@ -1575,6 +1557,49 @@ SS_output <-
       } # end test for whether CompReport.sso info is available
     } # end section related to Dirichlet-Multinomial likelihood
 
+    # check the covar.sso file 
+    # this section moved down within SS_output for 3.30.20 to avoid
+    # reading covar if -nohess used
+    if (covar) {
+      covarfile <- file.path(dir, covarfile)
+      if (!file.exists(covarfile)) {
+        message("covar file not found, input 'covar' changed to FALSE")
+        covar <- FALSE
+      } else {
+
+        # time check for CoVar file
+        covarhead <- readLines(con = covarfile, n = 10)
+        covarskip <- grep("active-i", covarhead) - 1
+        covartime <- findtime(covarhead)
+        # the conversion to R time class below may no longer be necessary as strings should match
+        if (is.null(covartime) || is.null(repfiletime)) {
+          message(
+            "problem comparing the file creation times:\n",
+            "  Report.sso:", repfiletime, "\n",
+            "  covar.sso:", covartime
+          )
+        } else {
+          if (covartime != repfiletime) {
+            message("covar time:", covartime)
+            stop(
+              shortrepfile, " and ", covarfile,
+              " were from different model runs. Change input to covar=FALSE"
+            )
+          }
+        }
+
+        # covar file exists, but has problems
+        nowrite <- grep("do not write", covarhead)
+        if (length(nowrite) > 0) {
+          warning(
+            "covar file contains the warning\n",
+            "     '", covarhead[nowrite], "'\n",
+            "  input 'covar' changed to FALSE.\n"
+          )
+          covar <- FALSE
+        }
+      }
+    }
 
     # read covar.sso file
     if (covar) {
@@ -1889,13 +1914,7 @@ SS_output <-
         )
       }
     }
-
-    # log determinant of the Hessian (previously was from ss.cor file)
-    stats[["log_det_hessian"]] <-
-      as.numeric(match_report_table("Hessian", 0,
-        "Hessian", 0,
-        cols = 2
-      ))
+    
     # max gradient
     stats[["maximum_gradient_component"]] <-
       as.numeric(match_report_table("Convergence_Level", 0,
@@ -2061,11 +2080,12 @@ SS_output <-
       lenntune <- match_report_table("Length_Comp_Fit_Summary", 1, header = TRUE)
       if (!is.null(lenntune)) {
         lenntune <- df.rename(lenntune,
-          oldnames = c("FleetName"),
-          newnames = c("Fleet_name")
+          oldnames = c("FleetName", "Factor", "HarMean_effN"),
+          newnames = c("Fleet_name", "Data_type", "HarMean")
         )
-        if ("Factor" %in% names(lenntune)) {
+      if ("Data_type" %in% names(lenntune)) {
           # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
+          # ("Factor", introduced in 3.30.12, was renamed "Data_type" in 3.30.20)
           lenntune <- type.convert(lenntune, as.is = TRUE)
         } else {
           # process 3.30 versions prior to 3.30.12
@@ -2139,12 +2159,14 @@ SS_output <-
       }
     } # end 3.30 version
     agentune <- df.rename(agentune,
-      oldnames = c("FleetName", "N"),
-      newnames = c("Fleet_name", "Nsamp_adj")
+      oldnames = c("FleetName", "N", "Factor", "HarMean_effN"),
+      newnames = c("Fleet_name", "Nsamp_adj", "Data_type", "HarMean")
     )
 
-    if ("Factor" %in% names(agentune)) {
-      # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
+    if ("Data_type" %in% names(agentune)) {
+      # format starting with 3.30.12 doesn't need adjustment, just
+      # convert to numeric
+      # ("Factor", introduced in 3.30.12, was renamed "Data_type" in 3.30.20)
       agentune <- type.convert(agentune, as.is = TRUE)
     } else {
       if (!is.null(dim(agentune))) {
@@ -2189,8 +2211,7 @@ SS_output <-
     ## FIT_SIZE_COMPS
     fit_size_comps <- NULL
     if (SS_versionNumeric >= 3.30) {
-      # test for SS version 3.30.12 and beyond which doesn't include
-      # the label "Size_Comp_Fit_Summary"
+      # test for SS version 3.30.12 and beyond
       if (!is.na(match_report_line("FIT_SIZE_COMPS"))) {
         # note that there are hashes in between sub-sections,
         # so using rep_blank_lines instead of default
@@ -2211,8 +2232,18 @@ SS_output <-
           fit_size_comps[["Add_to_comp"]] <- NA
           # find the lines with the method-specific info
           method_lines <- grep("#Method:", fit_size_comps[, 1])
+          # method info is table to store info from only those lines
           method_info <- fit_size_comps[method_lines, ]
-          tune_lines <- grep("Factor", fit_size_comps[, 1])
+
+          # find the lines with the fit summary
+          if (any(grepl("Size_Comp_Fit_Summary", fit_size_comps[, 1]))) {
+            # new header line added in version 3.30.20
+            tune_lines <- grep("Size_Comp_Fit_Summary", fit_size_comps[, 1]) + 1
+          } else {
+            tune_lines <- grep("Factor", fit_size_comps[, 1])
+          }
+     
+          # place to store fit summary which is split across methods
           sizentune <- NULL
           # loop over methods to fill in new columns
           for (imethod in seq_along(method_lines)) {
@@ -2226,22 +2257,36 @@ SS_output <-
             fit_size_comps[["Units"]][start:end] <- method_info[imethod, 4]
             fit_size_comps[["Scale"]][start:end] <- method_info[imethod, 6]
             fit_size_comps[["Add_to_comp"]][start:end] <- method_info[imethod, 8]
+            
             # split out rows with info on tuning
             sizentune <- rbind(sizentune, fit_size_comps[tune_lines[imethod]:end, ])
           }
           # format sizentune (info on tuning) has been split into
           # a separate data.frame, needs formatting: remove extra columns, change names
           goodcols <- c(
+            # grab columns up through Fleet_name + added Method column
             1:grep("name", tolower(sizentune[1, ])),
             grep("Method", names(sizentune))
           )
+          # fill in header for Method in first row
           sizentune[1, max(goodcols)] <- "Method"
           sizentune <- sizentune[, goodcols]
+          # use first row for names
           names(sizentune) <- sizentune[1, ]
-          sizentune <- sizentune[sizentune[["Factor"]] == 7, ]
+          # rename Factor to Data_type (changed in 3.30.20)
+          sizentune <- df.rename(sizentune,
+            oldnames = c("Factor", "HarMean_effN"),
+            newnames = c("Data_type", "HarMean")
+          )
+          # subset for rows with single-character value for 
+          # Data_type (should always be 7 but seems to have been
+          # 6 in some earlier models)
+          # this should filter out extra header rows
+          sizentune <- sizentune[nchar(sizentune[["Data_type"]]) == 1, ]
+          # convert to numeric values as needed
           sizentune <- type.convert(sizentune, as.is = TRUE)
           stats[["Size_Comp_Fit_Summary"]] <- sizentune
-          # format fit_size_comps: remove extra rows, make numeric
+          # remove extra summary rows of fit_size_comps 
           fit_size_comps <- fit_size_comps[fit_size_comps[["Fleet_Name"]] %in% FleetNames, ]
         } # end check for non-empty fit_size_comps
       } else {
@@ -2496,14 +2541,19 @@ SS_output <-
       replacement = "\\1",
       x = M_type
     ))
+    
     # in SS 3.30 the number of rows of Natural_Mortality is the product of
     # the number of sexes, growth patterns, settlement events but settlement
     # events didn't exist in 3.24
-    M_Parameters <- match_report_table("Natural_Mortality",
+
+    # this first table includes all time periods as of 3.30.20
+    Natural_Mortality <- match_report_table("Natural_Mortality",
       adjust1 = adjust1,
       header = TRUE,
       type.convert = TRUE
     )
+    # the Bmark and endyr tables have been subsumed into the table above
+    # in 3.30.20
     Natural_Mortality_Bmark <- match_report_table("Natural_Mortality_Bmark",
       adjust1 = 1,
       header = TRUE,
@@ -2515,6 +2565,7 @@ SS_output <-
       type.convert = TRUE
     )
     returndat[["M_type"]] <- M_type
+    returndat[["Natural_Mortality"]] <- Natural_Mortality
     returndat[["Natural_Mortality_Bmark"]] <- Natural_Mortality_Bmark
     returndat[["Natural_Mortality_endyr"]] <- Natural_Mortality_endyr
 

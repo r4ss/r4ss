@@ -114,10 +114,10 @@ Current grouping of plots is as follows:
 \item Mean weight
 \item Indices
 \item Numbers at age
-\item Length comp data
+\item Length comp data (and generalized size comp data)
 \item Age comp data
 \item Conditional age-at-length data
-\item Length comp fits
+\item Length comp fits (and generalized size comp fits)
 \item Age comp fits
 \item Conditional age-at-length fits
 \item Francis and Punt conditional age-at-length comp fits

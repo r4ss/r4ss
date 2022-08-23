@@ -80,8 +80,8 @@ If \code{write=TRUE} then will write the values to a file
 and called "suggested_tunings.ss").
 }
 \description{
-Creates a table of values that can be copied into the SS control file
-for SS 3.30 models to adjust the input sample sizes for length and age
+Creates a table of values that can be copied into the SS3 control file
+for SS3 3.30 models to adjust the input sample sizes for length and age
 compositions based on either the Francis or McAllister-Ianelli tuning or
 adds the Dirichlet-Multinomial parameters to the necessary files to
 tune the model using an integrated method.
@@ -107,7 +107,7 @@ of the input sample size to the harmonic mean of the effective sample size.
 \subsection{Dirichlet-Multinomial (DM)}{
 
 The Dirichlet-Multinomial likelihood is an alternative approach that allows
-the tuning factor to be estimated rather than iteratively tuned.
+the tuning data type to be estimated rather than iteratively tuned.
 Note that for \code{option = "DM"} a table of tunings is
 not created as the DM is not an iterative reweighting option. Instead, each
 of the fleets with length- and age-composition data will be assigned a DM
@@ -115,26 +115,35 @@ parameter and the model will be rerun.
 }
 }
 
-\section{SS versions}{
+\section{SS3 versions}{
 \subsection{3.30.00-3.30.11}{
 
 Recommended_var_adj and other columns were named differently in these
-early version of SS. Calculations are thus done internally based on
+early version of SS3. Calculations are thus done internally based on
 finding the correct column name.
 }
 
 \subsection{3.30.12-3.30.16}{
 
-Starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
+Starting with SS3 version 3.30.12, the "Length_Comp_Fit_Summary"
 table in Report.sso is already in the format required to paste into
 the control file to apply the McAllister-Ianelli tuning. However, this
 function provides the additional option of the Francis tuning and the
 ability to compare the two approaches, as well as the functionality to add
 tunings and rerun the model. The "Age_Comp_Fit_Summary" table in Report.sso
 is formatted similarly though, though the Recommended_var_adj was wrongly
-set to 1 for all fleets in SS versions 3.30.12 to 3.30.16. Thus, the
+set to 1 for all fleets in SS3 versions 3.30.12 to 3.30.16. Thus, the
 MI approach is not taken from this recommended column, instead, it is
 calculated from the harmonic mean and input sample sizes.
+}
+
+\subsection{3.30.20}{
+
+Starting with SS3 version 3.30.20, the Dirichlet-multinomial
+likelihood was made available for Generalized Size Comp data. As part
+of this change, the column names were changed for all fit summary
+tables, to both align the notation among them and also facilitate the
+future addition of the Multivariate-Tweedie likelihood.
 }
 }
 
