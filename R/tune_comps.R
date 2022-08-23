@@ -74,7 +74,7 @@ SS_tune_comps <-
 #' of this change, the column names were changed for all fit summary
 #' tables, to both align the notation among them and also facilitate the
 #' future addition of the Multivariate-Tweedie likelihood.
-#' 
+#'
 #' @template replist
 #' @template fleets
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.

@@ -1369,7 +1369,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     }
     ctllist <- add_2dar(x = ctllist)
   }
-  
+
   # tagging ----
   # TG_custom:  0=no read; 1=read if tags exist
   ctllist <- add_elem(ctllist, name = "TG_custom")
