@@ -1125,7 +1125,7 @@ SS_output <-
     )
     if (!is.null(Final_phase)) {
       stats[["Final_phase"]] <- as.numeric(Final_phase)
-    } 
+    }
     N_iterations <- match_report_table("N_iterations", 0,
       "N_iterations", 0,
       cols = 2
