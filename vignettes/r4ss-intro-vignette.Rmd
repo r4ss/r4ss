@@ -61,8 +61,7 @@ such as to test upcoming features.
 To install alternative versions of r4ss, provide a reference to the
 `install_github`, such as  
 ```{r, install-older-version, eval=FALSE}
-remotes::install_github("r4ss/r4ss", ref="1.26.0") # install r4ss version 1.26.0
-
+remotes::install_github("r4ss/r4ss", ref = "1.46.1") # install r4ss version 1.26.0
 ```
 where the `ref` input can be a release number, the name of a branch on
 GitHub, or a git SHA-1 code, which are [listed with all code changes
@@ -76,13 +75,17 @@ for making a large set of plots illustrating that output.
 
 ```{r, eval=FALSE, echo=TRUE, message=FALSE}
 # it's useful to create a variable for the directory with the model output
-mydir <- file.path(path.package("r4ss"),
-                   file.path("extdata", "simple_small"))
+mydir <- file.path(
+  path.package("r4ss"),
+  file.path("extdata", "simple_small")
+)
 
-# read the model output and print diagnostic messages 
-replist <- SS_output(dir = mydir, 
-                     verbose = TRUE,
-                     printstats = TRUE)
+# read the model output and print diagnostic messages
+replist <- SS_output(
+  dir = mydir,
+  verbose = TRUE,
+  printstats = TRUE
+)
 
 # plots the results
 SS_plots(replist)
@@ -111,7 +114,7 @@ SS_plots(replist = replist, plot = 7)
 
 If only plots of catch and discards were desired, the user could call:
 ```{r, eval=FALSE}
-SS_plots(replist = replist, plot = c(7,9))
+SS_plots(replist = replist, plot = c(7, 9))
 ```
 The documentation for the `plot` argument in the help file for
 `SS_plots()` lists the corresponding numbers for each group of plots. 
@@ -162,7 +165,7 @@ Stock Synthesis files can be read in as list objects in R using the
 ```{r, eval=TRUE}
 inputs <- r4ss::SS_read(dir = new_mod_path)
 # can also separately run the functions called by SS_read():
-# SS_readstarter(), SS_readdat(), SS_readctl(), SS_readforecast(), 
+# SS_readstarter(), SS_readdat(), SS_readctl(), SS_readforecast(),
 # and SS_readwtatage()
 ```
 
@@ -191,7 +194,7 @@ example, the initial value of M can be changed:
 ```{r}
 # view the initial value
 inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
-#change it to 0.2
+# change it to 0.2
 inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"] <- 0.2
 ```
 
@@ -245,40 +248,20 @@ r4ss::run(dir = new_mod_path, skipfinished = FALSE)
 
 Note this is similar to resetting the working directory and running the
 model with `system()` or `shell()`, but deals with differences among
-operating systems automatically:
-
-```{r system-call, eval=FALSE}
-wd <- getwd()
-setwd(new_mod_path)
-system("./ss")
-setwd(wd)
-```
-
-An advantage of `run()` is that there is no need to change the working
-directory.
+operating systems automatically. Another advantage of `run()` is that 
+there is no need to change the working directory.
 
 If the executable in a different folder than the model, specify either
-the absolute or relative path to the executable. In the situation that
-the executable is in the working directory, it is necessary to provide
-the absolute path:
+the absolute or relative path to the executable.
 ```{r exe-in-diff-dir, eval=FALSE}
-# get the absolute exe path
-exe_path <- normalizePath("ss.exe", winslash = "/", mustWork = TRUE)
-# use the absolute exe path in the call.
-run(dir = new_mod_path, model = exe_path, skipfinished = FALSE)
+# use the absolute exe path in the call on a Windows computer.
+run(dir = new_mod_path, exe = "c:/SS/SSv3.30.19.01_Apr15/ss.exe")
+# use the absolute exe path in the call on linux.
+run(dir = new_mod_path, exe = "~/SS/SSv3.30.19.01_Apr15/ss_linux")
 ```
 
-Finally, if the stock synthesis executable is in your PATH, then the the
-`run()` can be called with `exe_in_path = TRUE`.
-
-```{r run-mult-models, eval=FALSE}
-r4ss::run(dir = new_mod_path, exe_in_path = TRUE, skipfinished = FALSE)
-```
-
-### Running models in multiple directories
-
-A vector of directories can also be passed to the `dir` variable in
-`run()` to run models in multiple directories with one function call.
+Finally, if the stock synthesis executable is in your PATH, then
+`run()` should find it automatically.
 
 ### Investigate the model run
 
@@ -301,7 +284,7 @@ While stock assessment processes differ among regions, some modeling
 workflows and diagnostics are commonly used. Within r4ss, there are
 functions to perform a retrospective (`retro()`), jitter the
 starting values and reoptimize the stock assessment model a number of
-times to check for local minima (`SS_run_jitter()`) and tuning
+times to check for local minima (`jitter()`) and tuning
 composition data (`tune_comps()`).
 
 Additional model diagnostics for Stock Synthesis models are available as
@@ -326,64 +309,64 @@ retrospective is run on, just in case there are problems with the run.
 For example, a five year retrospective could be done:
 
 ```{r, eval=FALSE}
-# define a new directory
-retro_dir <-"retro_dir"
-# copy over the stock synthesis model files to the new directory
-copy_SS_inputs(dir.old = mod_path, dir.new = retro_dir) 
-
 # run the retrospective analyses
-retro(masterdir = retro_dir, 
-           oldsubdir = "", 
-           newsubdir = "retrospectives", 
-           years = 0:-5)
+retro(
+  dir = new_mod_path, # wherever the model files are
+  oldsubdir = "", # subfolder within dir
+  newsubdir = "retrospectives", # new place to store retro runs within dir
+  years = 0:-5 # years relative to ending year of model
+)
 ```
 After running this retrospective, six new folders would be created
-within `retro_dir`, where each folder would contain a different run of
-the retrospective (removing 0 to 5 years of data).
+within a new "retrospectives" directory, where each folder would contain 
+a different run of the retrospective (removing 0 to 5 years of data).
 
 After the retrospective models have run, the results can be used as a
 diagnostic:
 
 ```{r, eval=FALSE}
 # load the 6 models
-retroModels <- SSgetoutput(dirvec = file.path(retro_dir, "retrospectives", 
-                                              paste("retro", 0:-5, sep = "")))
+retroModels <- SSgetoutput(dirvec = file.path(
+  new_mod_path, "retrospectives",
+  paste("retro", 0:-5, sep = "")
+))
 # summarize the model results
 retroSummary <- SSsummarize(retroModels)
 # create a vector of the ending year of the retrospectives
 endyrvec <- retroSummary[["endyrs"]] + 0:-5
 # make plots comparing the 6 models
-SSplotComparisons(retroSummary, endyrvec = endyrvec,
-                  legendlabels = paste("Data", 0:-5, "years"))
+SSplotComparisons(retroSummary,
+  endyrvec = endyrvec,
+  legendlabels = paste("Data", 0:-5, "years")
+)
 # calculate Mohn's rho, a diagnostic value
-rho_output <- SSmohnsrho(summaryoutput = retroSummary, 
-                         endyrvec = endyrvec,
-                         startyr = retroSummary[["endyrs"]]-5, 
-                         verbose = FALSE)
+rho_output <- SSmohnsrho(
+  summaryoutput = retroSummary,
+  endyrvec = endyrvec,
+  startyr = retroSummary[["endyrs"]] - 5,
+  verbose = FALSE
+)
 ```
 
 ### Jittering
 
 Another commonly used diagnostic with Stock Synthesis models is
 "jittering". Model initial values are changed randomly (by some
-fraction) and the model is reoptimized. The `jitter()` function
-performs this routine for the number of times specified by the user. For
-a stock Synthesis model in a folder called `my_model` that also contains
-a copy of the stock synthesis executable named ss (or ss.exe on
-Windows), jittering starting values can be run 100 times (note this
-could take a while, as this is running the model 100 times):
+fraction in a transformed parameter space) and the model is reoptimized. 
+The `jitter()` function performs this routine for the number of times 
+specified by the user. For a stock Synthesis model in a folder called 
+`jitter_dir` jittering starting values can be run 100 times (note this
+could take a while as they will be run in sequence):
 
 ```{r, eval=FALSE}
 # define a new directory
-jitter_dir <-"retro_dir"
+jitter_dir <- file.path(mod_path, "jitter")
 # copy over the stock synthesis model files to the new directory
-copy_SS_inputs(dir.old = mod_path, dir.new = jitter_dir) 
+copy_SS_inputs(dir.old = mod_path, dir.new = jitter_dir)
 # run the jitters
 jitter_loglike <- jitter(
-  mydir = jitter_dir,
-  model = "ss", # name of the stock synthesis exe in jitter_dir
+  dir = jitter_dir,
   Njitter = 100,
-  verbose = FALSE,
   jitter_fraction = 0.1 # a typically used jitter fraction
 )
 ```
@@ -425,7 +408,7 @@ mod_path <- file.path(tempdir(), "simple_mod")
 # Path to simple model in r4ss and copy files to mod_path
 example_path <- system.file("extdata", "simple_small", package = "r4ss")
 # copy model input files
-copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
+copy_SS_inputs(dir.old = example_path, dir.new = mod_path)
 # copy over the Report file to provide information about the last run
 file.copy(
   from = file.path(example_path, "Report.sso"),
@@ -433,8 +416,8 @@ file.copy(
 )
 # copy comp report file  to provide information about the last run of this model
 file.copy(
-from = file.path(example_path, "CompReport.sso"),
-to = file.path(mod_path, "CompReport.sso")
+  from = file.path(example_path, "CompReport.sso"),
+  to = file.path(mod_path, "CompReport.sso")
 )
 ```
 
@@ -448,7 +431,6 @@ tune_info <- tune_comps(
   niters_tuning = 1,
   dir = mod_path,
   allow_up_tuning = TRUE,
-  model = "ss",
   verbose = FALSE
 )
 # see the tuning table, and the weights applied to the model.
@@ -465,8 +447,7 @@ data and for each type of composition data) and re-run the model.
 # create additional temporary directory
 mod_path_dm <- file.path(tempdir(), "simple_mod_dm")
 # copy model files
-copy_SS_inputs(dir.old = mod_path, dir.new = mod_path_dm, verbose = FALSE,
-               copy_exe = TRUE)
+copy_SS_inputs(dir.old = mod_path, dir.new = mod_path_dm, copy_exe = TRUE)
 # copy over the Report file to provide information about the last run
 file.copy(
   from = file.path(mod_path, "Report.sso"),
@@ -474,19 +455,15 @@ file.copy(
 )
 # copy comp report file  to provide information about the last run of this model
 file.copy(
-from = file.path(mod_path, "CompReport.sso"),
-to = file.path(mod_path_dm, "CompReport.sso")
+  from = file.path(mod_path, "CompReport.sso"),
+  to = file.path(mod_path_dm, "CompReport.sso")
 )
-# Add Dirichlet-multinomial parameters and rerun. The function will 
+# Add Dirichlet-multinomial parameters and rerun. The function will
 # automatically remove the MI weighting and add in the DM parameters.
-# Use extras = "-nohess" when running model to speed up run.
 DM_parm_info <- tune_comps(
   option = "DM",
   niters_tuning = 1, # must be 1 or greater to run, through DM is not iterative
-  dir = mod_path_dm,
-  model = "ss",
-  extras = "-nohess",
-  verbose = FALSE
+  dir = mod_path_dm
 )
 # see the DM parameter estimates
 DM_parm_info[["tuning_table_list"]]
