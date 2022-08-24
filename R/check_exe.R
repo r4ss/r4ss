@@ -47,7 +47,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
   # remove extension from exe (if present)
   exe_no_extension <- gsub("\\.exe$", "", exe)
 
-  # Check that the file exists
+  # exe name with extension added back on Windows
   exename <- paste0(
     exe_no_extension,
     switch(.Platform[["OS.type"]],
@@ -55,18 +55,24 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
       unix = ""
     )
   )
+  # path.expand will resolve any use of "~" in input exe
+  # if exename doesn't include any path info (e.g. "ss")
+  # it will remain unchanged
+  exename <- path.expand(exename)
 
   # placeholder to store path(s)
   path_to_exe <- NULL
   # check for exe in specified directory (or directories)
   for (idir in seq_along(dir)) {
     if (file.exists(file.path(dir[idir], exename))) {
-      path_to_exe[idir] <- dir[idir]
+      path_to_exe[idir] <- path.expand(dir[idir])
       if (verbose) {
         message("Executable found in directory ", path_to_exe)
       }
       # add ./ to exename so it knows to run in the current directory
-      if (.Platform[["OS.type"]] == "unix") {
+      # but only if the exename doesn't include additional directory
+      # information
+      if (.Platform[["OS.type"]] == "unix" && basename(exename) == exename) {
         exename <- paste0("./", exename)
       }
     }
