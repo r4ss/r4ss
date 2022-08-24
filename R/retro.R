@@ -10,7 +10,7 @@
 #' @export
 #' @seealso [retro()]
 SS_doRetro <-
-  function() {
+  function(...) {
     lifecycle::deprecate_stop(
       when = "4.6.1",
       what = "SS_doRetro()",

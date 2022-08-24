@@ -4,7 +4,7 @@
 \alias{SS_doRetro}
 \title{Deprecated function to run a retrospective analyses, renamed to retro()}
 \usage{
-SS_doRetro()
+SS_doRetro(...)
 }
 \arguments{
 \item{...}{Any arguments associated with the now-deprecated functions.}

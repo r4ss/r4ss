@@ -4,7 +4,7 @@
 \alias{SS_tune_comps}
 \title{Deprecated function to tune composition data, renamed to tune_comps()}
 \usage{
-SS_tune_comps()
+SS_tune_comps(...)
 }
 \arguments{
 \item{...}{Any arguments associated with the now-deprecated functions.}

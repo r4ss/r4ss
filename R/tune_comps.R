@@ -10,7 +10,7 @@
 #' @export
 #' @seealso [tune_comps()]
 SS_tune_comps <-
-  function() {
+  function(...) {
     lifecycle::deprecate_stop(
       when = "4.6.1",
       what = "SS_tune_comps()",
