@@ -1119,14 +1119,20 @@ SS_output <-
     # two additional outputs added in 3.30.20
     # (also "total_LogL" which is redundant with value in LIKELIHOOD
     # table read later)
-    stats[["Final_phase"]] <- match_report_table("Final_phase", 0,
+    Final_phase <- match_report_table("Final_phase", 0,
       "Final_phase", 0,
       cols = 2
     )
-    stats[["N_iterations"]] <- match_report_table("N_iterations", 0,
+    if (!is.null(Final_phase)) {
+      stats[["Final_phase"]] <- as.numeric(Final_phase)
+    } 
+    N_iterations <- match_report_table("N_iterations", 0,
       "N_iterations", 0,
       cols = 2
     )
+    if (!is.null(N_iterations)) {
+      stats[["N_iterations"]] <- as.numeric(N_iterations)
+    }
 
     # check warnings
     stats[["Nwarnings"]] <- nwarn
