@@ -457,7 +457,7 @@ profile <- function(dir,
       }
 
       # run model
-      run(dir = dir, verbose = verbose, ...)
+      run(dir = dir, verbose = verbose, exe = exe, ...)
 
       # check for convergence
       converged[i] <- file.exists(stdfile)
