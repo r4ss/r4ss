@@ -25,6 +25,17 @@
 #' If the specified `exe` input is not found in any of the `dir` input
 #' values nor in the PATH, then the function stops with an error.
 #'
+#' @export
+#' @seealso [run()]
+#' @examples
+#' \dontrun{
+#'   # check for executable called "ss" or "ss.exe" in the PATH
+#'   check_exe()
+#'   # check for executable with a different name in the PATH
+#'   check_exe(exe = "ss_win")
+#'   # check for executable in a specific directory
+#'   check_exe(exe = "ss_linux", dir = "~/ss/ss_v3.30.19.01")
+#' }
 #' @description The `check_exe()` function first checks the specified
 #' directory `dir` for the specified SS3 executable name and returns the
 #' file's location if found. If it is not found in the specified

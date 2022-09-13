@@ -50,6 +50,19 @@ Check that the Stock Synthesis executable name provided in \code{exe},
 an input argument to numerous \code{r4ss} functions is available in the
 location specified by \code{dir} or in the path.
 }
+\examples{
+\dontrun{
+  # check for executable called "ss" or "ss.exe" in the PATH
+  check_exe()
+  # check for executable with a different name in the PATH
+  check_exe(exe = "ss_win")
+  # check for executable in a specific directory
+  check_exe(exe = "ss_linux", dir = "~/ss/ss_v3.30.19.01")
+}
+}
+\seealso{
+\code{\link[=run]{run()}}
+}
 \author{
 Kelli F. Johnson, Ian G. Taylor
 }
