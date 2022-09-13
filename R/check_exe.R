@@ -29,12 +29,12 @@
 #' @seealso [run()]
 #' @examples
 #' \dontrun{
-#'   # check for executable called "ss" or "ss.exe" in the PATH
-#'   check_exe()
-#'   # check for executable with a different name in the PATH
-#'   check_exe(exe = "ss_win")
-#'   # check for executable in a specific directory
-#'   check_exe(exe = "ss_linux", dir = "~/ss/ss_v3.30.19.01")
+#' # check for executable called "ss" or "ss.exe" in the PATH
+#' check_exe()
+#' # check for executable with a different name in the PATH
+#' check_exe(exe = "ss_win")
+#' # check for executable in a specific directory
+#' check_exe(exe = "ss_linux", dir = "~/ss/ss_v3.30.19.01")
 #' }
 #' @description The `check_exe()` function first checks the specified
 #' directory `dir` for the specified SS3 executable name and returns the
