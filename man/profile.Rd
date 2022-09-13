@@ -133,12 +133,10 @@ Nprofile <- length(h.vec)
 
 # run profile command
 profile <- profile(
-  dir = mydir, # directory
-  # "NatM" is a subset of one of the
-  # parameter labels in control.ss_new
+  dir = mydir,
   oldctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
-  string = "steep",
+  string = "steep", # subset of parameter label
   profilevec = h.vec
 )
 
