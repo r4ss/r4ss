@@ -16,7 +16,7 @@ SS_makeHTMLdiagnostictable <- function(replist,
   parchecks <- replist[["estimated_non_dev_parameters"]]
   cormin <- replist[["inputs"]][["cormin"]]
   cormax <- replist[["inputs"]][["cormax"]]
-  
+
   # set default directory (following convention in other plot functions,
   # not bothering to create "plots" subfolder if called indepenently of SS_plots)
   if (is.null(plotdir)) {
@@ -33,7 +33,7 @@ SS_makeHTMLdiagnostictable <- function(replist,
 
   # Highlight high gradients
   # (sorting turned off keep parameters in familiar order)
-  if (!is.null(parchecks[["Gradient"]]) && 
+  if (!is.null(parchecks[["Gradient"]]) &&
     all(!is.nan(parchecks[["Gradient"]]))) {
     parchecks <- parchecks[!is.na(parchecks[["Gradient"]]), ]
     # parchecks <- parchecks[order(-parchecks[["Gradient"]]), ]
