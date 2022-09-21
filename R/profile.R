@@ -350,11 +350,19 @@ profile <- function(dir,
       " from 0 to 1 and re-run the estimation.\n"
     )
   }
-  # check for consistency in use of par file
+  # check for consistency in use of par file (part 1)
   if (usepar & starter[["init_values_src"]] == 0) {
     stop(
-      "with setting 'usepar=TRUE', you need to change the starter file value\n",
+      "With setting 'usepar=TRUE', change the starter file value",
       " for initial value source from 0 (ctl file) to 1 (par file).\n"
+    )
+  }
+  # check for consistency in use of par file (part 2)
+  if (!usepar & starter[["init_values_src"]] == 1) {
+    stop(
+      "Change the starter file value for initial value source",
+      " from 1 (par file) to 0 (par file) or change to",
+      " profile(..., usepar = TRUE)."
     )
   }
 
