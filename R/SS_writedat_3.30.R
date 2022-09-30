@@ -403,11 +403,11 @@ SS_writedat_3.30 <- function(datlist,
     wl.vector("scale_per_method", comment = "#_scale_per_method")
     wl.vector("mincomp_per_method", comment = "#_mincomp_per_method")
     # Dirichlet-multinomial or MV-Tweedie settings conditioned on code
+    wl.vector("Nobs_per_method", comment = "#_Nobs_per_method")
     if (d[["N_sizefreq_methods_rd"]] == -1) {
-      wl.vector("Comp_Err_per_method", comment = "#_Comp_Err_per_method")
+      wl.vector("Comp_Error_per_method", comment = "#_Comp_Error_per_method")
       wl.vector("ParmSelect_per_method", comment = "#_ParmSelect_per_method")
     }
-    wl.vector("Nobs_per_method", comment = "#_Nobs_per_method")
     writeComment("#\n#_Sizefreq bins")
     writeComment("#\n#_sizefreq_bins_list")
     wl.list("sizefreq_bins_list")
