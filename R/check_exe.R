@@ -55,8 +55,17 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
   if (!is.character(dir)) {
     stop("Input 'dir' should be a character vector")
   }
+  # check for escaped quotes around string added by shQuotes()
+  quotes <- FALSE
+  if(substring(exe, 1, 1) == '\"') {
+    quotes = TRUE
+    exe <- gsub('\"', '', exe)
+  }
   # remove extension from exe (if present)
   exe_no_extension <- gsub("\\.exe$", "", exe)
+  if (!is.na(file.info(exe)[["isdir"]]) && file.info(exe)[["isdir"]]) {
+    stop("Input 'exe' is a directory, it should include the file name as well")
+  }
 
   # exe name with extension added back on Windows
   exename <- paste0(
@@ -66,6 +75,11 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
       unix = ""
     )
   )
+  # add back quotes if they were found in input
+  if (quotes) {
+    exe <- paste0('\"', exe, '\"')
+    exename <- paste0('\"', exename, '\"')
+  }
   # path.expand will resolve any use of "~" in input exe
   # if exename doesn't include any path info (e.g. "ss")
   # it will remain unchanged
@@ -74,18 +88,16 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
   # placeholder to store path(s)
   path_to_exe <- NULL
   # check for exe in specified directory (or directories)
-  for (idir in seq_along(dir)) {
-    if (file.exists(file.path(dir[idir], exename))) {
-      path_to_exe[idir] <- path.expand(dir[idir])
-      if (verbose) {
-        message("Executable found in directory ", path_to_exe)
-      }
-      # add ./ to exename so it knows to run in the current directory
-      # but only if the exename doesn't include additional directory
-      # information
-      if (.Platform[["OS.type"]] == "unix" && basename(exename) == exename) {
-        exename <- paste0("./", exename)
-      }
+  if (file.exists(file.path(dir, exename))) {
+    path_to_exe <- path.expand(dir)
+    if (verbose) {
+      message("Executable found in directory ", path_to_exe)
+    }
+    # add ./ to exename so it knows to run in the current directory
+    # but only if the exename doesn't include additional directory
+    # information
+    if (.Platform[["OS.type"]] == "unix" && basename(exename) == exename) {
+      exename <- paste0("./", exename)
     }
   }
 
@@ -95,25 +107,29 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
 
     # if exe is found in PATH
     if (path_to_exe != "") {
+      # normalize path
+      # e.g. convert "C:\\SS\\SSB672~1.01_\\" to "C:/SS/SSv3.30.19.01_Apr15/"
+      path_to_exe <- normalizePath(path_to_exe)
+      
       # make sure it has a size that makes sense for Stock Synthesis
       # (linux systems have a command line tool called "ss" in a location
       # like /usr/sbin/ but it's size is much smaller (about 100k vs 7MB)
-      if (file.info(path_to_exe)[["size"]] < 1e6) {
+      if (file.info(normalizePath(path_to_exe))[["size"]] < 1e6) {
         if (verbose) {
           message(
-            "Executable found in PATH that isn't Stock Synthesis: ",
-            path_to_exe
+            "Executable found that isn't Stock Synthesis: ",
+            path_to_exe,
+            "\n  File size is too small: ", 
+            file.info(normalizePath(path_to_exe))[["size"]]
           )
         }
         path_to_exe <- ""
       } else {
         if (verbose) {
-          message("Executable found in PATH at ", path_to_exe)
+          message("Executable found at ", path_to_exe)
         }
-        # if found in PATH and file size is large enough,
-        # then normalize path and remove exe name from the end
-        # e.g. convert "C:\\SS\\SSB672~1.01_\\ss.exe" to "C:/SS/SSv3.30.19.01_Apr15"
-        path_to_exe <- dirname(normalizePath(path_to_exe))
+        # remove filename to just get path
+        path_to_exe <- dirname(path_to_exe)
       }
     }
     if (path_to_exe == "") {
