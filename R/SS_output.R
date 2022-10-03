@@ -1438,7 +1438,7 @@ SS_output <-
         file = file.path(dir, datname),
         verbose = verbose,
       )
-      # deal with case where data file is empty
+      # when new data file is empty, find input data file
       if (is.null(datfile)) {
         starter <- SS_readstarter(
           file = file.path(dir, "starter.ss"),

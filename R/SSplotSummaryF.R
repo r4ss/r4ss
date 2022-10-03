@@ -104,8 +104,5 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
       plotinfo[["category"]] <- "Timeseries"
     }
   }
-  if (verbose) {
-    message("Plotting Summary F\n")
-  }
   return(invisible(plotinfo))
 }

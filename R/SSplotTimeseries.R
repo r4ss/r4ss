@@ -236,6 +236,8 @@ SSplotTimeseries <-
         quants <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", ]
         # get year for each row
         quants[["Yr"]] <- as.numeric(substring(quants[["Label"]], 8))
+        # replace y-values with Bratio values from derived quantities
+        # PROBLEM: this doesn't work for seasonal models
         yvals[ts[["Yr"]] %in% quants[["Yr"]]] <- quants[["Value"]]
         ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
       }

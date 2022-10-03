@@ -78,6 +78,11 @@ SSplotSPR <-
       message("Skipping SPR plots: no output available")
       return()
     }
+    # at least one non-converged model had NaN values for all years
+    if (all(is.nan(sprseries[["spr"]]))) {
+      warning("NaN values in SPR series, skipping plots")
+      return()
+    }
 
     # get SPR target and associated label based on forecast specified SPR target or
     # the denominator of the SPR ratio as specified in the starter file
