@@ -101,7 +101,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
       # normalize path
       # e.g. convert "C:\\SS\\SSB672~1.01_\\" to "C:/SS/SSv3.30.19.01_Apr15/"
       path_to_exe <- normalizePath(path_to_exe)
-      
+
       # make sure it has a size that makes sense for Stock Synthesis
       # (linux systems have a command line tool called "ss" in a location
       # like /usr/sbin/ but it's size is much smaller (about 100k vs 7MB)
@@ -110,7 +110,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
           message(
             "Executable found that isn't Stock Synthesis: ",
             path_to_exe,
-            "\n  File size is too small: ", 
+            "\n  File size is too small: ",
             file.info(normalizePath(path_to_exe))[["size"]]
           )
         }
