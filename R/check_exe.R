@@ -55,12 +55,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
   if (!is.character(dir)) {
     stop("Input 'dir' should be a character vector")
   }
-  # check for escaped quotes around string added by shQuotes()
-  quotes <- FALSE
-  if(substring(exe, 1, 1) == '\"') {
-    quotes = TRUE
-    exe <- gsub('\"', '', exe)
-  }
+
   # remove extension from exe (if present)
   exe_no_extension <- gsub("\\.exe$", "", exe)
   if (!is.na(file.info(exe)[["isdir"]]) && file.info(exe)[["isdir"]]) {
@@ -75,11 +70,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
       unix = ""
     )
   )
-  # add back quotes if they were found in input
-  if (quotes) {
-    exe <- paste0('\"', exe, '\"')
-    exename <- paste0('\"', exename, '\"')
-  }
+
   # path.expand will resolve any use of "~" in input exe
   # if exename doesn't include any path info (e.g. "ss")
   # it will remain unchanged
