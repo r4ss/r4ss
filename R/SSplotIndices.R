@@ -229,14 +229,14 @@ SSplotIndices <-
           if (error != -1) {
             ylim <- c(0, 1.05 * min(
               max(upper_total, zrange, na.rm = TRUE),
-              max(maximum_ymax_ratio * y)
+              max(maximum_ymax_ratio * y, na.rm = TRUE)
             ))
           } else {
             ylim <- 1.05 * c(
               min(lower_total, zrange, na.rm = TRUE),
               min(
                 max(upper_total, zrange, na.rm = TRUE),
-                max(maximum_ymax_ratio * y)
+                max(maximum_ymax_ratio * y, na.rm = TRUE)
               )
             )
           }
