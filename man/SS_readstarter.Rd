@@ -24,7 +24,7 @@ Read Stock Synthesis starter file as a list
 }
 \examples{
 starter_list <- SS_readstarter(
-  system.file("extdata", "simple_3.30.13", "starter.ss",
+  system.file("extdata", "simple_small", "starter.ss",
     package = "r4ss"
   ),
   verbose = FALSE
@@ -36,14 +36,18 @@ starter_list[["ctlfile"]] == "simple_control.ss"
 starter_list[["datfile"]] == "simple_data.ss"
 }
 \seealso{
-\itemize{
-\item \code{\link[=SS_readforecast]{SS_readforecast()}},
-\item \code{\link[=SS_readdat]{SS_readdat()}},
-\item \code{\link[=SS_writestarter]{SS_writestarter()}},
-\item \code{\link[=SS_writeforecast]{SS_writeforecast()}},
-\item \code{\link[=SS_writedat]{SS_writedat()}}
-}
+Other read/write functions: 
+\code{\link{SS_readctl}()},
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_read}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()},
+\code{\link{SS_write}()}
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 }
+\concept{read/write functions}

@@ -9,12 +9,12 @@ example_path <- system.file("extdata", package = "r4ss")
 ###############################################################################
 # global variables
 ###############################################################################
-ctlfile <- file.path(example_path, "simple_3.30.13", "simple_control.ss")
+ctlfile <- file.path(example_path, "simple_small", "control.ss")
 ss3file <- file.path(dirname(ctlfile), "ss.exe")
 pars <- SS_parlines(ctlfile = ctlfile)
 
 ###############################################################################
-# test r4ss functions used by SS_profile
+# test r4ss functions used by profile
 ###############################################################################
 test_that(
   "blocks_per_pattern not in read pars",
@@ -65,8 +65,3 @@ test_that(
   ))
 )
 unlink(file.path(dirname(ctlfile), "control_change.ss"))
-
-# writeLines("dummy", con = ss3file)
-# SS_profile(dir = dirname(ctlfile),
-#   masterctlfile = basename(ctlfile),
-#   newctlfile = "test_ctl.ss", string = "NatM")

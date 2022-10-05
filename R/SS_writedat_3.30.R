@@ -229,7 +229,7 @@ SS_writedat_3.30 <- function(datlist,
   #  v.names = "catch",
   #  sep = ""),
   #  data.frame(
-  #    "fleet" = 1:length(d[["se_log_catch"]]),
+  #    "fleet" = seq_along(d[["se_log_catch"]]),
   #    "catch_se" = d[["se_log_catch"]]),
   #  all.x = TRUE)
   catch.out <- catch.out[, c("year", "seas", "fleet", "catch", "catch_se")]
@@ -393,13 +393,21 @@ SS_writedat_3.30 <- function(datlist,
   if (is.null(d[["N_sizefreq_methods"]])) {
     d[["N_sizefreq_methods"]] <- 0
   }
+  if (d[["N_sizefreq_methods_rd"]] == -1) {
+    wl("N_sizefreq_methods_rd") # conditional code added in 3.30.20
+  }
   wl("N_sizefreq_methods")
   if (d[["N_sizefreq_methods"]] > 0) {
     wl.vector("nbins_per_method", comment = "#_nbins_per_method")
     wl.vector("units_per_method", comment = "#_units_per_method")
     wl.vector("scale_per_method", comment = "#_scale_per_method")
     wl.vector("mincomp_per_method", comment = "#_mincomp_per_method")
+    # Dirichlet-multinomial or MV-Tweedie settings conditioned on code
     wl.vector("Nobs_per_method", comment = "#_Nobs_per_method")
+    if (d[["N_sizefreq_methods_rd"]] == -1) {
+      wl.vector("Comp_Error_per_method", comment = "#_Comp_Error_per_method")
+      wl.vector("ParmSelect_per_method", comment = "#_ParmSelect_per_method")
+    }
     writeComment("#\n#_Sizefreq bins")
     writeComment("#\n#_sizefreq_bins_list")
     wl.list("sizefreq_bins_list")

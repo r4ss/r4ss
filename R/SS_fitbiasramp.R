@@ -220,7 +220,7 @@ SS_fitbiasramp <-
       max_biasadj <- vec2[5]
 
       biasadj <- rep(NA, length(yr))
-      for (i in 1:length(yr)) {
+      for (i in seq_along(yr)) {
         y <- yr[i]
 
         if (y <= last_no) {
@@ -322,7 +322,7 @@ SS_fitbiasramp <-
         warning("Problem with convergence, here is output from 'optim':\n")
         print(newbias)
       }
-      message("Estimated values: \n", paste0(capture.output(df), collpase = "\n"))
+      message("Estimated values: \n", paste0(utils::capture.output(df), collpase = "\n"))
     }
 
     if (plot) {

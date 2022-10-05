@@ -13,9 +13,7 @@
 #' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
-#' @seealso [SS_readstarter()], [SS_readdat()],
-#' [SS_writestarter()],
-#' [SS_writeforecast()], [SS_writedat()],
+#' @family read/write functions
 
 SS_readforecast <- function(file = "forecast.ss",
                             Nfleets = NULL,
@@ -45,7 +43,7 @@ SS_readforecast <- function(file = "forecast.ss",
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
-  for (i in 1:length(dat)) {
+  for (i in seq_along(dat)) {
     # First split between input and comments
     mysplit <- strsplit(dat[i], split = "#")[[1]]
     if (!is.na(mysplit[1])) {

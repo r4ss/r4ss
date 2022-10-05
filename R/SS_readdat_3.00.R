@@ -1,9 +1,12 @@
-#' read data file from SS version 3.00
+#' Deprecate: read data file from SS version 3.00
 #'
 #' Read Stock Synthesis (version 3.00) data file into list object in R.
 #' This function was formerly called SS_readdat. That name is now used
 #' for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
 #' (and potentially additional functions in the future).
+#'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30.
 #'
 #'
 #' @template file
@@ -21,6 +24,12 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_3.00 <- function(file, verbose = TRUE,
                             echoall = lifecycle::deprecated(), section = NULL) {
+  # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_readdat_3.00()",
+    details = "Please update model to version 3.30."
+  )
   # function to read Stock Synthesis data files
   if (lifecycle::is_present(echoall)) {
     lifecycle::deprecate_warn(
@@ -59,7 +68,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
-  for (i in 1:length(dat)) {
+  for (i in seq_along(dat)) {
     # split along blank spaces
     mysplit <- strsplit(dat[i], split = "[[:blank:]]+")[[1]]
     mysplit <- mysplit[mysplit != ""]
@@ -70,7 +79,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     # convert to numeric
     nums <- suppressWarnings(as.numeric(mysplit))
     if (sum(is.na(nums)) > 0) {
-      maxcol <- min((1:length(nums))[is.na(nums)]) - 1
+      maxcol <- min((seq_along(nums))[is.na(nums)]) - 1
     } else {
       maxcol <- length(nums)
     }
@@ -139,7 +148,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
   i <- i + Ntypes
   if (verbose) {
     message("areas:", areas)
-    message("fleet info:\n", paste0(capture.output(
+    message("fleet info:\n", paste0(utils::capture.output(
       data.frame(
         fleet = 1:Ntypes,
         name = fleetnames,

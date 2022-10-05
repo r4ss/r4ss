@@ -164,7 +164,7 @@ SSplotBiology <-
     ians_contour <- c("white", rep("blue", 100))
     # convert colvec to semi-transparent colors for shading polygons
     shadecolvec <- rep(NA, length(colvec))
-    for (icol in 1:length(colvec)) {
+    for (icol in seq_along(colvec)) {
       tmp <- col2rgb(colvec[icol]) / 255
       shadecolvec[icol] <- rgb(
         red = tmp[1], green = tmp[2], blue = tmp[3],
@@ -294,19 +294,12 @@ SSplotBiology <-
     ## FecundAtAge <- ageselex[ageselex[["factor"]]=="Fecund", names(ageselex)%in%0:accuage]
     ## WtAtAge <- ageselex[ageselex[["factor"]]=="bodywt", names(ageselex)%in%0:accuage]
 
-    # column name for weight-at-length
-    # (Wt_len for 1-sex models starting with 3.30.16)
-    Wt_len_colname <- "Wt_len_F"
-    if ("Wt_len" %in% names(biology)) {
-      Wt_len_colname <- "Wt_len"
-    }
-
     # determine fecundity type
     # define labels and x-variable
     if (FecType == 1) {
       fec_ylab <- "Eggs per kg"
       fec_xlab <- labels[8]
-      FecX <- biology[[Wt_len_colname]]
+      FecX <- biology[["Wt_F"]]
       FecY <- FecPar1 + FecPar2 * FecX
     }
     if (labels[11] != "Default fecundity label") fec_ylab <- labels[11]
@@ -362,19 +355,19 @@ SSplotBiology <-
       ## This needs to be a function of sex since it can be called
       ## either once for a single sex model or twice to produce plots for
       ## each one.
-      x <- biology[["Mean_Size"]]
+      x <- biology[["Len_mean"]]
       if (!wtatage_switch) { # if empirical weight-at-age is not used
         if (!add) {
-          ymax <- max(biology[[Wt_len_colname]])
-          if (nsexes > 1) ymax <- max(ymax, biology[["Wt_len_M"]])
+          ymax <- max(biology[["Wt_F"]])
+          if (nsexes > 1) ymax <- max(ymax, biology[["Wt_M"]])
           plot(x, x,
             ylim = c(0, 1.1 * ymax), xlab = labels[1], ylab = labels[4], type = "n",
             las = 1, yaxs = "i"
           )
         }
-        lines(x, biology[[Wt_len_colname]], type = "o", col = colvec[1])
+        lines(x, biology[["Wt_F"]], type = "o", col = colvec[1])
         if (nsexes > 1) {
-          lines(x, biology[["Wt_len_M"]], type = "o", col = colvec[2])
+          lines(x, biology[["Wt_M"]], type = "o", col = colvec[2])
           if (!add) {
             legend(legendloc,
               bty = "n", c("Females", "Males"),
@@ -398,16 +391,16 @@ SSplotBiology <-
 
     maturity_plot <- function() { # maturity
       if (!wtatage_switch) { # if empirical weight-at-age is not used
-        x <- biology[["Mean_Size"]]
-        if (min(biology[["Mat_len"]]) < 1) { # if length based
+        x <- biology[["Len_mean"]]
+        if (min(biology[["Mat"]]) < 1) { # if length based
           if (!add) {
-            plot(x, biology[["Mat_len"]],
+            plot(x, biology[["Mat"]],
               xlab = labels[1], ylab = labels[3],
-              las = 1, yaxs = "i", ylim = c(0, max(biology[["Mat_len"]])),
+              las = 1, yaxs = "i", ylim = c(0, max(biology[["Mat"]])),
               type = "o", col = colvec[1]
             )
           }
-          if (add) lines(x, biology[["Mat_len"]], type = "o", col = colvec[1])
+          if (add) lines(x, biology[["Mat"]], type = "o", col = colvec[1])
         } else { # else is age based
           if (!add) {
             plot(growdatF[["Age_Beg"]], growdatF[["Age_Mat"]],
@@ -530,32 +523,32 @@ SSplotBiology <-
         points(FecX, FecY, col = colvec[2], pch = 19)
       }
     }
-    fecundityOK <- all(!is.na(biology[["Fecundity"]]))
+    fecundityOK <- all(!is.na(biology[["Fec"]]))
     fec_weight_fn <- function() { # fecundity at weight from BIOLOGY section
-      ymax <- 1.1 * max(biology[["Fecundity"]])
+      ymax <- 1.1 * max(biology[["Fec"]])
       if (!add) {
-        plot(biology[[Wt_len_colname]], biology[["Fecundity"]],
+        plot(biology[["Wt_F"]], biology[["Fec"]],
           xlab = labels[8], ylab = labels[10],
           las = 1, yaxs = "i", ylim = c(0, ymax), col = colvec[1], type = "o"
         )
       } else {
-        points(biology[["Mean_Size"]], biology[["Fecundity"]], col = colvec[1], type = "o")
+        points(biology[["Len_mean"]], biology[["Fec"]], col = colvec[1], type = "o")
       }
     }
     fec_len_fn <- function() { # fecundity at length from BIOLOGY section
-      ymax <- 1.1 * max(biology[["Fecundity"]])
+      ymax <- 1.1 * max(biology[["Fec"]])
       if (!add) {
-        plot(biology[["Mean_Size"]], biology[["Fecundity"]],
+        plot(biology[["Len_mean"]], biology[["Fec"]],
           xlab = labels[9], ylab = labels[10],
           las = 1, yaxs = "i", ylim = c(0, 1.1 * ymax), col = colvec[1], type = "o", yaxs = "i"
         )
       } else {
-        points(biology[["Mean_Size"]], biology[["Fecundity"]], col = colvec[1], type = "o")
+        points(biology[["Len_mean"]], biology[["Fec"]], col = colvec[1], type = "o")
       }
     }
     spawn_output_len_fn <- function() { # spawning output at length
-      x <- biology[["Mean_Size"]]
-      y <- biology[["Spawn"]]
+      x <- biology[["Len_mean"]]
+      y <- biology[["Mat*Fec"]]
       ymax <- 1.1 * max(y)
       if (!add) {
         plot(x, y,
@@ -580,7 +573,7 @@ SSplotBiology <-
       }
     }
 
-    ymax <- max(biology[["Mean_Size"]])
+    ymax <- max(biology[["Len_mean"]])
     x <- growdatF[["Age_Beg"]]
 
     main <- "Ending year expected growth (with 95% intervals)"
@@ -751,7 +744,7 @@ SSplotBiology <-
         lab2 <- "Wt_Beg"
         lab2long <- "Mean weight"
         lab1max <- 1
-        lab2max <- max(c(biology[[Wt_len_colname]], biology[["Wt_len_M"]]), na.rm = TRUE)
+        lab2max <- max(c(biology[["Wt_F"]], biology[["Wt_M"]]), na.rm = TRUE)
         lab1_axis_vec <- c(0, 0.5, 1)
       }
       # calculate scaling factor between CVs and SDs to share each panel
@@ -793,12 +786,12 @@ SSplotBiology <-
       }
       if (option == 2) {
         # if plotting maturity and fecundity, then get this panel from length-based data
-        lines(biology[[Wt_len_colname]] * lab2_to_lab1_scale, biology[["Mean_Size"]],
+        lines(biology[["Wt_F"]] * lab2_to_lab1_scale, biology[["Len_mean"]],
           col = colvec[col_index1], lwd = 3
         )
-        lines(biology[["Mat_len"]], biology[["Mean_Size"]], col = colvec[col_index1], lty = "12")
+        lines(biology[["Mat"]], biology[["Len_mean"]], col = colvec[col_index1], lty = "12")
         if (nsexes > 1) {
-          lines(biology[["Wt_len_M"]] * lab2_to_lab1_scale, biology[["Mean_Size"]],
+          lines(biology[["Wt_M"]] * lab2_to_lab1_scale, biology[["Len_mean"]],
             col = colvec[2], lwd = 3, lty = 2
           )
         }
@@ -947,7 +940,7 @@ SSplotBiology <-
       L_at_AmaxM <- Growth_Parameters[["L_a_A2"]][2]
       LinfF <- Growth_Parameters[["Linf"]][1]
       LinfM <- Growth_Parameters[["Linf"]][2]
-      ymax <- max(biology[["Mean_Size"]])
+      ymax <- max(biology[["Len_mean"]])
       plot(0,
         type = "n",
         xlim = c(0, 1 + max(growdatF[["Age_Beg"]])),
@@ -1245,7 +1238,8 @@ SSplotBiology <-
       dev.off()
     }
 
-    x <- biology[["Mean_Size"]]
+
+    x <- biology[["Len_mean"]]
     ## NOTE: weight plots are now a special case since they are broken down
     ## by whether the model is 1-sex or 2-sex. In the latter two separate
     ## plots need to be made.
@@ -1309,7 +1303,7 @@ SSplotBiology <-
       }
       if (6 %in% subplots) {
         file <- "bio6_maturity.png"
-        caption <- paste("Maturity at", ifelse(min(biology[["Mat_len"]]) < 1, "length", "age"))
+        caption <- paste("Maturity at", ifelse(min(biology[["Mat"]]) < 1, "length", "age"))
         if (wtatage_switch) {
           caption <- "Spawning output at age (maturity x fecundity)"
         }
@@ -1632,7 +1626,7 @@ SSplotBiology <-
         abline(h = c(0, 1), col = "grey")
       }
       herma_func2 <- function() {
-        plot(growdatF[["Age_Beg"]], growdatF[["Herma_Cum"]],
+        plot(growdatF[["Age_Beg"]], growdatF[["sex_ratio"]],
           xaxs = "i", ylim = c(0, 1), las = 1,
           xlab = labels[2], ylab = labels[14], type = "l", lwd = 3, col = colvec[2]
         )

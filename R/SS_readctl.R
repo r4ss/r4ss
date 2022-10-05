@@ -1,9 +1,10 @@
 #' Read control file from SS
 #'
-#' Read control file from Stock Synthesis (SS) into R as a list object.
-#' This function acts as a wrapper for version-specific SS_readctl_ functions.
-#' For example, if the control file was written using SS 3.24,
-#' then `SS_readctl` will call [SS_readctl_3.24]. Input arguments that do not
+#' Read control file from Stock Synthesis (SS3) into R as a list object.
+#' This function acts as a wrapper for version-specific `SS_readctl_` functions.
+#' But all version-specific functions prior to 3.30 have been
+#' deprecated, so this function primarily calls [SS_readctl_3.30()].
+#' Input arguments that do not
 #' pertain to the version of your control file can be left at their
 #' default values.
 #'
@@ -47,30 +48,24 @@
 #' @md
 #' @return
 #' A list structure where each element is a section of the control file.
-#' @seealso
-#' See the following for version-specific SS_readctl functions:
-#' `r ls("package:r4ss", pattern = "SS_readctl_")`.
-#' The returned list structure can be written back to the disk using
-#' [r4ss::SS_writectl].\cr
-#' See the following for other `SS_read` functions:
-#' `r ls("package:r4ss", pattern = "SS_read[a-z]+$")`.\cr
+#' @family read/write functions
 #' @examples
 #' # Read in the 'simple' example SS model stored in r4ss
 #' # Find the directory
-#' dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+#' dirsimple <- system.file("extdata", "simple_small", package = "r4ss")
 #' # Read in the dat file to define the structure of the control file so that
 #' # you don't have to specify things in the function call such as 'Nfleet'
 #' datfilename <- dir(dirsimple, pattern = "data\\.ss", full.names = TRUE)
 #' dat <- r4ss::SS_readdat(file = datfilename, verbose = FALSE)
 #' # Read in the control file using a list object for datlist
 #' ctl <- r4ss::SS_readctl(
-#'   file = dir(dirsimple, pattern = "control\\.ss", full.names = TRUE),
+#'   file = dir(dirsimple, pattern = "control\\.ss$", full.names = TRUE),
 #'   verbose = FALSE,
 #'   datlist = dat, use_datlist = TRUE
 #' )
 #' # Read in the control file using a file name for datlist
 #' ctl <- r4ss::SS_readctl(
-#'   file = dir(dirsimple, pattern = "control\\.ss", full.names = TRUE),
+#'   file = dir(dirsimple, pattern = "control\\.ss$", full.names = TRUE),
 #'   verbose = FALSE,
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
@@ -78,7 +73,7 @@ SS_readctl <- function(file,
                        version = "3.30",
                        verbose = FALSE,
                        use_datlist = TRUE,
-                       datlist = "data.ss_new",
+                       datlist = file.path(dirname(file), "data_echo.ss_new"),
                        ## Parameters that are not defined in control file
                        nseas = NULL,
                        N_areas = NULL,

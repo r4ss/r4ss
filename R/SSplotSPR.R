@@ -74,6 +74,11 @@ SSplotSPR <-
       message("Skipping SPR plots: no output available")
       return()
     }
+    # at least one non-converged model had NaN values for all years
+    if (all(is.nan(sprseries[["spr"]]))) {
+      warning("NaN values in SPR series, skipping plots")
+      return()
+    }
 
     # get SPR target and associated label based on forecast specified SPR target or
     # the denominator of the SPR ratio as specified in the starter file
@@ -466,7 +471,7 @@ SSplotSPR <-
         col = phase_df[["col"]][-1]
       )
       options(warn = old_warn) # returning to old value
-      
+
       # add bigger points for first and final years
       points(
         x = phase_df[1, "Bratio"],

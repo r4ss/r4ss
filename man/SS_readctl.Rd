@@ -9,7 +9,7 @@ SS_readctl(
   version = "3.30",
   verbose = FALSE,
   use_datlist = TRUE,
-  datlist = "data.ss_new",
+  datlist = file.path(dirname(file), "data_echo.ss_new"),
   nseas = NULL,
   N_areas = NULL,
   Nages = NULL,
@@ -119,43 +119,49 @@ parameters. Defaults to 0. Used only in control file 3.30 syntax if
 A list structure where each element is a section of the control file.
 }
 \description{
-Read control file from Stock Synthesis (SS) into R as a list object.
-This function acts as a wrapper for version-specific SS_readctl_ functions.
-For example, if the control file was written using SS 3.24,
-then \code{SS_readctl} will call \link{SS_readctl_3.24}. Input arguments that do not
+Read control file from Stock Synthesis (SS3) into R as a list object.
+This function acts as a wrapper for version-specific \code{SS_readctl_} functions.
+But all version-specific functions prior to 3.30 have been
+deprecated, so this function primarily calls \code{\link[=SS_readctl_3.30]{SS_readctl_3.30()}}.
+Input arguments that do not
 pertain to the version of your control file can be left at their
 default values.
 }
 \examples{
 # Read in the 'simple' example SS model stored in r4ss
 # Find the directory
-dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+dirsimple <- system.file("extdata", "simple_small", package = "r4ss")
 # Read in the dat file to define the structure of the control file so that
 # you don't have to specify things in the function call such as 'Nfleet'
 datfilename <- dir(dirsimple, pattern = "data\\\\.ss", full.names = TRUE)
 dat <- r4ss::SS_readdat(file = datfilename, verbose = FALSE)
 # Read in the control file using a list object for datlist
 ctl <- r4ss::SS_readctl(
-  file = dir(dirsimple, pattern = "control\\\\.ss", full.names = TRUE),
+  file = dir(dirsimple, pattern = "control\\\\.ss$", full.names = TRUE),
   verbose = FALSE,
   datlist = dat, use_datlist = TRUE
 )
 # Read in the control file using a file name for datlist
 ctl <- r4ss::SS_readctl(
-  file = dir(dirsimple, pattern = "control\\\\.ss", full.names = TRUE),
+  file = dir(dirsimple, pattern = "control\\\\.ss$", full.names = TRUE),
   verbose = FALSE,
   datlist = datfilename, use_datlist = TRUE
 )
 }
 \seealso{
-See the following for version-specific SS_readctl functions:
-SS_readctl_3.24, SS_readctl_3.30.
-The returned list structure can be written back to the disk using
-\link{SS_writectl}.\cr
-See the following for other \code{SS_read} functions:
-SS_readctl, SS_readdat, SS_readforecast, SS_readstarter, SS_readwtatage.\cr
+Other read/write functions: 
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_readstarter}()},
+\code{\link{SS_read}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()},
+\code{\link{SS_write}()}
 }
 \author{
 Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer, Kelli F.
 Johnson, Kathryn L. Doering, Nathan R. Vaughan
 }
+\concept{read/write functions}

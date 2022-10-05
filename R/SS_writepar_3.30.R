@@ -43,21 +43,21 @@ SS_writepar_3.30 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
   }
 
   if (!is.null(parlist[["MG_parms"]])) {
-    for (i in 1:length(parlist[["MG_parms"]][, 1])) {
+    for (i in seq_along(parlist[["MG_parms"]][, 1])) {
       writeLines(paste0("# MGparm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["MG_parms"]][i, 2]), con = zz)
     }
   }
 
   if (!is.null(parlist[["SR_parms"]])) {
-    for (i in 1:length(parlist[["SR_parms"]][, 1])) {
+    for (i in seq_along(parlist[["SR_parms"]][, 1])) {
       writeLines(paste0("# SR_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["SR_parms"]][i, 2]), con = zz)
     }
   }
 
   if (!is.null(parlist[["recdev_cycle_parm"]])) {
-    for (i in 1:length(parlist[["recdev_cycle_parm"]][, 1])) {
+    for (i in seq_along(parlist[["recdev_cycle_parm"]][, 1])) {
       writeLines(paste0("# recdev_cycle_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["recdev_cycle_parm"]][i, 2]), con = zz)
     }
@@ -89,42 +89,42 @@ SS_writepar_3.30 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
   }
 
   if (!is.null(parlist[["init_F"]])) {
-    for (i in 1:length(parlist[["init_F"]])) {
+    for (i in seq_along(parlist[["init_F"]])) {
       writeLines(paste0("# init_F[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["init_F"]][i]), con = zz)
     }
   }
 
   if (!is.null(parlist[["F_rate"]])) {
-    for (i in 1:length(parlist[["F_rate"]][, 1])) {
+    for (i in seq_along(parlist[["F_rate"]][, 1])) {
       writeLines(paste0("# F_rate[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["F_rate"]][i, 4]), con = zz)
     }
   }
 
   if (!is.null(parlist[["Q_parms"]])) {
-    for (i in 1:length(parlist[["Q_parms"]][, 1])) {
+    for (i in seq_along(parlist[["Q_parms"]][, 1])) {
       writeLines(paste0("# Q_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["Q_parms"]][i, 2]), con = zz)
     }
   }
 
   if (!is.null(parlist[["S_parms"]])) {
-    for (i in 1:length(parlist[["S_parms"]][, 1])) {
+    for (i in seq_along(parlist[["S_parms"]][, 1])) {
       writeLines(paste0("# selparm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["S_parms"]][i, 2]), con = zz)
     }
   }
 
   if (!is.null(parlist[["TG_parms"]])) {
-    for (i in 1:length(parlist[["TG_parms"]][, 1])) {
+    for (i in seq_along(parlist[["TG_parms"]][, 1])) {
       writeLines(paste0("# TG_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["TG_parms"]][i, 2]), con = zz)
     }
   }
 
   if (!is.null(parlist[["parm_devs"]])) {
-    for (i in 1:length(parlist[["parm_devs"]])) {
+    for (i in seq_along(parlist[["parm_devs"]])) {
       writeLines(paste0("# parm_dev[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["parm_devs"]][[i]][, 2], collapse = " "), con = zz)
     }

@@ -50,7 +50,7 @@ SS_readdat_3.30 <-
     ## Run some checks to ensure that only the section break 999's are being captured
     ## and not things such as year 999 or a catch of 999mt etc
     incorr.secs <- NULL
-    for (i in 1:length(sec.end.inds)) {
+    for (i in seq_along(sec.end.inds)) {
       check_section <- dat[sec.end.inds[i]]
       check_section <- strsplit(check_section, "#")[[1]][1]
       check_section <- unlist(strsplit(unlist(strsplit(check_section, "\t")), " "))
@@ -516,7 +516,7 @@ SS_readdat_3.30 <-
             "on separate lines than other inputs."
           )
         }
-        xx <- paste(xx[1:length(xx) %% 2 == 1], xx[1:length(xx) %% 2 == 0])
+        xx <- paste(xx[seq_along(xx) %% 2 == 1], xx[seq_along(xx) %% 2 == 0])
       }
       datlist[["MeanSize_at_Age_obs"]] <- data.frame(do.call("rbind", strsplit(xx, "\\s+")),
         stringsAsFactors = FALSE
@@ -589,15 +589,27 @@ SS_readdat_3.30 <-
     }
 
     ## Size frequency methods ----
-    datlist[["N_sizefreq_methods"]] <- get.val(dat, ind)
-    if (datlist[["N_sizefreq_methods"]]) {
+    datlist[["N_sizefreq_methods_rd"]] <- get.val(dat, ind)
+    if (datlist[["N_sizefreq_methods_rd"]] == -1) {
+      # new code added for 3.30.20 to support D-M likelihood
+      datlist[["N_sizefreq_methods"]] <- get.val(dat, ind)
+    } else {
+      # no additional line to read, just copy over value
+      datlist[["N_sizefreq_methods"]] <- datlist[["N_sizefreq_methods_rd"]]
+    }
+    if (datlist[["N_sizefreq_methods"]] > 0) {
       ## Get details of generalized size frequency methods
       datlist[["nbins_per_method"]] <- get.vec(dat, ind)
       datlist[["units_per_method"]] <- get.vec(dat, ind)
       datlist[["scale_per_method"]] <- get.vec(dat, ind)
       datlist[["mincomp_per_method"]] <- get.vec(dat, ind)
       datlist[["Nobs_per_method"]] <- get.vec(dat, ind)
-      ## get list of bin vectors
+      ## Get additional info on composition error distribution (likelihood)
+      if (datlist[["N_sizefreq_methods_rd"]] == -1) {
+        datlist[["Comp_Error_per_method"]] <- get.vec(dat, ind)
+        datlist[["ParmSelect_per_method"]] <- get.vec(dat, ind)
+      }
+      ## Get list of bin vectors
       datlist[["sizefreq_bins_list"]] <- list()
       for (imethod in seq_len(datlist[["N_sizefreq_methods"]])) {
         datlist[["sizefreq_bins_list"]][[imethod]] <- get.vec(dat, ind)

@@ -179,7 +179,7 @@ SSplotNumbers <-
         labels[17] <- gsub(pattern = "of year", replacement = "of season 1", x = labels[17])
       }
       for (iarea in areas) {
-        for (iperiod in 1:length(period)) {
+        for (iperiod in seq_along(period)) {
           for (m in 1:nsexes) {
             # warning! implementation of birthseasons may not be correct in this section
             # data frame to combine values across factors
@@ -201,7 +201,7 @@ SSplotNumbers <-
               natagetemp0[, column1 + iage] <- 0
             }
 
-            for (imorph in 1:length(morphlist)) {
+            for (imorph in seq_along(morphlist)) {
               for (igp in 1:ngpatterns) {
                 natagetemp_imorph_igp <-
                   natagetemp_all[natagetemp_all[["Platoon"]] == morphlist[imorph] &
@@ -296,7 +296,7 @@ SSplotNumbers <-
             }
             meanage <- 0 * natageyrs
 
-            for (i in 1:length(natageyrs)) {
+            for (i in seq_along(natageyrs)) {
               # averaging over values within a year (depending on birth season)
               meanage[i] <- sum(natagetemp2[["meanage"]][natagetemp0[["Yr"]] == natageyrs[i]] *
                 natagetemp2[["sum"]][natagetemp0[["Yr"]] == natageyrs[i]]) /
@@ -442,7 +442,7 @@ SSplotNumbers <-
         column1 <- column1 - 1 # because index of lengths starts at 1, not 0 as in ages
 
         for (iarea in areas) {
-          for (iperiod in 1:length(period)) {
+          for (iperiod in seq_along(period)) {
             for (m in 1:nsexes) {
               # warning! implementation of birthseasons may not be correct in this section
               # data frame to combine values across factors
@@ -464,7 +464,7 @@ SSplotNumbers <-
                 # matrix of zeros for upcoming calculations
                 natlentemp0[, column1 + ilen] <- 0
               }
-              for (imorph in 1:length(morphlist)) {
+              for (imorph in seq_along(morphlist)) {
                 for (igp in 1:ngpatterns) {
                   natlentemp_imorph_igp <-
                     natlentemp_all[natlentemp_all[["Platoon"]] == morphlist[imorph] &
@@ -548,7 +548,7 @@ SSplotNumbers <-
               }
 
               meanlen <- 0 * natlenyrs
-              for (i in 1:length(natlenyrs)) {
+              for (i in seq_along(natlenyrs)) {
                 # averaging over values within a year (depending on birth season)
                 meanlen[i] <-
                   sum(natlentemp2[["meanlen"]][natlentemp0[["Yr"]] == natlenyrs[i]] *

@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<meta name="author" content="Ian Taylor and Kathryn Doering" />
+<meta name="author" content="Ian Taylor and Kathryn L. Doering" />
 
 <meta name="date" content="2021-11-04" />
 
@@ -140,7 +140,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <h1 class="title toc-ignore">Introduction to r4ss</h1>
-<h4 class="author">Ian Taylor and Kathryn Doering</h4>
+<h4 class="author">Ian Taylor and Kathryn L. Doering</h4>
 <h4 class="date">2021-11-04</h4>
 
 
@@ -406,17 +406,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="functions-for-common-stock-assessment-tasks" class="section level2">
 <h2>Functions for common stock assessment tasks</h2>
-<p>While stock assessment processes differ among regions, some modeling workflows and diagnostics are commonly used. Within r4ss, there are functions to perform a retrospective (<code>SS_doRetro()</code>), jitter the starting values and reoptimize the stock assessment model a number of times to check for local minima (<code>SS_run_jitter()</code>) and tuning composition data (<code>SS_tune_comps()</code>).</p>
+<p>While stock assessment processes differ among regions, some modeling workflows and diagnostics are commonly used. Within r4ss, there are functions to perform a retrospective (<code>retro()</code>), jitter the starting values and reoptimize the stock assessment model a number of times to check for local minima (<code>SS_run_jitter()</code>) and tuning composition data (<code>tune_comps()</code>).</p>
 <p>Additional model diagnostics for Stock Synthesis models are available as part of the <a href="https://github.com/jabbamodel/ss3diags">ss3diags</a> package.</p>
 <div id="running-retrospectives" class="section level3">
 <h3>Running retrospectives</h3>
 <p>A retrospective analysis removes a certain number of years of the model data and recalculates the fit. This is typically done several times and the results are used to look for retrospective patterns (i.e., non-random deviations in estimated parameters or derived quantities as years of data are removed). If the model results change drastically and non-randomly as data is removed, this is less support for the model. For more on the theory and details behind retrospective analyses, see <a href="https://doi.org/10.1093/icesjms/fsu198">Hurtado-Ferro et al. 2015</a> and <a href="https://doi.org/10.1093/icesjms/fsaa184">Legault 2020</a>.</p>
-<p>The function <code>SS_doRetro()</code> can be used to run retrospective analyses starting from an existing Stock Synthesis model. Note that it is safest to create a copy of your original Stock Synthesis model that the retrospective is run on, just in case there are problems with the run. For example, a five year retrospective could be done:</p>
+<p>The function <code>retro()</code> can be used to run retrospective analyses starting from an existing Stock Synthesis model. Note that it is safest to create a copy of your original Stock Synthesis model that the retrospective is run on, just in case there are problems with the run. For example, a five year retrospective could be done:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>retro_dir <span class="ot">&lt;-</span><span class="st">&quot;retro_dir&quot;</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">copy_SS_inputs</span>(<span class="at">dir.old =</span> mod_path, <span class="at">dir.new =</span> retro_dir) <span class="co"># copy over the stock synthesis model</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="do">## retrospective analyses</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">SS_doRetro</span>(<span class="at">masterdir =</span> retro_dir, <span class="at">oldsubdir =</span> <span class="st">&quot;&quot;</span>, <span class="at">newsubdir =</span> <span class="st">&quot;retrospectives&quot;</span>, </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">retro</span>(<span class="at">masterdir =</span> retro_dir, <span class="at">oldsubdir =</span> <span class="st">&quot;&quot;</span>, <span class="at">newsubdir =</span> <span class="st">&quot;retrospectives&quot;</span>, </span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">years =</span> <span class="dv">0</span><span class="sc">:-</span><span class="dv">5</span>)</span></code></pre></div>
 <p>After running this retrospective, six new folders would be created within <code>retro_dir</code>, where each folder would contain a different run of the retrospective (removing 0 to 5 years of data).</p>
 <p>After the retrospective models have run, the results can be used as a diagnostic:</p>
@@ -432,25 +432,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="jittering" class="section level3">
 <h3>Jittering</h3>
-<p>Another commonly used diagnostic with Stock Synthesis models is “jittering”. Model initial values are changed randomly (by some fraction) and the model is reoptimized. The <code>SS_RunJitter()</code> function performs this routine for the number of times specified by the user. For a stock Synthesis model in a folder called <code>my_model</code> that also contains a copy of the stock synthesis executable named ss (or ss.exe on Windows), jittering starting values can be run 100 times (note this could take a while, as this is running the model 100 times):</p>
+<p>Another commonly used diagnostic with Stock Synthesis models is “jittering”. Model initial values are changed randomly (by some fraction) and the model is reoptimized. The <code>jitter()</code> function performs this routine for the number of times specified by the user. For a stock Synthesis model in a folder called <code>my_model</code> that also contains a copy of the stock synthesis executable named ss (or ss.exe on Windows), jittering starting values can be run 100 times (note this could take a while, as this is running the model 100 times):</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>jitter_dir <span class="ot">&lt;-</span><span class="st">&quot;retro_dir&quot;</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">copy_SS_inputs</span>(<span class="at">dir.old =</span> mod_path, <span class="at">dir.new =</span> jitter_dir) <span class="co"># copy over the stock synthesis model</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: would also need to add the stock synthesis executable to the jitter_dir</span></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># folder</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>jitter_loglike <span class="ot">&lt;-</span> <span class="fu">SS_RunJitter</span>(</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>jitter_loglike <span class="ot">&lt;-</span> <span class="fu">jitter</span>(</span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mydir =</span> jitter_dir,</span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">&quot;ss&quot;</span>, <span class="co"># name of the stock synthesis exe in jitter_dir</span></span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Njitter =</span> <span class="dv">100</span>,</span>
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">jitter_fraction =</span> <span class="fl">0.1</span> <span class="co"># a typically used jitter fraction</span></span>
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>             )</span></code></pre></div>
-<p>The output from <code>SS_RunJitter()</code> is saved in <code>jitter_loglike</code>, which is a table of the different negative log likelihoods produced from jittering. If there are any negative log likelihoods smaller than the original model’s log likelihood, this indicates that the original model’s log likelihood is a local minimum and not the global minimum. On the other hand, if there are no log likelihoods lower than the original model’s log likelihood, then this is evidence (but not proof) that the original model’s negative log likelihood could be the global minimum.</p>
+<p>The output from <code>jitter()</code> is saved in <code>jitter_loglike</code>, which is a table of the different negative log likelihoods produced from jittering. If there are any negative log likelihoods smaller than the original model’s log likelihood, this indicates that the original model’s log likelihood is a local minimum and not the global minimum. On the other hand, if there are no log likelihoods lower than the original model’s log likelihood, then this is evidence (but not proof) that the original model’s negative log likelihood could be the global minimum.</p>
 <p>Jittering starting values can also provide evidence about the sensitivity of the model to starting values. If many different likelihood values are arrived at during the jitter analysis, then the model is sensitive to starting values. However, if many of the models converge to the same negative log likelihood value, this indicates the model is less sensitive to starting values.</p>
 </div>
 <div id="tuning-composition-data" class="section level3">
 <h3>Tuning composition data</h3>
 <p>Three different routines are available to tune (or weight) composition data in Stock Synthesis. The McAllister-Ianelli (MI) and Francis tuning methods are iterative reweighting routines, while the Dirichlet-multinomial (DM) option incorporates weighting parameters directly in the original model.</p>
-<p>Because tuning is commonly used with Stock Synthesis models, and users may be interested in exploring the same model, but using different tuning methods, <code>SS_tune_comps()</code> can start from the same model and transform it into different tuning methods.</p>
+<p>Because tuning is commonly used with Stock Synthesis models, and users may be interested in exploring the same model, but using different tuning methods, <code>tune_comps()</code> can start from the same model and transform it into different tuning methods.</p>
 <p>As an example, we will illustrate how to run Francis tuning on an example Stock Synthesis model built into the r4ss package. First, we make a copy of the model to avoid changing the original model files</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>mod_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&quot;simple_mod&quot;</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Path to simple model in r4ss and copy files to mod_path</span></span>
@@ -470,8 +470,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="at">to =</span> <span class="fu">file.path</span>(mod_path, <span class="st">&quot;CompReport.sso&quot;</span>)</span>
 <span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>The following call to <code>SS_tune_comps()</code> runs MI weighting for 1 iteration and allows upweighting. Assume that an ss executable called “ss or ss.exe” is available in the mod_path folder.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>tune_info <span class="ot">&lt;-</span> <span class="fu">SS_tune_comps</span>(</span>
+<p>The following call to <code>tune_comps()</code> runs MI weighting for 1 iteration and allows upweighting. Assume that an ss executable called “ss or ss.exe” is available in the mod_path folder.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>tune_info <span class="ot">&lt;-</span> <span class="fu">tune_comps</span>(</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">option =</span> <span class="st">&quot;MI&quot;</span>,</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">niters_tuning =</span> <span class="dv">1</span>,</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir =</span> mod_path,</span>
@@ -481,7 +481,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># see the tuning table, and the weights applied to the model.</span></span>
 <span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>tune_info</span></code></pre></div>
-<p>Now, suppose we wanted to run the same model, but using Dirichlet-multinomial parameters to weight. The model can be copied over to a new folder, then the <code>SS_tune_comps()</code> function could be used to add Dirichlet-multinomial parameters (1 for each fleet with composition data and for each type of composition data) and re run the model.</p>
+<p>Now, suppose we wanted to run the same model, but using Dirichlet-multinomial parameters to weight. The model can be copied over to a new folder, then the <code>tune_comps()</code> function could be used to add Dirichlet-multinomial parameters (1 for each fleet with composition data and for each type of composition data) and re run the model.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>mod_path_dm <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&quot;simple_mod_dm&quot;</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">copy_SS_inputs</span>(<span class="at">dir.old =</span> mod_path, <span class="at">dir.new =</span> mod_path_dm, <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">copy_exe =</span> <span class="cn">TRUE</span>)</span>
@@ -498,7 +498,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Add Dirichlet-multinomial parameters and rerun. The function will </span></span>
 <span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co"># automatically remove the MI weighting and add in the DM parameters.</span></span>
 <span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Use extras = &quot;-nohess&quot; when running model to speed up run.</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>DM_parm_info <span class="ot">&lt;-</span> <span class="fu">SS_tune_comps</span>(</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>DM_parm_info <span class="ot">&lt;-</span> <span class="fu">tune_comps</span>(</span>
 <span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">option =</span> <span class="st">&quot;DM&quot;</span>,</span>
 <span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">niters_tuning =</span> <span class="dv">1</span>, <span class="co"># must be 1 or greater to run, through DM is not an iterative reweighting approach</span></span>
 <span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir =</span> mod_path_dm,</span>
@@ -508,7 +508,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="co"># see the DM parameter estimates</span></span>
 <span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>DM_parm_info[[<span class="st">&quot;tuning_table_list&quot;</span>]]</span></code></pre></div>
-<p>There are many options in the <code>SS_tune_comps()</code> function; please see the documentation (<code>?SS_tune_comps</code> in the R console) for more details and examples.</p>
+<p>There are many options in the <code>tune_comps()</code> function; please see the documentation (<code>?tune_comps</code> in the R console) for more details and examples.</p>
 </div>
 </div>
 

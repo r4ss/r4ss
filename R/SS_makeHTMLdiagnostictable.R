@@ -33,7 +33,8 @@ SS_makeHTMLdiagnostictable <- function(replist,
 
   # Highlight high gradients
   # (sorting turned off keep parameters in familiar order)
-  if (!is.null(parchecks[["Gradient"]])) {
+  if (!is.null(parchecks[["Gradient"]]) &&
+    all(!is.nan(parchecks[["Gradient"]]))) {
     parchecks <- parchecks[!is.na(parchecks[["Gradient"]]), ]
     # parchecks <- parchecks[order(-parchecks[["Gradient"]]), ]
     parchecks[["Gradient"]] <-

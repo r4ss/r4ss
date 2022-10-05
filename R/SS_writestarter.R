@@ -12,9 +12,8 @@
 #' @param warn Deprecated.
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 #' @export
-#' @seealso [SS_readstarter()], [SS_readforecast()],
-#' [SS_writestarter()],
-#' [SS_writeforecast()], [SS_writedat()]
+#' @family read/write functions
+
 SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
                             overwrite = FALSE, verbose = TRUE,
                             warn = lifecycle::deprecated()) {

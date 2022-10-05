@@ -7,7 +7,7 @@
 #' particularly helpful, i.e., `ctlfile` and `datfile`, respectively.
 #' @examples
 #' starter_list <- SS_readstarter(
-#'   system.file("extdata", "simple_3.30.13", "starter.ss",
+#'   system.file("extdata", "simple_small", "starter.ss",
 #'     package = "r4ss"
 #'   ),
 #'   verbose = FALSE
@@ -19,12 +19,7 @@
 #' starter_list[["datfile"]] == "simple_data.ss"
 #' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
 #' @export
-#' @seealso
-#' * [SS_readforecast()],
-#' * [SS_readdat()],
-#' * [SS_writestarter()],
-#' * [SS_writeforecast()],
-#' * [SS_writedat()]
+#' @family read/write functions
 SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
     message("running SS_readstarter")
@@ -42,13 +37,13 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
 
   # get strings for control and data file names
   starter2 <- NULL
-  for (i in 1:length(starter)) {
+  for (i in seq_along(starter)) {
     # get only stuff before # marks
     mysplit <- strsplit(starter[i], split = "#")[[1]][1]
     if (!is.na(mysplit) && length(mysplit) > 0) starter2 <- c(starter2, mysplit)
   }
   strings <- NULL
-  for (i in 1:length(starter2)) {
+  for (i in seq_along(starter2)) {
     mysplit <- strsplit(starter2[i], split = "[[:blank:]]+")[[1]]
     mysplit <- mysplit[mysplit != ""]
     strings <- c(strings, mysplit)
@@ -72,13 +67,13 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
 
   # get numbers (could be better integrated with function above)
   allnums <- NULL
-  for (i in 1:length(starter)) {
+  for (i in seq_along(starter)) {
     # split apart numbers from text in file
     mysplit <- strsplit(starter[i], split = "[[:blank:]]+")[[1]]
     mysplit <- mysplit[mysplit != ""]
     nums <- suppressWarnings(as.numeric(mysplit))
     if (sum(is.na(nums)) > 0) {
-      maxcol <- min((1:length(nums))[is.na(nums)]) - 1
+      maxcol <- min((seq_along(nums))[is.na(nums)]) - 1
     } else {
       maxcol <- length(nums)
     }

@@ -301,7 +301,7 @@ SSexecutivesummary <- function(replist,
       ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
     depl <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
-    for (i in 1:length(years)) {
+    for (i in seq_along(years)) {
       dig <- ifelse(ssb[i, 2] < 100, 1, 0)
     }
     if (format) {
@@ -397,7 +397,7 @@ SSexecutivesummary <- function(replist,
         devs.out <- data.frame(rep(0, length(years)), rep(0, length(years)), rep(0, length(years)))
       }
     }
-    for (i in 1:length(years)) {
+    for (i in seq_along(years)) {
       dig <- ifelse(recruits[i, 2] < 100, 1, 0)
     }
     if (format) {
@@ -863,7 +863,7 @@ SSexecutivesummary <- function(replist,
       ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
     depl <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
-    for (i in 1:length(years)) {
+    for (i in seq_along(years)) {
       dig <- ifelse(ssb[i, 2] < 100, 1, 0)
     }
     recruits <- Get.Values(replist = replist, label = "Recr", years, ci_value)

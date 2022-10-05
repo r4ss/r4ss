@@ -14,18 +14,14 @@
 #' @author Ian G. Taylor
 #'
 #' @export
-#' @seealso
-#' * [SS_read()] creates the list that is used by this function.
-#' * [SS_writestarter()], [SS_writedat()], [SS_writectl()],
-#' [SS_writeforecast()], [SS_writewtatage()], [SS_writepar_3.30()],
-#' and [SS_writepar_3.24()] are used to write the
-#' input files.
-
+#' @seealso [SS_read()] creates the list that is used by this function.
+#' @family read/write functions
+#'
 #' @examples
 #' \dontrun{
 #' # read inputlist to modify the data file
 #' inputlist <- SS_read(
-#'   dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
+#'   dir = system.file("extdata", "simple_small", package = "r4ss")
 #' )
 #'
 #' # modify the starter file (use the par file)

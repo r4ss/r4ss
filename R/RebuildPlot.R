@@ -203,7 +203,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     }
 
     NOpts <- 0
-    for (Ifile in 1:length(FileN)) NOpts <- NOpts + length(Options[[Ifile]])
+    for (Ifile in seq_along(FileN)) NOpts <- NOpts + length(Options[[Ifile]])
 
     if (NOpts > 8) {
       warning(
@@ -215,7 +215,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     Files <- NULL
     Opts <- NULL
     LastCatch <- NULL
-    for (Ifile in 1:length(FileN)) {
+    for (Ifile in seq_along(FileN)) {
       for (II in Options[[Ifile]])
       {
         Files <- c(Files, Ifile)
@@ -236,7 +236,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     # get the x-axis right
     xmin <- 1.0e20
     xmax <- 0
-    for (Ifile in 1:length(FileN))
+    for (Ifile in seq_along(FileN))
     {
       Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
       Npnt <- as.double(UUUs[[Ifile]][Ipnt - 2, 1])
@@ -289,7 +289,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
 
       if (ii == 2) {
         ymax <- 0
-        for (Ifile in 1:length(FileN)) {
+        for (Ifile in seq_along(FileN)) {
           for (II in Options[[Ifile]])
           {
             Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
@@ -319,7 +319,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
 
       if (ii == 3) {
         ymax <- 0
-        for (Ifile in 1:length(FileN)) {
+        for (Ifile in seq_along(FileN)) {
           for (II in Options[[Ifile]])
           {
             Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3
@@ -349,7 +349,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
 
       if (ii == 4) {
         ymax <- 0
-        for (Ifile in 1:length(FileN)) {
+        for (Ifile in seq_along(FileN)) {
           for (II in Options[[Ifile]])
           {
             Ipnt <- which(UUUs[[Ifile]] == "#Summary_1") + 3

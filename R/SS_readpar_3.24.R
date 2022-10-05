@@ -1,7 +1,9 @@
-#' read ss.par file from SS version 3.24
+#' Deprecated: read ss.par file from SS version 3.24
 #'
 #' Read Stock Synthesis (version 3.24) parameter file into list object in R.
 #'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30.
 #'
 #' @param parfile Filename either with full path or relative to working directory.
 #' @param datsource list or character. If list, should be a list produced
@@ -20,6 +22,12 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
+  # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_readpar_3.24()",
+    details = "Please update model to version 3.30."
+  )
   if (is.character(datsource)) {
     datlist <- SS_readdat(file = datsource, version = "3.24", verbose = FALSE)
   } else if (is.list(datsource)) {
@@ -82,7 +90,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     # Build parameter deviations list
     parlist[["MG_parm_devs"]] <- list()
     # Read in the values for parameter deviations for each vector
-    for (i in 1:length(dev_parm_labels))
+    for (i in seq_along(dev_parm_labels))
     {
       years_temp <- dev_parm_start[i]:dev_parm_end[i]
       dev_temp <- as.numeric(strsplit(parvals[(grep("MGparm_dev", parvals) + i)], " ")[[1]])
@@ -333,7 +341,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     # Build parameter deviations list
     parlist[["sel_parm_devs"]] <- list()
     # Read in the values for parameter deviations for each vector
-    for (i in 1:length(dev_parm_labels))
+    for (i in seq_along(dev_parm_labels))
     {
       years_temp <- dev_parm_start[i]:dev_parm_end[i]
       dev_temp <- as.numeric(strsplit(parvals[(grep("selparm_dev", parvals) + i)], " ")[[1]])

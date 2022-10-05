@@ -69,7 +69,7 @@ SS_ForeCatch <- function(replist, yrs = 2021:2032,
     total <- rep(total, length(yrs))
   }
   # loop over seasons and areas (only 1 for most models) to subset timeseries
-  for (iyr in 1:length(yrs)) {
+  for (iyr in seq_along(yrs)) {
     y <- yrs[iyr]
     forecast_catches_y <- NULL
     for (iseas in 1:replist[["nseasons"]]) {

@@ -1,7 +1,9 @@
-#' write ss.par file from SS version 3.24
+#' Deprecated: write ss.par file from SS version 3.24
 #'
 #' Write Stock Synthesis (version 3.24) parameter file from list object in R to file.
 #'
+#' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
+#' functions is ending, so please update models to 3.30.
 #'
 #' @param parlist  List object created by [SS_readpar_3.24()].
 #' @param outfile Filename for where to write new parameter file.
@@ -16,7 +18,12 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
-
+  # deprecate. Remove code upon next release.
+  lifecycle::deprecate_warn(
+    when = "1.45.3",
+    what = "SS_writepar_3.24()",
+    details = "Please update model to version 3.30."
+  )
   # function to write Stock Synthesis parameter files
   if (verbose) message("running SS_writepar_3.24")
 
@@ -40,7 +47,7 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
   }
 
   if (!is.null(parlist[["MG_parms"]])) {
-    for (i in 1:length(parlist[["MG_parms"]][, 1])) {
+    for (i in seq_along(parlist[["MG_parms"]][, 1])) {
       writeLines(paste0("# MGparm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["MG_parms"]][i, 2]), con = zz)
     }
@@ -48,20 +55,20 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
 
   if (!is.null(parlist[["MG_parm_devs"]])) {
     writeLines(paste0("# MGparm_dev:"), con = zz)
-    for (i in 1:length(parlist[["MG_parm_devs"]])) {
+    for (i in seq_along(parlist[["MG_parm_devs"]])) {
       writeLines(paste0(parlist[["MG_parm_devs"]][[i]][, 2], collapse = " "), con = zz)
     }
   }
 
   if (!is.null(parlist[["SR_parms"]])) {
-    for (i in 1:length(parlist[["SR_parms"]][, 1])) {
+    for (i in seq_along(parlist[["SR_parms"]][, 1])) {
       writeLines(paste0("# SR_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["SR_parms"]][i, 2]), con = zz)
     }
   }
 
   if (!is.null(parlist[["recdev_cycle_parm"]])) {
-    for (i in 1:length(parlist[["recdev_cycle_parm"]][, 1])) {
+    for (i in seq_along(parlist[["recdev_cycle_parm"]][, 1])) {
       writeLines(paste0("# recdev_cycle_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["recdev_cycle_parm"]][i, 2]), con = zz)
     }
@@ -93,28 +100,28 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
   }
 
   if (!is.null(parlist[["init_F"]])) {
-    for (i in 1:length(parlist[["init_F"]])) {
+    for (i in seq_along(parlist[["init_F"]])) {
       writeLines(paste0("# init_F[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["init_F"]][i]), con = zz)
     }
   }
 
   if (!is.null(parlist[["F_rate"]])) {
-    for (i in 1:length(parlist[["F_rate"]][, 1])) {
+    for (i in seq_along(parlist[["F_rate"]][, 1])) {
       writeLines(paste0("# F_rate[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["F_rate"]][i, 4]), con = zz)
     }
   }
 
   if (!is.null(parlist[["Q_parms"]])) {
-    for (i in 1:length(parlist[["Q_parms"]][, 1])) {
+    for (i in seq_along(parlist[["Q_parms"]][, 1])) {
       writeLines(paste0("# Q_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["Q_parms"]][i, 2]), con = zz)
     }
   }
 
   if (!is.null(parlist[["S_parms"]])) {
-    for (i in 1:length(parlist[["S_parms"]][, 1])) {
+    for (i in seq_along(parlist[["S_parms"]][, 1])) {
       writeLines(paste0("# selparm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["S_parms"]][i, 2]), con = zz)
     }
@@ -122,13 +129,13 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
 
   if (!is.null(parlist[["sel_parm_devs"]])) {
     writeLines(paste0("# selparm_dev:"), con = zz)
-    for (i in 1:length(parlist[["sel_parm_devs"]])) {
+    for (i in seq_along(parlist[["sel_parm_devs"]])) {
       writeLines(paste0(parlist[["sel_parm_devs"]][[i]][, 2], collapse = " "), con = zz)
     }
   }
 
   if (!is.null(parlist[["TG_parms"]])) {
-    for (i in 1:length(parlist[["TG_parms"]][, 1])) {
+    for (i in seq_along(parlist[["TG_parms"]][, 1])) {
       writeLines(paste0("# TG_parm[", i, "]:"), con = zz)
       writeLines(paste0(parlist[["TG_parms"]][i, 2]), con = zz)
     }

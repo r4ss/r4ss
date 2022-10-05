@@ -46,7 +46,7 @@ the control and data files.
 \examples{
 # Read in the 'simple' example model stored in {r4ss}
 inputs <- SS_read(
-  dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
+  dir = system.file("extdata", "simple_small", package = "r4ss")
 )
 # Read in an example from GitHub stored in user-examples,
 # wrapped in `dontrun` because it requires an Internet connection
@@ -62,16 +62,21 @@ webexample <- SS_read(dir = file.path(
 }
 }
 \seealso{
-\itemize{
-\item \code{\link[=SS_write]{SS_write()}} can be used to write the input files using the list
+\code{\link[=SS_write]{SS_write()}} can be used to write the input files using the list
 created by this function.
-\item \code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_readctl]{SS_readctl()}},
-\code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_readwtatage]{SS_readwtatage()}},
-\code{\link[=SS_readpar_3.30]{SS_readpar_3.30()}}, and \code{\link[=SS_readpar_3.24]{SS_readpar_3.24()}} used by this
-function to read in the input files.
-\item \code{\link[=SS_output]{SS_output()}} to read in equivalent SS3 output files.
-}
+
+Other read/write functions: 
+\code{\link{SS_readctl}()},
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_readstarter}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()},
+\code{\link{SS_write}()}
 }
 \author{
 Ian G. Taylor, Kelli F. Johnson
 }
+\concept{read/write functions}

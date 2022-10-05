@@ -201,7 +201,7 @@ SSplotPars <-
       if (exact) {
         goodnames <- allnames[allnames %in% strings]
       } else {
-        for (i in 1:length(strings)) {
+        for (i in seq_along(strings)) {
           goodnames <- c(
             goodnames,
             grep(strings[i], allnames, fixed = TRUE, value = TRUE)
@@ -247,7 +247,7 @@ SSplotPars <-
       )
       # look for rows in table of parameters that have label indicating deviation
       devrows <- NULL
-      for (iname in 1:length(devnames)) {
+      for (iname in seq_along(devnames)) {
         devrows <- unique(c(devrows, grep(
           devnames[iname],
           goodnames

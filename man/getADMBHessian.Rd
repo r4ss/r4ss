@@ -4,13 +4,19 @@
 \alias{getADMBHessian}
 \title{Read admodel.hes file}
 \usage{
-getADMBHessian(File = getwd(), FileName = "admodel.hes")
+getADMBHessian(
+  hesfile = "admodel.hes",
+  File = lifecycle::deprecated(),
+  FileName = lifecycle::deprecated()
+)
 }
 \arguments{
-\item{File}{Directory in which .hes file is located. Defaults to the working
-directory.}
+\item{hesfile}{Name of .hes file, including the full path (can be
+relative to working directory).}
 
-\item{FileName}{Name of .hes file. Defaults to admodel.hes.}
+\item{File}{Deprecated. Add path to \code{hesfile} input instead.}
+
+\item{FileName}{Deprecated. Use `hesfile`` instead.}
 }
 \value{
 A list with elements num.pars, hes, hybrid_bounded_flag, and scale.

@@ -56,7 +56,7 @@ SS_html <- function(replist = NULL,
       if (length(filenames) == 0) stop("No CSV files with name 'plotInfoTable...'")
       plotInfoTable <- NULL
       # loop over matching CSV files and combine them
-      for (ifile in 1:length(filenames)) {
+      for (ifile in seq_along(filenames)) {
         filename <- file.path(plotdir, filenames[ifile])
         temp <- read.csv(filename, colClasses = "character")
         plotInfoTable <- rbind(plotInfoTable, temp)
@@ -71,7 +71,7 @@ SS_html <- function(replist = NULL,
             "    Hopefully you know what you're doing, or change to 'multimodel=FALSE.\n",
             "    Runs:\n"
           )
-          for (irun in 1:length(runs)) msg <- c(msg, paste("    ", runs[irun], "\n"))
+          for (irun in seq_along(runs)) msg <- c(msg, paste("    ", runs[irun], "\n"))
           warning(msg)
         } else {
           msg <- c(
@@ -79,7 +79,7 @@ SS_html <- function(replist = NULL,
             "    Delete old files or (if you really know what you're doing) override with 'multimodel=TRUE.\n",
             "    Runs:\n"
           )
-          for (irun in 1:length(runs)) msg <- c(msg, paste("    ", runs[irun], "\n"))
+          for (irun in seq_along(runs)) msg <- c(msg, paste("    ", runs[irun], "\n"))
           stop(msg)
         }
       }
@@ -89,7 +89,7 @@ SS_html <- function(replist = NULL,
       # loop over duplicates and remove rows for older instance
       if (length(duplicates) > 0) {
         if (verbose) message("Removing duplicate rows in combined plotInfoTable based on multiple CSV files")
-        for (idup in 1:length(duplicates)) {
+        for (idup in seq_along(duplicates)) {
           duprows <- grep(duplicates[idup], plotInfoTable[["file"]], fixed = TRUE)
           duptimes <- plotInfoTable[["png_time"]][duprows]
           # keep duplicates with the most recent time
@@ -284,7 +284,7 @@ SS_html <- function(replist = NULL,
           sep = "", file = htmlfile, append = TRUE
         )
         if (!is.null(filenotes)) {
-          for (i in 1:length(filenotes)) {
+          for (i in seq_along(filenotes)) {
             cat("<p><b>Notes:</b>\n",
               paste(filenotes, collapse = "</b>\n"),
               "</p>\n\n",

@@ -41,7 +41,7 @@ SSplotMovementMap <-
 
     par(mar = c(3, 3, 3, 3))
     maps::map(xlim = xlim, ylim = ylim, xaxs = "i", yaxs = "i")
-    for (i in 1:length(polygonlist)) {
+    for (i in seq_along(polygonlist)) {
       polygon(polygonlist[[i]], col = colvec[i], lwd = 2)
     }
     maps::map(

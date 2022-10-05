@@ -65,9 +65,9 @@
 #' Can be set to FALSE in order to add plots form multiple calls to
 #' this function as separate panels in one larger figure.
 #' @param add add to existing plot
-#' @author Chris Francis, Andre Punt, Ian Taylor
+#' @author R.I.C Chris Francis, Andre E. Punt, Ian G. Taylor
 #' @export
-#' @seealso [SSMethod.Cond.TA1.8()]
+#' @family tuning functions
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Canadian Journal of
 #' Fisheries and Aquatic Sciences 68: 1124-1138.
@@ -204,7 +204,7 @@ SSMethod.TA1.8 <-
     }
 
     # Find the weighting factor for this combination of factors
-    for (i in 1:length(uindx)) { # each row of pldat is an individual comp
+    for (i in seq_along(uindx)) { # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
       xvar <- subdbase[["Bin"]]
       pldat[i, "Obsmn"] <- sum(subdbase[["Obs"]] * xvar) / sum(subdbase[["Obs"]])
@@ -228,7 +228,7 @@ SSMethod.TA1.8 <-
     Nmult <- 1 / var(pldat[, "Std.res"], na.rm = TRUE)
 
     # Find the adjusted confidence intervals
-    for (i in 1:length(uindx)) {
+    for (i in seq_along(uindx)) {
       pldat[i, "ObsloAdj"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"] / sqrt(Nmult)
       pldat[i, "ObshiAdj"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"] / sqrt(Nmult)
     }

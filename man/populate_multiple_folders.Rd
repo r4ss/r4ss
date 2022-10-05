@@ -5,14 +5,14 @@
 \title{Populate multiple Stock Synthesis folders with input files}
 \usage{
 populate_multiple_folders(
-  outerdir.old = NULL,
-  outerdir.new = NULL,
+  outerdir.old,
+  outerdir.new,
   create.dir = TRUE,
   overwrite = FALSE,
   use_ss_new = FALSE,
+  copy_par = FALSE,
   exe.dir = NULL,
-  exe.file = "ss.exe",
-  exe.only = FALSE,
+  exe.file = "ss",
   verbose = TRUE
 )
 }
@@ -30,38 +30,51 @@ should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{use_ss_new}{Use .ss_new files instead of original inputs?}
 
-\item{exe.dir}{Path to executable to copy into all the subfolders.}
+\item{copy_par}{Copy any .par files found in the individual directories?}
 
-\item{exe.file}{Filename of executable to copy into all the subfolders.
-A value of NULL will skip copying the executable.}
+\item{exe.dir}{Where to get executable to copy to each new subfolder.
+Options are
+\itemize{
+\item FALSE to not copy any executables,
+\item TRUE to copy executables found in each existing subfolder to the
+corresponding new subfolder,
+\item a path to a central location containing an executable to copy into
+each new subfolder.
+}}
 
-\item{exe.only}{Only copy exe files from exe.dir, don't copy input files}
+\item{exe.file}{Filename of executable to copy into all the subfolders.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
 \value{
-Returns table of results indicating which directories were
-successfully populated with the model input files and/or executables
+Returns a table of results indicating which directories were
+successfully populated with the model input files and/or executables.
 }
 \description{
-Creates a set of multiple folders and populate each with SS input files
-such as for the purpose of running a new version of SS for an existing
+Creates a set of multiple folders and populates each with SS3 input files
+such as for the purpose of running a new version of SS3 for an existing
 set of test models.
 }
 \examples{
 \dontrun{
 populate_multiple_folders(
-  outerdir.old = "c:/SS/old_models",
-  outerdir.new = "c:/SS/new_models",
-  exe.dir = "c:/SS/SSv3.30.12.00"
+  outerdir.old = system.file("extdata", package = "r4ss"),
+  outerdir.new = file.path(tempdir(), "test")
 )
 }
 
 }
 \seealso{
-\code{\link[=copy_SS_inputs]{copy_SS_inputs()}}
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{jitter}()},
+\code{\link{profile}()},
+\code{\link{retro}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Kelli F. Johnson
 }
+\concept{run functions}

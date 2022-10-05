@@ -1167,7 +1167,7 @@ SSplotComps <-
 
             # add lines for growth of individual cohorts if requested
             if (length(cohortlines) > 0) {
-              for (icohort in 1:length(cohortlines)) {
+              for (icohort in seq_along(cohortlines)) {
                 message("  Adding line for", cohortlines[icohort], "cohort\n")
                 if (kind == "LEN") {
                   lines(growdatF[["Age"]] + cohortlines[icohort],
@@ -1592,7 +1592,7 @@ SSplotComps <-
               )
               # add lines for growth of individual cohorts if requested
               if (length(cohortlines) > 0) {
-                for (icohort in 1:length(cohortlines)) {
+                for (icohort in seq_along(cohortlines)) {
                   message("  Adding line for", cohortlines[icohort], "cohort\n")
                   if (kind == "LEN") {
                     if (nsexes > 1) {
@@ -1735,7 +1735,7 @@ SSplotComps <-
           ###                   conditional age-at-length
           ###                   and Pearson residuals of A-L key for specific years
           if ((4 %in% subplots | 5 %in% subplots) & aalyear[1] > 0 & kind == "cond") {
-            for (y in 1:length(aalyear)) {
+            for (y in seq_along(aalyear)) {
               aalyr <- aalyear[y]
               if (length(dbase[["Obs"]][dbase[["Yr"]] == aalyr]) > 0) {
                 ydbase <- dbase[dbase[["Yr"]] == aalyr, ]
@@ -1863,7 +1863,7 @@ SSplotComps <-
                   "       the following inputs for 'aalbin' are fine:", goodbins, "\n"
                 )
               }
-              for (ibin in 1:length(goodbins)) { # loop over good bins
+              for (ibin in seq_along(goodbins)) { # loop over good bins
                 ilenbin <- goodbins[ibin]
                 abindbase <- dbase[dbase[["Lbin_hi"]] == ilenbin, ]
                 if (nrow(abindbase) > 0) { # check for data associated with this bin
@@ -1998,7 +1998,7 @@ SSplotComps <-
             }
           } # end subplot 7
 
-          ### subplot 8: Chris Francis TA1.8 method for non-conditional data
+          ### subplot 8: R.I.C Chris Francis TA1.8 method for non-conditional data
           if (8 %in% subplots & kind %in% c("LEN", "SIZE", "AGE")) {
             # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
             kind2 <- tolower(kind)
@@ -2085,7 +2085,7 @@ SSplotComps <-
               dev.off() # close device if png
             } # end test for print to PNG option
           } # end subplot 8
-          ### subplot 9: Chris Francis TA1.8 method for conditional data
+          ### subplot 9: R.I.C Chris Francis TA1.8 method for conditional data
           if (9 %in% subplots & kind == "cond" & (f %in% condbase[["Fleet"]])) {
             if (plot) {
               SSMethod.Cond.TA1.8(

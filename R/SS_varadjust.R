@@ -19,7 +19,7 @@
 #' @template version
 #' @template verbose
 #' @author Ian G. Taylor, Gwladys I. Lambert
-#' @seealso [SS_tune_comps()], [SS_parlines()], [SS_changepars()]
+#' @seealso [tune_comps()], [SS_parlines()], [SS_changepars()]
 #' @export
 #' @examples
 #' \dontrun{
@@ -27,7 +27,7 @@
 #' replist <- SS_output(dir = "c:/model/")
 #'
 #' # get new variance adjustments (
-#' varadjust <- SS_tune_comps(replist, option = "Francis")
+#' varadjust <- tune_comps(replist, option = "Francis")
 #' print(varadjust)
 #'
 #' # write new table to file
@@ -144,7 +144,7 @@ SS_varadjust <- function(dir,
   if (verbose) {
     message(
       "Existing table of variance adjustments:\n",
-      paste0(capture.output(ctl), collapse = "\n")
+      paste0(utils::capture.output(ctl), collapse = "\n")
     )
   }
 
@@ -174,7 +174,7 @@ SS_varadjust <- function(dir,
   if (verbose) {
     message(
       "New table of variance adjustments:\n",
-      paste0(capture.output(ctl), collapse = "\n")
+      paste0(utils::capture.output(ctl), collapse = "\n")
     )
   }
 

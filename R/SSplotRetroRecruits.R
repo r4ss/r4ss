@@ -31,7 +31,7 @@
 #' @examples
 #' \dontrun{
 #' # run retrospective analysis
-#' SS_doRetro(olddir = "2013hake_12", years = 0:-10)
+#' retro(olddir = "2013hake_12", years = 0:-10)
 #' # read in output
 #' retroModels <- SSgetoutput(dirvec = paste("retrospectives/retro", -10:0, sep = ""))
 #' # summarize output
@@ -111,7 +111,7 @@ SSplotRetroRecruits <-
     shadecolvec <- rainbow(length(cohorts), alpha = .1)
     colvec.txt <- colvec
     # make text darker
-    for (i in 1:length(colvec)) {
+    for (i in seq_along(colvec)) {
       tmp <- col2rgb(colvec[i]) / 255
       colvec.txt[i] <- rgb(tmp[1] / 2, tmp[2] / 2, tmp[3] / 2, alpha = .7)
     }
@@ -188,7 +188,7 @@ SSplotRetroRecruits <-
 
     outputTable <- NULL
 
-    for (iy in 1:length(cohorts)) {
+    for (iy in seq_along(cohorts)) {
       y <- cohorts[iy]
       cohortvals <- recvals[recvals[["Yr"]] == y, 1:n]
       cohortvalsLower <- recvalsLower[recvalsLower[["Yr"]] == y, 1:n]

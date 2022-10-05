@@ -1,0 +1,55 @@
+name: Feature Request
+description: Request new features or changes to features
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees:
+  - iantaylor-NOAA
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the feature request.
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you have considered
+      description: A clear and concise description of any alternative solutions or features you have considered.
+      placeholder: Other solutions include ...
+    validations:
+      required: true
+  - type: textarea
+    id: stats
+    attributes:
+      label: Statistical validity, if applicable
+      description: Please link to a paper or reference that describes how this approach improves accuracy or statistical power.
+    validations:
+      required: false
+  - type: textarea
+    id: management
+    attributes:
+      label: Describe if this is needed for a management application
+      description: If this feature is necessary to satisfy the Terms of Reference for your fishery management body, please explain why here and describe which management body.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context or screenshots about the feature request here.
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/r4ss/r4ss#code-of-conduct)
+      options:
+        - label: I agree to follow this project's [Code of Conduct](https://github.com/r4ss/r4ss#code-of-conduct)
+          required: true

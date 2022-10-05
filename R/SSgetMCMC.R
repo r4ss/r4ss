@@ -79,13 +79,13 @@ SSgetMCMC <-
     # separate "key posteriors" from "nuisance posteriors"
     keylabels <- NULL
     nuisancelabels <- NULL
-    for (istring in 1:length(keystrings)) {
+    for (istring in seq_along(keystrings)) {
       keylabels <- c(
         keylabels,
         names(allpost)[grep(keystrings[istring], names(allpost))]
       )
     }
-    for (istring in 1:length(nuisancestrings)) {
+    for (istring in seq_along(nuisancestrings)) {
       nuisancelabels <- c(
         nuisancelabels,
         names(allpost)[grep(nuisancestrings[istring], names(allpost))]

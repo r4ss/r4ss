@@ -33,10 +33,18 @@ write Stock Synthesis starter file from list object in R which was probably
 created using \code{\link[=SS_readstarter]{SS_readstarter()}}
 }
 \seealso{
-\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
-\code{\link[=SS_writestarter]{SS_writestarter()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
+Other read/write functions: 
+\code{\link{SS_readctl}()},
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_readstarter}()},
+\code{\link{SS_read}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_write}()}
 }
 \author{
 Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 }
+\concept{read/write functions}

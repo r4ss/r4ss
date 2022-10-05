@@ -8,7 +8,7 @@ SS_readctl_3.30(
   file,
   verbose = FALSE,
   use_datlist = TRUE,
-  datlist = "data.ss_new",
+  datlist = file.path(dirname(file), "data_echo.ss_new"),
   nseas = NULL,
   N_areas = NULL,
   Nages = NULL,

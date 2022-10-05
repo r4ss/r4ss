@@ -122,7 +122,7 @@ SStableComparisons <- function(summaryoutput,
           fleetvec <- sort(as.numeric(unique(Calc_Q[["Fleet"]])))
           vals <- data.frame(matrix(NA, nrow = length(fleetvec), ncol = ncol(bigtable)))
           names(vals) <- names(bigtable)
-          for (ifleet in 1:length(fleetvec)) {
+          for (ifleet in seq_along(fleetvec)) {
             f <- fleetvec[ifleet]
             vals[ifleet, 1] <- paste("Q_calc_mean_fleet_", f, sep = "")
             vals[ifleet, -1] <- Calc_Q[["Calc_Q"]][Calc_Q[["Fleet"]] == f]

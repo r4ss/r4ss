@@ -1,13 +1,14 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.45.2
+Version: 1.46.1
 Authors@R: c(person(given = "Ian G.", family = "Taylor",
   email = "Ian.Taylor@noaa.gov", role = c("aut","cre")),
   person(given = "Ian J.", family = "Stewart", role = "aut"),
   person(given = "Allan C.", family = "Hicks", role = "aut"),
   person(given = "Tommy M.", family = "Garrison", role = "aut"),
   person(given = "Andre E.", family = "Punt", role = "aut"),
+  person(given = "R.I.C. Chris", family = "Francis", role = "aut"),
   person(given = "John R.", family = "Wallace", role = "aut"),
   person(given = "Chantel R.", family = "Wetzel", role = "aut"),
   person(given = "James T.", family = "Thorson", role = "aut"),
@@ -45,9 +46,10 @@ Imports:
     dplyr,
     forcats,
     ggplot2,
+    kableExtra,
     lifecycle,
     stringr,
-    kableExtra
+    tidyr
 Suggests: 
     gtools,
     gplots,
@@ -75,6 +77,6 @@ Encoding: UTF-8
 LazyLoad: yes
 URL: https://github.com/r4ss/r4ss
 BugReports: https://github.com/r4ss/r4ss/issues
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

@@ -135,8 +135,11 @@ fisheries stock assessment models. Canadian Journal of
 Fisheries and Aquatic Sciences 68: 1124-1138.
 }
 \seealso{
-\code{\link[=SSMethod.Cond.TA1.8]{SSMethod.Cond.TA1.8()}}
+Other tuning functions: 
+\code{\link{SSMethod.Cond.TA1.8}()},
+\code{\link{tune_comps}()}
 }
 \author{
-Chris Francis, Andre Punt, Ian Taylor
+R.I.C Chris Francis, Andre E. Punt, Ian G. Taylor
 }
+\concept{tuning functions}

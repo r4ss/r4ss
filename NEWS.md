@@ -1,3 +1,32 @@
+# r4ss 1.46.1 (29 July 2022)
+* Major revamp of all functions that run the Stock Synthesis executable
+  https://github.com/r4ss/r4ss/pull/722
+  * Functions that run the executable have been renamed:
+    https://github.com/r4ss/r4ss/issues/723:
+    * `run_SS_models()` -> `run()` (now has defaults which allow you to
+      simply call `run()` in the current working directory as well as
+      and better support for having the Stock Synthesis executable in
+      your path)
+    * `SS_profile()` -> `profile()`
+    * `SS_doRetro()` -> `retro()`
+    * `SS_RunJitter()` -> `jitter()`
+    * `SS_tune_comps()` -> `tune_comps()`
+  * Functions have more consistent inputs (e.g., always `dir` instead of
+    `mydir`, `File`, or `masterdir`, and now defaulting to the current
+    working directory) 
+  * Input `show_in_console = FALSE` can be used with all these functions
+    and will pipe output to a text file keeping R console cleaner while
+    models run
+* Deprecates functions that relate to 3.24 models, like
+  `SS_readdat_3.24()` (although `SS_output()` is still compatible back
+  to version 3.24) https://github.com/r4ss/r4ss/pull/718 
+* Introduces new "simple_small" example model but removes older
+  examples, reducing total package size https://github.com/r4ss/r4ss/pull/700
+* Uses new columns names in BIOLOGY output https://github.com/r4ss/r4ss/pull/711
+* Numerous bug fixes
+* Adds dependency on 'tidyr'
+* Removes never-completed function `SSbootstrap()`
+
 # r4ss 1.44.0 (23 May 2022)
 * Minor improvements and bug fixes
 * Compatibility with SS3 version 3.30.19

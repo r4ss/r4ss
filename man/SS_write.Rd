@@ -28,7 +28,7 @@ six model input files.
 \dontrun{
 # read inputlist to modify the data file
 inputlist <- SS_read(
-  dir = system.file("extdata", "simple_3.30.13", package = "r4ss")
+  dir = system.file("extdata", "simple_small", package = "r4ss")
 )
 
 # modify the starter file (use the par file)
@@ -51,14 +51,20 @@ SS_write(
 }
 }
 \seealso{
-\itemize{
-\item \code{\link[=SS_read]{SS_read()}} creates the list that is used by this function.
-\item \code{\link[=SS_writestarter]{SS_writestarter()}}, \code{\link[=SS_writedat]{SS_writedat()}}, \code{\link[=SS_writectl]{SS_writectl()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writewtatage]{SS_writewtatage()}}, \code{\link[=SS_writepar_3.30]{SS_writepar_3.30()}},
-and \code{\link[=SS_writepar_3.24]{SS_writepar_3.24()}} are used to write the
-input files.
-}
+\code{\link[=SS_read]{SS_read()}} creates the list that is used by this function.
+
+Other read/write functions: 
+\code{\link{SS_readctl}()},
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_readstarter}()},
+\code{\link{SS_read}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()}
 }
 \author{
 Ian G. Taylor
 }
+\concept{read/write functions}

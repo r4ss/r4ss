@@ -160,8 +160,8 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     parlist[["recdev1"]][, 1] <- ctllist[["MainRdevYrFirst"]]:ctllist[["MainRdevYrLast"]]
     rec_temp <- as.numeric(strsplit(parvals[(grep("recdev1", parvals) + 1)], " ")[[1]])
     rec_temp <- rec_temp[!is.na(rec_temp)]
-    parlist[["recdev1"]][1:length(rec_temp), 2] <- rec_temp
-    parlist[["recdev1"]] <- parlist[["recdev1"]][1:length(rec_temp), ]
+    parlist[["recdev1"]][seq_along(rec_temp), 2] <- rec_temp
+    parlist[["recdev1"]] <- parlist[["recdev1"]][seq_along(rec_temp), ]
     colnames(parlist[["recdev1"]]) <- c("year", "recdev")
   }
 
@@ -171,8 +171,8 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     parlist[["recdev2"]][, 1] <- ctllist[["MainRdevYrFirst"]]:ctllist[["MainRdevYrLast"]]
     rec_temp <- as.numeric(strsplit(parvals[(grep("recdev2", parvals) + 1)], " ")[[1]])
     rec_temp <- rec_temp[!is.na(rec_temp)]
-    parlist[["recdev2"]][1:length(rec_temp), 2] <- rec_temp
-    parlist[["recdev2"]] <- parlist[["recdev2"]][1:length(rec_temp), ]
+    parlist[["recdev2"]][seq_along(rec_temp), 2] <- rec_temp
+    parlist[["recdev2"]] <- parlist[["recdev2"]][seq_along(rec_temp), ]
     colnames(parlist[["recdev2"]]) <- c("year", "recdev")
   }
 
@@ -412,7 +412,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     # Build parameter deviations list
     parlist[["parm_devs"]] <- list()
     # Read in the values for parameter deviations for each vector
-    for (i in 1:length(dev_parm_labels))
+    for (i in seq_along(dev_parm_labels))
     {
       years_temp <- dev_parm_start[i]:dev_parm_end[i]
       dev_temp <- as.numeric(strsplit(parvals[(grep("parm_dev", parvals)[i] + 1)], " ")[[1]])

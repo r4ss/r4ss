@@ -47,7 +47,7 @@ copy step.
 \examples{
 \dontrun{
 # directory with the model output
-mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")
+mydir <- file.path(path.package("r4ss"), "extdata/simple_small")
 # read the model output
 model <- SS_output(dir = mydir)
 # run get_SIS_info:

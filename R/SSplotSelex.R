@@ -137,7 +137,7 @@ SSplotSelex <-
       lifecycle::deprecate_warn(
         when = "1.45.1",
         what = "SSplotSelex(subplot)",
-        details = "Please use subplots instead. Assigning subplot to subplots."
+        with = "SSplotSelex(subplots)"
       )
       subplots <- subplot
     }
@@ -253,7 +253,7 @@ SSplotSelex <-
         years <- NULL
         years2 <- NULL
         year_ranges <- NULL
-        for (i in 1:length(inputyears)) {
+        for (i in seq_along(inputyears)) {
           if (inputyears[i] >= startyr) {
             newyear <- min(endyr, allselex[["Yr"]][allselex[["Yr"]] >= inputyears[i]])
             newyear2 <- max(startyr, allselex[["Yr"]][allselex[["Yr"]] <= inputyears[i]])
@@ -274,7 +274,7 @@ SSplotSelex <-
           year_ranges <- paste(startyr, "-", endyr, sep = "")
         }
         bad <- rep(FALSE, length(years))
-        for (i in 1:length(years)) {
+        for (i in seq_along(years)) {
           y <- years[i]
           y2 <- years2[i]
           if (sum(years == y) > 1) bad[years == y & years2 == y] <- TRUE
@@ -341,7 +341,7 @@ SSplotSelex <-
 
         # add index from 1 up to number of fleets plotted
         allfleets <- sort(unique(infotable2[["Fleet"]]))
-        for (ifleet in 1:length(allfleets)) {
+        for (ifleet in seq_along(allfleets)) {
           infotable2[["ifleet"]][infotable2[["Fleet"]] == allfleets[ifleet]] <- ifleet
         }
         # choose colors
@@ -355,7 +355,7 @@ SSplotSelex <-
         # or line by year (with line width by Sex)
         allyears <- sort(unique(infotable2[["Yr"]]))
         if (length(allyears) > 1) {
-          for (iyear in 1:length(allyears)) {
+          for (iyear in seq_along(allyears)) {
             infotable2[["lty"]][infotable2[["Yr"]] == allyears[iyear]] <- iyear
           }
           if (twosex) infotable2[["lwd"]][infotable2[["Sex"]] == 2] <- lwd / 2
@@ -427,7 +427,7 @@ SSplotSelex <-
     }
 
     if (1 %in% subplots & !is.null(sizeselex)) {
-      for (ifactor in 1:length(sizefactors)) {
+      for (ifactor in seq_along(sizefactors)) {
         if (plot) {
           infotable2 <- plotAllSel(factor = sizefactors[ifactor])
         }
@@ -456,7 +456,7 @@ SSplotSelex <-
       }
 
       if (length(agefactors) > 0) {
-        for (ifactor in 1:length(agefactors)) {
+        for (ifactor in seq_along(agefactors)) {
           factor <- agefactors[ifactor]
           if (plot) {
             infotable2 <- plotAllSel(factor = factor)
@@ -1026,7 +1026,7 @@ SSplotSelex <-
         box()
       }
 
-      for (imatrix in 1:length(seldev_matrix)) {
+      for (imatrix in seq_along(seldev_matrix)) {
         label <- names(seldev_matrix)[imatrix]
         main <- gsub(pattern = "_", replacement = " ", x = label)
         main <- gsub(pattern = "seldevs", replacement = "selectivity deviations", x = main)

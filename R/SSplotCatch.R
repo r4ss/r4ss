@@ -569,7 +569,7 @@ SSplotCatch <-
         a <- FALSE
         myname <- subplot_names[isubplot]
         badstrings <- c(":", "  ", "__")
-        for (i in 1:length(badstrings)) {
+        for (i in seq_along(badstrings)) {
           myname <- gsub(pattern = badstrings[i], replacement = " ", x = myname, fixed = T)
         }
         file <- paste0("catch", myname, ".png")

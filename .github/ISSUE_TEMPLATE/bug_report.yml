@@ -1,0 +1,78 @@
+name: Bug Report
+description: Report a potential bug in r4ss
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - iantaylor-NOAA
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: describe
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: I expected...
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+    validations:
+      required: false
+  - type: dropdown
+    id: os
+    attributes:
+      label: Which OS are you seeing the problem on?
+      multiple: true
+      options:
+        - Windows
+        - Mac
+        - Linux
+        - Other
+    validations: 
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Which versions of r4ss and SS3 are you seeing the problem on?
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/r4ss/r4ss#code-of-conduct)
+      options:
+        - label: I agree to follow this project's [Code of Conduct](https://github.com/r4ss/r4ss#code-of-conduct)
+          required: true

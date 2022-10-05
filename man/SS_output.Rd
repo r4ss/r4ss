@@ -13,7 +13,7 @@ SS_output(
   forefile = "Forecast-report.sso",
   wtfile = "wtatage.ss_new",
   warnfile = "warning.sso",
-  ncols = NULL,
+  ncols = lifecycle::deprecated(),
   forecast = TRUE,
   warn = TRUE,
   covar = TRUE,
@@ -49,11 +49,7 @@ will end up in the right place, or an absolute path.}
 
 \item{warnfile}{Name of the file containing warnings.}
 
-\item{ncols}{The maximum number of columns in files being read in.  If this
-value is too big the function runs more slowly, too small and errors will
-occur.  A warning will be output to the R command line if the value is too
-small. It should be bigger than the maximum age + 10 and the number of
-years + 10. The default value is \code{NULL}, which finds the optimum width.}
+\item{ncols}{Deprecated. This value is now calculated automatically.}
 
 \item{forecast}{Read the forecast-report file?}
 
@@ -99,7 +95,7 @@ should probably be created at some point in the future.
 Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
 other files produced by Stock Synthesis and formats the important
 content of these files into a list in the R workspace. A few statistics
-unavailable elsewhere are taken from the .par and .cor files. Summary
+unavailable elsewhere are taken from the .par file. Summary
 information and statistics can be returned to the R console or just
 contained within the list produced by this function.
 }

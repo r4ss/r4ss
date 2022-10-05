@@ -69,15 +69,16 @@
 #' @param cutoff_prob Probability associated with `add_cutoff` above.
 #' @template verbose
 #' @param \dots Additional arguments passed to the `plot` command.
-#' @note Someday the function [SS_profile()] will be improved and
+#' @note Someday the function [profile()] will be improved and
 #' made to work directly with this plotting function, but they don't yet work
-#' well together. Thus, even if [SS_profile()] is used, the output
+#' well together. Thus, even if [profile()] is used, the output
 #' should be read using [SSgetoutput()] or by multiple calls to
 #' [SS_output()].
-#' @author Ian Taylor, Ian Stewart
+#' @author Ian G. Taylor, Ian J. Stewart
 #' @export
-#' @seealso [SSsummarize()], [SS_profile()],
-#' [SS_output()], [SSgetoutput()]
+#' @seealso [SSsummarize()], [SSgetoutput()]
+#' @family profile functions
+
 SSplotProfile <-
   function(summaryoutput,
            plot = TRUE, print = FALSE,

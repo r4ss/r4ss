@@ -4,7 +4,7 @@
 #' Current initial value, lower and upper bounds, and phase can be modified,
 #' but function could be expanded to control other columns.
 #' Depends on [SS_parlines()].
-#' Used by [SS_profile()] and the \pkg{ss3sim} package.
+#' Used by [profile()] and the \pkg{ss3sim} package.
 #'
 #'
 #' @template dir
@@ -69,7 +69,7 @@
 #'   `linenums` or `strings`.
 #' @template verbose
 #' @author Ian Taylor, Christine Stawitz, Chantel Wetzel
-#' @seealso [SS_parlines()], [SS_profile()]
+#' @seealso [SS_parlines()], [profile()]
 #' @export
 #' @examples
 #' \dontrun{
@@ -127,7 +127,7 @@ SS_changepars <-
       # if strings are provided, look for matching subset of labels
       if (!is.null(strings)) {
         # loop over vector of strings to add to goodnames vector
-        for (i in 1:length(strings)) {
+        for (i in seq_along(strings)) {
           # fixed matching on string
           goodnames[[i]] <- allnames[grep(strings[i], allnames, fixed = TRUE)]
         }
@@ -330,7 +330,7 @@ SS_changepars <-
     if (verbose) {
       message(
         "Wrote new file to ", newctlfile, " with the following changes:\n",
-        paste0(capture.output(results), collapse = "\n")
+        paste0(utils::capture.output(results), collapse = "\n")
       )
     }
     return(invisible(results))
