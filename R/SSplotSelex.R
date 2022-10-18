@@ -1188,11 +1188,22 @@ SSplotSelex <-
         sel <- derived_quants[rows, ]
         names <- sel[["Label"]]
         splitnames <- strsplit(names, "_")
-        namesDF <- as.data.frame(matrix(unlist(strsplit(names, "_")), ncol = 6, byrow = T))
-        sel[["Fleet"]] <- as.numeric(as.character(namesDF[["V3"]]))
-        sel[["Sex"]] <- as.character(namesDF[["V4"]])
-        sel[["agelen"]] <- as.character(namesDF[["V5"]])
-        sel[["bin"]] <- as.numeric(as.character(namesDF[["V6"]]))
+        if (grepl("AgeLenSelex", names[[1]])) {
+          # if uncertainty is for combined age and length there's one
+          # more column
+          namesDF <- as.data.frame(matrix(unlist(strsplit(names, "_")), ncol = 7, byrow = TRUE))
+          sel[["Fleet"]] <- as.numeric(as.character(namesDF[["V3"]]))
+          sel[["Sex"]] <- as.character(namesDF[["V5"]])
+          sel[["agelen"]] <- as.character(namesDF[["V6"]])
+          sel[["bin"]] <- as.numeric(as.character(namesDF[["V7"]]))
+        } else {
+          # if uncertainty is only for age or length
+          namesDF <- as.data.frame(matrix(unlist(strsplit(names, "_")), ncol = 6, byrow = TRUE))
+          sel[["Fleet"]] <- as.numeric(as.character(namesDF[["V3"]]))
+          sel[["Sex"]] <- as.character(namesDF[["V4"]])
+          sel[["agelen"]] <- as.character(namesDF[["V5"]])
+          sel[["bin"]] <- as.numeric(as.character(namesDF[["V6"]]))
+        }
         sel[["lower"]] <- pmax(qnorm(0.025, mean = sel[["Value"]], sd = sel[["StdDev"]]), 0) # trim at 0
         sel[["upper"]] <- pmin(qnorm(0.975, mean = sel[["Value"]], sd = sel[["StdDev"]]), 1) # trim at 1
         i <- sel[["Fleet"]][1]
@@ -1246,6 +1257,7 @@ SSplotSelex <-
             abline(h = 0, col = "grey")
           }
           if (plot) {
+            browser()
             plot_extra_selex_SD()
           }
           if (print) {
