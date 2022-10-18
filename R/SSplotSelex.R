@@ -1257,7 +1257,6 @@ SSplotSelex <-
             abline(h = 0, col = "grey")
           }
           if (plot) {
-            browser()
             plot_extra_selex_SD()
           }
           if (print) {
