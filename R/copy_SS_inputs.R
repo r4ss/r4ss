@@ -40,7 +40,6 @@ copy_SS_inputs <- function(dir.old = NULL,
                            copy_par = FALSE,
                            dir.exe = NULL,
                            verbose = TRUE) {
-
   # check to make sure the first input is in the correct format
   if (!is.character(dir.old) | length(dir.old) != 1) {
     stop("Input 'dir.old' should be a character string for a directory")

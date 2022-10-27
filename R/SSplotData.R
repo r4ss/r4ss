@@ -164,7 +164,6 @@ SSplotData <- function(replist,
         dat.f <- dat[dat[["Fleet"]] == ifleet, ]
         # check for observations from this fleet
         if (nrow(dat.f) > 0) {
-
           # identify years from different data types
           if (typename == "catch") {
             # aggregate catch by year

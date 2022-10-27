@@ -92,7 +92,6 @@ SS_readctl <- function(file,
                        N_rows_equil_catch = NULL,
                        N_dirichlet_parms = NULL,
                        ptype = lifecycle::deprecated()) {
-
   # warn about soft deprecated arguments ----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(ptype)) {

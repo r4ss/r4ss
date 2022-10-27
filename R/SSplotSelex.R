@@ -131,7 +131,6 @@ SSplotSelex <-
            mar = NULL,
            plotdir = "default",
            verbose = TRUE, subplot = lifecycle::deprecated()) {
-
     # Warning about deprecated arguments. Should be removed after 1 release.
     if (lifecycle::is_present(subplot)) {
       lifecycle::deprecate_warn(
@@ -837,7 +836,6 @@ SSplotSelex <-
     ################################################################################
     ### loop over fleets and sexes to make individual plot of age-based patterns
     if (any(11:14 %in% subplots) & !is.null(ageselex)) {
-
       # Age based selex
       ylab <- labels[4]
       for (facnum in 1) {

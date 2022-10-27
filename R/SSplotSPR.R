@@ -59,7 +59,6 @@ SSplotSPR <-
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            plotdir = "default",
            verbose = TRUE) {
-
     # table to store information on each plot
     plotinfo <- NULL
 

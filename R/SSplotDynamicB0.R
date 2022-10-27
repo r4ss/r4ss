@@ -117,13 +117,14 @@ SSplotDynamicB0 <- function(replist,
   equil_yr <- Dynamic_Bzero[["Yr"]][sub_equil] + 1
 
   # set ymax
-  ymax <- max(ifelse(equilibrium,
-    Dynamic_Bzero[["SSB"]][sub_equil],
-    NA
-  ),
-  Dynamic_Bzero[["SSB"]][Dynamic_Bzero[["Yr"]] %in% yrs],
-  Dynamic_Bzero[["SSB_nofishing"]][Dynamic_Bzero[["Yr"]] %in% yrs],
-  na.rm = TRUE
+  ymax <- max(
+    ifelse(equilibrium,
+      Dynamic_Bzero[["SSB"]][sub_equil],
+      NA
+    ),
+    Dynamic_Bzero[["SSB"]][Dynamic_Bzero[["Yr"]] %in% yrs],
+    Dynamic_Bzero[["SSB_nofishing"]][Dynamic_Bzero[["Yr"]] %in% yrs],
+    na.rm = TRUE
   )
 
   # get subsets of derived quantities and extract year value

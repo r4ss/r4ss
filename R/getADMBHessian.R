@@ -16,7 +16,6 @@
 getADMBHessian <- function(hesfile = "admodel.hes",
                            File = lifecycle::deprecated(),
                            FileName = lifecycle::deprecated()) {
-
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(File)) {
