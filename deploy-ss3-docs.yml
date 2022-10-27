@@ -11,7 +11,7 @@ jobs:
       RSPM: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"
     steps:
       - name: Set up Git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2

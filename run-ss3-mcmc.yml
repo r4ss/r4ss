@@ -14,11 +14,11 @@ jobs:
     steps:
 
       - name: Checkout ss repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
 
       - name: Checkout models repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'nmfs-stock-synthesis/test-models'
           path: test-models-repo
