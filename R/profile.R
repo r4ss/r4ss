@@ -473,10 +473,15 @@ profile <- function(dir,
       if (read_like && file.exists("Report.sso") &
         file.info("Report.sso")$size > 0) {
         onegood <- TRUE
+        # read first 400 lines of Report.sso
         Rep <- readLines("Report.sso", n = 400)
+        # calculate range of rows with LIKELIHOOD table
+        skip <- grep("LIKELIHOOD", Rep)[2]
+        nrows <- grep("Crash_Pen", Rep) - skip - 1
+        # read Report again to just get LIKELIHOOD table
         like <- read.table("Report.sso",
-          skip = grep("LIKELIHOOD", Rep)[2] + 0,
-          nrows = 11, header = TRUE, fill = TRUE
+          skip = skip,
+          nrows = nrows, header = TRUE, fill = TRUE
         )
         liketable <- rbind(liketable, as.numeric(like[["logL.Lambda"]]))
       } else {
