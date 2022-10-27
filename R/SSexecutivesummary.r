@@ -62,7 +62,6 @@ SSexecutivesummary <- function(replist,
                                format = TRUE,
                                match_digits = FALSE,
                                verbose = TRUE) {
-
   # Make sure table.dir contains the report file
   if (is.null(replist)) {
     stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
@@ -895,41 +894,43 @@ SSexecutivesummary <- function(replist,
     }
 
     if (format) {
-      es.i <- matrix(c(
-        c("OFL", ofl),
-        c("ACL", acl),
-        total.bind,
-        c(spr_type, c(print(adj.spr[["dq"]][1:(length(years) - 1)], 2), "NA")),
-        c(f_type, c(print(f.value[["dq"]][1:(length(years) - 1)], 2), "NA")),
-        c(paste0("Age ", smry.age, "+ Biomass (mt)"), comma(smry, dig)),
-        c(sb.label, comma(ssb[["dq"]], dig)),
-        c("Interval", paste0(comma(ssb[["low"]], dig), "\u2013", comma(ssb[["high"]], dig))),
-        c("Recruits", comma(recruits[["dq"]], dig)),
-        c("Interval", paste0(comma(recruits[["low"]], dig), "\u2013", comma(recruits[["high"]], dig))),
-        c("Fraction Unfished", print(depl[["dq"]], 1)),
-        c("Interval", paste0(print(depl[["low"]], 1), "\u2013", print(depl[["high"]], 1)))
-      ),
-      ncol = (length(years) + 1), byrow = T
+      es.i <- matrix(
+        c(
+          c("OFL", ofl),
+          c("ACL", acl),
+          total.bind,
+          c(spr_type, c(print(adj.spr[["dq"]][1:(length(years) - 1)], 2), "NA")),
+          c(f_type, c(print(f.value[["dq"]][1:(length(years) - 1)], 2), "NA")),
+          c(paste0("Age ", smry.age, "+ Biomass (mt)"), comma(smry, dig)),
+          c(sb.label, comma(ssb[["dq"]], dig)),
+          c("Interval", paste0(comma(ssb[["low"]], dig), "\u2013", comma(ssb[["high"]], dig))),
+          c("Recruits", comma(recruits[["dq"]], dig)),
+          c("Interval", paste0(comma(recruits[["low"]], dig), "\u2013", comma(recruits[["high"]], dig))),
+          c("Fraction Unfished", print(depl[["dq"]], 1)),
+          c("Interval", paste0(print(depl[["low"]], 1), "\u2013", print(depl[["high"]], 1)))
+        ),
+        ncol = (length(years) + 1), byrow = T
       )
     } else {
-      es.i <- matrix(c(
-        c("OFL", ofl),
-        c("ACL", acl),
-        total.bind,
-        c(spr_type, c(adj.spr[["dq"]][1:(length(years) - 1)], NA)),
-        c(f_type, c(f.value[["dq"]][1:(length(years) - 1)], NA)),
-        c(paste0("Age ", smry.age, "+ Biomass (mt)"), smry),
-        c(sb.label, ssb[["dq"]]),
-        c("Lower Interval", ssb[["low"]]),
-        c("Upper Interval", ssb[["high"]]),
-        c("Recruits", recruits[["dq"]]),
-        c("Lower Interval", recruits[["low"]]),
-        c("Upper Interval", recruits[["high"]]),
-        c("Fraction Unfished", depl[["dq"]]),
-        c("Lower Interval", depl[["low"]]),
-        c("Upper Interval", depl[["high"]])
-      ),
-      ncol = (length(years) + 1), byrow = T
+      es.i <- matrix(
+        c(
+          c("OFL", ofl),
+          c("ACL", acl),
+          total.bind,
+          c(spr_type, c(adj.spr[["dq"]][1:(length(years) - 1)], NA)),
+          c(f_type, c(f.value[["dq"]][1:(length(years) - 1)], NA)),
+          c(paste0("Age ", smry.age, "+ Biomass (mt)"), smry),
+          c(sb.label, ssb[["dq"]]),
+          c("Lower Interval", ssb[["low"]]),
+          c("Upper Interval", ssb[["high"]]),
+          c("Recruits", recruits[["dq"]]),
+          c("Lower Interval", recruits[["low"]]),
+          c("Upper Interval", recruits[["high"]]),
+          c("Fraction Unfished", depl[["dq"]]),
+          c("Lower Interval", depl[["low"]]),
+          c("Upper Interval", depl[["high"]])
+        ),
+        ncol = (length(years) + 1), byrow = T
       )
     }
     es.i <- noquote(es.i)

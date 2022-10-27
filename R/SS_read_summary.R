@@ -18,7 +18,6 @@
 #' }
 #'
 SS_read_summary <- function(file = "ss_summary.sso", verbose = FALSE) {
-
   # check to make sure file is present and non-empty
   if (is.na(file.info(file)$size) || file.info(file)$size == 0) {
     if (verbose) warning("file is missing or empty: ", file)

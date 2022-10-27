@@ -535,7 +535,6 @@ SSplotIndices <-
 
     # loop over fleets
     for (ifleet in fleetvec) {
-
       # use fancy colors only if the individual index spans more than one season
       usecol <- FALSE
       if (length(unique(cpue[["Seas"]][cpue[["Fleet"]] == ifleet])) > 1) {
@@ -721,7 +720,6 @@ SSplotIndices <-
         # same plots again in log space
         # check for lognormal error
         if (error != -1) {
-
           # plot subplots 4-6 to current device
           if (plot) {
             if (4 %in% subplots & datplot) {

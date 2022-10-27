@@ -81,7 +81,6 @@ TSCplot <- function(SSout,
                     makePDF = NULL,
                     makePNG = NULL,
                     MCMC = FALSE) {
-
   ### Plots the barchart of catches and depletion trajctory for the TSC report
 
   if (!is.null(makePDF) & !is.null(makePNG)) {

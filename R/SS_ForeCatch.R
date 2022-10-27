@@ -80,7 +80,6 @@ SS_ForeCatch <- function(replist, yrs = 2021:2032,
           fleets_with_catch <- which(replist[["fleet_type"]] == 1)
         }
         for (ifleet in fleets_with_catch) {
-
           # figure out column name
           if (replist[["catch_units"]][ifleet] == 1) {
             string <- ifelse(dead, "dead(B)", "retain(B):_")

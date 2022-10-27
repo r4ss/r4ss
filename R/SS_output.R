@@ -1361,10 +1361,11 @@ SS_output <-
       seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[[yr_col]], 2))
       # note: bin was indicated by "a" for length- and age-based selectivity
       # until early 2020 when separate "A" or "Lbin" codes were used
-      seldev_pars[["Type"]] <- ifelse(substring(seldev_label_info[[type_bin_col]], 1, 1) %in%
-        c("A", "a"),
-      yes = "age",
-      no = "length"
+      seldev_pars[["Type"]] <- ifelse(
+        substring(seldev_label_info[[type_bin_col]], 1, 1) %in%
+          c("A", "a"),
+        yes = "age",
+        no = "length"
       )
       # how many non-numeric digits to skip over in parsing bin value
       first_bin_digit <- ifelse(seldev_pars[["Type"]] == "age", 2, 5)
@@ -1572,7 +1573,6 @@ SS_output <-
         message("covar file not found, input 'covar' changed to FALSE")
         covar <- FALSE
       } else {
-
         # time check for CoVar file
         covarhead <- readLines(con = covarfile, n = 10)
         covarskip <- grep("active-i", covarhead) - 1
@@ -3413,7 +3413,6 @@ SS_output <-
 
     # check for presence of any lines with that string
     if (length(sdsize_lines) > 0) {
-
       # the section ends with first blank line after the last of the sdsize_lines
       # so count the blanks as 1 greater than those in between the keyword
       # and the last of those sdsize_lines

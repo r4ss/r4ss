@@ -243,7 +243,6 @@ save_png <- function(plotinfo,
                      caption = NA,
                      alt_text = NA,
                      filenameprefix = NA) {
-
   # replace any slashes (as in 'Eggs/kg_inter_Fem')
   file <- gsub(pattern = "/", replacement = "_per_", x = file, fixed = TRUE)
   if (!is.na(filenameprefix)) {

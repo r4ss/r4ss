@@ -65,7 +65,6 @@ SS_fitbiasramp <-
            transform = FALSE, plot = TRUE, print = FALSE, plotdir = "default", shownew = TRUE,
            oldctl = NULL, newctl = NULL, altmethod = "nlminb", exclude_forecast = FALSE,
            pwidth = 6.5, pheight = 5.0, punits = "in", ptsize = 10, res = 300, cex.main = 1) {
-
     # note, method is choices that go into optim:
     #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 

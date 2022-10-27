@@ -999,7 +999,6 @@ SSplotComps <-
     ### subplot 24: bubble plot comparison of length or age residuals
     ###             across fleets within sex/partition
     if (24 %in% subplots & kind %in% c("LEN", "AGE")) {
-
       # loop over partitions groups (everything, or separate discard, retain, total)
       for (j in unique(dbase_kind[["Part_group"]])) {
         # subset data.frame for this partition group and subset of fleets of interest
