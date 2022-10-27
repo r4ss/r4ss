@@ -40,7 +40,6 @@
 #'
 SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
                         version = "3.30", verbose = TRUE, active = FALSE) {
-
   # function to read parameter lines in Stock Synthesis control files
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     # turns out 3.30 != "3.30" in R

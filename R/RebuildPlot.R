@@ -78,7 +78,6 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     pdf(file = pdffile, width = pwidth, height = pheight)
     message("Name of PDF file with plots: ", pdffile)
   } else {
-
     ### Note: the following line has been commented out because it was identified
     ###       by Brian Ripley as "against CRAN policies".
     # if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)

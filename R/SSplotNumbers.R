@@ -93,7 +93,6 @@ SSplotNumbers <-
            plotdir = "default",
            mainTitle = FALSE,
            verbose = TRUE) {
-
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -515,8 +514,7 @@ SSplotNumbers <-
               if (nareas > 1) sextitle <- paste0(sextitle, " in ", areanames[iarea])
               if (period[iperiod] == "B") {
                 periodtitle <- labels[16]
-              } else
-              if (period[iperiod] == "M") {
+              } else if (period[iperiod] == "M") {
                 periodtitle <- labels[17]
               } else {
                 stop("'period' input to SSplotNumbers should include only 'B' or 'M'")

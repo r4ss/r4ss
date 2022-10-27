@@ -79,7 +79,6 @@ mcmc.out <- function(directory = "c:/mydirectory/",
                      colNames = NULL)
 ##############################################################################################################
 {
-
   # add section to set up for printing or display to screen (default)
   if (print == TRUE) {} # not implemented
 
@@ -215,21 +214,23 @@ mcmc.out <- function(directory = "c:/mydirectory/",
 
         fun <- function(x, prob) quantile(x, probs = prob, names = FALSE) # the quantile to use in next 2 lines
 
-        lines(gtools::running(mcmcobject[, i],
-          fun = fun, # function to use
-          prob = 0.05,
-          allow.fewer = TRUE, # begin calculating from the first point
-          width = draws
-        ),
-        col = "GREY"
+        lines(
+          gtools::running(mcmcobject[, i],
+            fun = fun, # function to use
+            prob = 0.05,
+            allow.fewer = TRUE, # begin calculating from the first point
+            width = draws
+          ),
+          col = "GREY"
         )
-        lines(gtools::running(mcmcobject[, i],
-          fun = fun, # function to use
-          prob = 0.95,
-          allow.fewer = TRUE, # begin calculating from the first point
-          width = draws
-        ),
-        col = "GREY"
+        lines(
+          gtools::running(mcmcobject[, i],
+            fun = fun, # function to use
+            prob = 0.95,
+            allow.fewer = TRUE, # begin calculating from the first point
+            width = draws
+          ),
+          col = "GREY"
         )
       } # end temporary turning off
       #### Autocorrelation plot section ####

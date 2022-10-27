@@ -69,7 +69,6 @@ SSplotSexRatio <-
            maxrows = 6, maxcols = 6,
            rows = 1, cols = 1, fixdims = TRUE, verbose = TRUE,
            mainTitle = FALSE, ...) {
-
     # table to store information on each plot
     plotinfo <- NULL
 

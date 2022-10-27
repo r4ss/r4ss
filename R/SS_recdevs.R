@@ -35,7 +35,6 @@ SS_recdevs <-
            newctlfile = "control_modified.ss",
            verbose = TRUE, writectl = TRUE, returnctl = FALSE,
            newmaxbias = NULL) {
-
     ################################################################################
     #
     # SS_recdevs March 31, 2010.

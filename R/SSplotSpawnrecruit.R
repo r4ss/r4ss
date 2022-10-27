@@ -77,7 +77,6 @@ SSplotSpawnrecruit <-
            expected = TRUE, estimated = TRUE, bias_adjusted = TRUE,
            show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE,
            subplot = lifecycle::deprecated()) {
-
     # warn about soft deprecated arguments
     if (lifecycle::is_present(subplot)) {
       lifecycle::deprecate_warn(

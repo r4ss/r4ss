@@ -53,7 +53,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
                             predM_fleets = NULL,
                             N_rows_equil_catch = NULL,
                             N_dirichlet_parms = NULL) {
-
   # deprecated variable warnings -----
 
   # function to read Stock Synthesis data files

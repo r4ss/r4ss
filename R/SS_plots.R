@@ -402,7 +402,6 @@ SS_plots <-
           StartTimes.old <- c(StartTimes.old, unique(plotInfo.old[["StartTime"]]))
         }
         if (any(StartTimes.old != StartTime)) {
-
           # if there are plots that are older than those from the current model,
           # rename the directory to something containing the older model start time
           StartTimeName <- gsub(":", ".", StartTimes.old[1], fixed = TRUE)

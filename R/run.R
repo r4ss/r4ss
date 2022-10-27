@@ -117,15 +117,16 @@ run <- function(dir = getwd(),
       )
       # write console output to file if not shown in console
       if (!show_in_console) {
-        writeLines(c(
-          "###",
-          "console output",
-          as.character(Sys.time()),
-          "###",
-          " ",
-          console_output
-        ),
-        con = console_output_file
+        writeLines(
+          c(
+            "###",
+            "console output",
+            as.character(Sys.time()),
+            "###",
+            " ",
+            console_output
+          ),
+          con = console_output_file
         )
         if (verbose) {
           message("console output written to ", console_output_file)
