@@ -562,22 +562,27 @@ SS_output <-
     if (warn) {
       warnname <- file.path(dir, warnfile)
       if (!file.exists(warnname)) {
+        # no warnings.sso file
         message(warnfile, " file not found")
         warnrows <- NA
-        warn <- NA
+        warnlines <- NA
       } else {
-        # format prior to 3.30.20
+        # read warning.sso file
         warnlines <- readLines(warnname, warn = FALSE)
+        # number of rows isn't equal to number of warnings, just used to
+        # detect empty file
         warnrows <- length(warnlines)
         if (verbose && warnrows > 0) {
           message("Got warning file. Final line:", tail(warnlines, 1))
         }
       }
     } else {
+      # chose not to read warning.sso file
       if (verbose) {
         message("You skipped the warnings file")
       }
       warnrows <- NA
+      warnlines <- NA
     }
     if (verbose) {
       message("Finished reading files")
