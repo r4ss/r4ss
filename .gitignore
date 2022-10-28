@@ -3,6 +3,7 @@ inst/extdata/models
 inst/extdata/simple_3.30.01/
 inst/extdata/simple_3.30.12/
 inst/extdata/simple_3.30.13/
+inst/extdata/simple_small_*
 *.p0*
 *.b0*
 *.r0*
