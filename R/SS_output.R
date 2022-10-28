@@ -563,33 +563,21 @@ SS_output <-
       warnname <- file.path(dir, warnfile)
       if (!file.exists(warnname)) {
         message(warnfile, " file not found")
-        nwarn <- NA
+        warnrows <- NA
         warn <- NA
       } else {
-        warn <- readLines(warnname, warn = FALSE)
-        warnstring <- warn[grep("N warnings: ", warn)]
-        if (length(warnstring) > 0) {
-          nwarn <- as.numeric(strsplit(warnstring, "N warnings: ")[[1]][2])
-          textblock <- ifelse(nwarn > 1,
-            paste("were", nwarn, "warnings"),
-            paste("was", nwarn, "warning")
-          )
-          if (verbose) {
-            message(
-              "Got warning file.",
-              " There", textblock, " in ", warnname
-            )
-          }
-        } else {
-          message(warnfile, " file is missing the string 'N warnings'")
-          nwarn <- NA
+        # format prior to 3.30.20
+        warnlines <- readLines(warnname, warn = FALSE)
+        warnrows <- length(warnlines)
+        if (verbose && warnrows > 0) {
+          message("Got warning file. Final line:", tail(warnlines, 1))
         }
       }
     } else {
       if (verbose) {
         message("You skipped the warnings file")
       }
-      nwarn <- NA
+      warnrows <- NA
     }
     if (verbose) {
       message("Finished reading files")
@@ -1135,7 +1123,7 @@ SS_output <-
     }
 
     # check warnings
-    stats[["Nwarnings"]] <- nwarn
+    stats[["Nwarnings"]] <- warnrows
     if (length(warn) > 20) {
       warn <- c(warn[1:20], paste(
         "Note:", length(warn) - 20,
@@ -1144,7 +1132,7 @@ SS_output <-
         "file to see full list."
       ))
     }
-    stats[["warnings"]] <- warn
+    stats[["warnings"]] <- warnlines
 
     # likelihoods
     rawlike <- match_report_table("LIKELIHOOD", 2, "Fleet:", -2)
