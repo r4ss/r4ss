@@ -82,7 +82,7 @@ test_that("SS_plots runs on simple_small model", {
     dir = temp_path,
     printfolder = "plots_simple_small", verbose = FALSE
   )
-  expect_equal(tail(plots_simple_small$file, 1), "parameterchecks.html")
+  expect_equal(tail(plots_simple_small$file, 1), "lowcorrelationcheck.html")
 })
 
 ###############################################################################
