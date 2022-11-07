@@ -351,9 +351,14 @@ SS_html <- function(replist = NULL,
         file = htmlfile, append = TRUE
       )
       for (i in 1:nrow(plotinfo)) {
-        # default alternative text is caption up to any line break <br>
+        # default alternative text is caption up to any line break
+        # or period
         alt <- strsplit(plotinfo[["caption"]][i],
           split = "<br>",
+          fixed = TRUE
+        )[[1]][1]
+        alt <- strsplit(alt,
+          split = ". ",
           fixed = TRUE
         )[[1]][1]
         cat("<p align=left><a href='", plotinfo[["basename"]][i],
