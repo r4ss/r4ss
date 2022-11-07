@@ -21,19 +21,8 @@
 #' @param ncols Deprecated. This value is now calculated automatically.
 #' @param forecast Read the forecast-report file?
 #' @param warn Read the Warning.sso file?
-#' @param covar Read covar.sso to get variance information and identify bad
-#' correlations?
+#' @param covar Read covar.sso?
 #' @param readwt Read the weight-at-age file?
-#' @param checkcor Check for bad correlations?
-#' @param cormax The specified threshold for defining high correlations.  A
-#' quantity with any correlation above this value is identified.
-#' @param cormin The specified threshold for defining low correlations.  Only
-#' quantities with all correlations below this value are identified (to find
-#' variables that appear too independent from the model results).
-#' @param printhighcor The maximum number of high correlations to print to the
-#' R GUI.
-#' @param printlowcor The maximum number of low correlations to print to the R
-#' GUI.
 #' @template verbose
 #' @param printstats Print summary statistics about the output to the R GUI?
 #' @param hidewarn Hides some warnings output from the R GUI.
@@ -71,11 +60,6 @@ SS_output <-
            warn = TRUE,
            covar = TRUE,
            readwt = TRUE,
-           checkcor = TRUE,
-           cormax = 0.95,
-           cormin = 0.01,
-           printhighcor = 10,
-           printlowcor = 10,
            verbose = TRUE,
            printstats = TRUE,
            hidewarn = FALSE,
@@ -1271,9 +1255,6 @@ SS_output <-
     # end fix
     rownames(parameters) <- ParmLabels
 
-    # names of active parameters
-    activepars <- parameters[["Label"]][!is.na(parameters[["Active_Cnt"]])]
-
     if (!is.na(parfile)) {
       parline <- read.table(parfile, fill = TRUE, comment.char = "", nrows = 1)
     } else {
@@ -1640,83 +1621,6 @@ SS_output <-
 
       if (Nstd <= 1) {
         stop("Too few estimated quantities in covar file (n=", Nstd, "). Change input to covar=FALSE.")
-      }
-      if (checkcor == TRUE & stats[["N_estimated_parameters"]] > 1) {
-        corfilter <- CoVar[CoVar[["all.i"]] != CoVar[["all.j"]] &
-          CoVar[["Par..i"]] == "Par" &
-          CoVar[["Par..j"]] == "Par" &
-          CoVar[["label.i"]] %in% activepars &
-          CoVar[["label.j"]] %in% activepars &
-          !substr(CoVar[["label.i"]], 1, 8) == "ForeRecr" &
-          !substr(CoVar[["label.j"]], 1, 8) == "ForeRecr", ]
-        rangecor <- range(abs(corfilter[["corr"]]))
-        corstats <- list()
-        corstats[["cormessage1"]] <- paste("Range of abs(parameter correlations) is", min(rangecor), "to", max(rangecor))
-        # search for high or low correlations in covar file
-        highcor <- corfilter[abs(corfilter[["corr"]]) >= cormax, names(CoVar) %in% c("label.i", "label.j", "corr")]
-        lowcorcandidates <- corfilter[abs(corfilter[["corr"]]) <= cormin, names(CoVar) %in% c("label.i", "label.j", "corr")]
-        lowcortestlist <- data.frame(unique(c(lowcorcandidates[["label.i"]], lowcorcandidates[["label.j"]])))
-        lowcortestlist[["name"]] <- as.character(lowcortestlist[, 1])
-        nlowcor <- 0
-        lowcor <- 0
-        if (nrow(lowcortestlist) > 0) {
-          lowcortestlist[["max"]] <- NA
-          for (i in seq_along(lowcortestlist[, 1]))
-          {
-            lowcortestlist[["max"]][i] <- max(corfilter[["corr"]][corfilter[["label.i"]] == lowcortestlist[["name"]][i]], corfilter[["corr"]][corfilter[["label.j"]] == lowcortestlist[["name"]][i]])
-          }
-          lowcor <- lowcortestlist[abs(lowcortestlist[["max"]]) <= cormin, 2:3]
-          nlowcor <- nrow(lowcor)
-        }
-        nhighcor <- nrow(highcor)
-        if (printhighcor > 0) {
-          if (nhighcor == 0) textblock <- "No correlations"
-          if (nhighcor == 1) textblock <- "1 correlation"
-          if (nhighcor > 1) textblock <- paste(nhighcor, "correlations")
-          corstats[["cormessage2"]] <- paste(textblock, " above threshold (cormax=", cormax, ")", sep = "")
-          if (nhighcor > 0 & nhighcor <= printhighcor) {
-            row.names(highcor) <- paste("   ", 1:nhighcor)
-            corstats[["cormessage3"]] <- highcor
-          }
-          if (nhighcor > 0 & nhighcor > printhighcor) {
-            highcorsub <- highcor[order(-abs(highcor[["corr"]])), ]
-            highcorsub <- highcorsub[1:printhighcor, ]
-            row.names(highcorsub) <- paste("   ", 1:printhighcor)
-            corstats[["cormessage4"]] <- paste(
-              "Highest", printhighcor,
-              "parameter correlations above threshold (to print more, increase 'printhighcor' input):"
-            )
-            corstats[["cormessage5"]] <- highcorsub
-          }
-        } else {
-          corstats[["cormessage6"]] <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
-        }
-
-        if (printlowcor > 0) {
-          if (nlowcor == 0) textblock <- "No uncorrelated parameters"
-          if (nlowcor == 1) textblock <- "1 uncorrelation"
-          if (nlowcor > 1) textblock <- paste(nlowcor, "uncorrelated parameters")
-          corstats[["cormessage7"]] <- paste(textblock, " below threshold (cormin=", cormin, ")", sep = "")
-          if (nlowcor > 0 & nlowcor <= printlowcor) {
-            corstats[["cormessage8"]] <- lowcor
-          }
-          if (nlowcor > 0 & nlowcor > printlowcor) {
-            lowcorsub <- lowcor[order(abs(lowcor[["max"]])), ]
-            lowcorsub <- lowcorsub[1:printlowcor, ]
-            corstats[["cormessage9"]] <- paste(
-              "Lowest", printlowcor,
-              "parameters uncorrelations below threshold (to print more, increase 'printlowcor' input):"
-            )
-            corstats[["cormessage10"]] <- lowcorsub
-          }
-        } else {
-          corstats[["cormessage11"]] <- "Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
-        }
-      } else { # if checkcor = FALSE or only 1 estimated parameter
-        corstats <- NA
-        if (verbose) {
-          message("You skipped the correlation check (or have only 1 parameter)")
-        }
       }
     } else {
       if (verbose) {
@@ -3681,11 +3585,6 @@ SS_output <-
 
     if (covar) {
       returndat[["CoVar"]] <- CoVar
-      if (stats[["N_estimated_parameters"]] > 1) {
-        returndat[["highcor"]] <- highcor
-        returndat[["lowcor"]] <- lowcor
-        returndat[["corstats"]] <- corstats
-      }
       returndat[["stdtable"]] <- stdtable
     }
 
@@ -3832,13 +3731,6 @@ SS_output <-
         scientific = 20
       )
       print(stats)
-      if (covar) {
-        if (stats[["N_estimated_parameters"]] > 1) {
-          print(corstats, quote = FALSE)
-        } else {
-          message("Too few estimated parameters to report correlations.")
-        }
-      }
     }
 
     # add log file to list that gets returned

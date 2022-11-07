@@ -4,20 +4,34 @@
 \alias{SS_makeHTMLdiagnostictable}
 \title{Make html diagnostic tables}
 \usage{
-SS_makeHTMLdiagnostictable(replist, plotdir = NULL, gradmax = 0.001)
+SS_makeHTMLdiagnostictable(
+  replist,
+  plotdir = NULL,
+  gradmax = 0.001,
+  ncor = 50,
+  cormax = 0.95,
+  cormin = 0.01
+)
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 
-\item{gradmax}{the largest gradient value for estimated parameter; the default is 1E-3}
+\item{gradmax}{the largest gradient value for estimated parameter}
+
+\item{ncor}{number of rows in tables of correlations}
+
+\item{cormax}{threshold for highlighting high correlations}
+
+\item{cormin}{threshold for highlighting low correlations}
 }
 \value{
 a three-element vector; the first element is the name of the html table file, the second is the table caption, and the third is the category of output type
 }
 \description{
-Creates html tables that show diagnostic outputs, including status checks, gradients, and correlations.
+Creates html tables that show diagnostic outputs, including status
+checks, gradients, and correlations.
 }
 \seealso{
 \code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}, \code{\link[=SS_html]{SS_html()}}

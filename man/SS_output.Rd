@@ -18,11 +18,6 @@ SS_output(
   warn = TRUE,
   covar = TRUE,
   readwt = TRUE,
-  checkcor = TRUE,
-  cormax = 0.95,
-  cormin = 0.01,
-  printhighcor = 10,
-  printlowcor = 10,
   verbose = TRUE,
   printstats = TRUE,
   hidewarn = FALSE,
@@ -57,25 +52,9 @@ will end up in the right place, or an absolute path.}
 
 \item{warn}{Read the Warning.sso file?}
 
-\item{covar}{Read covar.sso to get variance information and identify bad
-correlations?}
+\item{covar}{Read covar.sso?}
 
 \item{readwt}{Read the weight-at-age file?}
-
-\item{checkcor}{Check for bad correlations?}
-
-\item{cormax}{The specified threshold for defining high correlations.  A
-quantity with any correlation above this value is identified.}
-
-\item{cormin}{The specified threshold for defining low correlations.  Only
-quantities with all correlations below this value are identified (to find
-variables that appear too independent from the model results).}
-
-\item{printhighcor}{The maximum number of high correlations to print to the
-R GUI.}
-
-\item{printlowcor}{The maximum number of low correlations to print to the R
-GUI.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
