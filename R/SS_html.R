@@ -316,11 +316,9 @@ SS_html <- function(replist = NULL,
                 sep = "", file = htmlfile, append = TRUE
               )
             }
-            for (irow in 3:length(replist[["warnings"]])) {
-              cat(replist[["warnings"]][irow], "\n",
-                sep = "", file = htmlfile, append = TRUE
-              )
-            }
+            cat(replist[["warnings"]], 
+              sep = "\n", file = htmlfile, append = TRUE
+            )
             cat("</pre>\n",
               sep = "", file = htmlfile, append = TRUE
             )

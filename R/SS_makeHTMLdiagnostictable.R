@@ -52,7 +52,7 @@ SS_makeHTMLdiagnostictable <- function(replist,
       )
   }
   # Format table with parameter checks so high gradients or parameters
-  # on bounds are shown in red 
+  # on bounds are shown in red
   parchecks[["Afterbound"]] <-
     kableExtra::cell_spec(parchecks[["Afterbound"]],
       "html",
@@ -102,7 +102,6 @@ SS_makeHTMLdiagnostictable <- function(replist,
     # Remove forecast recdevs which are typically all zero and
     # uncorrelated with everything else
     activepars <- activepars[!grepl("ForeRecr", activepars)]
-
     # filter covar.sso file for pairs of active parameters
     # (ignoring forecast recruitment deviations)
     cor_table <- dplyr::filter(
@@ -149,52 +148,53 @@ SS_makeHTMLdiagnostictable <- function(replist,
     ))
   }
 
-  # Create and format low correlations table
-  low_cor_table <- data.frame(Parameter = activepars, max_correlation = NA)
-  for (par in activepars) {
-    correlations <-
-      c(
-        abs(cor_table[["corr"]][cor_table[["label.i"]] == par]),
-        abs(cor_table[["corr"]][cor_table[["label.j"]] == par])
-      )
-    if (length(correlations) > 0) {
-      low_cor_table[["max_correlation"]][which(low_cor_table[["Parameter"]] == par)] <-
-        max(correlations)
+  if (!is.null(replist[["CoVar"]]) && replist[["N_estimated_parameters"]] > 1) {
+    # Create and format low correlations table
+    low_cor_table <- data.frame(Parameter = activepars, max_correlation = NA)
+    for (par in activepars) {
+      correlations <-
+        c(
+          abs(cor_table[["corr"]][cor_table[["label.i"]] == par]),
+          abs(cor_table[["corr"]][cor_table[["label.j"]] == par])
+        )
+      if (length(correlations) > 0) {
+        low_cor_table[["max_correlation"]][which(low_cor_table[["Parameter"]] == par)] <-
+          max(correlations)
+      }
     }
-  }
-  low_cor_table <- low_cor_table %>%
-    dplyr::arrange(abs(max_correlation)) %>%
-    head(ncor)
+    low_cor_table <- low_cor_table %>%
+      dplyr::arrange(abs(max_correlation)) %>%
+      head(ncor)
 
-  low_cor_table[["max_correlation"]] <-
-    kableExtra::cell_spec(low_cor_table[["max_correlation"]],
-      "html",
-      color = ifelse(abs(low_cor_table[["max_correlation"]]) <
-        cormin, "darkred", "black")
+    low_cor_table[["max_correlation"]] <-
+      kableExtra::cell_spec(low_cor_table[["max_correlation"]],
+        "html",
+        color = ifelse(abs(low_cor_table[["max_correlation"]]) <
+          cormin, "darkred", "black")
+      )
+    low_cor_table <- kableExtra::kable(low_cor_table,
+      format = "html",
+      escape = FALSE,
+      row.names = FALSE
+    ) %>%
+      kableExtra::kable_styling() %>%
+      kableExtra::scroll_box(width = "100%", height = "200px")
+
+    # save table to file
+    filename <- c(filename, "lowcorrelationcheck.html")
+    write(low_cor_table,
+      file = file.path(plotdir, "lowcorrelationcheck.html")
     )
-  low_cor_table <- kableExtra::kable(low_cor_table,
-    format = "html",
-    escape = FALSE,
-    row.names = FALSE
-  ) %>%
-    kableExtra::kable_styling() %>%
-    kableExtra::scroll_box(width = "100%", height = "200px")
-
-  # save table to file
-  filename <- c(filename, "lowcorrelationcheck.html")
-  write(low_cor_table,
-    file = file.path(plotdir, "lowcorrelationcheck.html")
-  )
-  # create caption
-  caption <- c(caption, paste(
-    "<b>Parameters with low correlations</b><br>",
-    "Estimated parameters that are the least correlated with all other",
-    "parameters. The correlation value represents the maximum correlation",
-    "between the parameter in question and all other estimated parameters.",
-    "Uncorrelated parameters may not be playing a significant role in",
-    "the model. Maximum correlations below", cormin, "are colored in red."
-  ))
-
+    # create caption
+    caption <- c(caption, paste(
+      "<b>Parameters with low correlations</b><br>",
+      "Estimated parameters that are the least correlated with all other",
+      "parameters. The correlation value represents the maximum correlation",
+      "between the parameter in question and all other estimated parameters.",
+      "Uncorrelated parameters may not be playing a significant role in",
+      "the model. Maximum correlations below", cormin, "are colored in red."
+    ))
+  }
   # Create data frame of filenames and captions to add to PlotInfoTable
   # to be used by SS_html()
   outtable_df <- data.frame(

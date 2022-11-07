@@ -431,10 +431,12 @@ SSplotNumbers <-
               dev.off()
             }
           } else {
-            message(
-              "skipped sex ratio contour plot because females=males ",
-              "for all ages and years"
-            )
+            if (verbose) {
+              message(
+                "skipped sex ratio contour plot because females=males ",
+                "for all ages and years"
+              )
+            }
           }
         } # end area loop
       } # end if nsexes>1
@@ -693,10 +695,12 @@ SSplotNumbers <-
                 dev.off()
               }
             } else {
-              message(
-                "skipped sex ratio contour plot because females=males",
-                " for all lengths and years"
-              )
+              if (verbose) {
+                message(
+                  "skipped sex ratio contour plot because females=males",
+                  " for all lengths and years"
+                )
+              }
             }
           } # end area loop
         } # end if nsexes>1
