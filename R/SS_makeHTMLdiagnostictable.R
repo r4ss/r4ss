@@ -20,6 +20,22 @@ SS_makeHTMLdiagnostictable <- function(replist,
                                        ncor = 50,
                                        cormax = 0.95,
                                        cormin = 0.01) {
+
+  # function to add scope association to table headers
+  # to meet accessibility requirements
+  add_scope_to_table_headers <- function(htmltable) {
+    gsub(pattern = '<th ', 
+         replacement = '<th scope="col" ',
+         x = htmltable)
+  }
+  
+  # filename and caption will be vectors with values for each table
+  filename <- NULL
+  caption <- NULL
+
+  ######################################################################
+  # First table: estimated parameters (excluding devs)
+
   # Filter out parameters with NA gradients
   parchecks <- replist[["estimated_non_dev_parameters"]]
 
@@ -77,10 +93,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
     row.names = FALSE
   ) %>%
     kableExtra::kable_styling() %>%
-    kableExtra::scroll_box(width = "100%", height = table_height)
+    kableExtra::scroll_box(width = "100%", height = table_height) %>%
+    add_scope_to_table_headers()
 
-  # filename and cpation will be vectors with values for each table
-  filename <- caption <- NULL
   filename <- c(filename, "parameterchecks.html")
 
   write(parchecks,
@@ -90,8 +105,11 @@ SS_makeHTMLdiagnostictable <- function(replist,
     "<b>Estimated parameters (excluding deviation parameters)</b><br>",
     "Any parameter with a gradient value with an absolute value above",
     gradmax,
-    "(for SS 3.30 models) or a parameter on bounds is colored in red."
+    "or a parameter on bounds is colored in red."
   ))
+
+  ######################################################################
+  # Second Table: high correlations
 
   # calculate parameter pairs with high correlations
   if (!is.null(replist[["CoVar"]]) && replist[["N_estimated_parameters"]] > 1) {
@@ -131,7 +149,8 @@ SS_makeHTMLdiagnostictable <- function(replist,
       row.names = FALSE
     ) %>%
       kableExtra::kable_styling() %>%
-      kableExtra::scroll_box(width = "100%", height = "200px")
+      kableExtra::scroll_box(width = "100%", height = "200px") %>%
+      add_scope_to_table_headers()
 
     # save table to file
     filename <- c(filename, "correlationcheck.html")
@@ -147,6 +166,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
       "These parameters may be confounded or may cause convergence issues."
     ))
   }
+
+  ######################################################################
+  # Third Table: low maximum correlation
 
   if (!is.null(replist[["CoVar"]]) && replist[["N_estimated_parameters"]] > 1) {
     # Create and format low correlations table
@@ -178,7 +200,8 @@ SS_makeHTMLdiagnostictable <- function(replist,
       row.names = FALSE
     ) %>%
       kableExtra::kable_styling() %>%
-      kableExtra::scroll_box(width = "100%", height = "200px")
+      kableExtra::scroll_box(width = "100%", height = "200px") %>%
+      add_scope_to_table_headers()
 
     # save table to file
     filename <- c(filename, "lowcorrelationcheck.html")

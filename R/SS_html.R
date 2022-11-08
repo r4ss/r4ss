@@ -335,9 +335,10 @@ SS_html <- function(replist = NULL,
         txtfilename <- plotinfo[["basename"]][i]
         table_text <- readLines(file.path(plotdir, txtfilename))
         cat("<p align=left>",
-          table_text,
-          "<br>", plotinfo[["caption"]][i], "<br><i><small>file: <a href='",
+          plotinfo[["caption"]][i], "<br><i><small>file: <a href='",
           txtfilename, "'>", plotinfo[["basename"]][i], "</a></small></i>\n",
+          "<br>",
+          table_text,
           sep = "", file = htmlfile, append = TRUE
         )
       }
