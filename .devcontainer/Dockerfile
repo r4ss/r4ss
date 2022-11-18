@@ -28,23 +28,21 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         libfontconfig1-dev \
         libcairo2-dev \
         build-essential \
-        cmake \
-        clang-tidy \
-        clang-format \
-        clang \
-        doxygen \
-        ninja-build \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts \
     && python3 -m pip --no-cache-dir install radian \
     && install2.r --error --skipinstalled --ncpus -1 \
         devtools \
         languageserver \
         httpgd \
-        RcppEigen \
-        TMB \
-        ggplot2 \
+        coda \
+        corpcor \
         dplyr \
-        scales \
+        forcats \
+        ggplot2 \
+        kableExtra \
+        lifecycle \
+        stringr \
+        tidyr \
     && rm -rf /tmp/downloaded_packages
 
 # VSCode R Debugger dependency. Install the latest release version from GitHub without using GitHub API.

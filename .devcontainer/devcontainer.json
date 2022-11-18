@@ -28,11 +28,7 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	// For example, if you want to use vscode-jupyter, add "ms-toolsai.jupyter".
 	"extensions": [
-		"ms-vscode.cpptools",
-		"ms-vscode.cmake-tools",
 		"GitHub.codespaces",
-		"bbenoist.Doxygen",
-		"matepek.vscode-catch2-text-adapter",
 		"hbenl.vscode-test-explorer",
 		"reditorsupport.r",
 		"rdebugger.r-debugger",
