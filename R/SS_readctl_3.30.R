@@ -1145,7 +1145,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
           size_selex_label[[j]],
           make_sel_lab("s", "PFemOff", 1:3, jn, j)
         )
-      } else if (ctllist[["size_selex_types"]][j, "Pattern"] %in% 23:24) {
+      } else if (ctllist[["size_selex_types"]][j, "Pattern"] %in% c(2,23:24)) {
         size_selex_label[[j]] <- c(
           size_selex_label[[j]],
           make_sel_lab("s", "PFemOff", 1:5, jn, j)
