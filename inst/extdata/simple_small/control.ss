@@ -1,4 +1,4 @@
-#V3.30.19.01;_safe;_compile_date:_Apr 15 2022;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_12.3
+#V3.30.20.00;_safe;_compile_date:_Sep 30 2022;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.0
 #_Stock_Synthesis_is_a_work_of_the_U.S._Government_and_is_not_subject_to_copyright_protection_in_the_United_States.
 #_Foreign_copyrights_may_apply._See_copyright.txt_for_more_information.
 #_User_support_available_at:NMFS.Stock.Synthesis@noaa.gov
@@ -47,7 +47,7 @@
 #
 # setup for M, growth, wt-len, maturity, fecundity, (hermaphro), recr_distr, cohort_grow, (movement), (age error), (catch_mult), sex ratio 
 #_NATMORT
-0 #_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate;_5=BETA:_Maunder_link_to_maturity
+0 #_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate;_5=BETA:_Maunder_link_to_maturity;_6=Lorenzen_range
   #_no additional input for selected M option; read 1P per morph
 #
 1 # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K_incr; 4=age_specific_K_decr; 5=age_specific_K_each; 6=NA; 7=NA; 8=growth cessation
@@ -61,7 +61,7 @@
 #
 1 #_maturity_option:  1=length logistic; 2=age logistic; 3=read age-maturity matrix by growth_pattern; 4=read age-fecundity; 5=disabled; 6=read length-maturity
 1 #_First_Mature_Age
-1 #_fecundity option:(1)eggs=Wt*(a+b*Wt);(2)eggs=a*L^b;(3)eggs=a*Wt^b; (4)eggs=a+b*L; (5)eggs=a+b*W
+1 #_fecundity_at_length option:(1)eggs=Wt*(a+b*Wt);(2)eggs=a*L^b;(3)eggs=a*Wt^b; (4)eggs=a+b*L; (5)eggs=a+b*W
 0 #_hermaphroditism option:  0=none; 1=female-to-male age-specific fxn; -1=male-to-female age-specific fxn
 1 #_parameter_offset_approach for M, G, CV_G:  1- direct, no offset**; 2- male=fem_parm*exp(male_parm); 3: male=female*exp(parm) then old=young*exp(parm)
 #_** in option 1, any male parameter with value = 0.0 and phase <0 is set equal to female parameter
@@ -71,9 +71,9 @@
 # Sex: 1  BioPattern: 1  NatMort
  0.05 0.15 0.1 0.1 0.8 0 -3 0 0 0 0 0 0 0 # NatM_uniform_Fem_GP_1
 # Sex: 1  BioPattern: 1  Growth
- -10 45 21.6535 36 10 0 2 0 0 0 0 0 0 0 # L_at_Amin_Fem_GP_1
- 40 90 71.6493 70 10 0 4 0 0 0 0 0 0 0 # L_at_Amax_Fem_GP_1
- 0.05 0.25 0.147297 0.15 0.8 0 4 0 0 0 0 0 0 0 # VonBert_K_Fem_GP_1
+ -10 45 22.769 36 10 0 2 0 0 0 0 0 0 0 # L_at_Amin_Fem_GP_1
+ 40 90 71.8072 70 10 0 4 0 0 0 0 0 0 0 # L_at_Amax_Fem_GP_1
+ 0.05 0.25 0.142165 0.15 0.8 0 4 0 0 0 0 0 0 0 # VonBert_K_Fem_GP_1
  0.05 0.25 0.1 0.1 0.8 0 -3 0 0 0 0 0 0 0 # CV_young_Fem_GP_1
  0.05 0.25 0.1 0.1 0.8 0 -3 0 0 0 0 0 0 0 # CV_old_Fem_GP_1
 # Sex: 1  BioPattern: 1  WtLen
@@ -96,7 +96,7 @@
  -3 3 2.44e-06 2.44e-06 0.8 0 -3 0 0 0 0 0 0 0 # Wtlen_1_Mal_GP_1
  -3 4 3.34694 3.34694 0.8 0 -3 0 0 0 0 0 0 0 # Wtlen_2_Mal_GP_1
 # Hermaphroditism
-#  Recruitment Distribution  
+#  Recruitment Distribution 
 #  Cohort growth dev base
  0.1 10 1 1 1 0 -1 0 0 0 0 0 0 0 # CohortGrowDev
 #  Movement
@@ -149,7 +149,7 @@
 #
 # all recruitment deviations
 #  2011R 2012R 2013R 2014R 2015R 2016R 2017R 2018R 2019R 2020R 2021R 2022R 2023F 2024F 2025F 2026F 2027F 2028F 2029F 2030F 2031F 2032F
-#  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+#  -0.0600525 -0.0128487 0.134787 0.114101 -0.083254 0.145568 -0.12974 -0.183081 0.0244276 -0.0897981 -0.0781232 0.218013 0 0 0 0 0 0 0 0 0 0
 #
 #Fishing Mortality info 
 0.3 # F ballpark value in units of annual_F
@@ -166,7 +166,7 @@
 # F rates by fleet x season
 # Yr:  2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030 2031 2032
 # seas:  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-# FISHERY 0.19733 0.211855 0.228681 0.248324 0.271543 0.299402 0.333369 0.333536 0.323999 0.302861 0.269856 0.1788 0.0370749 0.0423612 0.046518 0.0497821 0.0523522 0.0543924 0.0560339 0.0573766 0.058492 0.0594324
+# FISHERY 0.220229 0.239068 0.263759 0.287798 0.316758 0.350726 0.404085 0.405179 0.390484 0.37618 0.33635 0.226617 0.0405108 0.0466812 0.051486 0.0553062 0.0583986 0.0609127 0.0629524 0.0646111 0.0659699 0.067099
 #
 #_Q_setup for fleets with cpue or survey data
 #_1:  fleet number
@@ -182,9 +182,9 @@
 #
 #_Q_parms(if_any);Qunits_are_ln(q)
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
-            -7             5      0.516018             0             1             0          1          0          0          0          0          0          0          0  #  LnQ_base_SURVEY1(2)
+            -7             5      0.476759             0             1             0          1          0          0          0          0          0          0          0  #  LnQ_base_SURVEY1(2)
              0           0.5             0          0.05             1             0         -4          0          0          0          0          0          0          0  #  Q_extraSD_SURVEY1(2)
-            -7             5       -6.6281             0             1             0          1          0          0          0          0          0          0          0  #  LnQ_base_SURVEY2(3)
+            -7             5      -6.30407             0             1             0          1          0          0          0          0          0          0          0  #  LnQ_base_SURVEY2(3)
 #_no timevary Q parameters
 #
 #_size_selex_patterns
@@ -236,11 +236,11 @@
 #
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
 # 1   FISHERY LenSelex
-            19            80       53.6411            50            99             0          2          0          0          0          0          0          0          0  #  Size_inflection_FISHERY(1)
-          0.01            60       18.9232            15            99             0          3          0          0          0          0          0          0          0  #  Size_95%width_FISHERY(1)
+            19            80       56.5138            50            99             0          2          0          0          0          0          0          0          0  #  Size_inflection_FISHERY(1)
+          0.01            60       20.1793            15            99             0          3          0          0          0          0          0          0          0  #  Size_95%width_FISHERY(1)
 # 2   SURVEY1 LenSelex
-            19            70        36.653            30            99             0          2          0          0          0          0          0          0          0  #  Size_inflection_SURVEY1(2)
-          0.01            60       6.59179            10            99             0          3          0          0          0          0          0          0          0  #  Size_95%width_SURVEY1(2)
+            19            70       36.0233            30            99             0          2          0          0          0          0          0          0          0  #  Size_inflection_SURVEY1(2)
+          0.01            60       5.33502            10            99             0          3          0          0          0          0          0          0          0  #  Size_95%width_SURVEY1(2)
 # 3   SURVEY2 LenSelex
 # 1   FISHERY AgeSelex
 # 2   SURVEY1 AgeSelex

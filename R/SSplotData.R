@@ -22,7 +22,7 @@
 #' @param datatypes Either the string "all", or a vector including some subset
 #' of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 #' "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
-#' "wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".
+#' "wadbase", "mnwgt", "discard", "tagrelease", "tagdbase1", and "morphcompdbase".
 #' @template fleets
 #' @template fleetnames
 #' @param ghost TRUE/FALSE indicator for whether to show presence of
@@ -106,6 +106,7 @@ SSplotData <- function(replist,
   ladbase <- replist[["ladbase"]]
   wadbase <- replist[["wadbase"]]
   tagdbase1 <- replist[["tagdbase1"]]
+  morphcompdbase <- replist[["morphcompdbase"]]
 
   # mean body weight
   mnwgt <- replist[["mnwgt"]]
@@ -132,8 +133,9 @@ SSplotData <- function(replist,
     "mnwgt", "Mean body weight", # 12
     "discard", "Discards", # 13
     "tagrelease", "Tag releases", # 14
-    "tagdbase1", "Tag recaptures"
-  ), ncol = 2, byrow = TRUE) # 15
+    "tagdbase1", "Tag recaptures", # 15
+    "morphcompdbase", "Morph compositions" # 16
+  ), ncol = 2, byrow = TRUE)
   # note: tagdbase2 excluded since it is not fleet specific and the years
   #       should always match those in tagdbase1
 
@@ -253,6 +255,14 @@ SSplotData <- function(replist,
             if (nrow(dat.f) > 0) { # skip of all values are excluded
               # aggregate sample sizes by year
               dat.agg <- aggregate(dat.f[["Obs"]], by = list(dat.f[["Yr"]]), FUN = sum)
+              allyrs <- dat.agg[["Group.1"]][dat.agg[["x"]] > 0]
+              size <- dat.agg[["x"]][dat.agg[["x"]] > 0]
+            }
+          }
+          if (typename == "morphcompdbase") {
+            if (nrow(dat.f) > 0) { # skip of all values are excluded
+              # aggregate sample sizes by year
+              dat.agg <- aggregate(dat.sub[["Nsamp_adj"]], by = list(dat.sub[["Yr"]]), FUN = sum)
               allyrs <- dat.agg[["Group.1"]][dat.agg[["x"]] > 0]
               size <- dat.agg[["x"]][dat.agg[["x"]] > 0]
             }

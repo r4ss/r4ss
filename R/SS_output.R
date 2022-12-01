@@ -928,6 +928,8 @@ SS_output <-
             compdbase[["Used"]] != "skip" & notconditional, ]
           condbase <- compdbase[compdbase[["Kind"]] == "AGE" &
             compdbase[["Used"]] != "skip" & conditional, ]
+          morphcompdbase <- compdbase[compdbase[["Kind"]] == "GP%" &
+            compdbase[["Used"]] != "skip", ]
         } else {
           # older designation of ghost fleets from negative samp size to negative fleet
           lendbase <- compdbase[compdbase[["Kind"]] == "LEN" &
@@ -1001,19 +1003,78 @@ SS_output <-
           message(
             "CompReport file separated by this code as follows",
             " (rows = Ncomps*Nbins):\n",
-            "  ", nrow(lendbase), " rows of length comp data,\n",
-            "  ", nrow(sizedbase), " rows of generalized size comp data,\n",
-            "  ", nrow(agedbase), " rows of age comp data,\n",
-            "  ", nrow(condbase), " rows of conditional age-at-length data,\n",
-            "  ", nrow(ghostagedbase), " rows of ghost fleet age comp data,\n",
-            "  ", nrow(ghostcondbase),
-            " rows of ghost fleet conditional age-at-length data,\n",
-            "  ", nrow(ghostlendbase),
-            " rows of ghost fleet length comp data,\n",
-            "  ", nrow(ladbase), " rows of mean length at age data,\n",
-            "  ", nrow(wadbase), " rows of mean weight at age data,\n",
-            "  ", nrow(tagdbase1), " rows of 'TAG1' comp data, and\n",
-            "  ", nrow(tagdbase2), " rows of 'TAG2' comp data."
+            if (nrow(lendbase) > 0) {
+              paste0(
+                "  ", nrow(lendbase),
+                " rows of length comp data\n"
+              )
+            },
+            if (nrow(sizedbase) > 0) {
+              paste0(
+                "  ", nrow(sizedbase),
+                " rows of generalized size comp data\n"
+              )
+            },
+            if (nrow(agedbase) > 0) {
+              paste0(
+                "  ", nrow(agedbase),
+                " rows of age comp data\n"
+              )
+            },
+            if (nrow(condbase) > 0) {
+              paste0(
+                "  ", nrow(condbase),
+                " rows of conditional age-at-length data\n"
+              )
+            },
+            if (nrow(ghostagedbase) > 0) {
+              paste0(
+                "  ", nrow(ghostagedbase),
+                " rows of ghost fleet age comp data\n"
+              )
+            },
+            if (nrow(ghostcondbase) > 0) {
+              paste0(
+                "  ", nrow(ghostcondbase),
+                " rows of ghost fleet conditional age-at-length data\n"
+              )
+            },
+            if (nrow(ghostlendbase) > 0) {
+              paste0(
+                "  ", nrow(ghostlendbase),
+                " rows of ghost fleet length comp data\n"
+              )
+            },
+            if (nrow(ladbase) > 0) {
+              paste0(
+                "  ", nrow(ladbase),
+                " rows of mean length at age data\n"
+              )
+            },
+            if (nrow(wadbase) > 0) {
+              paste0(
+                "  ", nrow(wadbase),
+                " rows of mean weight at age data\n"
+              )
+            },
+            if (nrow(tagdbase1) > 0) {
+              paste0(
+                "  ", nrow(tagdbase1),
+                " rows of 'TAG1' comp data\n"
+              )
+            },
+            if (nrow(tagdbase2) > 0) {
+              paste0(
+                "  ", nrow(tagdbase2),
+                " rows of 'TAG2' comp data"
+              )
+            },
+            if (nrow(morphcompdbase) > 0) {
+              paste0(
+                "  ", nrow(morphcompdbase),
+                " rows of morph comp data"
+              )
+            }
           )
         }
         # convert bin indices to true lengths
@@ -3639,6 +3700,7 @@ SS_output <-
       returndat[["wadbase"]] <- wadbase
       returndat[["tagdbase1"]] <- tagdbase1
       returndat[["tagdbase2"]] <- tagdbase2
+      returndat[["morphcompdbase"]] <- morphcompdbase
     } else {
       returndat[["comp_data_exists"]] <- FALSE
     }
