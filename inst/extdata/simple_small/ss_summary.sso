@@ -1,8 +1,8 @@
-#V3.30.19.01;_safe;_compile_date:_Apr 15 2022;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_12.3
+#V3.30.20.00;_safe;_compile_date:_Sep 30 2022;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.0
 data.ss #_DataFile 
 control.ss #_Control 
-Run_Date: Wed Jun 15 15:54:10 2022
-Final_phase: 5  N_iterations: 257
+Run_Date: Thu Dec  1 11:48:36 2022
+Final_phase: 5  N_iterations: 250
 #_LIKELIHOOD 
 Label logL*Lambda
 TOTAL_LogL 754.302
@@ -14,7 +14,7 @@ Age_comp 231.845
 Size_at_age 162.399
 Recruitment 0.244061
 InitEQ_regime 0
-Sum_recdevs -2.77556e-17
+Sum_recdevs 0
 Forecast_Recruitment 0
 Parm_priors 0
 Parm_softbounds 0.00141332
@@ -213,7 +213,7 @@ Totbio_unfished 141103 8142.92
 SmryBio_unfished 140435 8107.57
 Recr_unfished 7535.61 418.526
 SSB_Btgt 21909.5 1216.85
-SPR_Btgt 0.4375 6.06658e-18
+SPR_Btgt 0.4375 6.35977e-18
 annF_Btgt 0.115262 0.009462
 Dead_Catch_Btgt 4580.66 221.601
 SSB_SPR 25561.1 1419.66
