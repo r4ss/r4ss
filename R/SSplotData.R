@@ -262,7 +262,7 @@ SSplotData <- function(replist,
           if (typename == "morphcompdbase") {
             if (nrow(dat.f) > 0) { # skip of all values are excluded
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.sub[["Nsamp_adj"]], by = list(dat.sub[["Yr"]]), FUN = sum)
+              dat.agg <- aggregate(dat.f[["Nsamp_adj"]], by = list(dat.f[["Yr"]]), FUN = sum)
               allyrs <- dat.agg[["Group.1"]][dat.agg[["x"]] > 0]
               size <- dat.agg[["x"]][dat.agg[["x"]] > 0]
             }
