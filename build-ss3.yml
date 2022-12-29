@@ -91,9 +91,9 @@ jobs:
           $latest_tag = (git describe --abbrev=0 --tags)
           $latest_tag_commit = ( git rev-list -n 1 $latest_tag)
           $latest_commit = (git rev-list HEAD -n 1)
-          echo "::set-output name=tag::${latest_tag}"
-          echo "::set-output name=tag_commit::${latest_tag_commit}"
-          echo "::set-output name=commit::${latest_commit}"
+          echo "tag=${latest_tag}" >> $env:GITHUB_OUTPUT
+          echo "tag_commit=${latest_tag_commit}" >> $env:GITHUB_OUTPUT
+          echo "commit=${latest_commit}" >> $env:GITHUB_OUTPUT
 
        # uses: actions-ecosystem/action-get-latest-tag@v1 # for linux
 
@@ -113,9 +113,9 @@ jobs:
           latest_tag=$(git describe --abbrev=0 --tags)
           latest_tag_commit=$(git rev-list -n 1 $latest_tag)
           latest_commit=$(git rev-list HEAD -n 1)
-          echo "::set-output name=tag::${latest_tag}"
-          echo "::set-output name=tag_commit::${latest_tag_commit}"
-          echo "::set-output name=commit::${latest_commit}"
+          echo "tag=${latest_tag}" >> $GITHUB_OUTPUT
+          echo "tag_commit=${latest_tag_commit}" >> $GITHUB_OUTPUT
+          echo "commit=${latest_commit}" >> $GITHUB_OUTPUT
        # uses: actions-ecosystem/action-get-latest-tag@v1 # for linux
 
 

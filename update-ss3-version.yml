@@ -29,8 +29,8 @@ jobs:
         run: |
           link_to_release=$(curl https://api.github.com/repos/nmfs-stock-synthesis/stock-synthesis/releases/latest | grep "html_url" | grep 'releases' | grep -Eo 'https://[^\"]*')
           release_digits=$(echo "${link_to_release}" | sed 's/https\:\/\/github\.com\/nmfs-stock-synthesis\/stock-synthesis\/releases\/tag\/v3\.30\.//')
-          echo "::set-output name=link_to_release::${link_to_release}"
-          echo "::set-output name=release_digits::${release_digits}"
+          echo "link_to_release=${link_to_release}" >> $GITHUB_OUTPUT
+          echo "release_digits=${release_digits}" >> $GITHUB_OUTPUT
 
 # Note on versioning in ss3sim and SSMSE:
 # x.yy.z where yy is the "patch" version of the SS3.30 executable,
