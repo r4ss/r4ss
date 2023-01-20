@@ -39,10 +39,10 @@ jobs:
 
       - name: Get admb and put in path, linux
         run: |
-          wget https://github.com/admb-project/admb/releases/download/admb-13.0/admb-13.0-linux.zip
-          sudo unzip admb-13.0-linux.zip -d /usr/local/bin
-          sudo chmod 755 /usr/local/bin/admb-13.0/bin/admb
-          echo "/usr/local/bin/admb-13.0/bin" >> $GITHUB_PATH
+          wget https://github.com/admb-project/admb/releases/download/admb-13.1/admb-13.1-linux.zip
+          sudo unzip admb-13.1-linux.zip -d /usr/local/bin
+          sudo chmod 755 /usr/local/bin/admb-13.1/bin/admb
+          echo "/usr/local/bin/admb-13.1/bin" >> $GITHUB_PATH
 
       - name: Build stock synthesis
         run: |
