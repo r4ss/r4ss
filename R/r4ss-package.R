@@ -1,5 +1,7 @@
 #' @import coda
+#' @import dplyr
 #' @import kableExtra
+#' @import magrittr
 #' @importFrom corpcor pseudoinverse
 #' @importFrom grDevices adjustcolor col2rgb colorRampPalette
 #'   dev.new dev.off graphics.off
