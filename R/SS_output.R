@@ -708,6 +708,8 @@ SS_output <-
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
       # end new DEFINITIONS format (starting with 3.30.12)
+      Length_comp_error_controls <- NULL
+      Age_comp_error_controls <- NULL
 
       if ("Length_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of length comp error controls (added 3.30.21)
@@ -2572,8 +2574,8 @@ SS_output <-
     returndat[["Current_phase"]] <- return.def("Current_phase")
     returndat[["Jitter"]] <- return.def("Jitter")
     returndat[["ALK_tolerance"]] <- return.def("ALK_tolerance")
-    returndat[["Length_comp_error_controls"]] <- return.def("Length_comp_error_controls")
-    returndat[["Age_comp_error_controls"]] <- return.def("Age_comp_error_controls")
+    returndat[["Length_comp_error_controls"]] <- Length_comp_error_controls
+    returndat[["Age_comp_error_controls"]] <- Age_comp_error_controls
     returndat[["nforecastyears"]] <- nforecastyears
     returndat[["morph_indexing"]] <- morph_indexing
     returndat[["MGparmAdj"]] <- MGparmAdj
