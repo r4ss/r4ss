@@ -1,4 +1,4 @@
-# r4ss 1.47.0 (XX February 2023)
+# r4ss 1.47.0 (31 January 2023)
 * Support new SS3 option to estimate separate Dirichlet-multinomial parameters 
   for retained vs discards
   * SS3 version 3.30.21 models will also have all info on D-M
