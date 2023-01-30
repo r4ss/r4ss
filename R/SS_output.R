@@ -624,6 +624,11 @@ SS_output <-
 
     # check for new format for definitions (starting with 3.30.12)
     # ("Jitter" is an indicator of the new format)
+
+    # placeholders for tables added in 3.30.21
+    Length_comp_error_controls <- NULL
+    Age_comp_error_controls <- NULL
+
     if ("Jitter:" %in% rawdefs[["X1"]]) {
       get.def <- function(string) {
         # function to grab numeric value from 2nd column matching string in 1st column
@@ -707,9 +712,7 @@ SS_output <-
       seasfracs <- round(12 * cumsum(seasdurations)) / 12
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
-      # end new DEFINITIONS format (starting with 3.30.12)
-      Length_comp_error_controls <- NULL
-      Age_comp_error_controls <- NULL
+      # end DEFINITIONS elements in 3.30.12-3.30.20
 
       if ("Length_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of length comp error controls (added 3.30.21)
