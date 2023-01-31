@@ -713,7 +713,6 @@ SS_output <-
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
       # end DEFINITIONS elements in 3.30.12-3.30.20
-
       if ("Length_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of length comp error controls (added 3.30.21)
         Length_comp_error_controls <-
@@ -721,6 +720,9 @@ SS_output <-
             adjust1 = 1,
             header = TRUE, type.convert = TRUE
           )
+      }
+      # if that table has information in it then proceed with reading the length comp error controls
+      if(exists("Length_comp_error_controls") & nrow(Length_comp_error_controls)>0){
         # rename "NoName" columns
         names(Length_comp_error_controls)[names(Length_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")

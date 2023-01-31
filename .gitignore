@@ -43,6 +43,7 @@ CumReport.sso
 ParmTrace.sso
 ss.cor
 ss.rep
+test.R
 #ss.par
 *.exe
 *.bat
