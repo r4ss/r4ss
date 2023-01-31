@@ -37,7 +37,8 @@ Authors@R: c(person(given = "Ian G.", family = "Taylor",
   person(given = "Henning", family = "Winker", role = "aut"),
   person(given = "Lee", family = "Qi", role = "aut"),
   person(given = "Megumi", family = "Oshima", role = "aut"),
-  person(given = "Eric", family = "Fletcher", role = "aut"))
+  person(given = "Eric", family = "Fletcher", role = "aut"),
+  person(given = "Elizabeth F.", family = "Gugliotti", role = "aut"))
 Depends:
     R (>= 3.5.0)
 Imports:
