@@ -6,15 +6,25 @@
 \alias{r4ss-package}
 \title{r4ss: R Code for Stock Synthesis}
 \description{
-A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of '{r4ss}' is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.19.01, from April 2022).
+A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of '{r4ss}' is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.21 beta, from January 2023). Support for 3.24 models is only through the core functions for reading output and plotting.
 }
 \examples{
 \dontrun{
-# read in the report file using SS_output
-myreplist <- SS_output(dir = "c:/SS/simple/")
+  # it's useful to create a variable for the directory with the model output
+  mydir <- file.path(
+    path.package("r4ss"),
+    file.path("extdata", "simple_small")
+  )
 
-# make a collection of plots using SS_plots
-SS_plots(replist = myreplist)
+  # read the model output and print diagnostic messages
+  replist <- SS_output(
+    dir = mydir,
+    verbose = TRUE,
+    printstats = TRUE
+  )
+
+  # plots the results
+  SS_plots(replist)
 }
 
 }

@@ -1283,10 +1283,16 @@ SSplotComps <-
 
         # get table of info about the comp data of this kind/fleet
         if (kind %in% c("AGE", "GSTAGE", "cond", "GSTcond")) {
-          data_info <- replist[["age_data_info"]]
+          data_info <- replist[["Age_comp_error_controls"]]
+          if (is.null(data_info)) { # versions prior to 3.30.21
+            data_info <- replist[["age_data_info"]]
+          }
         }
         if (kind %in% c("LEN", "GSTLEN")) {
-          data_info <- replist[["len_data_info"]]
+          data_info <- replist[["Length_comp_error_controls"]]
+          if (is.null(data_info)) { # versions prior to 3.30.21
+            data_info <- replist[["len_data_info"]]
+          }
         }
 
 
@@ -1453,15 +1459,21 @@ SSplotComps <-
                 caption_extra <- ""
                 if (ipage == 1) {
                   if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
-                    # get Theta value for this fleet
-                    if (kind %in% "LEN") {
-                      ipar <- data_info[["ParmSelect"]][f]
-                    } else { # "AGE" or "cond"
-                      ipar <- data_info[["ParmSelect"]][f]
+                    # get Theta value for this fleet & partition
+
+                    # partition weighting added in 3.30.21
+                    if ("partition" %in% names(data_info)) {  # added in 3.30.21
+                      sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
+                    } else {
+                      # earlier version without partition weighting
+                      sub <- data_info[["Fleet"]] == f
                     }
+                    ParmSelect <- data_info[sub, "ParmSelect"]
+                    CompError <- data_info[sub, "CompError"]
+
                     # D-M option 1 (linear)
-                    if (data_info[["CompError"]][f] == 1) {
-                      Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
+                    if (CompError == 1) {
+                      Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
                       # note: in caption below &#920 = Theta
                       caption_extra <-
                         paste0(
@@ -1475,8 +1487,8 @@ SSplotComps <-
                         )
                     }
                     # D-M option 2 (saturating)
-                    if (data_info[["CompError"]][f] == 2) {
-                      beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
+                    if (CompError == 2) {
+                      beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
                       # note: in captions below &#946 = beta
                       caption_extra <-
                         paste0(

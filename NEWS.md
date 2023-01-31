@@ -1,3 +1,11 @@
+# r4ss 1.47.0 (31 January 2023)
+* Support new SS3 option to estimate separate Dirichlet-multinomial parameters 
+  for retained vs discards
+  * SS3 version 3.30.21 models will also have all info on D-M
+    parameters read directly from Report.sso instead of the data file 
+* Numerous minor bug fixes
+* Adds dependency on 'dplyr' and 'magrittr'
+
 # r4ss 1.46.1 (29 July 2022)
 * Major revamp of all functions that run the Stock Synthesis executable
   https://github.com/r4ss/r4ss/pull/722
