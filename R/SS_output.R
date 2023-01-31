@@ -720,7 +720,7 @@ SS_output <-
             adjust1 = 1,
             header = TRUE, type.convert = TRUE
           )
-        if(nrow(Length_comp_error_controls) > 0){
+        if (nrow(Length_comp_error_controls) > 0) {
           present_Length_comp_error_controls <- TRUE
         }
       }
@@ -734,7 +734,7 @@ SS_output <-
         Length_comp_error_controls <- Length_comp_error_controls %>%
           dplyr::select(-NoName)
       }
-      
+
       if ("Age_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of age comp error controls (added 3.30.21)
         Age_comp_error_controls <-
@@ -742,8 +742,8 @@ SS_output <-
             adjust1 = 1,
             header = TRUE, type.convert = TRUE
           )
-          if(nrow(Age_comp_error_controls) > 0){
-            present_Age_comp_error_controls <- TRUE
+        if (nrow(Age_comp_error_controls) > 0) {
+          present_Age_comp_error_controls <- TRUE
         }
       }
       # if that table has information in it then proceed with renaming columns
