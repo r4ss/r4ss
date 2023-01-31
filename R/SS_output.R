@@ -722,10 +722,9 @@ SS_output <-
           )
         if(nrow(Length_comp_error_controls) > 0){
           present_Length_comp_error_controls <- TRUE
-        }        
+        }
       }
 
-      browser()
       # if that table has information in it then proceed with renaming columns
       if (exists("Length_comp_error_controls") & exists("present_Length_comp_error_controls")) {
         # rename "NoName" columns
@@ -734,8 +733,8 @@ SS_output <-
         # remove extra column with hash symbols
         Length_comp_error_controls <- Length_comp_error_controls %>%
           dplyr::select(-NoName)
-          browser()
       }
+      
       if ("Age_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of age comp error controls (added 3.30.21)
         Age_comp_error_controls <-
