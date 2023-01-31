@@ -20,21 +20,21 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # it's useful to create a variable for the directory with the model output
-#'   mydir <- file.path(
-#'     path.package("r4ss"),
-#'     file.path("extdata", "simple_small")
-#'   )
+#' # it's useful to create a variable for the directory with the model output
+#' mydir <- file.path(
+#'   path.package("r4ss"),
+#'   file.path("extdata", "simple_small")
+#' )
 #'
-#'   # read the model output and print diagnostic messages
-#'   replist <- SS_output(
-#'     dir = mydir,
-#'     verbose = TRUE,
-#'     printstats = TRUE
-#'   )
+#' # read the model output and print diagnostic messages
+#' replist <- SS_output(
+#'   dir = mydir,
+#'   verbose = TRUE,
+#'   printstats = TRUE
+#' )
 #'
-#'   # plots the results
-#'   SS_plots(replist)
+#' # plots the results
+#' SS_plots(replist)
 #' }
 #'
 #' @keywords internal

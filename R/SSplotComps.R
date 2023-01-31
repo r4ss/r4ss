@@ -1462,7 +1462,7 @@ SSplotComps <-
                     # get Theta value for this fleet & partition
 
                     # partition weighting added in 3.30.21
-                    if ("partition" %in% names(data_info)) {  # added in 3.30.21
+                    if ("partition" %in% names(data_info)) { # added in 3.30.21
                       sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
                     } else {
                       # earlier version without partition weighting
