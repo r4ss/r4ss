@@ -713,7 +713,6 @@ SS_output <-
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
       # end DEFINITIONS elements in 3.30.12-3.30.20
-
       if ("Length_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of length comp error controls (added 3.30.21)
         Length_comp_error_controls <-
@@ -721,6 +720,13 @@ SS_output <-
             adjust1 = 1,
             header = TRUE, type.convert = TRUE
           )
+        if(nrow(Length_comp_error_controls) > 0){
+          present_Length_comp_error_controls <- TRUE
+        }
+      }
+
+      # if that table has information in it then proceed with renaming columns
+      if (exists("Length_comp_error_controls") & exists("present_Length_comp_error_controls")) {
         # rename "NoName" columns
         names(Length_comp_error_controls)[names(Length_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
@@ -728,6 +734,7 @@ SS_output <-
         Length_comp_error_controls <- Length_comp_error_controls %>%
           dplyr::select(-NoName)
       }
+      
       if ("Age_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of age comp error controls (added 3.30.21)
         Age_comp_error_controls <-
@@ -735,6 +742,12 @@ SS_output <-
             adjust1 = 1,
             header = TRUE, type.convert = TRUE
           )
+          if(nrow(Age_comp_error_controls) > 0){
+            present_Age_comp_error_controls <- TRUE
+        }
+      }
+      # if that table has information in it then proceed with renaming columns
+      if (exists("Age_comp_error_controls") & exists("present_Age_comp_error_controls") > 0) {
         # rename "NoName" columns
         names(Age_comp_error_controls)[names(Age_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
