@@ -2334,7 +2334,6 @@ SS_output <-
               dplyr::left_join(condbase, .)
           }
           # IGT 28 Jan 2023: need to add support for DM for generalized size comps
-
         } # end test for whether CompReport.sso info is available
         # end approach used starting in 3.30.21
       } else {
