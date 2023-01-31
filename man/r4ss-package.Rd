@@ -75,6 +75,7 @@ Authors:
   \item Lee Qi
   \item Megumi Oshima
   \item Eric Fletcher
+  \item Elizabeth F. Gugliotti
 }
 
 }
