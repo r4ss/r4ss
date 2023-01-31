@@ -721,8 +721,8 @@ SS_output <-
             header = TRUE, type.convert = TRUE
           )
       }
-      # if that table has information in it then proceed with reading the length comp error controls
-      if(exists("Length_comp_error_controls") & nrow(Length_comp_error_controls)>0){
+      # if that table has information in it then proceed with renaming columns
+      if (exists("Length_comp_error_controls") & nrow(Length_comp_error_controls) > 0) {
         # rename "NoName" columns
         names(Length_comp_error_controls)[names(Length_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
@@ -737,6 +737,9 @@ SS_output <-
             adjust1 = 1,
             header = TRUE, type.convert = TRUE
           )
+      }
+      # if that table has information in it then proceed with renaming columns
+      if (exists("Age_comp_error_controls") & nrow(Age_comp_error_controls) > 0) {
         # rename "NoName" columns
         names(Age_comp_error_controls)[names(Age_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
@@ -2336,7 +2339,6 @@ SS_output <-
               dplyr::left_join(condbase, .)
           }
           # IGT 28 Jan 2023: need to add support for DM for generalized size comps
-
         } # end test for whether CompReport.sso info is available
         # end approach used starting in 3.30.21
       } else {
