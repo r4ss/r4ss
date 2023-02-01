@@ -1465,7 +1465,7 @@ SSplotComps <-
                     if ("partition" %in% names(data_info)) { # added in 3.30.21
                       sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
                     } else {
-                      # earlier version without partition weighting 
+                      # earlier version without partition weighting
                       # has one row per fleet so no "fleet" column
                       sub <- f
                     }

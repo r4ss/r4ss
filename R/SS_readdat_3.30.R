@@ -365,7 +365,7 @@ SS_readdat_3.30 <-
         )[1:ncol(datlist[["len_info"]])]
         rownames(datlist[["len_info"]]) <- datlist[["fleetnames"]]
       }
-      # read table in format used in 3.30.21 
+      # read table in format used in 3.30.21
       # when data-weighting by partition was added
       # (more columns and "minsamplesize" column always present)
       if (datlist[["use_lencomp"]] == 2) {
