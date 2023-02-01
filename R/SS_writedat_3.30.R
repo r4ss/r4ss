@@ -297,7 +297,7 @@ SS_writedat_3.30 <- function(datlist,
   if (d[["use_lencomp"]]) {
     # fleet-specific info on length comps
     writeComment("#\n#_len_info")
-    # terminator line added in SS version 3.30.21 with the addition of 
+    # terminator line added in SS version 3.30.21 with the addition of
     # separate data-weighting by partition
     terminate_len_info <- "partition" %in% names(d[["len_info"]])
     # write table with or without terminator line
