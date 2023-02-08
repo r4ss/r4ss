@@ -301,10 +301,10 @@ SSplotComps <-
       kindlab <- labels[1]
       if (datonly) {
         filenamestart <- "comp_gstlendat_"
-        titledata <- "Ghost length comp data, "
+        titledata <- "Excluded length comp data, "
       } else {
         filenamestart <- "comp_gstlenfit_"
-        titledata <- "Ghost length comps, "
+        titledata <- "Excluded length comps, "
       }
     }
     if (kind == "SIZE") {
@@ -381,10 +381,10 @@ SSplotComps <-
       kindlab <- labels[2]
       if (datonly) {
         filenamestart <- "comp_gstagedat_"
-        titledata <- "Ghost age comp data, "
+        titledata <- "Excluded age comp data, "
       } else {
         filenamestart <- "comp_gstagefit_"
-        titledata <- "Ghost age comps, "
+        titledata <- "Excluded age comps, "
       }
     }
     if (kind == "GSTcond") {
@@ -392,10 +392,10 @@ SSplotComps <-
       kindlab <- labels[2]
       if (datonly) {
         filenamestart <- "comp_gstCAALdat_"
-        titledata <- "Ghost conditional age-at-length data, "
+        titledata <- "Excluded conditional age-at-length data, "
       } else {
         filenamestart <- "comp_gstCAALfit_"
-        titledata <- "Ghost conditional age-at-length comps, "
+        titledata <- "Excluded conditional age-at-length comps, "
       }
     }
     if (kind == "L@A") {
@@ -1271,7 +1271,7 @@ SSplotComps <-
         dbasef <- dbase_kind[dbase_kind[["Fleet"]] == f, ]
         # get mean sample quantities to show in conditional age-at-length figures
         if (kind %in% c("cond", "GSTcond") && f %in% Age_tuning[["Fleet"]]) {
-          #### these values not to be trusted in the presence of ghost data:
+          #### these values not to be trusted in the presence of excluded data:
           ## HarmEffNage <- Age_tuning$"HarMean(effN)"[Age_tuning[["Fleet"]]==f]
           ## MeanNage    <- Age_tuning$"mean(inputN*Adj)"[Age_tuning[["Fleet"]]==f]
           HarmEffNage <- NULL

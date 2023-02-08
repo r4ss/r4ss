@@ -125,9 +125,9 @@ SSplotData <- function(replist,
     "sizedbase", "Size compositions", # 4
     "agedbase", "Age compositions", # 5
     "condbase", "Conditional age-at-length compositions", # 6
-    "ghostagedbase", "Ghost age compositions", # 7
-    "ghostcondbase", "Ghost conditional age-at-length compositions", # 8
-    "ghostlendbase", "Ghost length compositions", # 9
+    "ghostagedbase", "Excluded age compositions", # 7
+    "ghostcondbase", "Excluded conditional age-at-length compositions", # 8
+    "ghostlendbase", "Excluded length compositions", # 9
     "ladbase", "Mean length-at-age", # 10
     "wadbase", "Mean weight-at-age", # 11
     "mnwgt", "Mean body weight", # 12
@@ -462,7 +462,7 @@ SSplotData <- function(replist,
         "total catch for catches; to precision for indices, discards, and <br> ",
         "mean body weight observations; and to total sample size for <br>",
         "compositions and mean weight- or length-at-age observations. <br>",
-        "'Ghost' observations (not included in the likelihood) have <br>",
+        "Observations excluded from the likelihood have <br>",
         "equal size for all years. <br>",
         "Note that since the circles are are scaled relative <br> ",
         "to maximum within each type, the scaling within separate plots <br> ",
