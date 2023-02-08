@@ -17,7 +17,7 @@ SSplotCatch(
   fleetcols = "default",
   fleetnames = "default",
   lwd = 3,
-  areacols = "default",
+  areacols = NULL,
   areanames = "default",
   minyr = -Inf,
   maxyr = Inf,
@@ -99,8 +99,8 @@ only.  Other options include "o" for overplotting points on lines.}
 
 \item{lwd}{Line width for plot elements.}
 
-\item{areacols}{Vector of colors by area. Default uses rich.colors by Arni
-Magnusson}
+\item{areacols}{Optional vector of colors for each area if model has
+multiple areas. NULL value will be replaced by a default set of areas.}
 
 \item{areanames}{Names for areas. Default is to use Area1, Area2,...}
 

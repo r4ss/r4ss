@@ -16,6 +16,7 @@ SSplotBiology(
   minyr = -Inf,
   maxyr = Inf,
   colvec = c("red", "blue", "grey20"),
+  areacols = NULL,
   ltyvec = c(1, 2),
   shadealpha = 0.1,
   imageplot_text = FALSE,
@@ -91,6 +92,9 @@ will be \code{replist[["mainmorphs"]]}}
 \item{maxyr}{optional input for maximum year to show in plots}
 
 \item{colvec}{vector of length 3 with colors for various points/lines}
+
+\item{areacols}{Optional vector of colors for each area if model has
+multiple areas. NULL value will be replaced by a default set of areas.}
 
 \item{ltyvec}{vector of length 2 with lty for females/males in growth plots
 values can be applied to other plots in the future}
