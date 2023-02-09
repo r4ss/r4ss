@@ -28,7 +28,8 @@
 #'     MGparm_By_Year_after_adjustments table (report:7) is available in the
 #'     Report.sso file)
 #'   \item 31	hermaphroditism transition probability
-#'   \item 32	hermaphroditism cumulative probability
+#'   \item 32	sex ratio in ending year 
+#'     (only plotted when model has hermaphroditism)
 #' }
 #' Additional plots not created by default
 #' \itemize{
@@ -101,7 +102,7 @@ SSplotBiology <-
              "Default fecundity label", # 11
              "Year", # 12
              "Hermaphroditism transition rate", # 13
-             "Fraction females by age at equilibrium"
+             "Fraction females by age in ending year"
            ), # 14
            pwidth = 6.5, pheight = 5.0,
            punits = "in", res = 300, ptsize = 10, cex.main = 1,

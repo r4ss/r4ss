@@ -26,7 +26,7 @@ SSplotBiology(
   labels = c("Length (cm)", "Age (yr)", "Maturity", "Mean weight (kg) in last year",
     "Spawning output", "Length (cm, beginning of the year)", "Natural mortality",
     "Female weight (kg)", "Female length (cm)", "Fecundity", "Default fecundity label",
-    "Year", "Hermaphroditism transition rate", "Fraction females by age at equilibrium"),
+    "Year", "Hermaphroditism transition rate", "Fraction females by age in ending year"),
   pwidth = 6.5,
   pheight = 5,
   punits = "in",
@@ -67,7 +67,8 @@ Numbering of subplots is as follows:
 MGparm_By_Year_after_adjustments table (report:7) is available in the
 Report.sso file)
 \item 31    hermaphroditism transition probability
-\item 32    hermaphroditism cumulative probability
+\item 32    sex ratio in ending year
+(only plotted when model has hermaphroditism)
 }
 Additional plots not created by default
 \itemize{
