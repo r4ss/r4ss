@@ -9,7 +9,7 @@ SSplotTimeseries(
   subplot,
   add = FALSE,
   areas = "all",
-  areacols = "default",
+  areacols = NULL,
   areanames = "default",
   forecastplot = TRUE,
   uncertainty = TRUE,
@@ -62,8 +62,8 @@ Numbering of subplots is as follows, where the spawning biomass plots
 
 \item{areas}{optional subset of areas to plot for spatial models}
 
-\item{areacols}{vector of colors by area. Default uses rich.colors by Arni
-Magnusson}
+\item{areacols}{Optional vector of colors for each area if model has
+multiple areas. NULL value will be replaced by a default set of areas.}
 
 \item{areanames}{names for areas. Default is to use Area1, Area2,...}
 

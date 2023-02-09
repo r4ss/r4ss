@@ -266,3 +266,26 @@ save_png <- function(plotinfo,
     alt_text = alt_text
   )))
 }
+
+#' Get default vector of colors for each area
+#'
+#' this was previously contained within SS_plots() and 4 of the SSplotXXX() 
+#' functions.
+#'
+#' @template areacols
+#' @param nareas number of areas
+#' @author Ian G. Taylor
+
+get_areacols <- function(areacols, nareas) {
+  # set default colors if not specified
+  if (is.null(areacols)) {
+    areacols <- rich.colors.short(nareas)
+    if (nareas == 3) {
+      areacols <- c("blue", "red", "green3")
+    }
+    if (nareas > 3) {
+      areacols <- rich.colors.short(nareas + 1)[-1]
+    }
+  }
+  return(areacols)
+}

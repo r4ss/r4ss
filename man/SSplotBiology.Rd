@@ -16,6 +16,7 @@ SSplotBiology(
   minyr = -Inf,
   maxyr = Inf,
   colvec = c("red", "blue", "grey20"),
+  areacols = NULL,
   ltyvec = c(1, 2),
   shadealpha = 0.1,
   imageplot_text = FALSE,
@@ -25,7 +26,7 @@ SSplotBiology(
   labels = c("Length (cm)", "Age (yr)", "Maturity", "Mean weight (kg) in last year",
     "Spawning output", "Length (cm, beginning of the year)", "Natural mortality",
     "Female weight (kg)", "Female length (cm)", "Fecundity", "Default fecundity label",
-    "Year", "Hermaphroditism transition rate", "Fraction females by age at equilibrium"),
+    "Year", "Hermaphroditism transition rate", "Fraction females by age in ending year"),
   pwidth = 6.5,
   pheight = 5,
   punits = "in",
@@ -66,7 +67,8 @@ Numbering of subplots is as follows:
 MGparm_By_Year_after_adjustments table (report:7) is available in the
 Report.sso file)
 \item 31    hermaphroditism transition probability
-\item 32    hermaphroditism cumulative probability
+\item 32    sex ratio in ending year
+(only plotted when model has hermaphroditism)
 }
 Additional plots not created by default
 \itemize{
@@ -91,6 +93,9 @@ will be \code{replist[["mainmorphs"]]}}
 \item{maxyr}{optional input for maximum year to show in plots}
 
 \item{colvec}{vector of length 3 with colors for various points/lines}
+
+\item{areacols}{Optional vector of colors for each area if model has
+multiple areas. NULL value will be replaced by a default set of areas.}
 
 \item{ltyvec}{vector of length 2 with lty for females/males in growth plots
 values can be applied to other plots in the future}

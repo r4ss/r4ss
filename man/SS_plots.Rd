@@ -19,7 +19,7 @@ SS_plots(
   fleetlty = 1,
   fleetpch = 1,
   lwd = 1,
-  areacols = "default",
+  areacols = NULL,
   areanames = "default",
   verbose = TRUE,
   uncertainty = TRUE,
@@ -172,8 +172,8 @@ Default=1.}
 
 \item{lwd}{Line width for plot elements.}
 
-\item{areacols}{Either the string "default", or a vector of colors to use
-for each area. Default="default".}
+\item{areacols}{Optional vector of colors for each area if model has
+multiple areas. NULL value will be replaced by a default set of areas.}
 
 \item{areanames}{Optional vector of names for each area used in titles.
 Default="default".}

@@ -46,8 +46,7 @@
 #' @param fleetcols Vector of colors by fleet
 #' @template fleetnames
 #' @template lwd
-#' @param areacols Vector of colors by area. Default uses rich.colors by Arni
-#' Magnusson
+#' @template areacols
 #' @param areanames Names for areas. Default is to use Area1, Area2,...
 #' @param minyr Optional input for minimum year to show in plots
 #' @param maxyr Optional input for maximum year to show in plots
@@ -84,7 +83,7 @@ SSplotCatch <-
            type = "l",
            fleetlty = 1, fleetpch = 1,
            fleetcols = "default", fleetnames = "default",
-           lwd = 3, areacols = "default", areanames = "default",
+           lwd = 3, areacols = NULL, areanames = "default",
            minyr = -Inf, maxyr = Inf,
            annualcatch = TRUE,
            forecastplot = FALSE,
@@ -335,10 +334,8 @@ SSplotCatch <-
       if (nfleets_with_catch > 2) fleetcols <- rich.colors.short(nfleets_with_catch + 1)[-1]
     }
 
-    if (areacols[1] == "default") {
-      areacols <- rich.colors.short(nareas)
-      if (nareas > 2) areacols <- rich.colors.short(nareas + 1)[-1]
-    }
+    # set default area-specific colors if not specified
+    areacols <- get_areacols(areacols, nareas)
 
     # add total across seasons "mat2" indicates aggregation across seasons
     if (nseasons > 1) {
