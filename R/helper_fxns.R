@@ -269,7 +269,7 @@ save_png <- function(plotinfo,
 
 #' Get default vector of colors for each area
 #'
-#' this was previously contained within SS_plots() and 4 of the SSplotXXX() 
+#' this was previously contained within SS_plots() and 4 of the SSplotXXX()
 #' functions.
 #'
 #' @template areacols

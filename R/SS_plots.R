@@ -317,7 +317,7 @@ SS_plots <-
     if (length(fleetpch) < nfishfleets) {
       fleetpch <- rep(fleetpch, nfishfleets)
     }
-    
+
     # set default area-specific colors if not specified
     areacols <- get_areacols(areacols, nareas)
 
