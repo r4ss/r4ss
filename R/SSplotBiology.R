@@ -28,7 +28,7 @@
 #'     MGparm_By_Year_after_adjustments table (report:7) is available in the
 #'     Report.sso file)
 #'   \item 31	hermaphroditism transition probability
-#'   \item 32	sex ratio in ending year 
+#'   \item 32	sex ratio in ending year
 #'     (only plotted when model has hermaphroditism)
 #' }
 #' Additional plots not created by default
@@ -1647,9 +1647,9 @@ SSplotBiology <-
       herma_func1 <- function() {
         # if females change to males, there will be numerical values here:
         if (Hermaphro_Option == 1) {
-          df = growdatF
-        }else {
-          df = growdatM
+          df <- growdatF
+        } else {
+          df <- growdatM
         }
 
         # make plot (age vector should be the same for females and males)
