@@ -31,14 +31,14 @@ jobs:
           latexmk_use_lualatex: true
           
       - name: Upload PDF file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: SS330_User_Manual.pdf
           path: SS330_User_Manual.pdf
           
       - name: Upload log file when job fails
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with: 
           name: SS330_User_Manual.log
           path: SS330_User_Manual.log
