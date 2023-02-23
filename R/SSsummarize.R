@@ -333,7 +333,7 @@ SSsummarize <- function(biglist,
       SpawnOutputUnits <- rep(NA, n)
     }
     # if NA value in vector for current model, replace with value from model
-    if (is.na(SpawnOutputUnits[imodel])) {
+    if (is.na(SpawnOutputUnits[imodel]) & !is.null(stats[["SpawnOutputUnits"]])) {
       SpawnOutputUnits[imodel] <- stats[["SpawnOutputUnits"]]
     }
     # get mcmc values if present
