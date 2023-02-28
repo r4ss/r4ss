@@ -1,7 +1,7 @@
-#V3.30.20.00;_safe;_compile_date:_Sep 30 2022;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.0
+#V3.30.21.00;_safe;_compile_date:_Feb 10 2023;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.1
 data.ss #_DataFile 
 control.ss #_Control 
-Run_Date: Thu Dec  1 11:48:36 2022
+Run_Date: Tue Feb 28 13:43:45 2023
 Final_phase: 5  N_iterations: 250
 #_LIKELIHOOD 
 Label logL*Lambda
