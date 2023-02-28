@@ -39,8 +39,8 @@ than what's on CRAN. The github version also contains a vignette and
 additional model files that were too large for CRAN:
 
 ```S
-install.packages("remotes")
-remotes::install_github("r4ss/r4ss")
+install.packages("pak")
+pak::pkg_install("r4ss/r4ss")
 ```
 
 Once you have installed the r4ss package, it can be loaded using:
@@ -57,13 +57,7 @@ required, but those without an account may still view and post forum
 messages.
 
 A basic vignette (not available in the CRAN version) can be viewed at
-<https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html> or
-built locally on your computer using this command to install the
-package:
-
-```S
-remotes::install_github("r4ss/r4ss", build_vignettes = TRUE)
-```
+<https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html>.
 
 ## Citing r4ss
 

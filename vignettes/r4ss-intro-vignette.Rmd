@@ -30,8 +30,8 @@ The CRAN version of r4ss is not as regularly updated and therefore may be out of
 date. Instead, it is recommended to install from GitHub:
 
 ```{r, install-and-load, eval=FALSE}
-# install.packages("remotes") # if needed
-remotes::install_github("r4ss/r4ss")
+# install.packages("pak") # if needed
+pak::pkg_install("r4ss/r4ss")
 ```
 
 ### Loading the package and reading help pages
