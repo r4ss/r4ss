@@ -350,16 +350,12 @@ SS_html <- function(replist = NULL,
         file = htmlfile, append = TRUE
       )
       for (i in 1:nrow(plotinfo)) {
-        # default alternative text is caption up to any line break
-        # or period
-        alt <- strsplit(plotinfo[["caption"]][i],
-          split = "<br>",
-          fixed = TRUE
-        )[[1]][1]
-        alt <- strsplit(alt,
-          split = ". ",
-          fixed = TRUE
-        )[[1]][1]
+        # default alternative text is ""
+        # @kellijohnson-NOAA suggests 
+        #   Ultimately, I think it would be great if the alternative text 
+        #   referenced "sections" within Report.sso or any other file that 
+        #   held the raw data that is on the figure.
+        alt <- ""
         cat("<p align=left><a href='", plotinfo[["basename"]][i],
           "'><img src='", plotinfo[["basename"]][i],
           "' border=0 width=", width,

@@ -1,0 +1,45 @@
+###
+console output
+2023-02-28 13:44:08
+###
+ 
+ reading from starter.ss
+ reading from data file
+Data read sucessful 999
+
+ reading forecast file 
+ reading from control file
+End of control file successful! 999
+Begin setting up parameters ...  end of parameter section 
+Evaluating biology calculations once ... done
+Starting optimization of 'ss_win' in phase 1 of 5 at Tue Feb 28 13:43:45 2023
+phase= 1 | nvar=  3 | iter=  0 | nll=7.58e+02 | mag=3.27e+02 | par[  1]=SR_parm[1]
+phase= 1 | nvar=  3 | iter=  7 | nll=7.55e+02 | mag=1.74e+00 | par[  1]=SR_parm[1]
+phase= 2 | nvar= 18 | iter=  0 | nll=7.55e+02 | mag=2.52e+01 | par[  6]=recdev1[4]
+phase= 2 | nvar= 18 | iter= 20 | nll=7.54e+02 | mag=8.36e+00 | par[  1]=MGparm[2]
+phase= 3 | nvar= 20 | iter=  0 | nll=7.54e+02 | mag=8.36e+00 | par[  1]=MGparm[2]
+phase= 3 | nvar= 20 | iter= 20 | nll=7.54e+02 | mag=9.10e-01 | par[  6]=recdev1[4]
+phase= 4 | nvar= 22 | iter=  0 | nll=7.54e+02 | mag=7.45e-01 | par[  1]=MGparm[2]
+phase= 4 | nvar= 22 | iter= 20 | nll=7.54e+02 | mag=9.63e-02 | par[  3]=MGparm[4]
+phase= 4 | nvar= 22 | iter= 27 | nll=7.54e+02 | mag=8.38e-06 | par[  4]=SR_parm[1]
+phase= 5 | nvar= 32 | iter=  0 | nll=7.54e+02 | mag=8.38e-06 | par[  4]=SR_parm[1]
+Optimization completed after 1.9 s with final statistics:
+  nll=754.301688 | mag=8.38424e-06 | par[  4]=SR_parm[1]
+
+Wrote first version of output files (before hessian, benchmark, and forecast)
+Calculating Hessian (32 variables): 20%, 40%, 60%, 80%, 100% done (2 s) 
+Differentiating 8 derived quantities: 1, 2, 3, 4, 5, 6, 7, 8 done (16 s) 
+Inverting Hessian (32 variables): 20%, 40%, 60%, 80%, 100% done (0.002 s) 
+Starting standard error calculations...  done (0.18 s) 
+Iterations: 250
+Finished forecast
+Writing wtatage.ss_new
+mceval counter: 0
+Finished posteriors
+Finished final writing of report.sso
+Begin writing *.ss_new output files ... Finished writing *.ss_new output files
+
+!!  Run has completed  !! 
+!!  See warning.sso for 1 note 
+
+Finished running model 'ss_win' after 22 s.
