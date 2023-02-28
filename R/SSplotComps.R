@@ -1458,7 +1458,9 @@ SSplotComps <-
                 }
                 caption_extra <- ""
                 if (ipage == 1) {
-                  if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
+                  if (("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) |
+                      ("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]])))
+                  ) {
                     # get Theta value for this fleet & partition
 
                     # partition weighting added in 3.30.21
