@@ -225,7 +225,7 @@ rich.colors.short <- function(n, alpha = 1) {
 #' @template ptsize
 #' @param caption caption for the image
 #' @param alt_text alternative text for screen readers
-#' (if left as NA then will be set based on the caption)
+#' (if left as NA then will be set by SS_html() based on the caption)
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
 #' It will be separated from default name by an underscore.
 #' @author Ian G. Taylor

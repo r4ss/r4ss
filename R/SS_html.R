@@ -316,11 +316,9 @@ SS_html <- function(replist = NULL,
                 sep = "", file = htmlfile, append = TRUE
               )
             }
-            for (irow in 3:length(replist[["warnings"]])) {
-              cat(replist[["warnings"]][irow], "\n",
-                sep = "", file = htmlfile, append = TRUE
-              )
-            }
+            cat(replist[["warnings"]], 
+              sep = "\n", file = htmlfile, append = TRUE
+            )
             cat("</pre>\n",
               sep = "", file = htmlfile, append = TRUE
             )
@@ -337,9 +335,10 @@ SS_html <- function(replist = NULL,
         txtfilename <- plotinfo[["basename"]][i]
         table_text <- readLines(file.path(plotdir, txtfilename))
         cat("<p align=left>",
-          table_text,
-          "<br>", plotinfo[["caption"]][i], "<br><i><small>file: <a href='",
+          plotinfo[["caption"]][i], "<br><i><small>file: <a href='",
           txtfilename, "'>", plotinfo[["basename"]][i], "</a></small></i>\n",
+          "<br>",
+          table_text,
           sep = "", file = htmlfile, append = TRUE
         )
       }
@@ -351,11 +350,12 @@ SS_html <- function(replist = NULL,
         file = htmlfile, append = TRUE
       )
       for (i in 1:nrow(plotinfo)) {
-        # default alternative text is caption up to any line break <br>
-        alt <- strsplit(plotinfo[["caption"]][i],
-          split = "<br>",
-          fixed = TRUE
-        )[[1]][1]
+        # default alternative text is ""
+        # @kellijohnson-NOAA suggests 
+        #   Ultimately, I think it would be great if the alternative text 
+        #   referenced "sections" within Report.sso or any other file that 
+        #   held the raw data that is on the figure.
+        alt <- ""
         cat("<p align=left><a href='", plotinfo[["basename"]][i],
           "'><img src='", plotinfo[["basename"]][i],
           "' border=0 width=", width,
