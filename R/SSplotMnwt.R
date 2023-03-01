@@ -64,7 +64,7 @@ SSplotMnwt <-
     if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
 
     # mean body weight observations ###
-    if (!is.na(mnwgt)[1]) {
+    if (!is.na(mnwgt)[[1]][1]) {
       for (ifleet in intersect(fleets, unique(mnwgt[["Fleet"]]))) {
         # usemnwgt is subset of mnwgt for the particular fleet
         usemnwgt <- mnwgt[mnwgt[["Fleet"]] == ifleet & mnwgt[["Obs"]] > 0, ]

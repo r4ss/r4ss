@@ -17,6 +17,7 @@ docs
 ^inst/extdata/simple_3.30.01/
 ^inst/extdata/simple_3.30.12/
 ^inst/extdata/simple_3.30.13/
+^\.devcontainer$
 # # temporary additions for CRAN submission
 # ^tests/
 # ^inst/extdata/models/

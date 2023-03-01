@@ -552,6 +552,14 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
       cnt <- cnt + 2
     }
   }
+
+  # Platoon SD Ratio (depends on negative value for sd_ratio input at the top)
+  if (ctllist[["N_platoon"]] > 1 && ctllist[["sd_ratio"]] < 0) {
+    N_MGparm <- N_MGparm + 1 # add Platoon_SD_Ratio
+    MGparmLabel[cnt] <- "Platoon_SD_Ratio"
+    cnt <- cnt + 1
+  }
+
   # age error parameters
   if (ctllist[["Do_AgeKey"]]) {
     MGparmLabel[cnt + 0:6] <- paste0("AgeKeyParm", 1:7)
@@ -1145,7 +1153,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
           size_selex_label[[j]],
           make_sel_lab("s", "PFemOff", 1:3, jn, j)
         )
-      } else if (ctllist[["size_selex_types"]][j, "Pattern"] %in% 23:24) {
+      } else if (ctllist[["size_selex_types"]][j, "Pattern"] %in% c(2, 23:24)) {
         size_selex_label[[j]] <- c(
           size_selex_label[[j]],
           make_sel_lab("s", "PFemOff", 1:5, jn, j)

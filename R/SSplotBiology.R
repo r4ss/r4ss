@@ -28,7 +28,8 @@
 #'     MGparm_By_Year_after_adjustments table (report:7) is available in the
 #'     Report.sso file)
 #'   \item 31	hermaphroditism transition probability
-#'   \item 32	hermaphroditism cumulative probability
+#'   \item 32	sex ratio in ending year
+#'     (only plotted when model has hermaphroditism)
 #' }
 #' Additional plots not created by default
 #' \itemize{
@@ -47,6 +48,7 @@
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
 #' @param colvec vector of length 3 with colors for various points/lines
+#' @template areacols
 #' @param ltyvec vector of length 2 with lty for females/males in growth plots
 #' values can be applied to other plots in the future
 #' @param shadealpha Transparency parameter used to make default shadecol
@@ -79,6 +81,7 @@ SSplotBiology <-
            minyr = -Inf,
            maxyr = Inf,
            colvec = c("red", "blue", "grey20"),
+           areacols = NULL,
            ltyvec = c(1, 2),
            shadealpha = 0.1,
            imageplot_text = FALSE,
@@ -99,7 +102,7 @@ SSplotBiology <-
              "Default fecundity label", # 11
              "Year", # 12
              "Hermaphroditism transition rate", # 13
-             "Fraction females by age at equilibrium"
+             "Fraction females by age in ending year"
            ), # 14
            pwidth = 6.5, pheight = 5.0,
            punits = "in", res = 300, ptsize = 10, cex.main = 1,
@@ -171,10 +174,12 @@ SSplotBiology <-
         alpha = shadealpha
       )
     }
+
     #### plot function 1
     # mean weight, maturity, fecundity, spawning output
     # get objects from replist
     nseasons <- replist[["nseasons"]]
+    nareas <- replist[["nareas"]]
     growdat <- replist[["endgrowth"]][replist[["endgrowth"]][["Seas"]] == seas, ]
     growthCVtype <- replist[["growthCVtype"]]
     biology <- replist[["biology"]]
@@ -1628,20 +1633,56 @@ SSplotBiology <-
 
     # plot of vectors found in models with hermaphroditism
     if ("Herma_Trans" %in% names(growdatF)) {
+      # Hermaphro_Option from SS3 User Manual
+      # 1 = invoke female to male age-specific function; and
+      # -1 = invoke male to female age-specific function.
+      if (any(!is.na(growdatF[["Herma_Trans"]]))) {
+        Hermaphro_Option <- 1
+        labels[13] <- paste(labels[13], "(F to M)")
+      } else {
+        Hermaphro_Option <- -1
+        labels[13] <- paste(labels[13], "(M to F)")
+      }
+
       herma_func1 <- function() {
-        plot(growdatF[["Age_Beg"]], growdatF[["Herma_Trans"]],
+        # if females change to males, there will be numerical values here:
+        if (Hermaphro_Option == 1) {
+          df <- growdatF
+        } else {
+          df <- growdatM
+        }
+
+        # make plot (age vector should be the same for females and males)
+        plot(df[["Age_Beg"]], df[["Herma_Trans"]],
           xaxs = "i", ylim = c(0, 1), las = 1,
-          xlab = labels[12], ylab = labels[13], type = "l", lwd = 3, col = colvec[2]
+          xlab = labels[12], ylab = labels[13],
+          type = "l", lwd = 3, col = colvec[2]
         )
         abline(h = c(0, 1), col = "grey")
       }
-      herma_func2 <- function() {
-        plot(growdatF[["Age_Beg"]], growdatF[["sex_ratio"]],
-          xaxs = "i", ylim = c(0, 1), las = 1,
-          xlab = labels[2], ylab = labels[14], type = "l", lwd = 3, col = colvec[2]
+      herma_func2 <- function(area = 1) {
+        # new area-specific columns in 3.30.21 have format "sex_ratio_area:1"
+        # assuming that there will always be one column per area
+        colnames <- grep("sex_ratio", names(growdatF), value = TRUE)
+        matplot(growdatF[["Age_Beg"]], growdatF[, colnames],
+          xaxs = "i", ylim = c(0, 1), las = 1, lty = 1:nareas,
+          xlab = labels[2], ylab = labels[14], type = "l", lwd = 3,
+          col = areacols
         )
+        # add grey line at 1.0
         abline(h = c(0, 1), col = "grey")
+        # add legend if multiple lines per area
+        if (length(colnames) > 1) {
+          legend(legendloc,
+            bty = "n", col = areacols, lty = 1:nareas, lwd = 3,
+            legend = paste("area", 1:nareas)
+          )
+        }
       }
+
+      # set default colors if not specified
+      areacols <- get_areacols(areacols, nareas)
+
       if (31 %in% subplots) {
         if (plot) {
           herma_func1()

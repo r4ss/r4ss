@@ -4,6 +4,8 @@ inst/extdata/simple_3.30.01/
 inst/extdata/simple_3.30.12/
 inst/extdata/simple_3.30.13/
 inst/extdata/simple_small_*
+
+plots
 *.p0*
 *.b0*
 *.r0*
@@ -26,6 +28,8 @@ inst/extdata/simple_small_*
 *.hst
 *.psv
 *.ss_new
+data_boot*
+data_expval.ss
 gradient.1
 gradient.2
 gradient.3
@@ -43,6 +47,8 @@ ParmTrace.sso
 ss.cor
 ss.rep
 #ss.par
+console.output.txt
+test.R
 *.exe
 *.bat
 ignored

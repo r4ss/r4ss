@@ -583,16 +583,36 @@ SS_output <-
       newnames = c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label")
     )
 
-    ## DEFINITIONS section (new in SSv3.20)
+    ## read DEFINITIONS section (new in SSv3.20)
     ## (which_blank = 2 skips the "#" near the end to include the final table)
-    rawdefs <- match_report_table("DEFINITIONS", 1, which_blank = 2)
-    # re-read that section for older models which didn't have a hash
-    if ("LIKELIHOOD" %in% rawdefs[, 1]) {
-      rawdefs <- match_report_table("DEFINITIONS", 1, which_blank = 1)
-    }
+    rawdefs <- match_report_table("DEFINITIONS", 1,
+      which_blank = 1,
+      blank_lines = rep_blank_lines
+    )
+    # # re-read that section for older models which didn't have a hash
+    # if ("LIKELIHOOD" %in% rawdefs[, 1]) {
+    #   rawdefs <- match_report_table("DEFINITIONS", 1, which_blank = 1)
+    # }
+
+    # four eras for DEFINITIONS section
+    # - prior to 3.20: section didn't exist
+    #   - these versions not really supported by r4ss, but might work anyway
+    # - 3.20 up through 3.24: section was brief with fleet info in rows
+    #   - identify by version < 3.30 & presence of DEFINITIONS
+    # - 3.30 up through 3.30.11: table of fleet info by column was added
+    #   - identify by version >= 3.30, absence of "Jitter"
+    # - 3.30.12 to 3.30.20: lots more definitions added
+    #   - identify by presence of "Jitter" and "Fleet_names:" in first column
+    # - 3.30.21+: fleet info in rows removed, Length_ & Age_comp_error_controls added
+    #   - identify by presence of "Jitter" and absence of "Fleet_names:" in first column
 
     # check for new format for definitions (starting with 3.30.12)
     # ("Jitter" is an indicator of the new format)
+
+    # placeholders for tables added in 3.30.21
+    Length_comp_error_controls <- NULL
+    Age_comp_error_controls <- NULL
+
     if ("Jitter:" %in% rawdefs[["X1"]]) {
       get.def <- function(string) {
         # function to grab numeric value from 2nd column matching string in 1st column
@@ -642,7 +662,7 @@ SS_output <-
       Jitter <- get.def("Jitter")
       ALK_tolerance <- get.def("ALK_tolerance")
 
-      # table starting with final occurrence of "Fleet" in column 1
+      # fleetdefs table starts with final "Fleet" in column 1 (within DEFINITIONS)
       fleetdefs <- rawdefs[tail(grep("Fleet", rawdefs[["X1"]]), 1):nrow(rawdefs), ]
       names(fleetdefs) <- fleetdefs[1, ] # set names equal to first row
       fleetdefs <- fleetdefs[-1, ] # remove first row
@@ -676,7 +696,50 @@ SS_output <-
       seasfracs <- round(12 * cumsum(seasdurations)) / 12
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
-      # end new DEFINITIONS format (starting with 3.30.12)
+      # end DEFINITIONS elements in 3.30.12-3.30.20
+      if ("Length_comp_error_controls" %in% rawdefs[["X1"]]) {
+        # read table of length comp error controls (added 3.30.21)
+        Length_comp_error_controls <-
+          match_report_table("Length_comp_error_controls",
+            adjust1 = 1,
+            header = TRUE, type.convert = TRUE
+          )
+        if (nrow(Length_comp_error_controls) > 0) {
+          present_Length_comp_error_controls <- TRUE
+        }
+      }
+
+      # if that table has information in it then proceed with renaming columns
+      if (exists("Length_comp_error_controls") & exists("present_Length_comp_error_controls")) {
+        # rename "NoName" columns
+        names(Length_comp_error_controls)[names(Length_comp_error_controls) == "NoName"] <-
+          c("NoName", "Fleet_name")
+        # remove extra column with hash symbols
+        Length_comp_error_controls <- Length_comp_error_controls %>%
+          dplyr::select(-NoName)
+      }
+
+      if ("Age_comp_error_controls" %in% rawdefs[["X1"]]) {
+        # read table of age comp error controls (added 3.30.21)
+        Age_comp_error_controls <-
+          match_report_table("Age_comp_error_controls",
+            adjust1 = 1,
+            header = TRUE, type.convert = TRUE
+          )
+        if (nrow(Age_comp_error_controls) > 0) {
+          present_Age_comp_error_controls <- TRUE
+        }
+      }
+      # if that table has information in it then proceed with renaming columns
+      if (exists("Age_comp_error_controls") & exists("present_Age_comp_error_controls") > 0) {
+        # rename "NoName" columns
+        names(Age_comp_error_controls)[names(Age_comp_error_controls) == "NoName"] <-
+          c("NoName", "Fleet_name")
+        # remove extra column with hash symbols
+        Age_comp_error_controls <- Age_comp_error_controls %>%
+          dplyr::select(-NoName)
+      }
+      # end read of 3.30.12+ DEFINITIONS
     } else {
       # old format for DEFINITIONS (up through 3.30.11)
 
@@ -687,7 +750,6 @@ SS_output <-
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
       if (SS_versionNumeric >= 3.30) {
-        # add read of additions to DEFINITIONS section added with 3.30.12
         # version 3.3 (fleet info switched from columns to rows starting with 3.30)
         FleetNames <- as.character(rawdefs[grep("fleet_names", rawdefs[["X1"]]), -1])
         FleetNames <- FleetNames[!is.na(FleetNames) & FleetNames != ""]
@@ -724,6 +786,8 @@ SS_output <-
         survey_units <- fleetdefs[["survey_units"]]
         survey_error <- fleetdefs[["survey_error"]]
         IsFishFleet <- fleet_type <= 2 # based on definitions above
+
+        # end of 3.30 - 3.30.11 version of DEFINITIONS
       } else {
         # version 3.20-3.24
         # get fleet info
@@ -912,6 +976,8 @@ SS_output <-
             compdbase[["Used"]] != "skip" & notconditional, ]
           condbase <- compdbase[compdbase[["Kind"]] == "AGE" &
             compdbase[["Used"]] != "skip" & conditional, ]
+          morphcompdbase <- compdbase[compdbase[["Kind"]] == "GP%" &
+            compdbase[["Used"]] != "skip", ]
         } else {
           # older designation of ghost fleets from negative samp size to negative fleet
           lendbase <- compdbase[compdbase[["Kind"]] == "LEN" &
@@ -985,19 +1051,78 @@ SS_output <-
           message(
             "CompReport file separated by this code as follows",
             " (rows = Ncomps*Nbins):\n",
-            "  ", nrow(lendbase), " rows of length comp data,\n",
-            "  ", nrow(sizedbase), " rows of generalized size comp data,\n",
-            "  ", nrow(agedbase), " rows of age comp data,\n",
-            "  ", nrow(condbase), " rows of conditional age-at-length data,\n",
-            "  ", nrow(ghostagedbase), " rows of ghost fleet age comp data,\n",
-            "  ", nrow(ghostcondbase),
-            " rows of ghost fleet conditional age-at-length data,\n",
-            "  ", nrow(ghostlendbase),
-            " rows of ghost fleet length comp data,\n",
-            "  ", nrow(ladbase), " rows of mean length at age data,\n",
-            "  ", nrow(wadbase), " rows of mean weight at age data,\n",
-            "  ", nrow(tagdbase1), " rows of 'TAG1' comp data, and\n",
-            "  ", nrow(tagdbase2), " rows of 'TAG2' comp data."
+            if (nrow(lendbase) > 0) {
+              paste0(
+                "  ", nrow(lendbase),
+                " rows of length comp data\n"
+              )
+            },
+            if (nrow(sizedbase) > 0) {
+              paste0(
+                "  ", nrow(sizedbase),
+                " rows of generalized size comp data\n"
+              )
+            },
+            if (nrow(agedbase) > 0) {
+              paste0(
+                "  ", nrow(agedbase),
+                " rows of age comp data\n"
+              )
+            },
+            if (nrow(condbase) > 0) {
+              paste0(
+                "  ", nrow(condbase),
+                " rows of conditional age-at-length data\n"
+              )
+            },
+            if (nrow(ghostagedbase) > 0) {
+              paste0(
+                "  ", nrow(ghostagedbase),
+                " rows of ghost fleet age comp data\n"
+              )
+            },
+            if (nrow(ghostcondbase) > 0) {
+              paste0(
+                "  ", nrow(ghostcondbase),
+                " rows of ghost fleet conditional age-at-length data\n"
+              )
+            },
+            if (nrow(ghostlendbase) > 0) {
+              paste0(
+                "  ", nrow(ghostlendbase),
+                " rows of ghost fleet length comp data\n"
+              )
+            },
+            if (nrow(ladbase) > 0) {
+              paste0(
+                "  ", nrow(ladbase),
+                " rows of mean length at age data\n"
+              )
+            },
+            if (nrow(wadbase) > 0) {
+              paste0(
+                "  ", nrow(wadbase),
+                " rows of mean weight at age data\n"
+              )
+            },
+            if (nrow(tagdbase1) > 0) {
+              paste0(
+                "  ", nrow(tagdbase1),
+                " rows of 'TAG1' comp data\n"
+              )
+            },
+            if (nrow(tagdbase2) > 0) {
+              paste0(
+                "  ", nrow(tagdbase2),
+                " rows of 'TAG2' comp data"
+              )
+            },
+            if (nrow(morphcompdbase) > 0) {
+              paste0(
+                "  ", nrow(morphcompdbase),
+                " rows of morph comp data"
+              )
+            }
           )
         }
         # convert bin indices to true lengths
@@ -1386,157 +1511,17 @@ SS_output <-
     } # end check for semi-parametric selectivity
 
     # Dirichlet-Multinomial parameters
-    # (new option for comp likelihood that uses these parameters for automated
-    #  data weighting)
+    # more processing of these parameters is done later in SS_output()
+    # after info on the comps has been read
     DM_pars <- parameters[
       grep("ln\\((EffN_mult)|(DM_theta)\\)", parameters[["Label"]]),
       names(parameters) %in% c("Value", "Phase", "Min", "Max")
     ]
+    # calculate additional values based on estimate parameter
+    # non-log Theta
     DM_pars[["Theta"]] <- exp(DM_pars[["Value"]])
+    # Theta ratio related to weighting
     DM_pars$"Theta/(1+Theta)" <- DM_pars[["Theta"]] / (1 + DM_pars[["Theta"]])
-    # if D-M parameters are present, then do some extra processing steps
-    age_data_info <- NULL
-    len_data_info <- NULL
-
-    if (nrow(DM_pars) > 0) {
-      # save to "stats" list that gets printed to R console
-      # (and also added to "returndat" which is returned by this function)
-      stats[["Dirichlet_Multinomial_pars"]] <- DM_pars
-
-      # figure out which fleet uses which parameter,
-      # currently (as of SS version 3.30.10.00), requires reading data file
-      if (verbose) {
-        message("Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters")
-      }
-      datname <- get_dat_new_name(dir)
-      datfile <- SS_readdat(
-        file = file.path(dir, datname),
-        verbose = verbose,
-      )
-      # when new data file is empty, find input data file
-      if (is.null(datfile)) {
-        starter <- SS_readstarter(
-          file = file.path(dir, "starter.ss"),
-          verbose = verbose
-        )
-        datfile <- SS_readdat(
-          file = file.path(dir, starter[["datfile"]]),
-          verbose = verbose, version = "3.30"
-        )
-      }
-      age_data_info <- datfile[["age_info"]]
-      len_data_info <- datfile[["len_info"]]
-      if (!is.null(age_data_info) & !is.null(len_data_info)) {
-        age_data_info[["CompError"]] <- as.numeric(age_data_info[["CompError"]])
-        age_data_info[["ParmSelect"]] <- as.numeric(age_data_info[["ParmSelect"]])
-        len_data_info[["CompError"]] <- as.numeric(len_data_info[["CompError"]])
-        len_data_info[["ParmSelect"]] <- as.numeric(len_data_info[["ParmSelect"]])
-        if (!any(age_data_info[["CompError"]] > 0) & !any(len_data_info[["CompError"]] > 0)) {
-          stop(
-            "Problem with Dirichlet-Multinomial parameters: \n",
-            "  Report file indicates parameters exist, but no CompError values\n",
-            "  in data.ss_new are > 0."
-          )
-        }
-      }
-
-      ## get Dirichlet-Multinomial parameter values and adjust input N
-      ##
-      ## note (2021 Feb 4): the Nsamp_DM column from len_comp_fit_table
-      ## and age_comp_fit_table could be used to get the DM_effN values
-      ## in the future
-
-      get_DM_sample_size <- function(CompError,
-                                     f,
-                                     sub,
-                                     data_info,
-                                     dbase) {
-        ipar <- data_info[["ParmSelect"]][f]
-        if (ipar %in% 1:nrow(DM_pars)) {
-          if (CompError == 1) {
-            Theta <- DM_pars[["Theta"]][ipar]
-          }
-          if (CompError == 2) {
-            beta <- DM_pars[["Theta"]][ipar]
-          }
-        } else {
-          stop(
-            "Issue with Dirichlet-Multinomial parameter:",
-            "Fleet = ", f, "and ParmSelect = ", ipar
-          )
-        }
-        if (CompError == 1) {
-          DM_effN <-
-            1 / (1 + Theta) +
-            dbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
-        }
-        if (CompError == 2) {
-          DM_effN <-
-            dbase[["Nsamp_adj"]][sub] * (1 + beta) /
-              (dbase[["Nsamp_adj"]][sub] + beta)
-        }
-        DM_effN
-      }
-
-      if (comp) { # only possible if CompReport.sso was read
-        if (nrow(agedbase) > 0) {
-          agedbase[["DM_effN"]] <- NA
-        }
-        if (nrow(lendbase) > 0) {
-          lendbase[["DM_effN"]] <- NA
-        }
-        if (nrow(condbase) > 0) {
-          condbase[["DM_effN"]] <- NA
-        }
-        # loop over fleets within agedbase
-        for (f in unique(agedbase[["Fleet"]])) {
-          # D-M likelihood for age comps
-          if (age_data_info[["CompError"]][f] > 0) {
-            sub <- agedbase[["Fleet"]] == f
-            agedbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(
-                CompError = age_data_info[["CompError"]][f],
-                f = f,
-                sub = sub,
-                data_info = age_data_info,
-                dbase = agedbase
-              )
-          } # end test for D-M likelihood in age comp
-        } # end loop over fleets within agedbase
-
-        # loop over fleets within lendbase
-        for (f in unique(lendbase[["Fleet"]])) {
-          # D-M likelihood for len comps
-          if (len_data_info[["CompError"]][f] > 0) {
-            sub <- lendbase[["Fleet"]] == f
-            lendbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(
-                CompError = len_data_info[["CompError"]][f],
-                f = f,
-                sub = sub,
-                data_info = len_data_info,
-                dbase = lendbase
-              )
-          } # end test for D-M likelihood in len comp
-        } # end loop over fleets within lendbase
-
-        # loop over fleets within condbase
-        for (f in unique(condbase[["Fleet"]])) {
-          # D-M likelihood for age comps
-          if (age_data_info[["CompError"]][f] > 0) {
-            sub <- condbase[["Fleet"]] == f
-            condbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(
-                CompError = age_data_info[["CompError"]][f],
-                f = f,
-                sub = sub,
-                data_info = age_data_info,
-                dbase = condbase
-              )
-          } # end test for D-M likelihood in age comp
-        } # end loop over fleets within condbase
-      } # end test for whether CompReport.sso info is available
-    } # end section related to Dirichlet-Multinomial likelihood
 
     # check the covar.sso file
     # this section moved down within SS_output for 3.30.20 to avoid
@@ -1947,8 +1932,7 @@ SS_output <-
 
     ## FIT_LEN_COMPS
     if (SS_versionNumeric >= 3.30) {
-      # This section hasn't been read by SS_output in the past,
-      # not bother adding to models prior to 3.30
+      # This section existed but wasn't read prior to 3.30
       fit_len_comps <- match_report_table("FIT_LEN_COMPS", 1, header = TRUE)
     } else {
       fit_len_comps <- NULL
@@ -2226,6 +2210,188 @@ SS_output <-
       stats[["Size_comp_Eff_N_tuning_check"]] <- sizentune
     }
 
+    # placeholders for tables read from data file
+    # in versions prior to 3.30.21
+    age_data_info <- NULL
+    len_data_info <- NULL
+
+    # if D-M parameters present
+    if (nrow(DM_pars) > 0) {
+      if (!is.null(Length_comp_error_controls) |
+        !is.null(Age_comp_error_controls)) {
+        # approach used from 3.30.21+ when all info was available in Report.sso
+        # (info was added earlier but r4ss didn't switch right away)
+
+        # loop over fleets within each comp database
+        # to copy DM sample size over from one table to another
+        # surely there are far better ways of doing this with merge
+        # or dplyr function
+
+        if (comp) { # only possible if CompReport.sso was read
+
+          # map select columns from fit_len_comps to lendbase
+          # (can expand to other columns like MV_T_parm in the future)
+          if (nrow(lendbase) > 0) {
+            lendbase <- fit_len_comps %>%
+              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
+              dplyr::left_join(lendbase, .)
+          }
+          # repeat for other parts of CompReport.sso
+          if (nrow(agedbase) > 0) {
+            agedbase <- fit_age_comps %>%
+              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
+              dplyr::left_join(agedbase, .)
+          }
+          if (nrow(condbase) > 0) {
+            condbase <- fit_age_comps %>%
+              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
+              dplyr::left_join(condbase, .)
+          }
+          # IGT 28 Jan 2023: need to add support for DM for generalized size comps
+        } # end test for whether CompReport.sso info is available
+        # end approach used starting in 3.30.21
+      } else {
+        # approach prior to 3.30.21 when info was needed from
+        # the data file
+
+        # figure out which fleet uses which parameter,
+        # currently (as of SS version 3.30.10.00), requires reading data file
+        if (verbose) {
+          message("Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters")
+        }
+        datname <- get_dat_new_name(dir)
+        datfile <- SS_readdat(
+          file = file.path(dir, datname),
+          verbose = verbose,
+        )
+        # when new data file is empty, find input data file
+        if (is.null(datfile)) {
+          starter <- SS_readstarter(
+            file = file.path(dir, "starter.ss"),
+            verbose = verbose
+          )
+          datfile <- SS_readdat(
+            file = file.path(dir, starter[["datfile"]]),
+            verbose = verbose, version = "3.30"
+          )
+        }
+
+        age_data_info <- datfile[["age_info"]]
+        len_data_info <- datfile[["len_info"]]
+        if (!is.null(age_data_info) & !is.null(len_data_info)) {
+          age_data_info[["CompError"]] <- as.numeric(age_data_info[["CompError"]])
+          age_data_info[["ParmSelect"]] <- as.numeric(age_data_info[["ParmSelect"]])
+          len_data_info[["CompError"]] <- as.numeric(len_data_info[["CompError"]])
+          len_data_info[["ParmSelect"]] <- as.numeric(len_data_info[["ParmSelect"]])
+          if (!any(age_data_info[["CompError"]] > 0) & !any(len_data_info[["CompError"]] > 0)) {
+            stop(
+              "Problem with Dirichlet-Multinomial parameters: \n",
+              "  Report file indicates parameters exist, but no CompError values\n",
+              "  in data.ss_new are > 0."
+            )
+          }
+        } # end check for no Length_ or Age_comp_error_controls tables
+
+        # get Dirichlet-Multinomial parameter values and adjust input N
+        # the old way before that info was available in fit_len_comps
+        # and fit_age_comps
+        get_DM_sample_size <- function(CompError,
+                                       f,
+                                       sub,
+                                       data_info,
+                                       dbase) {
+          ipar <- data_info[["ParmSelect"]][f]
+          if (ipar %in% 1:nrow(DM_pars)) {
+            if (CompError == 1) {
+              Theta <- DM_pars[["Theta"]][ipar]
+            }
+            if (CompError == 2) {
+              beta <- DM_pars[["Theta"]][ipar]
+            }
+          } else {
+            stop(
+              "Issue with Dirichlet-Multinomial parameter:",
+              "Fleet = ", f, "and ParmSelect = ", ipar
+            )
+          }
+          if (CompError == 1) {
+            DM_effN <-
+              1 / (1 + Theta) +
+              dbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
+          }
+          if (CompError == 2) {
+            DM_effN <-
+              dbase[["Nsamp_adj"]][sub] * (1 + beta) /
+                (dbase[["Nsamp_adj"]][sub] + beta)
+          }
+          DM_effN
+        } # end get_DM_sample_size()
+
+        if (comp) { # only possible if CompReport.sso was read
+          if (nrow(agedbase) > 0) {
+            agedbase[["DM_effN"]] <- NA
+          }
+          if (nrow(lendbase) > 0) {
+            lendbase[["DM_effN"]] <- NA
+          }
+          if (nrow(condbase) > 0) {
+            condbase[["DM_effN"]] <- NA
+          }
+
+          # loop over fleets within agedbase
+          for (f in unique(agedbase[["Fleet"]])) {
+            # D-M likelihood for age comps
+            if (age_data_info[["CompError"]][f] > 0) {
+              sub <- agedbase[["Fleet"]] == f
+              agedbase[["DM_effN"]][sub] <-
+                get_DM_sample_size(
+                  CompError = age_data_info[["CompError"]][f],
+                  f = f,
+                  sub = sub,
+                  data_info = age_data_info,
+                  dbase = agedbase
+                )
+            } # end test for D-M likelihood in age comp
+          } # end loop over fleets within agedbase
+
+          # loop over fleets within lendbase
+          for (f in unique(lendbase[["Fleet"]])) {
+            # D-M likelihood for len comps
+            if (len_data_info[["CompError"]][f] > 0) {
+              sub <- lendbase[["Fleet"]] == f
+              lendbase[["DM_effN"]][sub] <-
+                get_DM_sample_size(
+                  CompError = len_data_info[["CompError"]][f],
+                  f = f,
+                  sub = sub,
+                  data_info = len_data_info,
+                  dbase = lendbase
+                )
+            } # end test for D-M likelihood in len comp
+          } # end loop over fleets within lendbase
+
+          # loop over fleets within condbase
+          for (f in unique(condbase[["Fleet"]])) {
+            # D-M likelihood for age comps
+            if (age_data_info[["CompError"]][f] > 0) {
+              sub <- condbase[["Fleet"]] == f
+              condbase[["DM_effN"]][sub] <-
+                get_DM_sample_size(
+                  CompError = age_data_info[["CompError"]][f],
+                  f = f,
+                  sub = sub,
+                  data_info = age_data_info,
+                  dbase = condbase
+                )
+            } # end test for D-M likelihood in age comp
+          } # end loop over fleets within condbase
+        } # end test for whether CompReport.sso info is available
+      } # end processing DM pars & samples prior to 3.30.21
+    } # end if DM pars are present
+
     # get information that will help diagnose jitter coverage and bad bounds
     jitter_info <- parameters[
       !is.na(parameters[["Active_Cnt"]]) &
@@ -2327,6 +2493,8 @@ SS_output <-
     returndat[["Current_phase"]] <- return.def("Current_phase")
     returndat[["Jitter"]] <- return.def("Jitter")
     returndat[["ALK_tolerance"]] <- return.def("ALK_tolerance")
+    returndat[["Length_comp_error_controls"]] <- Length_comp_error_controls
+    returndat[["Age_comp_error_controls"]] <- Age_comp_error_controls
     returndat[["nforecastyears"]] <- nforecastyears
     returndat[["morph_indexing"]] <- morph_indexing
     returndat[["MGparmAdj"]] <- MGparmAdj
@@ -3543,6 +3711,7 @@ SS_output <-
       returndat[["wadbase"]] <- wadbase
       returndat[["tagdbase1"]] <- tagdbase1
       returndat[["tagdbase2"]] <- tagdbase2
+      returndat[["morphcompdbase"]] <- morphcompdbase
     } else {
       returndat[["comp_data_exists"]] <- FALSE
     }
@@ -3553,6 +3722,7 @@ SS_output <-
 
     returndat[["derived_quants"]] <- der
     returndat[["parameters"]] <- parameters
+    returndat[["Dirichlet_Multinomial_pars"]] <- DM_pars
     returndat[["FleetNames"]] <- FleetNames
     returndat[["repfiletime"]] <- repfiletime
 

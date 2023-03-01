@@ -70,8 +70,7 @@
 #' @param fleetpch Vector of point types used for each fleet in some plots.
 #' Default=1.
 #' @template lwd
-#' @param areacols Either the string "default", or a vector of colors to use
-#' for each area. Default="default".
+#' @template areacols
 #' @param areanames Optional vector of names for each area used in titles.
 #' Default="default".
 #' @template verbose
@@ -217,7 +216,7 @@ SS_plots <-
   function(replist = NULL, plot = 1:26, pdf = FALSE, png = TRUE, html = png,
            printfolder = "plots", dir = "default", fleets = "all", areas = "all",
            fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
-           lwd = 1, areacols = "default", areanames = "default",
+           lwd = 1, areacols = NULL, areanames = "default",
            verbose = TRUE, uncertainty = TRUE, forecastplot = FALSE,
            datplot = TRUE, Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
            comp.yupper = 0.4,
@@ -318,16 +317,9 @@ SS_plots <-
     if (length(fleetpch) < nfishfleets) {
       fleetpch <- rep(fleetpch, nfishfleets)
     }
+
     # set default area-specific colors if not specified
-    if (areacols[1] == "default") {
-      areacols <- rich.colors.short(nareas)
-      if (nareas == 3) {
-        areacols <- c("blue", "red", "green3")
-      }
-      if (nareas > 3) {
-        areacols <- rich.colors.short(nareas + 1)[-1]
-      }
-    }
+    areacols <- get_areacols(areacols, nareas)
 
     #### prepare for plotting
 
@@ -481,6 +473,7 @@ SS_plots <-
       }
       plotinfo <- SSplotBiology(
         replist = replist,
+        areacols = areacols,
         forecast = forecastplot, minyr = minyr, maxyr = maxyr,
         plot = !png, print = png,
         pwidth = pwidth, pheight = pheight, punits = punits,
@@ -790,7 +783,9 @@ SS_plots <-
     #
     igroup <- 9
     if (igroup %in% plot) {
-      if (!is.na(replist[["discard"]]) && nrow(replist[["discard"]]) > 0) {
+      if (!is.null(replist[["discard"]]) &&
+        !is.na(replist[["discard"]][[1]][1]) &&
+        nrow(replist[["discard"]]) > 0) {
         if (verbose) {
           message("Starting discard plot (group ", igroup, ")")
         }
@@ -818,7 +813,9 @@ SS_plots <-
     #
     igroup <- 10
     if (igroup %in% plot) {
-      if (!is.na(replist[["mnwgt"]]) && nrow(replist[["mnwgt"]]) > 0) {
+      if (!is.null(replist[["mnwgt"]]) &&
+        !is.na(replist[["mnwgt"]][[1]][1]) &&
+        nrow(replist[["mnwgt"]]) > 0) {
         if (verbose) {
           message("Starting mean body weight plot (group ", igroup, ")")
         }
