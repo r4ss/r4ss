@@ -783,7 +783,9 @@ SS_plots <-
     #
     igroup <- 9
     if (igroup %in% plot) {
-      if (!is.na(replist[["discard"]]) && nrow(replist[["discard"]]) > 0) {
+      if (!is.null(replist[["discard"]]) &&
+        !is.na(replist[["discard"]][[1]][1]) &&
+        nrow(replist[["discard"]]) > 0) {
         if (verbose) {
           message("Starting discard plot (group ", igroup, ")")
         }
@@ -811,7 +813,9 @@ SS_plots <-
     #
     igroup <- 10
     if (igroup %in% plot) {
-      if (!is.na(replist[["mnwgt"]]) && nrow(replist[["mnwgt"]]) > 0) {
+      if (!is.null(replist[["mnwgt"]]) &&
+        !is.na(replist[["mnwgt"]][[1]][1]) &&
+        nrow(replist[["mnwgt"]]) > 0) {
         if (verbose) {
           message("Starting mean body weight plot (group ", igroup, ")")
         }

@@ -70,7 +70,9 @@ SSplotDiscard <-
     }
 
     # if discards exist
-    if (!is.na(discard) && nrow(discard) > 0) {
+    if (!is.null(discard) &&
+        !is.na(discard[[1]][1]) &&
+        nrow(discard) > 0) {
       if (fleets[1] == "all") fleets <- 1:nfishfleets
       for (ifleet in intersect(fleets, unique(discard[["Fleet"]]))) {
         # table available beginning with SSv3.20 has fleet-specific discard specs
