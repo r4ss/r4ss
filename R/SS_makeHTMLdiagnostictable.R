@@ -20,15 +20,16 @@ SS_makeHTMLdiagnostictable <- function(replist,
                                        ncor = 50,
                                        cormax = 0.95,
                                        cormin = 0.01) {
-
   # function to add scope association to table headers
   # to meet accessibility requirements
   add_scope_to_table_headers <- function(htmltable) {
-    gsub(pattern = '<th ', 
-         replacement = '<th scope="col" ',
-         x = htmltable)
+    gsub(
+      pattern = "<th ",
+      replacement = '<th scope="col" ',
+      x = htmltable
+    )
   }
-  
+
   # filename and caption will be vectors with values for each table
   filename <- NULL
   caption <- NULL
