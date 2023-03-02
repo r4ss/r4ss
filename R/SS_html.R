@@ -316,7 +316,7 @@ SS_html <- function(replist = NULL,
                 sep = "", file = htmlfile, append = TRUE
               )
             }
-            cat(replist[["warnings"]], 
+            cat(replist[["warnings"]],
               sep = "\n", file = htmlfile, append = TRUE
             )
             cat("</pre>\n",
@@ -351,9 +351,9 @@ SS_html <- function(replist = NULL,
       )
       for (i in 1:nrow(plotinfo)) {
         # default alternative text is ""
-        # @kellijohnson-NOAA suggests 
-        #   Ultimately, I think it would be great if the alternative text 
-        #   referenced "sections" within Report.sso or any other file that 
+        # @kellijohnson-NOAA suggests
+        #   Ultimately, I think it would be great if the alternative text
+        #   referenced "sections" within Report.sso or any other file that
         #   held the raw data that is on the figure.
         alt <- ""
         cat("<p align=left><a href='", plotinfo[["basename"]][i],
