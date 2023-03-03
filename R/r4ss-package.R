@@ -1,5 +1,7 @@
 #' @import coda
+#' @import dplyr
 #' @import kableExtra
+#' @import magrittr
 #' @importFrom corpcor pseudoinverse
 #' @importFrom grDevices adjustcolor col2rgb colorRampPalette
 #'   dev.new dev.off graphics.off
@@ -18,11 +20,21 @@
 #'
 #' @examples
 #' \dontrun{
-#' # read in the report file using SS_output
-#' myreplist <- SS_output(dir = "c:/SS/simple/")
+#' # it's useful to create a variable for the directory with the model output
+#' mydir <- file.path(
+#'   path.package("r4ss"),
+#'   file.path("extdata", "simple_small")
+#' )
 #'
-#' # make a collection of plots using SS_plots
-#' SS_plots(replist = myreplist)
+#' # read the model output and print diagnostic messages
+#' replist <- SS_output(
+#'   dir = mydir,
+#'   verbose = TRUE,
+#'   printstats = TRUE
+#' )
+#'
+#' # plots the results
+#' SS_plots(replist)
 #' }
 #'
 #' @keywords internal

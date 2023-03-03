@@ -34,7 +34,6 @@
 #'
 get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                          stock = "StockName", final_year = 2019, data_year = NULL, sciencecenter = "NWFSC", Mgt_Council = "NA") {
-
   # directory to write file
   if (is.null(dir)) {
     dir <- model[["inputs"]][["dir"]]
@@ -303,7 +302,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
 
   # GM Settings: Using F_SPR target
   if (Mgt_Council == "GM") {
-
     # Annual FSPR names changed between versions
     if ("annF_SPR" %in% rownames(model[["derived_quants"]])) {
       F_limit <- round(model[["derived_quants"]]["annF_SPR", "Value"], digits = 3)

@@ -147,7 +147,6 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
 
       # fleet and area-specific inputs for version 3.24
       if (SSversion == 3.24) {
-
         # write relative F values by fleet
         if (mylist[["fleet_relative_F"]] == 2) {
           writeLines("#_vals_fleet_relative_f")
@@ -172,7 +171,6 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       }
       # fleet and area-specific inputs for version 3.30
       if (SSversion == "3.30" | SSversion == 3.3) {
-
         # write relative F values by fleet
         if (mylist[["fleet_relative_F"]] == 2) {
           writeLines("#_vals_fleet_relative_f")

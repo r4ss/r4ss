@@ -12,7 +12,7 @@ SSplotNumbers(
   numbers.unit = 1000,
   areas = "all",
   areanames = "default",
-  areacols = "default",
+  areacols = NULL,
   pntscalar = 2.6,
   bub.bg = gray(0.5, alpha = 0.5),
   bublegend = TRUE,
@@ -67,7 +67,8 @@ setup) is thousands (numbers.unit=1000).}
 
 \item{areanames}{names for areas. Default is to use Area1, Area2,...}
 
-\item{areacols}{vector of colors by area}
+\item{areacols}{Optional vector of colors for each area if model has
+multiple areas. NULL value will be replaced by a default set of areas.}
 
 \item{pntscalar}{maximum bubble size for bubble plots; each plot scaled
 independently based on this maximum size and the values plotted. Often some

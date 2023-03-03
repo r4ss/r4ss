@@ -27,8 +27,7 @@
 #' }
 #' @param add add to existing plot? (not yet implemented)
 #' @param areas optional subset of areas to plot for spatial models
-#' @param areacols vector of colors by area. Default uses rich.colors by Arni
-#' Magnusson
+#' @template areacols
 #' @param areanames names for areas. Default is to use Area1, Area2,...
 #' @param forecastplot add points from forecast years
 #' @param uncertainty add intervals around quantities for which uncertainty is
@@ -64,7 +63,7 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotTimeseries <-
   function(replist, subplot, add = FALSE, areas = "all",
-           areacols = "default", areanames = "default",
+           areacols = NULL, areanames = "default",
            forecastplot = TRUE, uncertainty = TRUE, bioscale = 1,
            minyr = -Inf, maxyr = Inf,
            plot = TRUE, print = FALSE, plotdir = replist[["inputs"]][["dir"]], 
@@ -126,15 +125,8 @@ SSplotTimeseries <-
     depletion_multiplier <- replist[["depletion_multiplier"]]
 
     # set default colors if not specified
-    if (areacols[1] == "default") {
-      areacols <- rich.colors.short(nareas)
-      if (nareas == 3) {
-        areacols <- c("blue", "red", "green3")
-      }
-      if (nareas > 3) {
-        areacols <- rich.colors.short(nareas + 1)[-1]
-      }
-    }
+    areacols <- get_areacols(areacols, nareas)
+
     if (!is.null(birthseas)) {
       nbirthseas <- length(birthseas)
       seascols <- rich.colors.short(nbirthseas)

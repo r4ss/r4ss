@@ -77,7 +77,6 @@ SSplotSpawnrecruit <-
            expected = TRUE, estimated = TRUE, bias_adjusted = TRUE,
            show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE,
            subplot = lifecycle::deprecated()) {
-
     # warn about soft deprecated arguments
     if (lifecycle::is_present(subplot)) {
       lifecycle::deprecate_warn(
@@ -108,10 +107,12 @@ SSplotSpawnrecruit <-
     xlab <- labels[1]
     ylab <- labels[2]
     # check if spawning output rather than spawning biomass is plotted
-    if (is.na(replist[["SpawnOutputUnits"]]) ||
+    if (is.null(replist[["SpawnOutputUnits"]]) ||
+      is.na(replist[["SpawnOutputUnits"]]) ||
       replist[["SpawnOutputUnits"]] == "numbers") { # quantity from test in SS_output
       xlab <- labels[3]
     }
+
     if (relative) {
       xlab <- labels[4]
       ylab <- labels[5]

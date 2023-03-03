@@ -48,7 +48,6 @@ SSplotMnwt <-
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
            cex.main = 1,
            plotdir = replist[["inputs"]][["dir"]], verbose = TRUE) {
-
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -61,7 +60,7 @@ SSplotMnwt <-
     if (fleets[1] == "all") fleets <- 1:nfleets
 
     # mean body weight observations ###
-    if (!is.na(mnwgt)[1]) {
+    if (!is.na(mnwgt)[[1]][1]) {
       for (ifleet in intersect(fleets, unique(mnwgt[["Fleet"]]))) {
         # usemnwgt is subset of mnwgt for the particular fleet
         usemnwgt <- mnwgt[mnwgt[["Fleet"]] == ifleet & mnwgt[["Obs"]] > 0, ]

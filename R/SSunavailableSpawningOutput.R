@@ -50,7 +50,6 @@ SSunavailableSpawningOutput <-
 
     # Run the code for each area
     for (area in 1:replist[["nareas"]]) {
-
       ##########################################################################
       # step 1: calculate catch by fleet by year
 
@@ -205,7 +204,6 @@ SSunavailableSpawningOutput <-
 
       # Wrap up the plotting commands in a function
       CrypticPlots <- function() {
-
         ### Plot total and cryptic spawning output
         layout(matrix(c(1, 2, 3, 4), 2, 2, byrow = TRUE))
         par(mar = c(5, 5, 1, 1), oma = c(0, 0, 2, 0))
@@ -263,7 +261,6 @@ SSunavailableSpawningOutput <-
         )
         for (y in seq_along(years.with.catch)) {
           for (a in 0:accuage) {
-
             # plot circles for small unavailable spawning output
             radius.small <- small.unavailable.mature.by.age[y, a + 1] *
               multiplier

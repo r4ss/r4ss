@@ -29,7 +29,6 @@
 mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
                       nshades = 100, axes = TRUE, xaxs = "i", yaxs = "i",
                       xlab = "", ylab = "", las = 1, addbox = FALSE, ...) {
-
   ## DESCRIPTION:
   # a function by Ian Taylor designed to look like the cool-looking Figure 7 in
   # Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical model for
@@ -78,7 +77,6 @@ mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
     zvec <- as.numeric(zmat[iy, ])
     zvec2 <- c(0, zscale * zvec, 0) # row from z matrix
     if (any(zvec2 > 0)) {
-
       # calculate set of all intersections between polygon and the horizontal lines
       x3list <- list()
       for (iz in 1:nshades) {

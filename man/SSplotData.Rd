@@ -54,7 +54,7 @@ added for the tag releases which are not assigned to a fleet.}
 \item{datatypes}{Either the string "all", or a vector including some subset
 of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
-"wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".}
+"wadbase", "mnwgt", "discard", "tagrelease", "tagdbase1", and "morphcompdbase".}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}

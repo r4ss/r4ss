@@ -54,7 +54,6 @@
 SS_read <- function(dir = getwd(),
                     ss_new = FALSE,
                     verbose = FALSE) {
-
   # Read in starter first to find the names of the input files
   start <- SS_readstarter(
     file = file.path(dir, ifelse(ss_new, "starter.ss_new", "starter.ss")),

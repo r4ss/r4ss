@@ -224,7 +224,7 @@ rich.colors.short <- function(n, alpha = 1) {
 #' @template ptsize
 #' @param caption caption for the image
 #' @param alt_text alternative text for screen readers
-#' (if left as NA then will be set based on the caption)
+#' (if left as NA then will be set by SS_html() based on the caption)
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
 #' It will be separated from default name by an underscore.
 #' @author Ian G. Taylor
@@ -242,7 +242,6 @@ save_png <- function(plotinfo,
                      caption = NA,
                      alt_text = NA,
                      filenameprefix = NA) {
-
   # replace any slashes (as in 'Eggs/kg_inter_Fem')
   file <- gsub(pattern = "/", replacement = "_per_", x = file, fixed = TRUE)
   if (!is.na(filenameprefix)) {
@@ -265,4 +264,27 @@ save_png <- function(plotinfo,
     caption = caption,
     alt_text = alt_text
   )))
+}
+
+#' Get default vector of colors for each area
+#'
+#' this was previously contained within SS_plots() and 4 of the SSplotXXX()
+#' functions.
+#'
+#' @template areacols
+#' @param nareas number of areas
+#' @author Ian G. Taylor
+
+get_areacols <- function(areacols, nareas) {
+  # set default colors if not specified
+  if (is.null(areacols)) {
+    areacols <- rich.colors.short(nareas)
+    if (nareas == 3) {
+      areacols <- c("blue", "red", "green3")
+    }
+    if (nareas > 3) {
+      areacols <- rich.colors.short(nareas + 1)[-1]
+    }
+  }
+  return(areacols)
 }

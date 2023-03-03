@@ -1087,7 +1087,6 @@ SS_readctl_3.24 <- function(file,
     DoAdjust <- TRUE
     ctllist <- add_elem(ctllist, "DoCustom_sel_blk_setup") # _custom_sel-blk_setup (0/1)
     if (ctllist[["DoCustom_sel_blk_setup"]]) {
-
       # FIND relevant blocks
       blks <- ctllist[["blocks_per_pattern"]]
 

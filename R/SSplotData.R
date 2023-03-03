@@ -22,7 +22,7 @@
 #' @param datatypes Either the string "all", or a vector including some subset
 #' of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 #' "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
-#' "wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".
+#' "wadbase", "mnwgt", "discard", "tagrelease", "tagdbase1", and "morphcompdbase".
 #' @template fleets
 #' @template fleetnames
 #' @param ghost TRUE/FALSE indicator for whether to show presence of
@@ -99,6 +99,7 @@ SSplotData <- function(replist,
   ladbase <- replist[["ladbase"]]
   wadbase <- replist[["wadbase"]]
   tagdbase1 <- replist[["tagdbase1"]]
+  morphcompdbase <- replist[["morphcompdbase"]]
 
   # mean body weight
   mnwgt <- replist[["mnwgt"]]
@@ -117,16 +118,17 @@ SSplotData <- function(replist,
     "sizedbase", "Size compositions", # 4
     "agedbase", "Age compositions", # 5
     "condbase", "Conditional age-at-length compositions", # 6
-    "ghostagedbase", "Ghost age compositions", # 7
-    "ghostcondbase", "Ghost conditional age-at-length compositions", # 8
-    "ghostlendbase", "Ghost length compositions", # 9
+    "ghostagedbase", "Excluded age compositions", # 7
+    "ghostcondbase", "Excluded conditional age-at-length compositions", # 8
+    "ghostlendbase", "Excluded length compositions", # 9
     "ladbase", "Mean length-at-age", # 10
     "wadbase", "Mean weight-at-age", # 11
     "mnwgt", "Mean body weight", # 12
     "discard", "Discards", # 13
     "tagrelease", "Tag releases", # 14
-    "tagdbase1", "Tag recaptures"
-  ), ncol = 2, byrow = TRUE) # 15
+    "tagdbase1", "Tag recaptures", # 15
+    "morphcompdbase", "Morph compositions" # 16
+  ), ncol = 2, byrow = TRUE)
   # note: tagdbase2 excluded since it is not fleet specific and the years
   #       should always match those in tagdbase1
 
@@ -157,7 +159,6 @@ SSplotData <- function(replist,
         dat.f <- dat[dat[["Fleet"]] == ifleet, ]
         # check for observations from this fleet
         if (nrow(dat.f) > 0) {
-
           # identify years from different data types
           if (typename == "catch") {
             # aggregate catch by year
@@ -247,6 +248,14 @@ SSplotData <- function(replist,
             if (nrow(dat.f) > 0) { # skip of all values are excluded
               # aggregate sample sizes by year
               dat.agg <- aggregate(dat.f[["Obs"]], by = list(dat.f[["Yr"]]), FUN = sum)
+              allyrs <- dat.agg[["Group.1"]][dat.agg[["x"]] > 0]
+              size <- dat.agg[["x"]][dat.agg[["x"]] > 0]
+            }
+          }
+          if (typename == "morphcompdbase") {
+            if (nrow(dat.f) > 0) { # skip of all values are excluded
+              # aggregate sample sizes by year
+              dat.agg <- aggregate(dat.f[["Nsamp_adj"]], by = list(dat.f[["Yr"]]), FUN = sum)
               allyrs <- dat.agg[["Group.1"]][dat.agg[["x"]] > 0]
               size <- dat.agg[["x"]][dat.agg[["x"]] > 0]
             }
@@ -446,7 +455,7 @@ SSplotData <- function(replist,
         "total catch for catches; to precision for indices, discards, and <br> ",
         "mean body weight observations; and to total sample size for <br>",
         "compositions and mean weight- or length-at-age observations. <br>",
-        "'Ghost' observations (not included in the likelihood) have <br>",
+        "Observations excluded from the likelihood have <br>",
         "equal size for all years. <br>",
         "Note that since the circles are are scaled relative <br> ",
         "to maximum within each type, the scaling within separate plots <br> ",

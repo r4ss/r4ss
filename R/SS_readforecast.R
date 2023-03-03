@@ -22,7 +22,6 @@ SS_readforecast <- function(file = "forecast.ss",
                             version = "3.30",
                             readAll = FALSE,
                             verbose = TRUE) {
-
   # function to read Stock Synthesis forecast files
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     # turns out 3.30 != "3.30" in R

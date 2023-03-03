@@ -467,24 +467,48 @@ profile <- function(dir,
 
       # check for convergence
       converged[i] <- file.exists(stdfile)
+      # onegood tracks whether there is at least one non-empty Report file
       onegood <- FALSE
+      # look for non-zero report file and read LIKELIHOOD table
       if (read_like && file.exists("Report.sso") &
         file.info("Report.sso")$size > 0) {
         onegood <- TRUE
-        Rep <- readLines("Report.sso", n = 200)
-        like <- read.table("Report.sso", skip = grep("LIKELIHOOD", Rep)[2] + 0, nrows = 11, header = TRUE, fill = TRUE)
+        # read first 400 lines of Report.sso
+        Rep <- readLines("Report.sso", n = 400)
+        # calculate range of rows with LIKELIHOOD table
+        skip <- grep("LIKELIHOOD", Rep)[2]
+        nrows <- grep("Crash_Pen", Rep) - skip - 1
+        # read Report again to just get LIKELIHOOD table
+        like <- read.table("Report.sso",
+          skip = skip,
+          nrows = nrows, header = TRUE, fill = TRUE
+        )
         liketable <- rbind(liketable, as.numeric(like[["logL.Lambda"]]))
       } else {
+        # add a placeholder row of NA values if no good report file
         liketable <- rbind(liketable, rep(NA, 10))
       }
 
+      # rename output files
       if (saveoutput) {
-        file.copy("Report.sso", paste("Report", i, ".sso", sep = ""), overwrite = overwrite)
-        file.copy("CompReport.sso", paste("CompReport", i, ".sso", sep = ""), overwrite = overwrite)
-        file.copy("covar.sso", paste("covar", i, ".sso", sep = ""), overwrite = overwrite)
-        file.copy("warning.sso", paste("warning", i, ".sso", sep = ""), overwrite = overwrite)
-        file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""), overwrite = overwrite)
-        file.copy("ss.par", paste("ss.par_", i, ".sso", sep = ""), overwrite = overwrite)
+        file.copy("Report.sso", paste("Report", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("CompReport.sso", paste("CompReport", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("covar.sso", paste("covar", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("warning.sso", paste("warning", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("ss.par", paste("ss.par_", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
       }
     } # end running stuff
   } # end loop of whichruns

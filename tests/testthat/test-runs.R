@@ -19,9 +19,10 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 
 test_that("check_exe() fails or succeeds as expected", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
-    (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS3 executable"
+  skip_if(
+    (!file.exists(file.path(path_simple_small, "ss"))) &
+      (!file.exists(file.path(path_simple_small, "ss.exe"))),
+    message = "skipping test that requires SS3 executable"
   )
   # error when no exe found
   expect_error(check_exe("bad_exe_name"))
@@ -34,9 +35,10 @@ test_that("check_exe() fails or succeeds as expected", {
 
 test_that("retro() and populate_multiple_folders() both work", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
-    (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS3 executable"
+  skip_if(
+    (!file.exists(file.path(path_simple_small, "ss"))) &
+      (!file.exists(file.path(path_simple_small, "ss.exe"))),
+    message = "skipping test that requires SS3 executable"
   )
   retro(
     dir = path_simple_small,
@@ -158,9 +160,10 @@ test_that("jitter runs on simple_small model", {
 
 test_that("profile functions run on simple_small model", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
-    (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS3 executable"
+  skip_if(
+    (!file.exists(file.path(path_simple_small, "ss"))) &
+      (!file.exists(file.path(path_simple_small, "ss.exe"))),
+    message = "skipping test that requires SS3 executable"
   )
   dir.prof <- file.path(path_simple_small, "profile")
   copy_SS_inputs(
@@ -202,9 +205,10 @@ test_that("profile functions run on simple_small model", {
 
 test_that("Run an SS3 model and read the hessian", {
   # skip if no executable in model path
-  skip_if((!file.exists(file.path(path_simple_small, "ss"))) &
-    (!file.exists(file.path(path_simple_small, "ss.exe"))),
-  message = "skipping test that requires SS3 executable"
+  skip_if(
+    (!file.exists(file.path(path_simple_small, "ss"))) &
+      (!file.exists(file.path(path_simple_small, "ss.exe"))),
+    message = "skipping test that requires SS3 executable"
   )
   copy_results <- copy_SS_inputs(
     dir.old = path_simple_small,

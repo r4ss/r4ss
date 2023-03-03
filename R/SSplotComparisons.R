@@ -252,7 +252,6 @@ SSplotComparisons <-
            verbose = TRUE,
            mcmcVec = FALSE,
            show_equilibrium = TRUE) {
-
     # switch to avoid repetition of warning about mean recruitment
     meanRecWarning <- TRUE
     ymax_vec <- rep(NA, 17) # vector of ymax values for each plot
@@ -793,9 +792,12 @@ SSplotComparisons <-
           " for spawning output than others"
         )
       }
-      if (any(SpawnOutputUnits == "numbers")) {
+      # if either SpawnOutputUnits is unknown or in numbers,
+      # use label "Spawning output"
+      if (all(is.na(SpawnOutputUnits)) || any(SpawnOutputUnits == "numbers")) {
         ylab <- labels[12] # numbers
       } else {
+        # otherwise (if all are in "biomass"), use "Spawning biomass"
         ylab <- labels[2] # biomass
       }
 
@@ -1074,7 +1076,6 @@ SSplotComparisons <-
         if (isTRUE(!is.na(SPRratioLabel) &&
           SPRratioLabel ==
             paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)"))) {
-
           # add to right-hand outer margin to make space
           # for second vertical axis
 
@@ -1516,17 +1517,18 @@ SSplotComparisons <-
           # can't do uncertainty if no range present
           return(invisible(NA))
         }
-        ylim <- ylimAdj * range(recdevsLower[
-          recdevs[["Yr"]] >= xlim[1] &
-            recdevs[["Yr"]] <= xlim[2],
-          models
-        ],
-        recdevsUpper[
-          recdevs[["Yr"]] >= xlim[1] &
-            recdevs[["Yr"]] <= xlim[2],
-          models
-        ],
-        na.rm = TRUE
+        ylim <- ylimAdj * range(
+          recdevsLower[
+            recdevs[["Yr"]] >= xlim[1] &
+              recdevs[["Yr"]] <= xlim[2],
+            models
+          ],
+          recdevsUpper[
+            recdevs[["Yr"]] >= xlim[1] &
+              recdevs[["Yr"]] <= xlim[2],
+            models
+          ],
+          na.rm = TRUE
         )
       }
       ylim <- range(-ylim, ylim) # make symmetric

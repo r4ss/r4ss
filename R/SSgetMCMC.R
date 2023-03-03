@@ -52,7 +52,6 @@ SSgetMCMC <-
            burnin = 0, # the number of values to discard for burnin
            thin = 1 # the thinning interval
   ) {
-
     # get MCMC output
     if (verbose) {
       message("reading MCMC output in\n", dir)

@@ -11,7 +11,6 @@ Ashleigh
 Athol
 BH
 Bartolino
-BirthSeas
 BootData
 Btarget
 Btgt
@@ -52,12 +51,10 @@ Mohn's
 NMFS
 NOAA
 NWFSC
-Nancie
 Nfleet
 Nsexes
 Nsurveys
 OFL
-Parallelization
 Param
 Pebesma
 Piner
@@ -72,17 +69,15 @@ SELEX
 SHA
 SPR
 SSB
-SSO
 SSout
 SSplotXXX
-SSsummarize
 SSv
 Spawner
 TG
-TPL
 TSC
 Thorson's
 Timeseries
+Tweedie
 VLab
 Valerio
 Vec
@@ -106,7 +101,6 @@ btarg
 catchability
 cex
 cexZ
-changepars
 checkInftr
 checkNA
 cjfas
@@ -134,17 +128,16 @@ dev
 devs
 diags
 dir
-dirvec
+doRetro
 doesn
 doi
-doRetro
+dplyr
 effN
 effNline
 endyr
 eol
 et
 exe
-exefile
 faq
 fileN
 filenaming
@@ -188,7 +181,7 @@ linepos
 linux
 loess
 lty
-mainTitle
+magrittr
 maintainer's
 maxcols
 maxrows
@@ -200,6 +193,7 @@ minnbubble
 mnwgt
 modelled
 modeloutput
+morphcompdbase
 multifig
 newhis
 newrow
@@ -209,7 +203,6 @@ nlminb
 nmfs
 noaa
 nohess
-nox
 num
 ofl
 ogive
@@ -218,7 +211,6 @@ outfile
 overplots
 param
 params
-parfile
 parlinenum
 parms
 pch
@@ -244,8 +236,6 @@ readLines
 readctl
 readdat
 readforecast
-readstarter
-readwtatage
 rebuilder
 recdev
 recdevs
@@ -257,7 +247,6 @@ rescaling
 retune
 retuning
 reweighting
-r4ss
 rgb
 rstudio
 sampsize
@@ -294,7 +283,6 @@ timeseries
 tk
 tolerace
 topleft
-topright
 tunings
 unfished
 unparsable
@@ -305,7 +293,6 @@ varadjust
 venus
 vlab
 wadbase
-wd
 writectl
 writedat
 wtatage

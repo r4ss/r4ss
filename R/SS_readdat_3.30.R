@@ -210,9 +210,10 @@ SS_readdat_3.30 <-
       datlist[["fleetinfo"]][["need_catch_mult"]] == 1)) {
       stop(
         "Catch multipler can be used only for fleet_type = 1; Check fleet = ",
-        paste0(which(datlist[["fleetinfo"]][["type"]] != 1 &
-          datlist[["fleetinfo"]][["need_catch_mult"]] == 1),
-        collapse = ", "
+        paste0(
+          which(datlist[["fleetinfo"]][["type"]] != 1 &
+            datlist[["fleetinfo"]][["need_catch_mult"]] == 1),
+          collapse = ", "
         ),
         " in fleet info."
       )
@@ -350,16 +351,30 @@ SS_readdat_3.30 <-
     }
     ## Length Comp information matrix (new for 3.30)
     datlist[["use_lencomp"]] <- get.val(dat, ind)
-    # only read all the stuff related to length comps if switch above = 1
-    if (datlist[["use_lencomp"]]) {
+    # only read all the stuff related to length comps if switch above = 1 or 2
+    if (datlist[["use_lencomp"]] %in% 1:2) {
+      # read table in format used up through 3.30.20
       # note: minsamplesize column not present in early 3.30 versions of SS
-      datlist[["len_info"]] <- get.df(dat, ind, datlist[["Nfleets"]])
-      colnames(datlist[["len_info"]]) <- c(
-        "mintailcomp", "addtocomp", "combine_M_F",
-        "CompressBins", "CompError", "ParmSelect",
-        "minsamplesize"
-      )[1:ncol(datlist[["len_info"]])]
-      rownames(datlist[["len_info"]]) <- datlist[["fleetnames"]]
+      if (datlist[["use_lencomp"]] == 1) {
+        datlist[["len_info"]] <- get.df(dat, ind, datlist[["Nfleets"]])
+        colnames(datlist[["len_info"]]) <- c(
+          "mintailcomp", "addtocomp", "combine_M_F",
+          "CompressBins", "CompError", "ParmSelect",
+          "minsamplesize"
+        )[1:ncol(datlist[["len_info"]])]
+        rownames(datlist[["len_info"]]) <- datlist[["fleetnames"]]
+      }
+      # read table in format used in 3.30.21
+      # when data-weighting by partition was added
+      # (more columns and "minsamplesize" column always present)
+      if (datlist[["use_lencomp"]] == 2) {
+        datlist[["len_info"]] <- get.df(dat, ind, nrow = NULL)
+        colnames(datlist[["len_info"]]) <- c(
+          "fleet", "partition", "mintailcomp", "addtocomp", "combine_M_F",
+          "CompressBins", "CompError", "ParmSelect",
+          "minsamplesize"
+        )
+      }
       ## Length comp data
       datlist[["N_lbins"]] <- get.val(dat, ind)
       datlist[["lbin_vector"]] <- get.vec(dat, ind)

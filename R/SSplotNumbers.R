@@ -27,7 +27,7 @@
 #' setup) is thousands (numbers.unit=1000).
 #' @param areas optional subset of areas to plot for spatial models
 #' @param areanames names for areas. Default is to use Area1, Area2,...
-#' @param areacols vector of colors by area
+#' @template areacols
 #' @param pntscalar maximum bubble size for bubble plots; each plot scaled
 #' independently based on this maximum size and the values plotted. Often some
 #' plots look better with one value and others with a larger or smaller value.
@@ -59,7 +59,7 @@ SSplotNumbers <-
            numbers.unit = 1000,
            areas = "all",
            areanames = "default",
-           areacols = "default",
+           areacols = NULL,
            pntscalar = 2.6,
            bub.bg = gray(0.5, alpha = 0.5),
            bublegend = TRUE,
@@ -93,7 +93,6 @@ SSplotNumbers <-
            plotdir = replist[["inputs"]][["dir"]],
            mainTitle = FALSE,
            verbose = TRUE) {
-
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -136,10 +135,8 @@ SSplotNumbers <-
         areanames <- paste0("area", 1:nareas)
       }
 
-      if (areacols[1] == "default") {
-        areacols <- rich.colors.short(nareas)
-        if (nareas > 2) areacols <- rich.colors.short(nareas + 1)[-1]
-      }
+      # set default area-specific colors if not specified
+      areacols <- get_areacols(areacols, nareas)
 
       if (SS_versionNumeric <= 3.1) {
         stop("numbers at age plots no longer supported for SS version 3.10 and earlier")
@@ -428,10 +425,12 @@ SSplotNumbers <-
               dev.off()
             }
           } else {
-            message(
-              "skipped sex ratio contour plot because females=males ",
-              "for all ages and years"
-            )
+            if (verbose) {
+              message(
+                "skipped sex ratio contour plot because females=males ",
+                "for all ages and years"
+              )
+            }
           }
         } # end area loop
       } # end if nsexes>1
@@ -510,8 +509,7 @@ SSplotNumbers <-
               if (nareas > 1) sextitle <- paste0(sextitle, " in ", areanames[iarea])
               if (period[iperiod] == "B") {
                 periodtitle <- labels[16]
-              } else
-              if (period[iperiod] == "M") {
+              } else if (period[iperiod] == "M") {
                 periodtitle <- labels[17]
               } else {
                 stop("'period' input to SSplotNumbers should include only 'B' or 'M'")
@@ -690,10 +688,12 @@ SSplotNumbers <-
                 dev.off()
               }
             } else {
-              message(
-                "skipped sex ratio contour plot because females=males",
-                " for all lengths and years"
-              )
+              if (verbose) {
+                message(
+                  "skipped sex ratio contour plot because females=males",
+                  " for all lengths and years"
+                )
+              }
             }
           } # end area loop
         } # end if nsexes>1

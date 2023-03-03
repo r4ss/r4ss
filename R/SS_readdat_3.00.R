@@ -237,11 +237,12 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
 
     datlist[["N_discard_fleets"]] <- N_discard_fleets <- length(unique(discard_data[["Flt"]]))
 
-    datlist[["discard_fleet_info"]] <- data.frame(matrix(c(
-      unique(discard_data[["Flt"]]),
-      rep(Dis_type, N_discard_fleets), rep(0, N_discard_fleets)
-    ),
-    nrow = N_discard_fleets, ncol = 3, byrow = FALSE
+    datlist[["discard_fleet_info"]] <- data.frame(matrix(
+      c(
+        unique(discard_data[["Flt"]]),
+        rep(Dis_type, N_discard_fleets), rep(0, N_discard_fleets)
+      ),
+      nrow = N_discard_fleets, ncol = 3, byrow = FALSE
     )) # fill discard fleet info with defaults
     names(datlist[["discard_fleet_info"]]) <- c("Fleet", "units", "errtype")
   } else {

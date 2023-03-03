@@ -308,18 +308,20 @@ NegLogInt_Fn <- function(dir = getwd(),
         )
         if (ifelse(is.na(as.numeric(PAR[11])), FALSE, as.numeric(PAR[16]) < 1)) {
           Converged <- TRUE
-          write(paste0(
-            "*** Optimization ", 2, "-", PreviousIteration,
-            " did converge ***"
-          ),
-          file = OptRecord, append = TRUE
+          write(
+            paste0(
+              "*** Optimization ", 2, "-", PreviousIteration,
+              " did converge ***"
+            ),
+            file = OptRecord, append = TRUE
           )
         } else {
-          write(paste0(
-            "*** Optimization ", 2, "-", PreviousIteration,
-            " didn't converge ***"
-          ),
-          file = OptRecord, append = TRUE
+          write(
+            paste0(
+              "*** Optimization ", 2, "-", PreviousIteration,
+              " didn't converge ***"
+            ),
+            file = OptRecord, append = TRUE
           )
         }
       }

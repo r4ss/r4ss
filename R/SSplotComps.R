@@ -294,10 +294,10 @@ SSplotComps <-
       kindlab <- labels[1]
       if (datonly) {
         filenamestart <- "comp_gstlendat_"
-        titledata <- "Ghost length comp data, "
+        titledata <- "Excluded length comp data, "
       } else {
         filenamestart <- "comp_gstlenfit_"
-        titledata <- "Ghost length comps, "
+        titledata <- "Excluded length comps, "
       }
     }
     if (kind == "SIZE") {
@@ -374,10 +374,10 @@ SSplotComps <-
       kindlab <- labels[2]
       if (datonly) {
         filenamestart <- "comp_gstagedat_"
-        titledata <- "Ghost age comp data, "
+        titledata <- "Excluded age comp data, "
       } else {
         filenamestart <- "comp_gstagefit_"
-        titledata <- "Ghost age comps, "
+        titledata <- "Excluded age comps, "
       }
     }
     if (kind == "GSTcond") {
@@ -385,10 +385,10 @@ SSplotComps <-
       kindlab <- labels[2]
       if (datonly) {
         filenamestart <- "comp_gstCAALdat_"
-        titledata <- "Ghost conditional age-at-length data, "
+        titledata <- "Excluded conditional age-at-length data, "
       } else {
         filenamestart <- "comp_gstCAALfit_"
-        titledata <- "Ghost conditional age-at-length comps, "
+        titledata <- "Excluded conditional age-at-length comps, "
       }
     }
     if (kind == "L@A") {
@@ -989,7 +989,6 @@ SSplotComps <-
     ### subplot 24: bubble plot comparison of length or age residuals
     ###             across fleets within sex/partition
     if (24 %in% subplots & kind %in% c("LEN", "AGE")) {
-
       # loop over partitions groups (everything, or separate discard, retain, total)
       for (j in unique(dbase_kind[["Part_group"]])) {
         # subset data.frame for this partition group and subset of fleets of interest
@@ -1260,7 +1259,7 @@ SSplotComps <-
         dbasef <- dbase_kind[dbase_kind[["Fleet"]] == f, ]
         # get mean sample quantities to show in conditional age-at-length figures
         if (kind %in% c("cond", "GSTcond") && f %in% Age_tuning[["Fleet"]]) {
-          #### these values not to be trusted in the presence of ghost data:
+          #### these values not to be trusted in the presence of excluded data:
           ## HarmEffNage <- Age_tuning$"HarMean(effN)"[Age_tuning[["Fleet"]]==f]
           ## MeanNage    <- Age_tuning$"mean(inputN*Adj)"[Age_tuning[["Fleet"]]==f]
           HarmEffNage <- NULL
@@ -1272,10 +1271,16 @@ SSplotComps <-
 
         # get table of info about the comp data of this kind/fleet
         if (kind %in% c("AGE", "GSTAGE", "cond", "GSTcond")) {
-          data_info <- replist[["age_data_info"]]
+          data_info <- replist[["Age_comp_error_controls"]]
+          if (is.null(data_info)) { # versions prior to 3.30.21
+            data_info <- replist[["age_data_info"]]
+          }
         }
         if (kind %in% c("LEN", "GSTLEN")) {
-          data_info <- replist[["len_data_info"]]
+          data_info <- replist[["Length_comp_error_controls"]]
+          if (is.null(data_info)) { # versions prior to 3.30.21
+            data_info <- replist[["len_data_info"]]
+          }
         }
 
         # loop over partitions (discard, retain, total)
@@ -1440,16 +1445,25 @@ SSplotComps <-
                 }
                 caption_extra <- ""
                 if (ipage == 1) {
-                  if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
-                    # get Theta value for this fleet
-                    if (kind %in% "LEN") {
-                      ipar <- data_info[["ParmSelect"]][f]
-                    } else { # "AGE" or "cond"
-                      ipar <- data_info[["ParmSelect"]][f]
+                  if (("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) |
+                    ("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]])))
+                  ) {
+                    # get Theta value for this fleet & partition
+
+                    # partition weighting added in 3.30.21
+                    if ("partition" %in% names(data_info)) { # added in 3.30.21
+                      sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
+                    } else {
+                      # earlier version without partition weighting
+                      # has one row per fleet so no "fleet" column
+                      sub <- f
                     }
+                    ParmSelect <- data_info[sub, "ParmSelect"]
+                    CompError <- data_info[sub, "CompError"]
+
                     # D-M option 1 (linear)
-                    if (data_info[["CompError"]][f] == 1) {
-                      Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
+                    if (CompError == 1) {
+                      Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
                       # note: in caption below &#920 = Theta
                       caption_extra <-
                         paste0(
@@ -1463,8 +1477,8 @@ SSplotComps <-
                         )
                     }
                     # D-M option 2 (saturating)
-                    if (data_info[["CompError"]][f] == 2) {
-                      beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
+                    if (CompError == 2) {
+                      beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
                       # note: in captions below &#946 = beta
                       caption_extra <-
                         paste0(

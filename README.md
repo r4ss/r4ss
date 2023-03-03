@@ -1,5 +1,6 @@
 # r4ss: R code for Stock Synthesis
 
+[![release date](https://img.shields.io/github/last-commit/r4ss/r4ss)](https://github.com/r4ss/r4ss/commits/main)
 [![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml)
 [![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r4ss/r4ss)
 [![cran version](http://www.r-pkg.org/badges/version/r4ss)](https://cran.r-project.org/package=r4ss)
@@ -38,8 +39,8 @@ than what's on CRAN. The github version also contains a vignette and
 additional model files that were too large for CRAN:
 
 ```S
-install.packages("remotes")
-remotes::install_github("r4ss/r4ss")
+install.packages("pak")
+pak::pkg_install("r4ss/r4ss")
 ```
 
 Once you have installed the r4ss package, it can be loaded using:
@@ -56,13 +57,7 @@ required, but those without an account may still view and post forum
 messages.
 
 A basic vignette (not available in the CRAN version) can be viewed at
-<https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html> or
-built locally on your computer using this command to install the
-package:
-
-```S
-remotes::install_github("r4ss/r4ss", build_vignettes = TRUE)
-```
+<https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html>.
 
 ## Citing r4ss
 

@@ -148,5 +148,7 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
   options(width = oldwidth)
   sink()
   close(zz)
-  if (verbose) message("file written to", outfile)
+  if (verbose) {
+    message("file written to ", outfile)
+  }
 }
