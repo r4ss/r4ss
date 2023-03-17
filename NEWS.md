@@ -83,8 +83,7 @@ cleanup of terminology in latest Stock Synthesis
 * Slacked off on updating this NEWS file
 
 # r4ss 1.24.3
-* Implemented automated R package check on Travis-CI:
-https://travis-ci.org/r4ss/r4ss
+* Implemented automated R package check on Travis-CI
 
 # r4ss 1.24.2
 * SS_varadjust now works for use in automating variance adjustments
