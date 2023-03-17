@@ -7,10 +7,10 @@
 selShapes()
 }
 \description{
-This app is hosted at https://connect.fisheries.noaa.gov/shiny-selex-ss3/
+This app is hosted at https://connect.fisheries.noaa.gov/ss3-helper/
 }
 \author{
-Allan Hicks, Andrea Havron, Ian Taylor,
+Allan Hicks, Andrea Havron, Ian Taylor
 
 inspired by tcl/tk code written by Tommy Garrison
 }
