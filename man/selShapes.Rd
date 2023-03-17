@@ -10,7 +10,7 @@ selShapes()
 This app is hosted at https://connect.fisheries.noaa.gov/ss3-helper/
 }
 \author{
-Allan Hicks, Andrea Havron, Ian Taylor
+Allan C. Hicks, Andrea M. Havron, Ian G. Taylor, Kathryn L. Doering
 
 inspired by tcl/tk code written by Tommy Garrison
 }

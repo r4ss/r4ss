@@ -2,7 +2,7 @@
 #'
 #' This app is hosted at https://connect.fisheries.noaa.gov/ss3-helper/
 #' @export
-#' @author Allan Hicks, Andrea Havron, Ian Taylor
+#' @author Allan C. Hicks, Andrea M. Havron, Ian G. Taylor, Kathryn L. Doering
 #' @author inspired by tcl/tk code written by Tommy Garrison
 
 selShapes <- function() {
