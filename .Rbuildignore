@@ -7,7 +7,6 @@ revdep
 ^CRAN-RELEASE$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-docs
 ^jenkins
 ^\.github/
 ^\.github$
@@ -23,3 +22,6 @@ docs
 # ^inst/extdata/models/
 # ^inst/extdata/simple_3.24/
 # ^vignettes/
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
