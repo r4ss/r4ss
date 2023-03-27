@@ -1,6 +1,6 @@
 ---
 title: "Introduction to r4ss"
-author: "Ian Taylor and Kathryn L. Doering"
+author: "Ian G. Taylor and Kathryn L. Doering"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:

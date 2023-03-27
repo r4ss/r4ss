@@ -4,6 +4,7 @@ inst/extdata/simple_3.30.01/
 inst/extdata/simple_3.30.12/
 inst/extdata/simple_3.30.13/
 inst/extdata/simple_small_*
+vignettes/simple_new
 
 plots
 *.p0*
