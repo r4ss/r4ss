@@ -56,8 +56,11 @@ that to subscribe to the Stock Synthesis VLab forums, an account is
 required, but those without an account may still view and post forum
 messages.
 
-A basic vignette (not available in the CRAN version) can be viewed at
-<https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html>.
+The r4ss website <https://r4ss.github.io/r4ss> includes a vignette explaining 
+the use of common functions and 
+[example r4ss plots](https://r4ss.github.io/r4ss/assets/BigSkate) from a 2019 
+Big Skate stock assessment for the U.S. West Coast 
+(which used SS version 3.30.13.02 and r4ss version 1.39.0). 
 
 ## Citing r4ss
 
