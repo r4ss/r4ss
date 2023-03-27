@@ -34,6 +34,7 @@ SS_plots(replist)
 Useful links:
 \itemize{
   \item \url{https://github.com/r4ss/r4ss}
+  \item \url{https://r4ss.github.io/r4ss/}
   \item Report bugs at \url{https://github.com/r4ss/r4ss/issues}
 }
 

@@ -61,7 +61,7 @@ such as to test upcoming features.
 To install alternative versions of r4ss, provide a reference to the
 `install_github`, such as  
 ```{r, install-older-version, eval=FALSE}
-remotes::install_github("r4ss/r4ss", ref = "1.46.1") # install r4ss version 1.26.0
+pak::pkg_install("r4ss/r4ss@1.46.1") # install r4ss version 1.46.1
 ```
 where the `ref` input can be a release number, the name of a branch on
 GitHub, or a git SHA-1 code, which are [listed with all code changes
