@@ -1,0 +1,12 @@
+# updates exiting pkgdown site for a repository
+# deploys to a branch gh-pages
+name: call-update-pkgdown
+# on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
+on:
+# this workflow runs on pushes to main or master or any time a new tag is pushed
+  push:
+    branches: [main, master]
+    tags: ['*']
+jobs:
+  call-workflow:
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/update-pkgdown.yml@main

@@ -78,7 +78,8 @@ Description: A collection of R functions for use with Stock Synthesis, a
 License: GPL-3
 Encoding: UTF-8
 LazyLoad: yes
-URL: https://github.com/r4ss/r4ss
+URL: https://github.com/r4ss/r4ss,
+    https://r4ss.github.io/r4ss/
 BugReports: https://github.com/r4ss/r4ss/issues
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
