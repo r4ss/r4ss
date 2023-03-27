@@ -1,3 +1,9 @@
+# r4ss 1.48.0 (27 March 2023)
+* Bug fixes and cosmetic changes
+  * Use {pkgdown} to develop a better website
+  * Change logo
+  * Update install instructions on README to use {pak}
+
 # r4ss 1.47.0 (31 January 2023)
 * Support new SS3 option to estimate separate Dirichlet-multinomial parameters 
   for retained vs discards
