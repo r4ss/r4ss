@@ -1,0 +1,101 @@
+<html><head><title>SS Output</title>
+    <!-- source for text below is http://unraveled.com/publications/css_tabs/ -->
+    <!-- CSS Tabs is licensed under Creative Commons Attribution 3.0 - http://creativecommons.org/licenses/by/3.0/ -->
+    
+    <style type="text/css">
+    
+    body {
+    font: 100% verdana, arial, sans-serif;
+    background-color: #fff;
+    margin: 50px;
+    }
+    
+    /* begin css tabs */
+    
+    ul#tabnav { /* general settings */
+    text-align: left; /* set to left, right or center */
+    margin: 1em 0 1em 0; /* set margins as desired */
+    font: bold 11px verdana, arial, sans-serif; /* set font as desired */
+    border-bottom: 1px solid #6c6; /* set border COLOR as desired */
+    list-style-type: none;
+    padding: 3px 10px 2px 10px; /* THIRD number must change with respect to padding-top (X) below */
+    }
+    
+    ul#tabnav li { /* do not change */
+    display: inline;
+    }
+    
+    body#tab1 li.tab1, body#tab2 li.tab2, body#tab3 li.tab3, body#tab4 li.tab4 { /* settings for selected tab */
+    border-bottom: 1px solid #fff; /* set border color to page background color */
+    background-color: #fff; /* set background color to match above border color */
+    }
+    
+    body#tab1 li.tab1 a, body#tab2 li.tab2 a, body#tab3 li.tab3 a, body#tab4 li.tab4 a { /* settings for selected tab link */
+    background-color: #fff; /* set selected tab background color as desired */
+    color: #000; /* set selected tab link color as desired */
+    position: relative;
+    top: 1px;
+    padding-top: 4px; /* must change with respect to padding (X) above and below */
+    }
+    
+    ul#tabnav li a { /* settings for all tab links */
+    padding: 2px 4px; /* set padding (tab size) as desired; FIRST number must change with respect to padding-top (X) above */
+    border: 1px solid #6c6; /* set border COLOR as desired; usually matches border color specified in #tabnav */
+    background-color: #cfc; /* set unselected tab background color as desired */
+    color: #666; /* set unselected tab link color as desired */
+    margin-right: 0px; /* set additional spacing between tabs as desired */
+    text-decoration: none;
+    border-bottom: none;
+    }
+    
+    ul#tabnav a:hover { /* settings for hover effect */
+    background: #fff; /* set desired hover color */
+    }
+    
+    /* end css tabs */
+    
+    
+    h2 {
+    font-size: 20px;
+    color: #4c994c;
+    padding-top: 1px;
+    font-weight: bold;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #6c6;
+    padding-bottom: 2px;
+    padding-left: 0px;
+    }
+    </style></head>
+<!-- Site navigation menu -->
+   <ul id="tabnav">
+    <li class="tab1"><a href="_SS_output.html">Home</a></li>
+    <li class="tab2"><a href="_SS_output_Bio.html">Bio</a></li>
+    <li class="tab3"><a href="_SS_output_Sel.html">Sel</a></li>
+    <li class="tab4"><a href="_SS_output_Timeseries.html">Timeseries</a></li>
+    <li class="tab5"><a href="_SS_output_S-R.html">S-R</a></li>
+    <li class="tab6"><a href="_SS_output_Catch.html">Catch</a></li>
+    <li class="tab7"><a href="_SS_output_SPR.html">SPR</a></li>
+    <li class="tab8"><a href="_SS_output_Discard.html">Discard</a></li>
+    <li class="tab9"><a href="_SS_output_Mnwt.html">Mnwt</a></li>
+    <li class="tab10"><a href="_SS_output_Index.html">Index</a></li>
+    <li class="tab11"><a href="_SS_output_Numbers.html">Numbers</a></li>
+    <li class="tab12"><a href="_SS_output_CompDat.html">CompDat</a></li>
+    <li class="tab13"><a href="_SS_output_LenComp.html">LenComp</a></li>
+    <li class="tab14"><a href="_SS_output_AgeComp.html">AgeComp</a></li>
+    <li class="tab15"><a href="_SS_output_A@LComp.html">A@LComp</a></li>
+    <li class="tab16"><a href="_SS_output_Mean@A.html">Mean@A</a></li>
+    <li class="tab17"><a href="_SS_output_Yield.html">Yield</a></li>
+    <li class="tab18"><a href="_SS_output_Data.html">Data</a></li>
+    <li class="tab19"><a href="_SS_output_Pars.html">Pars</a></li>
+    <li class="tab20"><a href="_SS_output_DiagnosticTables.html">DiagnosticTables</a></li>
+  </ul>
+
+
+<h2><a name="AgeComp">AgeComp</h2>
+<p align=left><a href='comp_gstagefit_flt1mkt2.png'><img src='comp_gstagefit_flt1mkt2.png' border=0 width=500 alt=''></a><br>Excluded age comps, retained, Fishery_current.<br><br>'N adj.' is the input sample size after data-weighting adjustment. N eff. is the calculated effective sample size used in the McAllister-Ianelli tuning method.<br><i><small>file: <a href='comp_gstagefit_flt1mkt2.png'>comp_gstagefit_flt1mkt2.png</a></small></i>
+<p align=left><a href='comp_gstagefit_residsflt1mkt2.png'><img src='comp_gstagefit_residsflt1mkt2.png' border=0 width=500 alt=''></a><br>Pearson residuals, retained, Fishery_current (max=NA) <br> 
+Closed bubbles are positive residuals (observed > expected) and open bubbles are negative residuals (observed < expected).<br><i><small>file: <a href='comp_gstagefit_residsflt1mkt2.png'>comp_gstagefit_residsflt1mkt2.png</a></small></i>
+<p align=left><a href='comp_gstagefit_flt5mkt0.png'><img src='comp_gstagefit_flt5mkt0.png' border=0 width=500 alt=''></a><br>Excluded age comps, whole catch, WCGBTS.<br><br>'N adj.' is the input sample size after data-weighting adjustment. N eff. is the calculated effective sample size used in the McAllister-Ianelli tuning method.<br><i><small>file: <a href='comp_gstagefit_flt5mkt0.png'>comp_gstagefit_flt5mkt0.png</a></small></i>
+<p align=left><a href='comp_gstagefit_residsflt5mkt0.png'><img src='comp_gstagefit_residsflt5mkt0.png' border=0 width=500 alt=''></a><br>Pearson residuals, whole catch, WCGBTS (max=NA) <br> 
+Closed bubbles are positive residuals (observed > expected) and open bubbles are negative residuals (observed < expected).<br><i><small>file: <a href='comp_gstagefit_residsflt5mkt0.png'>comp_gstagefit_residsflt5mkt0.png</a></small></i>
