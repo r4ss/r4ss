@@ -6,6 +6,8 @@
 \alias{r4ss-package}
 \title{r4ss: R Code for Stock Synthesis}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of '{r4ss}' is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.21 beta, from January 2023). Support for 3.24 models is only through the core functions for reading output and plotting.
 }
 \examples{
@@ -32,6 +34,7 @@ SS_plots(replist)
 Useful links:
 \itemize{
   \item \url{https://github.com/r4ss/r4ss}
+  \item \url{https://r4ss.github.io/r4ss/}
   \item Report bugs at \url{https://github.com/r4ss/r4ss/issues}
 }
 
