@@ -59,6 +59,7 @@ Param
 Pebesma
 Piner
 Piner's
+README
 Rdata
 Rebuilder
 ReferencePoints
@@ -209,6 +210,7 @@ ogive
 optim
 outfile
 overplots
+pak
 param
 params
 parlinenum
@@ -216,6 +218,7 @@ parms
 pch
 pearson
 persp
+pkgdown
 pldat
 plindx
 plotInfoTable
