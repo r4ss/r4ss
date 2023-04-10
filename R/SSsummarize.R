@@ -90,7 +90,7 @@ SSsummarize <- function(biglist,
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
   # objects to store quantities
-  pars <- parsSD <- parphases <- par_prior_likes <- 
+  pars <- parsSD <- parphases <- par_prior_likes <-
     as.data.frame(matrix(NA, nrow = length(parnames), ncol = n))
   quants <- quantsSD <- as.data.frame(matrix(NA, nrow = length(dernames), ncol = n))
   maxgrad <- NULL
@@ -346,12 +346,12 @@ SSsummarize <- function(biglist,
 
 
   ### format and process info from the models
-  names(pars) <- names(parsSD) <- names(parphases) <- names(par_prior_likes) <- 
+  names(pars) <- names(parsSD) <- names(parphases) <- names(par_prior_likes) <-
     modelnames
   names(quants) <- names(quantsSD) <- modelnames
   names(likelihoods) <- names(likelambdas) <- modelnames
 
-  pars[["Label"]] <- parsSD[["Label"]] <- parphases[["Label"]] <- 
+  pars[["Label"]] <- parsSD[["Label"]] <- parphases[["Label"]] <-
     par_prior_likes[["Label"]] <- parnames
   quants[["Label"]] <- quantsSD[["Label"]] <- dernames
   likelihoods[["Label"]] <- likelambdas[["Label"]] <- likenames

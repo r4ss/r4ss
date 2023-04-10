@@ -283,7 +283,7 @@ SSplotProfile <-
     if (add_no_prior_line) {
       component.labels.used <- c(component.labels.used, "Total without prior")
     }
-    
+
     # define colors and line types
     if (col[1] == "default") {
       col <- rich.colors.short(nlines)
@@ -300,7 +300,7 @@ SSplotProfile <-
     lwd <- c(lwd.total, rep(lwd, nlines - 1), ifelse(add_no_prior_line, lwd, NULL))
     cex <- c(cex.total, rep(cex, nlines - 1), ifelse(add_no_prior_line, cex.total, NULL))
     lty <- c(lty.total, rep(lty, nlines - 1), ifelse(add_no_prior_line, 2, NULL))
-    
+
     # make plot
     plotprofile <- function() {
       plot(0,
@@ -313,7 +313,8 @@ SSplotProfile <-
       if (add_cutoff) {
         abline(h = 0.5 * qchisq(p = cutoff_prob, df = 1), lty = 2)
       }
-      matplot(x = parvec, 
+      matplot(
+        x = parvec,
         y = prof.table,
         type = type,
         pch = pch, col = col,
