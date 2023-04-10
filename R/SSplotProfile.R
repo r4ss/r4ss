@@ -67,6 +67,8 @@
 #' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
 #' can be adjusted using the `cutoff_prob` below.
 #' @param cutoff_prob Probability associated with `add_cutoff` above.
+#' @param add_no_prior_line Add line showing total likelihood without
+#' the prior (only appears when profiled parameter that includes a prior)
 #' @template verbose
 #' @param \dots Additional arguments passed to the `plot` command.
 #' @note Someday the function [profile()] will be improved and
@@ -151,6 +153,7 @@ SSplotProfile <-
            plotdir = NULL,
            add_cutoff = FALSE,
            cutoff_prob = 0.95,
+           add_no_prior_line = TRUE,
            verbose = TRUE, ...) {
     if (print) {
       if (is.null(plotdir)) {
@@ -177,6 +180,7 @@ SSplotProfile <-
       )
     }
     pars <- summaryoutput[["pars"]]
+    par_prior_likes <- summaryoutput[["par_prior_likes"]]
 
     # check number of models to be plotted
     if (models[1] == "all") {
@@ -205,10 +209,15 @@ SSplotProfile <-
       )
     }
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
+    par_prior_like_vec <- as.numeric(par_prior_likes[par_prior_likes[["Label"]] == parlabel, models])
     message("Parameter matching profile.string=", profile.string, ": ", parlabel)
     message(
       "Parameter values (after subsetting based on input 'models'): ",
       paste0(parvec, collapse = ", ")
+    )
+    message(
+      "Parameter prior likelihoods: ",
+      paste0(par_prior_like_vec, collapse = ", ")
     )
     if (xlim[1] == "default") xlim <- range(parvec)
 
@@ -225,10 +234,15 @@ SSplotProfile <-
       component.labels.good[icol] <- component.labels[ilabel]
     }
 
+    # calculate total likelihood without any prior on the profiled parameter
+    par_prior_like_vec[is.na(par_prior_like_vec)] <- 0
+    TOTAL_no_prior <- prof.table$TOTAL - par_prior_like_vec
+
     # subtract minimum value from each likelihood component (over requested parameter range)
     subset <- parvec >= xlim[1] & parvec <= xlim[2]
     for (icol in 1:ncol(prof.table)) {
       prof.table[, icol] <- prof.table[, icol] - min(prof.table[subset, icol])
+      TOTAL_no_prior <- TOTAL_no_prior - min(TOTAL_no_prior)
     }
     if (ymax == "default") ymax <- 1.1 * max(prof.table[subset, ])
     ylim <- c(0, ymax)
@@ -264,17 +278,29 @@ SSplotProfile <-
       }
     }
 
+    # add TOTAL_no_prior to table
+    prof.table <- data.frame(prof.table, TOTAL_no_prior)
+    if (add_no_prior_line) {
+      component.labels.used <- c(component.labels.used, "Total without prior")
+    }
+    
+    # define colors and line types
     if (col[1] == "default") {
       col <- rich.colors.short(nlines)
     }
     if (pch[1] == "default") {
       pch <- 1:nlines
     }
-    lwd <- c(lwd.total, rep(lwd, nlines - 1))
-    cex <- c(cex.total, rep(cex, nlines - 1))
-    lty <- c(lty.total, rep(lty, nlines - 1))
-    # return(prof.table)
-
+    # total without prior matches total (first value)
+    if (add_no_prior_line) {
+      col <- c(col, col[1])
+      pch <- c(pch, NA)
+    }
+    # make total line wider with bigger points (or whatever user chooses)
+    lwd <- c(lwd.total, rep(lwd, nlines - 1), ifelse(add_no_prior_line, lwd, NULL))
+    cex <- c(cex.total, rep(cex, nlines - 1), ifelse(add_no_prior_line, cex.total, NULL))
+    lty <- c(lty.total, rep(lty, nlines - 1), ifelse(add_no_prior_line, 2, NULL))
+    
     # make plot
     plotprofile <- function() {
       plot(0,
@@ -287,11 +313,13 @@ SSplotProfile <-
       if (add_cutoff) {
         abline(h = 0.5 * qchisq(p = cutoff_prob, df = 1), lty = 2)
       }
-      matplot(parvec, prof.table,
+      matplot(x = parvec, 
+        y = prof.table,
         type = type,
         pch = pch, col = col,
         cex = cex, lty = lty, lwd = lwd, add = T
       )
+
       if (legend) {
         legend(legendloc,
           bty = "n", legend = component.labels.used,
