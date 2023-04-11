@@ -250,8 +250,8 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     ctllist[["Nfleets"]] <- Nfleets <- datlist[["Nfleets"]]
     # ctllist[["Nsurveys"]]<-Nsurveys<-datlist[["Nsurveys"]]
     # short circuit logic to avoid error if it is null.
-    if (!is.null(datlist[["N_ageerror_definition"]]) &&
-      datlist[["N_ageerror_definition"]] > 0) {
+    if (!is.null(datlist[["N_ageerror_definitions"]]) &&
+      datlist[["N_ageerror_definitions"]] > 0) {
       ctllist[["Do_AgeKey"]] <- ifelse(
         any(datlist[["ageerror"]][1:(nrow(datlist[["ageerror"]]) / 2) * 2, 1] < 0), 1, 0
       )
