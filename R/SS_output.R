@@ -1584,12 +1584,11 @@ SS_output <-
         if (stats[["N_estimated_parameters"]] != N_estimated_parameters2) {
           warning(
             stats[["N_estimated_parameters"]],
-            "estimated parameters indicated by", parfile, "\n",
+            " estimated parameters indicated by the par file\n  ",
             N_estimated_parameters2,
-            "estimated parameters shown in", covarfile, "\n",
-            "returning the first value:", stats[["N_estimated_parameters"]]
+            " estimated parameters shown in the covar file\n  ",
+            "Returning the par file value: ", stats[["N_estimated_parameters"]]
           )
-          stats[["N_estimated_parameters"]] <- stats[["N_estimated_parameters"]]
         }
       }
       Nstd <- sum(stdtable[["std"]] > 0)
@@ -3611,14 +3610,21 @@ SS_output <-
     }
     returndat[["Z_at_age"]] <- Z_at_age
 
-    # M at age table ends with comments
-    #   Note:  Z calculated as -ln(Nt+1 / Nt)
-    #   Note:  Z calculation for maxage not possible, for maxage-1 includes numbers at maxage, so is approximate
-    M_at_age <- match_report_table("Z_AT_AGE_Annual_1", 1,
-      "-ln(Nt+1", -1,
-      matchcol2 = 5,
-      header = TRUE
-    )
+    if (!is.na(match_report_line("Report_Z_by_area_morph_platoon"))) {
+      # from 3.30.16.03 onward the old end of the Z_AT_AGE_Annual 1 table 
+      # doesn't work so should just use the blank line 
+      # (not available in early versions)
+      M_at_age <- match_report_table("Z_AT_AGE_Annual_1", 1, header = TRUE)
+    } else {
+      # In earlier versions the M at age table ended with comments
+      #   Note:  Z calculated as -ln(Nt+1 / Nt)
+      #   Note:  Z calculation for maxage not possible, for maxage-1 includes numbers at maxage, so is approximate
+      M_at_age <- match_report_table("Z_AT_AGE_Annual_1", 1,
+        "-ln(Nt+1", -1,
+        matchcol2 = 5,
+        header = TRUE
+      )
+    }
     if (!is.null(M_at_age)) {
       M_at_age[M_at_age == "_"] <- NA
       # if birth season is not season 1, you can get infinite values
@@ -3641,6 +3647,7 @@ SS_output <-
         )
         M_by_area <- match_report_table("Report_Z_by_area_morph_platoon_1",
           adjust1 = 1,
+          adjust2 = -3, # remove 2 lines at end ("Note:  Z calculated as -ln(Nt+1 / Nt)")
           header = TRUE,
           type.convert = TRUE
         )
