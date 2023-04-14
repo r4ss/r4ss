@@ -211,16 +211,22 @@ SSMethod.TA1.8 <-
       pldat[i, "Obsmn"] <- sum(subdbase[["Obs"]] * xvar) / sum(subdbase[["Obs"]])
       # expected mean
       pldat[i, "Expmn"] <- sum(subdbase[["Exp"]] * xvar) / sum(subdbase[["Exp"]])
-      # standard error of the mean
-      if(!"DM_effN" %in% names(subdbase) || any(is.na(subdbase[["DM_effN"]]))) {
-        # use adjusted input sample size for Francis or MI weighting options
-        Nsamp <- subdbase[["Nsamp_adj"]] 
-      } else {
-        # use dirichlet multinomial value if present
+
+      # use adjusted input sample size for Francis or MI weighting options
+      Nsamp <- subdbase[["Nsamp_adj"]] 
+      if("DM_effN" %in% names(subdbase) || any(is.na(subdbase[["DM_effN"]]))) {
+        # dirichlet multinomial older format
         Nsamp <- subdbase[["DM_effN"]] 
       }
+      if("Nsamp_DM" %in% names(subdbase) || any(is.na(subdbase[["Nsamp_DM"]]))) {
+        # dirichlet multinomial newer format
+        Nsamp <- subdbase[["Nsamp_DM"]] 
+      }
+
+      # standard error of the mean
       pldat[i, "semn"] <- sqrt((sum(subdbase[["Exp"]] * xvar^2) / sum(subdbase[["Exp"]]) -
         pldat[i, "Expmn"]^2) / mean(Nsamp))
+      # calculate confidence intervals and other stuff
       pldat[i, "Obslo"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"]
       pldat[i, "Obshi"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"]
       pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) / pldat[i, "semn"]

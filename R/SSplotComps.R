@@ -18,9 +18,13 @@
 #'   \item 6 multi-panel plot of point and line fit to conditional
 #'           age-at-length for specific length bins
 #'   \item 7 sample size plot
-#'   \item 8 TA1.8 Francis weighting plot
-#'   \item 9 TA1.8 Francis weighting plot for conditional data
-#'   \item 10 Andre's mean age and std. dev. in conditional AAL
+#'   \item 8 TA1.8 Francis plot for marginal data with 
+#'           Dirichlet-Multinomial and no Francis adjustment
+#'   \item 9 TA1.8 Francis weighting plot for marginal data
+#'   \item 10 TA1.8 Francis plot for conditional data with
+#'           Dirichlet-Multinomial and no Francis adjustment
+#'   \item 11 TA1.8 Francis weighting plot for conditional data
+#'   \item 12 Andre's mean age and std. dev. in conditional AAL
 #'   \item 21 composition by fleet aggregating across years
 #'   \item 22 composition by fleet aggregating across years within each season
 #'   \item 23 composition by fleet aggregating across seasons within a year
@@ -184,30 +188,6 @@ SSplotComps <-
     ################################################################################
     # SSplotComps
     ################################################################################
-
-    ###### list of subplots
-    ###
-    ### { # loop over fleets
-    ###
-    ### subplot 1: multi-panel composition plot
-    ### subplot 2: single panel bubble plot for numbers at length or age
-    ### subplot 3: multi-panel bubble plots for conditional age-at-length
-    ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
-    ### subplot 5: Pearson residuals for A-L key
-    ### subplot 6: multi-panel plot of point and line fit to conditional
-    ###            age-at-length for specific length bins
-    ### subplot 7: sample size plot
-    ### subplot 8: TA1.8 Francis weighting plot
-    ### subplot 9: TA1.8 Francis weighting plot for conditional data
-    ### subplot 10: Andre's mean age and std. dev. in conditional AAL
-    ###
-    ### } # end loop over fleets
-    ###
-    ### subplot 21: by fleet aggregating across years
-    ### subplot 22: by fleet aggregating across years within each season
-    ### subplot 23: by fleet aggregating across seasons within a year
-    ### subplot 24: bubble plot comparison of length or age residuals
-    ###             across fleets within partition
 
     # table to store information on each plot
     plotinfo <- NULL
@@ -445,7 +425,6 @@ SSplotComps <-
       }
     }
 
-
     # Add asterix to indicate super periods and then remove rows labeled "skip".
     # It would be better to somehow show the range of years, but that seems difficult.
     if (any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")) {
@@ -513,8 +492,8 @@ SSplotComps <-
                 obs = dbase[["Obs"]] * dbase[["Nsamp_adj"]],
                 exp = dbase[["Exp"]] * dbase[["Nsamp_adj"]]
               )
-              if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
-                df[["DM_effN"]] <- dbase[["DM_effN"]]
+              if ("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]]))) {
+                df[["Nsamp_DM"]] <- dbase[["Nsamp_DM"]]
               }
 
               agg <- aggregate(
@@ -539,8 +518,8 @@ SSplotComps <-
                 for (mkt in unique(agg[["mkt"]][agg[["f"]] == f])) {
                   sub <- agg[["f"]] == f & agg[["mkt"]] == mkt
                   agg[["Nsamp_adj"]][sub] <- max(agg[["Nsamp_adj"]][sub])
-                  if ("DM_effN" %in% names(agg) && any(!is.na(agg[["DM_effN"]]))) {
-                    agg[["DM_effN"]][sub] <- max(agg[["DM_effN"]][sub], na.rm = TRUE)
+                  if ("Nsamp_DM" %in% names(agg) && any(!is.na(agg[["Nsamp_DM"]]))) {
+                    agg[["Nsamp_DM"]][sub] <- max(agg[["Nsamp_DM"]][sub], na.rm = TRUE)
                   } else {
                     if (any(!is.na(agg[["effN"]][sub]))) {
                       agg[["effN"]][sub] <- max(agg[["effN"]][sub], na.rm = TRUE)
@@ -563,13 +542,13 @@ SSplotComps <-
                 # group remaining calculations as a function
                 tempfun7 <- function(ipage, ...) {
                   # test for Dirichlet-Multinomial likelihood
-                  if ("DM_effN" %in% names(agg) && any(!is.na(agg[["DM_effN"]]))) {
+                  if ("Nsamp_DM" %in% names(agg) && any(!is.na(agg[["Nsamp_DM"]]))) {
                     # Dirichlet-Multinomial likelihood
                     make_multifig(
                       ptsx = agg[["bin"]], ptsy = agg[["obs"]], yr = paste(agg[["f"]], agg[["mkt"]]),
                       linesx = agg[["bin"]], linesy = agg[["exp"]],
                       sampsize = agg[["Nsamp_adj"]],
-                      effN = agg[["DM_effN"]],
+                      effN = agg[["Nsamp_DM"]],
                       showsampsize = showsampsize, showeffN = showeffN,
                       sampsize_label = "Sum of N input=",
                       effN_label = "Sum of N adj.=",
@@ -670,7 +649,7 @@ SSplotComps <-
     if (22 %in% subplots & kind != "cond" & nseasons > 1) # for age or length comps, but not conditional AAL
       {
         dbasef <- dbase_kind[dbase_kind[["Fleet"]] %in% fleets, ]
-        if ("DM_effN" %in% names(dbasef) && any(!is.na(dbasef[["DM_effN"]]))) {
+        if ("Nsamp_DM" %in% names(dbasef) && any(!is.na(dbasef[["Nsamp_DM"]]))) {
           warning("Sample sizes in plots by fleet aggregating across years within each season have not yet been updated to reflect Dirichlet-Multinomial likelihood")
         }
         # check for the presence of data
@@ -838,7 +817,7 @@ SSplotComps <-
       # loop over fleets
       for (f in fleets) {
         dbasef <- dbase_kind[dbase_kind[["Fleet"]] == f, ]
-        if ("DM_effN" %in% names(dbasef) && any(!is.na(dbasef[["DM_effN"]]))) {
+        if ("Nsamp_DM" %in% names(dbasef) && any(!is.na(dbasef[["Nsamp_DM"]]))) {
           warning("Sample sizes in plots by fleet aggregating across seasons within a year have not yet been updated to reflect Dirichlet-Multinomial likelihood")
         }
 
@@ -1352,13 +1331,13 @@ SSplotComps <-
               # a function to combine a bunch of repeated commands
               if (!(kind %in% c("GSTAGE", "GSTLEN", "L@A", "W@A"))) {
                 # test for Dirichlet-Multinomial likelihood
-                if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
+                if ("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]]))) {
                   # Dirichlet-Multinomial likelihood
                   make_multifig(
                     ptsx = dbase[["Bin"]], ptsy = dbase[["Obs"]], yr = dbase[["Yr.S"]],
                     linesx = dbase[["Bin"]], linesy = dbase[["Exp"]],
                     sampsize = dbase[["Nsamp_adj"]],
-                    effN = dbase[["DM_effN"]],
+                    effN = dbase[["Nsamp_DM"]],
                     showsampsize = showsampsize, showeffN = showeffN,
                     sampsize_label = "N input=",
                     effN_label = "N adj.=",
@@ -1458,10 +1437,8 @@ SSplotComps <-
                 }
                 caption_extra <- ""
                 if (ipage == 1) {
-                  if (("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) |
-                    ("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]])))
-                  ) {
-                    # get Theta value for this fleet & partition
+                  if ("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]]))) {
+                    # if using DM likelihood, get Theta value for this fleet & partition
 
                     # partition weighting added in 3.30.21
                     if ("partition" %in% names(data_info)) { # added in 3.30.21
@@ -1480,13 +1457,14 @@ SSplotComps <-
                       # note: in caption below &#920 = Theta
                       caption_extra <-
                         paste0(
-                          ".<br><br>'N input' is the input sample size. ",
+                          ".<br>'N input' is the input sample size. ",
                           "'N adj.' is the sample size after adjustment by the ",
                           "Dirichlet-Multinomial <i>&#920</i> parameter based on the ",
                           "formula N adj. = 1 / (1+<i>&#920</i>) + N * <i>&#920</i> / (1+<i>&#920</i>). ",
-                          "<br><br>For this fleet, <i>&#920</i> = ", round(Theta, 3),
+                          "<br>For this fleet, <i>&#920</i> = ", round(Theta, 3),
                           " and the sample size multiplier is approximately ",
-                          "<i>&#920</i> / (1+<i>&#920</i>) = ", round(Theta / (1 + Theta), 3)
+                          "<i>&#920</i> / (1+<i>&#920</i>) = ", round(Theta / (1 + Theta), 3),
+                          "."
                         )
                     }
                     # D-M option 2 (saturating)
@@ -1495,7 +1473,7 @@ SSplotComps <-
                       # note: in captions below &#946 = beta
                       caption_extra <-
                         paste0(
-                          ".<br><br>'N input' is the input sample size. ",
+                          ".<br>'N input' is the input sample size. ",
                           "'N adj.' is the sample size after adjustment by the ",
                           "Dirichlet-Multinomial <i>&#946</i> parameter based on the ",
                           "formula N adj. = (N + N<i>&#946</i>) / (N + <i>&#946</i>). ",
@@ -1506,18 +1484,9 @@ SSplotComps <-
                     }
                     caption_extra <- paste0(
                       caption_extra,
-                      "<br><br>For more info, see<br>",
-                      "<blockquote>",
-                      "Thorson, J.T., Johnson, K.F., ",
-                      "Methot, R.D. and Taylor, I.G. 2017. ",
-                      "Model-based estimates of effective sample size ",
-                      "in stock assessment models using the ",
-                      "Dirichlet-multinomial distribution. ",
-                      "<i>Fisheries Research</i>",
-                      "192: 84-93. ",
+                      " For more info, see ",
                       "<a href=https://doi.org/10.1016/j.fishres.2016.06.005>",
-                      "https://doi.org/10.1016/j.fishres.2016.06.005</a>",
-                      "</blockquote>"
+                      "Thorson et al. (2017)</a>."
                     )
                   } else { # if not using Dirichlet-Multinomial likelihood
                     caption_extra <-
@@ -2025,163 +1994,203 @@ SSplotComps <-
             }
           } # end subplot 7
 
-          ### subplot 8: R.I.C Chris Francis TA1.8 method for non-conditional data
-          if (8 %in% subplots & kind %in% c("LEN", "SIZE", "AGE")) {
-            # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
-            kind2 <- tolower(kind)
-            if (plot) {
-              tmp <- SSMethod.TA1.8(
-                fit = replist, type = kind2,
-                fleet = f, fleetnames = fleetnames, datonly = datonly,
-                printit = FALSE
-              )
-            }
-            if (print) { # set up plotting to png file if required
-              file <- paste0(
-                filenamestart,
-                "data_weighting_TA1.8_", fleetnames[f], ".png"
-              )
-              # not using save_png because caption isn't available until after
-              # plot is created
-              # old command: plotinfo <- save_png(file=file, caption=caption)
-              png(
-                filename = file.path(plotdir, file), width = pwidth, height = pheight,
-                units = punits, res = res, pointsize = ptsize
-              )
-              # run function
-              tmp <- SSMethod.TA1.8(
-                fit = replist, type = kind2,
-                fleet = f, fleetnames = fleetnames, datonly = datonly,
-                printit = FALSE
-              )
-              # create caption
-              caption <- paste0(
-                "Mean ", gsub("len", "length", tolower(kind)),
-                " for ", fleetnames[f],
-                " with 95% confidence intervals",
-                " based on current samples sizes."
-              )
-              # add warning at top of caption if Dirichlet-Multinomial is used
-              # regarldess of whether it is applied to this fleet/data combination
-              if (!is.null(replist[["Dirichlet_Multinomial_pars"]])) {
-                caption <-
-                  paste(
-                    "WARNING: this figure is based on multinomial likelihood",
-                    "and has not been updated to account for Dirichlet-Multinomial",
-                    "likelihood and the sample size adjustment associated with",
-                    "the estimated log(<i>&#920</i>) parameters.<br><br>", caption
-                  )
-              }
-              if (!datonly) {
-                caption <- paste0(
-                  caption,
-                  "<br>Francis data weighting method TA1.8:"
-                )
-                if (!is.null(tmp[1])) {
-                  vals <- paste0(
-                    "thinner intervals (with capped ends) show ",
-                    "result of further adjusting sample sizes ",
-                    "based on suggested multiplier ",
-                    "(with 95% interval) for ", kind2, " data from ",
-                    fleetnames[f], ":<br>",
-                    round(tmp[1], 4), " (",
-                    round(tmp[2], 4), "-", round(tmp[3], 4), ")"
-                  )
-                } else {
-                  vals <- "too few points to calculate adjustments."
-                }
-                caption <- paste(
-                  caption, vals, "<br><br>For more info, see<br>",
-                  "<blockquote>Francis, R.I.C.C. (2011).",
-                  "Data weighting in statistical fisheries stock assessment",
-                  "models. <i>Can. J. Fish. Aquat. Sci.</i>",
-                  "68: 1124-1138. ",
-                  "<a href=https://doi.org/10.1139/f2011-025>",
-                  "https://doi.org/10.1139/f2011-025</a>",
-                  "</blockquote>"
-                )
-              } # end test for datonly
-
-              # add caption to the plotinfo table (normally done by save_png)
-              plotinfo <- rbind(plotinfo, data.frame(
-                file = file,
-                caption = caption,
-                alt_text = NA
-              ))
-
-              dev.off() # close device if png
-            } # end test for print to PNG option
-          } # end subplot 8
-          ### subplot 9: R.I.C Chris Francis TA1.8 method for conditional data
-          if (9 %in% subplots & kind == "cond" & (f %in% condbase[["Fleet"]])) {
-            if (plot) {
-              SSMethod.Cond.TA1.8(
-                fit = replist,
-                fleet = f, fleetnames = fleetnames, datonly = datonly
-              )
-            }
-            if (print) { # set up plotting to png file if required
-              file <- paste(filenamestart,
-                "data_weighting_TA1.8_condAge", fleetnames[f], ".png",
-                sep = ""
-              )
-              # not using save_png because caption isn't available until after
-              # plot is created
-              png(
-                filename = file.path(plotdir, file), width = pwidth, height = pheight,
-                units = punits, res = res, pointsize = ptsize
-              )
-              # run function
-              tmp <- SSMethod.Cond.TA1.8(
-                fit = replist,
-                fleet = f, fleetnames = fleetnames, datonly = datonly
-              )
-              # create caption
-              caption <- paste0(
-                "Mean age from conditional data",
-                " (aggregated across length bins) for ",
-                fleetnames[f],
-                " with 95% confidence intervals ",
-                " based on current samples sizes."
-              )
-              if (!datonly) {
-                caption <- paste0(
-                  caption,
-                  "<br>Francis data weighting method TA1.8:"
-                )
-                if (!is.null(tmp[1])) {
-                  vals <- paste0("thinner intervals (with capped ends) show ",
-                    "result of further adjusting sample sizes ",
-                    "based on suggested multiplier ",
-                    "(with 95% interval) for ",
-                    "conditional age-at-length data from ",
-                    fleetnames[f], ":<br>",
-                    round(tmp[1], 4), " (",
-                    round(tmp[2], 4), "-", round(tmp[3], 4), ")",
-                    sep = ""
-                  )
-                } else {
-                  vals <- "too few points to calculate adjustments."
-                }
-                caption <- paste(
-                  caption, vals, "<br><br>For more info, see<br>",
-                  "<blockquote>Francis, R.I.C.C. (2011).",
-                  "Data weighting in statistical fisheries stock assessment",
-                  "models. <i>Can. J. Fish. Aquat. Sci.</i>",
-                  "68: 1124-1138.</blockquote>"
-                )
-              } # end test for datonly
-              # add caption to the plotinfo table (normally done by save_png)
-              plotinfo <- rbind(plotinfo, data.frame(
-                file = file,
-                caption = caption,
-                alt_text = NA
-              ))
-              dev.off() # close device if png
-            } # end test for print to PNG option
+          ### subplots 8 and 9: Francis plot for non-conditional data
+          if (nrow(replist[["Dirichlet_Multinomial_pars"]]) == 0) {
+            # only include subplots 8 and 10 if using DM likelihood
+            subplots <- subplots[!subplots %in% c(8, 10)]
           }
-          ### subplot 10: Andre's mean age and std. dev. in conditional AAL
-          if (10 %in% subplots & kind == "cond" & length(unique(dbase[["Bin"]])) > 1) {
+          for (whichplot in 8:9) {
+            # don't include Francis adjustment in subplot 8, just 9
+            # and plot only values by partition in subplot 8
+            if (whichplot == 8) {
+              plotadj <- FALSE
+              part <- j
+            } else {
+              plotadj <- TRUE
+              part <- 0:2
+            }
+
+            if (whichplot %in% subplots & kind %in% c("LEN", "SIZE", "AGE")) {
+              # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
+              kind2 <- tolower(kind)
+              if (plot) {
+                tmp <- SSMethod.TA1.8(
+                  fit = replist, type = kind2, 
+                  part = part,
+                  fleet = f, fleetnames = fleetnames, datonly = datonly,
+                  plotadj = plotadj,
+                  printit = FALSE
+                )
+              }
+              if (print) { # set up plotting to png file if required
+                file <- paste0(
+                  filenamestart,
+                  ifelse(whichplot == 8, 
+                         "data_weighting_timeseries_",
+                         "data_weighting_TA1.8_"
+                         ),
+                  fleetnames[f], ".png"
+                )
+                if (length(part) == 1) {
+                  file <- gsub(pattern = "timeseries", 
+                    replacement = paste0("timeseries_part", part), 
+                    x = file)
+                }
+                # not using save_png because caption isn't available until after
+                # plot is created
+                # old command: plotinfo <- save_png(file=file, caption=caption)
+                png(
+                  filename = file.path(plotdir, file), width = pwidth, height = pheight,
+                  units = punits, res = res, pointsize = ptsize
+                )
+                # run function
+                tmp <- SSMethod.TA1.8(
+                  fit = replist, type = kind2,
+                  part = part,
+                  fleet = f, fleetnames = fleetnames, datonly = datonly,
+                  plotadj = plotadj,
+                  printit = FALSE
+                )
+                # create caption
+                caption <- paste0(
+                  "Mean ", gsub("len", "length", tolower(kind)),
+                  " for ", fleetnames[f],
+                  " with 95% confidence intervals",
+                  " based on current sample sizes."
+                )
+                if (!datonly & whichplot == 8) {
+                  caption <- gsub(
+                    pattern = "sizes.",
+                    replacement = "sizes (including any D-M weighting).",
+                    x = caption
+                  )
+                }
+                if (!datonly & whichplot == 9) {
+                  caption <- paste0(
+                    caption,
+                    "<br>Francis data weighting method TA1.8:"
+                  )
+                  if (!is.null(tmp[1])) {
+                    vals <- paste0(
+                      "thinner intervals (with capped ends) show ",
+                      "result of further adjusting sample sizes ",
+                      "based on suggested multiplier ",
+                      "(with 95% interval) for ", kind2, " data from ",
+                      fleetnames[f], ":<br>",
+                      round(tmp[1], 4), " (",
+                      round(tmp[2], 4), "-", round(tmp[3], 4), ")"
+                    )
+                  } else {
+                    vals <- "too few points to calculate adjustments."
+                  }
+                  caption <- paste(
+                    caption, vals, "<br>For more info, see ",
+                    "<a href=https://doi.org/10.1139/f2011-025>",
+                    "Francis (2011)</a>."
+                  )
+                } # end additional caption text about Francis weighting
+  
+                # add caption to the plotinfo table (normally done by save_png)
+                plotinfo <- rbind(plotinfo, data.frame(
+                  file = file,
+                  caption = caption,
+                  alt_text = NA
+                ))
+  
+                dev.off() # close device if png
+              } # end test for print to PNG option
+            } # end subplot 8 or 9
+          } # end loop over 8 and 9
+          
+          ### subplots 10 and 11: Francis weighting for conditional data
+          for (whichplot in 10:11) {
+            # don't include Francis adjustment in subplot 10, just 11
+            plotadj <- (whichplot == 11)
+
+            if (whichplot %in% subplots & kind == "cond" & (f %in% condbase[["Fleet"]])) {
+              if (plot) {
+                SSMethod.Cond.TA1.8(
+                  fit = replist,
+                  fleet = f, fleetnames = fleetnames, datonly = datonly,
+                  plotadj = plotadj
+                )
+              }
+              if (print) { # set up plotting to png file if required
+                file <- paste0(
+                  filenamestart,
+                  ifelse(whichplot == 10, 
+                         "data_weighting_timeseries_condAge",
+                         "data_weighting_TA1.8_condAge"
+                         ),
+                  fleetnames[f], ".png"
+                )
+                # not using save_png because caption isn't available until after
+                # plot is created
+                png(
+                  filename = file.path(plotdir, file), width = pwidth, height = pheight,
+                  units = punits, res = res, pointsize = ptsize
+                )
+                # run function
+                tmp <- SSMethod.Cond.TA1.8(
+                  fit = replist,
+                  fleet = f, fleetnames = fleetnames, datonly = datonly,
+                  plotadj = plotadj
+                )
+                # create caption
+                caption <- paste0(
+                  "Mean age from conditional data",
+                  " (aggregated across length bins) for ",
+                  fleetnames[f],
+                  " with 95% confidence intervals ",
+                  " based on current samples sizes."
+                )
+                if (!datonly & whichplot == 10) {
+                  caption <- gsub(
+                    pattern = "sizes.",
+                    replacement = "sizes (including any D-M weighting).",
+                    x = caption
+                  )
+                }
+                if (!datonly & whichplot == 11) {
+                  caption <- paste0(
+                    caption,
+                    "<br>Francis data weighting method TA1.8:"
+                  )
+                  if (!is.null(tmp[1])) {
+                    vals <- paste0("thinner intervals (with capped ends) show ",
+                      "result of further adjusting sample sizes ",
+                      "based on suggested multiplier ",
+                      "(with 95% interval) for ",
+                      "conditional age-at-length data from ",
+                      fleetnames[f], ":<br>",
+                      round(tmp[1], 4), " (",
+                      round(tmp[2], 4), "-", round(tmp[3], 4), ")",
+                      sep = ""
+                    )
+                  } else {
+                    vals <- "too few points to calculate adjustments."
+                  }
+                  caption <- paste(
+                    caption, vals, "<br>For more info, see ",
+                    "<a href=https://doi.org/10.1139/f2011-025>",
+                    "Francis (2011)</a> and ",
+                    "<a href=https://doi.org/10.1016/j.fishres.2015.12.006>",
+                    "Punt (2017)</a>."
+                  )
+                } # end test for datonly
+                # add caption to the plotinfo table (normally done by save_png)
+                plotinfo <- rbind(plotinfo, data.frame(
+                  file = file,
+                  caption = caption,
+                  alt_text = NA
+                ))
+                dev.off() # close device if png
+              } # end test for print to PNG option
+            } # end plot 10 or 11
+          } # end loop over 10 and 11
+          
+          ### subplot 12: Andre's mean age and std. dev. in conditional AAL
+          if (12 %in% subplots & kind == "cond" & length(unique(dbase[["Bin"]])) > 1) {
             caption1 <- paste(labels[14], title_sexmkt, fleetnames[f], sep = "")
             if (mainTitle) {
               ptitle <- caption1
@@ -2314,7 +2323,7 @@ SSplotComps <-
                 dev.off() # close device if png
               } # end loop over pages
             } # end test for print to PNG option
-          } # end subplot 10
+          } # end subplot 12
         } # end loop over partitions (index j)
         #        } # end test for whether sex in vector of requested sexes
         #      } # end loop over combined/not-combined sex

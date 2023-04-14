@@ -76,7 +76,7 @@ sets of confidence limits - based on \emph{N1i} (thin lines) and \emph{N2i}
 This function formerly reported two versions of w differ according to whether
 the calculated mean ages are
 indexed by year (version A) or by year and length bin (version B).
-However, research by Punt (2015) found Version A to perform better and
+However, research by Punt (2017) found Version A to perform better and
 version B is no longer recommended and is only reported if requested by the user.
 
 CAUTIONARY/EXPLANATORY NOTE. The large number of options available in SS makes it
@@ -99,9 +99,10 @@ selected data.
 \references{
 Francis, R.I.C.C. (2011). Data weighting in statistical
 fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
+https://doi.org/10.1139/f2011-025.
 
-Punt, A.E. (2015). Some insights into data weighting in integrated stock assessments.
-Fish. Res.
+Punt, A.E. (2017). Some insights into data weighting in integrated stock assessments.
+Fish. Res. 192:52-65. https://doi.org/10.1016/j.fishres.2015.12.006.
 }
 \seealso{
 Other tuning functions: 

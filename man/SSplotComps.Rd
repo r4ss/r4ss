@@ -94,9 +94,13 @@ Numbering of subplots is as follows, where subplots 21 to 24
 \item 6 multi-panel plot of point and line fit to conditional
 age-at-length for specific length bins
 \item 7 sample size plot
-\item 8 TA1.8 Francis weighting plot
-\item 9 TA1.8 Francis weighting plot for conditional data
-\item 10 Andre's mean age and std. dev. in conditional AAL
+\item 8 TA1.8 Francis plot for marginal data with
+Dirichlet-Multinomial and no Francis adjustment
+\item 9 TA1.8 Francis weighting plot for marginal data
+\item 10 TA1.8 Francis plot for conditional data with
+Dirichlet-Multinomial and no Francis adjustment
+\item 11 TA1.8 Francis weighting plot for conditional data
+\item 12 Andre's mean age and std. dev. in conditional AAL
 \item 21 composition by fleet aggregating across years
 \item 22 composition by fleet aggregating across years within each season
 \item 23 composition by fleet aggregating across seasons within a year

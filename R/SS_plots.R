@@ -1372,7 +1372,7 @@ SS_plots <-
             }
             plotinfo <-
               SSplotComps(
-                replist = replist, subplots = 9:10, datonly = FALSE, kind = "cond",
+                replist = replist, subplots = 10:12, datonly = FALSE, kind = "cond",
                 bub = TRUE, verbose = verbose, fleets = fleets,
                 fleetnames = fleetnames,
                 aalbin = aalbin, aalyear = aalyear,
