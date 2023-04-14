@@ -3611,8 +3611,8 @@ SS_output <-
     returndat[["Z_at_age"]] <- Z_at_age
 
     if (!is.na(match_report_line("Report_Z_by_area_morph_platoon"))) {
-      # from 3.30.16.03 onward the old end of the Z_AT_AGE_Annual 1 table 
-      # doesn't work so should just use the blank line 
+      # from 3.30.16.03 onward the old end of the Z_AT_AGE_Annual 1 table
+      # doesn't work so should just use the blank line
       # (not available in early versions)
       M_at_age <- match_report_table("Z_AT_AGE_Annual_1", 1, header = TRUE)
     } else {
