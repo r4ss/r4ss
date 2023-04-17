@@ -240,9 +240,9 @@ SSMethod.Cond.TA1.8 <-
         # add model expectation
         if (!datonly) {
           if (length(x) > 1) {
-            lines(x[ord], subpldat[ord, "Expmn"])
+            lines(x[ord], subpldat[ord, "Expmn"], col = 4)
           } else {
-            lines(c(x - 0.5, x + 0.5), rep(subpldat[, "Expmn"], 2))
+            lines(c(x - 0.5, x + 0.5), rep(subpldat[, "Expmn"], 2), col = 4)
           }
         }
         # Lines
