@@ -214,10 +214,6 @@ SSMethod.TA1.8 <-
 
       # use adjusted input sample size for Francis or MI weighting options
       Nsamp <- subdbase[["Nsamp_adj"]] 
-      if("DM_effN" %in% names(subdbase) || any(is.na(subdbase[["DM_effN"]]))) {
-        # dirichlet multinomial older format
-        Nsamp <- subdbase[["DM_effN"]] 
-      }
       if("Nsamp_DM" %in% names(subdbase) || any(is.na(subdbase[["Nsamp_DM"]]))) {
         # dirichlet multinomial newer format
         Nsamp <- subdbase[["Nsamp_DM"]] 

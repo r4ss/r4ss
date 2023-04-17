@@ -1913,7 +1913,7 @@ SSplotComps <-
 
           ### subplot 7: sample size plot
           if (7 %in% subplots & samplesizeplots & !datonly &
-            !("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) &
+            !("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]]))) &
             !(kind %in% c("GSTAGE", "GSTLEN", "L@A", "W@A"))) {
             caption <- paste0("N-EffN comparison, ", titledata, title_sexmkt, fleetnames[f])
             if (mainTitle) {
