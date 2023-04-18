@@ -18,7 +18,7 @@
 #'   \item 6 multi-panel plot of point and line fit to conditional
 #'           age-at-length for specific length bins
 #'   \item 7 sample size plot
-#'   \item 8 TA1.8 Francis plot for marginal data with 
+#'   \item 8 TA1.8 Francis plot for marginal data with
 #'           Dirichlet-Multinomial and no Francis adjustment
 #'   \item 9 TA1.8 Francis weighting plot for marginal data
 #'   \item 10 TA1.8 Francis plot for conditional data with
@@ -2015,7 +2015,7 @@ SSplotComps <-
               kind2 <- tolower(kind)
               if (plot) {
                 tmp <- SSMethod.TA1.8(
-                  fit = replist, type = kind2, 
+                  fit = replist, type = kind2,
                   part = part,
                   fleet = f, fleetnames = fleetnames, datonly = datonly,
                   plotadj = plotadj,
@@ -2025,16 +2025,18 @@ SSplotComps <-
               if (print) { # set up plotting to png file if required
                 file <- paste0(
                   filenamestart,
-                  ifelse(whichplot == 8, 
-                         "data_weighting_timeseries_",
-                         "data_weighting_TA1.8_"
-                         ),
+                  ifelse(whichplot == 8,
+                    "data_weighting_timeseries_",
+                    "data_weighting_TA1.8_"
+                  ),
                   fleetnames[f], ".png"
                 )
                 if (length(part) == 1) {
-                  file <- gsub(pattern = "timeseries", 
-                    replacement = paste0("timeseries_part", part), 
-                    x = file)
+                  file <- gsub(
+                    pattern = "timeseries",
+                    replacement = paste0("timeseries_part", part),
+                    x = file
+                  )
                 }
                 # not using save_png because caption isn't available until after
                 # plot is created
@@ -2089,19 +2091,19 @@ SSplotComps <-
                     "Francis (2011)</a>."
                   )
                 } # end additional caption text about Francis weighting
-  
+
                 # add caption to the plotinfo table (normally done by save_png)
                 plotinfo <- rbind(plotinfo, data.frame(
                   file = file,
                   caption = caption,
                   alt_text = NA
                 ))
-  
+
                 dev.off() # close device if png
               } # end test for print to PNG option
             } # end subplot 8 or 9
           } # end loop over 8 and 9
-          
+
           ### subplots 10 and 11: Francis weighting for conditional data
           for (whichplot in 10:11) {
             # don't include Francis adjustment in subplot 10, just 11
@@ -2118,10 +2120,10 @@ SSplotComps <-
               if (print) { # set up plotting to png file if required
                 file <- paste0(
                   filenamestart,
-                  ifelse(whichplot == 10, 
-                         "data_weighting_timeseries_condAge",
-                         "data_weighting_TA1.8_condAge"
-                         ),
+                  ifelse(whichplot == 10,
+                    "data_weighting_timeseries_condAge",
+                    "data_weighting_TA1.8_condAge"
+                  ),
                   fleetnames[f], ".png"
                 )
                 # not using save_png because caption isn't available until after
@@ -2188,7 +2190,7 @@ SSplotComps <-
               } # end test for print to PNG option
             } # end plot 10 or 11
           } # end loop over 10 and 11
-          
+
           ### subplot 12: Andre's mean age and std. dev. in conditional AAL
           if (12 %in% subplots & kind == "cond" & length(unique(dbase[["Bin"]])) > 1) {
             caption1 <- paste(labels[14], title_sexmkt, fleetnames[f], sep = "")
