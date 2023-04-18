@@ -207,10 +207,22 @@ SSMethod.TA1.8 <-
     for (i in seq_along(uindx)) { # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
       xvar <- subdbase[["Bin"]]
+      # observed mean
       pldat[i, "Obsmn"] <- sum(subdbase[["Obs"]] * xvar) / sum(subdbase[["Obs"]])
+      # expected mean
       pldat[i, "Expmn"] <- sum(subdbase[["Exp"]] * xvar) / sum(subdbase[["Exp"]])
+
+      # use adjusted input sample size for Francis or MI weighting options
+      Nsamp <- subdbase[["Nsamp_adj"]] 
+      if("Nsamp_DM" %in% names(subdbase) || any(is.na(subdbase[["Nsamp_DM"]]))) {
+        # dirichlet multinomial newer format
+        Nsamp <- subdbase[["Nsamp_DM"]] 
+      }
+
+      # standard error of the mean
       pldat[i, "semn"] <- sqrt((sum(subdbase[["Exp"]] * xvar^2) / sum(subdbase[["Exp"]]) -
-        pldat[i, "Expmn"]^2) / mean(subdbase[["Nsamp_adj"]]))
+        pldat[i, "Expmn"]^2) / mean(Nsamp))
+      # calculate confidence intervals and other stuff
       pldat[i, "Obslo"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"]
       pldat[i, "Obshi"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"]
       pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) / pldat[i, "semn"]

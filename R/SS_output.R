@@ -2317,27 +2317,27 @@ SS_output <-
             )
           }
           if (CompError == 1) {
-            DM_effN <-
+            Nsamp_DM <-
               1 / (1 + Theta) +
               dbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
           }
           if (CompError == 2) {
-            DM_effN <-
+            Nsamp_DM <-
               dbase[["Nsamp_adj"]][sub] * (1 + beta) /
                 (dbase[["Nsamp_adj"]][sub] + beta)
           }
-          DM_effN
+          Nsamp_DM
         } # end get_DM_sample_size()
 
         if (comp) { # only possible if CompReport.sso was read
           if (nrow(agedbase) > 0) {
-            agedbase[["DM_effN"]] <- NA
+            agedbase[["Nsamp_DM"]] <- NA
           }
           if (nrow(lendbase) > 0) {
-            lendbase[["DM_effN"]] <- NA
+            lendbase[["Nsamp_DM"]] <- NA
           }
           if (nrow(condbase) > 0) {
-            condbase[["DM_effN"]] <- NA
+            condbase[["Nsamp_DM"]] <- NA
           }
 
           # loop over fleets within agedbase
@@ -2345,7 +2345,7 @@ SS_output <-
             # D-M likelihood for age comps
             if (age_data_info[["CompError"]][f] > 0) {
               sub <- agedbase[["Fleet"]] == f
-              agedbase[["DM_effN"]][sub] <-
+              agedbase[["Nsamp_DM"]][sub] <-
                 get_DM_sample_size(
                   CompError = age_data_info[["CompError"]][f],
                   f = f,
@@ -2361,7 +2361,7 @@ SS_output <-
             # D-M likelihood for len comps
             if (len_data_info[["CompError"]][f] > 0) {
               sub <- lendbase[["Fleet"]] == f
-              lendbase[["DM_effN"]][sub] <-
+              lendbase[["Nsamp_DM"]][sub] <-
                 get_DM_sample_size(
                   CompError = len_data_info[["CompError"]][f],
                   f = f,
@@ -2377,7 +2377,7 @@ SS_output <-
             # D-M likelihood for age comps
             if (age_data_info[["CompError"]][f] > 0) {
               sub <- condbase[["Fleet"]] == f
-              condbase[["DM_effN"]][sub] <-
+              condbase[["Nsamp_DM"]][sub] <-
                 get_DM_sample_size(
                   CompError = age_data_info[["CompError"]][f],
                   f = f,
