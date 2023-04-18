@@ -213,10 +213,10 @@ SSMethod.TA1.8 <-
       pldat[i, "Expmn"] <- sum(subdbase[["Exp"]] * xvar) / sum(subdbase[["Exp"]])
 
       # use adjusted input sample size for Francis or MI weighting options
-      Nsamp <- subdbase[["Nsamp_adj"]] 
-      if("Nsamp_DM" %in% names(subdbase) || any(is.na(subdbase[["Nsamp_DM"]]))) {
+      Nsamp <- subdbase[["Nsamp_adj"]]
+      if ("Nsamp_DM" %in% names(subdbase) || any(is.na(subdbase[["Nsamp_DM"]]))) {
         # dirichlet multinomial newer format
-        Nsamp <- subdbase[["Nsamp_DM"]] 
+        Nsamp <- subdbase[["Nsamp_DM"]]
       }
 
       # standard error of the mean
