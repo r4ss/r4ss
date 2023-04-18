@@ -1601,7 +1601,7 @@ SSplotBiology <-
               # check for changes
               if (length(unique(parmvals[MGparmAdj[["Yr"]] <= endyr])) > 1) {
                 # make plot
-                if (plot) timeVaryingParmFunc(parmlabel)
+                if (plot) timeVaryingParmFunc(parmlabel, forecast = forecast)
                 if (print) {
                   file <- paste0("bio24_time-varying_", parmlabel, ".png")
                   # replace % sign which cause problems for filename
@@ -1615,7 +1615,7 @@ SSplotBiology <-
                     pheight = pheight, punits = punits, res = res, ptsize = ptsize,
                     caption = caption
                   )
-                  timeVaryingParmFunc(parmlabel)
+                  timeVaryingParmFunc(parmlabel, forecast = forecast)
                   dev.off()
                 }
               }

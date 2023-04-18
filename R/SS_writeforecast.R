@@ -136,7 +136,18 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       }
       wl("fcast_rec_option")
       wl("fcast_rec_val")
-      wl("Forecast_loop_control_5")
+      # new option added in 3.30.22 to forecast using average values
+      if (!is.null(mylist[["Forecast_loop_control_5"]])) {
+        warning(
+          "Forecast_loop_control_5 has been renamed to Fcast_MGparm_averaging\n",
+          " so only Fcast_MGparm_averaging will be written to the file."
+        )
+      }
+      wl("Fcast_MGparm_averaging")
+      if (mylist[["Fcast_MGparm_averaging"]] == 1) {
+        printdf("Fcast_MGparm_averaging_info")
+        writeLines("-9999 0 0 0")
+      }
       wl("FirstYear_for_caps_and_allocations")
       wl("stddev_of_log_catch_ratio")
       wl("Do_West_Coast_gfish_rebuilder_output")

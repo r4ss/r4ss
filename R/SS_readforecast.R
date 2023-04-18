@@ -284,7 +284,17 @@ SS_readforecast <- function(file = "forecast.ss",
     forelist <- add_elem(forelist, "First_forecast_loop_with_stochastic_recruitment")
     forelist <- add_elem(forelist, "fcast_rec_option")
     forelist <- add_elem(forelist, "fcast_rec_val")
-    forelist <- add_elem(forelist, "Forecast_loop_control_5")
+    forelist <- add_elem(forelist, "Fcast_MGparm_averaging") # 0 = not, 1 = do
+
+    # new option added in 3.30.22 to forecast using average values
+    if (forelist[["Fcast_MGparm_averaging"]] == 1) {
+      forelist <- add_df(forelist,
+        ncol = 4,
+        col.names = c("MG_type", "method", "st_year", "end_year"),
+        name = "Fcast_MGparm_averaging_info"
+      )
+    }
+
     forelist <- add_elem(forelist, "FirstYear_for_caps_and_allocations")
     forelist <- add_elem(forelist, "stddev_of_log_catch_ratio")
     forelist <- add_elem(forelist, "Do_West_Coast_gfish_rebuilder_output")
