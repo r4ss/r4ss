@@ -1439,14 +1439,16 @@ SSplotComps <-
                 if (ipage == 1) {
                   if ("Nsamp_DM" %in% names(dbase) && any(!is.na(dbase[["Nsamp_DM"]]))) {
                     # if using DM likelihood, get Theta value for this fleet & partition
-
-                    # partition weighting added in 3.30.21
-                    if ("partition" %in% names(data_info)) { # added in 3.30.21
+                    # # earlier format without partition weighting
+                    # # has one row per fleet so no "fleet" column
+                    sub <- f
+                    # table reformatted in 3.30.21 to only include fleets with data
+                    if ("Fleet" %in% names(data_info)) {
+                      sub <- data_info[["Fleet"]] == f 
+                    }
+                    # expanded table format includes partition
+                    if ("partition" %in% names(data_info)) {
                       sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
-                    } else {
-                      # earlier version without partition weighting
-                      # has one row per fleet so no "fleet" column
-                      sub <- f
                     }
                     ParmSelect <- data_info[sub, "ParmSelect"]
                     CompError <- data_info[sub, "CompError"]
