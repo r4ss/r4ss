@@ -875,6 +875,19 @@ SS_output <-
           oldnames = c("Pick_sex", "Pick_gender", "Gender", "N", "Rep"),
           newnames = c("Sexes", "Sexes", "Sex", "Nsamp_adj", "Repl.")
         )
+
+        # remove duplicate rows for unsexed fish
+        # (issue was introduced in SS3 version 3.30.20 and discovered
+        # after the release of 3.30.21)
+
+        # all values identical except for Cum_obs and Cum_exp
+        duplicates <- compdbase %>% 
+          dplyr::select(-Cum_obs, -Cum_exp) %>% 
+          duplicated()
+        message("Removing ", sum(duplicates), " out of ", nrow(compdbase),
+          " rows in CompReport.sso which are duplicates.")
+        compdbase <- compdbase[!duplicates, ]
+
         # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
         #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
         # this is the user input in the data file
