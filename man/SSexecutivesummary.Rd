@@ -10,6 +10,7 @@ SSexecutivesummary(
   ci_value = 0.95,
   es_only = FALSE,
   fleetnames = NULL,
+  add_text = NULL,
   tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
     "numbers", "biomass", "likes"),
   divide_by_2 = FALSE,
@@ -37,6 +38,11 @@ will be produced, default is FALSE which will return all executive summary
 tables, historical catches, and numbers-at-ages}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
+
+\item{add_text}{Default NULL. Additional text to add to table captions to indicate a specific model area
+If text is added here it will be combined to add the following text: paste("for the sub-area model", add_text).
+For example, add_text = "South of Point Conception" will add the following text to each caption
+"for the sub-area model South of Point Conception."}
 
 \item{tables}{Which tables to produce (default is everything). Note: some
 tables depend on calculations related to previous tables, so will fail
