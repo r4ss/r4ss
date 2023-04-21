@@ -533,7 +533,7 @@ SSexecutivesummary <- function(replist,
         caption,
         paste0(
           "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio the exploitation rate, and the ", round(100 * ci_value, 0),
-          "percent intervals for the sub-area model ", add_text, "."
+          " percent intervals for the sub-area model ", add_text, "."
         )
       )
     }
@@ -718,7 +718,7 @@ SSexecutivesummary <- function(replist,
         caption,
         paste0(
           "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
-          "percent intervals for the sub-area model ", add_text, "."
+          " percent intervals for the sub-area model ", add_text, "."
         )
       )
     }
