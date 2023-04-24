@@ -881,11 +881,13 @@ SS_output <-
         # after the release of 3.30.21)
 
         # all values identical except for Cum_obs and Cum_exp
-        duplicates <- compdbase %>% 
-          dplyr::select(-Cum_obs, -Cum_exp) %>% 
+        duplicates <- compdbase %>%
+          dplyr::select(-Cum_obs, -Cum_exp) %>%
           duplicated()
-        message("Removing ", sum(duplicates), " out of ", nrow(compdbase),
-          " rows in CompReport.sso which are duplicates.")
+        message(
+          "Removing ", sum(duplicates), " out of ", nrow(compdbase),
+          " rows in CompReport.sso which are duplicates."
+        )
         compdbase <- compdbase[!duplicates, ]
 
         # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
