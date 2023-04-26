@@ -3177,6 +3177,7 @@ SS_output <-
     } else {
       DF_mnwgt <- NA
       mnwgt <- NA
+      mnwgt_tuning_info <- NULL
     }
     returndat[["mnwgt"]] <- mnwgt
     returndat[["mnwgt_tuning_info"]] <- mnwgt_tuning_info
