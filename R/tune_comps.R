@@ -444,12 +444,16 @@ tune_comps <- function(replist = NULL, fleets = "all",
     fleets_age <- fleets[fleets %in% unique(dat[["agecomp"]][, "FltSvy"])]
 
     # 1. specify the parameters in the data file need to do dirichlet MN
-    dat[["len_info"]][fleets_len, "CompError"] <- 1
-    dat[["age_info"]][fleets_age, "CompError"] <- 1
-    # TODO: make this more general so can share params across fleets?
-    dat[["len_info"]][fleets_len, "ParmSelect"] <- seq_len(length(fleets_len))
-    dat[["age_info"]][fleets_age, "ParmSelect"] <-
-      (length(fleets_len) + 1):(length(fleets_len) + length(fleets_age))
+    if (!is.null(dat[["lencomp"]])) {
+      dat[["len_info"]][fleets_len, "CompError"] <- 1
+      # TODO: make this more general so can share params across fleets?
+      dat[["len_info"]][fleets_len, "ParmSelect"] <- seq_len(length(fleets_len))
+    }
+    if (!is.null(dat[["agecomp"]])) {
+      dat[["age_info"]][fleets_age, "CompError"] <- 1
+      dat[["age_info"]][fleets_age, "ParmSelect"] <-
+        (length(fleets_len) + 1):(length(fleets_len) + length(fleets_age))
+    }
     npars <- length(fleets_len) + length(fleets_age)
     # get the highest phase in the model
     last_phase <- get_last_phase(ctl)
