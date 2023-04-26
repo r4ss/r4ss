@@ -30,6 +30,7 @@ calculated as described above
 as described above
 \item \code{added} is the value that could be added to any existing value in the
 "Input variance adjustments factors" section of the control file.
+\item \code{type} is the data type code used in "Input variance adjustments factors"
 }
 }
 \description{

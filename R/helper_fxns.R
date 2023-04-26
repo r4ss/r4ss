@@ -326,7 +326,8 @@ get_areacols <- function(areacols, nareas) {
 #' as described above
 #' * `added` is the value that could be added to any existing value in the
 #' "Input variance adjustments factors" section of the control file.
-#'
+#' * `type` is the data type code used in "Input variance adjustments factors"
+#' 
 #' @author Kelli F. Johnson
 #'
 #' @export
