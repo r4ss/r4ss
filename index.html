@@ -103,13 +103,16 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>The CRAN version of r4ss was updated on 26 May 2022 and is available via</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>install.packages<span class="op">(</span><span class="st">"r4ss"</span><span class="op">)</span></span></code></pre></div>
-<p>In general, installing directly from github will get a newer version than what’s on CRAN. The github version also contains a vignette and additional model files that were too large for CRAN:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>install.packages<span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pak::</span>pkg_install<span class="op">(</span><span class="st">"r4ss/r4ss"</span><span class="op">)</span></span></code></pre></div>
+<p>There is a CRAN version of r4ss but it is out of data (last updated in May 2022). Installing directly from github via either the {pak} package or {remotes} will get the most recent main branch which should always work with the latest version of Stock Synthesis (as well as many older versions).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># option 1: install via {pak}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>install.packages<span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pak::</span>pkg_install<span class="op">(</span><span class="st">"r4ss/r4ss"</span><span class="op">)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># option 2: install via {remotes}</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>install.packages<span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">remotes::</span>install_github<span class="op">(</span><span class="st">"r4ss/r4ss"</span><span class="op">)</span></span></code></pre></div>
 <p>Once you have installed the r4ss package, it can be loaded using:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>library<span class="op">(</span>r4ss<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>library<span class="op">(</span>r4ss<span class="op">)</span></span></code></pre></div>
 <p>To get notifications about r4ss, you can watch this GitHub project or follow messages on the <a href="https://vlab.noaa.gov/web/stock-synthesis/public-forums" class="external-link">forums on Stock Synthesis VLab</a>. Note that to subscribe to the Stock Synthesis VLab forums, an account is required, but those without an account may still view and post forum messages.</p>
 <p>The r4ss website <a href="https://r4ss.github.io/r4ss" class="uri">https://r4ss.github.io/r4ss</a> includes a vignette explaining the use of common functions and <a href="https://r4ss.github.io/r4ss/BigSkate">example r4ss plots</a> from a 2019 Big Skate stock assessment for the U.S. West Coast (which used SS version 3.30.13.02 and r4ss version 1.39.0).</p>
 </div>
