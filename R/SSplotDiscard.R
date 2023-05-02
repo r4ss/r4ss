@@ -120,50 +120,39 @@ SSplotDiscard <-
         }
         liw[(ob - liw) < 0] <- ob[(ob - liw) < 0] # no negative limits
         xlim <- c((min(yr) - 3), (max(yr) + 3))
-        if (!is.na(discard_type)) { # SSv3.11
-          if (grepl("as_fraction", discard_type)) {
-            # discards as a fraction
-            title <- paste("Discard fraction for", FleetName)
-            ylab <- labels[2]
-          } else {
-            # discards in same units as catch, or in numbers
-            title <- paste("Total discard for", FleetName)
-            ylab <- labels[3]
+        ## three options for discard_units:
+        ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
+        ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
+        ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
+        discard_units <- discard_spec[["units"]][discard_spec[["Fleet"]] == ifleet]
+        if (discard_units == 1) {
+          # type 1: biomass or numbers
+          title <- paste("Total discard for", FleetName)
+          ylab <- labels[3]
+          if (replist[["catch_units"]][ifleet] == 1) {
+            ylab <- paste(ylab, "(mt)")
           }
-        } else { # SSv3.20 and beyond
-          ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
-          ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
-          ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
-          discard_units <- discard_spec[["units"]][discard_spec[["Fleet"]] == ifleet]
-          if (discard_units == 1) {
-            # type 1: biomass or numbers
-            title <- paste("Total discard for", FleetName)
-            ylab <- labels[3]
-            if (replist[["catch_units"]][ifleet] == 1) {
-              ylab <- paste(ylab, "(mt)")
-            }
-            if (replist[["catch_units"]][ifleet] == 2) {
-              ylab <- paste(ylab, "(1000's)")
-            }
-          }
-          if (discard_units == 2) {
-            # type 2: discards as fractions
-            title <- paste("Discard fraction for", FleetName)
-            ylab <- labels[2]
-            if (replist[["catch_units"]][ifleet] == 1) {
-              ylab <- paste(ylab, "(mt)")
-            }
-            if (replist[["catch_units"]][ifleet] == 2) {
-              ylab <- paste(ylab, "(1000's)")
-            }
-          }
-          if (discard_units == 3) {
-            # type 3: discards as numbers
-            title <- paste("Total discard for", FleetName)
-            ylab <- "Total discards (1000's)"
+          if (replist[["catch_units"]][ifleet] == 2) {
+            ylab <- paste(ylab, "(1000's)")
           }
         }
-
+        if (discard_units == 2) {
+          # type 2: discards as fractions
+          title <- paste("Discard fraction for", FleetName)
+          ylab <- labels[2]
+          if (replist[["catch_units"]][ifleet] == 1) {
+            ylab <- paste(ylab, "(mt)")
+          }
+          if (replist[["catch_units"]][ifleet] == 2) {
+            ylab <- paste(ylab, "(1000's)")
+          }
+        }
+        if (discard_units == 3) {
+          # type 3: discards as numbers
+          title <- paste("Total discard for", FleetName)
+          ylab <- "Total discards (1000's)"
+        }
+        
         # wrap up plot command in function
         dfracfunc <- function(addfit) {
           plotCI(
