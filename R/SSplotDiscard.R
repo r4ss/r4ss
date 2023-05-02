@@ -152,7 +152,7 @@ SSplotDiscard <-
           title <- paste("Total discard for", FleetName)
           ylab <- "Total discards (1000's)"
         }
-        
+
         # wrap up plot command in function
         dfracfunc <- function(addfit) {
           plotCI(
