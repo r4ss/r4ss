@@ -40,7 +40,7 @@ U.S. west coast groundfish assessments but as of 2023 have not often
 had any data weighting method applied to them.
 }
 \details{
-The calculation is based on sd_out = sqrt(mean(data[\link{"Obs"}] - data[\link{"Exp"}])^2)).
+The calculation is based on sd_out = sqrt(mean(Obs - Exp)^2)).
 Added sd is calculated as sd_out - sd_in where sd_in is the mean of the
 input standard deviations (possibly including existing variance adjustments).
 When a CV adjustment is required, the sd_out is converted to CV_out by
