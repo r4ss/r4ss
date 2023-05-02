@@ -27,20 +27,20 @@ the output files being analyzed.*
 
 ## Installation
 
-The CRAN version of r4ss was updated on 26 May 2022 and is available
-via
+There is a CRAN version of r4ss but it is out of data 
+(last updated in May 2022). Installing directly from github via either the 
+{pak} package or {remotes} will get the most recent main branch which should 
+always work with the latest version of Stock Synthesis (as well as many older 
+versions).
 
 ```S
-install.packages("r4ss")
-```
-
-In general, installing directly from github will get a newer version
-than what's on CRAN. The github version also contains a vignette and
-additional model files that were too large for CRAN:
-
-```S
+# option 1: install via {pak}
 install.packages("pak")
 pak::pkg_install("r4ss/r4ss")
+
+# option 2: install via {remotes}
+install.packages("remotes")
+remotes::install_github("r4ss/r4ss")
 ```
 
 Once you have installed the r4ss package, it can be loaded using:
