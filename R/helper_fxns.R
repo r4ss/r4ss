@@ -297,7 +297,7 @@ get_areacols <- function(areacols, nareas) {
 #' U.S. west coast groundfish assessments but as of 2023 have not often
 #' had any data weighting method applied to them.
 #'
-#' The calculation is based on sd_out = sqrt(mean(data$Obs - data$Exp)^2)).
+#' The calculation is based on sd_out = sqrt(mean(data[["Obs"]] - data[["Exp"]])^2)).
 #' Added sd is calculated as sd_out - sd_in where sd_in is the mean of the
 #' input standard deviations (possibly including existing variance adjustments).
 #' When a CV adjustment is required, the sd_out is converted to CV_out by
@@ -327,7 +327,7 @@ get_areacols <- function(areacols, nareas) {
 #' * `added` is the value that could be added to any existing value in the
 #' "Input variance adjustments factors" section of the control file.
 #' * `type` is the data type code used in "Input variance adjustments factors"
-#' 
+#'
 #' @author Kelli F. Johnson
 #'
 #' @export
@@ -336,32 +336,32 @@ calc_var_adjust <- function(data, type = c("CV", "sd")) {
   # check arguments (will default to first value in vector)
   type <- match.arg(type)
   # calculate SD if not provided
-  if (!"Std_in" %in% colnames(data)) data$Std_use <- data$CV * data$Exp
+  if (!"Std_in" %in% colnames(data)) data[["Std_use"]] <- data[["CV"]] * data[["Exp"]]
   # calculate CV if not provided
-  if (!"CV" %in% colnames(data)) data$CV <- NA
+  if (!"CV" %in% colnames(data)) data[["CV"]] <- NA
 
   # make a table of values by fleet, where the *_in values are the
   # mean adjusted input variability values and the *_out values are based on
   # the variability of the observed around the expected values
   calc <- aggregate(
     list(
-      "mean_out" = data$Exp,
-      "mean_in" = data$Obs,
-      "CV_in" = data$CV,
-      "sd_in" = data$Std_use,
-      "sd_out" = (data$Obs - data$Exp)^2
+      "mean_out" = data[["Exp"]],
+      "mean_in" = data[["Obs"]],
+      "CV_in" = data[["CV"]],
+      "sd_in" = data[["Std_use"]],
+      "sd_out" = (data[["Obs"]] - data[["Exp"]])^2
     ),
-    by = list("fleet" = data$Fleet), mean
+    by = list("fleet" = data[["Fleet"]]), mean
   )
   calc[, "sd_out"] <- sqrt(calc[, "sd_out"])
   calc[, "CV_out"] <- calc[, "sd_out"] / calc[, "mean_out"]
   # calculated the CV or sd that needs to be added to get a match
-  calc$added <- switch(type,
+  calc[["added"]] <- switch(type,
     CV = calc[, "CV_out"] - calc[, "CV_in"],
     sd = calc[, "sd_out"] - calc[, "sd_in"]
   )
   # report the "type" used in the control file table of variance adjustments
-  calc$type <- switch(type,
+  calc[["type"]] <- switch(type,
     CV = 3,
     sd = 2
   )
