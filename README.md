@@ -27,7 +27,7 @@ the output files being analyzed.*
 
 ## Installation
 
-There is a CRAN version of r4ss but it is out of data 
+There is a CRAN version of r4ss but it is out of date 
 (last updated in May 2022). Installing directly from github via either the 
 {pak} package or {remotes} will get the most recent main branch which should 
 always work with the latest version of Stock Synthesis (as well as many older 
