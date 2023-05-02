@@ -104,7 +104,7 @@ as described above</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The calculation is based on sd_out = sqrt(mean(data$Obs - data$Exp)^2)).
+    <p>The calculation is based on sd_out = sqrt(mean(data["Obs"] - data["Exp"])^2)).
 Added sd is calculated as sd_out - sd_in where sd_in is the mean of the
 input standard deviations (possibly including existing variance adjustments).
 When a CV adjustment is required, the sd_out is converted to CV_out by
