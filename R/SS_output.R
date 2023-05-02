@@ -3110,7 +3110,6 @@ SS_output <-
     )
 
     # process discard info if table was present
-    discard_type <- NA
     if (!is.null(discard) && nrow(discard) > 1) {
       discard[discard == "_"] <- NA
       # v3.23 and before had things combined under "Name"
@@ -3132,14 +3131,17 @@ SS_output <-
         # v3.24 and beyond has separate columns
         # for fleet number and fleet name
         discard <- type.convert(discard, as.is = TRUE)
+        # get info on variance adjustments for discards
+        discard_tuning_info <- calc_var_adjust(discard, type = "sd")
       }
     } else {
-      discard <- NA
+      discard <- NA # IGT 23-04-2023: not sure why this is NA instead of NULL
+      discard_tuning_info <- NULL
     }
     returndat[["discard"]] <- discard
-    returndat[["discard_type"]] <- discard_type
-    returndat[["DF_discard"]] <- DF_discard
     returndat[["discard_spec"]] <- discard_spec
+    returndat[["discard_tuning_info"]] <- discard_tuning_info
+    returndat[["DF_discard"]] <- DF_discard
 
     ## Average body weight observations
     # degrees of freedom for T-distribution
@@ -3169,12 +3171,16 @@ SS_output <-
         }
       } else { # v3.24 and beyond has separate columns for fleet number and fleet name
         mnwgt <- type.convert(mnwgt, as.is = TRUE)
+        # get info on variance adjustments for mean body weight
+        mnwgt_tuning_info <- calc_var_adjust(mnwgt, type = "CV")
       }
     } else {
       DF_mnwgt <- NA
       mnwgt <- NA
+      mnwgt_tuning_info <- NULL
     }
     returndat[["mnwgt"]] <- mnwgt
+    returndat[["mnwgt_tuning_info"]] <- mnwgt_tuning_info
     returndat[["DF_mnwgt"]] <- DF_mnwgt
 
     # Yield and SPR time-series
