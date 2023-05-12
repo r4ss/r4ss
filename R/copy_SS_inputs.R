@@ -26,10 +26,18 @@
 #' @family run functions
 #' @examples
 #' \dontrun{
+#' # A theoretical example if "old_model" was present
+#' # but expect an error
 #' copy_SS_inputs(
 #'   dir.old = "c:/SS/old_model",
 #'   dir.new = "c:/SS/new_model"
 #' )
+#' # A working example using files stored in {r4ss}
+#' copy_SS_inputs(
+#'   dir.old = system.file("extdata", "simple_small", package = "r4ss"),
+#'   dir.new = "test"
+#' )
+#' unlink(test, recursive = TRUE)
 #' }
 #'
 copy_SS_inputs <- function(dir.old = NULL,
