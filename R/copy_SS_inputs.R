@@ -18,7 +18,9 @@
 #' @param copy_par Copy any .par files found in dir.old to dir.new?
 #' @param dir.exe Path to executable to copy instead of any in dir.old
 #' @template verbose
-#' @return Logical indicating whether all input files were copied successfully.
+#' @return
+#' A logical value is invisibly returned, indicating whether all input files
+#' were copied successfully.
 #' @author Ian G. Taylor
 #' @export
 #' @family run functions
@@ -66,13 +68,13 @@ copy_SS_inputs <- function(dir.old = NULL,
     starter <- SS_readstarter(starter_file, verbose = FALSE)
   } else {
     warning("file not found: ", file.path(starter_file))
-    return(FALSE)
+    return(invisible(FALSE))
   }
 
   # check for starter file in new location
   if (!overwrite && file.exists(file.path(dir.new, "starter.ss"))) {
     warning("overwrite = FALSE and starter.ss exists in ", dir.new)
-    return(FALSE)
+    return(invisible(FALSE))
   }
 
   if (verbose) {
@@ -193,7 +195,7 @@ copy_SS_inputs <- function(dir.old = NULL,
     if (verbose) {
       message("copying complete")
     }
-    return(TRUE)
+    return(invisible(TRUE))
   } else {
     if (verbose) {
       if (overwrite) {
@@ -202,6 +204,6 @@ copy_SS_inputs <- function(dir.old = NULL,
         warning("at least 1 file failed to copy, try 'overwrite = TRUE'")
       }
     }
-    return(FALSE)
+    return(invisible(FALSE))
   }
 }
