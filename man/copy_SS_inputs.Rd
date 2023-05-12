@@ -24,28 +24,30 @@ path or relative to the working directory.}
 \item{dir.new}{New location to which the files should be copied,
 either an absolute path or relative to the working directory.}
 
-\item{create.dir}{Create dir.new directory if it doesn't exist already?}
+\item{create.dir}{Create \code{dir.new} directory if it doesn't exist already?}
 
 \item{overwrite}{A logical value specifying if the existing file(s)
 should be overwritten. The default value is \code{overwrite = FALSE}.}
 
-\item{recursive}{logical. Should elements of the path other than the last be
-created?}
+\item{recursive}{A logical value passed to the \code{recursive} argument of
+\code{\link[=dir.create]{dir.create()}} that specifies if elements of the path other than the last
+be created?}
 
 \item{use_ss_new}{Use .ss_new files instead of original inputs?}
 
-\item{copy_exe}{Copy any executables found in dir.old to dir.new or
+\item{copy_exe}{Copy any executables found in \code{dir.old} to \code{dir.new} or
 dir.exe (if provided)?}
 
-\item{copy_par}{Copy any .par files found in dir.old to dir.new?}
+\item{copy_par}{Copy any .par files found in \code{dir.old} to \code{dir.new}?}
 
-\item{dir.exe}{Path to executable to copy instead of any in dir.old}
+\item{dir.exe}{Path to executable to copy instead of any in \code{dir.old}.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
 \value{
-Logical indicating whether all input files were copied successfully.
+A logical value is invisibly returned, indicating whether all input files
+were copied successfully.
 }
 \description{
 Reads the starter.ss file to figure out the names of the control and
@@ -54,10 +56,18 @@ and wtatage.ss (if present) to a new directory, as specified.
 }
 \examples{
 \dontrun{
+# A theoretical example if "old_model" was present
+# but expect an error
 copy_SS_inputs(
   dir.old = "c:/SS/old_model",
   dir.new = "c:/SS/new_model"
 )
+# A working example using files stored in {r4ss}
+copy_SS_inputs(
+  dir.old = system.file("extdata", "simple_small", package = "r4ss"),
+  dir.new = "test"
+)
+unlink(test, recursive = TRUE)
 }
 
 }
