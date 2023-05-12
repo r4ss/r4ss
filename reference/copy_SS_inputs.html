@@ -91,7 +91,7 @@ either an absolute path or relative to the working directory.</p></dd>
 
 
 <dt>create.dir</dt>
-<dd><p>Create dir.new directory if it doesn't exist already?</p></dd>
+<dd><p>Create <code>dir.new</code> directory if it doesn't exist already?</p></dd>
 
 
 <dt>overwrite</dt>
@@ -100,8 +100,9 @@ should be overwritten. The default value is <code>overwrite = FALSE</code>.</p><
 
 
 <dt>recursive</dt>
-<dd><p>logical. Should elements of the path other than the last be
-created?</p></dd>
+<dd><p>A logical value passed to the <code>recursive</code> argument of
+<code><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create()</a></code> that specifies if elements of the path other than the last
+be created?</p></dd>
 
 
 <dt>use_ss_new</dt>
@@ -109,16 +110,16 @@ created?</p></dd>
 
 
 <dt>copy_exe</dt>
-<dd><p>Copy any executables found in dir.old to dir.new or
+<dd><p>Copy any executables found in <code>dir.old</code> to <code>dir.new</code> or
 dir.exe (if provided)?</p></dd>
 
 
 <dt>copy_par</dt>
-<dd><p>Copy any .par files found in dir.old to dir.new?</p></dd>
+<dd><p>Copy any .par files found in <code>dir.old</code> to <code>dir.new</code>?</p></dd>
 
 
 <dt>dir.exe</dt>
-<dd><p>Path to executable to copy instead of any in dir.old</p></dd>
+<dd><p>Path to executable to copy instead of any in <code>dir.old</code>.</p></dd>
 
 
 <dt>verbose</dt>
@@ -130,7 +131,8 @@ to the screen.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Logical indicating whether all input files were copied successfully.</p>
+<p>A logical value is invisibly returned, indicating whether all input files
+were copied successfully.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -150,10 +152,18 @@ to the screen.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># A theoretical example if "old_model" was present</span></span></span>
+<span class="r-in"><span><span class="co"># but expect an error</span></span></span>
 <span class="r-in"><span><span class="fu">copy_SS_inputs</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  dir.old <span class="op">=</span> <span class="st">"c:/SS/old_model"</span>,</span></span>
 <span class="r-in"><span>  dir.new <span class="op">=</span> <span class="st">"c:/SS/new_model"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># A working example using files stored in {r4ss}</span></span></span>
+<span class="r-in"><span><span class="fu">copy_SS_inputs</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dir.old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dir.new <span class="op">=</span> <span class="st">"test"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">test</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
