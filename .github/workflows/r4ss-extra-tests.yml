@@ -1,13 +1,20 @@
 # Extra run of r4ss tests, when exe and models in test-models are available.workflow_call
 # stored in this repo because only applicable to ss3 (and in particular r4ss)
 
-on:
-  workflow_call:
-    inputs:
-      run-codecov:
-        required: false
-        type: boolean
-        default: false
+on: 
+  push: 
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+      - 'README.md'
+  pull_request:
+    branches:
+      - main
+    # paths-ignore:
+    #   - '.github/**'
+    #   - 'README.md'
+  workflow_dispatch:
 
 name: run-tests
 jobs:
@@ -66,15 +73,7 @@ jobs:
           wget -O ss https://vlab.noaa.gov/documents/259399/2000201/ss_3.24Z/037e3921-1f00-611a-1c30-d7a5c1063835?version=1.1&t=1608655599519&download=true
           sudo chmod a+x ss
           mv ss inst/extdata/simple_3.24/ss
-          
-      - name: Test
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        if: inputs.run-codecov != true
-        run: devtools::test(stop_on_failure = TRUE)
-        shell: Rscript {0}
         
       - name: Test coverage
-        if: inputs.run-codecov == true
         run: covr::codecov()
         shell: Rscript {0}
