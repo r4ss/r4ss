@@ -1,7 +1,6 @@
-# Run code cov
-name: run tests and calc code coverage
-# only run on pushes to main when there have been code changes
-# or on pull requests
+# Extra run of r4ss tests, when exe and models in test-models are available.workflow_call
+# stored in this repo because only applicable to ss3 (and in particular r4ss)
+
 on: 
   push: 
     branches:
@@ -10,34 +9,17 @@ on:
     paths-ignore:
 #      - '.github/**'
       - 'README.md'
-    inputs:
-      run-codecov:
-        required: false
-        type: boolean
-        default: false
   pull_request:
     branches:
       - main
     # paths-ignore:
     #   - '.github/**'
     #   - 'README.md'
-    inputs:
-      run-codecov:
-        required: false
-        type: boolean
-        default: false
   workflow_dispatch:
-    inputs:
-      run-codecov:
-        required: false
-        type: boolean
-        default: false
 
+name: run-tests
 jobs:
   R-CMD-check:
-    with: 
-      run-codecov: true
-
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
@@ -93,14 +75,14 @@ jobs:
           sudo chmod a+x ss
           mv ss inst/extdata/simple_3.24/ss
           
-      - name: Test
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        if: inputs.run-codecov != true
-        run: devtools::test(stop_on_failure = TRUE)
-        shell: Rscript {0}
+      # - name: Test
+      #   env:
+      #     _R_CHECK_CRAN_INCOMING_REMOTE_: false
+      #   if: inputs.run-codecov != true
+      #   run: devtools::test(stop_on_failure = TRUE)
+      #   shell: Rscript {0}
         
       - name: Test coverage
-        if: inputs.run-codecov == true
+      #  if: inputs.run-codecov == true
         run: covr::codecov()
         shell: Rscript {0}
