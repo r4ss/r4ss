@@ -96,7 +96,7 @@ use in multi-figure plots.}
 \description{
 Bubble plot based on function vaguely based on \code{bubble} by Edzer
 Pebesma in gstat package. By default, positive values have closed bubbles
-and negative values have open bubbles.
+and negative values have open bubbles. Tmp change, do not merge this PR! Small change.
 }
 \author{
 Ian Stewart and Ian Taylor
