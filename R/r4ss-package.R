@@ -10,7 +10,7 @@
 #'   legend lines matplot mtext pairs par
 #'   persp plot points polygon rect segments
 #'   symbols text title
-#' @importFrom kableExtra cell_spec kable kable_styling scroll_box 
+#' @importFrom kableExtra cell_spec kable kable_styling scroll_box
 #' @importFrom stats acf aggregate density dnorm loess
 #'   median na.omit nlminb optim pnorm qbeta qchisq qlnorm
 #'   qnorm qt quantile rnorm sd var window
