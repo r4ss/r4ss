@@ -833,7 +833,7 @@ SSplotBiology <-
       }
       if (option == 2) {
         # maturity curve is product of age-based and length-based factors
-        lines(growdatF[["Age_Beg"]], growdatF[["Len_Mat"]] * growdatF[["Age_Mat"]],
+        lines(growdatF[["Age_Beg"]], growdatF[["Len_Mat"]] * abs(growdatF[["Age_Mat"]]),
           col = colvec[col_index1], lwd = 1, lty = "12"
         )
       }
