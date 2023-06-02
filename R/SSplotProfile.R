@@ -225,9 +225,14 @@ SSplotProfile <-
     par_prior_like_vec <- as.numeric(par_prior_likes[par_prior_likes[["Label"]] == parlabel, models])
     # turn off addition of "Total without prior" line if there is no prior
     # on the parameter being profiled over
-    if (all(par_prior_like_vec) == 0) {
+    if (all(is.na(par_prior_like_vec))) {
       add_no_prior_line <- FALSE
     }
+    par_prior_like_vec[is.na(par_prior_like_vec)] <- 0
+    if (all(par_prior_like_vec == 0)) {
+      add_no_prior_line <- FALSE
+    }
+
     if (verbose & add_no_prior_line) {
       message(
         "Parameter prior likelihoods: ",
@@ -252,7 +257,6 @@ SSplotProfile <-
     }
 
     # calculate total likelihood without any prior on the profiled parameter
-    par_prior_like_vec[is.na(par_prior_like_vec)] <- 0
     TOTAL_no_prior <- prof.table[["TOTAL"]] - par_prior_like_vec
 
     # subtract minimum value from each likelihood component (over requested parameter range)
@@ -321,10 +325,12 @@ SSplotProfile <-
       col <- c(col, col[1])
       pch <- c(pch, NA)
     }
+
     # make total line wider with bigger points (or whatever user chooses)
-    lwd <- c(lwd.total, rep(lwd, nlines - 1), ifelse(add_no_prior_line, lwd, NULL))
-    cex <- c(cex.total, rep(cex, nlines - 1), ifelse(add_no_prior_line, cex.total, NULL))
-    lty <- c(lty.total, rep(lty, nlines - 1), ifelse(add_no_prior_line, 2, NULL))
+    # uses switch() instead of ifelse() because ifelse() doesn't return NULL
+    lwd <- c(lwd.total, rep(lwd, nlines - 1), switch(add_no_prior_line + 1, NULL, lwd))
+    cex <- c(cex.total, rep(cex, nlines - 1), switch(add_no_prior_line + 1, NULL, cex.total))
+    lty <- c(lty.total, rep(lty, nlines - 1), switch(add_no_prior_line + 1, NULL, 2))
 
     # make plot
     plotprofile <- function() {
