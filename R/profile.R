@@ -85,8 +85,7 @@ SS_profile <- function(...) {
 #' # example profile
 #' # (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)
 #' ###########################################################################
-#' }
-
+#'
 #' # directory for "simple_small" example model included with r4ss
 #' dir_simple_small <- file.path(
 #'   path.package("r4ss"),
