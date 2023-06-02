@@ -2,7 +2,7 @@
 #'
 #' Bubble plot based on function vaguely based on `bubble` by Edzer
 #' Pebesma in gstat package. By default, positive values have closed bubbles
-#' and negative values have open bubbles.
+#' and negative values have open bubbles. Tmp change, do not merge this PR!
 #'
 #'
 #' @param x Vector of x-values.
