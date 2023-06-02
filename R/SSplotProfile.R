@@ -161,7 +161,9 @@ SSplotProfile <-
       }
       # create directory if it's missing
       if (!file.exists(plotdir)) {
-        if (verbose) message("creating directory:", plotdir)
+        if (verbose) {
+          message("creating directory:", plotdir)
+        }
         dir.create(plotdir, recursive = TRUE)
       }
     }
@@ -208,17 +210,32 @@ SSplotProfile <-
         sep = ""
       )
     }
+
+    # get vector of parameter values
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
+    if (verbose) {
+      message("Parameter matching profile.string=", profile.string, ": ", parlabel)
+      message(
+        "Parameter values (after subsetting based on input 'models'): ",
+        paste0(parvec, collapse = ", ")
+      )
+    }
+    
+    # get vector of prior likelihoods for this parameter
     par_prior_like_vec <- as.numeric(par_prior_likes[par_prior_likes[["Label"]] == parlabel, models])
-    message("Parameter matching profile.string=", profile.string, ": ", parlabel)
-    message(
-      "Parameter values (after subsetting based on input 'models'): ",
-      paste0(parvec, collapse = ", ")
-    )
-    message(
-      "Parameter prior likelihoods: ",
-      paste0(par_prior_like_vec, collapse = ", ")
-    )
+    # turn off addition of "Total without prior" line if there is no prior 
+    # on the parameter being profiled over
+    if (all(par_prior_like_vec) == 0) {
+      add_no_prior_line <- FALSE
+    }
+    if (verbose & add_no_prior_line) {
+      message(
+        "Parameter prior likelihoods: ",
+        paste0(par_prior_like_vec, collapse = ", ")
+      )
+    }
+
+    # set x-axis limits
     if (xlim[1] == "default") xlim <- range(parvec)
 
     # rearange likelihoods to be in columns by type
@@ -236,15 +253,17 @@ SSplotProfile <-
 
     # calculate total likelihood without any prior on the profiled parameter
     par_prior_like_vec[is.na(par_prior_like_vec)] <- 0
-    TOTAL_no_prior <- prof.table$TOTAL - par_prior_like_vec
+    TOTAL_no_prior <- prof.table[["TOTAL"]] - par_prior_like_vec
 
     # subtract minimum value from each likelihood component (over requested parameter range)
     subset <- parvec >= xlim[1] & parvec <= xlim[2]
     for (icol in 1:ncol(prof.table)) {
       prof.table[, icol] <- prof.table[, icol] - min(prof.table[subset, icol])
-      TOTAL_no_prior <- TOTAL_no_prior - min(TOTAL_no_prior)
     }
-    if (ymax == "default") ymax <- 1.1 * max(prof.table[subset, ])
+    TOTAL_no_prior <- TOTAL_no_prior - min(TOTAL_no_prior)
+    if (ymax == "default") {
+      ymax <- 1.1 * max(prof.table[subset, ])
+    }
     ylim <- c(0, ymax)
 
     # remove columns that have change less than minfraction change relative to total
@@ -253,11 +272,13 @@ SSplotProfile <-
     include <- change.fraction >= minfraction
 
     nlines <- sum(include)
-    message(
-      "\nLikelihood components showing max change as fraction of total change.\n",
-      "To change which components are included, change input 'minfraction'.\n"
-    )
-    print(data.frame(frac_change = round(change.fraction, 4), include = include, label = component.labels.good))
+    if (verbose) {
+      message(
+        "Likelihood components showing max change as fraction of total change.\n",
+        "To change which components are included, change input 'minfraction'.\n"
+      )
+      print(data.frame(frac_change = round(change.fraction, 4), include = include, label = component.labels.good))
+    }
     # stop function if nothing left
     if (nlines == 0) {
       stop("No components included, 'minfraction' should be smaller.")
@@ -266,8 +287,9 @@ SSplotProfile <-
 
     # reorder values
     prof.table <- prof.table[order(parvec), include]
+    TOTAL_no_prior <- TOTAL_no_prior[order(parvec)]
     parvec <- parvec[order(parvec)]
-
+    
     # reorder columns by largest change (if requested, and more than 1 line)
     change.fraction <- change.fraction[include]
     if (nlines > 1) {
@@ -279,6 +301,9 @@ SSplotProfile <-
     }
 
     # add TOTAL_no_prior to table
+    # Note: this is done at this stage rather than when first calculated
+    # to avoid dealing with this column while filtering and reordering 
+    # the other columns
     prof.table <- data.frame(prof.table, TOTAL_no_prior)
     if (add_no_prior_line) {
       component.labels.used <- c(component.labels.used, "Total without prior")
