@@ -37,11 +37,19 @@ SSgetoutput <-
       )
     }
 
-    if (!is.null(keyvec) & verbose) message("length(keyvec) as input to SSgetoutput:", length(keyvec))
-    if (!is.null(dirvec) & verbose) message("length(dirvec) as input to SSgetoutput:", length(dirvec))
+    if (verbose) {
+      if (!is.null(keyvec)) {
+        message("length(keyvec) as input to SSgetoutput: ", length(keyvec))
+      }
+      if (!is.null(dirvec)) {
+        message("length(dirvec) as input to SSgetoutput: ", length(dirvec))
+      }
+    }
 
     # change inputs so that keyvec and dirvec have matching lengths or keyvec=NULL
-    if (listlists) biglist <- list()
+    if (listlists) {
+      biglist <- list()
+    }
     n1 <- length(keyvec)
     n2 <- length(dirvec)
     if (n1 > 1 & n2 > 1 & n1 != n2) {
@@ -49,12 +57,20 @@ SSgetoutput <-
     } else {
       n <- max(1, n1, n2) # n=1 or n=length of either optional input vector
     }
-    if (n1 == 1) keyvec <- rep(keyvec, n)
+    if (n1 == 1) {
+      keyvec <- rep(keyvec, n)
+    }
     objectnames <- paste("replist", keyvec, sep = "")
-    if (n1 == 0) objectnames <- paste("replist", 1:n, sep = "")
+    if (n1 == 0) {
+      objectnames <- paste("replist", 1:n, sep = "")
+    }
 
-    if (n2 == 0) dirvec <- getwd()
-    if (length(dirvec) == 1) dirvec <- rep(dirvec, n)
+    if (n2 == 0) {
+      dirvec <- getwd()
+    }
+    if (length(dirvec) == 1) {
+      dirvec <- rep(dirvec, n)
+    }
     dirvec <- paste(dirvec, "/", sep = "")
 
     # loop over directories or key strings
@@ -69,7 +85,9 @@ SSgetoutput <-
       }
       newobject <- objectnames[i]
 
-      if (verbose & !is.null(key)) message("getting files with key =", key)
+      if (verbose & !is.null(key)) {
+        message("getting files with key =", key)
+      }
 
       repFileName <- paste("Report", key2, ".sso", sep = "")
       covarname <- paste("covar", key2, ".sso", sep = "")
@@ -86,7 +104,9 @@ SSgetoutput <-
       mycovar <- file.exists(file.path(mydir, covarname)) & getcovar
 
       fullfile <- paste(mydir, repFileName, sep = "")
-      if (verbose) message("reading output from", fullfile)
+      if (verbose) {
+        message("reading output from ", fullfile)
+      }
       repfilesize <- file.info(fullfile)$size
 
       output <- NA
@@ -110,8 +130,12 @@ SSgetoutput <-
       } else {
         message("!repfile doesn't exists or is empty")
       }
-      if (verbose) message("added element '", newobject, "' to list")
-      if (listlists) biglist[[newobject]] <- output
+      if (verbose) {
+        message("added element '", newobject, "' to list")
+      }
+      if (listlists) {
+        biglist[[newobject]] <- output
+      }
 
       if (save.lists) {
         biglist.file <- paste("biglist", i, "_", format(Sys.time(), "%d-%b-%Y_%H.%M"), ".Rdata", sep = "")
