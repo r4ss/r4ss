@@ -884,11 +884,14 @@ SS_output <-
         duplicates <- compdbase %>%
           dplyr::select(-Cum_obs, -Cum_exp) %>%
           duplicated()
-        message(
-          "Removing ", sum(duplicates), " out of ", nrow(compdbase),
-          " rows in CompReport.sso which are duplicates."
-        )
+        if (verbose) {
+          message(
+            "Removing ", sum(duplicates), " out of ", nrow(compdbase),
+            " rows in CompReport.sso which are duplicates."
+          )
+        }
         compdbase <- compdbase[!duplicates, ]
+        # done removing duplicates
 
         # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
         #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
