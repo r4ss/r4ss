@@ -220,10 +220,10 @@ SSplotProfile <-
         paste0(parvec, collapse = ", ")
       )
     }
-    
+
     # get vector of prior likelihoods for this parameter
     par_prior_like_vec <- as.numeric(par_prior_likes[par_prior_likes[["Label"]] == parlabel, models])
-    # turn off addition of "Total without prior" line if there is no prior 
+    # turn off addition of "Total without prior" line if there is no prior
     # on the parameter being profiled over
     if (all(par_prior_like_vec) == 0) {
       add_no_prior_line <- FALSE
@@ -289,7 +289,7 @@ SSplotProfile <-
     prof.table <- prof.table[order(parvec), include]
     TOTAL_no_prior <- TOTAL_no_prior[order(parvec)]
     parvec <- parvec[order(parvec)]
-    
+
     # reorder columns by largest change (if requested, and more than 1 line)
     change.fraction <- change.fraction[include]
     if (nlines > 1) {
@@ -302,7 +302,7 @@ SSplotProfile <-
 
     # add TOTAL_no_prior to table
     # Note: this is done at this stage rather than when first calculated
-    # to avoid dealing with this column while filtering and reordering 
+    # to avoid dealing with this column while filtering and reordering
     # the other columns
     prof.table <- data.frame(prof.table, TOTAL_no_prior)
     if (add_no_prior_line) {
