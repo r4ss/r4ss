@@ -1,33 +1,35 @@
-#' Calculate Mohn's Rho values for select quantities
+#' Calculate Mohn's rho values for select quantities
 #'
 #' Function calculates:
-#' (1) a rho value for the ending year for each retrospective relative to the reference model
-#' as in Mohn (1999),
-#' (2) a "Wood's Hole Mohn's Rho", which is a rho value averaged across all years for each
-#' retrospective relative to the reference model, and
-#' (3) an "Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho,
-#' which is the average rho per retrospective "peel".
+#' 1. a rho value for the ending year for each retrospective relative to the
+#'    reference model as in Mohn (1999);
+#' 1. a ``Wood's Hole Mohn's rho'', which is a rho value averaged across all
+#'    years for each retrospective relative to the reference model; and
+#' 1. an Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's
+#'    rho, which is the average rho per retrospective ``peel''.
 #'
-#'
-#' @param summaryoutput List created by `SSsummarize`. The expected order for the
-#' models are the full reference model, the retro -1, retro -2, and so forth.
-#' @param endyrvec Single year or vector of years representing the
-#' final year of values to show for each model.
+#' @param summaryoutput List created by [SSsummarize()]. The expected order for
+#'   the models are the full reference model, the retro -1, retro -2, and so
+#'   forth.
+#' @param endyrvec Single year or vector of years representing the final year of
+#'   values to show for each model.
 #' @param startyr Single year used to calculate the start of the Wood's Hole
-#' Mohn's Rho value across all years. Defaults to startyr of reference model.
+#'   Mohn's rho value across all years. Defaults to `startyr` of reference
+#'   model.
 #' @template verbose
 #'
-#' @author Chantel R. Wetzel and Carey McGilliard
-#' @references Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias
-#' and retrospective patterns in integrated, age-structured stock assessment
-#' models. ICES J. Mar. Sci Volume 72, Issue 1, 1 January 2015,
-#' Pages 99-110, https://doi.org/10.1093/icesjms/fsu198
-#' Mohn, R. 1999. The retrospective problem in sequential population analysis:
-#' An investigation using cod fishery and simulated data. ICES J. Mar. Sci
-#' Volume 56, Pages 473-488
-#'
+#' @author Chantel R. Wetzel and Carey R. McGilliard
+#' @references
+#' * Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias and
+#'   retrospective patterns in integrated, age-structured stock assessment
+#'   models. ICES J. Mar. Sci. 72(1), 99--110.
+#'   https://doi.org/10.1093/icesjms/fsu198.
+#' * Mohn, R. 1999. The retrospective problem in sequential population analysis:
+#'   an investigation using cod fishery and simulated data. ICES J. Mar. Sci.
+#'   56, 473--488. https://doi.org/10.1006/jmsc.1999.0481.
+#' @return
+#' A list.
 #' @export
-
 SSmohnsrho <-
   function(summaryoutput,
            endyrvec,
@@ -53,9 +55,9 @@ SSmohnsrho <-
     mohnSSB <- mohnRec <- mohnBratio <- mohnF <- numeric()
     mohnSSB.all <- mohnRec.all <- mohnBratio.all <- mohnF.all <- numeric()
 
-    # Mohn's Rho Calculation for the terminal year for each of
+    # Mohn's rho Calculation for the terminal year for each of
     # the retrospectives relative to the reference model
-    # Rho <- sum over y [ (X_y,retro - X_y,ref) / X_y,ref ]
+    # rho <- sum over y [ (X_y,retro - X_y,ref) / X_y,ref ]
     for (i in 1:(N - 1)) {
       ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1])
       mohnSSB[i] <- (summaryoutput[["SpawnBio"]][ind, i + 1] -
@@ -78,12 +80,12 @@ SSmohnsrho <-
         summaryoutput[["Fvalue"]][ind, 1]
     }
 
-    # Wood's Hole Mohn's Rho Calculation for all years for each of the
+    # Wood's Hole Mohn's rho Calculation for all years for each of the
     # retrospectives relative to the reference model
-    # Rho <- sum over y [ (X_y,retro - X_y,ref) / X_y,ref ]
+    # rho <- sum over y [ (X_y,retro - X_y,ref) / X_y,ref ]
     # This rho value is then scaled according to the number of model years
     # for comparison between the one year and all year calculation
-    # Rho <- Rho / Number of Years
+    # rho <- rho / Number of Years
     for (i in 1:(N - 1)) {
       ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == startyr):which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1])
       mohnSSB.all[i] <-
@@ -99,7 +101,7 @@ SSmohnsrho <-
           sum((summaryoutput[["Bratio"]][ind, i + 1] - summaryoutput[["Bratio"]][ind, 1]) /
             summaryoutput[["Bratio"]][ind, 1]) / length(ind)
       } else {
-        warning("Skipping Wood's Hole Mohns Rho on Bratio, as Bratio is not available for year after the first model year.")
+        warning("Skipping Wood's Hole Mohns rho on Bratio, as Bratio is not available for year after the first model year.")
         mohnBratio.all[i] <- NA
       }
       if (length(which(summaryoutput[["Fvalue"]][["Yr"]] == startyr)) != 0) {
@@ -108,7 +110,7 @@ SSmohnsrho <-
           sum((summaryoutput[["Fvalue"]][ind, i + 1] - summaryoutput[["Fvalue"]][ind, 1]) /
             summaryoutput[["Fvalue"]][ind, 1]) / length(ind)
       } else {
-        warning("Skipping Wood's Hole Mohn's Rho on Fvalue, ecause Fvalue is not available for first model year.")
+        warning("Skipping Wood's Hole Mohn's rho on Fvalue, ecause Fvalue is not available for first model year.")
         mohnF.all[i] <- NA
       }
     }
@@ -126,7 +128,7 @@ SSmohnsrho <-
 
     # Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho
     # https://www.afsc.noaa.gov/REFM/stocks/Plan_Team/2013/Sept/Retrospectives_2013_final3.pdf
-    # Equation 1:  Rho <- (sum over p [ (X_y-p,p -X_y-p,0) / X_y-p,0]) / P
+    # Equation 1:  rho <- (sum over p [ (X_y-p,p -X_y-p,0) / X_y-p,0]) / P
     mohn.out[["AFSC_Hurtado_SSB"]] <- sum(mohnSSB) / length(mohnSSB)
     mohn.out[["AFSC_Hurtado_Rec"]] <- sum(mohnRec) / length(mohnRec)
     mohn.out[["AFSC_Hurtado_F"]] <- sum(mohnF) / length(mohnF)
