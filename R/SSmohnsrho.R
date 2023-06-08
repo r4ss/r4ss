@@ -26,7 +26,7 @@
 #'   is to use the `startyr` of the reference model.
 #' @template verbose
 #'
-#' @author Chantel R. Wetzel and Carey R. McGilliard
+#' @author Chantel R. Wetzel, Carey R. McGilliard, and Kelli F. Johnson
 #' @references
 #' * Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias and
 #'   retrospective patterns in integrated, age-structured stock assessment

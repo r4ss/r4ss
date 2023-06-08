@@ -67,5 +67,5 @@ an investigation using cod fishery and simulated data. ICES J. Mar. Sci.
 }
 }
 \author{
-Chantel R. Wetzel and Carey R. McGilliard
+Chantel R. Wetzel, Carey R. McGilliard, and Kelli F. Johnson
 }
