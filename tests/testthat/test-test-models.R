@@ -6,8 +6,8 @@ test_that("test-models work with SS_output() and SS_plots()", {
   # (should have been loaded there by 
   # .github\workflows\r4ss-extra-tests.yml)
   skip_if(
-    (!file.exists("inst/extdata/simple_small/ss"))) &
-      (!file.exists("inst/extdata/simple_small/ss.exe"))),
+    (!file.exists("inst/extdata/simple_small/ss")) &
+      (!file.exists("inst/extdata/simple_small/ss.exe")),
     message = "skipping test that requires SS3 executable"
   )
   mod_path <- file.path(tempdir(check = TRUE), "test-test-models")
