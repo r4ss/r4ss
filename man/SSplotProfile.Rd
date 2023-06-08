@@ -49,6 +49,7 @@ SSplotProfile(
   plotdir = NULL,
   add_cutoff = FALSE,
   cutoff_prob = 0.95,
+  add_no_prior_line = TRUE,
   verbose = TRUE,
   ...
 )
@@ -162,6 +163,9 @@ freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
 can be adjusted using the \code{cutoff_prob} below.}
 
 \item{cutoff_prob}{Probability associated with \code{add_cutoff} above.}
+
+\item{add_no_prior_line}{Add line showing total likelihood without
+the prior (only appears when profiled parameter that includes a prior)}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

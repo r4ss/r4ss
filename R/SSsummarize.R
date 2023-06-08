@@ -90,7 +90,8 @@ SSsummarize <- function(biglist,
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
   # objects to store quantities
-  pars <- parsSD <- parphases <- as.data.frame(matrix(NA, nrow = length(parnames), ncol = n))
+  pars <- parsSD <- parphases <- par_prior_likes <-
+    as.data.frame(matrix(NA, nrow = length(parnames), ncol = n))
   quants <- quantsSD <- as.data.frame(matrix(NA, nrow = length(dernames), ncol = n))
   maxgrad <- NULL
   nsexes <- NULL
@@ -272,6 +273,7 @@ SSsummarize <- function(biglist,
       pars[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Value"]][ipar]
       parsSD[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Parm_StDev"]][ipar]
       parphases[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Phase"]][ipar]
+      par_prior_likes[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Pr_Like"]][ipar]
     }
     if (verbose) {
       message("  N active pars = ", sum(!is.na(parstemp[["Active_Cnt"]])))
@@ -344,11 +346,13 @@ SSsummarize <- function(biglist,
 
 
   ### format and process info from the models
-  names(pars) <- names(parsSD) <- names(parphases) <- modelnames
+  names(pars) <- names(parsSD) <- names(parphases) <- names(par_prior_likes) <-
+    modelnames
   names(quants) <- names(quantsSD) <- modelnames
   names(likelihoods) <- names(likelambdas) <- modelnames
 
-  pars[["Label"]] <- parsSD[["Label"]] <- parphases[["Label"]] <- parnames
+  pars[["Label"]] <- parsSD[["Label"]] <- parphases[["Label"]] <-
+    par_prior_likes[["Label"]] <- parnames
   quants[["Label"]] <- quantsSD[["Label"]] <- dernames
   likelihoods[["Label"]] <- likelambdas[["Label"]] <- likenames
   # extract year values from labels for some parameters associated with years
@@ -616,7 +620,7 @@ SSsummarize <- function(biglist,
       deparse(substitute(data)) == "pars") {
       message(
         "For model(s) ", paste(fix, collapse = ", "),
-        ", values in 'pars', 'parsSD', and 'parphases' for\n",
+        ", values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for\n",
         paste(data[oldrows, "Label"], data[newrows, "Label"],
           sep = " -> ", collapse = ", "
         ),
@@ -647,6 +651,7 @@ SSsummarize <- function(biglist,
   mylist[["pars"]] <- copy.dm(pars)
   mylist[["parsSD"]] <- copy.dm(parsSD)
   mylist[["parphases"]] <- copy.dm(parphases)
+  mylist[["par_prior_likes"]] <- copy.dm(par_prior_likes)
   mylist[["quants"]] <- quants
   mylist[["quantsSD"]] <- quantsSD
   mylist[["likelihoods"]] <- likelihoods
