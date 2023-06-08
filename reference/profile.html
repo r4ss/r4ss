@@ -227,48 +227,65 @@ Chantel R. Wetzel, James T. Thorson</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># note: don't run this in your main directory</span></span></span>
-<span class="r-in"><span><span class="co"># make a copy in case something goes wrong</span></span></span>
-<span class="r-in"><span><span class="va">mydir</span> <span class="op">&lt;-</span> <span class="st">"C:/ss/Simple - Copy"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">###########################################################################</span></span></span>
+<span class="r-in"><span><span class="co"># example profile</span></span></span>
+<span class="r-in"><span><span class="co"># (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)</span></span></span>
+<span class="r-in"><span><span class="co">###########################################################################</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># directory for "simple_small" example model included with r4ss</span></span></span>
+<span class="r-in"><span><span class="va">dir_simple_small</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"r4ss"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># create temporary directory and copy files into it</span></span></span>
+<span class="r-in"><span><span class="va">dir_prof</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"profile"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="copy_SS_inputs.html">copy_SS_inputs</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dir.old <span class="op">=</span> <span class="va">dir_simple_small</span>,</span></span>
+<span class="r-in"><span>  dir.new <span class="op">=</span> <span class="va">dir_prof</span>,</span></span>
+<span class="r-in"><span>  create.dir <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  copy_par <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the following commands related to starter.ss could be done by hand</span></span></span>
 <span class="r-in"><span><span class="co"># read starter file</span></span></span>
-<span class="r-in"><span><span class="va">starter</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_readstarter.html">SS_readstarter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">mydir</span>, <span class="st">"starter.ss"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">starter</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_readstarter.html">SS_readstarter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir_prof</span>, <span class="st">"starter.ss"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># change control file name in the starter file</span></span></span>
 <span class="r-in"><span><span class="va">starter</span><span class="op">[[</span><span class="st">"ctlfile"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"control_modified.ss"</span></span></span>
 <span class="r-in"><span><span class="co"># make sure the prior likelihood is calculated</span></span></span>
 <span class="r-in"><span><span class="co"># for non-estimated quantities</span></span></span>
 <span class="r-in"><span><span class="va">starter</span><span class="op">[[</span><span class="st">"prior_like"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="co"># write modified starter file</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="SS_writestarter.html">SS_writestarter</a></span><span class="op">(</span><span class="va">starter</span>, dir <span class="op">=</span> <span class="va">mydir</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="SS_writestarter.html">SS_writestarter</a></span><span class="op">(</span><span class="va">starter</span>, dir <span class="op">=</span> <span class="va">dir_prof</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># vector of values to profile over</span></span></span>
 <span class="r-in"><span><span class="va">h.vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.9</span>, <span class="fl">.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Nprofile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">h.vec</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># run profile command</span></span></span>
 <span class="r-in"><span><span class="va">profile</span> <span class="op">&lt;-</span> <span class="fu">profile</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">mydir</span>,</span></span>
-<span class="r-in"><span>  oldctlfile <span class="op">=</span> <span class="st">"control.ss_new"</span>,</span></span>
+<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">dir_prof</span>,</span></span>
+<span class="r-in"><span>  oldctlfile <span class="op">=</span> <span class="st">"control.ss"</span>,</span></span>
 <span class="r-in"><span>  newctlfile <span class="op">=</span> <span class="st">"control_modified.ss"</span>,</span></span>
 <span class="r-in"><span>  string <span class="op">=</span> <span class="st">"steep"</span>, <span class="co"># subset of parameter label</span></span></span>
 <span class="r-in"><span>  profilevec <span class="op">=</span> <span class="va">h.vec</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># read the output files (with names like Report1.sso, Report2.sso, etc.)</span></span></span>
-<span class="r-in"><span><span class="va">profilemodels</span> <span class="op">&lt;-</span> <span class="fu"><a href="SSgetoutput.html">SSgetoutput</a></span><span class="op">(</span>dirvec <span class="op">=</span> <span class="va">mydir</span>, keyvec <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">Nprofile</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">profilemodels</span> <span class="op">&lt;-</span> <span class="fu"><a href="SSgetoutput.html">SSgetoutput</a></span><span class="op">(</span>dirvec <span class="op">=</span> <span class="va">dir_prof</span>, keyvec <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">Nprofile</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># summarize output</span></span></span>
 <span class="r-in"><span><span class="va">profilesummary</span> <span class="op">&lt;-</span> <span class="fu"><a href="SSsummarize.html">SSsummarize</a></span><span class="op">(</span><span class="va">profilemodels</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># OPTIONAL COMMANDS TO ADD MODEL WITH PROFILE PARAMETER ESTIMATED</span></span></span>
-<span class="r-in"><span><span class="va">MLEmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_output.html">SS_output</a></span><span class="op">(</span><span class="st">"C:/ss/SSv3.24l_Dec5/Simple"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># (in the "simple_small" example, steepness is fixed so it doesn't</span></span></span>
+<span class="r-in"><span><span class="co"># have any impact)</span></span></span>
+<span class="r-in"><span><span class="va">MLEmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_output.html">SS_output</a></span><span class="op">(</span><span class="va">dir_simple_small</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, printstats <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">profilemodels</span><span class="op">[[</span><span class="st">"MLE"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">MLEmodel</span></span></span>
 <span class="r-in"><span><span class="va">profilesummary</span> <span class="op">&lt;-</span> <span class="fu"><a href="SSsummarize.html">SSsummarize</a></span><span class="op">(</span><span class="va">profilemodels</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># END OPTIONAL COMMANDS</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot profile using summary created above</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="SSplotProfile.html">SSplotProfile</a></span><span class="op">(</span><span class="va">profilesummary</span>, <span class="co"># summary object</span></span></span>
+<span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="SSplotProfile.html">SSplotProfile</a></span><span class="op">(</span><span class="va">profilesummary</span>, <span class="co"># summary object</span></span></span>
 <span class="r-in"><span>  profile.string <span class="op">=</span> <span class="st">"steep"</span>, <span class="co"># substring of profile parameter</span></span></span>
 <span class="r-in"><span>  profile.label <span class="op">=</span> <span class="st">"Stock-recruit steepness (h)"</span></span></span>
 <span class="r-in"><span><span class="op">)</span> <span class="co"># axis label</span></span></span>
@@ -276,61 +293,76 @@ Chantel R. Wetzel, James T. Thorson</p>
 <span class="r-in"><span><span class="co"># make timeseries plots comparing models in profile</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="SSplotComparisons.html">SSplotComparisons</a></span><span class="op">(</span><span class="va">profilesummary</span>, legendlabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"h ="</span>, <span class="va">h.vec</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">###########################################################################</span></span></span>
+<span class="r-in"><span><span class="co"># example two-dimensional profile</span></span></span>
+<span class="r-in"><span><span class="co"># (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)</span></span></span>
 <span class="r-in"><span><span class="co">###########################################################################</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># example two-dimensional profile</span></span></span>
-<span class="r-in"><span><span class="co"># (e.g. over 2 of the parameters in the low-fecundity stock-recruit function)</span></span></span>
-<span class="r-in"><span><span class="va">base_dir</span> <span class="op">&lt;-</span> <span class="st">"c:/mymodel"</span></span></span>
+<span class="r-in"><span><span class="va">dir_simple_small</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"r4ss"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">dir_profile_SR</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">base_dir</span>, <span class="st">"Profiles/Zfrac_and_Beta"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># create temporary directory and copy files into it</span></span></span>
+<span class="r-in"><span><span class="va">dir_prof</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"profile_2D"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="copy_SS_inputs.html">copy_SS_inputs</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dir.old <span class="op">=</span> <span class="va">dir_simple_small</span>,</span></span>
+<span class="r-in"><span>  dir.new <span class="op">=</span> <span class="va">dir_prof</span>,</span></span>
+<span class="r-in"><span>  create.dir <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  copy_par <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># make a grid of values in both dimensions Zfrac and Beta</span></span></span>
-<span class="r-in"><span><span class="co"># vector of values to profile over</span></span></span>
-<span class="r-in"><span><span class="va">Zfrac_vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">0.2</span>, to <span class="op">=</span> <span class="fl">0.6</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">Beta_vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1.0</span>, <span class="fl">1.5</span>, <span class="fl">2.0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">par_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>Zfrac <span class="op">=</span> <span class="va">Zfrac_vec</span>, Beta <span class="op">=</span> <span class="va">Beta_vec</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">par_table</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## [1] 25</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">par_table</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">##   Zfrac Beta</span></span></span>
-<span class="r-in"><span><span class="co">## 1   0.2 0.50</span></span></span>
-<span class="r-in"><span><span class="co">## 2   0.3 0.50</span></span></span>
-<span class="r-in"><span><span class="co">## 3   0.4 0.50</span></span></span>
-<span class="r-in"><span><span class="co">## 4   0.5 0.50</span></span></span>
-<span class="r-in"><span><span class="co">## 5   0.6 0.50</span></span></span>
-<span class="r-in"><span><span class="co">## 6   0.2 0.75</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># run profile command</span></span></span>
-<span class="r-in"><span><span class="va">profile</span> <span class="op">&lt;-</span> <span class="fu">profile</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">dir_profile_SR</span>, <span class="co"># directory</span></span></span>
+<span class="r-in"><span><span class="co"># create table of M values for females and males</span></span></span>
+<span class="r-in"><span><span class="va">par_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  M1vec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.10</span>, <span class="fl">0.15</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  M2vec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.10</span>, <span class="fl">0.15</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># run model once to create control.ss_new with</span></span></span>
+<span class="r-in"><span><span class="co"># good starting parameter values</span></span></span>
+<span class="r-in"><span><span class="co"># exe is assumed to be in PATH, add "exe" argument if needed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">dir_prof</span>, extras <span class="op">=</span> <span class="st">"-nohess"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># run profile using ss_new file as parameter source and</span></span></span>
+<span class="r-in"><span><span class="co"># overwriting original control file with new values</span></span></span>
+<span class="r-in"><span><span class="va">prof.table</span> <span class="op">&lt;-</span> <span class="fu">profile</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">dir_prof</span>,</span></span>
 <span class="r-in"><span>  oldctlfile <span class="op">=</span> <span class="st">"control.ss_new"</span>,</span></span>
-<span class="r-in"><span>  newctlfile <span class="op">=</span> <span class="st">"control_modified.ss"</span>,</span></span>
-<span class="r-in"><span>  string <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Zfrac"</span>, <span class="st">"Beta"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  newctlfile <span class="op">=</span> <span class="st">"control.ss"</span>,</span></span>
+<span class="r-in"><span>  string <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NatM_uniform_Fem_GP_1"</span>, <span class="st">"NatM_uniform_Mal_GP_1"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  profilevec <span class="op">=</span> <span class="va">par_table</span>,</span></span>
-<span class="r-in"><span>  extras <span class="op">=</span> <span class="st">"-nohess"</span> <span class="co"># argument passed to run()</span></span></span>
+<span class="r-in"><span>  extras <span class="op">=</span> <span class="st">"-nohess"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get model output</span></span></span>
 <span class="r-in"><span><span class="va">profilemodels</span> <span class="op">&lt;-</span> <span class="fu"><a href="SSgetoutput.html">SSgetoutput</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  dirvec <span class="op">=</span> <span class="va">dir_profile_SR</span>,</span></span>
+<span class="r-in"><span>  dirvec <span class="op">=</span> <span class="va">dir_prof</span>,</span></span>
 <span class="r-in"><span>  keyvec <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">par_table</span><span class="op">)</span>, getcovar <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">profilemodels</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">profilesummary</span> <span class="op">&lt;-</span> <span class="fu"><a href="SSsummarize.html">SSsummarize</a></span><span class="op">(</span><span class="va">profilemodels</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># add total likelihood (row 1) to table created above</span></span></span>
-<span class="r-in"><span><span class="va">par_table</span><span class="op">[[</span><span class="st">"like"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">profilesummary</span><span class="op">[[</span><span class="st">"likelihoods"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">par_table</span><span class="op">$</span><span class="va">like</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">profilesummary</span><span class="op">$</span><span class="va">likelihoods</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># reshape data frame into a matrix for use with contour</span></span></span>
-<span class="r-in"><span><span class="va">like_matrix</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html" class="external-link">acast</a></span><span class="op">(</span><span class="va">par_table</span>, <span class="va">Zfrac</span> <span class="op">~</span> <span class="va">Beta</span>, value.var <span class="op">=</span> <span class="st">"like"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># make contour plot</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/contour.html" class="external-link">contour</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">like_matrix</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">like_matrix</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  z <span class="op">=</span> <span class="va">like_matrix</span></span></span>
+<span class="r-in"><span><span class="va">like_matrix</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html" class="external-link">acast</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">par_table</span>,</span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">M1vec</span> <span class="op">~</span> <span class="va">M2vec</span>,</span></span>
+<span class="r-in"><span>  value.var <span class="op">=</span> <span class="st">"like"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># look at change relative to the minimum</span></span></span>
+<span class="r-in"><span><span class="co"># (shows small change when female and male M are equal,</span></span></span>
+<span class="r-in"><span><span class="co"># big change when they are different)</span></span></span>
+<span class="r-in"><span><span class="va">like_matrix</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">like_matrix</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#         0.05    0.1    0.15</span></span></span>
+<span class="r-in"><span><span class="co"># 0.05   6.938 32.710 121.959</span></span></span>
+<span class="r-in"><span><span class="co"># 0.1   49.706  0.000  27.678</span></span></span>
+<span class="r-in"><span><span class="co"># 0.15 154.897 44.768   5.366</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

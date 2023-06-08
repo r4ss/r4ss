@@ -109,6 +109,7 @@ total.</p>
 <span>  plotdir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  add_cutoff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cutoff_prob <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  add_no_prior_line <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -295,6 +296,11 @@ can be adjusted using the <code>cutoff_prob</code> below.</p></dd>
 
 <dt>cutoff_prob</dt>
 <dd><p>Probability associated with <code>add_cutoff</code> above.</p></dd>
+
+
+<dt>add_no_prior_line</dt>
+<dd><p>Add line showing total likelihood without
+the prior (only appears when profiled parameter that includes a prior)</p></dd>
 
 
 <dt>verbose</dt>
