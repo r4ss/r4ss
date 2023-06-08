@@ -159,7 +159,7 @@ jitter <- function(dir = getwd(),
       if (is.null(rep)) {
         report <- SS_output(
           dir = getwd(), forecast = FALSE,
-          covar = FALSE, checkcor = FALSE, NoCompOK = TRUE,
+          covar = FALSE, NoCompOK = TRUE,
           verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose
         )
         like <- report[["likelihoods_used"]][row.names(report[["likelihoods_used"]]) == "TOTAL", "values"]
