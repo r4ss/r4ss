@@ -3899,6 +3899,11 @@ SS_output <-
       sigma_R_info[["SD_of_devs_over_sigma_R"]] <- sigma_R_info[["SD_of_devs"]] / sigma_R_in
       sigma_R_info[["sqrt_sum_over_sigma_R"]] <- sigma_R_info[["sqrt_sum_of_components"]] / sigma_R_in
       sigma_R_info[["alternative_sigma_R"]] <- sigma_R_in * sigma_R_info[["sqrt_sum_over_sigma_R"]]
+
+      # if there's no uncertainty in the recdevs (probably because of -nohess)
+      # then don't report alternative sigma R values
+      # could also use [["log_det_hessian"]] as the filter
+      sigma_R_info[["alternative_sigma_R"]][sigma_R_info[["mean_SE"]] == 0] <- "needs_Hessian"
     }
     stats[["sigma_R_in"]] <- sigma_R_in
     stats[["sigma_R_info"]] <- sigma_R_info
