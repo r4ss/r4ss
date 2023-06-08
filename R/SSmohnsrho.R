@@ -10,12 +10,20 @@
 #'
 #' @param summaryoutput List created by [SSsummarize()]. The expected order for
 #'   the models are the full reference model, the retro -1, retro -2, and so
-#'   forth.
-#' @param endyrvec Single year or vector of years representing the final year of
-#'   values to show for each model.
-#' @param startyr Single year used to calculate the start of the Wood's Hole
-#'   Mohn's rho value across all years. Defaults to `startyr` of reference
-#'   model.
+#'   forth. Order matters for the calculations.
+#' @param endyrvec Integer vector of years that should be used as the final year
+#'   for each model in `summaryoutput`. The default, which happens if `endyrvec`
+#'   is missing, is based on information in `summaryoutput`, i.e.,
+#'   `summaryoutput[["endyrs"]][summaryoutput[["n"]]]:
+#'   (summaryoutput[["endyrs"]][summaryoutput[["n"]]] - summaryoutput[["n"]] +
+#'   1)`. This parameter will be used to extract estimates of fishing mortality
+#'   for each year in `endyrvec` and estimates of biomass-based quantities for
+#'   each year in `endyrvec + 1` because Stock Synthesis reports beginning of
+#'   the year biomass, which we use here as a proxy for end of the year biomass.
+#' @param startyr Single year used to calculate the start year for the
+#'   calculation of the Wood's Hole Mohn's rho value, which is computed across
+#'   the range of years in the model. If this parameter is missing, the default
+#'   is to use the `startyr` of the reference model.
 #' @template verbose
 #'
 #' @author Chantel R. Wetzel and Carey R. McGilliard
@@ -28,7 +36,19 @@
 #'   an investigation using cod fishery and simulated data. ICES J. Mar. Sci.
 #'   56, 473--488. https://doi.org/10.1006/jmsc.1999.0481.
 #' @return
-#' A list.
+#' A list with the following 12 entries:
+#' * `"SSB"`
+#' * `"Rec"`
+#' * `"Bratio"`
+#' * `"F"`
+#' * `"WoodHole_SSB.all"`
+#' * `"WoodHole_Rec.all"`
+#' * `"WoodHole_Bratio.all"`
+#' * `"WoodHole_F.all"`
+#' * `"AFSC_Hurtado_SSB"`
+#' * `"AFSC_Hurtado_Rec"`
+#' * `"AFSC_Hurtado_F"`
+#' * `"AFSC_Hurtado_Bratio"`
 #' @export
 SSmohnsrho <- function(summaryoutput,
                        endyrvec,
@@ -46,6 +66,8 @@ SSmohnsrho <- function(summaryoutput,
     endyrvec <- rev(
       (summaryoutput[["endyrs"]][N] - N + 1):summaryoutput[["endyrs"]][N]
     )
+  } else {
+    stopifnot(length(endyrvec) == summaryoutput[["n"]])
   }
 
   if (missing(startyr)) {
@@ -60,17 +82,17 @@ SSmohnsrho <- function(summaryoutput,
   # the retrospectives relative to the reference model
   # rho <- sum over y [ (X_y,retro - X_y,ref) / X_y,ref ]
   for (i in 1:(N - 1)) {
-    ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1])
+    ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1] + 1)
     mohnSSB[i] <- (summaryoutput[["SpawnBio"]][ind, i + 1] -
       summaryoutput[["SpawnBio"]][ind, 1]) /
       summaryoutput[["SpawnBio"]][ind, 1]
 
-    ind <- which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1])
+    ind <- which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1] + 1)
     mohnRec[i] <- (summaryoutput[["recruits"]][ind, i + 1] -
       summaryoutput[["recruits"]][ind, 1]) /
       summaryoutput[["recruits"]][ind, 1]
 
-    ind <- which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1])
+    ind <- which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1] + 1)
     mohnBratio[i] <- (summaryoutput[["Bratio"]][ind, i + 1] -
       summaryoutput[["Bratio"]][ind, 1]) /
       summaryoutput[["Bratio"]][ind, 1]
@@ -88,16 +110,16 @@ SSmohnsrho <- function(summaryoutput,
   # for comparison between the one year and all year calculation
   # rho <- rho / Number of Years
   for (i in 1:(N - 1)) {
-    ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == startyr):
-      which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1])
+    ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == startyr + 1):
+      which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1] + 1)
     mohnSSB.all[i] <- sum(
       (summaryoutput[["SpawnBio"]][ind, i + 1] -
        summaryoutput[["SpawnBio"]][ind, 1]
       ) /
       summaryoutput[["SpawnBio"]][ind, 1]
     ) / length(ind)
-    ind <- which(summaryoutput[["recruits"]][["Yr"]] == startyr):
-      which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1])
+    ind <- which(summaryoutput[["recruits"]][["Yr"]] == startyr + 1):
+      which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1] + 1)
     mohnRec.all[i] <- sum(
       (summaryoutput[["recruits"]][ind, i + 1] -
        summaryoutput[["recruits"]][ind, 1]
@@ -106,7 +128,7 @@ SSmohnsrho <- function(summaryoutput,
     ) / length(ind)
     if (length(which(summaryoutput[["Bratio"]][["Yr"]] == startyr + 1)) != 0) {
       ind <- which(summaryoutput[["Bratio"]][["Yr"]] == startyr + 1):
-        which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1])
+        which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1] + 1)
       mohnBratio.all[i] <- sum(
         (summaryoutput[["Bratio"]][ind, i + 1] -
          summaryoutput[["Bratio"]][ind, 1]
