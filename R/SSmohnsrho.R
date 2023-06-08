@@ -111,29 +111,29 @@ SSmohnsrho <- function(summaryoutput,
   # rho <- rho / Number of Years
   for (i in 1:(N - 1)) {
     ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == startyr + 1):
-      which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1] + 1)
+    which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1] + 1)
     mohnSSB.all[i] <- sum(
       (summaryoutput[["SpawnBio"]][ind, i + 1] -
-       summaryoutput[["SpawnBio"]][ind, 1]
+        summaryoutput[["SpawnBio"]][ind, 1]
       ) /
-      summaryoutput[["SpawnBio"]][ind, 1]
+        summaryoutput[["SpawnBio"]][ind, 1]
     ) / length(ind)
     ind <- which(summaryoutput[["recruits"]][["Yr"]] == startyr + 1):
-      which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1] + 1)
+    which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1] + 1)
     mohnRec.all[i] <- sum(
       (summaryoutput[["recruits"]][ind, i + 1] -
-       summaryoutput[["recruits"]][ind, 1]
+        summaryoutput[["recruits"]][ind, 1]
       ) /
-      summaryoutput[["recruits"]][ind, 1]
+        summaryoutput[["recruits"]][ind, 1]
     ) / length(ind)
     if (length(which(summaryoutput[["Bratio"]][["Yr"]] == startyr + 1)) != 0) {
       ind <- which(summaryoutput[["Bratio"]][["Yr"]] == startyr + 1):
-        which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1] + 1)
+      which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1] + 1)
       mohnBratio.all[i] <- sum(
         (summaryoutput[["Bratio"]][ind, i + 1] -
-         summaryoutput[["Bratio"]][ind, 1]
+          summaryoutput[["Bratio"]][ind, 1]
         ) /
-        summaryoutput[["Bratio"]][ind, 1]
+          summaryoutput[["Bratio"]][ind, 1]
       ) / length(ind)
     } else {
       warning(
@@ -144,12 +144,12 @@ SSmohnsrho <- function(summaryoutput,
     }
     if (length(which(summaryoutput[["Fvalue"]][["Yr"]] == startyr)) != 0) {
       ind <- which(summaryoutput[["Fvalue"]][["Yr"]] == startyr):
-        which(summaryoutput[["Fvalue"]][["Yr"]] == endyrvec[i + 1])
+      which(summaryoutput[["Fvalue"]][["Yr"]] == endyrvec[i + 1])
       mohnF.all[i] <- sum(
         (summaryoutput[["Fvalue"]][ind, i + 1] -
-         summaryoutput[["Fvalue"]][ind, 1]
+          summaryoutput[["Fvalue"]][ind, 1]
         ) /
-        summaryoutput[["Fvalue"]][ind, 1]
+          summaryoutput[["Fvalue"]][ind, 1]
       ) / length(ind)
     } else {
       warning(

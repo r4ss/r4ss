@@ -199,7 +199,7 @@ SS_profile <- function(...) {
 #' profilesummary <- SSsummarize(profilemodels)
 #'
 #' # add total likelihood (row 1) to table created above
-#' par_table$like <- as.numeric(profilesummary$likelihoods[1, 1:n])
+#' par_table[["like"]] <- as.numeric(profilesummary[["likelihoods"]][1, 1:n])
 #'
 #' # reshape data frame into a matrix for use with contour
 #' like_matrix <- reshape2::acast(

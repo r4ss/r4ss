@@ -328,9 +328,18 @@ SSplotProfile <-
 
     # make total line wider with bigger points (or whatever user chooses)
     # uses switch() instead of ifelse() because ifelse() doesn't return NULL
-    lwd <- c(lwd.total, rep(lwd, nlines - 1), switch(add_no_prior_line + 1, NULL, lwd))
-    cex <- c(cex.total, rep(cex, nlines - 1), switch(add_no_prior_line + 1, NULL, cex.total))
-    lty <- c(lty.total, rep(lty, nlines - 1), switch(add_no_prior_line + 1, NULL, 2))
+    lwd <- c(lwd.total, rep(lwd, nlines - 1), switch(add_no_prior_line + 1,
+      NULL,
+      lwd
+    ))
+    cex <- c(cex.total, rep(cex, nlines - 1), switch(add_no_prior_line + 1,
+      NULL,
+      cex.total
+    ))
+    lty <- c(lty.total, rep(lty, nlines - 1), switch(add_no_prior_line + 1,
+      NULL,
+      2
+    ))
 
     # make plot
     plotprofile <- function() {
