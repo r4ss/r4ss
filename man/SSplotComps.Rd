@@ -179,7 +179,7 @@ proportion within sample? Default=FALSE.}
 \item{linescol}{Color for lines on top of polygons}
 
 \item{xlas}{label style (las) input for x-axis. Default 0 has horizontal
-labels, input 2 would provide vertical lables.}
+labels, input 2 would provide vertical labels.}
 
 \item{ylas}{label style (las) input for y-axis. Default NULL has horizontal
 labels when all labels have fewer than 6 characters and vertical otherwise.

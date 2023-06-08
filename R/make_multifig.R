@@ -46,7 +46,7 @@
 #' @param yupper upper limit on ymax (applied before addition of ybuffer)
 #' @param ymin0 fix minimum y-value at 0?
 #' @param xlas label style (las) input for x-axis. Default 0 has horizontal
-#' labels, input 2 would provide vertical lables.
+#' labels, input 2 would provide vertical labels.
 #' @param ylas label style (las) input for y-axis. Default NULL has horizontal
 #' labels when all labels have fewer than 6 characters and vertical otherwise.
 #' Input 0 would force vertical labels, and 1 would force horizontal.
