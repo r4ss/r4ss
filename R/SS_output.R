@@ -3613,7 +3613,6 @@ SS_output <-
       yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
       names(yielddat) <- names
       yielddat <- type.convert(yielddat, as.is = TRUE)
-      yielddat <- yielddat[order(yielddat[["Depletion"]], decreasing = FALSE), ]
     } else {
       yielddat <- NA
     }
