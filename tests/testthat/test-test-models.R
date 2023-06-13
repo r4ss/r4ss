@@ -1,14 +1,16 @@
 context("Read output and make plots for all test-models")
 
 test_that("test-models work with SS_output() and SS_plots()", {
-  skip_if(!file.exists(system.file("extdata", "models", package = "r4ss")))
+  skip_if(!file.exists(system.file("extdata", "models", package = "r4ss")),
+    message = "No 'models' folder in 'extdata'")
   # skip if no executable in simple_small path
   # (should have been loaded there by 
   # .github\workflows\r4ss-extra-tests.yml)
+  dir_exe <- file.exists(system.file("extdata", "simple_small", package = "r4ss"))
   skip_if(
-    (!file.exists("inst/extdata/simple_small/ss")) &
-      (!file.exists("inst/extdata/simple_small/ss.exe")),
-    message = "skipping test that requires SS3 executable"
+    (!file.exists(file.path(dir_exe, "ss")) &
+      !file.exists(file.path(dir_exe, "ss.exe"))),
+    message = paste("skipping test: no exe called 'ss' found in", dir_exe)
   )
   mod_path <- file.path(tempdir(check = TRUE), "test-test-models")
   on.exit(unlink(mod_path, recursive = TRUE), add = TRUE)
