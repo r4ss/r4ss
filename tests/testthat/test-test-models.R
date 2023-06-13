@@ -8,7 +8,7 @@ test_that("test-models work with SS_output() and SS_plots()", {
   # .github\workflows\r4ss-extra-tests.yml)
 
   # find simple_small
-  dir_exe <- file.exists(system.file("extdata", "simple_small", package = "r4ss"))
+  dir_exe <- system.file("extdata", "simple_small", package = "r4ss")
   skip_if(
     (!file.exists(file.path(dir_exe, "ss")) &
       !file.exists(file.path(dir_exe, "ss.exe"))),
@@ -32,7 +32,7 @@ test_that("test-models work with SS_output() and SS_plots()", {
   ))
   for (m in all_mods) {
     message("Now running without estimation: ", basename(m))
-    run(m, exe = "inst/extdata/simple_small/ss", extras = "-stopph 0 -nohess")
+    run(m, exe = file.path(dir_exe, "ss"), extras = "-stopph 0 -nohess")
 
     #### Checks related to SS_output()
     message("Running SS_output()")
