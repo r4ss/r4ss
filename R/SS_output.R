@@ -1609,7 +1609,17 @@ SS_output <-
           )
         }
       }
-      Nstd <- sum(stdtable[["std"]] > 0)
+      # check for NA values (see https://github.com/r4ss/r4ss/issues/830)
+      if (any(is.na(stdtable[["std"]]))) {
+        warning(
+          "NA value for parameter uncertainty found in ",
+          sum(is.na(stdtable[["std"]])),
+          " rows of covar.sso file. ",
+          "First par with NA: ",
+          stdtable[["name"]][is.na(stdtable[["std"]])]
+        )
+      }
+      Nstd <- sum(stdtable[["std"]] > 0, na.rm = TRUE)
       checkbadrun <- unique(stdtable[["std"]])
       if (length(checkbadrun) == 1) {
         if (checkbadrun %in% c(NA, "NaN", "na")) {
