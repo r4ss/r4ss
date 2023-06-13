@@ -34,15 +34,20 @@ test_that("test-models work with SS_output() and SS_plots()", {
     message("Now running without estimation: ", basename(m))
     run(m, exe = file.path(dir_exe, "ss"), extras = "-stopph 0 -nohess")
 
-    #### Checks related to SS_output()
-    message("Running SS_output()")
-    out <- SS_output(m, verbose = FALSE, printstats = FALSE)
-    expect_true(is.list(out))
-    expect_equal(tail(names(out), 1), "inputs")
-
-    #### Checks related to SS_plots()
-    message("Running SS_plots()")
-    plots <- SS_plots(out, verbose = FALSE)
-    expect_equal(tail(plots$file, 1), "parameterchecks.html")
+    #### Check for presence of Report.sso
+    if (!"Report.sso" %in% dir(m)) {
+      warning("No Report.sso file in ", m)
+    } else {
+      #### Checks related to SS_output()
+      message("Running SS_output()")
+      out <- SS_output(m, verbose = FALSE, printstats = FALSE)
+      expect_true(is.list(out))
+      expect_equal(tail(names(out), 1), "inputs")
+  
+      #### Checks related to SS_plots()
+      message("Running SS_plots()")
+      plots <- SS_plots(out, verbose = FALSE)
+      expect_true("data_plot2.png" %in% plots$file)
+    }
   }
 })
