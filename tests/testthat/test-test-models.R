@@ -6,21 +6,27 @@ test_that("test-models work with SS_output() and SS_plots()", {
   # skip if no executable in simple_small path
   # (should have been loaded there by 
   # .github\workflows\r4ss-extra-tests.yml)
+
+  # find simple_small
   dir_exe <- file.exists(system.file("extdata", "simple_small", package = "r4ss"))
   skip_if(
     (!file.exists(file.path(dir_exe, "ss")) &
       !file.exists(file.path(dir_exe, "ss.exe"))),
     message = paste("skipping test: no exe called 'ss' found in", dir_exe)
   )
+  # temporary directory
   mod_path <- file.path(tempdir(check = TRUE), "test-test-models")
   on.exit(unlink(mod_path, recursive = TRUE), add = TRUE)
   dir.create(mod_path, showWarnings = FALSE)
+  # copy all test models to temporary directory
   orig_mod_path <- system.file("extdata", "models", package = "r4ss")
   file.copy(orig_mod_path, mod_path, recursive = TRUE)
   all_mods <- list.dirs(file.path(mod_path, "models"),
     full.names = TRUE,
     recursive = FALSE
   )
+
+  # run models without estimation and then run r4ss functions
   message("Will run SS_output() and SS_plots() on models:\n  ", paste(basename(all_mods),
     collapse = ",\n  "
   ))
