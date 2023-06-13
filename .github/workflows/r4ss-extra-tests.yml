@@ -15,6 +15,7 @@ on:
     #   - '.github/**'
     #   - 'README.md'
   workflow_dispatch:
+  workflow_call:
 
 name: run-tests
 jobs:
