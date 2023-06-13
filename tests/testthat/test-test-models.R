@@ -38,7 +38,7 @@ test_that("test-models work with SS_output() and SS_plots()", {
     message("Running SS_output()")
     out <- SS_output(m, verbose = FALSE, printstats = FALSE)
     expect_true(is.list(out))
-    expect_equal(tail(names(simple_small), 1), "inputs")
+    expect_equal(tail(names(out), 1), "inputs")
 
     #### Checks related to SS_plots()
     message("Running SS_plots()")
