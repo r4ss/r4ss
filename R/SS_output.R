@@ -1882,15 +1882,25 @@ SS_output <-
       sigma_R_in <- parameters["SR_sigmaR", "Value"]
     } else {
       # if SPAWN_RECRUIT is present
+
+      # get table of info on root mean squared error of recdevs (rmse)
       rmse_table <- as.data.frame(srhead[-(1:(last_row_index - 1)), 1:5])
       rmse_table <- rmse_table[!grepl("SpawnBio", rmse_table[, 2]), ]
       rmse_table <- type.convert(rmse_table, as.is = TRUE)
       names(rmse_table) <- srhead[last_row_index - 1, 1:5]
       names(rmse_table)[4] <- "RMSE_over_sigmaR"
-      sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
-      rmse_table <- rmse_table
       row.names(rmse_table) <- NULL
 
+      # info on sigmaR as input or estimated
+      sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
+
+      # info on recdev method
+      if (any(srhead[1,] == "RecDev_method:")) {
+        RecDev_method <- srhead[1, which(srhead[1,] == "RecDev_method:") + 1] %>% as.numeric()
+      } else {
+        RecDev_method <- NULL
+      }
+      
       # Bias adjustment ramp
       biascol <- grep("breakpoints_for_bias", srhead)
       breakpoints_for_bias_adjustment_ramp <- srhead[
@@ -3917,6 +3927,7 @@ SS_output <-
     stats[["sigma_R_in"]] <- sigma_R_in
     stats[["sigma_R_info"]] <- sigma_R_info
     stats[["rmse_table"]] <- rmse_table
+    stats[["RecDev_method"]] <- RecDev_method
 
     # process adjustments to recruit devs
     RecrDistpars <- parameters[substring(parameters[["Label"]], 1, 8) == "RecrDist", ]
