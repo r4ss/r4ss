@@ -2,9 +2,10 @@ context("Read output and make plots for all test-models")
 
 test_that("test-models work with SS_output() and SS_plots()", {
   skip_if(!file.exists(system.file("extdata", "models", package = "r4ss")),
-    message = "No 'models' folder in 'extdata'")
+    message = "No 'models' folder in 'extdata'"
+  )
   # skip if no executable in simple_small path
-  # (should have been loaded there by 
+  # (should have been loaded there by
   # .github\workflows\r4ss-extra-tests.yml)
 
   # find simple_small
@@ -43,7 +44,7 @@ test_that("test-models work with SS_output() and SS_plots()", {
       out <- SS_output(m, verbose = FALSE, printstats = FALSE)
       expect_true(is.list(out))
       expect_equal(tail(names(out), 1), "inputs")
-  
+
       #### Checks related to SS_plots()
       message("Running SS_plots()")
       plots <- SS_plots(out, verbose = FALSE)
