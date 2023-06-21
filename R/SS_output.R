@@ -881,12 +881,17 @@ SS_output <-
         # after the release of 3.30.21)
 
         # all values identical except for Cum_obs and Cum_exp
-        duplicates <- compdbase %>% 
-          dplyr::select(-Cum_obs, -Cum_exp) %>% 
+        duplicates <- compdbase %>%
+          dplyr::select(-Cum_obs, -Cum_exp) %>%
           duplicated()
-        message("Removing ", sum(duplicates), " out of ", nrow(compdbase),
-          " rows in CompReport.sso which are duplicates.")
+        if (verbose) {
+          message(
+            "Removing ", sum(duplicates), " out of ", nrow(compdbase),
+            " rows in CompReport.sso which are duplicates."
+          )
+        }
         compdbase <- compdbase[!duplicates, ]
+        # done removing duplicates
 
         # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
         #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
@@ -1604,7 +1609,17 @@ SS_output <-
           )
         }
       }
-      Nstd <- sum(stdtable[["std"]] > 0)
+      # check for NA values (see https://github.com/r4ss/r4ss/issues/830)
+      if (any(is.na(stdtable[["std"]]))) {
+        warning(
+          "NA value for parameter uncertainty found in ",
+          sum(is.na(stdtable[["std"]])),
+          " rows of covar.sso file. ",
+          "First par with NA: ",
+          stdtable[["name"]][is.na(stdtable[["std"]])]
+        )
+      }
+      Nstd <- sum(stdtable[["std"]] > 0, na.rm = TRUE)
       checkbadrun <- unique(stdtable[["std"]])
       if (length(checkbadrun) == 1) {
         if (checkbadrun %in% c(NA, "NaN", "na")) {
@@ -1867,14 +1882,24 @@ SS_output <-
       sigma_R_in <- parameters["SR_sigmaR", "Value"]
     } else {
       # if SPAWN_RECRUIT is present
+
+      # get table of info on root mean squared error of recdevs (rmse)
       rmse_table <- as.data.frame(srhead[-(1:(last_row_index - 1)), 1:5])
       rmse_table <- rmse_table[!grepl("SpawnBio", rmse_table[, 2]), ]
       rmse_table <- type.convert(rmse_table, as.is = TRUE)
       names(rmse_table) <- srhead[last_row_index - 1, 1:5]
       names(rmse_table)[4] <- "RMSE_over_sigmaR"
-      sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
-      rmse_table <- rmse_table
       row.names(rmse_table) <- NULL
+
+      # info on sigmaR as input or estimated
+      sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
+
+      # info on recdev method
+      if (any(srhead[1, ] == "RecDev_method:")) {
+        RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] %>% as.numeric()
+      } else {
+        RecDev_method <- NULL
+      }
 
       # Bias adjustment ramp
       biascol <- grep("breakpoints_for_bias", srhead)
@@ -3108,7 +3133,6 @@ SS_output <-
     )
 
     # process discard info if table was present
-    discard_type <- NA
     if (!is.null(discard) && nrow(discard) > 1) {
       discard[discard == "_"] <- NA
       # v3.23 and before had things combined under "Name"
@@ -3130,14 +3154,17 @@ SS_output <-
         # v3.24 and beyond has separate columns
         # for fleet number and fleet name
         discard <- type.convert(discard, as.is = TRUE)
+        # get info on variance adjustments for discards
+        discard_tuning_info <- calc_var_adjust(discard, type = "sd")
       }
     } else {
-      discard <- NA
+      discard <- NA # IGT 23-04-2023: not sure why this is NA instead of NULL
+      discard_tuning_info <- NULL
     }
     returndat[["discard"]] <- discard
-    returndat[["discard_type"]] <- discard_type
-    returndat[["DF_discard"]] <- DF_discard
     returndat[["discard_spec"]] <- discard_spec
+    returndat[["discard_tuning_info"]] <- discard_tuning_info
+    returndat[["DF_discard"]] <- DF_discard
 
     ## Average body weight observations
     # degrees of freedom for T-distribution
@@ -3167,12 +3194,16 @@ SS_output <-
         }
       } else { # v3.24 and beyond has separate columns for fleet number and fleet name
         mnwgt <- type.convert(mnwgt, as.is = TRUE)
+        # get info on variance adjustments for mean body weight
+        mnwgt_tuning_info <- calc_var_adjust(mnwgt, type = "CV")
       }
     } else {
       DF_mnwgt <- NA
       mnwgt <- NA
+      mnwgt_tuning_info <- NULL
     }
     returndat[["mnwgt"]] <- mnwgt
+    returndat[["mnwgt_tuning_info"]] <- mnwgt_tuning_info
     returndat[["DF_mnwgt"]] <- DF_mnwgt
 
     # Yield and SPR time-series
@@ -3605,7 +3636,6 @@ SS_output <-
       yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
       names(yielddat) <- names
       yielddat <- type.convert(yielddat, as.is = TRUE)
-      yielddat <- yielddat[order(yielddat[["Depletion"]], decreasing = FALSE), ]
     } else {
       yielddat <- NA
     }
@@ -3888,10 +3918,16 @@ SS_output <-
       sigma_R_info[["SD_of_devs_over_sigma_R"]] <- sigma_R_info[["SD_of_devs"]] / sigma_R_in
       sigma_R_info[["sqrt_sum_over_sigma_R"]] <- sigma_R_info[["sqrt_sum_of_components"]] / sigma_R_in
       sigma_R_info[["alternative_sigma_R"]] <- sigma_R_in * sigma_R_info[["sqrt_sum_over_sigma_R"]]
+
+      # if there's no uncertainty in the recdevs (probably because of -nohess)
+      # then don't report alternative sigma R values
+      # could also use [["log_det_hessian"]] as the filter
+      sigma_R_info[["alternative_sigma_R"]][sigma_R_info[["mean_SE"]] == 0] <- "needs_Hessian"
     }
     stats[["sigma_R_in"]] <- sigma_R_in
     stats[["sigma_R_info"]] <- sigma_R_info
     stats[["rmse_table"]] <- rmse_table
+    stats[["RecDev_method"]] <- RecDev_method
 
     # process adjustments to recruit devs
     RecrDistpars <- parameters[substring(parameters[["Label"]], 1, 8) == "RecrDist", ]

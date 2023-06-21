@@ -80,48 +80,65 @@ SS_profile <- function(...) {
 #' @family profile functions
 #' @examples
 #' \dontrun{
-#' # note: don't run this in your main directory
-#' # make a copy in case something goes wrong
-#' mydir <- "C:/ss/Simple - Copy"
+#'
+#' ###########################################################################
+#' # example profile
+#' # (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)
+#' ###########################################################################
+#'
+#' # directory for "simple_small" example model included with r4ss
+#' dir_simple_small <- file.path(
+#'   path.package("r4ss"),
+#'   file.path("extdata", "simple_small")
+#' )
+#'
+#' # create temporary directory and copy files into it
+#' dir_prof <- file.path(tempdir(), "profile")
+#' copy_SS_inputs(
+#'   dir.old = dir_simple_small,
+#'   dir.new = dir_prof,
+#'   create.dir = TRUE,
+#'   overwrite = TRUE,
+#'   copy_par = TRUE,
+#'   verbose = TRUE
+#' )
 #'
 #' # the following commands related to starter.ss could be done by hand
 #' # read starter file
-#' starter <- SS_readstarter(file.path(mydir, "starter.ss"))
+#' starter <- SS_readstarter(file.path(dir_prof, "starter.ss"))
 #' # change control file name in the starter file
 #' starter[["ctlfile"]] <- "control_modified.ss"
 #' # make sure the prior likelihood is calculated
 #' # for non-estimated quantities
 #' starter[["prior_like"]] <- 1
 #' # write modified starter file
-#' SS_writestarter(starter, dir = mydir, overwrite = TRUE)
-#'
+#' SS_writestarter(starter, dir = dir_prof, overwrite = TRUE)
 #' # vector of values to profile over
 #' h.vec <- seq(0.3, 0.9, .1)
 #' Nprofile <- length(h.vec)
-#'
 #' # run profile command
 #' profile <- profile(
-#'   dir = mydir,
-#'   oldctlfile = "control.ss_new",
+#'   dir = dir_prof,
+#'   oldctlfile = "control.ss",
 #'   newctlfile = "control_modified.ss",
 #'   string = "steep", # subset of parameter label
 #'   profilevec = h.vec
 #' )
-#'
-#'
 #' # read the output files (with names like Report1.sso, Report2.sso, etc.)
-#' profilemodels <- SSgetoutput(dirvec = mydir, keyvec = 1:Nprofile)
+#' profilemodels <- SSgetoutput(dirvec = dir_prof, keyvec = 1:Nprofile)
 #' # summarize output
 #' profilesummary <- SSsummarize(profilemodels)
 #'
 #' # OPTIONAL COMMANDS TO ADD MODEL WITH PROFILE PARAMETER ESTIMATED
-#' MLEmodel <- SS_output("C:/ss/SSv3.24l_Dec5/Simple")
+#' # (in the "simple_small" example, steepness is fixed so it doesn't
+#' # have any impact)
+#' MLEmodel <- SS_output(dir_simple_small, verbose = FALSE, printstats = FALSE)
 #' profilemodels[["MLE"]] <- MLEmodel
 #' profilesummary <- SSsummarize(profilemodels)
 #' # END OPTIONAL COMMANDS
 #'
 #' # plot profile using summary created above
-#' SSplotProfile(profilesummary, # summary object
+#' results <- SSplotProfile(profilesummary, # summary object
 #'   profile.string = "steep", # substring of profile parameter
 #'   profile.label = "Stock-recruit steepness (h)"
 #' ) # axis label
@@ -129,44 +146,53 @@ SS_profile <- function(...) {
 #' # make timeseries plots comparing models in profile
 #' SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
 #'
-#'
+#' ###########################################################################
+#' # example two-dimensional profile
+#' # (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)
 #' ###########################################################################
 #'
-#' # example two-dimensional profile
-#' # (e.g. over 2 of the parameters in the low-fecundity stock-recruit function)
-#' base_dir <- "c:/mymodel"
+#' dir_simple_small <- file.path(
+#'   path.package("r4ss"),
+#'   file.path("extdata", "simple_small")
+#' )
 #'
-#' dir_profile_SR <- file.path(base_dir, "Profiles/Zfrac_and_Beta")
+#' # create temporary directory and copy files into it
+#' dir_prof <- file.path(tempdir(), "profile_2D")
+#' copy_SS_inputs(
+#'   dir.old = dir_simple_small,
+#'   dir.new = dir_prof,
+#'   create.dir = TRUE,
+#'   overwrite = TRUE,
+#'   copy_par = TRUE,
+#'   verbose = TRUE
+#' )
 #'
-#' # make a grid of values in both dimensions Zfrac and Beta
-#' # vector of values to profile over
-#' Zfrac_vec <- seq(from = 0.2, to = 0.6, by = 0.1)
-#' Beta_vec <- c(0.5, 0.75, 1.0, 1.5, 2.0)
-#' par_table <- expand.grid(Zfrac = Zfrac_vec, Beta = Beta_vec)
-#' nrow(par_table)
-#' ## [1] 25
-#' head(par_table)
-#' ##   Zfrac Beta
-#' ## 1   0.2 0.50
-#' ## 2   0.3 0.50
-#' ## 3   0.4 0.50
-#' ## 4   0.5 0.50
-#' ## 5   0.6 0.50
-#' ## 6   0.2 0.75
 #'
-#' # run profile command
-#' profile <- profile(
-#'   dir = dir_profile_SR, # directory
+#' # create table of M values for females and males
+#' par_table <- expand.grid(
+#'   M1vec = c(0.05, 0.10, 0.15),
+#'   M2vec = c(0.05, 0.10, 0.15)
+#' )
+#'
+#' # run model once to create control.ss_new with
+#' # good starting parameter values
+#' # exe is assumed to be in PATH, add "exe" argument if needed
+#' run(dir_prof, extras = "-nohess")
+#'
+#' # run profile using ss_new file as parameter source and
+#' # overwriting original control file with new values
+#' prof.table <- profile(
+#'   dir = dir_prof,
 #'   oldctlfile = "control.ss_new",
-#'   newctlfile = "control_modified.ss",
-#'   string = c("Zfrac", "Beta"),
+#'   newctlfile = "control.ss",
+#'   string = c("NatM_uniform_Fem_GP_1", "NatM_uniform_Mal_GP_1"),
 #'   profilevec = par_table,
-#'   extras = "-nohess" # argument passed to run()
+#'   extras = "-nohess"
 #' )
 #'
 #' # get model output
 #' profilemodels <- SSgetoutput(
-#'   dirvec = dir_profile_SR,
+#'   dirvec = dir_prof,
 #'   keyvec = 1:nrow(par_table), getcovar = FALSE
 #' )
 #' n <- length(profilemodels)
@@ -176,14 +202,20 @@ SS_profile <- function(...) {
 #' par_table[["like"]] <- as.numeric(profilesummary[["likelihoods"]][1, 1:n])
 #'
 #' # reshape data frame into a matrix for use with contour
-#' like_matrix <- reshape2::acast(par_table, Zfrac ~ Beta, value.var = "like")
-#'
-#' # make contour plot
-#' contour(
-#'   x = as.numeric(rownames(like_matrix)),
-#'   y = as.numeric(colnames(like_matrix)),
-#'   z = like_matrix
+#' like_matrix <- reshape2::acast(
+#'   data = par_table,
+#'   formula = M1vec ~ M2vec,
+#'   value.var = "like"
 #' )
+#'
+#' # look at change relative to the minimum
+#' # (shows small change when female and male M are equal,
+#' # big change when they are different)
+#' like_matrix - min(like_matrix)
+#' #         0.05    0.1    0.15
+#' # 0.05   6.938 32.710 121.959
+#' # 0.1   49.706  0.000  27.678
+#' # 0.15 154.897 44.768   5.366
 #' }
 #'
 profile <- function(dir,

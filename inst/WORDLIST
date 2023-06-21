@@ -73,6 +73,7 @@ SSB
 SSout
 SSplotXXX
 SSv
+Sablefish
 Spawner
 TG
 TSC
@@ -97,6 +98,7 @@ analysed
 areanames
 aren
 bluefin
+bodywt
 bottomright
 btarg
 catchability
@@ -169,9 +171,9 @@ io
 iteratively
 ith
 jitter
+jmsc
 jstor
 keyvec
-lables
 ladbase
 las
 legx

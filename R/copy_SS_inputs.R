@@ -8,26 +8,37 @@
 #' path or relative to the working directory.
 #' @param dir.new New location to which the files should be copied,
 #' either an absolute path or relative to the working directory.
-#' @param create.dir Create dir.new directory if it doesn't exist already?
+#' @param create.dir Create `dir.new` directory if it doesn't exist already?
 #' @template overwrite
-#' @param recursive logical. Should elements of the path other than the last be
-#'        created?
+#' @param recursive A logical value passed to the `recursive` argument of
+#' [dir.create()] that specifies if elements of the path other than the last
+#' be created?
 #' @param use_ss_new Use .ss_new files instead of original inputs?
-#' @param copy_exe Copy any executables found in dir.old to dir.new or
+#' @param copy_exe Copy any executables found in `dir.old` to `dir.new` or
 #' dir.exe (if provided)?
-#' @param copy_par Copy any .par files found in dir.old to dir.new?
-#' @param dir.exe Path to executable to copy instead of any in dir.old
+#' @param copy_par Copy any .par files found in `dir.old` to `dir.new`?
+#' @param dir.exe Path to executable to copy instead of any in `dir.old`.
 #' @template verbose
-#' @return Logical indicating whether all input files were copied successfully.
+#' @return
+#' A logical value is invisibly returned, indicating whether all input files
+#' were copied successfully.
 #' @author Ian G. Taylor
 #' @export
 #' @family run functions
 #' @examples
 #' \dontrun{
+#' # A theoretical example if "old_model" was present
+#' # but expect an error
 #' copy_SS_inputs(
 #'   dir.old = "c:/SS/old_model",
 #'   dir.new = "c:/SS/new_model"
 #' )
+#' # A working example using files stored in {r4ss}
+#' copy_SS_inputs(
+#'   dir.old = system.file("extdata", "simple_small", package = "r4ss"),
+#'   dir.new = "test"
+#' )
+#' unlink(test, recursive = TRUE)
 #' }
 #'
 copy_SS_inputs <- function(dir.old = NULL,
@@ -66,13 +77,13 @@ copy_SS_inputs <- function(dir.old = NULL,
     starter <- SS_readstarter(starter_file, verbose = FALSE)
   } else {
     warning("file not found: ", file.path(starter_file))
-    return(FALSE)
+    return(invisible(FALSE))
   }
 
   # check for starter file in new location
   if (!overwrite && file.exists(file.path(dir.new, "starter.ss"))) {
     warning("overwrite = FALSE and starter.ss exists in ", dir.new)
-    return(FALSE)
+    return(invisible(FALSE))
   }
 
   if (verbose) {
@@ -193,7 +204,7 @@ copy_SS_inputs <- function(dir.old = NULL,
     if (verbose) {
       message("copying complete")
     }
-    return(TRUE)
+    return(invisible(TRUE))
   } else {
     if (verbose) {
       if (overwrite) {
@@ -202,6 +213,6 @@ copy_SS_inputs <- function(dir.old = NULL,
         warning("at least 1 file failed to copy, try 'overwrite = TRUE'")
       }
     }
-    return(FALSE)
+    return(invisible(FALSE))
   }
 }

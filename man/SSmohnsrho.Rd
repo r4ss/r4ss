@@ -2,41 +2,70 @@
 % Please edit documentation in R/SSmohnsrho.R
 \name{SSmohnsrho}
 \alias{SSmohnsrho}
-\title{Calculate Mohn's Rho values for select quantities}
+\title{Calculate Mohn's rho values for select quantities}
 \usage{
 SSmohnsrho(summaryoutput, endyrvec, startyr, verbose = TRUE)
 }
 \arguments{
-\item{summaryoutput}{List created by \code{SSsummarize}. The expected order for the
-models are the full reference model, the retro -1, retro -2, and so forth.}
+\item{summaryoutput}{List created by \code{\link[=SSsummarize]{SSsummarize()}}. The expected order for
+the models are the full reference model, the retro -1, retro -2, and so
+forth. Order matters for the calculations.}
 
-\item{endyrvec}{Single year or vector of years representing the
-final year of values to show for each model.}
+\item{endyrvec}{Integer vector of years that should be used as the final year
+for each model in \code{summaryoutput}. The default, which happens if \code{endyrvec}
+is missing, is based on information in \code{summaryoutput}, i.e.,
+\code{summaryoutput[["endyrs"]][summaryoutput[["n"]]]: (summaryoutput[["endyrs"]][summaryoutput[["n"]]] - summaryoutput[["n"]] + 1)}. This parameter will be used to extract estimates of fishing mortality
+for each year in \code{endyrvec} and estimates of biomass-based quantities for
+each year in \code{endyrvec + 1} because Stock Synthesis reports beginning of
+the year biomass, which we use here as a proxy for end of the year biomass.}
 
-\item{startyr}{Single year used to calculate the start of the Wood's Hole
-Mohn's Rho value across all years. Defaults to startyr of reference model.}
+\item{startyr}{Single year used to calculate the start year for the
+calculation of the Wood's Hole Mohn's rho value, which is computed across
+the range of years in the model. If this parameter is missing, the default
+is to use the \code{startyr} of the reference model.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
+\value{
+A list with the following 12 entries:
+\itemize{
+\item \code{"SSB"}
+\item \code{"Rec"}
+\item \code{"Bratio"}
+\item \code{"F"}
+\item \code{"WoodHole_SSB.all"}
+\item \code{"WoodHole_Rec.all"}
+\item \code{"WoodHole_Bratio.all"}
+\item \code{"WoodHole_F.all"}
+\item \code{"AFSC_Hurtado_SSB"}
+\item \code{"AFSC_Hurtado_Rec"}
+\item \code{"AFSC_Hurtado_F"}
+\item \code{"AFSC_Hurtado_Bratio"}
+}
+}
 \description{
 Function calculates:
-(1) a rho value for the ending year for each retrospective relative to the reference model
-as in Mohn (1999),
-(2) a "Wood's Hole Mohn's Rho", which is a rho value averaged across all years for each
-retrospective relative to the reference model, and
-(3) an "Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho,
-which is the average rho per retrospective "peel".
+\enumerate{
+\item a rho value for the ending year for each retrospective relative to the
+reference model as in Mohn (1999);
+\item a ``Wood's Hole Mohn's rho'', which is a rho value averaged across all
+years for each retrospective relative to the reference model; and
+\item an Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's
+rho, which is the average rho per retrospective ``peel''.
+}
 }
 \references{
-Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias
-and retrospective patterns in integrated, age-structured stock assessment
-models. ICES J. Mar. Sci Volume 72, Issue 1, 1 January 2015,
-Pages 99-110, https://doi.org/10.1093/icesjms/fsu198
-Mohn, R. 1999. The retrospective problem in sequential population analysis:
-An investigation using cod fishery and simulated data. ICES J. Mar. Sci
-Volume 56, Pages 473-488
+\itemize{
+\item Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias and
+retrospective patterns in integrated, age-structured stock assessment
+models. ICES J. Mar. Sci. 72(1), 99--110.
+https://doi.org/10.1093/icesjms/fsu198.
+\item Mohn, R. 1999. The retrospective problem in sequential population analysis:
+an investigation using cod fishery and simulated data. ICES J. Mar. Sci.
+56, 473--488. https://doi.org/10.1006/jmsc.1999.0481.
+}
 }
 \author{
-Chantel R. Wetzel and Carey McGilliard
+Chantel R. Wetzel, Carey R. McGilliard, and Kelli F. Johnson
 }

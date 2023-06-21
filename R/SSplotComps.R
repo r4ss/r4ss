@@ -75,7 +75,7 @@
 #' @param colvec Vector of length 3 with colors for females, males, unsexed fish
 #' @param linescol Color for lines on top of polygons
 #' @param xlas label style (las) input for x-axis. Default 0 has horizontal
-#' labels, input 2 would provide vertical lables.
+#' labels, input 2 would provide vertical labels.
 #' @param ylas label style (las) input for y-axis. Default NULL has horizontal
 #' labels when all labels have fewer than 6 characters and vertical otherwise.
 #' Input 0 would force vertical labels, and 1 would force horizontal.

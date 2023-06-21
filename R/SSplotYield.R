@@ -57,6 +57,12 @@ SSplotYield <-
 
     # extract quantities from replist
     equil_yield <- replist[["equil_yield"]]
+    # remove value associated with SPRloop 3 based on this comment in Report.sso:
+    # "value 3 uses endyr F, which has different fleet allocation than benchmark"
+    equil_yield <- equil_yield[equil_yield[["SPRloop"]] != 3, ]
+    # sort across the various iterations by increasing Depletion value
+    # previously this was done in SS_output()
+    equil_yield <- equil_yield[order(equil_yield[["Depletion"]], decreasing = FALSE), ]
     # column named changed from Catch to Tot_Catch in SSv3.30
     if ("Tot_Catch" %in% names(equil_yield)) {
       equil_yield[["Catch"]] <- equil_yield[["Tot_Catch"]]
