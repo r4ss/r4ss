@@ -265,7 +265,7 @@ SSexecutivesummary <- function(replist,
       } else {
         es.a <- data.frame(years_minus_final, catch, total.catch, total.dead)
       }
-      colnames(es.a) <- c("Year", fleet.names, "Total Landings", "Total Dead")
+      colnames(es.a) <- c("Year", fleet.names, "Total Catch", "Total Dead")
 
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       if (is.null(add_text)) {
@@ -286,17 +286,17 @@ SSexecutivesummary <- function(replist,
       } else {
         es.a <- data.frame(years_minus_final, catch, total.catch)
       }
-      colnames(es.a) <- c("Year", fleet.names, "Total Landings")
+      colnames(es.a) <- c("Year", fleet.names, "Total Catch")
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       if(is.null(add_text)){
         caption <- c(
           caption,
-          "Recent landings by fleet and total landings summed across fleets."
+          "Recent catches (mt) by fleet and total catch (mt) summed across fleets."
         )  
       } else {
         caption <- c(
           caption,
-          paste0("Recent landings by fleet and total landings summed across fleets for the sub-area model ", add_text, ".")
+          paste0("Recent catches (mt) by fleet and total catch (mt) summed across fleets for the sub-area model ", add_text, ".")
         )
       }
 
