@@ -547,7 +547,7 @@ profile <- function(dir,
   if (onegood) {
     liketable <- as.data.frame(liketable)
     names(liketable) <- like[["Component"]]
-    bigtable <- cbind(profilevec, converged, liketable)
+    bigtable <- cbind(profilevec[whichruns], converged[whichruns], liketable)
     names(bigtable)[1] <- "Value"
     return(bigtable)
   } else {
