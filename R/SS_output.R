@@ -1895,12 +1895,12 @@ SS_output <-
       sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
 
       # info on recdev method
-      if (any(srhead[1,] == "RecDev_method:")) {
-        RecDev_method <- srhead[1, which(srhead[1,] == "RecDev_method:") + 1] %>% as.numeric()
+      if (any(srhead[1, ] == "RecDev_method:")) {
+        RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] %>% as.numeric()
       } else {
         RecDev_method <- NULL
       }
-      
+
       # Bias adjustment ramp
       biascol <- grep("breakpoints_for_bias", srhead)
       breakpoints_for_bias_adjustment_ramp <- srhead[
