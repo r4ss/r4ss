@@ -3150,6 +3150,7 @@ SS_output <-
             nchar(discard[["Fleet"]][i]) + 2
           )
         }
+        discard_tuning_info <- NULL # not bothering to support this for 3.23 and before
       } else {
         # v3.24 and beyond has separate columns
         # for fleet number and fleet name
