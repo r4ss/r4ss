@@ -58,7 +58,7 @@ Suggests:
     knitr,
     maps,
     pso,
-    testthat,
+    testthat (>= 3.0.0),
     truncnorm,
     rmarkdown,
     shiny,
@@ -85,3 +85,4 @@ RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Language: en-US
+Config/testthat/edition: 3
