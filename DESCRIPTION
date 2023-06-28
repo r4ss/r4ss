@@ -51,7 +51,8 @@ Imports:
     lifecycle,
     magrittr,
     stringr,
-    tidyr
+    tidyr,
+    gh
 Suggests: 
     gtools,
     gplots,

@@ -34,7 +34,7 @@ get_ss3_exe <- function(dir = NULL){
               url <- paste0(
                 "https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/",
                 tag, "/ss_win.exe")
-              download.file(url, destfile=file.path(dir, "ss3.exe"))
+              utils::download.file(url, destfile=file.path(dir, "ss3.exe"))
               download_location <- file.path(dir, "ss3.exe")
               return(paste0("The stock synthesis executable was downloaded to: ",
                       download_location))
@@ -42,14 +42,14 @@ get_ss3_exe <- function(dir = NULL){
       } else {
         if(substr(R.version$os, 1, 6) == "darwin") {
           url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_osx")
-          download.file(url, destfile=file.path(dir, "ss3"))
+          utils::download.file(url, destfile=file.path(dir, "ss3"))
           download_location <- file.path(dir, "ss3")
           return(paste0("The stock synthesis executable was downloaded to: ",
                       download_location))
         } else {
             if (R.version$os == "linux-gnu") {
               url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
-              download.file(url, destfile=file.path(dir, "ss3"))
+              utils::download.file(url, destfile=file.path(dir, "ss3"))
               download_location <- file.path(dir, "ss3")
               return(paste0("The stock synthesis executable was downloaded to: ",
                       download_location))
