@@ -10,5 +10,5 @@ test_that("executables are downloading", {
   exe_name <- gsub(paste0(getwd(),"/"),"", download_filepath)
   dir_temp <- file.path(temp_path, exe_name)
   
-  expect_equal(dir_wd, download_filepath)
+  expect_equal(dir_temp, download_filepath)
 })
