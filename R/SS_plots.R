@@ -771,7 +771,8 @@ SS_plots <-
           plot = !png, print = png,
           uncertainty = uncertainty,
           sprtarg = sprtarg, btarg = btarg,
-          pwidth = pwidth, pheight = pheight, punits = punits,
+          pwidth = pwidth, pheight = pheight, pheight_tall = pheight_tall,
+          punits = punits,
           ptsize = ptsize, res = res, cex.main = cex.main,
           plotdir = plotdir
         )
