@@ -1,4 +1,4 @@
-temp_path <- file.path(tempdir(), "test_basics")
+temp_path <- file.path(tempdir(), "test_ss3_exe")
 dir.create(temp_path, showWarnings = FALSE)
 # remove all artifacts created from testing. (developers: simply comment out
 # the line below if you want to keep artifacts for troubleshooting purposes)
@@ -7,7 +7,7 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 test_that("executables are downloading", {
   download_loc <- get_ss3_exe(dir = temp_path)
   download_filepath <- gsub(".*: ","", download_loc)
-  exe_name <- gsub(".*test_basics/","", download_filepath)
+  exe_name <- gsub(".*test_ss3_exe/","", download_filepath)
   dir_temp <- file.path(temp_path, exe_name)
   
   expect_equal(dir_temp, download_filepath)
