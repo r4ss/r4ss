@@ -7,7 +7,7 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 test_that("executables are downloading", {
   download_loc <- get_ss3_exe(dir = temp_path)
   download_filepath <- gsub(".*: ","", download_loc)
-  exe_name <- gsub(paste0(getwd(),"/"),"", download_filepath)
+  exe_name <- gsub(".*test_basics/","", download_filepath)
   dir_temp <- file.path(temp_path, exe_name)
   
   expect_equal(dir_temp, download_filepath)
