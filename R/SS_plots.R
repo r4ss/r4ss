@@ -5,7 +5,6 @@
 #' multiple PNG files. This is now just a wrapper which calls on separate
 #' functions to make all the plots.
 #'
-#'
 #' @template replist
 #' @param plot Plot sets to be created, see list of plots below.  Use to
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
