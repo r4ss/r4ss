@@ -2,24 +2,29 @@
 % Please edit documentation in R/get_ss3_exe.r
 \name{get_ss3_exe}
 \alias{get_ss3_exe}
-\title{Download latest Stock Synthesis (SS3) executable.}
+\title{Download Stock Synthesis (SS3) executable.}
 \usage{
-get_ss3_exe(dir = NULL)
+get_ss3_exe(dir = NULL, version = NULL)
 }
 \arguments{
 \item{dir}{The directory that you would like the executable downloaded to.}
+
+\item{version}{A character string of the tag of the version that of the
+executable to download. Ex. 'v3.30.20' or 'v3.30.18'}
 }
 \value{
 A string of the full file path to the downloaded executable
 }
 \description{
-The \code{get_ss3_exe()} function gets the latest release tag from
-github using the {gh} package and uses that tag to download the executable
-for the appropriate operating system to the directory \code{dir} (if dir = NULL,
-then the executable is downloaded to the working directory).
+The \code{get_ss3_exe()} function gets either the version entered or
+the latest release version from GitHub using the {gh} package and uses that tag
+to download the executable for the appropriate operating system to the
+directory \code{dir} (if dir = NULL, then the executable is downloaded to the
+working directory). To view the version tags available go to
+https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
 }
 \details{
-Downloads the latest release SS3 executable according to operating system.
+Downloads the SS3 executable according to operating system.
 }
 \examples{
 \dontrun{
