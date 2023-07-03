@@ -234,7 +234,7 @@ If you need help troubleshooting `SS_read()` or `SS_write()` and the
 associated functions for each model file, or would like to report a bug,
 please [post an issue in the r4ss repository](https://github.com/r4ss/r4ss/issues).
 
-### Download the latest release of the Stock Synthesis executable from GitHub
+### Download the Stock Synthesis executable from GitHub
 The [latest release of the Stock Synthesis executable](https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/latest) 
 or other releases found by entering a character string of a version tag (list of 
 tags is available [here](https://github.com/nmfs-stock-synthesis/stock-synthesis/tags)) 
