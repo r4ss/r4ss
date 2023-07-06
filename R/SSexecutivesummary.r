@@ -222,8 +222,8 @@ SSexecutivesummary <- function(replist,
   # Spawning Biomass or Spawning Output?
   # ======================================================================
   if (replist[["SpawnOutputUnits"]] == "numbers") {
-    sb.label <- paste0("Spawning Output (", so_units, ")")
-    sb.text.name <- "spawning output"
+    sb.label <- replist[["spawn_output_label"]]
+    sb.text.name <- tolower(sb.label)
     sb_short <- "SO"
   } else {
     sb.label <- "Spawning Biomass (mt)"
@@ -489,9 +489,11 @@ SSexecutivesummary <- function(replist,
 
     caption <- c(
       caption,
-      paste0(
-        "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
-        " percent intervals for the ", add_text, "."
+      paste(
+        "Estimated recent trend in the ", spr_label, 
+        " (where SPR is the spawning potential ratio) and the exploitation rate, along with the ", 
+        round(100 * ci_value, 0),
+        " percent intervals associated with each of those quantities for the ", add_text, "."
       )
     )
     tex.label <- c(tex.label, "exploitES")

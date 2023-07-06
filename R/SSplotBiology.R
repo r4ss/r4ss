@@ -93,7 +93,7 @@ SSplotBiology <-
              "Age (yr)", # 2
              "Maturity", # 3
              "Mean weight (kg) in last year", # 4
-             "Spawning output", # 5
+             replist[["spawn_output_label"]], # 5
              "Length (cm, beginning of the year)", # 6
              "Natural mortality", # 7
              "Female weight (kg)", # 8

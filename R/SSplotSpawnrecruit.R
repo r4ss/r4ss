@@ -59,7 +59,7 @@ SSplotSpawnrecruit <-
            labels = c(
              "Spawning biomass (mt)",
              "Recruitment (1,000s)",
-             "Spawning output",
+             replist[["spawn_output_label"]],
              expression(paste("Spawning output (relative to ", italic(B)[0], ")")),
              expression(paste("Recruitment (relative to  ", italic(R)[0], ")")),
              "Log recruitment deviation"

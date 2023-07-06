@@ -4,7 +4,8 @@
 #'
 #' @template replist
 #' @param ylab Y-axis label. Default is "Spawning biomass (mt)" which is replaced
-#' by "Spawning output" for models with `replist[["SpawnOutputUnits"]] == "numbers"`
+#' by `replist[["spawn_output_label"]]` for models with 
+#' `replist[["SpawnOutputUnits"]] == "numbers"`
 #' @param equilibrium Show equilibrium in plot? Applies whether "yrs" is specified
 #' or not.
 #' @param forecast Show forecast years in plot? Only applies if yrs = "all".
@@ -72,7 +73,7 @@ SSplotDynamicB0 <- function(replist,
     is.na(replist[["SpawnOutputUnits"]]) ||
     replist[["SpawnOutputUnits"]] == "numbers") { # quantity from test in SS_output
     if (ylab == "Spawning biomass (mt)") {
-      ylab <- "Spawning output"
+      ylab <- replist[["spawn_output_label"]]
     }
   }
 

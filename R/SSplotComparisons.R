@@ -215,7 +215,7 @@ SSplotComparisons <-
              "Density", # 9
              "Management target", # 10
              "Minimum stock size threshold", # 11
-             "Spawning output", # 12
+             replist[["spawn_output_label"]], # 12
              "Harvest rate" # 13
            ),
            col = NULL, shadecol = NULL,
