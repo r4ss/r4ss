@@ -141,7 +141,6 @@ endyr
 eol
 et
 exe
-faq
 fileN
 filenaming
 fishres
@@ -151,6 +150,7 @@ fsu
 fwf
 gdata
 getwd
+gh
 ghostagedbase
 ghostcondbase
 ghostlendbase
@@ -167,7 +167,6 @@ icesjms
 iline
 indx
 initpoint
-io
 iteratively
 ith
 jitter
@@ -295,7 +294,6 @@ upweighting
 usepar
 varadjust
 venus
-vlab
 wadbase
 writectl
 writedat
