@@ -22,7 +22,7 @@ SSplotComparisons(
   labels = c("Year", "Spawning biomass (t)", "Fraction of unfished",
     "Age-0 recruits (1,000s)", "Recruitment deviations", "Index", "Log index",
     "SPR-related quantity", "Density", "Management target",
-    "Minimum stock size threshold", "Spawning output", "Harvest rate"),
+    "Minimum stock size threshold", replist[["spawn_output_label"]], "Harvest rate"),
   col = NULL,
   shadecol = NULL,
   pch = NULL,
