@@ -1,44 +1,58 @@
-Package: r4ss
 Type: Package
+Package: r4ss
 Title: R Code for Stock Synthesis
 Version: 1.48.1
-Authors@R: c(person(given = "Ian G.", family = "Taylor",
-  email = "Ian.Taylor@noaa.gov", role = c("aut","cre")),
-  person(given = "Ian J.", family = "Stewart", role = "aut"),
-  person(given = "Allan C.", family = "Hicks", role = "aut"),
-  person(given = "Tommy M.", family = "Garrison", role = "aut"),
-  person(given = "Andre E.", family = "Punt", role = "aut"),
-  person(given = "R.I.C. Chris", family = "Francis", role = "aut"),
-  person(given = "John R.", family = "Wallace", role = "aut"),
-  person(given = "Chantel R.", family = "Wetzel", role = "aut"),
-  person(given = "James T.", family = "Thorson", role = "aut"),
-  person(given = "Yukio", family = "Takeuchi", role = "aut"),
-  person(given = "Kotaro", family = "Ono", role = "aut"),
-  person(given = "Cole C.", family = "Monnahan", role = "aut"),
-  person(given = "Christine C.", family = "Stawitz", role = "aut"),
-  person(given = "Z. Teresa", family = "A'mar", role = "aut"),
-  person(given = "Athol R.", family = "Whitten", role = "aut"),
-  person(given = "Kelli F.", family = "Johnson", role = "aut"),
-  person(given = "Robbie L.", family = "Emmet", role = "aut"),
-  person(given = "Sean C.", family = "Anderson", role = "aut"),
-  person(given = "Gwladys I.", family = "Lambert", role = "aut"),
-  person(given = "Megan M.", family = "Stachura", role = "aut"),
-  person(given = "Andrew B.", family = "Cooper", role = "aut"),
-  person(given = "Andi", family = "Stephens", role = "aut"),
-  person(given = "Neil L.", family = "Klaer", role = "aut"),
-  person(given = "Carey R.", family = "McGilliard", role = "aut"),
-  person(given = "Iago", family = "Mosqueira", role = "aut"),
-  person(given = "Watal M.", family = "Iwasaki", role = "aut"),
-  person(given = "Kathryn L.", family = "Doering", role = "aut"),
-  person(given = "Andrea M.", family = "Havron", role = "aut"),
-  person(given = "Nathan R.", family = "Vaughan", role = "aut"),
-  person(given = "LaTreese S.", family = "Denson", role = "aut"),
-  person(given = "Ashleigh J.", family = "Novak", role = "aut"),
-  person(given = "Henning", family = "Winker", role = "aut"),
-  person(given = "Lee", family = "Qi", role = "aut"),
-  person(given = "Megumi", family = "Oshima", role = "aut"),
-  person(given = "Eric", family = "Fletcher", role = "aut"),
-  person(given = "Elizabeth F.", family = "Gugliotti", role = "aut"))
+Authors@R: c(
+    person("Ian G.", "Taylor", , "Ian.Taylor@noaa.gov", role = c("aut", "cre")),
+    person("Ian J.", "Stewart", role = "aut"),
+    person("Allan C.", "Hicks", role = "aut"),
+    person("Tommy M.", "Garrison", role = "aut"),
+    person("Andre E.", "Punt", role = "aut"),
+    person("R.I.C. Chris", "Francis", role = "aut"),
+    person("John R.", "Wallace", role = "aut"),
+    person("Chantel R.", "Wetzel", role = "aut"),
+    person("James T.", "Thorson", role = "aut"),
+    person("Yukio", "Takeuchi", role = "aut"),
+    person("Kotaro", "Ono", role = "aut"),
+    person("Cole C.", "Monnahan", role = "aut"),
+    person("Christine C.", "Stawitz", role = "aut"),
+    person("Z. Teresa", "A'mar", role = "aut"),
+    person("Athol R.", "Whitten", role = "aut"),
+    person("Kelli F.", "Johnson", role = "aut"),
+    person("Robbie L.", "Emmet", role = "aut"),
+    person("Sean C.", "Anderson", role = "aut"),
+    person("Gwladys I.", "Lambert", role = "aut"),
+    person("Megan M.", "Stachura", role = "aut"),
+    person("Andrew B.", "Cooper", role = "aut"),
+    person("Andi", "Stephens", role = "aut"),
+    person("Neil L.", "Klaer", role = "aut"),
+    person("Carey R.", "McGilliard", role = "aut"),
+    person("Iago", "Mosqueira", role = "aut"),
+    person("Watal M.", "Iwasaki", role = "aut"),
+    person("Kathryn L.", "Doering", role = "aut"),
+    person("Andrea M.", "Havron", role = "aut"),
+    person("Nathan R.", "Vaughan", role = "aut"),
+    person("LaTreese S.", "Denson", role = "aut"),
+    person("Ashleigh J.", "Novak", role = "aut"),
+    person("Henning", "Winker", role = "aut"),
+    person("Lee", "Qi", role = "aut"),
+    person("Megumi", "Oshima", role = "aut"),
+    person("Eric", "Fletcher", role = "aut"),
+    person("Elizabeth F.", "Gugliotti", role = "aut")
+  )
+Description: A collection of R functions for use with Stock Synthesis, a
+    fisheries stock assessment modeling platform written in ADMB by Dr.
+    Richard D. Methot at the NOAA Northwest Fisheries Science Center. The
+    functions include tools for summarizing and plotting results,
+    manipulating files, visualizing model parameterizations, and various
+    other common stock assessment tasks.  This version of '{r4ss}' is
+    compatible with Stock Synthesis versions 3.24 through 3.30
+    (specifically version 3.30.21 beta, from January 2023). Support for
+    3.24 models is only through the core functions for reading output and
+    plotting.
+License: GPL-3
+URL: https://github.com/r4ss/r4ss, https://r4ss.github.io/r4ss/
+BugReports: https://github.com/r4ss/r4ss/issues
 Depends:
     R (>= 3.5.0)
 Imports:
@@ -53,35 +67,22 @@ Imports:
     stringr,
     tidyr
 Suggests: 
-    gtools,
+    flextable,
+    ggpubr,
     gplots,
+    gtools,
     knitr,
     maps,
     pso,
-    testthat,
-    truncnorm,
+    reshape2,
     rmarkdown,
     shiny,
-    flextable,
-    reshape2,
-    ggpubr
-Description: A collection of R functions for use with Stock Synthesis, a
-    fisheries stock assessment modeling platform written in ADMB by Dr. Richard
-    D. Methot at the NOAA Northwest Fisheries Science Center. The functions
-    include tools for summarizing and plotting results, manipulating files,
-    visualizing model parameterizations, and various other common stock
-    assessment tasks.
-    This version of '{r4ss}' is compatible with Stock Synthesis versions
-    3.24 through 3.30 (specifically version 3.30.21 beta, from January 
-    2023). Support for 3.24 models is only through the core functions for 
-    reading output and plotting.
-License: GPL-3
+    testthat,
+    truncnorm
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
-LazyLoad: yes
-URL: https://github.com/r4ss/r4ss,
-    https://r4ss.github.io/r4ss/
-BugReports: https://github.com/r4ss/r4ss/issues
-RoxygenNote: 7.2.3
-VignetteBuilder: knitr
-Roxygen: list(markdown = TRUE)
 Language: en-US
+LazyLoad: yes
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
