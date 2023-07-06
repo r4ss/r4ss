@@ -276,8 +276,7 @@ SSexecutivesummary <- function(replist,
       caption <- c(
         caption,
         "Recent landings by fleet, total landings summed across fleets, and the total mortality including discards for the ", add_text, "."
-      ) 
-
+      )
     } else {
       if (format) {
         es.a <- data.frame(years_minus_final, comma(catch, digits = 2), comma(total.catch, digits = 2))
@@ -288,9 +287,8 @@ SSexecutivesummary <- function(replist,
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(
         caption,
-        paste0("Recent catches (mt) by fleet and total catch (mt) summed across fleets for the  ", add_text, "."
-        )
-      )  
+        paste0("Recent catches (mt) by fleet and total catch (mt) summed across fleets for the  ", add_text, ".")
+      )
     }
 
     tex.label <- c(tex.label, "removalsES")
@@ -435,7 +433,7 @@ SSexecutivesummary <- function(replist,
         "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
         " percent intervals for the ", add_text, "."
       )
-    )    
+    )
     tex.label <- c(tex.label, "recrES")
     filename <- c(filename, csv_name)
   } # end check for 'c' %in% tables
@@ -735,7 +733,6 @@ SSexecutivesummary <- function(replist,
         caption,
         "Recent trend in the overfishing limits (OFLs), the acceptable biological catches (ABCs), the annual catch limits (ACLs), the total landings, and total mortality all in metric tons (mt)."
       )
-
     } else {
       es.f <- data.frame(years_minus_final, ofl, abc, acl, catch)
       colnames(es.f) <- c("Year", "OFL (mt)", "ABC (mt)", "ACL (mt)", "Catch (mt)")
@@ -805,7 +802,7 @@ SSexecutivesummary <- function(replist,
       caption,
       paste0("Projections of potential OFLs (mt), ABCs (mt), estimated ", sb.text.name, ", and fraction unfished.")
     )
-    
+
     tex.label <- c(tex.label, "projectionES")
     filename <- c(filename, csv_name)
   } # end check for 'g' %in% tables
@@ -1014,9 +1011,9 @@ SSexecutivesummary <- function(replist,
       }
       colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Catch (mt)")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
-      caption <- c(caption, 
-          paste0("Catches (mt) by fleet for all years and total catches (mt) summed by year for the ", add_text, "."
-                 )
+      caption <- c(
+        caption,
+        paste0("Catches (mt) by fleet for all years and total catches (mt) summed by year for the ", add_text, ".")
       )
     }
 
