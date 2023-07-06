@@ -10,6 +10,8 @@ SSexecutivesummary(
   ci_value = 0.95,
   es_only = FALSE,
   fleetnames = NULL,
+  add_text = "model area",
+  so_units = "millions of eggs",
   tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
     "numbers", "biomass", "likes"),
   divide_by_2 = FALSE,
@@ -37,6 +39,14 @@ will be produced, default is FALSE which will return all executive summary
 tables, historical catches, and numbers-at-ages}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
+
+\item{add_text}{Default "model area". Additional text to add to table captions to indicate a specific model area
+If text is added here it will be combined to add the following text: paste("for the sub-area model", add_text).
+For example, add_text = "South of Point Conception" will add the following text to each caption
+"for the sub-area model South of Point Conception."}
+
+\item{so_units}{Default "millions of eggs". Additional text to add to table captions to indicate the specific units
+that spawning output is reported in. If fecundity is equal to the weight-at-length, the units by default within SS3 is mt.}
 
 \item{tables}{Which tables to produce (default is everything). Note: some
 tables depend on calculations related to previous tables, so will fail

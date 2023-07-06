@@ -131,7 +131,7 @@ SSplotYield <-
         legend("topright",
           bty = "n", lwd = 2, lty = 2,
           col = colvec[which_lines],
-          legend = c("MSY", "B target", "SPR target", "Current")
+          legend = refpoints #c("MSY", "B target", "SPR target", "Current")
         )
       }
     }

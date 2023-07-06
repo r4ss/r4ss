@@ -12,6 +12,12 @@
 #' will be produced, default is FALSE which will return all executive summary
 #' tables, historical catches, and numbers-at-ages
 #' @template fleetnames
+#' @param add_text Default "model area". Additional text to add to table captions to indicate a specific model area
+#' If text is added here it will be combined to add the following text: paste("for the sub-area model", add_text).
+#' For example, add_text = "South of Point Conception" will add the following text to each caption
+#' "for the sub-area model South of Point Conception."
+#' @param so_units Default "millions of eggs". Additional text to add to table captions to indicate the specific units
+#' that spawning output is reported in. If fecundity is equal to the weight-at-length, the units by default within SS3 is mt.
 #' @param tables Which tables to produce (default is everything). Note: some
 #' tables depend on calculations related to previous tables, so will fail
 #' if requested on their own (e.g. Table 'f' can't be created
@@ -51,6 +57,8 @@ SSexecutivesummary <- function(replist,
                                ci_value = 0.95,
                                es_only = FALSE,
                                fleetnames = NULL,
+                               add_text = "model area",
+                               so_units = "millions of eggs",
                                tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries", "numbers", "biomass", "likes"),
                                divide_by_2 = FALSE,
                                endyr = NULL,
@@ -214,11 +222,13 @@ SSexecutivesummary <- function(replist,
   # Spawning Biomass or Spawning Output?
   # ======================================================================
   if (replist[["SpawnOutputUnits"]] == "numbers") {
-    sb.label <- "Spawning Output"
+    sb.label <- paste0("Spawning Output (", so_units, ")")
     sb.text.name <- "spawning output"
+    sb_short <- "SO"
   } else {
     sb.label <- "Spawning Biomass (mt)"
     sb.text.name <- "spawning biomass"
+    sb_short <- "SB"
   }
 
   caption <- tex.label <- filename <- csv_name <- NULL
@@ -260,25 +270,27 @@ SSexecutivesummary <- function(replist,
       } else {
         es.a <- data.frame(years_minus_final, catch, total.catch, total.dead)
       }
-      colnames(es.a) <- c("Year", fleet.names, "Total Landings", "Total Dead")
+      colnames(es.a) <- c("Year", paste(fleet.names, "(mt)"), "Total Catch (mt)", "Total Dead (mt)")
 
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(
         caption,
-        "Recent landings by fleet, total landings summed across fleets, and the total mortality including discards."
-      )
+        "Recent landings by fleet, total landings summed across fleets, and the total mortality including discards for the ", add_text, "."
+      ) 
+
     } else {
       if (format) {
         es.a <- data.frame(years_minus_final, comma(catch, digits = 2), comma(total.catch, digits = 2))
       } else {
         es.a <- data.frame(years_minus_final, catch, total.catch)
       }
-      colnames(es.a) <- c("Year", fleet.names, "Total Landings")
+      colnames(es.a) <- c("Year", paste(fleet.names, "(mt)"), "Total Catch (mt)")
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(
         caption,
-        "Recent landings by fleet and total landings summed across fleets."
-      )
+        paste0("Recent catches (mt) by fleet and total catch (mt) summed across fleets for the  ", add_text, "."
+        )
+      )  
     }
 
     tex.label <- c(tex.label, "removalsES")
@@ -323,9 +335,9 @@ SSexecutivesummary <- function(replist,
 
     caption <- c(
       caption,
-      paste(
-        "Estimated recent trend in", sb.text.name, "and the fraction unfished and the", round(100 * ci_value, 0),
-        "percent intervals."
+      paste0(
+        "Estimated recent trend in ", sb.text.name, " and the fraction unfished and the ", round(100 * ci_value, 0),
+        " percent intervals for the ", add_text, "."
       )
     )
     tex.label <- c(tex.label, "ssbES")
@@ -406,11 +418,11 @@ SSexecutivesummary <- function(replist,
         devs.out
       )
 
-      colnames(es.c) <- c("Year", "Recruitment", "Interval", "Recruitment Deviations", "Interval")
+      colnames(es.c) <- c("Year", "Recruitment (1,000s)", "Interval", "Recruitment Deviations", "Interval")
     } else {
       es.c <- data.frame(years, recruits[["dq"]], recruits[["low"]], recruits[["high"]], devs.out[, 1], devs.out[, 2], devs.out[, 3])
       colnames(es.c) <- c(
-        "Year", "Recruitment", "Lower Interval", "Upper Interval",
+        "Year", "Recruitment (1,000s)", "Lower Interval", "Upper Interval",
         "Recruitment Deviations", "Lower Interval", "Upper Interval"
       )
     }
@@ -419,11 +431,11 @@ SSexecutivesummary <- function(replist,
 
     caption <- c(
       caption,
-      paste(
-        "Estimated recent trend in recruitment and recruitment deviations and the", round(100 * ci_value, 0),
-        "percent intervals."
+      paste0(
+        "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
+        " percent intervals for the ", add_text, "."
       )
-    )
+    )    
     tex.label <- c(tex.label, "recrES")
     filename <- c(filename, csv_name)
   } # end check for 'c' %in% tables
@@ -479,9 +491,9 @@ SSexecutivesummary <- function(replist,
 
     caption <- c(
       caption,
-      paste(
-        "Estimated recent trend in the", spr_label, "where SPR is the spawning potential ratio the exploitation rate, and the ", round(100 * ci_value, 0),
-        "percent intervals."
+      paste0(
+        "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
+        " percent intervals for the ", add_text, "."
       )
     )
     tex.label <- c(tex.label, "exploitES")
@@ -582,18 +594,18 @@ SSexecutivesummary <- function(replist,
         "Unfished Recruitment (R0)",
         paste0(sb.label, " (", years[length(years)], ")"),
         paste0("Fraction Unfished ", "(", years[length(years)], ")"),
-        paste0("Reference Points Based SB", btarg, "%"),
-        paste0("Proxy ", sb.label, " SB", btarg, "%"),
-        paste0("SPR Resulting in SB", btarg, "%"),
-        paste0("Exploitation Rate Resulting in SB", btarg, "%"),
-        paste0("Yield with SPR Based On SB", btarg, "% (mt)"),
+        paste0("Reference Points Based ", sb_short, btarg, "%"),
+        paste0("Proxy ", sb.label, " ", sb_short, btarg, "%"),
+        paste0("SPR Resulting in ", sb_short, btarg, "%"),
+        paste0("Exploitation Rate Resulting in ", sb_short, btarg, "%"),
+        paste0("Yield with SPR Based On ", sb_short, btarg, "% (mt)"),
         "Reference Points Based on SPR Proxy for MSY",
         paste0("Proxy ", sb.label, " (SPR", spr, ")"),
         paste0("SPR", spr),
         paste0("Exploitation Rate Corresponding to SPR", spr),
-        paste0("Yield with SPR", spr, " at SB SPR (mt)"),
+        paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
         "Reference Points Based on Estimated MSY Values",
-        paste0(sb.label, " at MSY (SB MSY)"),
+        paste0(sb.label, " at MSY (", sb_short, " MSY)"),
         "SPR MSY",
         "Exploitation Rate Corresponding to SPR MSY",
         "MSY (mt)"
@@ -631,18 +643,18 @@ SSexecutivesummary <- function(replist,
         "Unfished Recruitment (R0)",
         paste0(sb.label, " (", years[length(years)], ")"),
         paste0("Fraction Unfished ", "(", years[length(years)], ")"),
-        paste0("Reference Points Based SB", btarg, "\\%"),
-        paste0("Proxy ", sb.label, " SB", btarg, "\\%"),
-        paste0("SPR Resulting in SB", btarg, "\\%"),
-        paste0("Exploitation Rate Resulting in SB", btarg, "\\%"),
-        paste0("Yield with SPR Based On SB", btarg, "\\% (mt)"),
+        paste0("Reference Points Based ", sb_short, btarg, "\\%"),
+        paste0("Proxy ", sb.label, " ", sb_short, btarg, "\\%"),
+        paste0("SPR Resulting in ", sb_short, btarg, "\\%"),
+        paste0("Exploitation Rate Resulting in ", sb_short, btarg, "\\%"),
+        paste0("Yield with SPR Based On ", sb_short, btarg, "\\% (mt)"),
         "Reference Points Based on SPR Proxy for MSY",
         paste0("Proxy ", sb.label, " (SPR", spr, ")"),
         paste0("SPR", spr),
         paste0("Exploitation Rate Corresponding to SPR", spr),
-        paste0("Yield with SPR", spr, " at SB SPR (mt)"),
+        paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
         "Reference Points Based on Estimated MSY Values",
-        paste0(sb.label, " at MSY (SB MSY)"),
+        paste0(sb.label, " at MSY (", sb_short, " MSY)"),
         "SPR MSY",
         "Exploitation Rate Corresponding to SPR MSY",
         "MSY (mt)"
@@ -653,11 +665,12 @@ SSexecutivesummary <- function(replist,
 
     caption <- c(
       caption,
-      paste(
+      paste0(
         "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
-        "percent intervals."
+        " percent intervals for the ", add_text, "."
       )
     )
+
     tex.label <- c(tex.label, "referenceES")
     filename <- c(filename, csv_name)
   } # end check for 'e' %in% tables
@@ -717,19 +730,18 @@ SSexecutivesummary <- function(replist,
 
     if (sum(total.catch) != sum(total.dead)) {
       es.f <- data.frame(years_minus_final, ofl, abc, acl, catch, dead)
-      colnames(es.f) <- c("Year", "OFL", "ABC", "ACL", "Landings", "Total Mortality")
+      colnames(es.f) <- c("Year", "OFL (mt)", "ABC (mt)", "ACL (mt)", "Landings (mt)", "Total Mortality (mt)")
       caption <- c(
         caption,
-        paste("Recent trend in the overfishing limits (OFLs), the acceptable biological catches (ABCs),
-                the annual catch limits (ACLs), the total landings, and total mortality (mt).")
+        "Recent trend in the overfishing limits (OFLs), the acceptable biological catches (ABCs), the annual catch limits (ACLs), the total landings, and total mortality all in metric tons (mt)."
       )
+
     } else {
       es.f <- data.frame(years_minus_final, ofl, abc, acl, catch)
-      colnames(es.f) <- c("Year", "OFL", "ABC", "ACL", "Catch")
+      colnames(es.f) <- c("Year", "OFL (mt)", "ABC (mt)", "ACL (mt)", "Catch (mt)")
       caption <- c(
         caption,
-        paste("Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs),
-                the annual catch limits (ACLs), and the total catch (mt).")
+        "Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs), the annual catch limits (ACLs), and the total catch all in metric tons (mt)."
       )
     }
     write.csv(es.f, file.path(csv.dir, csv_name), row.names = FALSE)
@@ -793,6 +805,7 @@ SSexecutivesummary <- function(replist,
       caption,
       paste0("Projections of potential OFLs (mt), ABCs (mt), estimated ", sb.text.name, ", and fraction unfished.")
     )
+    
     tex.label <- c(tex.label, "projectionES")
     filename <- c(filename, csv_name)
   } # end check for 'g' %in% tables
@@ -940,8 +953,9 @@ SSexecutivesummary <- function(replist,
 
     caption <- c(
       caption,
-      "Summary of recent estimates and managment quantities"
+      paste0("Summary of recent estimates and management quantities for the ", add_text, ".")
     )
+
     tex.label <- c(tex.label, "summaryES")
     filename <- c(filename, csv_name)
   } # end check for 'i' %in% tables
@@ -989,18 +1003,21 @@ SSexecutivesummary <- function(replist,
       } else {
         mortality <- data.frame(ind, catch, total.catch, total.dead)
       }
-      colnames(mortality) <- c("Year", fleet.names, "Total Landings", "Total Dead")
+      colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Landings (mt)", "Total Dead (mt)")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
-      caption <- c(caption, "Landings (mt) by fleet for all years, total landings (mt), and total mortality (mt) summed by year.")
+      caption <- c(caption, "Landings (mt) by fleet for all years, total landings (mt), and total mortality (mt) summed by year for the ", add_test, ".")
     } else {
       if (format) {
         mortality <- data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
       } else {
         mortality <- data.frame(ind, catch, total.catch)
       }
-      colnames(mortality) <- c("Year", fleet.names, "Total Catch")
+      colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Catch (mt)")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
-      caption <- c(caption, "Catches (mt) by fleet for all years and total catches (mt) summed by year.")
+      caption <- c(caption, 
+          paste0("Catches (mt) by fleet for all years and total catches (mt) summed by year for the ", add_text, "."
+                 )
+      )
     }
 
     tex.label <- c(tex.label, "allcatches")
@@ -1108,15 +1125,16 @@ SSexecutivesummary <- function(replist,
     colnames(ts.table) <- c(
       "Year", "Total Biomass (mt)", sb.label,
       paste0("Total Biomass ", smry.age, "+ (mt)"), "Fraction Unfished",
-      "Age-0 Recruits", "Total Mortality (mt)", spr_type, "Exploitation Rate"
+      "Age-0 Recruits (1,000s)", "Total Mortality (mt)", spr_type, "Exploitation Rate"
     )
     csv_name <- "TimeSeries.csv"
     write.csv(ts.table, file = file.path(csv.dir, csv_name), row.names = FALSE)
 
     caption <- c(
       caption,
-      "Time series of population estimates from the base model."
+      paste0("Time series of population estimates from the base model for the ", add_text, ".")
     )
+
     tex.label <- c(tex.label, "timeseries")
     filename <- c(filename, csv_name)
   } # end check for es_only == FALSE & "timeseries" %in% tables
@@ -1253,13 +1271,13 @@ SSexecutivesummary <- function(replist,
 
   caption <- c(
     caption,
-    "Likelihood components by source."
+    "Negative log-likelihood components by data type."
   )
   tex.label <- c(tex.label, "likes")
   filename <- c(filename, csv_name)
 
   # ======================================================================
-  # Write out Master Table
+  # Write out table with all the captions for each executive summary table
   # ======================================================================
 
   out_csv <- cbind(caption, NA, tex.label, filename)
