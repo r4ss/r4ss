@@ -428,15 +428,7 @@ SSplotTimeseries <-
         # adjust file names
         caption <- main
         file <- main
-        # use standardized file name even if using custom SpawnOutputLabel
-        if (subplot %in% 7:8 & labels[7] != "Spawning output") {
-          file <- "Spawning output"
-          if (subplot == 8) {
-            # this gets changed below, but easier to just match
-            # the non-custom process
-            file <- "Spawning output with ~95% asymptotic intervals"
-          }
-        }
+
         if (subplot %in% 9:10 & grepl(":", main)) {
           # remove extra stuff like "B/B_0" from file
           file <- strsplit(main, split = ":")[[1]][1]
@@ -451,6 +443,16 @@ SSplotTimeseries <-
         file <- paste("ts", subplot, "_", file, ".png", sep = "")
         # replace any spaces with underscores
         file <- gsub(pattern = " ", replacement = "_", x = file, fixed = TRUE)
+
+        # use old (not-quite) standardized file name even if using custom SpawnOutputLabel
+        if (subplot == 7 & labels[7] != "Spawning output") {
+          file <- "ts7_Spawning_output.png"
+          if (uncertainty) {
+            # this name is silly ("with_95_asymptotic_intervals_intervals" 
+            # should just be "intervals"), but changing it would break stuff
+            file <- "ts7_Spawning_output_with_95_asymptotic_intervals_intervals.png"
+          }
+        }
 
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
