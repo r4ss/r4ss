@@ -100,9 +100,7 @@ output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).}
 
 \item{xlab}{x axis label for all plots}
 
-\item{labels}{Vector of labels for plots (titles and axis labels).
-In some cases these get modified by the function based on other
-function inputs.}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}.}

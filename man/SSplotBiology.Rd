@@ -119,9 +119,7 @@ the string options.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 
-\item{labels}{Vector of labels for plots (titles and axis labels).
-In some cases these get modified by the function based on other
-function inputs.}
+\item{labels}{Vector of labels for plots (titles and axis labels).}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}.}
