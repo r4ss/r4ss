@@ -5,7 +5,8 @@
 #'
 #' @param dir The directory that you would like the executable downloaded to.
 #' @param version A character string of the executable version tag to download 
-#' (e.g.'v3.30.20' or 'v3.30.18').
+#' (e.g.'v3.30.20' or 'v3.30.18'). A list of tags is available at 
+#' https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
 #' @return A string of the full file path to the downloaded executable
 #' @author Elizabeth F. Gugliotti
 #' @export
@@ -42,6 +43,10 @@ get_ss3_exe <- function(dir = NULL, version = NULL){
     }
   }
   
+  if (!dir.exists(dir)) {
+    stop("Directory doesn't exist: ", dir)
+  }
+
   if(is.null(dir)){
     dir <- getwd()
     message("No directory provided, the executable will be downloaded to the 
@@ -59,7 +64,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL){
         tag, "/ss_win.exe")
       utils::download.file(url, destfile=file.path(dir, "ss3.exe"))
       download_location <- file.path(dir, "ss3.exe")
-      return(paste0("The stock synthesis executable ", tag, " was downloaded to: ",
+      message(paste0("The stock synthesis executable for Windows ", tag, " was downloaded to: ",
                     download_location))
     }
   } else {
@@ -67,14 +72,14 @@ get_ss3_exe <- function(dir = NULL, version = NULL){
       url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_osx")
       utils::download.file(url, destfile=file.path(dir, "ss3"))
       download_location <- file.path(dir, "ss3")
-      return(paste0("The stock synthesis executable ", tag, " was downloaded to: ",
+      message(paste0("The stock synthesis executable for Mac ", tag, " was downloaded to: ",
                     download_location))
     } else {
       if (R.version$os == "linux-gnu") {
         url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
         utils::download.file(url, destfile=file.path(dir, "ss3"))
         download_location <- file.path(dir, "ss3")
-        return(paste0("The stock synthesis executable ", tag, " was downloaded to: ",
+        message(paste0("The stock synthesis executable for Linux ", tag, " was downloaded to: ",
                       download_location))
       } else {
         warning(

@@ -10,7 +10,8 @@ get_ss3_exe(dir = NULL, version = NULL)
 \item{dir}{The directory that you would like the executable downloaded to.}
 
 \item{version}{A character string of the executable version tag to download
-(e.g.'v3.30.20' or 'v3.30.18').}
+(e.g.'v3.30.20' or 'v3.30.18'). A list of tags is available at
+https://github.com/nmfs-stock-synthesis/stock-synthesis/tags}
 }
 \value{
 A string of the full file path to the downloaded executable
