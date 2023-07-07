@@ -61,12 +61,12 @@ Imports:
     dplyr,
     forcats,
     ggplot2,
+    gh,
     kableExtra,
     lifecycle,
     magrittr,
     stringr,
-    tidyr,
-    gh
+    tidyr
 Suggests: 
     flextable,
     ggpubr,

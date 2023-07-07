@@ -31,7 +31,7 @@ operating system.
 \examples{
 \dontrun{
 get_ss3_exe()
-get_ss3_exe(version = 'v3.30.18')
+get_ss3_exe(version = "v3.30.18")
 }
 }
 \author{
