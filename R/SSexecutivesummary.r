@@ -275,7 +275,7 @@ SSexecutivesummary <- function(replist,
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(
         caption,
-        "Recent landings by fleet, total landings summed across fleets, and the total mortality including discards for the ", add_text, "."
+        paste0("Recent landings by fleet, total landings summed across fleets, and the total mortality including discards for the ", add_text, ".")
       )
     } else {
       if (format) {
@@ -1002,7 +1002,7 @@ SSexecutivesummary <- function(replist,
       }
       colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Landings (mt)", "Total Dead (mt)")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
-      caption <- c(caption, "Landings (mt) by fleet for all years, total landings (mt), and total mortality (mt) summed by year for the ", add_test, ".")
+      caption <- c(caption, paste0("Landings (mt) by fleet for all years, total landings (mt), and total mortality (mt) summed by year for the ", add_text, "."))
     } else {
       if (format) {
         mortality <- data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
