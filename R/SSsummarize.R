@@ -120,6 +120,7 @@ SSsummarize <- function(biglist,
   endyrs <- NULL
   SPRratioLabels <- NULL
   FvalueLabels <- NULL
+  SpawnBioLabels <- NULL
   sprtargs <- NULL
   btargs <- NULL
   minbthreshs <- NULL
@@ -287,6 +288,7 @@ SSsummarize <- function(biglist,
     }
     SPRratioLabels <- c(SPRratioLabels, stats[["SPRratioLabel"]])
     FvalueLabels <- c(FvalueLabels, stats[["F_report_basis"]])
+    SpawnOutputLabels <- c(SpawnOutputLabels, stats[["SpawnOutputLabel"]])
     sprtargs <- c(sprtargs, stats[["sprtarg"]])
     btargs <- c(btargs, stats[["btarg"]])
     minbthreshs <- c(minbthreshs, stats[["minbthresh"]])
@@ -325,7 +327,9 @@ SSsummarize <- function(biglist,
     # 2nd fecundity parameter indicates whether spawning output is proportional to biomass
     if (!is.null(SpawnOutputUnits)) {
       # if 1 value is input, repeate n times
-      if (length(SpawnOutputUnits) == 1) SpawnOutputUnits <- rep(SpawnOutputUnits, n)
+      if (length(SpawnOutputUnits) == 1) {
+        SpawnOutputUnits <- rep(SpawnOutputUnits, n)
+      }
       # if total doesn't currently equal n, stop everything
       if (length(SpawnOutputUnits) != n) {
         stop("'SpawnOutputUnits' should have length = 1 or", n)
@@ -694,6 +698,7 @@ SSsummarize <- function(biglist,
   mylist[["InitAgeYrs"]] <- InitAgeYrs
   mylist[["lowerCI"]] <- lowerCI
   mylist[["upperCI"]] <- upperCI
+  mylist[["SpawnOutputLabels"]] <- SpawnOutputLabels
   mylist[["SpawnOutputUnits"]] <- SpawnOutputUnits
   mylist[["FleetNames"]] <- FleetNames
   mylist[["mcmc"]] <- mcmc

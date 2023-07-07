@@ -63,7 +63,9 @@ vector of two numeric values representing the fraction of the maximum in
 the x and y dimensions, respectively. See \code{help("legend")} for more info on
 the string options.}
 
-\item{labels}{Vector of labels for plots (titles and axis labels).}
+\item{labels}{Vector of labels for plots (titles and axis labels).
+In some cases these get modified by the function based on other
+function inputs.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}.}

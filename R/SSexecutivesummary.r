@@ -222,7 +222,7 @@ SSexecutivesummary <- function(replist,
   # Spawning Biomass or Spawning Output?
   # ======================================================================
   if (replist[["SpawnOutputUnits"]] == "numbers") {
-    sb.label <- replist[["spawn_output_label"]]
+    sb.label <- replist[["SpawnOutputLabel"]]
     sb.text.name <- tolower(sb.label)
     sb_short <- "SO"
   } else {

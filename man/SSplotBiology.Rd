@@ -24,7 +24,7 @@ SSplotBiology(
   legendloc = "topleft",
   plotdir = "default",
   labels = c("Length (cm)", "Age (yr)", "Maturity", "Mean weight (kg) in last year",
-    replist[["spawn_output_label"]], "Length (cm, beginning of the year)",
+    replist[["SpawnOutputLabel"]], "Length (cm, beginning of the year)",
     "Natural mortality", "Female weight (kg)", "Female length (cm)", "Fecundity",
     "Default fecundity label", "Year", "Hermaphroditism transition rate",
     "Fraction females by age in ending year"),
@@ -119,7 +119,9 @@ the string options.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 
-\item{labels}{Vector of labels for plots (titles and axis labels).}
+\item{labels}{Vector of labels for plots (titles and axis labels).
+In some cases these get modified by the function based on other
+function inputs.}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}.}

@@ -22,7 +22,7 @@ SSplotComparisons(
   labels = c("Year", "Spawning biomass (t)", "Fraction of unfished",
     "Age-0 recruits (1,000s)", "Recruitment deviations", "Index", "Log index",
     "SPR-related quantity", "Density", "Management target",
-    "Minimum stock size threshold", replist[["spawn_output_label"]], "Harvest rate"),
+    "Minimum stock size threshold", "Spawning output", "Harvest rate"),
   col = NULL,
   shadecol = NULL,
   pch = NULL,
@@ -148,7 +148,9 @@ models described above.}
 \item{indexPlotEach}{TRUE plots the observed index for each model with
 colors, or FALSE just plots observed once in black dots.}
 
-\item{labels}{Vector of labels for plots (titles and axis labels).}
+\item{labels}{Vector of labels for plots (titles and axis labels).
+In some cases these get modified by the function based on other
+function inputs.}
 
 \item{col}{Optional vector of colors to be used for lines. Input NULL
 makes use of \code{rich.colors.short} function.}
