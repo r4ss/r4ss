@@ -43,14 +43,14 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     }
   }
 
-  if (!dir.exists(dir)) {
-    stop("Directory doesn't exist: ", dir)
-  }
-
   if (is.null(dir)) {
     dir <- getwd()
     message("No directory provided, the executable will be downloaded to the
             working directory")
+  }
+
+  if (!dir.exists(dir)) {
+    stop("Directory doesn't exist: ", dir)
   }
 
   if (.Platform[["OS.type"]] == "windows") {
