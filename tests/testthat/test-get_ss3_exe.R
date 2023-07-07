@@ -7,20 +7,20 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
 test_that("executables are downloading default latest version", {
   download_loc <- get_ss3_exe(dir = temp_path)
-  download_filepath <- gsub(".*: ","", download_loc)
-  exe_name <- gsub(paste0(temp_path,"/"),"", download_filepath, fixed = TRUE)
+  download_filepath <- gsub(".*: ", "", download_loc)
+  exe_name <- gsub(paste0(temp_path, "/"), "", download_filepath, fixed = TRUE)
   dir_temp <- file.path(temp_path, exe_name)
   file.remove(download_filepath)
-  
+
   expect_equal(dir_temp, download_filepath)
 })
 
 test_that("executables are downloading with version", {
   download_loc <- get_ss3_exe(dir = temp_path, version = "v3.30.18")
-  download_filepath <- gsub(".*: ","", download_loc)
-  exe_name <- gsub(paste0(temp_path,"/"),"", download_filepath, fixed = TRUE)
+  download_filepath <- gsub(".*: ", "", download_loc)
+  exe_name <- gsub(paste0(temp_path, "/"), "", download_filepath, fixed = TRUE)
   dir_temp <- file.path(temp_path, exe_name)
   file.remove(download_filepath)
-  
+
   expect_equal(dir_temp, download_filepath)
 })
