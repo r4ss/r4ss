@@ -57,6 +57,7 @@ revdep
 \.Rhistory
 *\.Rproj
 .Rproj.user
+.RData
 
 .vscode/
 docs

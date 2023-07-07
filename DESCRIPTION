@@ -65,7 +65,8 @@ Imports:
     lifecycle,
     magrittr,
     stringr,
-    tidyr
+    tidyr,
+    gh
 Suggests: 
     flextable,
     ggpubr,
