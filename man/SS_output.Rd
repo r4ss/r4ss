@@ -23,7 +23,7 @@ SS_output(
   hidewarn = FALSE,
   NoCompOK = TRUE,
   aalmaxbinrange = 4,
-  spawn_output_label = "Spawning output"
+  SpawnOutputLabel = "Spawning output"
 )
 }
 \arguments{
@@ -69,7 +69,7 @@ to the screen.}
 \item{aalmaxbinrange}{The largest length bin range allowed for composition
 data to be considered as conditional age-at-length data.}
 
-\item{spawn_output_label}{An alternative to "Spawning output" for use in
+\item{SpawnOutputLabel}{An alternative to "Spawning output" for use in
 figure axis labels and table headers.}
 }
 \value{

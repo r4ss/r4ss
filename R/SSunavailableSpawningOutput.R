@@ -219,7 +219,7 @@ SSunavailableSpawningOutput <-
           col = c("red", "green4", "blue"),
           las = 1
         )
-        mtext(replist[["spawn_output_label"]], 3, line = 0.25)
+        mtext(replist[["SpawnOutputLabel"]], 3, line = 0.25)
 
         legend("topright",
           c("Unavailable Small", "Unavailable Large", "Available"),

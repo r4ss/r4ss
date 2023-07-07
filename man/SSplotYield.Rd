@@ -47,7 +47,9 @@ subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.}
 
 \item{print}{Print to PNG files?}
 
-\item{labels}{Vector of labels for plots (titles and axis labels).}
+\item{labels}{Vector of labels for plots (titles and axis labels).
+In some cases these get modified by the function based on other
+function inputs.}
 
 \item{col}{line color for equilibrium plot}
 

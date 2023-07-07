@@ -215,7 +215,7 @@ SSplotComparisons <-
              "Density", # 9
              "Management target", # 10
              "Minimum stock size threshold", # 11
-             replist[["spawn_output_label"]], # 12
+             "Spawning output", # 12 automatically updated when consistent
              "Harvest rate" # 13
            ),
            col = NULL, shadecol = NULL,
@@ -371,6 +371,7 @@ SSplotComparisons <-
     lowerCI <- summaryoutput[["lowerCI"]]
     upperCI <- summaryoutput[["upperCI"]]
     SpawnOutputUnits <- summaryoutput[["SpawnOutputUnits"]]
+    SpawnOutputLabels <- summaryoutput[["SpawnOutputLabels"]]
     btargs <- summaryoutput[["btargs"]]
     minbthreshs <- summaryoutput[["minbthreshs"]]
     sprtargs <- summaryoutput[["sprtargs"]]
@@ -406,6 +407,14 @@ SSplotComparisons <-
         "because the models don't have matching labels"
       )
       SPRratioLabel <- labels[8]
+    }
+    SpawnOutputLabel <- unique(SpawnOutputLabels)
+    if (length(SpawnOutputLabel) > 1) {
+      warning(
+        "setting label for Spawning Output to 12th element of input 'labels' ",
+        "because the models don't have matching SpawnOutputLabels"
+      )
+      SpawnOutputLabel <- labels[12]
     }
     FvalueLabel <- unique(FvalueLabels)
     if (length(FvalueLabel) > 1) {
@@ -797,7 +806,7 @@ SSplotComparisons <-
       # if either SpawnOutputUnits is unknown or in numbers,
       # use label "Spawning output"
       if (all(is.na(SpawnOutputUnits)) || any(SpawnOutputUnits == "numbers")) {
-        ylab <- labels[12] # numbers
+        ylab <- SpawnOutputLabel # numbers
       } else {
         # otherwise (if all are in "biomass"), use "Spawning biomass"
         ylab <- labels[2] # biomass

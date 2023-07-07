@@ -181,9 +181,9 @@
 #' @param scalebubbles scale data-only bubbles by sample size, not just
 #' proportion within sample? Default=FALSE.
 #' @param tslabels Either NULL to have default labels for timeseries plots or
-#' a vector of appropriate length (currently 11) with labels for each figure
+#' a vector of appropriate length with labels for each figure
 #' @param catlabels Either NULL to have default labels for catch plots or
-#' a vector of appropriate length (currently 10) with labels for each figure
+#' a vector of appropriate length with labels for each figure
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1.0.
 #' @param showmle Show MLE estimate and asymptotic variance estimate with blue
