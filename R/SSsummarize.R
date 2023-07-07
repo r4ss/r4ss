@@ -120,7 +120,7 @@ SSsummarize <- function(biglist,
   endyrs <- NULL
   SPRratioLabels <- NULL
   FvalueLabels <- NULL
-  SpawnBioLabels <- NULL
+  SpawnOutputLabels <- NULL
   sprtargs <- NULL
   btargs <- NULL
   minbthreshs <- NULL
@@ -698,8 +698,8 @@ SSsummarize <- function(biglist,
   mylist[["InitAgeYrs"]] <- InitAgeYrs
   mylist[["lowerCI"]] <- lowerCI
   mylist[["upperCI"]] <- upperCI
-  mylist[["SpawnOutputLabels"]] <- SpawnOutputLabels
   mylist[["SpawnOutputUnits"]] <- SpawnOutputUnits
+  mylist[["SpawnOutputLabels"]] <- SpawnOutputLabels
   mylist[["FleetNames"]] <- FleetNames
   mylist[["mcmc"]] <- mcmc
   # mylist[["lbinspop"]]   <- as.numeric(names(stats[["sizeselex"]])[-(1:5)])
