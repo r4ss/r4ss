@@ -428,6 +428,15 @@ SSplotTimeseries <-
         # adjust file names
         caption <- main
         file <- main
+        # use standardized file name even if using custom SpawnOutputLabel
+        if (subplot %in% 7:8 & labels[7] != "Spawning output") {
+          file <- "Spawning output"
+          if (subplot == 8) {
+            # this gets changed below, but easier to just match
+            # the non-custom process
+            file <- "Spawning output with ~95% asymptotic intervals"
+          }
+        }
         if (subplot %in% 9:10 & grepl(":", main)) {
           # remove extra stuff like "B/B_0" from file
           file <- strsplit(main, split = ":")[[1]][1]
