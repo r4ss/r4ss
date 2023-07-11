@@ -64,8 +64,8 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         "https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/",
         tag, "/ss_win.exe"
       )
-      utils::download.file(url, destfile = file.path(dir, "ss3.exe"))
-      download_location <- file.path(dir, "ss3.exe")
+      utils::download.file(url, destfile = file.path(dir, "ss_win.exe"))
+      download_location <- file.path(dir, "ss_win.exe")
       message(paste0(
         "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
         download_location
