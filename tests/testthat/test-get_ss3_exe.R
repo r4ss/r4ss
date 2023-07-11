@@ -30,11 +30,10 @@ test_that("executables are able to run simple_small model", {
   simple_small <- system.file("extdata/simple_small", package = "r4ss")
   file.copy(simple_small, temp_path, recursive = TRUE)
   download_loc <- get_ss3_exe(dir = file.path(temp_path, "simple_small"))
-  setwd(file.path(temp_path, "simple_small"))
   if(download_exe == "ss3"){
-    r4ss::run(dir = getwd(), exe = "ss3", skipfinished = FALSE)
+    r4ss::run(dir = file.path(temp_path, "simple_small"), exe = "ss3", skipfinished = FALSE)
   } else{
-    r4ss::run(dir = getwd(), exe = "ss_win.exe", skipfinished = FALSE)
+    r4ss::run(dir = file.path(temp_path, "simple_small"), exe = "ss_win", skipfinished = FALSE)
   }
   expect_true(file.exists(file.path(temp_path, "simple_small/Report.sso")))
 })
