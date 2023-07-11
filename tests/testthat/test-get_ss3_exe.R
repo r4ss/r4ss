@@ -37,5 +37,7 @@ test_that("executables are able to run simple_small model", {
   } else{
     r4ss::run(dir = path, exe = "ss_win", skipfinished = FALSE)
   }
-  expect_true(file.exists(file.path(temp_path, "simple_small/Report.sso")))
+  file_date <- file.mtime(file.path(temp_path, "simple_small/Report.sso"))
+  file_date <- gsub(" .*", "",file_date)
+  expect_true(file_date == Sys.Date())
 })
