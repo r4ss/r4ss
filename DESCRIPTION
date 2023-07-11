@@ -66,7 +66,8 @@ Imports:
     lifecycle,
     magrittr,
     stringr,
-    tidyr
+    tidyr,
+    downloader
 Suggests: 
     flextable,
     ggpubr,
