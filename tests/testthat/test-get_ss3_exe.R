@@ -26,10 +26,10 @@ test_that("executables are downloading with version", {
 })
 
 test_that("executables are able to run simple_small model", {
-  download_exe <- list.files(pattern = "ss3|ss_win.exe", temp_path)
   simple_small <- system.file("extdata/simple_small", package = "r4ss")
   file.copy(simple_small, temp_path, recursive = TRUE)
   download_loc <- get_ss3_exe(dir = file.path(temp_path, "simple_small"))
+  download_exe <- list.files(pattern = "ss3|ss_win.exe", temp_path)
   if(download_exe == "ss3"){
     r4ss::run(dir = file.path(temp_path, "simple_small"), exe = "ss3", skipfinished = FALSE)
   } else{
