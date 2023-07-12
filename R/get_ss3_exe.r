@@ -11,7 +11,6 @@
 #' @author Elizabeth F. Gugliotti
 #' @export
 #' @import gh
-#' @import downloader
 #' @examples
 #' \dontrun{
 #' get_ss3_exe()
