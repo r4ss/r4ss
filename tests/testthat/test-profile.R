@@ -10,7 +10,7 @@ example_path <- system.file("extdata", package = "r4ss")
 # global variables
 ###############################################################################
 ctlfile <- file.path(example_path, "simple_small", "control.ss")
-ss3file <- file.path(dirname(ctlfile), "ss.exe")
+ss3file <- file.path(dirname(ctlfile), "ss3.exe")
 pars <- SS_parlines(ctlfile = ctlfile)
 
 ###############################################################################

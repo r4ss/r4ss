@@ -29,7 +29,7 @@
 #' @seealso [run()]
 #' @examples
 #' \dontrun{
-#' # check for executable called "ss" or "ss.exe" in the PATH
+#' # check for executable called "ss3" or "ss3.exe" in the PATH
 #' check_exe()
 #' # check for executable with a different name in the PATH
 #' check_exe(exe = "ss_win")
@@ -47,7 +47,7 @@
 #' name the SS3 file something besides `ss`, such as `ss3` or
 #' `ss_linux`.
 
-check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
+check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   # check to make sure the first input is in the correct format
   if (!is.character(exe)) {
     stop("Input 'exe' should be a character vector")
@@ -72,7 +72,7 @@ check_exe <- function(exe = "ss", dir = getwd(), verbose = FALSE) {
   )
 
   # path.expand will resolve any use of "~" in input exe
-  # if exename doesn't include any path info (e.g. "ss")
+  # if exename doesn't include any path info (e.g. "ss3")
   # it will remain unchanged
   exename <- path.expand(exename)
 

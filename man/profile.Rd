@@ -21,7 +21,7 @@ profile(
   whichruns = NULL,
   prior_check = TRUE,
   read_like = TRUE,
-  exe = "ss",
+  exe = "ss3",
   verbose = TRUE,
   ...
 )
@@ -115,7 +115,7 @@ be read using \code{\link[=SSgetoutput]{SSgetoutput()}} or by multiple calls to
 
 ###########################################################################
 # example profile
-# (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)
+# (assumes you have an SS3 exe called "ss3.exe" or "ss3" in your PATH)
 ###########################################################################
 
 # directory for "simple_small" example model included with r4ss
@@ -180,7 +180,7 @@ SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
 
 ###########################################################################
 # example two-dimensional profile
-# (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)
+# (assumes you have an SS3 exe called "ss3.exe" or "ss3" in your PATH)
 ###########################################################################
 
 dir_simple_small <- file.path(

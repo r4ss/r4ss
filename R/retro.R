@@ -77,7 +77,7 @@ SS_doRetro <-
 retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
                   oldsubdir = "", newsubdir = "retrospectives",
                   subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                  RemoveBlocks = FALSE, verbose = FALSE, exe = "ss", ...) {
+                  RemoveBlocks = FALSE, verbose = FALSE, exe = "ss3", ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterdir)) {

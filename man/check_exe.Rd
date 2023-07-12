@@ -4,7 +4,7 @@
 \alias{check_exe}
 \title{Find location of executable within path or specified directory}
 \usage{
-check_exe(exe = "ss", dir = getwd(), verbose = FALSE)
+check_exe(exe = "ss3", dir = getwd(), verbose = FALSE)
 }
 \arguments{
 \item{exe}{Executable name. Can be just the name of the executable
@@ -52,7 +52,7 @@ location specified by \code{dir} or in the path.
 }
 \examples{
 \dontrun{
-# check for executable called "ss" or "ss.exe" in the PATH
+# check for executable called "ss3" or "ss3.exe" in the PATH
 check_exe()
 # check for executable with a different name in the PATH
 check_exe(exe = "ss_win")
