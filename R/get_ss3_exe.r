@@ -74,7 +74,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
   } else {
     if (substr(R.version[["os"]], 1, 6) == "darwin") {
       url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_osx")
-      utils::download.file(url, destfile = file.path(dir, "ss3"))
+      utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
       Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
       download_location <- file.path(dir, "ss3")
 
@@ -85,7 +85,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     } else {
       if (R.version[["os"]] == "linux-gnu") {
         url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
-        utils::download.file(url, destfile = file.path(dir, "ss3"))
+        utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
         download_location <- file.path(dir, "ss3")
         message(paste0(
