@@ -31,12 +31,7 @@ test_that("executables are able to run simple_small model", {
   path <- file.path(temp_path, "simple_small")
   path <- normalizePath(path, "/")
   get_ss3_exe(dir = file.path(temp_path, "simple_small"))
-  download_exe <- list.files(pattern = "ss3|ss_win.exe", temp_path)
-  if(download_exe == "ss3"){
-    r4ss::run(dir = path, exe = "ss3", skipfinished = FALSE)
-  } else{
-    r4ss::run(dir = path, exe = "ss_win", skipfinished = FALSE)
-  }
+  r4ss::run(dir = path, exe = "ss3", skipfinished = FALSE)
   file_date <- file.mtime(file.path(temp_path, "simple_small/Report.sso"))
   file_date <- gsub(" .*", "",file_date)
   expect_true(file_date == Sys.Date())

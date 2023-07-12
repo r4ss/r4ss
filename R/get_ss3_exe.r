@@ -11,7 +11,6 @@
 #' @author Elizabeth F. Gugliotti
 #' @export
 #' @import gh
-#' @import downloader
 #' @examples
 #' \dontrun{
 #' get_ss3_exe()
@@ -65,9 +64,8 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         "https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/",
         tag, "/ss_win.exe"
       )
-      # for some reason this method works best for the windows binary
-      downloader::download(url, file.path(dir, "ss_win.exe"), mode = "wb")
-      download_location <- file.path(dir, "ss_win.exe")
+      utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
+      download_location <- file.path(dir, "ss3.exe")
       message(paste0(
         "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
         download_location
