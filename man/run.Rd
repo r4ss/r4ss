@@ -6,7 +6,7 @@
 \usage{
 run(
   dir = getwd(),
-  exe = "ss",
+  exe = "ss3",
   extras = "",
   skipfinished = TRUE,
   show_in_console = FALSE,
