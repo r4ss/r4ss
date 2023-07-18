@@ -545,7 +545,7 @@ SSplotComps <-
                   if ("Nsamp_DM" %in% names(agg) && any(!is.na(agg[["Nsamp_DM"]]))) {
                     # Dirichlet-Multinomial likelihood
                     make_multifig(
-                      ptsx = agg[["bin"]], ptsy = agg[["obs"]], yr = paste(agg[["f"]], agg[["mkt"]]),
+                      ptsx = agg[["bin"]], ptsy = agg[["obs"]], yr = agg[["f"]] + agg[["mkt"]]/10,
                       linesx = agg[["bin"]], linesy = agg[["exp"]],
                       sampsize = agg[["Nsamp_adj"]],
                       effN = agg[["Nsamp_DM"]],
@@ -566,7 +566,7 @@ SSplotComps <-
                   } else {
                     # standard multinomial likelihood
                     make_multifig(
-                      ptsx = agg[["bin"]], ptsy = agg[["obs"]], yr = paste(agg[["f"]], agg[["mkt"]]),
+                      ptsx = agg[["bin"]], ptsy = agg[["obs"]], yr = agg[["f"]] + agg[["mkt"]]/10,
                       linesx = agg[["bin"]], linesy = agg[["exp"]],
                       sampsize = agg[["Nsamp_adj"]], effN = agg[["effN"]],
                       showsampsize = showsampsize, showeffN = showeffN,
