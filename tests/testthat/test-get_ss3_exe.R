@@ -33,6 +33,6 @@ test_that("executables are able to run simple_small model", {
   get_ss3_exe(dir = file.path(temp_path, "simple_small"))
   r4ss::run(dir = path, exe = "ss3", skipfinished = FALSE)
   file_date <- file.mtime(file.path(temp_path, "simple_small/Report.sso"))
-  file_date <- gsub(" .*", "",file_date)
+  file_date <- gsub(" .*", "", file_date)
   expect_true(file_date == Sys.Date())
 })
