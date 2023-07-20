@@ -34,6 +34,7 @@
 #' @template labels
 #' @template pwidth
 #' @template pheight
+#' @template pheight_tall
 #' @template punits
 #' @template res
 #' @template ptsize
@@ -56,7 +57,8 @@ SSplotSPR <-
              "Relative fishing intensity", # 4
              "Relative spawning output" # 5
            ),
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
+           pwidth = 6.5, pheight = 5.0, pheight_tall = 5.0, 
+           punits = "in", res = 300, ptsize = 10, cex.main = 1,
            plotdir = "default",
            verbose = TRUE) {
     # table to store information on each plot
@@ -268,6 +270,9 @@ SSplotSPR <-
       )
       abline(h = 0, col = "grey")
       abline(h = 1, col = col4)
+      if (sprtarg > 0 & SPRratioLabel == "1-SPR") {
+        abline(h = (1 - sprtarg), col = col4, lty = 2)
+      }
       #### "management target" doesn't make sense for all settings and
       #### is probably a limit, not a target, even where it does
       ## text((min(SPRratio[["Yr"]]) + 4), (1 + 0.02),
@@ -554,7 +559,7 @@ SSplotSPR <-
         # save to png
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          pheight = pheight_tall, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
         make.phase.plot.MLE()

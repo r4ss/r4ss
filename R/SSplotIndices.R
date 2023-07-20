@@ -254,6 +254,12 @@ SSplotIndices <-
           yaxs = ifelse(log, "r", "i"),
           ...
         )
+
+        # add line at 0 if it's not a log-scale plot
+        # and the axes include zero
+        if (!log & min(ylim) < 0) {
+          abline(h = 0, lty = 3)
+        }
       }
 
       # set bounds for arrows at total uncertainty
