@@ -24,3 +24,15 @@ test_that("executables are downloading with version", {
 
   expect_equal(dir_temp, download_filepath)
 })
+
+test_that("executables are able to run simple_small model", {
+  simple_small <- system.file("extdata/simple_small", package = "r4ss")
+  file.copy(simple_small, temp_path, recursive = TRUE)
+  path <- file.path(temp_path, "simple_small")
+  path <- normalizePath(path, "/")
+  get_ss3_exe(dir = file.path(temp_path, "simple_small"))
+  r4ss::run(dir = path, exe = "ss3", skipfinished = FALSE)
+  file_date <- file.mtime(file.path(temp_path, "simple_small/Report.sso"))
+  file_date <- gsub(" .*", "",file_date)
+  expect_true(file_date == Sys.Date())
+})
