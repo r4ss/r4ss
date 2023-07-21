@@ -66,7 +66,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       )
       utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
       download_location <- file.path(dir, "ss3.exe")
-      message(paste0(
+      return(paste0(
         "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
         download_location
       ))
@@ -78,7 +78,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
       download_location <- file.path(dir, "ss3")
 
-      message(paste0(
+      return(paste0(
         "The stock synthesis executable for Mac ", tag, " was downloaded to: ",
         download_location
       ))
@@ -88,7 +88,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
         download_location <- file.path(dir, "ss3")
-        message(paste0(
+        return(paste0(
           "The stock synthesis executable for Linux ", tag, " was downloaded to: ",
           download_location
         ))

@@ -23,6 +23,7 @@ SSplotSPR(
     "Relative spawning output"),
   pwidth = 6.5,
   pheight = 5,
+  pheight_tall = 5,
   punits = "in",
   res = 300,
   ptsize = 10,
@@ -85,6 +86,10 @@ based on model output.}
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
+
+\item{pheight_tall}{Height of tall plots printed to png files in units of
+\code{punits}, where the tall plots are a subset of the plots which typically
+work best in a taller format.}
 
 \item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
 (pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
