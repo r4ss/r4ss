@@ -70,7 +70,6 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
         download_location
       ))
-      return(invisible(download_location))
     }
   } else {
     if (substr(R.version[["os"]], 1, 6) == "darwin") {
@@ -83,7 +82,6 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         "The stock synthesis executable for Mac ", tag, " was downloaded to: ",
         download_location
       ))
-      return(invisible(download_location))
     } else {
       if (R.version[["os"]] == "linux-gnu") {
         url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
@@ -94,12 +92,12 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           "The stock synthesis executable for Linux ", tag, " was downloaded to: ",
           download_location
         ))
-        return(invisible(download_location))
       } else {
-        warning(
+        stop(
           "The Stock Synthesis executable is not available for ", R.version[["os"]], "."
         )
       }
     }
   }
+  return(invisible(download_location))
 }
