@@ -7,7 +7,7 @@
 #' @param version A character string of the executable version tag to download
 #' (e.g.'v3.30.20' or 'v3.30.18'). A list of tags is available at
 #' https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
-#' @return A string of the full file path to the downloaded executable
+#' @return A string of the file path to the downloaded executable
 #' @author Elizabeth F. Gugliotti
 #' @export
 #' @import gh
@@ -45,8 +45,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
 
   if (is.null(dir)) {
     dir <- getwd()
-    message("No directory provided, the executable will be downloaded to the
-            working directory")
+    message("No directory provided, the executable will be downloaded to the working directory")
   }
 
   if (!dir.exists(dir)) {
@@ -93,10 +92,11 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           download_location
         ))
       } else {
-        warning(
+        stop(
           "The Stock Synthesis executable is not available for ", R.version[["os"]], "."
         )
       }
     }
   }
+  return(invisible(download_location))
 }

@@ -14,7 +14,7 @@ get_ss3_exe(dir = NULL, version = NULL)
 https://github.com/nmfs-stock-synthesis/stock-synthesis/tags}
 }
 \value{
-A string of the full file path to the downloaded executable
+A string of the file path to the downloaded executable
 }
 \description{
 The \code{get_ss3_exe()} function uses the {gh} package to get either
