@@ -215,17 +215,17 @@ SS_output <-
     if (length(parfile) > 1) {
       parinfo <- file.info(file.path(dir, parfile))
       parfile <- parfile[!parinfo[["isdir"]] & # exclude directories
-        parinfo$mtime == max(parinfo[["mtime"]][!parinfo[["isdir"]]])] # pick most recently changed file
-    
-      # if there are still duplicates (with the same 'mtime' value), 
+        parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])] # pick most recently changed file
+
+      # if there are still duplicates (with the same 'mtime' value),
       # choose anything called "ss.par"
-      if (length(parfile) > 1 && any(parfile == "ss.par")){    
+      if (length(parfile) > 1 && any(parfile == "ss.par")) {
         parfile <- "ss.par"
-      } 
+      }
       # if there are still duplicates after all that, choose the first one
-      if (length(parfile) > 1){    
+      if (length(parfile) > 1) {
         parfile <- parfile[1]
-      } 
+      }
       if (verbose) {
         message(
           "Multiple files in directory match pattern *.par\n",
