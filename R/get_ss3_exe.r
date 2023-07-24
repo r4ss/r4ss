@@ -66,10 +66,11 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       )
       utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
       download_location <- file.path(dir, "ss3.exe")
-      return(paste0(
+      message(paste0(
         "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
         download_location
       ))
+      return(invisible(download_location))
     }
   } else {
     if (substr(R.version[["os"]], 1, 6) == "darwin") {
@@ -78,20 +79,22 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
       download_location <- file.path(dir, "ss3")
 
-      return(paste0(
+      message(paste0(
         "The stock synthesis executable for Mac ", tag, " was downloaded to: ",
         download_location
       ))
+      return(invisible(download_location))
     } else {
       if (R.version[["os"]] == "linux-gnu") {
         url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
         utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
         download_location <- file.path(dir, "ss3")
-        return(paste0(
+        message(paste0(
           "The stock synthesis executable for Linux ", tag, " was downloaded to: ",
           download_location
         ))
+        return(invisible(download_location))
       } else {
         warning(
           "The Stock Synthesis executable is not available for ", R.version[["os"]], "."
