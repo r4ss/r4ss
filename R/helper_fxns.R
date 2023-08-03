@@ -417,3 +417,63 @@ calc_var_adjust <- function(data, type = c("CV", "sd")) {
   # return the table
   return(calc)
 }
+
+#' Add a comment line to the input files
+#'
+#' Used by the SS_write* functions.
+#' @param text Comment to write
+#' @param con File to write to (passed to `con` input to `writeLines()`)
+#' @param ... Additional arguments passed to `writeLines()`
+
+
+writeComment <- function(text, con, ...) {
+  if (length(grep(x = text, pattern = "^#")) != length(text)) {
+    text <- paste("#_", text, sep = "")
+  }
+  writeLines(text = text, con = con, ...)
+}
+
+#' Add header comments to the input files
+#'
+#' Lines starting with #C at the top of the file are carried over to the
+#' *.ss_new files by Stock Synthesis
+#' This function modifies any existing header to add or replace lines
+#' written by r4ss that state the write time of the file.
+#'
+#' @param filelist An object created by one of the r4ss::SS_read* functions.
+#' @param con File to write to (passed to `con` input to `writeLines()`)
+#' @author Yukio Takeuchi, Ian G. Taylor
+#'
+add_file_header <- function(filelist, con) {
+  # #C means this header will be maintained in control.ss_new file
+  # created from a SS3 model run using this control file.
+
+  # the writeComment() function is defined within each of the SS_write*
+  # functions in order
+
+  if (is.null(filelist[["Comments"]])) {
+    # empty placeholder for comments
+    Comments <- NULL
+  } else {
+    Comments <-
+      sapply(filelist[["Comments"]], function(x) {
+        if (!grepl(x, pattern = "^#C")) {
+          x <- paste0("#C_", x)
+        }
+        x
+      })
+    # remove comments added by earlier runs of this function
+    Comments <- Comments[!grepl("file created using", Comments) &
+      !grepl("file write time", Comments)]
+  }
+  # add new comments
+  Comments <- c(Comments, paste0(
+    "#C file created using an r4ss function"
+  ))
+  Comments <- c(Comments, paste("#C file write time:", Sys.time()))
+  # write all comments
+  for (ln in Comments) {
+    writeComment(text = ln, con = con)
+  }
+  writeComment("#", con = con)
+}
