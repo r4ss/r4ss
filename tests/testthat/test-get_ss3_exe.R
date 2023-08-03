@@ -36,3 +36,15 @@ test_that("executables are able to run simple_small model", {
   file_date <- gsub(" .*", "", file_date)
   expect_true(file_date == Sys.Date())
 })
+
+test_that("version warning", {
+  expect_warning(try(get_ss3_exe(dir = temp_path, version = "v3.30.188"), silent = TRUE))
+})
+
+test_that("working directory message", {
+  expect_message(get_ss3_exe())
+})
+
+test_that("working directory message", {
+  expect_error(get_ss3_exe(dir = "fakedir"))
+})
