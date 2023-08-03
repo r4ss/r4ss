@@ -40,17 +40,6 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   zz <- file(outfile, open = "at") # open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
 
-  # Internally used function definitions -----
-  # many of these are identical with functions used by other
-  # SS_write* functions. Perhaps define them in a separate file so they can
-  # be used by any of these functions.But would require passing the file path
-  # each time.
-  writeComment <- function(text, ...) {
-    if (length(grep(x = text, pattern = "^#")) != length(text)) {
-      text <- paste("#_", text, sep = "")
-    }
-    writeLines(text = text, con = zz, ...)
-  }
   # wl = write a line with a single value to an SS control file.
   # @param name The name of the list component in ctllist to find
   # @param comment A comment to put after the value on the line. If no "#" is
@@ -171,29 +160,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE")
 
   # Write a header ----
-  # Line below included to be consistent with .ss_new files
-  writeComment(paste0("#V", ctllist[["ReadVersion"]]))
-  # starter #C means this header will be maintained in control.ss_new file
-  # created from a SS model run using this control file.
-  if (is.null(ctllist[["Comments"]])) {
-    writeComment(paste0(
-      "#C file created using the SS_writectl function ",
-      "in the R package r4ss"
-    ))
-    writeComment(paste("#C file write time:", Sys.time()))
-  } else {
-    Comments <-
-      sapply(ctllist[["Comments"]], function(x) {
-        if (!grepl(x, pattern = "^#C")) {
-          x <- paste0("#C_", x)
-        }
-        x
-      })
-    for (ln in Comments) {
-      writeComment(ln)
-    }
-  }
-  writeComment("#")
+  add_file_header(ctllist, con = zz)
 
   # Write the contents ----
   # Make comments as consistent with SS 3.30 as possible.
@@ -223,9 +190,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     comment = paste0("# number of recruitment settlement assignments ")
   )
   wl("recr_dist_inx", comment = "# unused option")
-  writeComment("# for each settlement assignment:")
+  writeComment("# for each settlement assignment:", zz)
   printdf("recr_dist_pattern")
-  writeComment("#")
+  writeComment("#", zz)
   # Movement ----
   if (ctllist[["N_areas"]] > 1) {
     wl("N_moveDef",
@@ -238,20 +205,20 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
           "not integer) also cond on do_migration>0"
         )
       )
-      writeComment("move definition for seas, morph, source, dest, age1, age2")
+      writeComment("move definition for seas, morph, source, dest, age1, age2", zz)
       printdf("moveDef", header = FALSE)
     }
   } else {
-    writeComment("#_Cond 0 # N_movement_definitions goes here if N_areas > 1")
+    writeComment("#_Cond 0 # N_movement_definitions goes here if N_areas > 1", zz)
     writeComment(paste0(
       "#_Cond 1.0 # first age that moves (real age at begin ",
       "of season, not integer) also cond on do_migration>0"
-    ))
+    ), zz)
     writeComment(paste0(
       "#_Cond 1 1 1 2 4 10 # example move definition for ",
       "seas=1, morph=1, source=1 dest=2, age1=4, age2=10"
-    ))
-    writeComment("#")
+    ), zz)
+    writeComment("#", zz)
   }
   # Block setup ----
   wl("N_Block_Designs", comment = "#_Nblock_Patterns")
@@ -259,20 +226,20 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     wl.vector("blocks_per_pattern", comment = "#_blocks_per_pattern")
     wl.list("Block_Design", header = "begin and end years of blocks")
   } else {
-    writeComment("#_Cond 0 #_blocks_per_pattern")
-    writeComment("# begin and end years of blocks")
+    writeComment("#_Cond 0 #_blocks_per_pattern", zz)
+    writeComment("# begin and end years of blocks", zz)
   }
-  writeComment("#")
+  writeComment("#", zz)
   # timevary controls ----
-  writeComment("# controls for all timevary parameters ")
+  writeComment("# controls for all timevary parameters ", zz)
   wl("time_vary_adjust_method",
     comment = paste0(
       "#_env/block/dev_adjust_method for all time-vary parms ",
       "(1=warn relative to base parm bounds; 3=no bound check)"
     )
   )
-  writeComment("#")
-  writeComment("# AUTOGEN")
+  writeComment("#", zz)
+  writeComment("# AUTOGEN", zz)
   wl.vector("time_vary_auto_generation",
     comment = paste0(
       "# autogen: 1st element for biology, 2nd for SR, ",
@@ -283,14 +250,14 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     "# where: 0 = autogen all time-varying parms; 1 = read ",
     "each time-varying parm line; 2 = read then autogen if ",
     "parm min==-12345"
-  ))
+  ), zz)
   # MG setup ----
-  writeComment(c("#"))
+  writeComment("#", zz)
   writeComment(paste0(
     "# setup for M, growth, maturity, fecundity, recruitment",
     " distibution, movement"
-  ))
-  writeComment("#")
+  ), zz)
+  writeComment("#", zz)
   # M setup ----
   wl("natM_type",
     comment = paste0(
@@ -300,7 +267,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   )
   # Following lines depends on the natM_type value.
   if (ctllist[["natM_type"]] == 0) {
-    writeComment("#_no additional input for selected M option; read 1P per morph")
+    writeComment("#_no additional input for selected M option; read 1P per morph", zz)
   } else if (ctllist[["natM_type"]] == 1) {
     wl("N_natM", comment = "#_N_breakpoints")
     wl.vector("M_ageBreakPoints", comment = "# age(real) at M breakpoints")
@@ -309,7 +276,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       comment = "#_reference age for Lorenzen M; later read 1P per Sex x G Morph"
     )
   } else if (ctllist[["natM_type"]] %in% c(3, 4)) {
-    writeComment(" #_Age_natmort_by sex x growthpattern")
+    writeComment(" #_Age_natmort_by sex x growthpattern", zz)
     printdf("natM")
   } else if (ctllist[["natM_type"]] == 6) {
     wl("Lorenzen_minage",
@@ -318,7 +285,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     wl("Lorenzen_maxage",
       comment = "#_maximum age for Age-range Lorenzen M;"
     )
-    writeComment(" #_later read 1P per Sex x G Morph")
+    writeComment(" #_later read 1P per Sex x G Morph", zz)
   } else {
     stop("natM_type : ", ctllist[["natM_type"]], " is not supported")
   }
@@ -355,7 +322,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       " is not an option in SS 3.30. Valid growth options are 1-5 and 8."
     )
   }
-  writeComment("#")
+  writeComment("#", zz)
   wl("SD_add_to_LAA",
     comment = "#_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)"
   )
@@ -382,11 +349,11 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   }
   # Below if statements are lines are conditional on the maturity option chosen
   if (ctllist[["maturity_option"]] %in% c(3, 4)) {
-    writeComment("# Age Maturity or Age fecundity:")
+    writeComment("# Age Maturity or Age fecundity:", zz)
     printdf("Age_Maturity")
   }
   if (ctllist[["maturity_option"]] == 6) {
-    writeComment("# Length Maturity: ")
+    writeComment("# Length Maturity: ", zz)
     printdf("Length_Maturity")
   }
   wl("First_Mature_Age", comment = "#_First_Mature_Age")
@@ -420,27 +387,27 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     )
   )
   # MG parms ----
-  writeComment(c("#", "#_growth_parms"))
+  writeComment(c("#", "#_growth_parms"), zz)
   printdf("MG_parms")
 
   # MG timevarying parms ----
   if (any(ctllist[["MG_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][1] != 0) {
-    writeComment("timevary MG parameters")
+    writeComment("timevary MG parameters", zz)
     printdf("MG_parms_tv")
     writeComment(paste0(
       "# info on dev vectors created for MGparms are ",
       "reported with other devs after tag parameter section"
-    ))
+    ), zz)
   } else {
-    writeComment("no timevary MG parameters")
+    writeComment("no timevary MG parameters", zz)
   }
 
 
 
   # Seasonal effects ----
-  writeComment("#")
-  writeComment("#_seasonal_effects_on_biology_parms")
+  writeComment("#", zz)
+  writeComment("#_seasonal_effects_on_biology_parms", zz)
   wl.vector("MGparm_seas_effects",
     comment = paste0(
       "#_femwtlen1,femwtlen2,mat1,mat2,fec1,fec2,",
@@ -449,10 +416,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   )
   if (sum(ctllist[["MGparm_seas_effects"]]) > 0) {
     printdf("MG_parms_seas")
-    writeComment("#")
+    writeComment("#", zz)
   } else {
-    writeComment("#_ LO HI INIT PRIOR PR_SD PR_type PHASE")
-    writeComment(c("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no seasonal MG parameters", "#"))
+    writeComment("#_ LO HI INIT PRIOR PR_SD PR_type PHASE", zz)
+    writeComment(c("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no seasonal MG parameters", "#"), zz)
   }
   # SR -----
   wl("SR_function",
@@ -487,10 +454,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   # SR tv parms ----
   if (any(ctllist[["SR_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][2] != 0) {
-    writeComment("# timevary SR parameters")
+    writeComment("# timevary SR parameters", zz)
     printdf("SR_parms_tv")
   } else {
-    writeComment("no timevary SR parameters")
+    writeComment("no timevary SR parameters", zz)
   }
   # recdevs ----
   wl("do_recdev",
@@ -554,26 +521,26 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     wl("min_rec_dev", comment = "#min rec_dev")
     wl("max_rec_dev", comment = "#max rec_dev")
     wl("N_Read_recdevs", comment = "#_read_recdevs")
-    writeComment("end of advanced SR options")
-    writeComment("#")
+    writeComment("end of advanced SR options", zz)
+    writeComment("#", zz)
 
     if (ctllist[["period_of_cycles_in_recr"]] > 0) {
       printdf("recr_cycle_pars")
     } else {
-      writeComment("#_placeholder for full parameter lines for recruitment cycles")
+      writeComment("#_placeholder for full parameter lines for recruitment cycles", zz)
     }
     if (ctllist[["N_Read_recdevs"]] > 0) {
       printdf("recdev_input")
     } else {
-      writeComment("# read specified recr devs")
-      writeComment("#_Yr Input_value")
+      writeComment("# read specified recr devs", zz)
+      writeComment("#_Yr Input_value", zz)
     }
   }
-  writeComment("#")
+  writeComment("#", zz)
 
   ##
   # F setup ----
-  writeComment("#Fishing Mortality info")
+  writeComment("#Fishing Mortality info", zz)
   wl("F_ballpark", comment = "# F ballpark")
   wl("F_ballpark_year", comment = "# F ballpark year (neg value to disable)")
   wl("F_Method",
@@ -581,7 +548,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   )
   wl("maxF", comment = "# max F or harvest rate, depends on F_Method")
   if (ctllist[["F_Method"]] == 2) {
-    writeComment("overall start F value; overall phase; N detailed inputs to read")
+    writeComment("overall start F value; overall phase; N detailed inputs to read", zz)
     wl.vector("F_setup")
     if (ctllist[["F_setup"]][length(ctllist[["F_setup"]])] > 0) {
       printdf("F_setup2")
@@ -598,16 +565,16 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       comment = "# N iterations for tuning F in hybrid method (recommend 3 to 7)"
     )
   }
-  writeComment("#")
+  writeComment("#", zz)
   if (!is.null(ctllist[["init_F"]])) {
-    writeComment("initial_F_parms")
+    writeComment("initial_F_parms", zz)
     printdf("init_F", cols_to_rm = 8)
   } else {
-    writeComment("initial_F_parms; count = 0")
+    writeComment("initial_F_parms; count = 0", zz)
   }
-  writeComment("#")
+  writeComment("#", zz)
   # Q setup ----
-  writeComment("#_Q_setup for fleets with cpue or survey data")
+  writeComment("#_Q_setup for fleets with cpue or survey data", zz)
   if (!is.null(ctllist[["Q_options"]])) {
     # There are extra commments with info here in control.ss_new, but exclude for now
     tmp_collength <- length(colnames(ctllist[["Q_options"]]))
@@ -617,7 +584,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     # change back
     colnames(ctllist[["Q_options"]])[tmp_collength] <- "float"
 
-    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)", zz)
     # change column names to match control.ss_new
     colnames(ctllist[["Q_parms"]]) <- c(
       "LO", "HI", "INIT", "PRIOR", "PR_SD",
@@ -630,22 +597,22 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     colnames(ctllist[["Q_parms"]]) <- lng_par_colnames
   } else {
     writeLines(text = "-9999 0 0 0 0 0 # terminator", con = zz)
-    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)", zz)
   }
   # time varying q parm lines -----
   if (!is.null(ctllist[["Q_options"]]) &&
     any(ctllist[["Q_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][3] != 0) {
-    writeComment("# timevary Q parameters")
+    writeComment("# timevary Q parameters", zz)
     printdf("Q_parms_tv")
     writeComment(paste0(
       "# info on dev vectors created for Q parms are ",
       "reported with other devs after tag parameter section"
-    ))
-    writeComment("#")
+    ), zz)
+    writeComment("#", zz)
   } else {
-    writeComment(c("#_no timevary Q parameters"))
-    writeComment("#")
+    writeComment(c("#_no timevary Q parameters"), zz)
+    writeComment("#", zz)
   }
   # Size selectivity setup ----
   # change row names to match with 3.30.14 version of control.ss_new
@@ -653,21 +620,21 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     1:nrow(ctllist[["size_selex_types"]]),
     rownames(ctllist[["size_selex_types"]])
   )
-  writeComment("#_size_selex_patterns")
+  writeComment("#_size_selex_patterns", zz)
   printdf("size_selex_types")
-  writeComment("#")
+  writeComment("#", zz)
   # Age selectivity setup ----
   # change row names to match with 3.30.14 version of control.ss_new
   rownames(ctllist[["age_selex_types"]]) <- paste(
     1:nrow(ctllist[["age_selex_types"]]),
     rownames(ctllist[["age_selex_types"]])
   )
-  writeComment("#_age_selex_patterns")
+  writeComment("#_age_selex_patterns", zz)
   printdf("age_selex_types")
-  writeComment("#")
+  writeComment("#", zz)
   # selectivity parameters ------
 
-  writeComment("SizeSelex")
+  writeComment("SizeSelex", zz)
   if (!is.null(ctllist[["size_selex_parms"]])) {
     # change header to match with control.ss_new
     colnames(ctllist[["size_selex_parms"]]) <- c(
@@ -681,18 +648,18 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     # change back
     colnames(ctllist[["size_selex_parms"]]) <- lng_par_colnames
   } else {
-    writeComment("#_No size_selex_parm")
+    writeComment("#_No size_selex_parm", zz)
   }
-  writeComment("AgeSelex")
+  writeComment("AgeSelex", zz)
   if (!is.null(ctllist[["age_selex_parms"]])) {
     printdf("age_selex_parms", header = FALSE)
   } else {
-    writeComment("#_No age_selex_parm")
+    writeComment("#_No age_selex_parm", zz)
   }
 
   # Dirichlet MN pars ----
   if (!is.null(ctllist[["dirichlet_parms"]])) {
-    writeComment("#_Dirichlet parameters")
+    writeComment("#_Dirichlet parameters", zz)
     printdf("dirichlet_parms", header = FALSE)
   }
 
@@ -702,36 +669,36 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   tv_sel_cmt <- FALSE # use to track if any tv selectivity pars have been written
   if (any(ctllist[["size_selex_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][5] != 0) {
-    writeComment("# timevary selex parameters ")
+    writeComment("# timevary selex parameters ", zz)
     tv_sel_cmt <- TRUE
     printdf("size_selex_parms_tv")
   }
   if (any(ctllist[["age_selex_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][5] != 0) {
     if (tv_sel_cmt == FALSE) {
-      writeComment("# timevary selex parameters ")
+      writeComment("# timevary selex parameters ", zz)
     }
     tv_sel_cmt <- TRUE
     printdf("age_selex_parms_tv")
   }
   if (tv_sel_cmt == FALSE) { # in this case, this means no tv lines written
-    writeComment(c("no timevary selex parameters"))
-    writeComment("#")
+    writeComment("no timevary selex parameters", zz)
+    writeComment("#", zz)
   } else {
     writeComment(paste0(
       "# info on dev vectors created for selex parms are ",
       "reported with other devs after tag parameter section"
-    ))
-    writeComment("#")
+    ), zz)
+    writeComment("#", zz)
   }
   # 2DAR sel ----
   wl("Use_2D_AR1_selectivity",
     comment = "#  use 2D_AR1 selectivity(0/1):  experimental feature"
   )
   if (ctllist[["Use_2D_AR1_selectivity"]] == 0) {
-    writeComment("#_no 2D_AR1 selex offset used")
+    writeComment("#_no 2D_AR1 selex offset used", zz)
   } else if (ctllist[["Use_2D_AR1_selectivity"]] == 1) {
-    writeComment("#_specifications for 2D_AR1 and associated parameters")
+    writeComment("#_specifications for 2D_AR1 and associated parameters", zz)
     printdf("specs_2D_AR")
     printdf("pars_2D_AR")
     writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
@@ -742,10 +709,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     )
   }
   # Tag model parameters ----
-  writeComment("# Tag loss and Tag reporting parameters go next")
+  writeComment("# Tag loss and Tag reporting parameters go next", zz)
   wl("TG_custom", comment = "# TG_custom:  0=no read; 1=read if tags exist")
   if (ctllist[["TG_custom"]] == 0) {
-    writeComment(c("#_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters", "#"))
+    writeComment(c("#_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters", "#"), zz)
   } else if (ctllist[["TG_custom"]] == 1) {
     printdf("TG_Loss_init")
     printdf("TG_Loss_chronic", header = FALSE)
@@ -766,15 +733,15 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     )
   }
   # Var Adj ----
-  writeComment("# Input variance adjustments factors: ")
+  writeComment("# Input variance adjustments factors: ", zz)
   if (ctllist[["DoVar_adjust"]] == 0) {
     ctllist[["tmp_var"]] <- c(-9999, 1, 0)
-    writeComment("#_Data_type Fleet Value")
+    writeComment("#_Data_type Fleet Value", zz)
     wl.vector("tmp_var", comment = "# terminator")
   } else if (ctllist[["DoVar_adjust"]] == 1) {
     printdf("Variance_adjustment_list", terminate = TRUE)
   }
-  writeComment("#")
+  writeComment("#", zz)
   # Lambdas ----
   wl("maxlambdaphase", comment = "#_maxlambdaphase")
   wl("sd_offset",
@@ -786,7 +753,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   writeComment(paste0(
     "# read ", ctllist[["N_lambdas"]], " changes to default ",
     "Lambdas (default value is 1.0)"
-  ))
+  ), con = zz)
   # There are some more .ss_new comments here, but not included for now.
   if ((ctllist[["N_lambdas"]] > 0) & (!is.null(ctllist[["lambdas"]]))) {
     if (nrow(ctllist[["lambdas"]]) != ctllist[["N_lambdas"]]) {
@@ -809,7 +776,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       "0, ctllist[['N_lambdas']] should equal nrow(ctllist[['lambdas']]))"
     )
   }
-  writeComment("#")
+  writeComment("#", zz)
   # more sd reporting ----
   wl("more_stddev_reporting",
     comment = "# 0/1 read specs for more stddev reporting"
@@ -887,7 +854,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     }
   }
   # terminate file ----
-  writeComment("#")
+  writeComment("#", zz)
   writeLines("999", con = zz)
 
   # cleanup -----
