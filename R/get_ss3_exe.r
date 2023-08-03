@@ -53,7 +53,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
   }
 
   if (.Platform[["OS.type"]] == "windows") {
-    if (.Platform[["r_arch"]] == "x32") {
+    if (.Platform[["r_arch"]] == "x32") { # nocov start
       warning(
         "Stock Synthesis binary is not available for 32-bit ",
         .Platform[["OS.type"]], "."
@@ -95,7 +95,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       } else {
         stop(
           "The Stock Synthesis executable is not available for ", R.version[["os"]], "."
-        )
+        ) # nocov end
       }
     }
   }
