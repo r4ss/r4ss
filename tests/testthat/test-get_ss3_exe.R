@@ -30,11 +30,13 @@ test_that("executables are able to run simple_small model", {
   file.copy(simple_small, temp_path, recursive = TRUE)
   path <- file.path(temp_path, "simple_small")
   path <- normalizePath(path, "/")
-  get_ss3_exe(dir = file.path(temp_path, "simple_small"))
+  download_loc <- get_ss3_exe(dir = file.path(temp_path, "simple_small"))
+  download_filepath <- gsub(".*: ", "", download_loc)
   r4ss::run(dir = path, exe = "ss3", skipfinished = FALSE)
   file_date <- file.mtime(file.path(temp_path, "simple_small/Report.sso"))
   file_date <- gsub(" .*", "", file_date)
   expect_true(file_date == Sys.Date())
+  file.remove(download_filepath)
 })
 
 test_that("version warning", {
@@ -42,7 +44,9 @@ test_that("version warning", {
 })
 
 test_that("working directory message", {
-  expect_message(get_ss3_exe())
+  expect_message(download_loc <- get_ss3_exe())
+  download_filepath <- gsub(".*: ", "", download_loc)
+  file.remove(download_filepath)
 })
 
 test_that("working directory message", {
