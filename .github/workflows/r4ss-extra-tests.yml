@@ -11,6 +11,7 @@ on:
   pull_request:
     branches:
       - main
+      - default_exe_name
     # paths-ignore:
     #   - '.github/**'
     #   - 'README.md'
@@ -64,16 +65,16 @@ jobs:
       - name: Get the latest SS3 executable and move to expected location
         run: |
           curl https://api.github.com/repos/nmfs-stock-synthesis/stock-synthesis/releases/latest | grep "browser_download_url" | grep -Eo 'https://[^\"]*' | grep "ss_linux" | xargs wget
-          mv ss_linux ss
-          sudo chmod a+x ss
-          cp ss inst/extdata/simple_small/ss
-          rm ss
+          mv ss_linux ss3
+          sudo chmod a+x ss3
+          cp ss inst/extdata/simple_small/ss3
+          rm ss3
 
       - name: Get a 3.24 SS executable
         run: |
-          wget -O ss https://vlab.noaa.gov/documents/259399/2000201/ss_3.24Z/037e3921-1f00-611a-1c30-d7a5c1063835?version=1.1&t=1608655599519&download=true
-          sudo chmod a+x ss
-          mv ss inst/extdata/simple_3.24/ss
+          wget -O ss3 https://vlab.noaa.gov/documents/259399/2000201/ss_3.24Z/037e3921-1f00-611a-1c30-d7a5c1063835?version=1.1&t=1608655599519&download=true
+          sudo chmod a+x ss3
+          mv ss3 inst/extdata/simple_3.24/ss3
         
       - name: Test coverage
         run: covr::codecov()
