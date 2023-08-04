@@ -43,7 +43,7 @@ The \code{check_exe()} function first checks the specified
 directory \code{dir} for the specified SS3 executable name and returns the
 file's location if found. If it is not found in the specified
 directory, then it checks the PATH. Linux systems may have an
-existing executable utility \verb{/usr/sbin/ss} in the path. If \code{exe = "ss"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
+existing executable utility \verb{/usr/sbin/ss} in the path. If \code{exe = "ss3"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
 }
 \details{
 Check that the Stock Synthesis executable name provided in \code{exe},

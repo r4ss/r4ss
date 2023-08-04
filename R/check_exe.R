@@ -41,7 +41,7 @@
 #' file's location if found. If it is not found in the specified
 #' directory, then it checks the PATH. Linux systems may have an
 #' existing executable utility `/usr/sbin/ss` in the path. If `exe =
-#' "ss"` and this file is found by `check_exe()``, it will be ignored
+#' "ss3"` and this file is found by `check_exe()``, it will be ignored
 #' based on the smaller file size relative to the SS3 executable. Linux
 #' users who want to use the workflow of having SS3 in their PATH should
 #' name the SS3 file something besides `ss`, such as `ss3` or
@@ -103,7 +103,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
       path_to_exe <- normalizePath(path_to_exe)
 
       # make sure it has a size that makes sense for Stock Synthesis
-      # (linux systems have a command line tool called "ss" in a location
+      # (linux systems have a command line tool called "ss3" in a location
       # like /usr/sbin/ but it's size is much smaller (about 100k vs 7MB)
       if (file.info(normalizePath(path_to_exe))[["size"]] < 1e6) {
         if (verbose) {
