@@ -67,7 +67,7 @@ jobs:
           curl https://api.github.com/repos/nmfs-stock-synthesis/stock-synthesis/releases/latest | grep "browser_download_url" | grep -Eo 'https://[^\"]*' | grep "ss_linux" | xargs wget
           mv ss_linux ss3
           sudo chmod a+x ss3
-          cp ss inst/extdata/simple_small/ss3
+          cp ss3 inst/extdata/simple_small/ss3
           rm ss3
 
       - name: Get a 3.24 SS executable
