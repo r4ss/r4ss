@@ -983,7 +983,7 @@ SSplotIndices <-
             cex = cex
           )
         }
-        legend("top",
+        legend(legendloc,
           legend = fleetnames[fleetvec],
           ncol = 2,
           bty = "n",
