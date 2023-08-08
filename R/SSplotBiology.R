@@ -58,6 +58,7 @@
 #' @template labels
 #' @template pwidth
 #' @template pheight
+#' @template pheight_tall
 #' @template punits
 #' @template res
 #' @template ptsize
@@ -104,7 +105,7 @@ SSplotBiology <-
              "Hermaphroditism transition rate", # 13
              "Fraction females by age in ending year"
            ), # 14
-           pwidth = 6.5, pheight = 5.0,
+           pwidth = 6.5, pheight = 5.0, pheight_tall = 6.5,
            punits = "in", res = 300, ptsize = 10, cex.main = 1,
            mainTitle = TRUE, verbose = TRUE) {
     #### current (Aug 18, 2017) order of plots:
@@ -884,7 +885,7 @@ SSplotBiology <-
       )
       plotinfo <- save_png(
         plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        pheight = pheight_tall, punits = punits, res = res, ptsize = ptsize,
         caption = caption
       )
       growth_curve_plus_fn(option = 1)
@@ -904,13 +905,12 @@ SSplotBiology <-
       )
       plotinfo <- save_png(
         plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        pheight = pheight_tall, punits = punits, res = res, ptsize = ptsize,
         caption = caption
       )
       growth_curve_plus_fn(option = 2)
       dev.off()
     }
-
 
     # plot distribution of length at age (by season, sub-season, and morph)
     if (4 %in% subplots & !wtatage_switch) {

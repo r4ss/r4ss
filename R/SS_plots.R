@@ -475,7 +475,7 @@ SS_plots <-
         areacols = areacols,
         forecast = forecastplot, minyr = minyr, maxyr = maxyr,
         plot = !png, print = png,
-        pwidth = pwidth, pheight = pheight, punits = punits,
+        pwidth = pwidth, pheight = pheight, pheight_tall = pheight_tall, punits = punits,
         ptsize = ptsize, res = res, mainTitle = mainTitle,
         cex.main = cex.main, plotdir = plotdir
       )

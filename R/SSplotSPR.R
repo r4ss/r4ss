@@ -57,7 +57,7 @@ SSplotSPR <-
              "Relative fishing intensity", # 4
              "Relative spawning output" # 5
            ),
-           pwidth = 6.5, pheight = 5.0, pheight_tall = 5.0, 
+           pwidth = 6.5, pheight = 5.0, pheight_tall = 6.5, 
            punits = "in", res = 300, ptsize = 10, cex.main = 1,
            plotdir = "default",
            verbose = TRUE) {
