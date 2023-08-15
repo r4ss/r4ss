@@ -140,12 +140,6 @@ SSplotDiscard <-
           # type 2: discards as fractions
           title <- paste("Discard fraction for", FleetName)
           ylab <- labels[2]
-          if (replist[["catch_units"]][ifleet] == 1) {
-            ylab <- paste(ylab, "(mt)")
-          }
-          if (replist[["catch_units"]][ifleet] == 2) {
-            ylab <- paste(ylab, "(1000's)")
-          }
         }
         if (discard_units == 3) {
           # type 3: discards as numbers
