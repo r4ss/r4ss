@@ -31,7 +31,10 @@ There is a CRAN version of r4ss but it is out of date
 (last updated in May 2022). Installing directly from github via either the 
 {pak} package or {remotes} will get the most recent main branch which should 
 always work with the latest version of Stock Synthesis (as well as many older 
-versions).
+versions). Sometimes one or the other of these installations doesn't work, in
+that case find where your R packages are stored using `.libPaths()`, navigate 
+there and manually delete the previously downloaded {r4ss} package. Then, 
+restart R and use the other installation method to download {r4ss}.
 
 ```S
 # option 1: install via {pak}
