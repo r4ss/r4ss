@@ -3,8 +3,9 @@
 [![release date](https://img.shields.io/github/last-commit/r4ss/r4ss)](https://github.com/r4ss/r4ss/commits/main)
 [![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml)
 [![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r4ss/r4ss)
-[![cran version](http://www.r-pkg.org/badges/version/r4ss)](https://cran.r-project.org/package=r4ss)
-[![github](https://img.shields.io/github/v/release/r4ss/r4ss?color=brightgreen&label=GitHub)](https://github.com/r4ss/r4ss/releases/latest)
+<!-- # commenting out version badges which were misleading (CRAN not recommended and GitHub number is only most recent release, not the current code) -->
+<!-- [![cran version](http://www.r-pkg.org/badges/version/r4ss)](https://cran.r-project.org/package=r4ss)
+[![github](https://img.shields.io/github/v/release/r4ss/r4ss?color=brightgreen&label=GitHub)](https://github.com/r4ss/r4ss/releases/latest) -->
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/r4ss?)](https://github.com/metacran/cranlogs.app)
 [![](https://cranlogs.r-pkg.org/badges/r4ss?color=FFD700)](https://www.r-pkg.org/pkg/r4ss)
 
@@ -34,7 +35,9 @@ always work with the latest version of Stock Synthesis (as well as many older
 versions). Sometimes one or the other of these installations doesn't work, in
 that case find where your R packages are stored using `.libPaths()`, navigate 
 there and manually delete the previously downloaded {r4ss} package. Then, 
-restart R and use the other installation method to download {r4ss}.
+restart R and use the other installation method to download {r4ss}. 
+This manual deletion approach may also for dependent packages if updating them
+is causing errors in the installation of r4ss.
 
 ```S
 # option 1: install via {pak}
