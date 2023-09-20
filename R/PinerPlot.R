@@ -316,6 +316,7 @@ PinerPlot <-
     }
     if (print) {
       save_png(
+        plotinfo = NULL,
         file = "profile_plot_likelihood.png",
         plotdir = plotdir, pwidth = pwidth,
         pheight = pheight, punits = punits, res = res, ptsize = ptsize
