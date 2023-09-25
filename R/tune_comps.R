@@ -594,6 +594,12 @@ tune_comps <- function(
       tuning_table_list <- ctl[["dirichlet_parms"]]
     }
   }
+
+  # make a plot showing time series of weights
+  if (option %in% c("Francis", "MI") & niters_tuning > 1) {
+    plot_tunings(weights, dir)
+  }
+
   return_list <- list(
     tuning_table_list = tuning_table_list,
     weights = weights
@@ -862,3 +868,78 @@ get_last_phase <- function(ctl) {
   )
   last_phase <- ceiling(max(phases)) # round up if not integer value.
 }
+
+#' Plot the comp tunings from tune_comps() by iteration
+#' 
+#' @param weights The list of variance adjustment tables created by
+#' [tune_comps()]. This can either by the list of both "tuning_table_list"
+#' and "weights" returned by [tune_comps()] or just the "weights" list.
+#' @param dir Directory in which to save the plot as a png file. 
+#' If `dir == NULL` then the plot will be created in the default 
+#' graphics device.
+#' 
+plot_tunings <- function(weights, dir = NULL){
+  # if the function is called outside of tune_comps() using the 
+  # output from that function, then extract weights
+  if("tuning_table_list" %in% names(weights)) {
+    weights <- weights$weights
+  }
+  if (length(weights) == 1) {
+    stop("weights needs more than 1 column")
+  }
+  niters_tuning <- length(weights)
+    labels <- paste(
+      c(
+        "Survey CV",
+        "Discard SD",
+        "Bodywt CV",
+        "Len",
+        "Age",
+        "Size-at-age",
+        "Size"
+      )[weights[[1]]$Data_type],
+      "Fleet", weights[[1]]$Fleet
+    )
+
+    colvec <- rich.colors.short(nrow(weights_df))
+    ylab <- "Sample size multiplier"
+    if (any(weights[[1]]$Data_type %in% 1:3)) {
+      ylab <- "Variance adjustment"
+    }
+    # get a dataframe of values
+    weights_df <- as.data.frame(weights) |>
+      dplyr::select(starts_with("Value"))
+
+    if(!is.null(dir)) {
+      save_png(plotinfo = NULL,
+      file = "tuning_values.png",
+      plotdir = dir,
+      pwidth = 6.5,
+      pheight = 6.5,
+      punits = "in",
+      res = 300,
+      ptsize = 10
+    )
+    }
+    matplot(
+      x = 1:niters_tuning, y = t(weights_df),
+      type = "o", lwd = 3, pch = 1:nrow(weights_df),
+      col = colvec, ylim = c(0, 1.2 * max(1, max(weights_df))),
+      yaxs = "i", xlab = "Iteration", ylab = ylab,
+      axes = FALSE
+    )
+    axis(1, at = 1:niters_tuning)
+    axis(2, las = 1)
+    box()
+    legend("bottomleft", 
+      legend = labels,
+      lwd = 3,
+      col = colvec, 
+      pch = 1:nrow(weights_df),
+      bty = "n"
+    )
+    if (!is.null(dir)) {
+      dev.off()
+    }
+  }
+
