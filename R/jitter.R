@@ -46,11 +46,16 @@ SS_RunJitter <-
 #' `extras`, `show_in_console`, and `skipfinished`.
 #'
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
-#' Kathryn L. Doering
+#' Kathryn L. Doering, Kiva L. Oken
 #'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
 #' @family run functions
+#' @note When running jitters in parallel, no extra steps are taken to ensure independence 
+#' of random numbers generated across cores. While the likelihood of the cores using
+#' the exact same seed is infinitesimal, random numbers may not be perfectly 
+#' independent. If jitter results are only used as a general heuristic for model convergence,
+#' this lack of independence should not matter.
 #' @examples
 #' \dontrun{
 #' #### Run jitter from par file with arbitrary, but common, choice of 0.1
@@ -134,49 +139,57 @@ jitter <- function(dir = getwd(),
     starter[["init_values_src"]] <- init_values_src
   }
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
+  
+  # This is not necessary, but maintaining for back compatibility
   file_increment(0, verbose = verbose)
 
   # check length of Njitter input
   if (length(Njitter) == 1) {
     Njitter <- 1:Njitter
   }
-  likesaved <- rep(NA, length(Njitter))
-  for (i in Njitter) {
-    if (verbose) {
-      message("Jitter=", i, ", ", date())
-    }
-    # check for use of .par file and replace original if needed
-    if (starter[["init_values_src"]] == 1) {
-      if (verbose) message("Replacing .par file with original")
-      file.copy(from = "ss.par_0.sso", to = "ss.par", overwrite = TRUE)
-    }
-    # run model
-    run(dir = dir, exe = exe, verbose = verbose, ...)
-
-    # Only save stuff if it converged
-    if ("Report.sso" %in% list.files()) {
-      rep <- SS_read_summary()
-      if (is.null(rep)) {
-        report <- SS_output(
-          dir = getwd(), forecast = FALSE,
-          covar = FALSE, NoCompOK = TRUE,
-          verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose
-        )
-        like <- report[["likelihoods_used"]][row.names(report[["likelihoods_used"]]) == "TOTAL", "values"]
-      } else {
-        like <- rep[["likelihoods"]][grep("TOTAL", row.names(rep[["likelihoods"]])), 1]
-      }
-      likesaved[i] <- like
-      if (printlikes) {
-        message("Likelihood for jitter ", i, " = ", like)
-      }
-      # rename output files
-      file_increment(i = i)
-    } else {
-      if (verbose) warning("No Report.sso file found from run ", i)
-    }
-  }
-  # Move original files back
+  
+  likesaved <- furrr::future_map_dbl(Njitter, \(x) 
+                                     iterate_jitter(i = x, dir = dir, printlikes = printlikes, 
+                                                     jitter_fraction = jitter_fraction, init_values_src = init_values_src, 
+                                                     exe = exe, verbose = verbose, extras = '-nohess'))
+  
+  # eventually delete this for loop!
+  # for (i in Njitter) {
+  #   if (verbose) {
+  #     message("Jitter=", i, ", ", date())
+  #   }
+  #   # check for use of .par file and replace original if needed
+  #   if (starter[["init_values_src"]] == 1) {
+  #     if (verbose) message("Replacing .par file with original")
+  #     file.copy(from = "ss.par_0.sso", to = "ss.par", overwrite = TRUE)
+  #   }
+  #   # run model
+  #   run(dir = dir, exe = exe, verbose = verbose, ...)
+  # 
+  #   # Only save stuff if it converged
+  #   if ("Report.sso" %in% list.files()) {
+  #     rep <- SS_read_summary()
+  #     if (is.null(rep)) {
+  #       report <- SS_output(
+  #         dir = getwd(), forecast = FALSE,
+  #         covar = FALSE, NoCompOK = TRUE,
+  #         verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose
+  #       )
+  #       like <- report[["likelihoods_used"]][row.names(report[["likelihoods_used"]]) == "TOTAL", "values"]
+  #     } else {
+  #       like <- rep[["likelihoods"]][grep("TOTAL", row.names(rep[["likelihoods"]])), 1]
+  #     }
+  #     likesaved[i] <- like
+  #     if (printlikes) {
+  #       message("Likelihood for jitter ", i, " = ", like)
+  #     }
+  #     # rename output files
+  #     file_increment(i = i)
+  #   } else {
+  #     if (verbose) warning("No Report.sso file found from run ", i)
+  #   }
+  # }
+  # Move original files back (also maintaining for back compatibility)
   pattern0 <- dir(pattern = "[a-z_]0\\.sso")
   file.copy(
     from = pattern0,
@@ -190,3 +203,77 @@ jitter <- function(dir = getwd(),
   }
   return(invisible(likesaved))
 }
+
+#' Accomplish a single jittered model run
+#'
+#' @param i Index of the jitter. This does not strictly have to be an integer.
+#' @param dir Directory of the base model to be jittered
+#' @param printlikes 
+#' @param jitter_fraction 
+#' @param init_values_src 
+#' @param exe 
+#' @param verbose 
+#' @param ... Additional arguments passed to [r4ss::run()]
+#'
+#' @return
+#' @export
+#'
+#' @examples
+iterate_jitter <- function(i, 
+                           dir = getwd(),
+                           printlikes = TRUE,
+                           jitter_fraction = NULL,
+                           init_values_src = NULL,
+                           exe = "ss",
+                           verbose = FALSE,
+                           ...) {
+  jitter.dir <- file.path(dir, paste0('jitter', i))
+  copy_SS_inputs(dir.old = dir, dir.new = jitter.dir, overwrite = TRUE)
+  # check for use of .par file and replace original if needed
+  if (starter[["init_values_src"]] == 1) {
+    file.copy(from = "ss.par_0.sso", to = file.path(jitter.dir, "ss.par"), 
+              overwrite = TRUE)
+  }
+  # run model
+  r4ss::run(dir = jitter.dir, exe = exe, verbose = verbose, ...)
+  # Only save stuff if it converged
+  if ("Report.sso" %in% list.files(path = jitter.dir)) {
+    rep <- SS_read_summary(file.path(jitter.dir, 'ss_summary.sso'))
+    if (is.null(rep)) {
+      report <- SS_output(
+        dir = jitter.dir, forecast = FALSE,
+        covar = FALSE, NoCompOK = TRUE,
+        verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose
+      )
+      like <- report[["likelihoods_used"]][row.names(report[["likelihoods_used"]]) == "TOTAL", "values"]
+    } else {
+      like <- rep[["likelihoods"]][grep("TOTAL", row.names(rep[["likelihoods"]])), 1]
+    }
+    if (printlikes) {
+      message("Likelihood for jitter ", i, " = ", like)
+    }
+    # move output files to base model directory
+    sso.files <- grep("^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$", 
+                      list.files(jitter.dir), value = TRUE)
+    sapply(sso.files, \(x) 
+           file.copy(from = file.path(jitter.dir, x), 
+                     to = file.path(dir, gsub('\\.', paste0(i, '\\.'), x)),
+                     overwrite = TRUE))
+    # delete jitter model directory
+    unlink(jitter.dir, recursive = TRUE)
+    return(like)
+  } else {
+    unlink(jitter.dir, recursive = TRUE)
+    if (verbose) warning("No Report.sso file found from run ", i)
+  }
+}
+
+plan(sequential)
+tictoc::tic()
+xx <- jitter(Njitter = 10, jitter_fraction = 0.1, exe = exe)
+tictoc::toc()
+
+plan(multisession(workers = availableCores()-1))
+tictoc::tic()
+yy <- jitter(Njitter = 10, jitter_fraction = 0.1, exe = exe)
+tictoc::toc()
