@@ -226,9 +226,11 @@ jitter <- function(dir = getwd(),
 }
 
 #' Execute a single jittered model run
+#' 
 #' @param i Index of the jitter iteration.
 #' @param dir Directory of the base model to be jittered
-#' @param  printlikes
+#' @param  printlikes A logical value specifying if the likelihood values should
+#'   be printed to the console.
 #' @template  exe
 #' @template  verbose
 #' @param ... Additional arguments passed to [r4ss::run()]

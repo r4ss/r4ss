@@ -79,6 +79,7 @@ Authors:
   \item Megumi Oshima
   \item Eric Fletcher
   \item Elizabeth F. Gugliotti
+  \item Kiva L. Oken
 }
 
 }

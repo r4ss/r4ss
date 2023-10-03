@@ -18,7 +18,8 @@ iterate_jitter(
 
 \item{dir}{Directory of the base model to be jittered}
 
-\item{printlikes}{}
+\item{printlikes}{A logical value specifying if the likelihood values should
+be printed to the console.}
 
 \item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can
