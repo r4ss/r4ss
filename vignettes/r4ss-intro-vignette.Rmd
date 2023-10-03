@@ -353,7 +353,7 @@ a different run of the retrospective (removing 0 to 5 years of data).
 After the retrospective models have run, the results can be used as a
 diagnostic:
 
-```{r, eval=TRUE, warning=FALSE, message=FALSE out.width="75%"}
+```{r, eval=TRUE, warning=FALSE, message=FALSE, out.width="75%"}
 # load the 6 models
 retroModels <- SSgetoutput(dirvec = file.path(
   new_mod_path, "retrospectives",
