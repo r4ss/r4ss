@@ -49,8 +49,8 @@ SS_RunJitter <-
 #' Kathryn L. Doering, Kiva L. Oken
 #'
 #' @return A vector of likelihoods for each jitter iteration.
-#' @import furrr
 #' @export
+#' @importFrom furrr future_map_dbl
 #' @family run functions
 #' @details This function will loop through models using the default strategy set by the 
 #' `future` package in the current working environment. In general, this means models 
@@ -235,7 +235,7 @@ jitter <- function(dir = getwd(),
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
 #' Kathryn L. Doering, Kiva L. Oken
 #' 
-#' @return Performs one jittered model run and returns its negative log-likelihood
+#' @return Negative log-likelihood of one jittered model
 #'
 iterate_jitter <- function(i,
                            dir = getwd(),

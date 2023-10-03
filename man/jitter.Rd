@@ -93,7 +93,7 @@ jit.likes <- jitter(
 )
 
 #### Run same jitter in parallel
-future::plan(future::sequential)
+future::plan(future::multisession)
 jit.likes <- jitter(
   dir = modeldir, Njitter = numjitter,
   jitter_fraction = 0.1, init_value_src = 1

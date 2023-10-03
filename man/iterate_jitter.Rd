@@ -34,7 +34,7 @@ to the screen.}
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}}
 }
 \value{
-Performs one jittered model run and returns its negative log-likelihood
+Negative log-likelihood of one jittered model
 }
 \description{
 Execute a single jittered model run
