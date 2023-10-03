@@ -325,13 +325,25 @@ to create a copy of your original Stock Synthesis model that the
 retrospective is run on, just in case there are problems with the run.
 For example, a five year retrospective could be done:
 
-```{r, eval=FALSE}
+```{r, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
+# create a temporary path for the retrospective analyses to run and download the
+# ss3 exe
+old_mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
+new_mod_path <- tempdir()
+all_files <- list.files(old_mod_path, full.names = TRUE)
+file.copy(from = all_files, to = new_mod_path)
+get_ss3_exe(dir = new_mod_path)
+```
+
+
+```{r, eval=TRUE}
 # run the retrospective analyses
 retro(
   dir = new_mod_path, # wherever the model files are
   oldsubdir = "", # subfolder within dir
   newsubdir = "retrospectives", # new place to store retro runs within dir
-  years = 0:-5 # years relative to ending year of model
+  years = 0:-5, # years relative to ending year of model
+  exe = "ss3"
 )
 ```
 After running this retrospective, six new folders would be created
@@ -341,7 +353,7 @@ a different run of the retrospective (removing 0 to 5 years of data).
 After the retrospective models have run, the results can be used as a
 diagnostic:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE, warning=FALSE, message=FALSE out.width="75%"}
 # load the 6 models
 retroModels <- SSgetoutput(dirvec = file.path(
   new_mod_path, "retrospectives",
@@ -352,10 +364,19 @@ retroSummary <- SSsummarize(retroModels)
 # create a vector of the ending year of the retrospectives
 endyrvec <- retroSummary[["endyrs"]] + 0:-5
 # make plots comparing the 6 models
+# showing 2 out of the 17 plots done by SSplotComparisons
 SSplotComparisons(retroSummary,
   endyrvec = endyrvec,
-  legendlabels = paste("Data", 0:-5, "years")
+  legendlabels = paste("Data", 0:-5, "years"),
+  subplot = 2,
+  print = TRUE,
+  plotdir = new_mod_path
 )
+
+knitr::include_graphics(file.path(new_mod_path, "compare2_spawnbio_uncertainty.png"))
+```
+
+```{r, eval = FALSE}
 # calculate Mohn's rho, a diagnostic value
 rho_output <- SSmohnsrho(
   summaryoutput = retroSummary,
