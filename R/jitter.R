@@ -168,48 +168,12 @@ jitter <- function(dir = getwd(),
     Njitter <- 1:Njitter
   }
 
-  likesaved <- furrr::future_map_dbl(Njitter, \(x)
+  likesaved <- furrr::future_map_dbl(Njitter, function(x)
   iterate_jitter(
     i = x, dir = dir, printlikes = printlikes,
     exe = exe, verbose = verbose, ...
   ))
 
-  # eventually delete this for loop!
-  # for (i in Njitter) {
-  #   if (verbose) {
-  #     message("Jitter=", i, ", ", date())
-  #   }
-  #   # check for use of .par file and replace original if needed
-  #   if (starter[["init_values_src"]] == 1) {
-  #     if (verbose) message("Replacing .par file with original")
-  #     file.copy(from = "ss.par_0.sso", to = "ss.par", overwrite = TRUE)
-  #   }
-  #   # run model
-  #   run(dir = dir, exe = exe, verbose = verbose, ...)
-  #
-  #   # Only save stuff if it converged
-  #   if ("Report.sso" %in% list.files()) {
-  #     rep <- SS_read_summary()
-  #     if (is.null(rep)) {
-  #       report <- SS_output(
-  #         dir = getwd(), forecast = FALSE,
-  #         covar = FALSE, NoCompOK = TRUE,
-  #         verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose
-  #       )
-  #       like <- report[["likelihoods_used"]][row.names(report[["likelihoods_used"]]) == "TOTAL", "values"]
-  #     } else {
-  #       like <- rep[["likelihoods"]][grep("TOTAL", row.names(rep[["likelihoods"]])), 1]
-  #     }
-  #     likesaved[i] <- like
-  #     if (printlikes) {
-  #       message("Likelihood for jitter ", i, " = ", like)
-  #     }
-  #     # rename output files
-  #     file_increment(i = i)
-  #   } else {
-  #     if (verbose) warning("No Report.sso file found from run ", i)
-  #   }
-  # }
   # Move original files back (also maintaining for back compatibility)
   pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
   file.copy(

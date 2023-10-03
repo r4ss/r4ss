@@ -116,7 +116,7 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
   check_exe(exe = exe, dir = olddir, verbose = verbose)
   
   # loop over retrospective years
-  furrr::future_walk(seq_along(years), \(iyr) {
+  furrr::future_walk(seq_along(years), function(iyr) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
     if(verbose) message("Running retrospective in ", newdir_iyr)
     
