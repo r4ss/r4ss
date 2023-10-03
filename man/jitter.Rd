@@ -25,7 +25,7 @@ jitter(
 \item{Intern}{Deprecated. Use \code{show_in_console} instead.}
 
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
-If \code{length(Njitter) > 1} only the iterations specified will be ran,
+If \code{length(Njitter) > 1} only the iterations specified will be run,
 else \code{1:Njitter} will be executed.}
 
 \item{printlikes}{A logical value specifying if the likelihood values should
@@ -63,11 +63,37 @@ Iteratively run a Stock Synthesis model with different jittered starting
 parameter values based on the jitter fraction. Output files are renamed
 in the format Report1.sso, Report2.sso, etc.
 }
+\details{
+This function will loop through models using the default strategy set by the
+\code{future} package in the current working environment. In general, this means models
+will run sequentially. To run multiple models simultaneously using parallel
+computing, see \code{\link[future:plan]{future::plan()}}
+
+Note that random number generation occurs outside of R directly in stock synthesis.
+When running jitters in parallel (i.e. \code{future} strategy is not \code{sequential}), no
+steps are taken to ensure independence of random numbers generated across
+cores. While the likelihood of the cores using the exact same seed is infinitesimal,
+random numbers may not technically be considered statistically independent. If
+jitter results are only used  as a general heuristic for model convergence, this
+mild lack of independence should not matter much.
+
+When running models in parallel, the transfer of large files leads to expensive
+overheads and parallel processing may not be faster. Covariance files are
+especially expensive to transfer, so the option \code{extras = '-nohess'} is
+recommended when using parallel processing.
+}
 \examples{
 \dontrun{
 #### Run jitter from par file with arbitrary, but common, choice of 0.1
 modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE), 1)
 numjitter <- 25
+jit.likes <- jitter(
+  dir = modeldir, Njitter = numjitter,
+  jitter_fraction = 0.1, init_value_src = 1
+)
+
+#### Run same jitter in parallel
+future::plan(future::sequential)
 jit.likes <- jitter(
   dir = modeldir, Njitter = numjitter,
   jitter_fraction = 0.1, init_value_src = 1
@@ -96,6 +122,6 @@ Other run functions:
 }
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
-Kathryn L. Doering
+Kathryn L. Doering, Kiva L. Oken
 }
 \concept{run functions}

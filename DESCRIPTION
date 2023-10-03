@@ -60,6 +60,7 @@ Imports:
     corpcor,
     dplyr,
     forcats,
+    furrr,
     ggplot2,
     gh,
     kableExtra,
