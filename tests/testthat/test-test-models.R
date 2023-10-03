@@ -11,8 +11,8 @@ test_that("test-models work with SS_output() and SS_plots()", {
   # find simple_small
   dir_exe <- system.file("extdata", "simple_small", package = "r4ss")
   skip_if(
-    (!file.exists(file.path(dir_exe, "ss")) &
-      !file.exists(file.path(dir_exe, "ss.exe"))),
+    (!file.exists(file.path(dir_exe, "ss3")) &
+      !file.exists(file.path(dir_exe, "ss3.exe"))),
     message = paste("skipping test: no exe called 'ss' found in", dir_exe)
   )
   # temporary directory
@@ -33,7 +33,7 @@ test_that("test-models work with SS_output() and SS_plots()", {
   ))
   for (m in all_mods) {
     message("Now running without estimation: ", basename(m))
-    run(m, exe = file.path(dir_exe, "ss"), extras = "-stopph 0 -nohess")
+    run(m, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
 
     #### Check for presence of Report.sso
     if (!"Report.sso" %in% dir(m)) {

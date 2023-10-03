@@ -1,5 +1,5 @@
 context("Test the tune_comps function")
-# note: to get these to run, please put an ss exe named "ss.exe" in
+# note: to get these to run, please put an ss exe named "ss3.exe" in
 # inst/extdata/simple_small . Otherwise, most of the tests will be skipped.
 
 # do runs in a temporary dir so that the state is not disrupted if tests
@@ -65,8 +65,8 @@ test_that(" tune_comps() works when just want to return the Francis table", {
 
 test_that("tune_comps() works with francis", {
   skip_if(
-    (!file.exists(file.path(runs_path, "simple_small", "ss"))) &
-      (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
+    (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
+      (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
     message = "skipping test that requires SS executable"
   )
   test <- tune_comps(
@@ -81,8 +81,8 @@ test_that("tune_comps() works with francis", {
 
 test_that("tune_comps() works with MI and up tuning", {
   skip_if(
-    (!file.exists(file.path(runs_path, "simple_small", "ss"))) &
-      (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
+    (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
+      (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
     message = "skipping test that requires SS executable"
   )
   test <- tune_comps(
@@ -97,8 +97,8 @@ test_that("tune_comps() works with MI and up tuning", {
 
 test_that("tune_comps() works with DM", {
   skip_if(
-    (!file.exists(file.path(runs_path, "simple_small", "ss"))) &
-      (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
+    (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
+      (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
     message = "skipping test that requires SS executable"
   )
   test <- tune_comps(
@@ -125,8 +125,8 @@ test_that("tune_comps() works with DM", {
 
 test_that("tune_comps() works with none", {
   skip_if(
-    (!file.exists(file.path(runs_path, "simple_small", "ss"))) &
-      (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
+    (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
+      (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
     message = "skipping test that requires SS executable"
   )
   test <- tune_comps(
@@ -141,8 +141,8 @@ test_that("tune_comps() works with none", {
 
 test_that("tune_comps() works with multiple iterations", {
   skip_if(
-    (!file.exists(file.path(runs_path, "simple_small", "ss"))) &
-      (!file.exists(file.path(runs_path, "simple_small", "ss.exe"))),
+    (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
+      (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
     message = "skipping test that requires SS executable"
   )
   test <- tune_comps(
