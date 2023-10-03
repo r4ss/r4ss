@@ -128,6 +128,7 @@ SSplotDiscard <-
         if (discard_units == 1) {
           # type 1: biomass or numbers
           title <- paste("Total discard for", FleetName)
+          caption <- title
           ylab <- labels[3]
           if (replist[["catch_units"]][ifleet] == 1) {
             ylab <- paste(ylab, "(mt)")
@@ -139,17 +140,20 @@ SSplotDiscard <-
         if (discard_units == 2) {
           # type 2: discards as fractions
           title <- paste("Discard fraction for", FleetName)
-          ylab <- labels[2]
+          caption <- paste0(title, ". The numerator and denominator are in")
           if (replist[["catch_units"]][ifleet] == 1) {
-            ylab <- paste(ylab, "(mt)")
+            caption <- paste(caption, "biomass.")
           }
           if (replist[["catch_units"]][ifleet] == 2) {
-            ylab <- paste(ylab, "(1000's)")
+            caption <- paste(caption, "numbers.")
           }
+
+          ylab <- labels[2]
         }
         if (discard_units == 3) {
           # type 3: discards as numbers
           title <- paste("Total discard for", FleetName)
+          caption <- title
           ylab <- "Total discards (1000's)"
         }
 
@@ -185,7 +189,6 @@ SSplotDiscard <-
             } else {
               file <- paste0("discard_fit", FleetName, ".png")
             }
-            caption <- title
             plotinfo <- save_png(
               plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
               pheight = pheight, punits = punits, res = res, ptsize = ptsize,

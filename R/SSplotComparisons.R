@@ -689,7 +689,7 @@ SSplotComparisons <-
     }
 
     if (is.null(endyrvec)) {
-      endyrvec <- endyrs + 1
+      endyrvec <- endyrs[models] + 1
     }
     if (length(endyrvec) == 1) {
       endyrvec <- rep(endyrvec, nlines)
