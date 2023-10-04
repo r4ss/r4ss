@@ -12,7 +12,7 @@ populate_multiple_folders(
   use_ss_new = FALSE,
   copy_par = FALSE,
   exe.dir = NULL,
-  exe.file = "ss",
+  exe.file = "ss3",
   verbose = TRUE
 )
 }

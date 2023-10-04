@@ -17,7 +17,7 @@ NegLogInt_Fn(
   ReDoBiasRamp = FALSE,
   BiasRamp_linenum_Vec = NULL,
   CTL_linenum_Type = NULL,
-  exe = "ss",
+  exe = "ss3",
   verbose = FALSE,
   ...
 )

@@ -83,7 +83,7 @@ SS_profile <- function(...) {
 #'
 #' ###########################################################################
 #' # example profile
-#' # (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)
+#' # (assumes you have an SS3 exe called "ss3.exe" or "ss3" in your PATH)
 #' ###########################################################################
 #'
 #' # directory for "simple_small" example model included with r4ss
@@ -148,7 +148,7 @@ SS_profile <- function(...) {
 #'
 #' ###########################################################################
 #' # example two-dimensional profile
-#' # (assumes you have an SS3 exe called "ss.exe" or "ss" in your PATH)
+#' # (assumes you have an SS3 exe called "ss3.exe" or "ss3" in your PATH)
 #' ###########################################################################
 #'
 #' dir_simple_small <- file.path(
@@ -234,7 +234,7 @@ profile <- function(dir,
                     whichruns = NULL,
                     prior_check = TRUE,
                     read_like = TRUE,
-                    exe = "ss",
+                    exe = "ss3",
                     verbose = TRUE,
                     ...) {
   # Ensure wd is not changed by the function
