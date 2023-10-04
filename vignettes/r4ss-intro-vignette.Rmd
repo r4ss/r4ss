@@ -368,8 +368,9 @@ endyrvec <- retroSummary[["endyrs"]] + 0:-5
 SSplotComparisons(retroSummary,
   endyrvec = endyrvec,
   legendlabels = paste("Data", 0:-5, "years"),
-  subplot = 2,
-  print = TRUE,
+  subplot = 2,  # only show one plot in vignette
+  print = TRUE, # send plots to PNG file
+  plot = FALSE, # don't plot to default graphics device
   plotdir = new_mod_path
 )
 
