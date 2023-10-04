@@ -175,6 +175,7 @@ jitter <- function(dir = getwd(),
     printlikes = printlikes,
     exe = exe, 
     verbose = verbose, 
+    starter = starter,
     ...))
 
   # Move original files back (also maintaining for back compatibility)
@@ -214,7 +215,8 @@ iterate_jitter <- function(i,
                            ...) {
   jitter_dir <- file.path(dir, paste0("jitter", i))
   copy_SS_inputs(dir.old = dir, dir.new = jitter_dir, overwrite = TRUE, 
-                 verbose = verbose, copy_par = TRUE, copy_exe = TRUE)
+                 verbose = verbose, copy_exe = TRUE,
+                 copy_par = as.logical(starter$init_values_src))
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
   # Only save stuff if it converged
