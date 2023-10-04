@@ -214,7 +214,7 @@ iterate_jitter <- function(i,
                            ...) {
   jitter_dir <- file.path(dir, paste0("jitter", i))
   copy_SS_inputs(dir.old = dir, dir.new = jitter_dir, overwrite = TRUE, 
-                 verbose = verbose, copy_par = TRUE)
+                 verbose = verbose, copy_par = TRUE, copy_exe = TRUE)
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
   # Only save stuff if it converged
