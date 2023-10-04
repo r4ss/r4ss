@@ -105,7 +105,7 @@ jitter <- function(dir = getwd(),
                    printlikes = TRUE,
                    jitter_fraction = NULL,
                    init_values_src = NULL,
-                   exe = "ss",
+                   exe = "ss3",
                    verbose = FALSE,
                    ...) {
   # deprecated variable warnings -----
