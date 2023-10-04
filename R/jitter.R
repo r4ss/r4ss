@@ -175,7 +175,7 @@ jitter <- function(dir = getwd(),
     printlikes = printlikes,
     exe = exe, 
     verbose = verbose, 
-    starter = starter,
+    init_values_src = starter$init_values_src,
     ...))
 
   # Move original files back (also maintaining for back compatibility)
@@ -201,6 +201,9 @@ jitter <- function(dir = getwd(),
 #'   be printed to the console.
 #' @template  exe
 #' @template  verbose
+#' @param init_values_src Either zero or one, specifying if the initial values to
+#'   jitter should be read from the control file or from the par file, respectively.
+#'   Cannot be `NULL`. Defaults to zero (initial values read from control file).
 #' @param ... Additional arguments passed to [r4ss::run()]
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
 #' Kathryn L. Doering, Kiva L. Oken
@@ -212,11 +215,12 @@ iterate_jitter <- function(i,
                            printlikes = TRUE,
                            exe = "ss",
                            verbose = FALSE,
+                           init_values_src = 0,
                            ...) {
   jitter_dir <- file.path(dir, paste0("jitter", i))
   copy_SS_inputs(dir.old = dir, dir.new = jitter_dir, overwrite = TRUE, 
                  verbose = verbose, copy_exe = TRUE,
-                 copy_par = as.logical(starter$init_values_src))
+                 copy_par = as.logical(init_values_src))
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
   # Only save stuff if it converged

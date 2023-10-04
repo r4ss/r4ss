@@ -10,6 +10,7 @@ iterate_jitter(
   printlikes = TRUE,
   exe = "ss",
   verbose = FALSE,
+  init_values_src = 0,
   ...
 )
 }
@@ -31,6 +32,10 @@ included.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{init_values_src}{Either zero or one, specifying if the initial values to
+jitter should be read from the control file or from the par file, respectively.
+Cannot be \code{NULL}. Defaults to zero (initial values read from control file).}
 
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}}
 }
