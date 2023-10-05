@@ -88,7 +88,7 @@ SSplotComparisons(retroSummary,
 )
 
 ## run retrospectives in parallel
-ncores <- parallel::detectCores() - 1 
+ncores <- parallel::detectCores() - 1
 future::plan(future::multisession, workers = ncores)
 retro(
   dir = mydir,

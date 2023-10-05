@@ -52,22 +52,22 @@ SS_RunJitter <-
 #' @export
 #' @importFrom furrr future_map_dbl
 #' @family run functions
-#' @details This function will loop through models using the default strategy set by the 
-#' `future` package in the current working environment. In general, this means models 
-#' will run sequentially. To run multiple models simultaneously using parallel 
-#' computing, see [future::plan()] 
-#' 
-#' Note that random number generation occurs outside of R directly in stock synthesis. 
-#' When running jitters in parallel (i.e. `future` strategy is not `sequential`), no 
-#' steps are taken to ensure independence of random numbers generated across 
-#' cores. While the likelihood of the cores using the exact same seed is infinitesimal, 
-#' random numbers may not technically be considered statistically independent. If 
+#' @details This function will loop through models using the default strategy set by the
+#' `future` package in the current working environment. In general, this means models
+#' will run sequentially. To run multiple models simultaneously using parallel
+#' computing, see [future::plan()]
+#'
+#' Note that random number generation occurs outside of R directly in stock synthesis.
+#' When running jitters in parallel (i.e. `future` strategy is not `sequential`), no
+#' steps are taken to ensure independence of random numbers generated across
+#' cores. While the likelihood of the cores using the exact same seed is infinitesimal,
+#' random numbers may not technically be considered statistically independent. If
 #' jitter results are only used  as a general heuristic for model convergence, this
 #' mild lack of independence should not matter much.
-#' 
-#' When running models in parallel, the transfer of large files leads to expensive 
-#' overheads and parallel processing may not be faster. Covariance files are 
-#' especially expensive to transfer, so the option `extras = '-nohess'` is 
+#'
+#' When running models in parallel, the transfer of large files leads to expensive
+#' overheads and parallel processing may not be faster. Covariance files are
+#' especially expensive to transfer, so the option `extras = '-nohess'` is
 #' recommended when using parallel processing.
 #' @examples
 #' \dontrun{
@@ -80,13 +80,13 @@ SS_RunJitter <-
 #' )
 #'
 #' #### Run same jitter in parallel
-#' ncores <- parallel::detectCores() - 1 
+#' ncores <- parallel::detectCores() - 1
 #' future::plan(future::multisession, workers = ncores)
 #' jit.likes <- jitter(
 #'   dir = modeldir, Njitter = numjitter,
 #'   jitter_fraction = 0.1, init_value_src = 1
 #' )
-#' 
+#'
 #' #### Read in results using other r4ss functions
 #' # (note that un-jittered model can be read using keyvec=0:numjitter)
 #' profilemodels <- SSgetoutput(dirvec = modeldir, keyvec = 1:numjitter, getcovar = FALSE)
@@ -170,13 +170,14 @@ jitter <- function(dir = getwd(),
   }
 
   likesaved <- furrr::future_map_dbl(Njitter, ~ iterate_jitter(
-    i = .x, 
-    dir = dir, 
+    i = .x,
+    dir = dir,
     printlikes = printlikes,
-    exe = exe, 
-    verbose = verbose, 
-    init_values_src = starter$init_values_src,
-    ...))
+    exe = exe,
+    verbose = verbose,
+    init_values_src = starter[["init_values_src"]],
+    ...
+  ))
 
   # Move original files back (also maintaining for back compatibility)
   pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
@@ -194,7 +195,7 @@ jitter <- function(dir = getwd(),
 }
 
 #' Execute a single jittered model run
-#' 
+#'
 #' @param i Index of the jitter iteration.
 #' @param dir Directory of the base model to be jittered
 #' @param  printlikes A logical value specifying if the likelihood values should
@@ -207,7 +208,7 @@ jitter <- function(dir = getwd(),
 #' @param ... Additional arguments passed to [r4ss::run()]
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
 #' Kathryn L. Doering, Kiva L. Oken
-#' 
+#'
 #' @return Negative log-likelihood of one jittered model
 #'
 iterate_jitter <- function(i,
@@ -218,9 +219,11 @@ iterate_jitter <- function(i,
                            init_values_src = 0,
                            ...) {
   jitter_dir <- file.path(dir, paste0("jitter", i))
-  copy_SS_inputs(dir.old = dir, dir.new = jitter_dir, overwrite = TRUE, 
-                 verbose = verbose, copy_exe = TRUE,
-                 copy_par = as.logical(init_values_src))
+  copy_SS_inputs(
+    dir.old = dir, dir.new = jitter_dir, overwrite = TRUE,
+    verbose = verbose, copy_exe = TRUE,
+    copy_par = as.logical(init_values_src)
+  )
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
   # Only save stuff if it converged
@@ -240,14 +243,19 @@ iterate_jitter <- function(i,
       message("Likelihood for jitter ", i, " = ", like)
     }
     # rename output files and move them to base model directory
-    to_copy <- list.files(path = jitter_dir,
-                          pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$")
-    new_name <- gsub(pattern = "par",
-                     replacement = "par_", 
-                     x = gsub(pattern = "\\.sso|(\\.par)",
-                              replacement = paste0("\\1", i, ".sso"),
-                              x = to_copy)
-                     )
+    to_copy <- list.files(
+      path = jitter_dir,
+      pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
+    )
+    new_name <- gsub(
+      pattern = "par",
+      replacement = "par_",
+      x = gsub(
+        pattern = "\\.sso|(\\.par)",
+        replacement = paste0("\\1", i, ".sso"),
+        x = to_copy
+      )
+    )
     file.copy(
       from = to_copy,
       to = file.path(dir, new_name),
