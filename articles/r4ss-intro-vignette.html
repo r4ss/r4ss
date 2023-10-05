@@ -509,14 +509,14 @@ diagnostic:</p>
 <span><span class="fu"><a href="../reference/SSplotComparisons.html">SSplotComparisons</a></span><span class="op">(</span><span class="va">retroSummary</span>,</span>
 <span>  endyrvec <span class="op">=</span> <span class="va">endyrvec</span>,</span>
 <span>  legendlabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="fl">0</span><span class="op">:</span><span class="op">-</span><span class="fl">5</span>, <span class="st">"years"</span><span class="op">)</span>,</span>
-<span>  subplot <span class="op">=</span> <span class="fl">2</span>,  <span class="co"># only show one plot in vignette</span></span>
+<span>  subplot <span class="op">=</span> <span class="fl">2</span>, <span class="co"># only show one plot in vignette</span></span>
 <span>  print <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># send plots to PNG file</span></span>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># don't plot to default graphics device</span></span>
 <span>  plotdir <span class="op">=</span> <span class="va">new_mod_path</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">new_mod_path</span>, <span class="st">"compare2_spawnbio_uncertainty.png"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../../../../../../tmp/RtmpR8n4rO/compare2_spawnbio_uncertainty.png" width="75%"></p>
+<p><img src="../../../../../../tmp/RtmprGXfMP/compare2_spawnbio_uncertainty.png" width="75%"></p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate Mohn's rho, a diagnostic value</span></span>
 <span><span class="va">rho_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSmohnsrho.html">SSmohnsrho</a></span><span class="op">(</span></span>
@@ -589,7 +589,7 @@ make a copy of the model to avoid changing the original model files</p>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
 <span><span class="co">#&gt; to</span></span>
-<span><span class="co">#&gt;  /tmp/RtmpR8n4rO/simple_mod</span></span>
+<span><span class="co">#&gt;  /tmp/RtmprGXfMP/simple_mod</span></span>
 <span><span class="co">#&gt; copying complete</span></span>
 <span><span class="co"># copy over the Report file to provide information about the last run</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span></span>
