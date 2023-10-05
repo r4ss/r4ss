@@ -49,7 +49,7 @@ jobs:
             any::covr
             any::devtools
 
-      - name: Get repository of SS models
+      - name: Get repository of SS3 models
         uses: actions/checkout@v3
         with:
           repository: 'nmfs-stock-synthesis/test-models'
@@ -69,7 +69,7 @@ jobs:
           cp ss3 inst/extdata/simple_small/ss3
           rm ss3
 
-      - name: Get a 3.24 SS executable
+      - name: Get a 3.24 SS3 executable
         run: |
           wget -O ss3 https://vlab.noaa.gov/documents/259399/2000201/ss_3.24Z/037e3921-1f00-611a-1c30-d7a5c1063835?version=1.1&t=1608655599519&download=true
           sudo chmod a+x ss3
