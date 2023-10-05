@@ -160,13 +160,9 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
           " beta versions of SS3 version 3.30.22, but has been replaced",
           " by the new Fcast_years table input format."
         )
-        mylist[["Forecast_loop_control_5"]] <- 0
+        mylist[["Fcast_loop_control_5"]] <- 0
       }
-      wl("Forecast_loop_control_5")
-      if (mylist[["Fcast_MGparm_averaging"]] == 1) {
-        printdf("Fcast_MGparm_averaging_info")
-        writeLines("-9999 0 0 0")
-      }
+      wl("Fcast_loop_control_5")
       wl("FirstYear_for_caps_and_allocations")
       wl("stddev_of_log_catch_ratio")
       wl("Do_West_Coast_gfish_rebuilder_output")
