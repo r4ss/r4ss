@@ -128,7 +128,7 @@ SS_readforecast <- function(file = "forecast.ss",
     }
     i <- i + k
 
-    if (is.null(nrows)) i <- i + ncol
+    if (is.null(nrows)) i <- i + ncol # adjust for -9999 row
 
     forelist[["temp"]] <- df0
     forelist$".i" <- i
@@ -258,11 +258,27 @@ SS_readforecast <- function(file = "forecast.ss",
     } else {
       forelist <- add_vec(forelist, length = 6, name = "Fcast_years")
     }
+    # -12345 code triggers read of new table input for forecast years
+    # implemented in 3.30.22
+    if (forelist[["Fcast_years"]][1] == -12345) {
+      # need to remove list element before adding new format version
+      forelist <- within(forelist, rm(Fcast_years))
+      # shift index to account for 6 elements read in previous step
+      forelist[[".i"]] <- forelist[[".i"]] - 5
+      # add data frame of new-format input
+      forelist <- add_df(forelist,
+        ncol = 4,
+        col.names = c("MG_type", "method", "st_year", "end_year"),
+        name = "Fcast_years"
+      )
+    }
     if (verbose) {
       message("Forecast years: ", forelist[["Fcast_years"]])
     }
-
-    if (version == "3.30" | version == 3.3) {
+    # 3.30 models that don't use the new table input above read
+    # additional selectivity setting
+    if (is.vector(forelist[["Fcast_years"]]) &&
+      (version == "3.30" | version == 3.3)) {
       forelist <- add_elem(forelist, "Fcast_selex")
       if (verbose) {
         message("Forecast selectivity option: ", forelist[["Fcast_selex"]])
@@ -284,17 +300,7 @@ SS_readforecast <- function(file = "forecast.ss",
     forelist <- add_elem(forelist, "First_forecast_loop_with_stochastic_recruitment")
     forelist <- add_elem(forelist, "fcast_rec_option")
     forelist <- add_elem(forelist, "fcast_rec_val")
-    forelist <- add_elem(forelist, "Fcast_MGparm_averaging") # 0 = not, 1 = do
-
-    # new option added in 3.30.22 to forecast using average values
-    if (forelist[["Fcast_MGparm_averaging"]] == 1) {
-      forelist <- add_df(forelist,
-        ncol = 4,
-        col.names = c("MG_type", "method", "st_year", "end_year"),
-        name = "Fcast_MGparm_averaging_info"
-      )
-    }
-
+    forelist <- add_elem(forelist, "Fcast_loop_control_5") # not used
     forelist <- add_elem(forelist, "FirstYear_for_caps_and_allocations")
     forelist <- add_elem(forelist, "stddev_of_log_catch_ratio")
     forelist <- add_elem(forelist, "Do_West_Coast_gfish_rebuilder_output")
