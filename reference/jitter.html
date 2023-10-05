@@ -94,7 +94,7 @@ in the format Report1.sso, Report2.sso, etc.</p>
 
 <dt>Njitter</dt>
 <dd><p>Number of jitters, or a vector of jitter iterations.
-If <code>length(Njitter) &gt; 1</code> only the iterations specified will be ran,
+If <code>length(Njitter) &gt; 1</code> only the iterations specified will be run,
 else <code>1:Njitter</code> will be executed.</p></dd>
 
 
@@ -144,6 +144,24 @@ to the screen.</p></dd>
 <p>A vector of likelihoods for each jitter iteration.</p>
     </div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This function will loop through models using the default strategy set by the
+<code>future</code> package in the current working environment. In general, this means models
+will run sequentially. To run multiple models simultaneously using parallel
+computing, see <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code></p>
+<p>Note that random number generation occurs outside of R directly in stock synthesis.
+When running jitters in parallel (i.e. <code>future</code> strategy is not <code>sequential</code>), no
+steps are taken to ensure independence of random numbers generated across
+cores. While the likelihood of the cores using the exact same seed is infinitesimal,
+random numbers may not technically be considered statistically independent. If
+jitter results are only used  as a general heuristic for model convergence, this
+mild lack of independence should not matter much.</p>
+<p>When running models in parallel, the transfer of large files leads to expensive
+overheads and parallel processing may not be faster. Covariance files are
+especially expensive to transfer, so the option <code>extras = '-nohess'</code> is
+recommended when using parallel processing.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other run functions: 
 <code><a href="copy_SS_inputs.html">copy_SS_inputs</a>()</code>,
@@ -156,7 +174,7 @@ to the screen.</p></dd>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
-Kathryn L. Doering</p>
+Kathryn L. Doering, Kiva L. Oken</p>
     </div>
 
     <div class="section level2">
@@ -165,6 +183,14 @@ Kathryn L. Doering</p>
 <span class="r-in"><span><span class="co">#### Run jitter from par file with arbitrary, but common, choice of 0.1</span></span></span>
 <span class="r-in"><span><span class="va">modeldir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">numjitter</span> <span class="op">&lt;-</span> <span class="fl">25</span></span></span>
+<span class="r-in"><span><span class="va">jit.likes</span> <span class="op">&lt;-</span> <span class="fu">jitter</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">modeldir</span>, Njitter <span class="op">=</span> <span class="va">numjitter</span>,</span></span>
+<span class="r-in"><span>  jitter_fraction <span class="op">=</span> <span class="fl">0.1</span>, init_value_src <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#### Run same jitter in parallel</span></span></span>
+<span class="r-in"><span><span class="va">ncores</span> <span class="op">&lt;-</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span> </span></span>
+<span class="r-in"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="va"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span>, workers <span class="op">=</span> <span class="va">ncores</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">jit.likes</span> <span class="op">&lt;-</span> <span class="fu">jitter</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  dir <span class="op">=</span> <span class="va">modeldir</span>, Njitter <span class="op">=</span> <span class="va">numjitter</span>,</span></span>
 <span class="r-in"><span>  jitter_fraction <span class="op">=</span> <span class="fl">0.1</span>, init_value_src <span class="op">=</span> <span class="fl">1</span></span></span>
@@ -188,7 +214,7 @@ Kathryn L. Doering</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison, Andre E. Punt, R.I.C. Chris Francis, John R. Wallace, Chantel R. Wetzel, James T. Thorson, Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz, Z. Teresa A’mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet, Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura, Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard, Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron, Nathan R. Vaughan, LaTreese S. Denson, Ashleigh J. Novak, Henning Winker, Lee Qi, Megumi Oshima, Eric Fletcher, Elizabeth F. Gugliotti.</p>
+  <p></p><p>Developed by Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison, Andre E. Punt, R.I.C. Chris Francis, John R. Wallace, Chantel R. Wetzel, James T. Thorson, Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz, Z. Teresa A’mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet, Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura, Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard, Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron, Nathan R. Vaughan, LaTreese S. Denson, Ashleigh J. Novak, Henning Winker, Lee Qi, Megumi Oshima, Eric Fletcher, Elizabeth F. Gugliotti, Kiva L. Oken.</p>
 </div>
 
 <div class="pkgdown-footer-right">
