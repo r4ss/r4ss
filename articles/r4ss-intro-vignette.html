@@ -388,12 +388,13 @@ can be downloaded from the Stock Synthesis GitHub page using the
 function:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Default with no version downloads the latest release</span></span>
+<span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/get_ss3_exe.html">get_ss3_exe</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download the latest release to a specific directory</span></span>
 <span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/get_ss3_exe.html">get_ss3_exe</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span><span class="op">)</span></span>
-<span><span class="co">#&gt; The stock synthesis executable for Linux v3.30.21 was downloaded to: simple_new/ss3</span></span>
 <span></span>
 <span><span class="co"># Adding a character string for a specific version using the GitHub tag</span></span>
-<span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/get_ss3_exe.html">get_ss3_exe</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span>, version <span class="op">=</span> <span class="st">"v3.30.18"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; The stock synthesis executable for Linux v3.30.18 was downloaded to: simple_new/ss3</span></span></code></pre></div>
+<span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/get_ss3_exe.html">get_ss3_exe</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span>, version <span class="op">=</span> <span class="st">"v3.30.18"</span><span class="op">)</span></span></code></pre></div>
 <p>You can also use the function without a specified directory which
 will download the executable to your working directory. This function
 downloads the correct executable according to information it gets about
@@ -471,12 +472,21 @@ is safest to create a copy of your original Stock Synthesis model that
 the retrospective is run on, just in case there are problems with the
 run. For example, a five year retrospective could be done:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># create a temporary path for the retrospective analyses to run and download the</span></span>
+<span><span class="co"># ss3 exe</span></span>
+<span><span class="va">old_mod_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span></span>
+<span><span class="va">new_mod_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">all_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">old_mod_path</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="va">all_files</span>, to <span class="op">=</span> <span class="va">new_mod_path</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/get_ss3_exe.html">get_ss3_exe</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the retrospective analyses</span></span>
 <span><span class="fu"><a href="../reference/retro.html">retro</a></span><span class="op">(</span></span>
 <span>  dir <span class="op">=</span> <span class="va">new_mod_path</span>, <span class="co"># wherever the model files are</span></span>
 <span>  oldsubdir <span class="op">=</span> <span class="st">""</span>, <span class="co"># subfolder within dir</span></span>
 <span>  newsubdir <span class="op">=</span> <span class="st">"retrospectives"</span>, <span class="co"># new place to store retro runs within dir</span></span>
-<span>  years <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="op">-</span><span class="fl">5</span> <span class="co"># years relative to ending year of model</span></span>
+<span>  years <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="op">-</span><span class="fl">5</span>, <span class="co"># years relative to ending year of model</span></span>
+<span>  exe <span class="op">=</span> <span class="st">"ss3"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>After running this retrospective, six new folders would be created
 within a new “retrospectives” directory, where each folder would contain
@@ -484,7 +494,7 @@ a different run of the retrospective (removing 0 to 5 years of
 data).</p>
 <p>After the retrospective models have run, the results can be used as a
 diagnostic:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load the 6 models</span></span>
 <span><span class="va">retroModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSgetoutput.html">SSgetoutput</a></span><span class="op">(</span>dirvec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
 <span>  <span class="va">new_mod_path</span>, <span class="st">"retrospectives"</span>,</span>
@@ -495,11 +505,20 @@ diagnostic:</p>
 <span><span class="co"># create a vector of the ending year of the retrospectives</span></span>
 <span><span class="va">endyrvec</span> <span class="op">&lt;-</span> <span class="va">retroSummary</span><span class="op">[[</span><span class="st">"endyrs"</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="op">-</span><span class="fl">5</span></span>
 <span><span class="co"># make plots comparing the 6 models</span></span>
+<span><span class="co"># showing 2 out of the 17 plots done by SSplotComparisons</span></span>
 <span><span class="fu"><a href="../reference/SSplotComparisons.html">SSplotComparisons</a></span><span class="op">(</span><span class="va">retroSummary</span>,</span>
 <span>  endyrvec <span class="op">=</span> <span class="va">endyrvec</span>,</span>
-<span>  legendlabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="fl">0</span><span class="op">:</span><span class="op">-</span><span class="fl">5</span>, <span class="st">"years"</span><span class="op">)</span></span>
+<span>  legendlabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="fl">0</span><span class="op">:</span><span class="op">-</span><span class="fl">5</span>, <span class="st">"years"</span><span class="op">)</span>,</span>
+<span>  subplot <span class="op">=</span> <span class="fl">2</span>,  <span class="co"># only show one plot in vignette</span></span>
+<span>  print <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># send plots to PNG file</span></span>
+<span>  plot <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># don't plot to default graphics device</span></span>
+<span>  plotdir <span class="op">=</span> <span class="va">new_mod_path</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># calculate Mohn's rho, a diagnostic value</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">new_mod_path</span>, <span class="st">"compare2_spawnbio_uncertainty.png"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="../../../../../../tmp/RtmpR8n4rO/compare2_spawnbio_uncertainty.png" width="75%"></p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># calculate Mohn's rho, a diagnostic value</span></span>
 <span><span class="va">rho_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSmohnsrho.html">SSmohnsrho</a></span><span class="op">(</span></span>
 <span>  summaryoutput <span class="op">=</span> <span class="va">retroSummary</span>,</span>
 <span>  endyrvec <span class="op">=</span> <span class="va">endyrvec</span>,</span>
@@ -518,7 +537,7 @@ times specified by the user. For a stock Synthesis model in a folder
 called <code>jitter_dir</code> jittering starting values can be run 100
 times (note this could take a while as they will be run in
 sequence):</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define a new directory</span></span>
 <span><span class="va">jitter_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">mod_path</span>, <span class="st">"jitter"</span><span class="op">)</span></span>
 <span><span class="co"># copy over the stock synthesis model files to the new directory</span></span>
@@ -560,7 +579,7 @@ and transform it into different tuning methods.</p>
 <p>As an example, we will illustrate how to run Francis tuning on an
 example Stock Synthesis model built into the r4ss package. First, we
 make a copy of the model to avoid changing the original model files</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define a new directory in a temporary location</span></span>
 <span><span class="va">mod_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"simple_mod"</span><span class="op">)</span></span>
 <span><span class="co"># Path to simple model in r4ss and copy files to mod_path</span></span>
@@ -570,7 +589,7 @@ make a copy of the model to avoid changing the original model files</p>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
 <span><span class="co">#&gt; to</span></span>
-<span><span class="co">#&gt;  /tmp/RtmpfSOFcl/simple_mod</span></span>
+<span><span class="co">#&gt;  /tmp/RtmpR8n4rO/simple_mod</span></span>
 <span><span class="co">#&gt; copying complete</span></span>
 <span><span class="co"># copy over the Report file to provide information about the last run</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span></span>
@@ -588,7 +607,7 @@ make a copy of the model to avoid changing the original model files</p>
 weighting for 1 iteration and allows upweighting. Assume that an
 executable called “ss or ss.exe” is available in the mod_path
 folder.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tune_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tune_comps.html">tune_comps</a></span><span class="op">(</span></span>
 <span>  option <span class="op">=</span> <span class="st">"Francis"</span>,</span>
 <span>  niters_tuning <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -604,7 +623,7 @@ to a new folder, then the <code><a href="../reference/tune_comps.html">tune_comp
 used to add Dirichlet-multinomial parameters (1 for each fleet with
 composition data and for each type of composition data) and re-run the
 model.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create additional temporary directory</span></span>
 <span><span class="va">mod_path_dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"simple_mod_dm"</span><span class="op">)</span></span>
 <span><span class="co"># copy model files</span></span>
