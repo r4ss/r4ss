@@ -24,7 +24,8 @@ SS_doRetro <-
 #' and iteratively changing the starter file to set the number of years of data
 #' to exclude. Note that there was a  bug for retrospectives in 3.30.01;
 #' the user should update their model to a newer version of Stock Synthesis to
-#' run retrospectives
+#' run retrospectives. To run retrospective models in parallel, use [future::plan()]
+#' before running `retro()`.
 #'
 #' @param dir Directory where everything takes place.
 #' @param masterdir Deprecated. Use `dir` instead.
@@ -47,8 +48,9 @@ SS_doRetro <-
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #'
-#' @author Ian G. Taylor, James T. Thorson, Kathryn L. Doering
+#' @author Ian G. Taylor, James T. Thorson, Kathryn L. Doering, Kiva L. Oken
 #' @export
+#' @importFrom furrr future_walk
 #' @seealso [SSgetoutput()]
 #' @family run functions
 #' @examples
@@ -71,6 +73,14 @@ SS_doRetro <-
 #' SSplotComparisons(retroSummary,
 #'   endyrvec = endyrvec,
 #'   legendlabels = paste("Data", 0:-5, "years")
+#' )
+#'
+#' ## run retrospectives in parallel
+#' ncores <- parallel::detectCores() - 1
+#' future::plan(future::multisession, workers = ncores)
+#' retro(
+#'   dir = mydir,
+#'   years = 0:-5
 #' )
 #' }
 #'
@@ -107,9 +117,9 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
   check_exe(exe = exe, dir = olddir, verbose = verbose)
 
   # loop over retrospective years
-  for (iyr in seq_along(years)) {
+  furrr::future_walk(seq_along(years), function(iyr) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
-    message("Running retrospective in ", newdir_iyr)
+    if (verbose) message("Running retrospective in ", newdir_iyr)
 
     # copy original input files to retro folder
     copy_SS_inputs(
@@ -145,5 +155,5 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
     if (!file.exists(file.path(newdir_iyr, "Report.sso"))) {
       warning("The retrospective model run failed in ", newdir_iyr)
     }
-  }
+  })
 }

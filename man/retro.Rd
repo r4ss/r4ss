@@ -62,7 +62,8 @@ Do retrospective analyses by creating new directories, copying model files,
 and iteratively changing the starter file to set the number of years of data
 to exclude. Note that there was a  bug for retrospectives in 3.30.01;
 the user should update their model to a newer version of Stock Synthesis to
-run retrospectives
+run retrospectives. To run retrospective models in parallel, use \code{\link[future:plan]{future::plan()}}
+before running \code{retro()}.
 }
 \examples{
 \dontrun{
@@ -85,6 +86,14 @@ SSplotComparisons(retroSummary,
   endyrvec = endyrvec,
   legendlabels = paste("Data", 0:-5, "years")
 )
+
+## run retrospectives in parallel
+ncores <- parallel::detectCores() - 1
+future::plan(future::multisession, workers = ncores)
+retro(
+  dir = mydir,
+  years = 0:-5
+)
 }
 
 }
@@ -100,6 +109,6 @@ Other run functions:
 \code{\link{tune_comps}()}
 }
 \author{
-Ian G. Taylor, James T. Thorson, Kathryn L. Doering
+Ian G. Taylor, James T. Thorson, Kathryn L. Doering, Kiva L. Oken
 }
 \concept{run functions}
