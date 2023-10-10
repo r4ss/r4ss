@@ -2885,7 +2885,11 @@ SS_output <-
     returndat[["exploitation"]] <- exploitation
 
     # catch
-    catch <- match_report_table("CATCH", 1, substr1 = FALSE, header = TRUE)
+    catch <- match_report_table("CATCH", 
+      # comment line added in 3.30.22 needs to be skipped
+      adjust1 = ifelse(rawrep[match_report_line("CATCH") + 1, 1] == "#", 2, 1),
+      substr1 = FALSE, 
+      header = TRUE)
     # if table is present, then do processing of it
     if (!is.null(catch)) {
       # update to new column names used starting with 3.30.13
