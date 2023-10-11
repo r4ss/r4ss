@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Ian G. Taylor
 and Kathryn L. Doering</h4>
             
-            <h4 data-toc-skip class="date">2023-10-10</h4>
+            <h4 data-toc-skip class="date">2023-10-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r4ss/r4ss/blob/HEAD/vignettes/r4ss-intro-vignette.Rmd" class="external-link"><code>vignettes/r4ss-intro-vignette.Rmd</code></a></small>
       <div class="d-none name"><code>r4ss-intro-vignette.Rmd</code></div>
@@ -513,11 +513,14 @@ diagnostic:</p>
 <span>  print <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># send plots to PNG file</span></span>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># don't plot to default graphics device</span></span>
 <span>  plotdir <span class="op">=</span> <span class="va">new_mod_path</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">new_mod_path</span>, <span class="st">"compare2_spawnbio_uncertainty.png"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../../../../../../tmp/Rtmpn8uOuL/compare2_spawnbio_uncertainty.png" width="75%"></p>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">new_mod_path</span>, <span class="st">"compare2_spawnbio_uncertainty.png"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="compare2_spawnbio_uncertainty.png" style="width:75.0%" alt=""><p class="caption">Illustration of the second comparison plot created by
+the <code><a href="../reference/SSplotComparisons.html">SSplotComparisons()</a></code> function.</p>
+</div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate Mohn's rho, a diagnostic value</span></span>
 <span><span class="va">rho_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSmohnsrho.html">SSmohnsrho</a></span><span class="op">(</span></span>
 <span>  summaryoutput <span class="op">=</span> <span class="va">retroSummary</span>,</span>
@@ -537,7 +540,7 @@ times specified by the user. For a stock Synthesis model in a folder
 called <code>jitter_dir</code> jittering starting values can be run 100
 times (note this could take a while as they will be run in
 sequence):</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define a new directory</span></span>
 <span><span class="va">jitter_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">mod_path</span>, <span class="st">"jitter"</span><span class="op">)</span></span>
 <span><span class="co"># copy over the stock synthesis model files to the new directory</span></span>
@@ -579,7 +582,7 @@ and transform it into different tuning methods.</p>
 <p>As an example, we will illustrate how to run Francis tuning on an
 example Stock Synthesis model built into the r4ss package. First, we
 make a copy of the model to avoid changing the original model files</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define a new directory in a temporary location</span></span>
 <span><span class="va">mod_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"simple_mod"</span><span class="op">)</span></span>
 <span><span class="co"># Path to simple model in r4ss and copy files to mod_path</span></span>
@@ -589,7 +592,7 @@ make a copy of the model to avoid changing the original model files</p>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
 <span><span class="co">#&gt; to</span></span>
-<span><span class="co">#&gt;  /tmp/Rtmpn8uOuL/simple_mod</span></span>
+<span><span class="co">#&gt;  /tmp/RtmpNgfHGl/simple_mod</span></span>
 <span><span class="co">#&gt; copying complete</span></span>
 <span><span class="co"># copy over the Report file to provide information about the last run</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span></span>
@@ -607,7 +610,7 @@ make a copy of the model to avoid changing the original model files</p>
 weighting for 1 iteration and allows upweighting. Assume that an
 executable called “ss or ss.exe” is available in the mod_path
 folder.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tune_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tune_comps.html">tune_comps</a></span><span class="op">(</span></span>
 <span>  option <span class="op">=</span> <span class="st">"Francis"</span>,</span>
 <span>  niters_tuning <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -623,7 +626,7 @@ to a new folder, then the <code><a href="../reference/tune_comps.html">tune_comp
 used to add Dirichlet-multinomial parameters (1 for each fleet with
 composition data and for each type of composition data) and re-run the
 model.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create additional temporary directory</span></span>
 <span><span class="va">mod_path_dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"simple_mod_dm"</span><span class="op">)</span></span>
 <span><span class="co"># copy model files</span></span>
