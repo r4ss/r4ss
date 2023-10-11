@@ -376,9 +376,20 @@ SSplotComparisons(retroSummary,
   plot = FALSE, # don't plot to default graphics device
   plotdir = new_mod_path
 )
+```
 
+```{r, eval = FALSE, echo = TRUE}
 knitr::include_graphics(file.path(new_mod_path, "compare2_spawnbio_uncertainty.png"))
 ```
+
+```{r, echo = FALSE, eval = FALSE}
+fls <- list.files(new_mod_path, pattern = "*.png", full.name = TRUE)
+to <- here::here("vignettes")
+file.copy(fls, to = to)
+```
+
+![Illustration of the second comparison plot created by the `SSplotComparisons()`
+function.](compare2_spawnbio_uncertainty.png){ width=75% } 
 
 ```{r, eval = FALSE}
 # calculate Mohn's rho, a diagnostic value
