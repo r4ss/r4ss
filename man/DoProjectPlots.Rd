@@ -2,124 +2,21 @@
 % Please edit documentation in R/RebuildPlot.R
 \name{DoProjectPlots}
 \alias{DoProjectPlots}
-\title{Make plots from Rebuilder program}
+\title{Deprecated function to make plots from Andre Punt's Rebuilder program.}
 \usage{
-DoProjectPlots(
-  dirn = "C:/myfiles/",
-  fileN = c("res.csv"),
-  Titles = "",
-  ncols = 200,
-  Plots = list(1:25),
-  Options = list(c(1:9)),
-  LegLoc = "bottomright",
-  yearmax = -1,
-  Outlines = c(2, 2),
-  OutlineMulti = c(2, 2),
-  AllTraj = c(1, 2, 3, 4),
-  AllInd = c(1, 2, 3, 4, 5, 6, 7),
-  BioType = "Spawning biomass",
-  CatchUnit = "(mt)",
-  BioUnit = "(mt)",
-  BioScalar = 1,
-  ColorsUsed = "default",
-  Labels = "default",
-  pdf = FALSE,
-  pwidth = 6.5,
-  pheight = 5,
-  lwd = 2
-)
+DoProjectPlots(...)
 }
 \arguments{
-\item{dirn}{Directory (or vector of directories) where rebuilder output
-files are stored.}
-
-\item{fileN}{Vector of filenames containing rebuilder output.
-Default=c("res.csv").}
-
-\item{Titles}{Titles for plots when using multiple filenames. Default="".}
-
-\item{ncols}{Number of columns to read in output file (fileN). Default=200.}
-
-\item{Plots}{List to get specific plots (currently 1 through 8).
-Default=list(1:25). If there are multiple files, supply a list of vectors,
-e.g. list(c(1,5),c(2:5))}
-
-\item{Options}{List to get specific strategies in the trajectory plots.
-Default=list(c(1:9)).If there are multiple files, supply a list of vectors,
-e.g. list(c(1,5),c(2:5))}
-
-\item{LegLoc}{Location for the legend (for plots with a legend).
-Default="bottomright".}
-
-\item{yearmax}{Maximum year to show in the plots. Set negative to show all
-years.  Default=-1.}
-
-\item{Outlines}{Number of rows, columns for some of the plots.
-Default=c(2,2).}
-
-\item{OutlineMulti}{Number of rows, columns for other plots.
-Default=c(2,2).}
-
-\item{AllTraj}{Vector of trajectories to show. Default=c(1,2,3,4).}
-
-\item{AllInd}{Vector of individual plots to show. Default=c(1,2,3,4,5,6,7).}
-
-\item{BioType}{Label for biomass type. Default="Spawning biomass".}
-
-\item{CatchUnit}{Units of catch. Default="(mt)".}
-
-\item{BioUnit}{Units of biomass. Default="(mt)".}
-
-\item{BioScalar}{Scalar for biomass plot. Default=1.}
-
-\item{ColorsUsed}{Optional vector for alternative line colors.
-Default="default".}
-
-\item{Labels}{Optional vector for alternative legend labels.
-Default="default".}
-
-\item{pdf}{Option to send figures to pdf file instead of plot window in
-Rgui. Default=FALSE.}
-
-\item{pwidth}{Default width of plots printed to files in units of
-\code{punits}.}
-
-\item{pheight}{Height of plots printed to png files in units of \code{punits}.
-Default is designed to allow two plots per page, with \code{pheight_tall} used
-for plots that work best with a taller format and a single plot per page.}
-
-\item{lwd}{Line width for plot elements.}
+\item{...}{Any arguments associated with the now-deprecated functions.}
 }
 \description{
-Make a set of plots based on output from Andre Punt's Rebuilder program.
-}
-\examples{
-\dontrun{
-# example with one file
-DoProjectPlots(
-  dirn = "c:/myfiles/", Plots = 1:8,
-  Options = c(1, 2, 3, 4, 5, 9), LegLoc = "bottomleft"
-)
-
-# example with multiple files
-# Plots - set to get specific plots
-# Options - set to get specific strategies in the trajectory plots
-
-Titles <- c("Res1", "Res2", "Res3")
-Plots <- list(c(1:9), c(6:7))
-Options <- list(c(7:9, 3), c(5, 7))
-DoProjectPlots(
-  fileN = c("res1.csv", "res2.csv"), Titles = Titles, Plots = Plots,
-  Options = Options, LegLoc = "bottomleft", yearmax = -1,
-  Outlines = c(2, 2), OutlineMulti = c(3, 3), AllTraj = c(1:4),
-  AllInd = c(1:7), BioType = "Spawning numbers", BioUnit = "(lb)",
-  BioScalar = 1000, CatchUnit = "(lb)",
-  ColorsUse = rep(c("red", "blue"), 5),
-  Labels = c("A", "B", "C", "D", "E", "F")
-)
-}
-
+The function has been moved to
+https://github.com/pfmc-assessments/rebuilder.
+This function was rarely used because it was specific to U.S. west
+coast groundfish stocks that were overfished and in a rebuilding
+plan. Therefore there's no need to have it available to all r4ss
+users.
 }
 \author{
-Andre Punt, Ian Taylor
+Ian G. Taylor
 }
