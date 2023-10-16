@@ -2799,8 +2799,8 @@ SS_output <-
     ageselex <- match_report_table("COMBINED_ALK*selL*selA", 1, header = TRUE)
     # new section added in 3.30.22
     maximum_ASEL2 <- match_report_table(
-      "maximum_ASEL2", 
-      adjust1 = 1, 
+      "maximum_ASEL2",
+      adjust1 = 1,
       header = TRUE,
       type.convert = TRUE
     )
