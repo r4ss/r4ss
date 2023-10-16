@@ -56,7 +56,6 @@ Nfleet
 Nsexes
 Nsurveys
 OFL
-Oken
 Param
 Pebesma
 Piner
@@ -66,7 +65,6 @@ Rdata
 Rebuilder
 ReferencePoints
 Rescale
-Rgui
 RunJitter
 SELEX
 SHA
@@ -101,7 +99,6 @@ areanames
 aren
 bluefin
 bodywt
-bottomright
 btarg
 catchability
 cex
@@ -117,7 +114,6 @@ condbase
 containg
 covar
 cpue
-cran
 csv
 ctl
 ctlfile
@@ -143,7 +139,6 @@ endyr
 eol
 et
 exe
-fileN
 filenaming
 fishres
 fleetnames
@@ -212,6 +207,7 @@ ofl
 ogive
 optim
 outfile
+overfished
 overplots
 pak
 param
@@ -221,6 +217,7 @@ parms
 pch
 pearson
 persp
+pfmc
 pkgdown
 pldat
 plindx
