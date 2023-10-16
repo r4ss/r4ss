@@ -2797,6 +2797,14 @@ SS_output <-
     # Age-based selectivity
     # Updated for 3.30.17 which added an additional row in the AGE_SELEX header
     ageselex <- match_report_table("COMBINED_ALK*selL*selA", 1, header = TRUE)
+    # new section added in 3.30.22
+    maximum_ASEL2 <- match_report_table(
+      "maximum_ASEL2", 
+      adjust1 = 1, 
+      header = TRUE,
+      type.convert = TRUE
+    )
+
     if (!is.null(ageselex)) {
       # account for additional header row added in March 2021
       # SS commit: 31ae478d1bae53235e14912d8c5c452a62c71adb
@@ -2823,6 +2831,7 @@ SS_output <-
       ageselex <- type.convert(ageselex, as.is = TRUE)
     }
     returndat[["ageselex"]] <- ageselex
+    returndat[["maximum_ASEL2"]] <- maximum_ASEL2
 
     # EXPLOITATION
     # read first 20 rows to figure out where meta-data ends
