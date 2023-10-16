@@ -87,7 +87,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
         utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
-        Sys.chmod(file.path(dir, "ss3"), "777", use_umask = FALSE)
+        system(paste0("sudo chmod 777 ", dir))
         download_location <- file.path(dir, "ss3")
         message(paste0(
           "The stock synthesis executable for Linux ", tag, " was downloaded to: ",
