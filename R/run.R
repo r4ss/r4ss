@@ -124,7 +124,7 @@ run <- function(dir = getwd(),
           }
         }
       )
-      if (console_output[[1]] == 127) {
+      if (length(console_output) > 0 && console_output[1] == 127) {
         stop(
           "There is a problem with the executable, perhaps due to mismatch ",
           "with the operating system."
