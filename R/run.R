@@ -115,6 +115,12 @@ run <- function(dir = getwd(),
           TRUE
         )
       )
+      if (console_output[[1]] == 127) {
+        stop(
+          "There is a problem with the executable, perhaps due to mismatch ",
+          "with the operating system."
+        )
+      }
       # write console output to file if not shown in console
       if (!show_in_console) {
         writeLines(
