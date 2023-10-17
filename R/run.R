@@ -103,17 +103,26 @@ run <- function(dir = getwd(),
         )
       }
       # call system2() to actually run the model
-      console_output <- system2(
-        command = command,
-        args = extras,
-        stdout = ifelse(show_in_console,
-          "",
-          TRUE
+      console_output <- tryCatch(
+        system2(
+          command = command,
+          args = extras,
+          stdout = ifelse(show_in_console,
+            "",
+            TRUE
+          ),
+          stderr = ""
         ),
-        stderr = ifelse(show_in_console,
-          "",
-          TRUE
-        )
+        error = function(err){
+          if (grepl("'CreateProcess' failed to run", err)) { 
+            stop(
+              "There is a problem with the SS3 executable, perhaps due to mismatch ",
+              "with the operating system."
+            )
+          } else {
+            err
+          }
+        }
       )
       if (console_output[[1]] == 127) {
         stop(
