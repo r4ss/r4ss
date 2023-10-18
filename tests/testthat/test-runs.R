@@ -151,7 +151,7 @@ test_that("jitter runs on simple_small model", {
     # confirm starter file change
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
     expect_equal(starter$jitter_fraction, 0.1)
-    
+
     # check jitter output
     jitter_output <- SSgetoutput(dir.jit, keyvec = c(1:2))
     jitter_summary <- SSsummarize(jitter_output)
