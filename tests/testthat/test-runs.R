@@ -151,6 +151,12 @@ test_that("jitter runs on simple_small model", {
     # confirm starter file change
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
     expect_equal(starter$jitter_fraction, 0.1)
+    
+    # check jitter output
+    jitter_output <- SSgetoutput(dir.jit, keyvec = c(1:2))
+    jitter_summary <- SSsummarize(jitter_output)
+    expect_equal(length(grep("replist", colnames(jitter_summary[["likelihoods"]][1, ]))), 2)
+    expect_equal(length(grep("replist", colnames(jitter_summary[["pars"]]))), 2)
   }
   expect_equal(starter$init_values_src, 0)
   unlink(dir.jit, recursive = TRUE)

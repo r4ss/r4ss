@@ -161,7 +161,7 @@ jitter <- function(dir = getwd(),
   }
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
 
-  # This is not necessary, but maintaining for back compatibility
+  # I'm not sure if this is necessary anymore
   file_increment(0, verbose = verbose)
 
   # check length of Njitter input
@@ -169,17 +169,45 @@ jitter <- function(dir = getwd(),
     Njitter <- 1:Njitter
   }
 
-  likesaved <- furrr::future_map_dbl(Njitter, ~ iterate_jitter(
+  likesaved <- furrr::future_map_dbl(Njitter, function(.x) iterate_jitter(
     i = .x,
     dir = dir,
     printlikes = printlikes,
     exe = exe,
     verbose = verbose,
-    init_values_src = starter[["init_values_src"]],
+    init_values_src = starter[["init_values_src"]], 
     ...
   ))
-
-  # Move original files back (also maintaining for back compatibility)
+  
+  # rename output files and move them to base model directory
+  to_copy <- purrr::map(Njitter, ~ list.files(
+    path = file.path(dir, paste0('jitter', .x)),
+    pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
+  ))
+  
+  new_name <- purrr::imap(to_copy, ~ gsub(
+    pattern = "par",
+    replacement = "par_",
+    x = gsub(
+      pattern = "\\.sso|(\\.par)",
+      replacement = paste0("\\1", .y, ".sso"),
+      x = .x
+    )
+  ))
+  
+  purrr::pwalk(list(Njitter, to_copy, new_name), 
+               function(.i, .x, .y) 
+                 file.copy(
+                   from = file.path(paste0('jitter', .i), .x),
+                   to = .y,
+                   overwrite = TRUE
+                 )
+               )
+  
+  # delete jitter model directory
+  purrr::walk(Njitter, ~ unlink(paste0('jitter', .x), recursive = TRUE))
+  
+  # only necessary if the file_increment line is maintained. 
   pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
   file.copy(
     from = pattern0,
@@ -242,27 +270,6 @@ iterate_jitter <- function(i,
     if (printlikes) {
       message("Likelihood for jitter ", i, " = ", like)
     }
-    # rename output files and move them to base model directory
-    to_copy <- list.files(
-      path = jitter_dir,
-      pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
-    )
-    new_name <- gsub(
-      pattern = "par",
-      replacement = "par_",
-      x = gsub(
-        pattern = "\\.sso|(\\.par)",
-        replacement = paste0("\\1", i, ".sso"),
-        x = to_copy
-      )
-    )
-    file.copy(
-      from = to_copy,
-      to = file.path(dir, new_name),
-      overwrite = TRUE
-    )
-    # delete jitter model directory
-    unlink(jitter_dir, recursive = TRUE)
     return(like)
   } else {
     unlink(jitter_dir, recursive = TRUE)
