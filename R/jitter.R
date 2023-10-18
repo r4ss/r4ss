@@ -169,22 +169,24 @@ jitter <- function(dir = getwd(),
     Njitter <- 1:Njitter
   }
 
-  likesaved <- furrr::future_map_dbl(Njitter, function(.x) iterate_jitter(
-    i = .x,
-    dir = dir,
-    printlikes = printlikes,
-    exe = exe,
-    verbose = verbose,
-    init_values_src = starter[["init_values_src"]], 
-    ...
-  ))
-  
+  likesaved <- furrr::future_map_dbl(Njitter, function(.x) {
+    iterate_jitter(
+      i = .x,
+      dir = dir,
+      printlikes = printlikes,
+      exe = exe,
+      verbose = verbose,
+      init_values_src = starter[["init_values_src"]],
+      ...
+    )
+  })
+
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
-    path = file.path(dir, paste0('jitter', .x)),
+    path = file.path(dir, paste0("jitter", .x)),
     pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
   ))
-  
+
   new_name <- purrr::imap(to_copy, ~ gsub(
     pattern = "par",
     replacement = "par_",
@@ -194,20 +196,22 @@ jitter <- function(dir = getwd(),
       x = .x
     )
   ))
-  
-  purrr::pwalk(list(Njitter, to_copy, new_name), 
-               function(.i, .x, .y) 
-                 file.copy(
-                   from = file.path(paste0('jitter', .i), .x),
-                   to = .y,
-                   overwrite = TRUE
-                 )
-               )
-  
+
+  purrr::pwalk(
+    list(Njitter, to_copy, new_name),
+    function(.i, .x, .y) {
+      file.copy(
+        from = file.path(paste0("jitter", .i), .x),
+        to = .y,
+        overwrite = TRUE
+      )
+    }
+  )
+
   # delete jitter model directory
-  purrr::walk(Njitter, ~ unlink(paste0('jitter', .x), recursive = TRUE))
-  
-  # only necessary if the file_increment line is maintained. 
+  purrr::walk(Njitter, ~ unlink(paste0("jitter", .x), recursive = TRUE))
+
+  # only necessary if the file_increment line is maintained.
   pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
   file.copy(
     from = pattern0,
