@@ -70,13 +70,14 @@ SSexecutivesummary <- function(replist,
                                format = TRUE,
                                match_digits = FALSE,
                                verbose = TRUE) {
-
-  if (plotfolder == "default") {
-    csv.dir <- paste0(replist[["inputs"]][["dir"]], "/tables")
-  }
-  if (plotfolder != "default") {
-    csv.dir <- paste0(plotfolder, "/tables")
-  }
+  csv.dir <- file.path(
+    ifelse(
+      plotfolder == "default",
+      yes = replist[["inputs"]][["dir"]],
+      no = plotfolder
+    ),
+    "tables"
+  )
 
   dir.create(csv.dir, showWarnings = FALSE)
   if (verbose) {
