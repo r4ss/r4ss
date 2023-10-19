@@ -70,10 +70,6 @@ SSexecutivesummary <- function(replist,
                                format = TRUE,
                                match_digits = FALSE,
                                verbose = TRUE) {
-  # Make sure table.dir contains the report file
-  if (is.null(replist)) {
-    stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
-  }
 
   if (plotfolder == "default") {
     csv.dir <- paste0(replist[["inputs"]][["dir"]], "/tables")
