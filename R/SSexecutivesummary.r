@@ -1190,7 +1190,7 @@ SSexecutivesummary <- function(replist,
 
         colnames(natage.f) <- paste0("Age", 0:(length(get.ages) - 1))
         natage.f <- data.frame(Year = startyr:max(fore), natage.f)
-        write.csv(natage.f, file.path(csv.dir, "natage.f.csv"), row.names = FALSE)
+        write.csv(natage.f, file.path(csv.dir, "natage_f.csv"), row.names = FALSE)
       }
     } # end check for detailed output
   } # end check for es_only = TRUE & 'numbers' %in% tables
@@ -1248,7 +1248,7 @@ SSexecutivesummary <- function(replist,
 
         colnames(batage.f) <- paste0("Age", 0:(length(get.ages) - 1))
         batage.f <- data.frame(Year = startyr:max(fore), batage.f)
-        write.csv(batage.f, file.path(csv.dir, "batage.f.csv"), row.names = FALSE)
+        write.csv(batage.f, file.path(csv.dir, "batage_f.csv"), row.names = FALSE)
       }
     } # end check for detailed output
   } # end check for es_only == FALSE & "biomass" %in% tables
