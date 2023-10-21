@@ -1147,7 +1147,12 @@ SSexecutivesummary <- function(replist,
 
     check <- dim(replist[["natage"]])[2]
     if (is.null(check)) {
-      "Detailed age-structure is not in the report file, double check settings in the starter file."
+      if (verbose) {
+        message(
+          "Detailed age-structure is not in the report file, double check",
+          " settings in the starter file."
+        )
+      }
     }
 
     if (!is.null(check)) {
@@ -1205,7 +1210,12 @@ SSexecutivesummary <- function(replist,
 
     check <- dim(replist[["batage"]])[2]
     if (is.null(check)) {
-      "Detailed age-structure is not in the report file, double check settings in the starter file."
+      if (verbose) {
+        message(
+          "Detailed age-structure is not in the report file, double check",
+          " settings in the starter file."
+        )
+      }
     }
 
     if (!is.null(check)) {
