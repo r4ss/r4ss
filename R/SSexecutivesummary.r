@@ -203,10 +203,9 @@ SSexecutivesummary <- function(replist,
   nareas <- replist[["nareas"]]
 
   # ======================================================================
-  # Determine the fleet name and number for fisheries with catch
+  # Determine the fleet name fisheries with catch
   # ======================================================================
   names <- replist[["FleetNames"]]
-  fleet.num <- replist[["fleet_ID"]]
 
   # ======================================================================
   # Find summary age
