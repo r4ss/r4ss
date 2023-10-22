@@ -596,31 +596,33 @@ SSexecutivesummary <- function(replist,
         comma(msy[["dq"]], dig), paste0(comma(msy[["low"]], dig), "\u2013", comma(msy[["high"]], dig))
       ), ncol = 2, byrow = T)
 
-      es.e <- noquote(es.e)
-
-      colnames(es.e) <- c("Estimate", "Interval")
-      rownames(es.e) <- c(
-        paste("Unfished", sb.label),
-        paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
-        "Unfished Recruitment (R0)",
-        paste0(sb.label, " (", years[length(years)], ")"),
-        paste0("Fraction Unfished ", "(", years[length(years)], ")"),
-        paste0("Reference Points Based ", sb_short, btarg, "%"),
-        paste0("Proxy ", sb.label, " ", sb_short, btarg, "%"),
-        paste0("SPR Resulting in ", sb_short, btarg, "%"),
-        paste0("Exploitation Rate Resulting in ", sb_short, btarg, "%"),
-        paste0("Yield with SPR Based On ", sb_short, btarg, "% (mt)"),
-        "Reference Points Based on SPR Proxy for MSY",
-        paste0("Proxy ", sb.label, " (SPR", spr, ")"),
-        paste0("SPR", spr),
-        paste0("Exploitation Rate Corresponding to SPR", spr),
-        paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
-        "Reference Points Based on Estimated MSY Values",
-        paste0(sb.label, " at MSY (", sb_short, " MSY)"),
-        "SPR MSY",
-        "Exploitation Rate Corresponding to SPR MSY",
-        "MSY (mt)"
+      es.e <- cbind(
+        c(
+          paste("Unfished", sb.label),
+          paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
+          "Unfished Recruitment (R0)",
+          paste0(sb.label, " (", years[length(years)], ")"),
+          paste0("Fraction Unfished ", "(", years[length(years)], ")"),
+          paste0("Reference Points Based ", sb_short, btarg, "%"),
+          paste0("Proxy ", sb.label, " ", sb_short, btarg, "%"),
+          paste0("SPR Resulting in ", sb_short, btarg, "%"),
+          paste0("Exploitation Rate Resulting in ", sb_short, btarg, "%"),
+          paste0("Yield with SPR Based On ", sb_short, btarg, "% (mt)"),
+          "Reference Points Based on SPR Proxy for MSY",
+          paste0("Proxy ", sb.label, " (SPR", spr, ")"),
+          paste0("SPR", spr),
+          paste0("Exploitation Rate Corresponding to SPR", spr),
+          paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
+          "Reference Points Based on Estimated MSY Values",
+          paste0(sb.label, " at MSY (", sb_short, " MSY)"),
+          "SPR MSY",
+          "Exploitation Rate Corresponding to SPR MSY",
+          "MSY (mt)"
+        ),
+        es.e
       )
+      es.e <- noquote(es.e)
+      colnames(es.e) <- c("Reference Points", "Estimate", "Interval")
     } else {
       es.e <- matrix(c(
         ssb.virgin[["dq"]], ssb.virgin[["low"]], ssb.virgin[["high"]],
@@ -645,34 +647,36 @@ SSexecutivesummary <- function(replist,
         msy[["dq"]], msy[["low"]], msy[["high"]]
       ), ncol = 3, byrow = T)
 
-      es.e <- noquote(es.e)
-
-      colnames(es.e) <- c("Estimate", "Lower Interval", "Upper Interval")
-      rownames(es.e) <- c(
-        paste("Unfished", sb.label),
-        paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
-        "Unfished Recruitment (R0)",
-        paste0(sb.label, " (", years[length(years)], ")"),
-        paste0("Fraction Unfished ", "(", years[length(years)], ")"),
-        paste0("Reference Points Based ", sb_short, btarg, "\\%"),
-        paste0("Proxy ", sb.label, " ", sb_short, btarg, "\\%"),
-        paste0("SPR Resulting in ", sb_short, btarg, "\\%"),
-        paste0("Exploitation Rate Resulting in ", sb_short, btarg, "\\%"),
-        paste0("Yield with SPR Based On ", sb_short, btarg, "\\% (mt)"),
-        "Reference Points Based on SPR Proxy for MSY",
-        paste0("Proxy ", sb.label, " (SPR", spr, ")"),
-        paste0("SPR", spr),
-        paste0("Exploitation Rate Corresponding to SPR", spr),
-        paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
-        "Reference Points Based on Estimated MSY Values",
-        paste0(sb.label, " at MSY (", sb_short, " MSY)"),
-        "SPR MSY",
-        "Exploitation Rate Corresponding to SPR MSY",
-        "MSY (mt)"
+      es.e <- cbind(
+        c(
+          paste("Unfished", sb.label),
+          paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
+          "Unfished Recruitment (R0)",
+          paste0(sb.label, " (", years[length(years)], ")"),
+          paste0("Fraction Unfished ", "(", years[length(years)], ")"),
+          paste0("Reference Points Based ", sb_short, btarg, "\\%"),
+          paste0("Proxy ", sb.label, " ", sb_short, btarg, "\\%"),
+          paste0("SPR Resulting in ", sb_short, btarg, "\\%"),
+          paste0("Exploitation Rate Resulting in ", sb_short, btarg, "\\%"),
+          paste0("Yield with SPR Based On ", sb_short, btarg, "\\% (mt)"),
+          "Reference Points Based on SPR Proxy for MSY",
+          paste0("Proxy ", sb.label, " (SPR", spr, ")"),
+          paste0("SPR", spr),
+          paste0("Exploitation Rate Corresponding to SPR", spr),
+          paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
+          "Reference Points Based on Estimated MSY Values",
+          paste0(sb.label, " at MSY (", sb_short, " MSY)"),
+          "SPR MSY",
+          "Exploitation Rate Corresponding to SPR MSY",
+          "MSY (mt)"
+        ),
+        es.e
       )
+      es.e <- noquote(es.e)
+      colnames(es.e) <- c("Reference Points", "Estimate", "Lower Interval", "Upper Interval")
     }
     csv_name <- "e_ReferencePoints_ES.csv"
-    write.csv(es.e, file.path(csv.dir, csv_name))
+    write.csv(es.e, file.path(csv.dir, csv_name), row.names = FALSE)
 
     caption <- c(
       caption,
