@@ -205,7 +205,11 @@ SSexecutivesummary <- function(replist,
   # ======================================================================
   # Determine the fleet name fisheries with catch
   # ======================================================================
-  names <- replist[["FleetNames"]]
+  fleetnames <- if (is.null(fleetnames) || fleetnames[1] == "default") {
+    replist[["FleetNames"]]
+  } else {
+    fleetnames
+  }
 
   # ======================================================================
   # Find summary age
@@ -267,11 +271,7 @@ SSexecutivesummary <- function(replist,
       dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
       if (!is.null(dead)) {
         total.dead <- total.dead + dead
-        if (is.null(fleetnames)) {
-          fleet.names <- c(fleet.names, replist[["FleetNames"]][i])
-        } else {
-          fleet.names <- c(fleet.names, fleetnames[i])
-        }
+        fleet.names <- c(fleet.names, fleetnames[i])
       }
     }
     total.catch <- apply(catch, 1, sum)
@@ -1002,7 +1002,7 @@ SSexecutivesummary <- function(replist,
       dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% ind, name]
       if (!is.null(dead)) {
         total.dead <- total.dead + dead
-        fleet.names <- c(fleet.names, replist[["FleetNames"]][i])
+        fleet.names <- c(fleet.names, fleetnames[i])
       }
     }
     total.catch <- apply(catch, 1, sum)
