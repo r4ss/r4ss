@@ -143,6 +143,7 @@ filenaming
 fishres
 fleetnames
 forecastplot
+formatting
 fsu
 fwf
 gdata
@@ -187,6 +188,7 @@ maxrows
 mcmc
 md
 mfrow
+microsoft
 minbthresh
 minnbubble
 mnwgt
@@ -208,6 +210,7 @@ ogive
 optim
 outfile
 overfished
+overfishing
 overplots
 pak
 param
@@ -287,6 +290,7 @@ tolerace
 topleft
 tunings
 unfished
+unformatted
 unparsable
 unsexed
 upweighting
