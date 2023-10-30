@@ -48,7 +48,7 @@ Description: A collection of R functions for use with Stock Synthesis, a
     manipulating files, visualizing model parameterizations, and various
     other common stock assessment tasks.  This version of '{r4ss}' is
     compatible with Stock Synthesis versions 3.24 through 3.30
-    (specifically version 3.30.21 beta, from January 2023). Support for
+    (specifically version 3.30.22, from October 2023). Support for
     3.24 models is only through the core functions for reading output and
     plotting.
 License: GPL-3
