@@ -8,7 +8,7 @@
 #' copy step.
 
 #' @param model Output from SS_output
-#' @template dir
+#' @param dir Directory in which to write the CSV files.
 #' @param writecsv Write results to a CSV file (where the name will have the
 #' format "\[stock\]_2019_SIS_info.csv" where `stock`
 #' is an additional input
@@ -32,17 +32,14 @@
 #' info <- get_SIS_info(model, stock = "SimpleExample")
 #' }
 #'
-get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
-                         stock = "StockName", final_year = 2019, data_year = NULL, sciencecenter = "NWFSC", Mgt_Council = "NA") {
-  # directory to write file
-  if (is.null(dir)) {
-    dir <- model[["inputs"]][["dir"]]
-  }
-
-
-  if (is.null(data_year)) {
-    data_year <- model[["endyr"]]
-  }
+get_SIS_info <- function(model, 
+                         dir = model[["inputs"]][["dir"]], 
+                         writecsv = TRUE,
+                         stock = "StockName", 
+                         final_year = model[["endyr"]] + 1, 
+                         data_year = model[["endyr"]], 
+                         sciencecenter = "NWFSC", 
+                         Mgt_Council = "NA") {
 
   # construct filename
   filename_values <- paste(gsub(" ", "_", stock), final_year,
@@ -220,8 +217,8 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   header_info["Category", "SpawnBio"] <- "Spawners"
   header_info["Primary", "SpawnBio"] <- "Y"
 
-  # numbers vs biomass switch should work for all models
-  # ran using SS after 8/28/20
+  # SpawnOutputUnits indicating numbers vs biomass switch should work for all 
+  # models run using SS3 versions released after August 2020
   if (model[["SpawnOutputUnits"]] == "numbers") {
     header_info["Description", "SpawnBio"] <- "Spawning Output(Eggs)"
     header_info["Unit", "SpawnBio"] <- "XXXX"
