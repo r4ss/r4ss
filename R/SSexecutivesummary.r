@@ -50,17 +50,13 @@
 #'   OFL and ABC values in the projection table, rather than the model
 #'   estimated OFL values. As an example, `c(1500, 1300)` would be viable
 #'   input.
-#' @param format A logical value that controls if the resulting tables are
-#'   formatted (e.g., commas added, confidence/credibility intervals separated
-#'   with an en dash, i.e., "--"). The formatting is intended to create tables
-#'   that can be cut and pasted easily into a word document without additional
-#'   formatting. If the tables are being used by LaTeX/Markdown or other
-#'   documenting software, having formatting turned on prevents the tables from
-#'   being formatted further since the returned objects are no longer numeric.
-#'   The default is `TRUE`.
-#' @param match_digits A logical value specifying if the lower and upper
-#'   interval values for derived quantities and recruitment deviations should
-#'   be reported with the same number of decimal digits as the estimate.
+#' @param format Deprecated as of version 1.49.1 because most users are now
+#'   using LaTeX instead of microsoft word so formatting can be done inside
+#'   `sa4ss::es_table_tex()` rather than here. From now on, only .csv files
+#'   will be available. The default was `TRUE` but is now essentially
+#'   `FALSE`.
+#' @param match_digits Deprecated as of version 1.49.1 because this function
+#'   just returns an unformatted csv file now.
 #' @template verbose
 #'
 #' @return
@@ -84,9 +80,21 @@ SSexecutivesummary <- function(replist,
                                adopted_acl = NULL,
                                forecast_ofl = NULL,
                                forecast_abc = NULL,
-                               format = TRUE,
-                               match_digits = FALSE,
+                               format = lifecycle::deprecated(),
+                               match_digits = lifecycle::deprecated(),
                                verbose = TRUE) {
+  if (!missing(format)) {
+    lifecycle::deprecate_warn(
+      when = "1.49.1",
+      what = "SSexecutivesummary(format)"
+    )
+  }
+  if (!missing(match_digits)) {
+    lifecycle::deprecate_warn(
+      when = "1.49.1",
+      what = "SSexecutivesummary(match_digits)"
+    )
+  }
   csv.dir <- file.path(
     ifelse(
       plotfolder == "default",
@@ -104,14 +112,6 @@ SSexecutivesummary <- function(replist,
   # =============================================================================
   # Function Sections
   # =============================================================================
-  print.numeric <- function(x, digits) {
-    formatC(x, digits = digits, format = "f")
-  }
-
-  comma <- function(x, digits = 0) {
-    formatC(x, big.mark = ",", digits, format = "f")
-  }
-
   # Function to pull values from the read in report file and calculate the confidence intervals
   Get.Values <- function(replist, label, yrs, ci_value, single = FALSE) {
     dat <- replist[["derived_quants"]]
@@ -150,20 +150,6 @@ SSexecutivesummary <- function(replist,
     if (label != "Recr" && label != "Recr_virgin") {
       low <- dq - qnorm(1 - (1 - ci_value) / 2) * sd
       high <- dq + qnorm(1 - (1 - ci_value) / 2) * sd
-    }
-
-    # match the number of decimal digits for the low and high with the estimate
-    # using approach found at
-    # https://stackoverflow.com/questions/5173692/how-to-return-number-of-decimal-places-in-r
-    if (match_digits) {
-      decimalplaces <- function(x) {
-        ifelse(abs(x - round(x)) > .Machine[["double.eps"]]^0.5,
-          nchar(sub("^\\d+\\.", "", sub("0+$", "", as.character(x)))),
-          0
-        )
-      }
-      low <- round(low, decimalplaces(dq))
-      high <- round(high, decimalplaces(dq))
     }
 
     if (!single) {
@@ -278,11 +264,7 @@ SSexecutivesummary <- function(replist,
 
 
     if (sum(total.catch) != sum(total.dead)) {
-      if (format) {
-        es.a <- data.frame(years_minus_final, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-      } else {
-        es.a <- data.frame(years_minus_final, catch, total.catch, total.dead)
-      }
+      es.a <- data.frame(years_minus_final, catch, total.catch, total.dead)
       colnames(es.a) <- c("Year", paste(fleet.names, "(mt)"), "Total Landings (mt)", "Total Dead (mt)")
 
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
@@ -291,11 +273,7 @@ SSexecutivesummary <- function(replist,
         paste0("Recent landings by fleet, total landings summed across fleets, and the total dead catch including discards for the ", add_text, ".")
       )
     } else {
-      if (format) {
-        es.a <- data.frame(years_minus_final, comma(catch, digits = 2), comma(total.catch, digits = 2))
-      } else {
-        es.a <- data.frame(years_minus_final, catch, total.catch)
-      }
+      es.a <- data.frame(years_minus_final, catch, total.catch)
       colnames(es.a) <- c("Year", paste(fleet.names, "(mt)"), "Total Catch (mt)")
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(
@@ -323,23 +301,11 @@ SSexecutivesummary <- function(replist,
       ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
     depl <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
-    for (i in seq_along(years)) {
-      dig <- ifelse(ssb[i, 2] < 100, 1, 0)
-    }
-    if (format) {
-      es.b <- data.frame(
-        years,
-        comma(ssb[["dq"]], digits = dig), paste0(comma(ssb[["low"]], digits = dig), "\u2013", comma(ssb[["high"]], digits = dig)),
-        print(depl[["dq"]], digits = 1), paste0(print(depl[["low"]], digits = 1), "\u2013", print(depl[["high"]], digits = 1))
-      )
-      colnames(es.b) <- c("Year", sb.label, "Interval", "Fraction Unfished", "Interval")
-    } else {
-      es.b <- data.frame(years, ssb[["dq"]], ssb[["low"]], ssb[["high"]], depl[["dq"]], depl[["low"]], depl[["high"]])
-      colnames(es.b) <- c(
-        "Year", sb.label, "Lower Interval", "Upper Interval",
-        "Fraction Unfished", "Lower Interval", "Upper Interval"
-      )
-    }
+    es.b <- data.frame(years, ssb[["dq"]], ssb[["low"]], ssb[["high"]], depl[["dq"]], depl[["low"]], depl[["high"]])
+    colnames(es.b) <- c(
+      "Year", sb.label, "Lower Interval", "Upper Interval",
+      "Fraction Unfished", "Lower Interval", "Upper Interval"
+    )
 
     csv_name <- "b_SSB_ES.csv"
     write.csv(es.b, file = file.path(csv.dir, csv_name), row.names = FALSE)
@@ -407,36 +373,18 @@ SSexecutivesummary <- function(replist,
       # Zero out the sd for years where devs were not estimated
       devs[is.na(devs)] <- 0
 
-      if (format) {
-        devs.out <- data.frame(print(devs[, 1], digits = 3), paste0(print(devs[, 2], digits = 3), "\u2013", print(devs[, 3], digits = 3)))
-      } else {
-        devs.out <- devs
-      }
+      devs.out <- devs
     } else {
-      if (format) {
-        devs.out <- data.frame(rep(0, length(years)), rep(0, length(years)))
-      } else {
-        devs.out <- data.frame(rep(0, length(years)), rep(0, length(years)), rep(0, length(years)))
-      }
+      devs.out <- data.frame(rep(0, length(years)), rep(0, length(years)), rep(0, length(years)))
     }
-    for (i in seq_along(years)) {
-      dig <- ifelse(recruits[i, 2] < 100, 1, 0)
-    }
-    if (format) {
-      es.c <- data.frame(
-        years,
-        comma(recruits[["dq"]], dig), paste0(comma(recruits[["low"]], dig), "\u2013", comma(recruits[["high"]], dig)),
-        devs.out
-      )
-
-      colnames(es.c) <- c("Year", "Recruitment (1,000s)", "Interval", "Recruitment Deviations", "Interval")
-    } else {
-      es.c <- data.frame(years, recruits[["dq"]], recruits[["low"]], recruits[["high"]], devs.out[, 1], devs.out[, 2], devs.out[, 3])
-      colnames(es.c) <- c(
-        "Year", "Recruitment (1,000s)", "Lower Interval", "Upper Interval",
-        "Recruitment Deviations", "Lower Interval", "Upper Interval"
-      )
-    }
+    es.c <- data.frame(
+      years, recruits[["dq"]], recruits[["low"]], recruits[["high"]],
+      devs.out[, 1], devs.out[, 2], devs.out[, 3]
+    )
+    colnames(es.c) <- c(
+      "Year", "Recruitment (1,000s)", "Lower Interval", "Upper Interval",
+      "Recruitment Deviations", "Lower Interval", "Upper Interval"
+    )
     csv_name <- "c_Recr_ES.csv"
     write.csv(es.c, file.path(csv.dir, csv_name), row.names = FALSE)
 
@@ -476,27 +424,15 @@ SSexecutivesummary <- function(replist,
 
     adj.spr <- Get.Values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
     f.value <- Get.Values(replist = replist, label = "F", years_minus_final, ci_value)
-    if (format) {
-      es.d <- data.frame(
-        years_minus_final,
-        print(adj.spr[["dq"]], 2), paste0(print(adj.spr[["low"]], 2), "\u2013", print(adj.spr[["high"]], 2)),
-        print(f.value[["dq"]], 4), paste0(print(f.value[["low"]], 4), "\u2013", print(f.value[["high"]], 4))
-      )
-      colnames(es.d) <- c(
-        "Year", spr_type, "Interval",
-        f_type, "Interval"
-      )
-    } else {
-      es.d <- data.frame(
-        years_minus_final,
-        adj.spr[["dq"]], adj.spr[["low"]], adj.spr[["high"]],
-        f.value[["dq"]], f.value[["low"]], f.value[["high"]]
-      )
-      colnames(es.d) <- c(
-        "Year", spr_label, "Lower Interval", "Upper Interval",
-        f_type, "Lower Interval", "Upper Interval"
-      )
-    }
+    es.d <- data.frame(
+      years_minus_final,
+      adj.spr[["dq"]], adj.spr[["low"]], adj.spr[["high"]],
+      f.value[["dq"]], f.value[["low"]], f.value[["high"]]
+    )
+    colnames(es.d) <- c(
+      "Year", spr_label, "Lower Interval", "Upper Interval",
+      f_type, "Lower Interval", "Upper Interval"
+    )
     csv_name <- "d_SPR_ES.csv"
     write.csv(es.d, file.path(csv.dir, csv_name), row.names = FALSE)
 
@@ -572,109 +508,56 @@ SSexecutivesummary <- function(replist,
       b.msy <- b.msy / sexfactor
     }
 
-    if (format) {
-      es.e <- matrix(c(
-        comma(ssb.virgin[["dq"]], dig), paste0(comma(ssb.virgin[["low"]], dig), "\u2013", comma(ssb.virgin[["high"]], dig)),
-        comma(smry.virgin[["dq"]], dig), paste0(comma(smry.virgin[["low"]], dig), "\u2013", comma(smry.virgin[["high"]], dig)),
-        comma(rec.virgin[["dq"]], dig), paste0(comma(rec.virgin[["low"]], dig), "\u2013", comma(rec.virgin[["high"]], dig)),
-        comma(ssb[["dq"]][dim(ssb)[1]], dig), paste0(comma(ssb[["low"]][dim(ssb)[1]], dig), "\u2013", comma(ssb[["high"]][dim(ssb)[1]], dig)),
-        print(final.depl[["dq"]], 2), paste0(print(final.depl[["low"]], 2), "\u2013", print(final.depl[["high"]], 2)),
-        "", "",
-        comma(b.target[["dq"]], dig), paste0(comma(b.target[["low"]], dig), "\u2013", comma(b.target[["high"]], dig)),
-        print(spr.btarg[["dq"]], 3), paste0(print(spr.btarg[["low"]], 3), "\u2013", print(spr.btarg[["high"]], 3)),
-        print(f.btarg[["dq"]], 3), paste0(print(f.btarg[["low"]], 3), "\u2013", print(f.btarg[["high"]], 3)),
-        comma(yield.btarg[["dq"]], dig), paste0(comma(yield.btarg[["low"]], dig), "\u2013", comma(yield.btarg[["high"]], dig)),
-        "", "",
-        comma(b.spr[["dq"]], dig), paste0(comma(b.spr[["low"]], dig), "\u2013", comma(b.spr[["high"]], dig)),
-        print(spr / 100, 3), " - ",
-        print(f.spr[["dq"]], 3), paste0(print(f.spr[["low"]], 3), "\u2013", print(f.spr[["high"]], 3)),
-        comma(yield.spr[["dq"]], dig), paste0(comma(yield.spr[["low"]], dig), "\u2013", comma(yield.spr[["high"]], dig)),
-        "", "",
-        comma(b.msy[["dq"]], dig), paste0(comma(b.msy[["low"]], dig), "\u2013", comma(b.msy[["high"]], dig)),
-        print(spr.msy[["dq"]], 3), paste0(print(spr.msy[["low"]], 3), "\u2013", print(spr.msy[["high"]], 3)),
-        print(f.msy[["dq"]], 3), paste0(print(f.msy[["low"]], 3), "\u2013", print(f.msy[["high"]], 3)),
-        comma(msy[["dq"]], dig), paste0(comma(msy[["low"]], dig), "\u2013", comma(msy[["high"]], dig))
-      ), ncol = 2, byrow = T)
+    es.e <- matrix(c(
+      ssb.virgin[["dq"]], ssb.virgin[["low"]], ssb.virgin[["high"]],
+      smry.virgin[["dq"]], smry.virgin[["low"]], smry.virgin[["high"]],
+      rec.virgin[["dq"]], rec.virgin[["low"]], rec.virgin[["high"]],
+      ssb[["dq"]][dim(ssb)[1]], ssb[["low"]][dim(ssb)[1]], ssb[["high"]][dim(ssb)[1]],
+      final.depl[["dq"]], final.depl[["low"]], final.depl[["high"]],
+      "", "", "",
+      b.target[["dq"]], b.target[["low"]], b.target[["high"]],
+      spr.btarg[["dq"]], spr.btarg[["low"]], spr.btarg[["high"]],
+      f.btarg[["dq"]], f.btarg[["low"]], f.btarg[["high"]],
+      yield.btarg[["dq"]], yield.btarg[["low"]], yield.btarg[["high"]],
+      "", "", "",
+      b.spr[["dq"]], b.spr[["low"]], b.spr[["high"]],
+      spr / 100, "", "",
+      f.spr[["dq"]], f.spr[["low"]], f.spr[["high"]],
+      yield.spr[["dq"]], yield.spr[["low"]], yield.spr[["high"]],
+      "", "", "",
+      b.msy[["dq"]], b.msy[["low"]], b.msy[["high"]],
+      spr.msy[["dq"]], spr.msy[["low"]], spr.msy[["high"]],
+      f.msy[["dq"]], f.msy[["low"]], f.msy[["high"]],
+      msy[["dq"]], msy[["low"]], msy[["high"]]
+    ), ncol = 3, byrow = T)
 
-      es.e <- cbind(
-        c(
-          paste("Unfished", sb.label),
-          paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
-          "Unfished Recruitment (R0)",
-          paste(years[length(years)], sb.label),
-          paste(years[length(years)], "Fraction Unfished"),
-          paste0("Reference Points Based ", sb_short, btarg, "%"),
-          paste0("Proxy ", sb.label, " ", sb_short, btarg, "%"),
-          paste0("SPR Resulting in ", sb_short, btarg, "%"),
-          paste0("Exploitation Rate Resulting in ", sb_short, btarg, "%"),
-          paste0("Yield with SPR Based On ", sb_short, btarg, "% (mt)"),
-          "Reference Points Based on SPR Proxy for MSY",
-          paste0("Proxy ", sb.label, " (SPR", spr, ")"),
-          paste0("SPR", spr),
-          paste0("Exploitation Rate Corresponding to SPR", spr),
-          paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
-          "Reference Points Based on Estimated MSY Values",
-          paste0(sb.label, " at MSY (", sb_short, " MSY)"),
-          "SPR MSY",
-          "Exploitation Rate Corresponding to SPR MSY",
-          "MSY (mt)"
-        ),
-        es.e
-      )
-      es.e <- noquote(es.e)
-      colnames(es.e) <- c("Reference Points", "Estimate", "Interval")
-    } else {
-      es.e <- matrix(c(
-        ssb.virgin[["dq"]], ssb.virgin[["low"]], ssb.virgin[["high"]],
-        smry.virgin[["dq"]], smry.virgin[["low"]], smry.virgin[["high"]],
-        rec.virgin[["dq"]], rec.virgin[["low"]], rec.virgin[["high"]],
-        ssb[["dq"]][dim(ssb)[1]], ssb[["low"]][dim(ssb)[1]], ssb[["high"]][dim(ssb)[1]],
-        final.depl[["dq"]], final.depl[["low"]], final.depl[["high"]],
-        "", "", "",
-        b.target[["dq"]], b.target[["low"]], b.target[["high"]],
-        spr.btarg[["dq"]], spr.btarg[["low"]], spr.btarg[["high"]],
-        f.btarg[["dq"]], f.btarg[["low"]], f.btarg[["high"]],
-        yield.btarg[["dq"]], yield.btarg[["low"]], yield.btarg[["high"]],
-        "", "", "",
-        b.spr[["dq"]], b.spr[["low"]], b.spr[["high"]],
-        spr / 100, "", "",
-        f.spr[["dq"]], f.spr[["low"]], f.spr[["high"]],
-        yield.spr[["dq"]], yield.spr[["low"]], yield.spr[["high"]],
-        "", "", "",
-        b.msy[["dq"]], b.msy[["low"]], b.msy[["high"]],
-        spr.msy[["dq"]], spr.msy[["low"]], spr.msy[["high"]],
-        f.msy[["dq"]], f.msy[["low"]], f.msy[["high"]],
-        msy[["dq"]], msy[["low"]], msy[["high"]]
-      ), ncol = 3, byrow = T)
-
-      es.e <- cbind(
-        c(
-          paste("Unfished", sb.label),
-          paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
-          "Unfished Recruitment (R0)",
-          paste(years[length(years)], sb.label),
-          paste(years[length(years)], "Fraction Unfished"),
-          paste0("Reference Points Based ", sb_short, btarg, "\\%"),
-          paste0("Proxy ", sb.label, " ", sb_short, btarg, "\\%"),
-          paste0("SPR Resulting in ", sb_short, btarg, "\\%"),
-          paste0("Exploitation Rate Resulting in ", sb_short, btarg, "\\%"),
-          paste0("Yield with SPR Based On ", sb_short, btarg, "\\% (mt)"),
-          "Reference Points Based on SPR Proxy for MSY",
-          paste0("Proxy ", sb.label, " (SPR", spr, ")"),
-          paste0("SPR", spr),
-          paste0("Exploitation Rate Corresponding to SPR", spr),
-          paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
-          "Reference Points Based on Estimated MSY Values",
-          paste0(sb.label, " at MSY (", sb_short, " MSY)"),
-          "SPR MSY",
-          "Exploitation Rate Corresponding to SPR MSY",
-          "MSY (mt)"
-        ),
-        es.e
-      )
-      es.e <- noquote(es.e)
-      colnames(es.e) <- c("Reference Points", "Estimate", "Lower Interval", "Upper Interval")
-    }
+    es.e <- cbind(
+      c(
+        paste("Unfished", sb.label),
+        paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
+        "Unfished Recruitment (R0)",
+        paste(years[length(years)], sb.label),
+        paste(years[length(years)], "Fraction Unfished"),
+        paste0("Reference Points Based ", sb_short, btarg, "\\%"),
+        paste0("Proxy ", sb.label, " ", sb_short, btarg, "\\%"),
+        paste0("SPR Resulting in ", sb_short, btarg, "\\%"),
+        paste0("Exploitation Rate Resulting in ", sb_short, btarg, "\\%"),
+        paste0("Yield with SPR Based On ", sb_short, btarg, "\\% (mt)"),
+        "Reference Points Based on SPR Proxy for MSY",
+        paste0("Proxy ", sb.label, " (SPR", spr, ")"),
+        paste0("SPR", spr),
+        paste0("Exploitation Rate Corresponding to SPR", spr),
+        paste0("Yield with SPR", spr, " at ", sb_short, " SPR (mt)"),
+        "Reference Points Based on Estimated MSY Values",
+        paste0(sb.label, " at MSY (", sb_short, " MSY)"),
+        "SPR MSY",
+        "Exploitation Rate Corresponding to SPR MSY",
+        "MSY (mt)"
+      ),
+      es.e
+    )
+    es.e <- noquote(es.e)
+    colnames(es.e) <- c("Reference Points", "Estimate", "Lower Interval", "Upper Interval")
     csv_name <- "e_ReferencePoints_ES.csv"
     write.csv(es.e, file.path(csv.dir, csv_name), row.names = FALSE)
 
@@ -740,18 +623,16 @@ SSexecutivesummary <- function(replist,
       }
     }
     total.catch <- apply(catch, 1, sum)
-    catch <- comma(total.catch, digits = 2)
-    dead <- comma(total.dead, digits = 2)
 
     if (sum(total.catch) != sum(total.dead)) {
-      es.f <- data.frame(years_minus_final, ofl, abc, acl, catch, dead)
+      es.f <- data.frame(years_minus_final, ofl, abc, acl, total.catch, total.dead)
       colnames(es.f) <- c("Year", "OFL (mt)", "ABC (mt)", "ACL (mt)", "Landings (mt)", "Total Mortality (mt)")
       caption <- c(
         caption,
         "Recent trend in the overfishing limits (OFLs), the acceptable biological catches (ABCs), the annual catch limits (ACLs), the total landings, and total mortality all in metric tons (mt)."
       )
     } else {
-      es.f <- data.frame(years_minus_final, ofl, abc, acl, catch)
+      es.f <- data.frame(years_minus_final, ofl, abc, acl, total.catch)
       colnames(es.f) <- c("Year", "OFL (mt)", "ABC (mt)", "ACL (mt)", "Catch (mt)")
       caption <- c(
         caption,
@@ -798,18 +679,7 @@ SSexecutivesummary <- function(replist,
       smry.fore <- smry.fore + temp
     }
 
-    if (format) {
-      es.g <- data.frame(
-        fore,
-        comma(ofl.fore, 2),
-        comma(abc.fore, 2),
-        comma(smry.fore, 2),
-        comma(ssb.fore, 2),
-        print(depl.fore, 2)
-      )
-    } else {
-      es.g <- data.frame(fore, ofl.fore, abc.fore, smry.fore, ssb.fore, depl.fore)
-    }
+    es.g <- data.frame(fore, ofl.fore, abc.fore, smry.fore, ssb.fore, depl.fore)
 
     colnames(es.g) <- c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Fraction Unfished")
     csv_name <- "g_Projections_ES.csv"
@@ -889,9 +759,6 @@ SSexecutivesummary <- function(replist,
       ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
     depl <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
-    for (i in seq_along(years)) {
-      dig <- ifelse(ssb[i, 2] < 100, 1, 0)
-    }
     recruits <- Get.Values(replist = replist, label = "Recr", years, ci_value)
 
     if (is.null(adopted_ofl)) {
@@ -920,46 +787,26 @@ SSexecutivesummary <- function(replist,
       }
     }
 
-    if (format) {
-      es.i <- matrix(
-        c(
-          c("OFL", ofl),
-          c("ACL", acl),
-          total.bind,
-          c(spr_type, c(print(adj.spr[["dq"]][1:(length(years) - 1)], 2), "NA")),
-          c(f_type, c(print(f.value[["dq"]][1:(length(years) - 1)], 2), "NA")),
-          c(paste0("Age ", smry.age, "+ Biomass (mt)"), comma(smry, dig)),
-          c(sb.label, comma(ssb[["dq"]], dig)),
-          c("Interval", paste0(comma(ssb[["low"]], dig), "\u2013", comma(ssb[["high"]], dig))),
-          c("Recruits", comma(recruits[["dq"]], dig)),
-          c("Interval", paste0(comma(recruits[["low"]], dig), "\u2013", comma(recruits[["high"]], dig))),
-          c("Fraction Unfished", print(depl[["dq"]], 1)),
-          c("Interval", paste0(print(depl[["low"]], 1), "\u2013", print(depl[["high"]], 1)))
-        ),
-        ncol = (length(years) + 1), byrow = T
-      )
-    } else {
-      es.i <- matrix(
-        c(
-          c("OFL", ofl),
-          c("ACL", acl),
-          total.bind,
-          c(spr_type, c(adj.spr[["dq"]][1:(length(years) - 1)], NA)),
-          c(f_type, c(f.value[["dq"]][1:(length(years) - 1)], NA)),
-          c(paste0("Age ", smry.age, "+ Biomass (mt)"), smry),
-          c(sb.label, ssb[["dq"]]),
-          c("Lower Interval", ssb[["low"]]),
-          c("Upper Interval", ssb[["high"]]),
-          c("Recruits", recruits[["dq"]]),
-          c("Lower Interval", recruits[["low"]]),
-          c("Upper Interval", recruits[["high"]]),
-          c("Fraction Unfished", depl[["dq"]]),
-          c("Lower Interval", depl[["low"]]),
-          c("Upper Interval", depl[["high"]])
-        ),
-        ncol = (length(years) + 1), byrow = T
-      )
-    }
+    es.i <- matrix(
+      c(
+        c("OFL", ofl),
+        c("ACL", acl),
+        total.bind,
+        c(spr_type, c(adj.spr[["dq"]][1:(length(years) - 1)], NA)),
+        c(f_type, c(f.value[["dq"]][1:(length(years) - 1)], NA)),
+        c(paste0("Age ", smry.age, "+ Biomass (mt)"), smry),
+        c(sb.label, ssb[["dq"]]),
+        c("Lower Interval", ssb[["low"]]),
+        c("Upper Interval", ssb[["high"]]),
+        c("Recruits", recruits[["dq"]]),
+        c("Lower Interval", recruits[["low"]]),
+        c("Upper Interval", recruits[["high"]]),
+        c("Fraction Unfished", depl[["dq"]]),
+        c("Lower Interval", depl[["low"]]),
+        c("Upper Interval", depl[["high"]])
+      ),
+      ncol = (length(years) + 1), byrow = T
+    )
     es.i <- noquote(es.i)
     colnames(es.i) <- c("Quantity", years)
     csv_name <- "i_Summary_ES.csv"
@@ -1012,20 +859,12 @@ SSexecutivesummary <- function(replist,
     total.catch <- apply(catch, 1, sum)
 
     if (sum(total.catch) != sum(total.dead)) {
-      if (format) {
-        mortality <- data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-      } else {
-        mortality <- data.frame(ind, catch, total.catch, total.dead)
-      }
+      mortality <- data.frame(ind, catch, total.catch, total.dead)
       colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Landings (mt)", "Total Dead (mt)")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(caption, paste0("Landings (mt) by fleet for all years, total landings (mt), and total dead catch (mt) summed by year for the ", add_text, "."))
     } else {
-      if (format) {
-        mortality <- data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
-      } else {
-        mortality <- data.frame(ind, catch, total.catch)
-      }
+      mortality <- data.frame(ind, catch, total.catch)
       colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Catch (mt)")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(
@@ -1110,31 +949,17 @@ SSexecutivesummary <- function(replist,
     # replace placeholders for years with reported SPRratio values
     adj.spr.all[all %in% adj.spr.yrs] <- replist[["derived_quants"]][adj.spr.labels, "Value"]
 
-    if (format) {
-      ts.table <- data.frame(
-        all,
-        comma(tot.bio.all, 0),
-        comma(ssb.all, 0),
-        comma(smry.all, 0),
-        print(depl.all, 3),
-        comma(recruits.all, 0),
-        total.dead.all,
-        print(adj.spr.all, 3),
-        expl.all
-      )
-    } else {
-      ts.table <- data.frame(
-        all,
-        tot.bio.all,
-        ssb.all,
-        smry.all,
-        depl.all,
-        recruits.all,
-        total.dead.all,
-        adj.spr.all,
-        expl.all
-      )
-    }
+    ts.table <- data.frame(
+      all,
+      tot.bio.all,
+      ssb.all,
+      smry.all,
+      depl.all,
+      recruits.all,
+      total.dead.all,
+      adj.spr.all,
+      expl.all
+    )
 
     colnames(ts.table) <- c(
       "Year", "Total Biomass (mt)", sb.label,
