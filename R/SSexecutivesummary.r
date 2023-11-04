@@ -287,11 +287,14 @@ SSexecutivesummary <- function(replist,
   } # end check for 'a' %in% tables
 
   # ======================================================================
-  # ES Table b Spawning Biomass and Depletion
+  # ES Table b Spawning Biomass and Fraction Unfished
   # ======================================================================
   if ("b" %in% tables) {
     if (verbose) {
-      message("Creating Table b: Recent spawning biomass/output and depletion")
+      message(
+        "Creating Table b:",
+        " Recent spawning biomass/output and fraction unfished"
+      )
     }
 
     ssb <- Get.Values(replist = replist, label = sb.name, years, ci_value)
@@ -300,8 +303,13 @@ SSexecutivesummary <- function(replist,
       ssb[["low"]] <- ssb[["low"]] / sexfactor
       ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
-    depl <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
-    es.b <- data.frame(years, ssb[["dq"]], ssb[["low"]], ssb[["high"]], depl[["dq"]], depl[["low"]], depl[["high"]])
+    fraction_unfished <- Get.Values(
+      replist = replist,
+      label = "Bratio",
+      years,
+      ci_value
+    )
+    es.b <- dplyr::full_join(ssb, fraction_unfished, by = "yrs")
     colnames(es.b) <- c(
       "Year", sb.label, "Lower Interval", "Upper Interval",
       "Fraction Unfished", "Lower Interval", "Upper Interval"
@@ -484,7 +492,7 @@ SSexecutivesummary <- function(replist,
       f.spr.name <- "annF_SPR"
     }
 
-    final.depl <- depl[dim(depl)[1], 2:4]
+    final.fraction_unfished <- fraction_unfished[dim(fraction_unfished)[1], 2:4]
     ssb.virgin <- Get.Values(replist = replist, label = sb.unfished, years, ci_value, single = TRUE)
     smry.virgin <- Get.Values(replist = replist, label = smry.unfished, years, ci_value, single = TRUE)
     rec.virgin <- Get.Values(replist = replist, label = recr.unfished, years, ci_value, single = TRUE)
@@ -513,7 +521,7 @@ SSexecutivesummary <- function(replist,
       smry.virgin[["dq"]], smry.virgin[["low"]], smry.virgin[["high"]],
       rec.virgin[["dq"]], rec.virgin[["low"]], rec.virgin[["high"]],
       ssb[["dq"]][dim(ssb)[1]], ssb[["low"]][dim(ssb)[1]], ssb[["high"]][dim(ssb)[1]],
-      final.depl[["dq"]], final.depl[["low"]], final.depl[["high"]],
+      final.fraction_unfished[["dq"]], final.fraction_unfished[["low"]], final.fraction_unfished[["high"]],
       "", "", "",
       b.target[["dq"]], b.target[["low"]], b.target[["high"]],
       spr.btarg[["dq"]], spr.btarg[["low"]], spr.btarg[["high"]],
@@ -650,13 +658,17 @@ SSexecutivesummary <- function(replist,
   # ======================================================================
   if ("g" %in% tables) {
     if (verbose) {
-      message("Creating Table g: Forecast OFLs, ABCs, Spawning Biomass/Output, and Depletion")
+      message(
+        "Creating Table g:",
+        " Forecast OFLs, ABCs, Spawning Biomass/Output, and",
+        " Fraction Unfished"
+      )
     }
 
     ofl.fore <- Get.Values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)$dq
     abc.fore <- Get.Values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)$dq
     ssb.fore <- Get.Values(replist = replist, label = sb.name, yrs = fore, ci_value)$dq
-    depl.fore <- Get.Values(replist = replist, label = "Bratio", yrs = fore, ci_value)$dq
+    fraction_unfished.fore <- Get.Values(replist = replist, label = "Bratio", yrs = fore, ci_value)$dq
 
     if (!is.null(forecast_ofl)) {
       n <- length(forecast_ofl)
@@ -679,7 +691,7 @@ SSexecutivesummary <- function(replist,
       smry.fore <- smry.fore + temp
     }
 
-    es.g <- data.frame(fore, ofl.fore, abc.fore, smry.fore, ssb.fore, depl.fore)
+    es.g <- data.frame(fore, ofl.fore, abc.fore, smry.fore, ssb.fore, fraction_unfished.fore)
 
     colnames(es.g) <- c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Fraction Unfished")
     csv_name <- "g_Projections_ES.csv"
@@ -758,7 +770,7 @@ SSexecutivesummary <- function(replist,
       ssb[["low"]] <- ssb[["low"]] / sexfactor
       ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
-    depl <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
+    fraction_unfished <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
     recruits <- Get.Values(replist = replist, label = "Recr", years, ci_value)
 
     if (is.null(adopted_ofl)) {
@@ -801,9 +813,9 @@ SSexecutivesummary <- function(replist,
         c("Recruits", recruits[["dq"]]),
         c("Lower Interval", recruits[["low"]]),
         c("Upper Interval", recruits[["high"]]),
-        c("Fraction Unfished", depl[["dq"]]),
-        c("Lower Interval", depl[["low"]]),
-        c("Upper Interval", depl[["high"]])
+        c("Fraction Unfished", fraction_unfished[["dq"]]),
+        c("Lower Interval", fraction_unfished[["low"]]),
+        c("Upper Interval", fraction_unfished[["high"]])
       ),
       ncol = (length(years) + 1), byrow = T
     )
@@ -906,7 +918,7 @@ SSexecutivesummary <- function(replist,
       ssb.all <- ssb.all / sexfactor
       ssb.virgin <- ssb.virgin / sexfactor
     }
-    depl.all <- ssb.all / ssb.virgin
+    fraction_unfished.all <- ssb.all / ssb.virgin
 
     total.dead.all <- 0
     for (i in 1:nfleets) {
@@ -954,7 +966,7 @@ SSexecutivesummary <- function(replist,
       tot.bio.all,
       ssb.all,
       smry.all,
-      depl.all,
+      fraction_unfished.all,
       recruits.all,
       total.dead.all,
       adj.spr.all,
