@@ -218,7 +218,7 @@ get_SIS_info <- function(model,
   header_info["Primary", "SpawnBio"] <- "Y"
 
   # SpawnOutputUnits indicating numbers vs biomass switch should work for all 
-  # models run using SS3 versions released after August 2020
+  # models starting with SS3 version 3.30.20 (September 2020)
   if (model[["SpawnOutputUnits"]] == "numbers") {
     header_info["Description", "SpawnBio"] <- "Spawning Output(Eggs)"
     header_info["Unit", "SpawnBio"] <- "XXXX"
