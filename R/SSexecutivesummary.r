@@ -115,10 +115,11 @@ SSexecutivesummary <- function(replist,
     message("CSV files will be written in:\n", csv.dir)
   }
 
-  # =============================================================================
+  # ===========================================================================
   # Function Sections
-  # =============================================================================
-  # Function to pull values from the read in report file and calculate the confidence intervals
+  # ===========================================================================
+  # Function to pull values from the read in report file and calculate the
+  # confidence intervals
   Get.Values <- function(replist, label, yrs, ci_value, single = FALSE) {
     dat <- replist[["derived_quants"]]
     if (label == "Main_RecrDev" || label == "Late_RecrDev" || label == "ForeRecr") {
@@ -176,7 +177,6 @@ SSexecutivesummary <- function(replist,
   # ============================================================================
   # Determine the model version and dimensions of the model
   # ============================================================================
-
   # Need to check how r4ss determines the colname based on SS verion
   sb.name <- "SSB"
 
@@ -213,7 +213,10 @@ SSexecutivesummary <- function(replist,
   # ======================================================================
   if (replist[["nsexes"]] == 1 & !(divide_by_2)) {
     if (verbose) {
-      message("Single sex model - spawning biomass NOT being divided by a factor of 2.")
+      message(
+        "Single sex model - ",
+        "spawning biomass NOT being divided by a factor of 2."
+      )
     }
   }
   nsexes <- replist[["nsexes"]]
@@ -337,7 +340,8 @@ SSexecutivesummary <- function(replist,
   if (verbose) {
     message("Creating Table c: Recent recruitment and deviations")
   }
-  # figure out which years for Main, Late, and Forecast recruitmets overlap the years we want
+  # figure out which years for Main, Late, and Forecast recruitmets overlap
+  # the years we want
   recdevMain <- replist[["parameters"]][substring(replist[["parameters"]][["Label"]], 1, 12) == "Main_RecrDev", 1:3]
   temp <- toupper(substr(recdevMain[["Label"]], 14, 17))
   main.yrs <- as.numeric(temp[temp %in% years])
@@ -825,7 +829,10 @@ SSexecutivesummary <- function(replist,
   # ======================================================================
   if (es_only == TRUE) {
     if (verbose) {
-      message("Skipping catch, timeseries, and numbers-at-age tables because es_only = TRUE")
+      message(
+        "Skipping catch, timeseries, and numbers-at-age tables because ",
+        "es_only = TRUE"
+      )
     }
   }
 
@@ -920,7 +927,10 @@ SSexecutivesummary <- function(replist,
 
     if (verbose) {
       message("Catch includes estimated discards for total dead.")
-      message("Exploitation = Total dead (including discards) divided by the summary biomass.")
+      message(
+        "Exploitation = Total dead (including discards) divided by the ",
+        "summary biomass."
+      )
     }
 
     # SPRratio may not be reported for all years
@@ -962,7 +972,8 @@ SSexecutivesummary <- function(replist,
     colnames(ts.table) <- c(
       "Year", "Total Biomass (mt)", sb.label,
       paste0("Total Biomass ", smry.age, "+ (mt)"), "Fraction Unfished",
-      "Age-0 Recruits (1,000s)", "Total Mortality (mt)", spr_type, "Exploitation Rate"
+      "Age-0 Recruits (1,000s)", "Total Mortality (mt)", spr_type,
+      "Exploitation Rate"
     )
     csv_name <- "TimeSeries.csv"
     write.csv(ts.table, file = file.path(csv.dir, csv_name), row.names = FALSE)
@@ -1131,5 +1142,9 @@ SSexecutivesummary <- function(replist,
 
   out_csv <- cbind(caption, NA, tex.label, filename)
   colnames(out_csv) <- c("caption", "altcaption", "label", "filename")
-  write.csv(out_csv, file = file.path(csv.dir, "table_labels.csv"), row.names = FALSE)
+  write.csv(
+    out_csv,
+    file = file.path(csv.dir, "table_labels.csv"),
+    row.names = FALSE
+  )
 }
