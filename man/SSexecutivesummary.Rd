@@ -12,8 +12,7 @@ SSexecutivesummary(
   fleetnames = NULL,
   add_text = "model area",
   so_units = "millions of eggs",
-  tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
-    "numbers", "biomass", "likes"),
+  tables = lifecycle::deprecated(),
   divide_by_2 = FALSE,
   endyr = NULL,
   adopted_ofl = NULL,
@@ -21,8 +20,8 @@ SSexecutivesummary(
   adopted_acl = NULL,
   forecast_ofl = NULL,
   forecast_abc = NULL,
-  format = TRUE,
-  match_digits = FALSE,
+  format = lifecycle::deprecated(),
+  match_digits = lifecycle::deprecated(),
   verbose = TRUE
 )
 }
@@ -55,11 +54,11 @@ This text will be used in the table captions. If fecundity is equal to
 weight-at-length, then the units are hard-wired to \code{"mt"} regardless of
 what is used within this argument.}
 
-\item{tables}{Which tables to produce, where the default is to save all
-possible tables. Note that some of the tables depend on calculations
-related to previous tables, so only producing some will fail if requested
-on their own (e.g., Table 'f' cannot be created without also creating Table
-'a').}
+\item{tables}{Deprecated as of version 1.49.1 because this function only
+takes 15 seconds to run and overwriting old tables should not be a problem
+if users are modifying the .csv files in a programmatic way. The function
+behavior is the same as the previous default behavior where all tables
+will be created.}
 
 \item{divide_by_2}{A logical allowing the output to be based on single sex
 values based on the new sex specification (-1) in SS3 for single sex
@@ -82,18 +81,14 @@ OFL and ABC values in the projection table, rather than the model
 estimated OFL values. As an example, \code{c(1500, 1300)} would be viable
 input.}
 
-\item{format}{A logical value that controls if the resulting tables are
-formatted (e.g., commas added, confidence/credibility intervals separated
-with an en dash, i.e., "--"). The formatting is intended to create tables
-that can be cut and pasted easily into a word document without additional
-formatting. If the tables are being used by LaTeX/Markdown or other
-documenting software, having formatting turned on prevents the tables from
-being formatted further since the returned objects are no longer numeric.
-The default is \code{TRUE}.}
+\item{format}{Deprecated as of version 1.49.1 because most users are now
+using LaTeX instead of microsoft word so formatting can be done inside
+\code{sa4ss::es_table_tex()} rather than here. From now on, only .csv files
+will be available. The default was \code{TRUE} but is now essentially
+\code{FALSE}.}
 
-\item{match_digits}{A logical value specifying if the lower and upper
-interval values for derived quantities and recruitment deviations should
-be reported with the same number of decimal digits as the estimate.}
+\item{match_digits}{Deprecated as of version 1.49.1 because this function
+just returns an unformatted csv file now.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
