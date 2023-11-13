@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSexecutivesummary.r
 \name{SSexecutivesummary}
 \alias{SSexecutivesummary}
-\title{A function to create a executive summary tables from an SS Report.sso file}
+\title{Create executive summary tables from an SS3 Report.sso file}
 \usage{
 SSexecutivesummary(
   replist,
@@ -12,8 +12,7 @@ SSexecutivesummary(
   fleetnames = NULL,
   add_text = "model area",
   so_units = "millions of eggs",
-  tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
-    "numbers", "biomass", "likes"),
+  tables = lifecycle::deprecated(),
   divide_by_2 = FALSE,
   endyr = NULL,
   adopted_ofl = NULL,
@@ -21,82 +20,89 @@ SSexecutivesummary(
   adopted_acl = NULL,
   forecast_ofl = NULL,
   forecast_abc = NULL,
-  format = TRUE,
-  match_digits = FALSE,
+  format = lifecycle::deprecated(),
+  match_digits = lifecycle::deprecated(),
   verbose = TRUE
 )
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{plotfolder}{Directory where the 'tables' directory will be created.
-The default is the dir location where the Report.sso file is located.}
+\item{plotfolder}{Directory where a new \code{tables} directory will be created,
+which will be used to store the output from this function. The default is
+the dir location where the Report.sso file is located.}
 
-\item{ci_value}{To calculate confidence intervals, default is set at 0.95}
+\item{ci_value}{To calculate confidence intervals, the desired interval must
+be specified. The default is 0.95.}
 
-\item{es_only}{TRUE/FALSE switch to produce only the executive summary tables
-will be produced, default is FALSE which will return all executive summary
-tables, historical catches, and numbers-at-ages}
+\item{es_only}{A logical that specifies if only the executive summary tables
+should be produced. The default is \code{FALSE}, which leads to all executive
+summary and auxiliary tables being produced (see Return).}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
-\item{add_text}{Default "model area". Additional text to add to table captions to indicate a specific model area
-If text is added here it will be combined to add the following text: paste("for the sub-area model", add_text).
-For example, add_text = "South of Point Conception" will add the following text to each caption
-"for the sub-area model South of Point Conception."}
+\item{add_text}{A single character object, where the default is \code{"model area"}. The text will be added to some of the table captions to indicate
+what the results apply to. Besides the default, one could use \code{"base model"}, \code{"sub-area model South of Point Conception."}, etc. Just know
+that the text will be appended to \code{"for the"}, and thus, the default text
+leads to \code{"for the model area."}. Another thing to note is that a full
+stop is not needed but can be used because a full stop is appended to the
+end of the caption if it does not already exist.}
 
-\item{so_units}{Default "millions of eggs". Additional text to add to table captions to indicate the specific units
-that spawning output is reported in. If fecundity is equal to the weight-at-length, the units by default within SS3 is mt.}
+\item{so_units}{A single character object specifying the unit of measurement
+that spawning output is reported in. The default is "millions of eggs".
+This text will be used in the table captions. If fecundity is equal to
+weight-at-length, then the units are hard-wired to \code{"mt"} regardless of
+what is used within this argument.}
 
-\item{tables}{Which tables to produce (default is everything). Note: some
-tables depend on calculations related to previous tables, so will fail
-if requested on their own (e.g. Table 'f' can't be created
-without also creating Table 'a')}
+\item{tables}{Deprecated as of version 1.49.1 because this function only
+takes 15 seconds to run and overwriting old tables should not be a problem
+if users are modifying the .csv files in a programmatic way. The function
+behavior is the same as the previous default behavior where all tables
+will be created.}
 
-\item{divide_by_2}{This will allow the user to calculate single sex values
-based on the new sex specification (-1) in SS for single sex models. Default value is FALSE.
-TRUE will divide by 2.}
+\item{divide_by_2}{A logical allowing the output to be based on single sex
+values based on the new sex specification (-1) in SS3 for single sex
+models. Default value is \code{FALSE}. \code{TRUE} will lead to dividing values by
+2.}
 
-\item{endyr}{Optional input to choose a different ending year for tables
-(could be useful for catch-only updates)}
+\item{endyr}{Optional input to choose a different ending year for tables,
+which could be useful for catch-only updates. The default is \code{NULL}, which
+leads to using the ending year defined in Report.sso.}
 
-\item{adopted_ofl}{Vector of adopted ofl values to be printed in the management performance
-table. This should be a vector of 10 values.}
+\item{adopted_ofl, adopted_abc, adopted_acl}{Vectors of adopted overfishing
+limits (OFL), acceptable biological catch (ABC), and annual catch limits
+(ACL) values to be printed in the management performance table. These
+vectors \emph{MUST BE} be vectors of length 10. The default of \code{NULL} leads to
+the table being filled in with notes that the values need to be changed.}
 
-\item{adopted_abc}{Vector of adopted abc values to be printed in the management performance
-table. This should be a vector of 10 values.}
+\item{forecast_ofl, forecast_abc}{Optional input vectors for management
+adopted OFL and ABC values for table g. These values will overwrite the
+OFL and ABC values in the projection table, rather than the model
+estimated OFL values. As an example, \code{c(1500, 1300)} would be viable
+input.}
 
-\item{adopted_acl}{Vector of adopted acl values to be printed in the management performance
-table. This should be a vector of 10 values.}
+\item{format}{Deprecated as of version 1.49.1 because most users are now
+using LaTeX instead of microsoft word so formatting can be done inside
+\code{sa4ss::es_table_tex()} rather than here. From now on, only .csv files
+will be available. The default was \code{TRUE} but is now essentially
+\code{FALSE}.}
 
-\item{forecast_ofl}{Optional input vector for management adopted OFL values for table g. These values
-will be overwrite the OFL values in the projection table, rather than the model estimated
-OFL values. Example input: c(1500, 1300)}
-
-\item{forecast_abc}{Optional input vector for management adopted ABC values for table g. These values
-will be overwrite the ABC values in the projection table, rather than the model estimated
-ABC values. Example input: c(1500, 1300)}
-
-\item{format}{Logical. Option to control whether tables are formatted (e.g. commas added, CIs separated with "-"). The
-formatting is intended to create tables that can be cut and pasted easily into a word document without additional formatting
-work. If the tables are being used by LaTex/Markdown or other documenting software, having formatting turned on prevents
-the tables from being formatted further since the objects are no longer numeric.}
-
-\item{match_digits}{TRUE/FALSE switch on whether the low and high interval values
-in e_ReferencePoints_ES will be reported with the same number of decimal digits
-as the estimate.}
+\item{match_digits}{Deprecated as of version 1.49.1 because this function
+just returns an unformatted csv file now.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
 \value{
-Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).
+Individual .csv files for each executive summary table and additional tables
+(catch, timeseries, numbers-at-age).
 }
 \description{
-Takes the output from SS_output and creates executive summary tables
-as required by the current Terms of Reference for US West Coast
-groundfish stock. Additionally, historical catches, time-series and numbers-at-ages tables are created.
+Take the output from \code{SS_output()} and create executive summary .csv files
+as required by the current Terms of Reference for U.S. West Coast
+groundfish assessments. Additionally, .csv files of historical catches,
+time-series, and numbers-at-age are created.
 }
 \author{
-Chantel Wetzel
+Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 }
