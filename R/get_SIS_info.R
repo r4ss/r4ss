@@ -38,7 +38,7 @@ get_SIS_info <- function(model,
                          stock = "StockName",
                          final_year = model[["endyr"]] + 1,
                          data_year = model[["endyr"]],
-                         month = "XX",
+                         month,
                          sciencecenter = "NWFSC",
                          Mgt_Council = "PFMC",
                          # SpawnOutputLabel is only available in an r4ss branch https://github.com/r4ss/r4ss/compare/main...spawn_output_label_838
