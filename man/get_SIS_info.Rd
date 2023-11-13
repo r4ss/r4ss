@@ -6,21 +6,28 @@
 \usage{
 get_SIS_info(
   model,
-  dir = NULL,
+  dir = model[["inputs"]][["dir"]],
   writecsv = TRUE,
   stock = "StockName",
-  final_year = 2019,
-  data_year = NULL,
+  final_year = model[["endyr"]] + 1,
+  data_year = model[["endyr"]],
+  month,
   sciencecenter = "NWFSC",
-  Mgt_Council = "NA"
+  Mgt_Council = "PFMC",
+  SpawnOutputLabel = model[["SpawnOutputLabel"]],
+  contact = "first.last@noaa.gov",
+  review_result = "XXXX",
+  catch_input_data = "XXXX",
+  abundance_input_data = "XXXX",
+  bio_input_data = "XXXX",
+  comp_input_data = "XXXX",
+  ecosystem_linkage = "XXXX"
 )
 }
 \arguments{
 \item{model}{Output from SS_output}
 
-\item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+\item{dir}{Directory in which to write the CSV files.}
 
 \item{writecsv}{Write results to a CSV file (where the name will have the
 format "[stock]_2019_SIS_info.csv" where \code{stock}

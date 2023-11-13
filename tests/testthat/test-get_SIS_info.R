@@ -18,9 +18,9 @@ simple_small <- SS_output(file.path(example_path, "simple_small"),
 )
 
 # run function
-get_SIS_info(simple_small, dir = temp_path)
+get_SIS_info(simple_small, dir = temp_path, month = 1)
 
-test_that("SSexecutivesummary() runs on simple_small model", {
+test_that("get_SIS_info() runs on simple_small model", {
   expect_true("StockName_2023_SIS_info_values.csv" %in% dir(temp_path))
   expect_true("StockName_2023_SIS_info_timeseries.csv" %in% dir(temp_path))
 })
