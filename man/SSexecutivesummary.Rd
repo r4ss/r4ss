@@ -104,5 +104,5 @@ groundfish assessments. Additionally, .csv files of historical catches,
 time-series, and numbers-at-age are created.
 }
 \author{
-Chantel Wetzel
+Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 }

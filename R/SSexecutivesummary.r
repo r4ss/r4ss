@@ -62,7 +62,7 @@
 #' @return
 #' Individual .csv files for each executive summary table and additional tables
 #' (catch, timeseries, numbers-at-age).
-#' @author Chantel Wetzel
+#' @author Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 #' @export
 #'
 SSexecutivesummary <- function(replist,
