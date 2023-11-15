@@ -9,6 +9,7 @@ get_SIS_info(
   dir = model[["inputs"]][["dir"]],
   writecsv = TRUE,
   stock = "StockName",
+  assessment_type = "Operational",
   final_year = model[["endyr"]] + 1,
   data_year = model[["endyr"]],
   month,
@@ -35,6 +36,9 @@ is an additional input}
 
 \item{stock}{String to prepend id info to filename for CSV file}
 
+\item{assessment_type}{"Operational" or "Stock Monitoring Updates"
+(or perhaps additional options as well)}
+
 \item{final_year}{Year of assessment and reference points
 (typically will be \code{model[["endyr"]] + 1})}
 
@@ -42,8 +46,28 @@ is an additional input}
 
 \item{sciencecenter}{Origin of assessment report}
 
-\item{Mgt_Council}{Council jurisdiction. Currently the only option
-outside of the default is Gulf of Mexico (\code{"GM"})}
+\item{Mgt_Council}{Council jurisdiction. Currently only
+\code{"PFMC"} (Pacific Fishery Management Council) and \code{"GM"}
+(Gulf of Mexico) are the only options.}
+
+\item{SpawnOutputLabel}{Units for spawning output if not in mt
+(e.g. "Millions of eggs"). In the future this can be included in the
+\code{model} list created by \code{r4ss::SS_output()}}
+
+\item{contact}{Name and/or email address for lead author.}
+
+\item{review_result}{Something like "Full Acceptance"}
+
+\item{catch_input_data}{Qualitative category for catch input data}
+
+\item{abundance_input_data}{Qualitative category for abundance input data}
+
+\item{bio_input_data}{Qualitative category for biological input data}
+
+\item{comp_input_data}{Qualitative category for size/age composition input
+data}
+
+\item{ecosystem_linkage}{Qualitative category for ecosystem linkage}
 }
 \description{
 Processes model results contained in the list created by
@@ -55,12 +79,11 @@ copy step.
 }
 \examples{
 \dontrun{
-# directory with the model output
-mydir <- file.path(path.package("r4ss"), "extdata/simple_small")
 # read the model output
-model <- SS_output(dir = mydir)
+model <- SS_output(dir = system.file("extdata/simple_small", package = "r4ss"),
+  printstats = FALSE, verbose = FALSE)
 # run get_SIS_info:
-info <- get_SIS_info(model, stock = "SimpleExample")
+info <- get_SIS_info(model, stock = "SimpleExample", month = 1)
 }
 
 }

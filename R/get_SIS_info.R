@@ -13,35 +13,53 @@
 #' format "\[stock\]_2019_SIS_info.csv" where `stock`
 #' is an additional input
 #' @param stock String to prepend id info to filename for CSV file
+#' @param assessment_type "Operational" or "Stock Monitoring Updates"
+#' (or perhaps additional options as well)
 #' @param final_year Year of assessment and reference points
 #' (typically will be `model[["endyr"]] + 1`)
 #' @param data_year Last year of of timeseries data
 #' @param sciencecenter Origin of assessment report
-#' @param Mgt_Council Council jurisdiction. Currently the only option
-#' outside of the default is Gulf of Mexico (`"GM"`)
+#' @param Mgt_Council Council jurisdiction. Currently only
+#' `"PFMC"` (Pacific Fishery Management Council) and `"GM"`
+#' (Gulf of Mexico) are the only options.
+#' @param SpawnOutputLabel Units for spawning output if not in mt
+#' (e.g. "Millions of eggs"). In the future this can be included in the
+#' `model` list created by `r4ss::SS_output()`
+#' @param contact Name and/or email address for lead author.
+#' @param review_result Something like "Full Acceptance"
+#' @param catch_input_data Qualitative category for catch input data
+#' @param abundance_input_data Qualitative category for abundance input data
+#' @param bio_input_data Qualitative category for biological input data
+#' @param comp_input_data Qualitative category for size/age composition input
+#' data
+#' @param ecosystem_linkage Qualitative category for ecosystem linkage
 #' @author Ian G. Taylor, Andi Stephens, LaTreese S. Denson
 #' @export
 #' @seealso [SS_output()]
 #' @examples
 #' \dontrun{
-#' # directory with the model output
-#' mydir <- file.path(path.package("r4ss"), "extdata/simple_small")
 #' # read the model output
-#' model <- SS_output(dir = mydir)
+#' model <- SS_output(
+#'   dir = system.file("extdata/simple_small", package = "r4ss"),
+#'   printstats = FALSE, verbose = FALSE
+#' )
 #' # run get_SIS_info:
-#' info <- get_SIS_info(model, stock = "SimpleExample")
+#' info <- get_SIS_info(model, stock = "SimpleExample", month = 1)
 #' }
 #'
 get_SIS_info <- function(model,
                          dir = model[["inputs"]][["dir"]],
                          writecsv = TRUE,
                          stock = "StockName",
+                         assessment_type = "Operational",
                          final_year = model[["endyr"]] + 1,
                          data_year = model[["endyr"]],
                          month,
                          sciencecenter = "NWFSC",
                          Mgt_Council = "PFMC",
-                         # SpawnOutputLabel is only available in an r4ss branch https://github.com/r4ss/r4ss/compare/main...spawn_output_label_838
+                         # SpawnOutputLabel is only available in an r4ss branch
+                         # https://github.com/r4ss/r4ss/compare/main...spawn_output_label_838
+                         # so will be NULL for most models, which is dealt with later
                          SpawnOutputLabel = model[["SpawnOutputLabel"]],
                          contact = "first.last@noaa.gov",
                          review_result = "XXXX",
@@ -103,10 +121,6 @@ get_SIS_info <- function(model,
 
   # subset for years of interest and replace potential bad 0 value with NA
   ts_tab <- ts_tab[ts_tab[["Year"]] %in% years, ]
-  # if(ts_tab[["Total_Bio"]][ts_tab[["Year"]] == final_year] == 0){
-  #  ts_tab[["Total_Bio"]][ts_tab[["Year"]] == final_year] <- NA
-  # }
-
 
   # calculate total dead catch (aggregated across fleets)
   dead_bio_columns <- grep("dead(B)", names(model[["timeseries"]]), fixed = TRUE)
@@ -145,35 +159,29 @@ get_SIS_info <- function(model,
   catch_tab[, -1] <- round(catch_tab[, -1], 2)
   rownames(catch_tab) <- 1:nrow(catch_tab)
 
-  # filter years and set forecast values to NA
+  # filter years
   catch_tab <- catch_tab[catch_tab[["Year"]] %in% years, ]
-  # catch_tab[catch_tab[["Year"]] == final_year, -1] <- NA
 
   # calculate proxy-F values (e.g. exploitation rate)
   F_tab <- data.frame(
     Year = years,
-    Exploit_rate = round(model[["derived_quants"]][paste0("F_", years), "Value"], 4)
+    F_values = round(model[["derived_quants"]][paste0("F_", years), "Value"], 4)
   )
-  if (length(grep("Exploit(bio)", model[["F_report_basis"]], fixed = TRUE)) == 0) {
-    warning("Problem with units of F, value is not exploitation rate")
-  }
-  # filter years and set forecast values to NA
+  # filter years
   F_tab <- F_tab[F_tab[["Year"]] %in% years, ]
-  # F_tab[F_tab[["Year"]] == final_year, -1] <- NA
 
   # SPR-related quantities
   spr_tab <- model[["sprseries"]][, c("Yr", "SPR_report", "Tot_Exploit", "SPR")]
   names(spr_tab)[1] <- "Year"
   if (model[["SPRratioLabel"]] != "1-SPR") {
     # add 1-SPR if it does not exist as SPR_report already
-    spr_tab$"1-SPR" <- 1 - spr_tab[["SPR"]]
+    spr_tab[["1-SPR"]] <- 1 - spr_tab[["SPR"]]
     spr_tab <- spr_tab[, c("Year", "SPR_report", "Tot_Exploit", "1-SPR")]
   } else {
     spr_tab <- spr_tab[, c("Year", "SPR_report", "Tot_Exploit")]
   }
-  # filter years and set forecast values to NA
+  # filter years
   spr_tab <- spr_tab[spr_tab[["Year"]] %in% years, ]
-  # spr_tab[spr_tab[["Year"]] == final_year, -1] <- NA
   spr_tab[, -1] <- round(spr_tab[, -1], 3)
 
   # merge columns from time series, catch, F, and SPR together
@@ -187,9 +195,21 @@ get_SIS_info <- function(model,
   }
 
   # replace NA with 0 in exploitation rate for years with 0 catch
-  tab[["Exploit_rate"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
+  tab[["F_values"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
   # again for 8th column (SPR-ratio)
   tab[["SPR_report"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
+
+  # replace values with NA for years beyond the data years
+  if (Mgt_Council == "PFMC") {
+    tab[tab[["Year"]] > data_year, "Catch_bio"] <- NA
+    tab[tab[["Year"]] > data_year, "Catch_n"] <- NA
+    tab[tab[["Year"]] > data_year, "F_values"] <- NA
+    tab[tab[["Year"]] > data_year, "SPR_report"] <- NA
+    tab[tab[["Year"]] > data_year, "Tot_Exploit"] <- NA
+    if ("1-SPR" %in% names(tab)) {
+      tab[tab[["Year"]] > data_year, "1-SPR"] <- NA
+    }
+  }
 
   # age for summary biomass
   summary_age <- model[["summary_age"]]
@@ -268,16 +288,29 @@ get_SIS_info <- function(model,
   header_info["Description", "Catch_n"] <- "Modeled Total Catch"
   header_info["Unit", "Catch_n"] <- "Number x 1000"
 
-  # info on Exploitation rate (whatever is chosen for the F_YYYY quants)
-  header_info["Category", "Exploit_rate"] <- "Fmort"
-  header_info["Primary", "Exploit_rate"] <-
-    dplyr::case_when(
-      Mgt_Council == "PFMC" ~ "N", # not used as primary exploitation rate by PFMC
-      Mgt_Council == "GM" ~ "XXXX", # fill in value here
-      TRUE ~ "XXXX" # any other Mgt_Council
+  # check for redundancy between F_values and Tot_Exploit columns
+  if (model[["F_report_basis"]] == "_abs_F;_with_F=Exploit(bio)") {
+    message(
+      "F_YYYY values are redundant with Tot_Exploit column in SPR series, ",
+      "excluding from output for SIS."
     )
-  header_info["Description", "Exploit_rate"] <- strsplit(model[["F_report_basis"]], ";")[[1]][1]
-  header_info["Unit", "Exploit_rate"] <- "Rate"
+    # remove redundant F_values column
+    header_info <- header_info |> dplyr::select(-F_values)
+    tab <- tab |> dplyr::select(-F_values)
+  } else {
+    # info on Exploitation rate (whatever is chosen for the F_YYYY quants)
+    header_info["Category", "F_values"] <- "Fmort"
+    header_info["Primary", "F_values"] <-
+      dplyr::case_when(
+        Mgt_Council == "PFMC" ~ "N", # not used as primary exploitation rate by PFMC
+        Mgt_Council == "GM" ~ "XXXX", # fill in value here
+        TRUE ~ "XXXX" # any other Mgt_Council
+      )
+    # clean up F_report_basis (e.g. "_abs_F;_with_F=sum(full_Fs)" to "abs F; with F=sum(full Fs)")
+    header_info["Description", "F_values"] <- gsub("_", " ", gsub("^_", "", model[["F_report_basis"]]))
+
+    header_info["Unit", "F_values"] <- "Rate"
+  }
 
   # info on total Exploitation rate (catch / summary bio)
   header_info["Category", "Tot_Exploit"] <- "Fmort"
@@ -419,7 +452,7 @@ get_SIS_info <- function(model,
 
   if (Mgt_Council == "PFMC") {
     best_F_column <- "1-SPR"
-    if(!best_F_column %in% names(tab)) {
+    if (!best_F_column %in% names(tab)) {
       best_F_column <- "SPR_report"
     }
     Best_F_Est <- tab[tab[["Year"]] == data_year, best_F_column]
@@ -429,7 +462,7 @@ get_SIS_info <- function(model,
 
   # GM Settings: Best F estimate = geometric mean of last three data years
   if (Mgt_Council == "GM") {
-    Best_F_Est <- round(mean(tab$"Exploit_rate"[tab[["Year"]] %in% c((data_year - 2):data_year)]), 2)
+    Best_F_Est <- round(mean(tab[["F_values"]][tab[["Year"]] %in% c((data_year - 2):data_year)]), 2)
     F_basis <- paste0("Total_Catch/Total_Biomass_Geometric_Mean_", (data_year - 2), "-", data_year)
     F_unit <- "Exploitation Rate"
   }
@@ -456,7 +489,7 @@ get_SIS_info <- function(model,
     paste0("SAIP:,", "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"),
     "",
     paste0("Stock / Entity Name,", stock),
-    paste0("Assessment Type,", "Operational"),
+    paste0("Assessment Type,", assessment_type),
     paste0("Ensemble/Multimodel Approach,", "NA"),
     # sprintf command in line below converts month 9 to "09" (for example)
     paste0("Asmt Year and Month,", final_year, ".", sprintf("%02d", month)),
@@ -493,7 +526,6 @@ get_SIS_info <- function(model,
     paste0("F/F_target, ", ""),
     "",
     "Biomass Estimates",
-    paste0("[Unfished Spawning Biomass], ", round(model[["SBzero"]], 1)), # no longer a requested value
     paste0("B Year, ", B_year),
     paste0("Min B. Estimate, ", ""),
     paste0("Max. B Estimate, ", ""),
