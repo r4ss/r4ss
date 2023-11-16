@@ -4,7 +4,7 @@
 \alias{check_exe}
 \title{Find location of executable within path or specified directory}
 \usage{
-check_exe(exe = "ss", dir = getwd(), verbose = FALSE)
+check_exe(exe = "ss3", dir = getwd(), verbose = FALSE)
 }
 \arguments{
 \item{exe}{Executable name. Can be just the name of the executable
@@ -43,7 +43,7 @@ The \code{check_exe()} function first checks the specified
 directory \code{dir} for the specified SS3 executable name and returns the
 file's location if found. If it is not found in the specified
 directory, then it checks the PATH. Linux systems may have an
-existing executable utility \verb{/usr/sbin/ss} in the path. If \code{exe = "ss"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
+existing executable utility \verb{/usr/sbin/ss} in the path. If \code{exe = "ss3"} and this file is found by \verb{check_exe()``, it will be ignored based on the smaller file size relative to the SS3 executable. Linux users who want to use the workflow of having SS3 in their PATH should name the SS3 file something besides }ss\verb{, such as }ss3\code{or}ss_linux`.
 }
 \details{
 Check that the Stock Synthesis executable name provided in \code{exe},
@@ -52,7 +52,7 @@ location specified by \code{dir} or in the path.
 }
 \examples{
 \dontrun{
-# check for executable called "ss" or "ss.exe" in the PATH
+# check for executable called "ss3" or "ss3.exe" in the PATH
 check_exe()
 # check for executable with a different name in the PATH
 check_exe(exe = "ss_win")

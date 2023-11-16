@@ -7,7 +7,7 @@
 #' @param version A character string of the executable version tag to download
 #' (e.g.'v3.30.20' or 'v3.30.18'). A list of tags is available at
 #' https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
-#' @return A string of the full file path to the downloaded executable
+#' @return A string of the file path to the downloaded executable
 #' @author Elizabeth F. Gugliotti
 #' @export
 #' @import gh
@@ -45,8 +45,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
 
   if (is.null(dir)) {
     dir <- getwd()
-    message("No directory provided, the executable will be downloaded to the
-            working directory")
+    message("No directory provided, the executable will be downloaded to the working directory")
   }
 
   if (!dir.exists(dir)) {
@@ -54,7 +53,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
   }
 
   if (.Platform[["OS.type"]] == "windows") {
-    if (.Platform[["r_arch"]] == "x32") {
+    if (.Platform[["r_arch"]] == "x32") { # nocov start
       warning(
         "Stock Synthesis binary is not available for 32-bit ",
         .Platform[["OS.type"]], "."
@@ -78,6 +77,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
       download_location <- file.path(dir, "ss3")
 
+
       message(paste0(
         "The stock synthesis executable for Mac ", tag, " was downloaded to: ",
         download_location
@@ -87,16 +87,18 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
         utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
+        Sys.chmod(paths = dir, mode = "0777")
         download_location <- file.path(dir, "ss3")
         message(paste0(
           "The stock synthesis executable for Linux ", tag, " was downloaded to: ",
           download_location
         ))
       } else {
-        warning(
+        stop(
           "The Stock Synthesis executable is not available for ", R.version[["os"]], "."
-        )
+        ) # nocov end
       }
     }
   }
+  return(invisible(download_location))
 }

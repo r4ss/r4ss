@@ -13,7 +13,7 @@ tune_comps(
   niters_tuning = 0,
   init_run = FALSE,
   dir = getwd(),
-  exe = "ss",
+  exe = "ss3",
   model = lifecycle::deprecated(),
   extras = "",
   allow_up_tuning = FALSE,
@@ -223,7 +223,7 @@ tune_info <- tune_comps(
   niters_tuning = 1,
   dir = mod_path,
   allow_up_tuning = TRUE,
-  exe = "ss",
+  exe = "ss3",
   verbose = FALSE
 )
 # see the tuning table, and the weights applied to the model.

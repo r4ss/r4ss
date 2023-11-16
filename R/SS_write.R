@@ -52,7 +52,7 @@ SS_write <- function(inputlist,
       if (verbose) {
         message("Creating new directory: ", dir)
       }
-      dir.create(dir)
+      dir.create(dir, recursive = TRUE)
     }
   }
 

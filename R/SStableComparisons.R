@@ -45,8 +45,8 @@ SStableComparisons <- function(summaryoutput,
                                  "L_at_Amax",
                                  "VonBert_K",
                                  "SSB_Virg",
-                                 "Bratio_2021",
-                                 "SPRratio_2020"
+                                 "Bratio_2023",
+                                 "SPRratio_2022"
                                ),
                                digits = NULL,
                                modelnames = "default",
@@ -117,6 +117,7 @@ SStableComparisons <- function(summaryoutput,
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")
         }
         if (substring(name, 1, 3) %in% c("SPB", "SSB") &
+          all(!is.na(summaryoutput[["SpawnOutputUnits"]])) &&
           all(summaryoutput[["SpawnOutputUnits"]] == "biomass")) {
           vals[1, -1] <- round(vals[1, -1] / 1e3, 3)
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")
@@ -192,6 +193,7 @@ SStableComparisons <- function(summaryoutput,
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")
         }
         if (substring(name, 1, 3) %in% c("SPB", "SSB") &
+          all(!is.na(summaryoutput[["SpawnOutputUnits"]])) &&
           all(summaryoutput[["SpawnOutputUnits"]] == "biomass")) {
           vals[1, -1] <- round(vals[1, -1] / 1e3, 3)
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")

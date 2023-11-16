@@ -218,17 +218,17 @@ SS_output <-
     if (length(parfile) > 1) {
       parinfo <- file.info(file.path(dir, parfile))
       parfile <- parfile[!parinfo[["isdir"]] & # exclude directories
-        parinfo$mtime == max(parinfo[["mtime"]][!parinfo[["isdir"]]])] # pick most recently changed file
-    
-      # if there are still duplicates (with the same 'mtime' value), 
+        parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])] # pick most recently changed file
+
+      # if there are still duplicates (with the same 'mtime' value),
       # choose anything called "ss.par"
-      if (length(parfile) > 1 && any(parfile == "ss.par")){    
+      if (length(parfile) > 1 && any(parfile == "ss.par")) {
         parfile <- "ss.par"
-      } 
+      }
       # if there are still duplicates after all that, choose the first one
-      if (length(parfile) > 1){    
+      if (length(parfile) > 1) {
         parfile <- parfile[1]
-      } 
+      }
       if (verbose) {
         message(
           "Multiple files in directory match pattern *.par\n",
@@ -2800,6 +2800,14 @@ SS_output <-
     # Age-based selectivity
     # Updated for 3.30.17 which added an additional row in the AGE_SELEX header
     ageselex <- match_report_table("COMBINED_ALK*selL*selA", 1, header = TRUE)
+    # new section added in 3.30.22
+    maximum_ASEL2 <- match_report_table(
+      "maximum_ASEL2",
+      adjust1 = 1,
+      header = TRUE,
+      type.convert = TRUE
+    )
+
     if (!is.null(ageselex)) {
       # account for additional header row added in March 2021
       # SS commit: 31ae478d1bae53235e14912d8c5c452a62c71adb
@@ -2826,6 +2834,7 @@ SS_output <-
       ageselex <- type.convert(ageselex, as.is = TRUE)
     }
     returndat[["ageselex"]] <- ageselex
+    returndat[["maximum_ASEL2"]] <- maximum_ASEL2
 
     # EXPLOITATION
     # read first 20 rows to figure out where meta-data ends
@@ -2888,7 +2897,12 @@ SS_output <-
     returndat[["exploitation"]] <- exploitation
 
     # catch
-    catch <- match_report_table("CATCH", 1, substr1 = FALSE, header = TRUE)
+    catch <- match_report_table("CATCH",
+      # comment line added in 3.30.22 needs to be skipped
+      adjust1 = ifelse(rawrep[match_report_line("CATCH") + 1, 1] == "#", 2, 1),
+      substr1 = FALSE,
+      header = TRUE
+    )
     # if table is present, then do processing of it
     if (!is.null(catch)) {
       # update to new column names used starting with 3.30.13

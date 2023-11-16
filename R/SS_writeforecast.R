@@ -107,9 +107,26 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
         writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF")
         writeLines(paste(paste(mylist[["Fcast_years"]], collapse = " ")))
       } else {
-        writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)")
-        writeLines(paste(paste(mylist[["Fcast_years"]], collapse = " ")))
-        wl("Fcast_selex")
+        if (is.vector(mylist[["Fcast_years"]])) {
+          # old format as a single vector
+          writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)")
+          writeLines(paste(paste(mylist[["Fcast_years"]], collapse = " ")))
+          wl("Fcast_selex")
+        }
+        if (is.data.frame(mylist[["Fcast_years"]])) {
+          # new (3.30.22) format as a matrix
+          writeLines("-12345  # code to invoke new format for expanded fcast year controls")
+          writeLines("# biology and selectivity vectors are updated annually in the forecast according to timevary parameters, so check end year of blocks and dev vectors")
+          writeLines("# input in this section directs creation of averages over historical years to override any time_vary changes")
+          writeLines("#_Types implemented so far: 1=M, 4=recr_dist, 5=migration, 10=selectivity, 11=rel. F, recruitment")
+          writeLines("#_list: type, method (1, 2), start year, end year")
+          writeLines("#_Terminate with -9999 for type")
+          writeLines("#_ year input can be actual year, or values <=0 to be rel. styr or endyr")
+          writeLines("#_Method = 0 (or omitted) means continue using time_vary parms; 1 means to use average of derived factor")
+
+          printdf(mylist[["Fcast_years"]])
+          writeLines("-9999 0 0 0")
+        }
       }
       wl("ControlRuleMethod")
       wl("BforconstantF")
@@ -137,17 +154,15 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       wl("fcast_rec_option")
       wl("fcast_rec_val")
       # new option added in 3.30.22 to forecast using average values
-      if (!is.null(mylist[["Forecast_loop_control_5"]])) {
+      if (!is.null(mylist[["Fcast_MGparm_averaging"]])) {
         warning(
-          "Forecast_loop_control_5 has been renamed to Fcast_MGparm_averaging\n",
-          " so only Fcast_MGparm_averaging will be written to the file."
+          "Fcast_MGparm_averaging was temporarily in place to support",
+          " beta versions of SS3 version 3.30.22, but has been replaced",
+          " by the new Fcast_years table input format."
         )
+        mylist[["Fcast_loop_control_5"]] <- 0
       }
-      wl("Fcast_MGparm_averaging")
-      if (mylist[["Fcast_MGparm_averaging"]] == 1) {
-        printdf("Fcast_MGparm_averaging_info")
-        writeLines("-9999 0 0 0")
-      }
+      wl("Fcast_loop_control_5")
       wl("FirstYear_for_caps_and_allocations")
       wl("stddev_of_log_catch_ratio")
       wl("Do_West_Coast_gfish_rebuilder_output")

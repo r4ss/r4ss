@@ -1,7 +1,7 @@
 Type: Package
 Package: r4ss
 Title: R Code for Stock Synthesis
-Version: 1.48.1
+Version: 1.49.1
 Authors@R: c(
     person("Ian G.", "Taylor", , "Ian.Taylor@noaa.gov", role = c("aut", "cre")),
     person("Ian J.", "Stewart", role = "aut"),
@@ -38,7 +38,8 @@ Authors@R: c(
     person("Lee", "Qi", role = "aut"),
     person("Megumi", "Oshima", role = "aut"),
     person("Eric", "Fletcher", role = "aut"),
-    person("Elizabeth F.", "Gugliotti", role = "aut")
+    person("Elizabeth F.", "Gugliotti", role = "aut"),
+    person("Kiva L.", "Oken", role = "aut")
   )
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr.
@@ -47,8 +48,8 @@ Description: A collection of R functions for use with Stock Synthesis, a
     manipulating files, visualizing model parameterizations, and various
     other common stock assessment tasks.  This version of '{r4ss}' is
     compatible with Stock Synthesis versions 3.24 through 3.30
-    (specifically version 3.30.21 beta, from January 2023). Support for
-    3.24 models is only through the core functions for reading output and
+    (specifically version 3.30.22, from October 2023). Support for 3.24
+    models is only through the core functions for reading output and
     plotting.
 License: GPL-3
 URL: https://github.com/r4ss/r4ss, https://r4ss.github.io/r4ss/
@@ -60,6 +61,7 @@ Imports:
     corpcor,
     dplyr,
     forcats,
+    furrr,
     ggplot2,
     gh,
     kableExtra,
