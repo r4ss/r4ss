@@ -447,18 +447,15 @@ SSexecutivesummary <- function(replist,
   csv_name <- "d_SPR_ES.csv"
   write.csv(es.d, file.path(csv.dir, csv_name), row.names = FALSE)
 
-    caption <- c(
-      caption,
-      paste(
-        "Estimated recent trend in the ", spr_label, 
-        " (where SPR is the spawning potential ratio) and the exploitation rate, along with the ", 
-        round(100 * ci_value, 0),
-        " percent intervals associated with each of those quantities for the ", add_text, "."
-      )
+  caption <- c(
+    caption,
+    paste0(
+      "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
+      " percent intervals for the ", add_text, "."
     )
-    tex.label <- c(tex.label, "exploitES")
-    filename <- c(filename, csv_name)
-  } # end check for 'd' %in% tables
+  )
+  tex.label <- c(tex.label, "exploitES")
+  filename <- c(filename, csv_name)
 
   # ======================================================================
   # ES Table e Reference Point Table
