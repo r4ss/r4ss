@@ -80,7 +80,7 @@ SS_RunJitter <-
 #' )
 #'
 #' #### Run same jitter in parallel
-#' ncores <- parallel::detectCores() - 1
+#' ncores <- parallelly::availableCores() - 1
 #' future::plan(future::multisession, workers = ncores)
 #' jit.likes <- jitter(
 #'   dir = modeldir, Njitter = numjitter,
