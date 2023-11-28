@@ -54,13 +54,11 @@ SS_profile <- function(...) {
 #' is the length of profilevec.
 #' @param prior_check Check to make sure the starter file is set to include
 #' the prior likelihood contribution in the total likelihood.  Default = TRUE.
-#' @param read_like Read the table of likelihoods from each model as it finishes.
-#' Default = TRUE. Changing to FALSE should allow the function to play through
-#' even if something is wrong with reading the table.
+#' @param read_like Deprecated.
 #' @template exe
 #' @template verbose
 #' @param conv_criteria Maximum gradient for a model to be considered converged.
-#' Default = 0.01.
+#' Defaults to 0.01.
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #' @note The starting values used in this profile are not ideal and some models
@@ -235,7 +233,7 @@ profile <- function(dir,
                     overwrite = TRUE,
                     whichruns = NULL,
                     prior_check = TRUE,
-                    read_like = TRUE,
+                    read_like = lifecycle::deprecated(),
                     exe = "ss3",
                     verbose = TRUE,
                     conv_criteria = 0.01,
@@ -253,6 +251,12 @@ profile <- function(dir,
       with = "profile(oldctlfile)"
     )
     oldctlfile <- masterctlfile
+  }
+  if (lifecycle::is_present(read_like)) {
+    lifecycle::deprecate_warn(
+      when = "1.49.2", # not sure if this is right
+      what = "profile(read_like)"
+    )
   }
   
   # check for executable
@@ -356,10 +360,6 @@ profile <- function(dir,
   }
   setwd(dir)
   
-  # note: std file name is independent of executable name
-  # I think this should get deleted with the new workflow
-  # stdfile <- file.path(dir, "ss.std")
-  
   # read starter file to get input file names and check various things
   starter.file <- dir()[tolower(dir()) == "starter.ss"]
   if (length(starter.file) == 0) {
@@ -405,7 +405,7 @@ profile <- function(dir,
     )
     # save current strategy as oplan, and change it to sequential, all in one step!
     oplan <- future::plan(future::sequential) 
-    on.exit(future::plan(oplan))
+    on.exit(future::plan(oplan), add = TRUE)
   }
   
   # back up par file
@@ -414,22 +414,24 @@ profile <- function(dir,
   }
   
   # run loop over profile values
-  res <- purrr::map(whichruns, function(i) { 
+  res <- furrr::future_map(whichruns, function(i) { 
     # for (i in whichruns) {
-    profile_dir <- file.path(getwd(), paste0("profile", i))
+    profile_dir <- paste0("profile", i)
     # check for presence of ReportN.sso files. If present and overwrite=FALSE,
     # then don't bother running anything
-    # Note: This checks in the main model directory, not the profile subdirectories.
-    #       Where should we check?
     newrepfiles <- c(paste0("Report", i, ".sso"),
                      file.path(profile_dir, "Report.sso"))
-    if (!overwrite & any(file.exists(newrepfile))) {
+    if (!overwrite & any(file.exists(newrepfiles))) {
+      # Cannot think of scenario where both temp directory and ReportN.sso exist
+      # Even if they do, this still works, it just prints out a little weird.
       message(
         "skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
-        "  and file exists: ", newrepfile
+        "  and file exists: ", newrepfiles[file.exists(newrepfiles)]
       )
-      converged <- NULL # NA
-      likevec <- NULL # rep(NA, 10)
+      # goodrep <- FALSE # rep file is from previous function call
+      # converged <- NULL
+      # likevec <- NULL
+      # max_grad <- NULL
     } else {
       message("running profile i=", i, "/", n)
       
@@ -445,12 +447,12 @@ profile <- function(dir,
         newvals <- as.numeric(profilevec[i, ])
       }
       copy_SS_inputs(dir.old = getwd(), 
-                     dir.new = paste0("profile", i),
+                     dir.new = profile_dir, #paste0("profile", i),
                      overwrite = TRUE, copy_exe = TRUE, 
                      copy_par = usepar, verbose = verbose)
       SS_changepars(
         dir = NULL, ctlfile = oldctlfile, 
-        newctlfile = file.path(paste0("profile", i), newctlfile),
+        newctlfile = file.path(profile_dir, newctlfile),
         linenums = linenum, strings = string,
         newvals = newvals, estimate = FALSE,
         verbose = TRUE, repeat.vals = TRUE
@@ -513,9 +515,6 @@ profile <- function(dir,
       # run model
       run(dir = profile_dir, verbose = verbose, exe = exe, ...)
       
-      # check for convergence
-      # It seems like maybe the ss.std file only gets created when you run w/hessian.
-      converged <- file.exists(file.path(profile_dir, "ss.std"))
       repfile_loc <- file.path(profile_dir, "Report.sso")
       # look for non-zero report file and read LIKELIHOOD table
       if (file.exists(repfile_loc) & file.info(repfile_loc)$size > 0) {
@@ -528,6 +527,7 @@ profile <- function(dir,
         }
         # read first 400 lines of Report.sso
         Rep <- readLines(repfile_loc, n = 400)
+        # check for convergence
         convergence_line <- grep('Convergence_Level', Rep)
         # I think stringr is already imported? Otherwise I am having a hard time figuring this out with base R,
         # but maybe Kelli can do some regex magic.
@@ -537,31 +537,31 @@ profile <- function(dir,
                                '[[:digit:]|\\.|\\-|e]{2,}')
         )
         converged <- max_grad <= conv_criteria
-        if (read_like) {
-          # calculate range of rows with LIKELIHOOD table
-          skip <- grep("LIKELIHOOD", Rep)[2]
-          nrows <- grep("Crash_Pen", Rep) - skip - 1
-          # read Report again to just get LIKELIHOOD table
-          like <- read.table(repfile_loc,
-                             skip = skip,
-                             nrows = nrows, header = TRUE, fill = TRUE
-          )
-          likevec <- as.numeric(like[["logL.Lambda"]])
-          names(likevec) <- like[["Component"]]
-        }
+        # calculate range of rows with LIKELIHOOD table
+        skip <- grep("LIKELIHOOD", Rep)[2]
+        nrows <- grep("Crash_Pen", Rep) - skip - 1
+        # read Report again to just get LIKELIHOOD table
+        like <- read.table(repfile_loc,
+                           skip = skip,
+                           nrows = nrows, header = TRUE, fill = TRUE
+        )
+        likevec <- as.numeric(like[["logL.Lambda"]])
+        names(likevec) <- like[["Component"]]
       } else {
+        # No good report file:
         goodrep <- FALSE
         converged <- FALSE
-        # add a placeholder row of NA values if no good report file
+        max_grad <- NA
         likevec <- rep(NA, 10)
       }
+      return(list(goodrep = goodrep,
+                  converged = converged,
+                  max_grad = max_grad,
+                  likevec = likevec
+      ))
     } # end running stuff
-    # don't return likevec if !readlike
-    return(list(converged = converged, 
-                likevec = likevec, 
-                goodrep = goodrep))
   }) # end loop of whichruns
-
+  
   # move and rename output files
   if (saveoutput) {
     purrr::walk(whichruns, function(i) {
@@ -598,14 +598,19 @@ profile <- function(dir,
   # delete profile subdirectories
   purrr::walk(whichruns, ~ unlink(paste0("profile", .x), recursive = TRUE))
   
-  goodrep <- sapply(res, function(x) x[["goodrep"]])
-  if(!any(goodrep)) stop("Error: no good Report.sso files created in profile")
+  # res is NULL for any values that didn't run due to existing report file.
+  res_keep <- which(!sapply(res, is.null))
+  res_clean <- res[res_keep]
   
+  goodrep <- sapply(res_clean, function(x) x[["goodrep"]])
+  if(!any(goodrep)) stop("Error: no good Report.sso files created in profile")
+
   # organize output data frame
-  # need an option for no liketable
-  liketable <- as.data.frame(t(sapply(res, function(x) x[["likevec"]])))
-  bigtable <- cbind(Value = profilevec[whichruns], 
-                    converged = sapply(res, function(x) x[["converged"]]), 
-                    liketable)
+  liketable <- as.data.frame(t(sapply(res_clean, function(x) x[["likevec"]])))
+  bigtable <- cbind(Value = profilevec[whichruns[res_keep]],
+                    converged = sapply(res_clean, function(x) x[["converged"]]),
+                    liketable,
+                    max_grad = sapply(res_clean, function(x) x[["max_grad"]]))
   return(bigtable)
+  # return(res)
 } # end function
