@@ -59,6 +59,8 @@ SS_profile <- function(...) {
 #' even if something is wrong with reading the table.
 #' @template exe
 #' @template verbose
+#' @param conv_criteria Maximum gradient for a model to be considered converged.
+#' Default = 0.01.
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #' @note The starting values used in this profile are not ideal and some models
@@ -236,6 +238,7 @@ profile <- function(dir,
                     read_like = TRUE,
                     exe = "ss3",
                     verbose = TRUE,
+                    conv_criteria = 0.01,
                     ...) {
   # Ensure wd is not changed by the function
   orig_wd <- getwd()
@@ -418,14 +421,15 @@ profile <- function(dir,
     # then don't bother running anything
     # Note: This checks in the main model directory, not the profile subdirectories.
     #       Where should we check?
-    newrepfile <- paste0("Report", i, ".sso")
-    if (!overwrite & file.exists(newrepfile)) {
+    newrepfiles <- c(paste0("Report", i, ".sso"),
+                     file.path(profile_dir, "Report.sso"))
+    if (!overwrite & any(file.exists(newrepfile))) {
       message(
         "skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
         "  and file exists: ", newrepfile
       )
-      converged <- NA
-      likevec <- rep(NA, 10)
+      converged <- NULL # NA
+      likevec <- NULL # rep(NA, 10)
     } else {
       message("running profile i=", i, "/", n)
       
@@ -440,21 +444,12 @@ profile <- function(dir,
         # get row as a vector (passing a data.frame to SS_changepars caused error)
         newvals <- as.numeric(profilevec[i, ])
       }
-      # Concerns about running this if there are multiple models in dir.old?
-      # I think this is ok after looking into copy_SS_inputs() source.
-      # BUT. What to do about people wanting to use ss_new files? 
-      # If they want to use control.ss_new that will happen because of SS_changepars(),
-      # but other ss_new files will not be used.
-      # Could also use file.copy(), but it will get long.
       copy_SS_inputs(dir.old = getwd(), 
                      dir.new = paste0("profile", i),
                      overwrite = TRUE, copy_exe = TRUE, 
                      copy_par = usepar, verbose = verbose)
-      file.copy(from = file.path(dir, oldctlfile),
-                to = file.path(newctlfile),
-                overwrite = TRUE)
       SS_changepars(
-        ctlfile = oldctlfile, 
+        dir = NULL, ctlfile = oldctlfile, 
         newctlfile = file.path(paste0("profile", i), newctlfile),
         linenums = linenum, strings = string,
         newvals = newvals, estimate = FALSE,
@@ -521,13 +516,10 @@ profile <- function(dir,
       # check for convergence
       # It seems like maybe the ss.std file only gets created when you run w/hessian.
       converged <- file.exists(file.path(profile_dir, "ss.std"))
-      # onegood tracks whether there is at least one non-empty Report file
-      onegood <- FALSE
       repfile_loc <- file.path(profile_dir, "Report.sso")
       # look for non-zero report file and read LIKELIHOOD table
-      if (read_like && file.exists(repfile_loc) &
-          file.info(repfile_loc)$size > 0) {
-        onegood <- TRUE
+      if (file.exists(repfile_loc) & file.info(repfile_loc)$size > 0) {
+        goodrep <- TRUE
         # move ss.par file into main directory if needed to start next run
         if(usepar & !globalpar) {
           file.copy(from = file.path(profile_dir, "ss.par"),
@@ -536,23 +528,40 @@ profile <- function(dir,
         }
         # read first 400 lines of Report.sso
         Rep <- readLines(repfile_loc, n = 400)
-        # calculate range of rows with LIKELIHOOD table
-        skip <- grep("LIKELIHOOD", Rep)[2]
-        nrows <- grep("Crash_Pen", Rep) - skip - 1
-        # read Report again to just get LIKELIHOOD table
-        like <- read.table(repfile_loc,
-                           skip = skip,
-                           nrows = nrows, header = TRUE, fill = TRUE
+        convergence_line <- grep('Convergence_Level', Rep)
+        # I think stringr is already imported? Otherwise I am having a hard time figuring this out with base R,
+        # but maybe Kelli can do some regex magic.
+        # Search for substring > 1 character with only: numbers, ., -, and e
+        max_grad <- as.numeric(
+          stringr::str_extract(Rep[convergence_line],
+                               '[[:digit:]|\\.|\\-|e]{2,}')
         )
-        likevec <- as.numeric(like[["logL.Lambda"]])
-        names(likevec) <- like[["Component"]]
+        converged <- max_grad <= conv_criteria
+        if (read_like) {
+          # calculate range of rows with LIKELIHOOD table
+          skip <- grep("LIKELIHOOD", Rep)[2]
+          nrows <- grep("Crash_Pen", Rep) - skip - 1
+          # read Report again to just get LIKELIHOOD table
+          like <- read.table(repfile_loc,
+                             skip = skip,
+                             nrows = nrows, header = TRUE, fill = TRUE
+          )
+          likevec <- as.numeric(like[["logL.Lambda"]])
+          names(likevec) <- like[["Component"]]
+        }
       } else {
+        goodrep <- FALSE
+        converged <- FALSE
         # add a placeholder row of NA values if no good report file
         likevec <- rep(NA, 10)
       }
     } # end running stuff
-    return(list(converged, likevec))
+    # don't return likevec if !readlike
+    return(list(converged = converged, 
+                likevec = likevec, 
+                goodrep = goodrep))
   }) # end loop of whichruns
+
   # move and rename output files
   if (saveoutput) {
     purrr::walk(whichruns, function(i) {
@@ -588,14 +597,15 @@ profile <- function(dir,
   }
   # delete profile subdirectories
   purrr::walk(whichruns, ~ unlink(paste0("profile", .x), recursive = TRUE))
+  
+  goodrep <- sapply(res, function(x) x[["goodrep"]])
+  if(!any(goodrep)) stop("Error: no good Report.sso files created in profile")
+  
   # organize output data frame
-  # if (onegood) {
-    liketable <- as.data.frame(t(sapply(res, function(x) x[[2]])))
-    bigtable <- cbind(Value = profilevec[whichruns], 
-                      converged = sapply(res, function(x) x[[1]]), 
-                      liketable)
-    return(bigtable)
-  # } else {
-  #   stop("Error: no good Report.sso files created in profile")
-  # }
+  # need an option for no liketable
+  liketable <- as.data.frame(t(sapply(res, function(x) x[["likevec"]])))
+  bigtable <- cbind(Value = profilevec[whichruns], 
+                    converged = sapply(res, function(x) x[["converged"]]), 
+                    liketable)
+  return(bigtable)
 } # end function
