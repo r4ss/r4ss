@@ -415,7 +415,6 @@ profile <- function(dir,
   
   # run loop over profile values
   res <- furrr::future_map(whichruns, function(i) { 
-    # for (i in whichruns) {
     profile_dir <- paste0("profile", i)
     # check for presence of ReportN.sso files. If present and overwrite=FALSE,
     # then don't bother running anything
@@ -428,10 +427,6 @@ profile <- function(dir,
         "skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
         "  and file exists: ", newrepfiles[file.exists(newrepfiles)]
       )
-      # goodrep <- FALSE # rep file is from previous function call
-      # converged <- NULL
-      # likevec <- NULL
-      # max_grad <- NULL
     } else {
       message("running profile i=", i, "/", n)
       
@@ -447,7 +442,7 @@ profile <- function(dir,
         newvals <- as.numeric(profilevec[i, ])
       }
       copy_SS_inputs(dir.old = getwd(), 
-                     dir.new = profile_dir, #paste0("profile", i),
+                     dir.new = profile_dir,
                      overwrite = TRUE, copy_exe = TRUE, 
                      copy_par = usepar, verbose = verbose)
       SS_changepars(
@@ -529,8 +524,7 @@ profile <- function(dir,
         Rep <- readLines(repfile_loc, n = 400)
         # check for convergence
         convergence_line <- grep('Convergence_Level', Rep)
-        # I think stringr is already imported? Otherwise I am having a hard time figuring this out with base R,
-        # but maybe Kelli can do some regex magic.
+        # I think stringr is already imported? Otherwise I need regex help.
         # Search for substring > 1 character with only: numbers, ., -, and e
         max_grad <- as.numeric(
           stringr::str_extract(Rep[convergence_line],

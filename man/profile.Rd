@@ -20,9 +20,10 @@ profile(
   overwrite = TRUE,
   whichruns = NULL,
   prior_check = TRUE,
-  read_like = TRUE,
+  read_like = lifecycle::deprecated(),
   exe = "ss3",
   verbose = TRUE,
+  conv_criteria = 0.01,
   ...
 )
 }
@@ -76,9 +77,7 @@ is the length of profilevec.}
 \item{prior_check}{Check to make sure the starter file is set to include
 the prior likelihood contribution in the total likelihood.  Default = TRUE.}
 
-\item{read_like}{Read the table of likelihoods from each model as it finishes.
-Default = TRUE. Changing to FALSE should allow the function to play through
-even if something is wrong with reading the table.}
+\item{read_like}{Deprecated.}
 
 \item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can
@@ -90,6 +89,9 @@ included.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{conv_criteria}{Maximum gradient for a model to be considered converged.
+Defaults to 0.01.}
 
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
 \code{extras}, \code{show_in_console}, and \code{skipfinished}.}
