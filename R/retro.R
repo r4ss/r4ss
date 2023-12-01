@@ -82,6 +82,7 @@ SS_doRetro <-
 #'   dir = mydir,
 #'   years = 0:-5
 #' )
+#' future::plan(future::sequential)
 #' }
 #'
 retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
