@@ -38,7 +38,7 @@
 #' columns in summary tables.
 #' @param endyrvec Optional single year or vector of years representing the
 #' final year of values to show for each model. By default it is set to the
-#' ending year specified in each model. If the number of models is subset using 
+#' ending year specified in each model. If the number of models is subset using
 #' the `models` input then `endyr` needs to be shortened as well.
 #' @param indexfleets Fleet numbers for each model to compare
 #' indices of abundance. Can take different forms:
