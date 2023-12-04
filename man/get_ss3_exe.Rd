@@ -11,7 +11,7 @@ get_ss3_exe(dir = NULL, version = NULL)
 
 \item{version}{A character string of the executable version tag to download
 (e.g.'v3.30.20' or 'v3.30.18'). A list of tags is available at
-https://github.com/nmfs-stock-synthesis/stock-synthesis/tags}
+https://github.com/nmfs-ost/ss3-source-code/tags}
 }
 \value{
 A string of the file path to the downloaded executable
@@ -22,7 +22,7 @@ the latest release (if version = NULL) or the specified version of the Stock
 Synthesis executable for the appropriate operating system to the directory \code{dir}
 (if dir = NULL, then the executable is downloaded to the working directory).
 To view the version tags available go to
-https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
+https://github.com/nmfs-ost/ss3-source-code/tags
 }
 \details{
 Downloads the SS3 executable according to specified version and the user

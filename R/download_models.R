@@ -1,10 +1,10 @@
 #' Download SS3 test models
 #'
 #' Download and unzip the models folder stored on GitHub within the
-#' nmfs-stock-synthesis/test-models repository.
+#' nmfs-ost/ss3-test-models repository.
 #' @param dir A file path where the downloaded `"models"` subfolder will be written to.
 #' @param branch A string specifying the desired branch of
-#' [nmfs-stock-synthesis/test-models repository](https://github.com/nmfs-stock-synthesis/test-models#test-models)
+#' [nmfs-ost/ss3-test-models repository](https://github.com/nmfs-ost/ss3-test-models#test-models)
 #' that you want to download. The default is `"main"`, which is the
 #' stable/default branch.
 #' @template overwrite
@@ -17,7 +17,7 @@
 #' # remove files
 #' unlink(file.path("models"), recursive = TRUE)
 #' @author Kathryn Doering
-#' @references [nmfs-stock-synthesis/test-models repository](https://github.com/nmfs-stock-synthesis/test-models#test-models)
+#' @references [nmfs-ost/ss3-test-models repository](https://github.com/nmfs-ost/ss3-test-models#test-models)
 #' @export
 download_models <- function(dir = file.path("inst", "extdata"),
                             branch = "main",
@@ -30,7 +30,7 @@ download_models <- function(dir = file.path("inst", "extdata"),
   result <- tryCatch(
     utils::download.file(
       url = paste0(
-        "https://github.com/nmfs-stock-synthesis/test-models/archive/",
+        "https://github.com/nmfs-ost/ss3-test-models/archive/",
         branch,
         ".zip"
       ),
@@ -58,12 +58,12 @@ download_models <- function(dir = file.path("inst", "extdata"),
   }
   dir.create(file.path(dir, "models"), showWarnings = FALSE)
   copy_status <- file.copy(
-    from = file.path(dir, paste0("test-models-", branch), "models"),
+    from = file.path(dir, paste0("ss3-test-models-", branch), "models"),
     to = file.path(dir), recursive = TRUE, overwrite = overwrite
   )
   # clean up
   unlink(zip_file_path)
-  unlink(file.path(dir, paste0("test-models-", branch)),
+  unlink(file.path(dir, paste0("ss3-test-models-", branch)),
     recursive = TRUE
   )
   invisible(copy_status)
