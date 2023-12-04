@@ -58,12 +58,12 @@ download_models <- function(dir = file.path("inst", "extdata"),
   }
   dir.create(file.path(dir, "models"), showWarnings = FALSE)
   copy_status <- file.copy(
-    from = file.path(dir, paste0("test-models-", branch), "models"),
+    from = file.path(dir, paste0("ss3-test-models-", branch), "models"),
     to = file.path(dir), recursive = TRUE, overwrite = overwrite
   )
   # clean up
   unlink(zip_file_path)
-  unlink(file.path(dir, paste0("test-models-", branch)),
+  unlink(file.path(dir, paste0("ss3-test-models-", branch)),
     recursive = TRUE
   )
   invisible(copy_status)
