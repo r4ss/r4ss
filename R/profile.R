@@ -432,7 +432,7 @@ profile <- function(dir,
   }
   
   # run loop over profile values
-  res <- purrr::map(whichruns, function(i) { 
+  res <- furrr::future_map(whichruns, function(i) { 
     profile_dir <- paste0("profile", i)
     # check for presence of ReportN.sso files. If present and overwrite=FALSE,
     # then don't bother running anything
@@ -477,15 +477,15 @@ profile <- function(dir,
       if (!any(ctltable_new[["PHASE"]] == 1)) {
         phase2pars <- ctltable_new[which(ctltable_new[["PHASE"]]==2), "Label"]
         par_to_change <- sort(phase2pars)[1]
-        SS_changepars(dir = file.path(profile_dir), 
-                      ctlfile = newctlfile,
-                      newctlfile = newctlfile, 
-                      strings = par_to_change,
-                      newphs = 1)
         message(
           "No estimated parameter in phase 1.\n",
           "Switching ", par_to_change, " from phase 2 to phase 1." 
         )
+        SS_changepars(dir = file.path(profile_dir), 
+                      ctlfile = newctlfile,
+                      newctlfile = newctlfile, 
+                      strings = par_to_change,
+                      newphs = 1, verbose = FALSE)
       }
       
       if (usepar) {
