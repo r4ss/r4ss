@@ -48,13 +48,13 @@ the control and data files.
 inputs <- SS_read(
   dir = system.file("extdata", "simple_small", package = "r4ss")
 )
-# Read in an example from GitHub stored in user-examples,
+# Read in an example from GitHub stored in ss3-user-examples,
 # wrapped in `dontrun` because it requires an Internet connection
 \dontrun{
 webexample <- SS_read(dir = file.path(
   "https://raw.githubusercontent.com",
-  "nmfs-stock-synthesis",
-  "user-examples",
+  "nmfs-ost",
+  "ss3-user-examples",
   "main",
   "model_files",
   "simple_long_wtatage"

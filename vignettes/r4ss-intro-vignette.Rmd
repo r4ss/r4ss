@@ -235,9 +235,9 @@ associated functions for each model file, or would like to report a bug,
 please [post an issue in the r4ss repository](https://github.com/r4ss/r4ss/issues).
 
 ### Download the Stock Synthesis executable from GitHub
-The [latest release of the Stock Synthesis executable](https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/latest) 
+The [latest release of the Stock Synthesis executable](https://github.com/nmfs-ost/ss3-source-code/releases/latest) 
 or other releases found by entering a character string of a version tag (list of 
-tags is available [here](https://github.com/nmfs-stock-synthesis/stock-synthesis/tags)) 
+tags is available [here](https://github.com/nmfs-ost/ss3-source-code/tags)) 
 can be downloaded from the Stock Synthesis GitHub page using the function:
 ```{r, eval = FALSE}
 # Default with no version downloads the latest release

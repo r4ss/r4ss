@@ -37,7 +37,6 @@ Iteratively
 Jeffreys
 Jolla
 Kiva
-LaTex
 LaTreese
 Legault
 Lsel
@@ -63,7 +62,6 @@ Piner's
 README
 Rdata
 Rebuilder
-ReferencePoints
 Rescale
 RunJitter
 SELEX
@@ -87,8 +85,6 @@ Venables
 Watal
 Xxis
 YYYY
-abc
-acl
 admodel
 agedbase
 agefactors
@@ -143,7 +139,6 @@ filenaming
 fishres
 fleetnames
 forecastplot
-formatting
 fsu
 fwf
 gdata
@@ -205,9 +200,9 @@ nmfs
 noaa
 nohess
 num
-ofl
 ogive
 optim
+ost
 outfile
 overfished
 overfishing
