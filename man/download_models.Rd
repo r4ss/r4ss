@@ -14,7 +14,7 @@ download_models(
 \item{dir}{A file path where the downloaded \code{"models"} subfolder will be written to.}
 
 \item{branch}{A string specifying the desired branch of
-\href{https://github.com/nmfs-stock-synthesis/test-models#test-models}{nmfs-stock-synthesis/test-models repository}
+\href{https://github.com/nmfs-ost/ss3-test-models#test-models}{nmfs-ost/ss3-test-models repository}
 that you want to download. The default is \code{"main"}, which is the
 stable/default branch.}
 
@@ -28,7 +28,7 @@ downloading SS3 test models.
 }
 \description{
 Download and unzip the models folder stored on GitHub within the
-nmfs-stock-synthesis/test-models repository.
+nmfs-ost/ss3-test-models repository.
 }
 \examples{
 download_models(dir = getwd())
@@ -37,7 +37,7 @@ model_name <- list.files("models") # see the model names
 unlink(file.path("models"), recursive = TRUE)
 }
 \references{
-\href{https://github.com/nmfs-stock-synthesis/test-models#test-models}{nmfs-stock-synthesis/test-models repository}
+\href{https://github.com/nmfs-ost/ss3-test-models#test-models}{nmfs-ost/ss3-test-models repository}
 }
 \author{
 Kathryn Doering

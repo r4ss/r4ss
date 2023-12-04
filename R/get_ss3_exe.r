@@ -6,7 +6,7 @@
 #' @param dir The directory that you would like the executable downloaded to.
 #' @param version A character string of the executable version tag to download
 #' (e.g.'v3.30.20' or 'v3.30.18'). A list of tags is available at
-#' https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
+#' https://github.com/nmfs-ost/ss3-source-code/tags
 #' @return A string of the file path to the downloaded executable
 #' @author Elizabeth F. Gugliotti
 #' @export
@@ -21,22 +21,22 @@
 #' Synthesis executable for the appropriate operating system to the directory `dir`
 #' (if dir = NULL, then the executable is downloaded to the working directory).
 #' To view the version tags available go to
-#' https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
+#' https://github.com/nmfs-ost/ss3-source-code/tags
 
 get_ss3_exe <- function(dir = NULL, version = NULL) {
   # Get latest release if version not specified
   if (is.null(version)) {
-    latest_release <- gh::gh("GET /repos/nmfs-stock-synthesis/stock-synthesis/releases/latest", page = 1)
+    latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1)
     tag <- latest_release[["tag_name"]]
   } else {
     # Otherwise get specified version
-    all_tags <- gh::gh("GET /repos/nmfs-stock-synthesis/stock-synthesis/tags")
+    all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags")
     df_tags <- as.data.frame(do.call(rbind, all_tags))
     tags <- unlist(df_tags[["name"]])
 
     if (!version %in% tags) {
       warning("The version tag that you entered is invalid or not in the right format,
-              please go to https://github.com/nmfs-stock-synthesis/stock-synthesis/tags
+              please go to https://github.com/nmfs-ost/ss3-source-code/tags
               to get a correct version tag or version tag format")
     } else {
       tag <- version
@@ -60,7 +60,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       )
     } else {
       url <- paste0(
-        "https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/",
+        "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
         tag, "/ss_win.exe"
       )
       utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
@@ -72,7 +72,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     }
   } else {
     if (substr(R.version[["os"]], 1, 6) == "darwin") {
-      url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_osx")
+      url <- paste0("https://github.com/nmfs-ost/ss3-source-code/releases/download/", tag, "/ss_osx")
       utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
       Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
       download_location <- file.path(dir, "ss3")
@@ -84,7 +84,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       ))
     } else {
       if (R.version[["os"]] == "linux-gnu") {
-        url <- paste0("https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/", tag, "/ss_linux")
+        url <- paste0("https://github.com/nmfs-ost/ss3-source-code/releases/download/", tag, "/ss_linux")
         utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
         Sys.chmod(paths = dir, mode = "0777")

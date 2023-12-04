@@ -52,7 +52,7 @@ jobs:
       - name: Get repository of SS3 models
         uses: actions/checkout@v3
         with:
-          repository: 'nmfs-stock-synthesis/test-models'
+          repository: 'nmfs-ost/ss3-test-models'
           path: test-models-repo
 
       - name: move the models to the desired location
@@ -63,7 +63,7 @@ jobs:
 
       - name: Get the latest SS3 executable and move to expected location
         run: |
-          curl https://api.github.com/repos/nmfs-stock-synthesis/stock-synthesis/releases/latest | grep "browser_download_url" | grep -Eo 'https://[^\"]*' | grep "ss_linux" | xargs wget
+          curl https://api.github.com/repos/nmfs-ost/ss3-source-code/releases/latest | grep "browser_download_url" | grep -Eo 'https://[^\"]*' | grep "ss_linux" | xargs wget
           mv ss_linux ss3
           sudo chmod a+x ss3
           cp ss3 inst/extdata/simple_small/ss3

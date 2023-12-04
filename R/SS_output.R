@@ -2565,7 +2565,7 @@ SS_output <-
       header = TRUE, type.convert = TRUE
     )
     # updated BIOLOGY table names based on change July 2022 change
-    # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/348
+    # https://github.com/nmfs-ost/ss3-source-code/issues/348
     biology <- df.rename(biology,
       oldnames = c("Low", "Mean_Size", "Wt_len", "Wt_len_F", "Mat_len", "Spawn", "Wt_len_M", "Fecundity"),
       newnames = c("Len_lo", "Len_mean", "Wt_F", "Wt_F", "Mat", "Mat*Fec", "Wt_M", "Fec")
@@ -3376,7 +3376,7 @@ SS_output <-
       }
 
       # work-around for missing SE_input values 3.30.16
-      # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/169
+      # https://github.com/nmfs-ost/ss3-source-code/issues/169
       # https://github.com/r4ss/r4ss/issues/324
       badrows <- which(cpue[["Use"]] == "")
       if (length(badrows) > 0) {
