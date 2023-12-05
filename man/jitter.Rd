@@ -99,6 +99,7 @@ jit.likes <- jitter(
   dir = modeldir, Njitter = numjitter,
   jitter_fraction = 0.1, init_value_src = 1
 )
+future::plan(future::sequential)
 
 #### Read in results using other r4ss functions
 # (note that un-jittered model can be read using keyvec=0:numjitter)

@@ -94,6 +94,7 @@ retro(
   dir = mydir,
   years = 0:-5
 )
+future::plan(future::sequential)
 }
 
 }

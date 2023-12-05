@@ -106,6 +106,12 @@ may not converge. Care should be taken in using an automated tool like this,
 and some models are likely to require rerunning with alternate starting
 values.
 
+To run multiple models simultaneously using parallel computing, see
+\code{\link[future:plan]{future::plan()}}. However, when running models in parallel, you cannot
+iteratively adapt the starting values using \code{usepar = TRUE} and
+\code{globalpar = FALSE}. This increases the chances that some of your models do
+not converge.
+
 Also, someday this function will be improved to work directly with the
 plotting function \code{\link[=SSplotProfile]{SSplotProfile()}}, but they don't yet work well
 together. Thus, even if \code{\link[=profile]{profile()}} is used, the output should
@@ -151,7 +157,7 @@ SS_writestarter(starter, dir = dir_prof, overwrite = TRUE)
 h.vec <- seq(0.3, 0.9, .1)
 Nprofile <- length(h.vec)
 # run profile command
-profile <- profile(
+prof.table <- profile(
   dir = dir_prof,
   oldctlfile = "control.ss",
   newctlfile = "control_modified.ss",
@@ -179,6 +185,18 @@ results <- SSplotProfile(profilesummary, # summary object
 
 # make timeseries plots comparing models in profile
 SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
+
+# run same profile in parallel
+ncores <- parallelly::availableCores() - 1
+future::plan(future::multisession, workers = ncores)
+prof.table <- profile(
+  dir = dir_prof,
+  oldctlfile = "control.ss",
+  newctlfile = "control_modified.ss",
+  string = "steep", # subset of parameter label
+  profilevec = h.vec
+)
+future::plan(future::sequential)
 
 ###########################################################################
 # example two-dimensional profile
