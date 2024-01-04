@@ -506,23 +506,25 @@ SS_output <-
     flush.console()
 
     # check for use of temporary files
-    logfile <- dir(dir, pattern = ".log$")
-    logfile <- logfile[logfile != "fmin.log"]
-    if (length(logfile) > 1) {
+    logfile_name <- dir(dir, pattern = ".log$")
+    logfile_name <- logfile_name[logfile_name != "fmin.log"]
+    if (length(logfile_name) > 1) {
       filetimes <- file.info(file.path(dir, logfile))$mtime
-      logfile <- logfile[filetimes == max(filetimes)]
+      logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
         message(
           "Multiple files in directory match pattern *.log\n",
-          "choosing most recently modified file:", logfile, "\n"
+          "choosing most recently modified file:", logfile_name, "\n"
         )
       }
     }
-    if (length(logfile) == 1 && file.info(file.path(dir, logfile))$size > 0) {
-      logfile <- readLines(file.path(dir, logfile))
+    if (length(logfile_name) == 1 && 
+      file.info(file.path(dir, logfile_name))$size > 0) {
+      logfile <- readLines(file.path(dir, logfile_name))
       logfile <- grep("^size", logfile, value = TRUE)
       if (length(logfile) == 0) {
-        warning("Error reading ss.log. Check the file, it should contain rows starting with 'size'")
+        warning(logfile_name, 
+          " does not contain information on the size of temporary files.")
         logfile <- NA
       } else {
         logfile <- tidyr::separate(as.data.frame(logfile),
