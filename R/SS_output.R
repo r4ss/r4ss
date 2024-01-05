@@ -518,13 +518,15 @@ SS_output <-
         )
       }
     }
-    if (length(logfile_name) == 1 && 
+    if (length(logfile_name) == 1 &&
       file.info(file.path(dir, logfile_name))$size > 0) {
       logfile <- readLines(file.path(dir, logfile_name))
       logfile <- grep("^size", logfile, value = TRUE)
       if (length(logfile) == 0) {
-        warning(logfile_name, 
-          " does not contain information on the size of temporary files.")
+        warning(
+          logfile_name,
+          " does not contain information on the size of temporary files."
+        )
         logfile <- NA
       } else {
         logfile <- tidyr::separate(as.data.frame(logfile),

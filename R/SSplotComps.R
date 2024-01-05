@@ -1446,8 +1446,8 @@ SSplotComps <-
                     if ("partition" %in% names(data_info)) { # added in 3.30.21
                       sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
                     } else {
-                      if ("Fleet" %in% names(data_info)){
-                        # partition weighting not available for all comp types, 
+                      if ("Fleet" %in% names(data_info)) {
+                        # partition weighting not available for all comp types,
                         # so can't rely on "partition" to distinguish
                         sub <- data_info[["Fleet"]] == f
                       } else {
