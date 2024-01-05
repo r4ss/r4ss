@@ -1273,7 +1273,9 @@ SSplotComps <-
             data_info <- replist[["len_data_info"]]
           }
         }
-
+        if (kind %in% c("SIZE")) {
+          data_info <- replist[["Size_comp_error_controls"]]
+        } # output wasn't available in earlier versions of SS3
 
         # loop over partitions (discard, retain, total)
         for (j in unique(dbasef[["Part"]])) {
@@ -1444,12 +1446,25 @@ SSplotComps <-
                     if ("partition" %in% names(data_info)) { # added in 3.30.21
                       sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
                     } else {
-                      # earlier version without partition weighting
-                      # has one row per fleet so no "fleet" column
-                      sub <- f
+                      if ("Fleet" %in% names(data_info)){
+                        # partition weighting not available for all comp types, 
+                        # so can't rely on "partition" to distinguish
+                        sub <- data_info[["Fleet"]] == f
+                      } else {
+                        # earlier version without partition weighting
+                        # has one row per fleet so no "fleet" column
+                        sub <- f
+                      }
                     }
-                    ParmSelect <- data_info[sub, "ParmSelect"]
-                    CompError <- data_info[sub, "CompError"]
+                    if (kind != "SIZE") {
+                      ParmSelect <- data_info[sub, "ParmSelect"]
+                      CompError <- data_info[sub, "CompError"]
+                    } else {
+                      # Size_comp_error_controls have different format
+                      sub <- sizemethod
+                      ParmSelect <- data_info[sub, "error_parm_ID"]
+                      CompError <- data_info[sub, "error_type"]
+                    }
 
                     # D-M option 1 (linear)
                     if (CompError == 1) {

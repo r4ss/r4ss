@@ -506,23 +506,25 @@ SS_output <-
     flush.console()
 
     # check for use of temporary files
-    logfile <- dir(dir, pattern = ".log$")
-    logfile <- logfile[logfile != "fmin.log"]
-    if (length(logfile) > 1) {
-      filetimes <- file.info(file.path(dir, logfile))$mtime
-      logfile <- logfile[filetimes == max(filetimes)]
+    logfile_name <- dir(dir, pattern = ".log$")
+    logfile_name <- logfile_name[logfile_name != "fmin.log"]
+    if (length(logfile_name) > 1) {
+      filetimes <- file.info(file.path(dir, logfile_name))$mtime
+      logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
         message(
           "Multiple files in directory match pattern *.log\n",
-          "choosing most recently modified file:", logfile, "\n"
+          "choosing most recently modified file:", logfile_name, "\n"
         )
       }
     }
-    if (length(logfile) == 1 && file.info(file.path(dir, logfile))$size > 0) {
-      logfile <- readLines(file.path(dir, logfile))
+    if (length(logfile_name) == 1 && 
+      file.info(file.path(dir, logfile_name))$size > 0) {
+      logfile <- readLines(file.path(dir, logfile_name))
       logfile <- grep("^size", logfile, value = TRUE)
       if (length(logfile) == 0) {
-        warning("Error reading ss.log. Check the file, it should contain rows starting with 'size'")
+        warning(logfile_name, 
+          " does not contain information on the size of temporary files.")
         logfile <- NA
       } else {
         logfile <- tidyr::separate(as.data.frame(logfile),
@@ -624,6 +626,7 @@ SS_output <-
     # placeholders for tables added in 3.30.21
     Length_comp_error_controls <- NULL
     Age_comp_error_controls <- NULL
+    Size_comp_error_controls <- NULL
 
     if ("Jitter:" %in% rawdefs[["X1"]]) {
       get.def <- function(string) {
@@ -709,6 +712,7 @@ SS_output <-
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
       # end DEFINITIONS elements in 3.30.12-3.30.20
+
       if ("Length_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of length comp error controls (added 3.30.21)
         Length_comp_error_controls <-
@@ -750,6 +754,16 @@ SS_output <-
         # remove extra column with hash symbols
         Age_comp_error_controls <- Age_comp_error_controls %>%
           dplyr::select(-NoName)
+      }
+
+      if ("Size_comp_error_controls" %in% rawdefs[["X1"]]) {
+        # read table of age comp error controls (added 3.30.21)
+        Size_comp_error_controls <-
+          match_report_table("Size_comp_error_controls",
+            adjust1 = 1,
+            header = TRUE, type.convert = TRUE
+          ) %>%
+          dplyr::rename(Sz_method = "#_Sz_method") # remove hash from header
       }
       # end read of 3.30.12+ DEFINITIONS
     } else {
@@ -2286,20 +2300,28 @@ SS_output <-
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
               dplyr::left_join(lendbase, .)
           }
-          # repeat for other parts of CompReport.sso
+          # add info to age comp data
           if (nrow(agedbase) > 0) {
             agedbase <- fit_age_comps %>%
               dplyr::rename(Like_sum = Like) %>% # like for vector not bin
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
               dplyr::left_join(agedbase, .)
           }
+          # add info to conditional age-at-length comp data
           if (nrow(condbase) > 0) {
             condbase <- fit_age_comps %>%
               dplyr::rename(Like_sum = Like) %>% # like for vector not bin
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
               dplyr::left_join(condbase, .)
           }
-          # IGT 28 Jan 2023: need to add support for DM for generalized size comps
+          # add info to generalized size comp data
+          if (nrow(sizedbase) > 0) {
+            sizedbase <- fit_size_comps %>%
+              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
+              dplyr::rename(method = Method) %>% # making it match what's in sizedbase
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM, method) %>%
+              dplyr::left_join(sizedbase, .)
+          }
         } # end test for whether CompReport.sso info is available
         # end approach used starting in 3.30.21
       } else {
@@ -2544,6 +2566,7 @@ SS_output <-
     returndat[["ALK_tolerance"]] <- return.def("ALK_tolerance")
     returndat[["Length_comp_error_controls"]] <- Length_comp_error_controls
     returndat[["Age_comp_error_controls"]] <- Age_comp_error_controls
+    returndat[["Size_comp_error_controls"]] <- Size_comp_error_controls
     returndat[["nforecastyears"]] <- nforecastyears
     returndat[["morph_indexing"]] <- morph_indexing
     returndat[["MGparmAdj"]] <- MGparmAdj
