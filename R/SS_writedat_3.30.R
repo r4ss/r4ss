@@ -168,32 +168,9 @@ SS_writedat_3.30 <- function(datlist,
       )
     }
   }
-  ## Function copied from SS_writectl3.24
-  writeComment <- function(text, ...) {
-    if (length(grep(x = text, pattern = "^#")) != length(text)) {
-      text <- paste("#_", text, sep = "")
-    }
-    writeLines(text = text, con = zz, ...)
-  }
 
   # write a header
-  writeComment(paste0("#V", d[["ReadVersion"]]))
-  if (is.null(d[["Comments"]])) {
-    writeComment("#C data file created using the SS_writedat function in the R package r4ss")
-    writeComment(paste("#C file write time:", Sys.time()))
-  } else {
-    Comments <-
-      sapply(d[["Comments"]], function(x) {
-        if (!grepl(x, pattern = "^#C")) {
-          x <- paste0("#C_", x)
-        }
-        x
-      })
-    for (ln in Comments) {
-      writeComment(ln)
-    }
-  }
-  writeComment("#")
+  add_file_header(datlist, con = zz)
 
   # write the contents
   wl("styr")
@@ -208,19 +185,19 @@ SS_writedat_3.30 <- function(datlist,
   wl("Nfleets")
 
   # write table of info on each fleet
-  writeComment("#_fleetinfo")
+  writeComment("#_fleetinfo", con = zz)
   print.df(d[["fleetinfo"]], terminate = FALSE)
 
   # write table of info on bycatch only fleets, if exists.
   if (!is.null(d[["bycatch_fleet_info"]])) {
-    writeComment("#Bycatch_fleet_input")
+    writeComment("#Bycatch_fleet_input", con = zz)
     print.df(d[["bycatch_fleet_info"]][, names(d[["bycatch_fleet_info"]]) != "fleetname"],
       terminate = FALSE
     )
   }
   # write table of catch
   # year season  fleet catch catch_se
-  writeComment("#_Catch data")
+  writeComment("#_Catch data", con = zz)
   catch.out <- d[["catch"]]
   # catch.out <- merge(stats::reshape(d[["catch"]], direction = "long",
   #  idvar = c("year", "seas"),
@@ -237,13 +214,13 @@ SS_writedat_3.30 <- function(datlist,
   print.df(catch.out)
 
   # write index info
-  writeComment("#_CPUE_and_surveyabundance_observations")
-  writeComment("#_Units:  0=numbers; 1=biomass; 2=F; >=30 for special types")
-  writeComment("#_Errtype:  -1=normal; 0=lognormal; >0=T")
-  writeComment("#_SD_Report: 0=no sdreport; 1=enable sdreport")
+  writeComment("#_CPUE_and_surveyabundance_observations", con = zz)
+  writeComment("#_Units:  0=numbers; 1=biomass; 2=F; >=30 for special types", con = zz)
+  writeComment("#_Errtype:  -1=normal; 0=lognormal; >0=T", con = zz)
+  writeComment("#_SD_Report: 0=no sdreport; 1=enable sdreport", con = zz)
   print.df(d[["CPUEinfo"]], terminate = FALSE)
 
-  writeComment("#\n#_CPUE_data")
+  writeComment("#\n#_CPUE_data", con = zz)
   if (isTRUE(nrow(d[["CPUE"]]) > 0)) {
     print.df(d[["CPUE"]])
   } else {
@@ -252,18 +229,19 @@ SS_writedat_3.30 <- function(datlist,
 
   # write discard info
   wl("N_discard_fleets")
-  writeComment("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)")
+  writeComment("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)", con = zz)
   writeComment(
-    "#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal"
+    "#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal",
+    con = zz
   )
 
-  writeComment("#\n#_discard_fleet_info")
+  writeComment("#\n#_discard_fleet_info", con = zz)
   print.df(d[["discard_fleet_info"]], terminate = FALSE)
 
-  writeComment("#\n#_discard_data")
+  writeComment("#\n#_discard_data", con = zz)
   print.df(d[["discard_data"]])
 
-  writeComment("#\n#_meanbodywt")
+  writeComment("#\n#_meanbodywt", con = zz)
   wl("use_meanbodywt")
   wl("DF_for_meanbodywt", comment = "#_DF_for_meanbodywt_T-distribution_like")
   if (d[["use_meanbodywt"]] == 1) {
@@ -279,7 +257,7 @@ SS_writedat_3.30 <- function(datlist,
   }
   # write length and age comps
   # population length bins
-  writeComment("#\n#_population_length_bins")
+  writeComment("#\n#_population_length_bins", con = zz)
   wl("lbin_method", comment = "# length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector")
   if (d[["lbin_method"]] == 2) {
     wl("binwidth", comment = "# binwidth for population size comp")
@@ -288,7 +266,7 @@ SS_writedat_3.30 <- function(datlist,
   }
   if (d[["lbin_method"]] == 3) {
     wl("N_lbinspop")
-    writeComment("#_lbin_vector_pop")
+    writeComment("#_lbin_vector_pop", con = zz)
     wl.vector("lbin_vector_pop")
   }
 
@@ -296,7 +274,7 @@ SS_writedat_3.30 <- function(datlist,
   # only write further info on length data if used (even if zero rows)
   if (d[["use_lencomp"]]) {
     # fleet-specific info on length comps
-    writeComment("#\n#_len_info")
+    writeComment("#\n#_len_info", con = zz)
     # terminator line added in SS version 3.30.21 with the addition of
     # separate data-weighting by partition
     terminate_len_info <- "partition" %in% names(d[["len_info"]])
@@ -311,11 +289,11 @@ SS_writedat_3.30 <- function(datlist,
       )
     }
     wl("N_lbins")
-    writeComment("#_lbin_vector")
+    writeComment("#_lbin_vector", con = zz)
     wl.vector("lbin_vector")
 
     # length comps
-    writeComment("#\n#_lencomp")
+    writeComment("#\n#_lencomp", con = zz)
     if (is.null(d[["lencomp"]]) & d[["use_lencomp"]] == 1) {
       # empty data.frame with correct number of columns needed for terminator row
       d[["lencomp"]] <-
@@ -341,16 +319,16 @@ SS_writedat_3.30 <- function(datlist,
 
   # additional age comp info only needed if N_agebins > 0
   if (d[["N_agebins"]] > 0) {
-    writeComment("#\n#_agebin_vector")
+    writeComment("#\n#_agebin_vector", con = zz)
     wl.vector("agebin_vector")
 
     # ageing error
-    writeComment("#\n#_ageing_error")
+    writeComment("#\n#_ageing_error", con = zz)
     wl("N_ageerror_definitions")
     print.df(d[["ageerror"]], terminate = FALSE)
 
     # specification of age comps
-    writeComment("#\n#_age_info")
+    writeComment("#\n#_age_info", con = zz)
     print.df("age_info", terminate = FALSE)
 
     wl("Lbin_method",
@@ -383,7 +361,7 @@ SS_writedat_3.30 <- function(datlist,
     print.df(d[["agecomp"]])
   }
 
-  writeComment("#\n#_MeanSize_at_Age_obs")
+  writeComment("#\n#_MeanSize_at_Age_obs", con = zz)
   if (is.null(d[["MeanSize_at_Age_obs"]]) && d[["use_MeanSize_at_Age_obs"]]) {
     d[["use_MeanSize_at_Age_obs"]] <- 0
   }
@@ -412,8 +390,8 @@ SS_writedat_3.30 <- function(datlist,
       wl.vector("Comp_Error_per_method", comment = "#_Comp_Error_per_method")
       wl.vector("ParmSelect_per_method", comment = "#_ParmSelect_per_method")
     }
-    writeComment("#\n#_Sizefreq bins")
-    writeComment("#\n#_sizefreq_bins_list")
+    writeComment("#\n#_Sizefreq bins", con = zz)
+    writeComment("#\n#_sizefreq_bins_list", con = zz)
     wl.list("sizefreq_bins_list")
     lapply(d[["sizefreq_data_list"]], print.df, terminate = FALSE)
   }
@@ -436,7 +414,7 @@ SS_writedat_3.30 <- function(datlist,
 
   wl("use_selectivity_priors")
 
-  writeComment("#")
+  writeComment("#", con = zz)
   writeLines("999", con = zz)
   if (verbose) {
     message("file written to ", outfile)

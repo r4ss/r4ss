@@ -83,11 +83,8 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
     }
   }
 
-  writeLines("#C starter file written by R function SS_writestarter")
-  writeLines("#C rerun model to get more complete formatting in starter.ss_new")
-  writeLines(paste("#C should work with SS version:", mylist[["SSversion"]]))
-  writeLines(paste("#C file write time:", Sys.time()))
-  writeLines("#")
+  # write a header
+  add_file_header(mylist, con = zz)
 
   # strings for control and data file names
   wl("datfile")
