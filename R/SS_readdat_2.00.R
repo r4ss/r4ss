@@ -313,7 +313,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     ))
     i <- i + N_lencomp * Ncols
     names(lencomp) <- c(
-      "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
+      "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("l", lbin_vector, sep = "")
       } else {
@@ -372,7 +372,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     ))
     i <- i + N_agecomp * Ncols
     names(agecomp) <- c(
-      "Yr", "Seas", "FltSvy", "Gender", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
+      "Yr", "Seas", "FltSvy", "Sex", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
@@ -402,7 +402,7 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     ))
     i <- i + N_MeanSize_at_Age_obs * Ncols
     names(MeanSize_at_Age_obs) <- c(
-      "Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
+      "Yr", "Seas", "FltSvy", "Sex", "Part", "AgeErr", "Ignore",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
