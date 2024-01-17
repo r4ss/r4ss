@@ -383,7 +383,7 @@ SS_readdat_3.30 <-
       if (!is.null(datlist[["lencomp"]])) {
         colnames(datlist[["lencomp"]]) <-
           c(
-            "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
+            "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
             if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("l", datlist[["lbin_vector"]])
             } else {
@@ -463,7 +463,7 @@ SS_readdat_3.30 <-
       if (!is.null(datlist[["agecomp"]])) {
         colnames(datlist[["agecomp"]]) <-
           c(
-            "Yr", "Seas", "FltSvy", "Gender",
+            "Yr", "Seas", "FltSvy", "Sex",
             "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
             if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("a", datlist[["agebin_vector"]])
@@ -547,7 +547,7 @@ SS_readdat_3.30 <-
 
       colnames(datlist[["MeanSize_at_Age_obs"]]) <-
         c(
-          "Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
+          "Yr", "Seas", "FltSvy", "Sex", "Part", "AgeErr", "Ignore",
           if (abs(datlist[["Nsexes"]]) == 1) {
             paste0("a", datlist[["agebin_vector"]])
           } else {
@@ -640,7 +640,7 @@ SS_readdat_3.30 <-
         colnames(datlist[["sizefreq_data_list"]][[imethod]]) <-
           c(
             "Method", "Yr", "Seas", "FltSvy",
-            "Gender", "Part", "Nsamp",
+            "Sex", "Part", "Nsamp",
             if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("a", datlist[["sizefreq_bins_list"]][[imethod]])
             } else {
@@ -693,7 +693,7 @@ SS_readdat_3.30 <-
         datlist[["tag_releases"]] <- get.df(dat, ind, datlist[["N_tag_groups"]])
         colnames(datlist[["tag_releases"]]) <- c(
           "TG", "Area", "Yr", "Season",
-          "tfill", "Gender", "Age", "Nrelease"
+          "tfill", "Sex", "Age", "Nrelease"
         )
       } else {
         datlist[["tag_releases"]] <- NULL
