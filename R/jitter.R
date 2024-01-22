@@ -226,7 +226,7 @@ jitter <- function(dir = getwd(),
 
 #' Execute a single jittered model run
 #' 
-#' Assumes based model for the jitter is in the current working directory.
+#' Assumes the current working directory contains the base model to be jittered.
 #'
 #' @param i Index of the jitter iteration.
 #' @param  printlikes A logical value specifying if the likelihood values should

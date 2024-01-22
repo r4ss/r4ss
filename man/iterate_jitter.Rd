@@ -40,7 +40,7 @@ Cannot be \code{NULL}. Defaults to zero (initial values read from control file).
 Negative log-likelihood of one jittered model
 }
 \description{
-Assumes based model for the jitter is in the current working directory.
+Assumes the current working directory contains the base model to be jittered.
 }
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
