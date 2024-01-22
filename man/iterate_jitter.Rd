@@ -6,7 +6,6 @@
 \usage{
 iterate_jitter(
   i,
-  dir = getwd(),
   printlikes = TRUE,
   exe = "ss",
   verbose = FALSE,
@@ -16,8 +15,6 @@ iterate_jitter(
 }
 \arguments{
 \item{i}{Index of the jitter iteration.}
-
-\item{dir}{Directory of the base model to be jittered}
 
 \item{printlikes}{A logical value specifying if the likelihood values should
 be printed to the console.}
@@ -43,7 +40,7 @@ Cannot be \code{NULL}. Defaults to zero (initial values read from control file).
 Negative log-likelihood of one jittered model
 }
 \description{
-Execute a single jittered model run
+Assumes based model for the jitter is in the current working directory.
 }
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor,

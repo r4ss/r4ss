@@ -169,21 +169,19 @@ jitter <- function(dir = getwd(),
     Njitter <- 1:Njitter
   }
 
-  likesaved <- furrr::future_map_dbl(Njitter, function(.x) {
-    iterate_jitter(
-      i = .x,
-      dir = dir,
-      printlikes = printlikes,
-      exe = exe,
-      verbose = verbose,
-      init_values_src = starter[["init_values_src"]],
-      ...
-    )
-  })
-
+  likesaved <- furrr::future_map_dbl(
+    .x = Njitter, 
+    .f = iterate_jitter,
+    printlikes = printlikes,
+    exe = exe,
+    verbose = verbose,
+    init_values_src = starter[["init_values_src"]],
+    ...
+  )
+  
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
-    path = file.path(dir, paste0("jitter", .x)),
+    path = paste0("jitter", .x),
     pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
   ))
 
@@ -227,9 +225,10 @@ jitter <- function(dir = getwd(),
 }
 
 #' Execute a single jittered model run
+#' 
+#' Assumes based model for the jitter is in the current working directory.
 #'
 #' @param i Index of the jitter iteration.
-#' @param dir Directory of the base model to be jittered
 #' @param  printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
 #' @template  exe
@@ -244,15 +243,14 @@ jitter <- function(dir = getwd(),
 #' @return Negative log-likelihood of one jittered model
 #'
 iterate_jitter <- function(i,
-                           dir = getwd(),
                            printlikes = TRUE,
                            exe = "ss",
                            verbose = FALSE,
                            init_values_src = 0,
                            ...) {
-  jitter_dir <- file.path(dir, paste0("jitter", i))
+  jitter_dir <- paste0("jitter", i)
   copy_SS_inputs(
-    dir.old = dir, dir.new = jitter_dir, overwrite = TRUE,
+    dir.old = getwd(), dir.new = jitter_dir, overwrite = TRUE,
     verbose = verbose, copy_exe = TRUE,
     copy_par = as.logical(init_values_src)
   )
