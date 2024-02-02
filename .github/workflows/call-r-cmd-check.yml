@@ -4,7 +4,7 @@ name: call-r-cmd-check
 on: 
   push: 
     paths-ignore: 
-      - '.github/**'
+      # - '.github/**'
       - 'README.md'
   workflow_dispatch:
 jobs:
