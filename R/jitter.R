@@ -162,14 +162,14 @@ jitter <- function(dir = getwd(),
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
 
   # I'm not sure if this is necessary anymore
-  file_increment(0, verbose = verbose)
+  # file_increment(0, verbose = verbose)
 
   # check length of Njitter input
   if (length(Njitter) == 1) {
     Njitter <- 1:Njitter
   }
 
-  likesaved <- furrr::future_map_dbl(Njitter, function(.x) {
+  likesaved <- furrr::future_map(Njitter, function(.x) {
     iterate_jitter(
       i = .x,
       dir = dir,
@@ -246,7 +246,7 @@ jitter <- function(dir = getwd(),
 iterate_jitter <- function(i,
                            dir = getwd(),
                            printlikes = TRUE,
-                           exe = "ss",
+                           exe = "ss3",
                            verbose = FALSE,
                            init_values_src = 0,
                            ...) {
@@ -257,7 +257,7 @@ iterate_jitter <- function(i,
     copy_par = as.logical(init_values_src)
   )
   # run model
-  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
+  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose)
   # Only save stuff if it converged
   if ("Report.sso" %in% list.files(path = jitter_dir)) {
     rep <- SS_read_summary(file.path(jitter_dir, "ss_summary.sso"))
