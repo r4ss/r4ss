@@ -92,7 +92,8 @@ SS_read <- function(dir = getwd(),
   }
 
   par <- NULL
-  if (file.exists(file.path(dir, "ss.par"))) {
+  par_file <- list.files(dir, patter = ".par$")
+  if (file.exists(file.path(dir, par_file))) {
     try(
       {
         if (ctl[["ReadVersion"]] == "3.24") {
@@ -102,7 +103,7 @@ SS_read <- function(dir = getwd(),
             verbose = verbose
           )
         } else {
-          par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
+          par <- r4ss::SS_readpar_3.30(file.path(dir, par_file),
             datsource = dat,
             ctlsource = ctl,
             verbose = verbose

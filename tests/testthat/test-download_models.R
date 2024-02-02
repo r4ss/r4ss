@@ -18,14 +18,15 @@ test_that("download_models with defaults work", {
   download_models()
   expect_true(file.exists("inst/extdata/models"))
   expect_true(file.exists("inst/extdata/models/Simple"))
-  expect_true(file.exists("inst/extdata/models/Simple/ss.par"))
+  expect_true(file.exists("inst/extdata/models/Simple/ss.par")|file.exists("inst/extdata/models/Simple/ss3.par")
+  )
 })
 
 test_that("download_models with different dir works", {
   download_models(dir = save_models_dir)
   expect_true(file.exists(file.path(save_models_dir, "models")))
   expect_true(file.exists(file.path(save_models_dir, "models", "Simple")))
-  expect_true(file.exists(file.path(save_models_dir, "models", "Simple", "ss.par")))
+  expect_true(file.exists(file.path(save_models_dir, "models", "Simple", "ss.par"))|file.exists(file.path(save_models_dir, "models", "Simple", "ss3.par")))
 })
 
 test_that("download_models() works when the dir doesn't exist", {
@@ -35,7 +36,7 @@ test_that("download_models() works when the dir doesn't exist", {
   expect_true(worked)
   expect_true(file.exists(file.path(temp_dir_missing_dir, "models")))
   expect_true(file.exists(file.path(temp_dir_missing_dir, "models", "Simple")))
-  expect_true(file.exists(file.path(temp_dir_missing_dir, "models", "Simple", "ss.par")))
+  expect_true(file.exists(file.path(temp_dir_missing_dir, "models", "Simple", "ss.par"))| file.exists(file.path(temp_dir_missing_dir, "models", "Simple", "ss3.par")))
 })
 
 # (note that this generates 2 warnings, and I'm not sure how to suppress them!)

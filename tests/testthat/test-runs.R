@@ -99,8 +99,11 @@ test_that("retro() and populate_multiple_folders() both work", {
   # check for .par file
   expect_true("ss.par" %in% dir(file.path(
     path_simple_small,
-    "retrospectives_copy", folders_copied[1, "dir"]
-  )))
+    "retrospectives_copy", folders_copied[1, "dir"])) |
+    "ss3.par" %in% dir(file.path(
+    path_simple_small,
+    "retrospectives_copy", folders_copied[1, "dir"]))
+    )
 
   # test exe.dir as a path and use_ss_new = TRUE
   folders_copied2 <- populate_multiple_folders(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readpar_3.30.R
 \name{SS_readpar_3.30}
 \alias{SS_readpar_3.30}
-\title{read ss.par file from SS version 3.30}
+\title{read ss.par or ss3.par file from SS version 3.30}
 \usage{
 SS_readpar_3.30(parfile, datsource, ctlsource, verbose = TRUE)
 }

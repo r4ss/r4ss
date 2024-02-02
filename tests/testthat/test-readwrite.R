@@ -22,7 +22,7 @@ test_that("models can be read and written", {
     fore <- SS_readforecast(file.path(m, "forecast.ss"), verbose = FALSE)
     dat <- SS_readdat(file.path(m, start[["datfile"]]), verbose = FALSE)
     ctl <- SS_readctl(file.path(m, start[["ctlfile"]]), datlist = dat)
-    par <- SS_readpar_3.30(file.path(m, "ss.par"),
+    par <- SS_readpar_3.30(file.path(m, list.files(m, pattern = ".par$")),
       datsource = dat,
       ctlsource = ctl,
       verbose = FALSE
@@ -48,7 +48,7 @@ test_that("models can be read and written", {
     #### Checks related to SS_write* functions
     files <- file.path(m, c(
       "starter.ss", "forecast.ss", start[["datfile"]],
-      start[["ctlfile"]], "ss.par"
+      start[["ctlfile"]], list.files(m, pattern = ".par$")
     ))
     # remove files
     lapply(files, function(x) file.remove(x))

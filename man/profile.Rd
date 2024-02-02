@@ -53,8 +53,8 @@ matrix with a column for each parameter.}
 \item{usepar}{Use PAR file from previous profile step for starting values?}
 
 \item{globalpar}{Use global par file (\code{parfile_original_backup.sso}, which is
-automatically copied from original \code{ss.par}) for all runs instead
-of the par file from each successive run}
+automatically copied from original \code{ss.par} or \code{ss3.par} depending on SS3
+version) for all runs instead of the par file from each successive run}
 
 \item{parlinenum}{Line number in par file to change (if usepar = TRUE).
 Can be a vector if you are profiling multiple parameters at the same time.}

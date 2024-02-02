@@ -222,6 +222,10 @@ SS_output <-
       if (length(parfile) > 1 && any(parfile == "ss.par")) {
         parfile <- "ss.par"
       }
+      # choose anything called "ss3.par" file option for v.3.30.22.1 and beyond
+      if (length(parfile) > 1 && any(parfile == "ss3.par")) {
+        parfile <- "ss3.par"
+      }
       # if there are still duplicates after all that, choose the first one
       if (length(parfile) > 1) {
         parfile <- parfile[1]

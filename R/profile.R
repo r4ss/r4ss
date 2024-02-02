@@ -35,8 +35,8 @@ SS_profile <- function(...) {
 #' profiling multiple parameters at the same time.
 #' @param usepar Use PAR file from previous profile step for starting values?
 #' @param globalpar Use global par file (`parfile_original_backup.sso`, which is
-#' automatically copied from original `ss.par`) for all runs instead
-#' of the par file from each successive run
+#' automatically copied from original `ss.par` or `ss3.par` depending on SS3 
+#' version) for all runs instead of the par file from each successive run
 #' @param parlinenum Line number in par file to change (if usepar = TRUE).
 #' Can be a vector if you are profiling multiple parameters at the same time.
 #' @param parstring String in par file preceding line number to change as
@@ -360,6 +360,7 @@ profile <- function(dir,
 
   # note: std file name is independent of executable name
   stdfile <- file.path(dir, "ss.std")
+  parfile <- list.files(dir, patter = ".par$")
 
   # read starter file to get input file names and check various things
   starter.file <- dir()[tolower(dir()) == "starter.ss"]
@@ -400,7 +401,7 @@ profile <- function(dir,
 
   # back up par file
   if (usepar) {
-    file.copy("ss.par", "parfile_original_backup.sso")
+    file.copy(parfile, "parfile_original_backup.sso")
   }
 
   # run loop over profile values
@@ -451,7 +452,7 @@ profile <- function(dir,
         if (globalpar) {
           par <- readLines("parfile_original_backup.sso")
         } else {
-          par <- readLines("ss.par")
+          par <- readLines(parfile)
         }
         # loop over the number of parameters (typically just 1)
         for (ipar in 1:npars) {
@@ -485,7 +486,7 @@ profile <- function(dir,
         message(paste0(note, collapse = "\n"))
         # write new par file
         writeLines(par, paste0("ss_input_par", i, ".ss"))
-        writeLines(par, "ss.par")
+        writeLines(par, parfile)
       }
       if (file.exists(stdfile)) {
         file.remove(stdfile)
@@ -538,7 +539,7 @@ profile <- function(dir,
         file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""),
           overwrite = overwrite
         )
-        file.copy("ss.par", paste("ss.par_", i, ".sso", sep = ""),
+        file.copy(parfile, paste(parfile,"_", i, ".sso", sep = ""),
           overwrite = overwrite
         )
       }
