@@ -92,7 +92,7 @@ SS_read <- function(dir = getwd(),
   }
 
   par <- NULL
-  par_file <- list.files(dir, patter = ".par$")
+  par_file <- list.files(dir, pattern = ".par$")
   if (file.exists(file.path(dir, par_file))) {
     try(
       {

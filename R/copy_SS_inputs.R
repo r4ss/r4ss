@@ -191,7 +191,7 @@ copy_SS_inputs <- function(dir.old = NULL,
   }
 
   # copy par file(s) if requested
-  par_file <- list.files(dir.old, patter = ".par$")
+  par_file <- list.files(dir.old, pattern = ".par$")
 
   if (copy_par) {
     results[7] <- file.copy(
