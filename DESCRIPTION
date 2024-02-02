@@ -67,6 +67,7 @@ Imports:
     kableExtra,
     lifecycle,
     magrittr,
+    purrr,
     stringr,
     tidyr
 Suggests: 
