@@ -8,7 +8,7 @@ iterate_jitter(
   i,
   dir = getwd(),
   printlikes = TRUE,
-  exe = "ss",
+  exe = "ss3",
   verbose = FALSE,
   init_values_src = 0,
   ...
