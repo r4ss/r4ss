@@ -360,7 +360,7 @@ profile <- function(dir,
 
   # note: std file name is independent of executable name
   stdfile <- file.path(dir, "ss.std")
-  parfile <- list.files(dir, pattern = ".par$")
+  parfile <- get_par_name(dir)
 
   # read starter file to get input file names and check various things
   starter.file <- dir()[tolower(dir()) == "starter.ss"]

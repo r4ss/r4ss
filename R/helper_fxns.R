@@ -12,6 +12,7 @@
 #' @return A string with the name of the data .ss_new file. If not found, will
 #'  be NA. Both of strings are searched for using `dir(pattern = )` and
 #'  if both exist, then `data_echo.ss_new` is returned.
+#' @seealso [get_par_name]
 #'
 get_dat_new_name <- function(dir) {
   datname <- tail(
@@ -20,6 +21,52 @@ get_dat_new_name <- function(dir) {
   )
   ifelse(length(datname) == 0, NA, datname)
 }
+
+#' Get the name of the .par file in a directory
+#'
+#' In previous versions of Stock Synthesis,
+#' @template dir
+#' @template verbose
+#' @return A string with the name of the .par file. If not found, will
+#'  be NA. If multiple files exist, preference is given to ss3.par
+#' (default as of 3.30.22.1), followed by ss.par, followed by the most recently
+#' modified file with a *.par extension (choosing the first if two were modified
+#' at the same time).
+#' @seealso [get_dat_new_name]
+
+get_par_name <- function(dir, verbose = TRUE) {
+  parfile <- dir(dir, pattern = ".par$")
+
+  # if no .par file found, return NA
+  if (length(parfile) == 0) {
+    return(NA)
+  }
+
+  # if more than 1 .par file
+  if (length(parfile) > 1) {
+    # get info on all files that match the pattern
+    parinfo <- file.info(file.path(dir, parfile))
+
+    parfile <- dplyr::case_when(
+      any(parfile == "ss3.par") ~ "ss3.par", # first choice
+      any(parfile == "ss.par") ~ "ss.par", # second choice
+      # last choice is most recently changed file (excluding directories)
+      TRUE ~ parfile[!parinfo[["isdir"]] &
+        parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])][1]
+    )
+
+    if (verbose) {
+      message(
+        "Multiple files in directory match pattern *.par, choosing based on the",
+        " preferences described in the help for get_par_name(): ", parfile
+      )
+    }
+  }
+  
+  # return file name as a string
+  return(parfile)
+}
+
 
 #' Allow Multi-Plots
 #' Set the par() to options suitable for ss3diags multi plots.

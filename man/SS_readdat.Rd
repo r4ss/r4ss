@@ -41,15 +41,15 @@ but they have been deprecated).
 }
 \seealso{
 Other read/write functions: 
-\code{\link{SS_read}()},
 \code{\link{SS_readctl}()},
 \code{\link{SS_readforecast}()},
 \code{\link{SS_readstarter}()},
-\code{\link{SS_write}()},
+\code{\link{SS_read}()},
 \code{\link{SS_writectl}()},
 \code{\link{SS_writedat}()},
 \code{\link{SS_writeforecast}()},
-\code{\link{SS_writestarter}()}
+\code{\link{SS_writestarter}()},
+\code{\link{SS_write}()}
 }
 \author{
 Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,

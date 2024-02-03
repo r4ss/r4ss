@@ -46,6 +46,9 @@ SS_write <- function(inputlist,
                      dir = "",
                      overwrite = FALSE,
                      verbose = FALSE) {
+  # check for contents of inputlist
+  check_inputlist(inputlist)
+
   # create directory if not already there
   if (dir != "") {
     if (!dir.exists(dir)) {
@@ -55,9 +58,6 @@ SS_write <- function(inputlist,
       dir.create(dir, recursive = TRUE)
     }
   }
-
-  # check for contents of inputlist
-  check_inputlist(inputlist)
 
   # write starter file
   if ("start" %in% names(inputlist)) {
@@ -116,17 +116,22 @@ SS_write <- function(inputlist,
   }
 
   if ("par" %in% names(inputlist)) {
+    if (is.null(inputlist[["par"]][["parfile"]])) {
+      inputlist[["par"]][["parfile"]] <- "ss3.par"
+      warning("parfile name assumed to be 'ss3.par' because it was not specified",
+      " by a recent version of SS_write()")
+    }
     if (!is.null(inputlist[["par"]])) {
       try(
         {
           if (inputlist[["ctl"]][["ReadVersion"]] == "3.24") {
             par <- r4ss::SS_writepar_3.24(inputlist[["par"]],
-              outfile = file.path(dir, "ss.par"),
+              outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
               verbose = verbose
             )
           } else {
             par <- r4ss::SS_writepar_3.30(inputlist[["par"]],
-              outfile = file.path(dir, "ss.par"),
+              outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
               verbose = verbose
             )
           }

@@ -192,12 +192,16 @@ copy_SS_inputs <- function(dir.old = NULL,
 
   # copy par file(s) if requested
   if (copy_par) {
-    par_file <- list.files(dir.old, pattern = ".par$")
-    results[7] <- file.copy(
-      from = file.path(dir.old, par_file),
-      to = file.path(dir.new, par_file),
-      overwrite = overwrite
-    )
+    parfile <- get_par_name(dir.old)
+    # if there's no .par file then don't report results for it
+    # even if copy_par == TRUE
+    if (!is.na(parfile)) { 
+      results[7] <- file.copy(
+        from = file.path(dir.old, parfile),
+        to = file.path(dir.new, parfile),
+        overwrite = overwrite
+      )
+    }
   }
 
   # check for successful copying

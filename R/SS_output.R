@@ -211,39 +211,12 @@ SS_output <-
     repfile <- file.path(dir, repfile)
 
     # figure out which par file to read
-    parfile <- dir(dir, pattern = ".par$")
-    if (length(parfile) > 1) {
-      parinfo <- file.info(file.path(dir, parfile))
-      parfile <- parfile[!parinfo[["isdir"]] & # exclude directories
-        parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])] # pick most recently changed file
+    parfile <- get_par_name(dir)
 
-      # if there are still duplicates (with the same 'mtime' value),
-      # choose anything called "ss.par"
-      if (length(parfile) > 1 && any(parfile == "ss.par")) {
-        parfile <- "ss.par"
-      }
-      # choose anything called "ss3.par" file option for v.3.30.22.1 and beyond
-      if (length(parfile) > 1 && any(parfile == "ss3.par")) {
-        parfile <- "ss3.par"
-      }
-      # if there are still duplicates after all that, choose the first one
-      if (length(parfile) > 1) {
-        parfile <- parfile[1]
-      }
-      if (verbose) {
-        message(
-          "Multiple files in directory match pattern *.par\n",
-          "choosing most recently modified:", parfile
-        )
-      }
-    }
-    if (length(parfile) == 0) {
+    if (is.na(parfile)) {
       if (!hidewarn) {
         message("Some stats skipped because the .par file not found.")
       }
-      parfile <- NA
-    } else {
-      parfile <- file.path(dir, parfile)
     }
 
     # read three rows to get start time and version number from rep file
@@ -1431,7 +1404,8 @@ SS_output <-
     rownames(parameters) <- ParmLabels
 
     if (!is.na(parfile)) {
-      parline <- read.table(parfile, fill = TRUE, comment.char = "", nrows = 1)
+      parline <- read.table(file.path(dir, parfile), fill = TRUE, 
+      comment.char = "", nrows = 1)
     } else {
       parline <- matrix(NA, 1, 16)
     }
