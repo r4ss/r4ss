@@ -1,4 +1,4 @@
-#' read ss.par or ss3.par file from SS version 3.30
+#' read .par file from SS version 3.30
 #'
 #' Read Stock Synthesis (version 3.30) parameter file into list object in R.
 #'
