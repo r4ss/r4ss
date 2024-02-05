@@ -1404,8 +1404,10 @@ SS_output <-
     rownames(parameters) <- ParmLabels
 
     if (!is.na(parfile)) {
-      parline <- read.table(file.path(dir, parfile), fill = TRUE, 
-      comment.char = "", nrows = 1)
+      parline <- read.table(file.path(dir, parfile),
+        fill = TRUE,
+        comment.char = "", nrows = 1
+      )
     } else {
       parline <- matrix(NA, 1, 16)
     }

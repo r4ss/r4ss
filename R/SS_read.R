@@ -93,7 +93,7 @@ SS_read <- function(dir = getwd(),
 
   par <- NULL
   parfile <- get_par_name(dir)
-  
+
   # if par file exists, try to read it
   if (!is.na(parfile)) {
     try(

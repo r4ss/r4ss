@@ -35,7 +35,7 @@ SS_profile <- function(...) {
 #' profiling multiple parameters at the same time.
 #' @param usepar Use PAR file from previous profile step for starting values?
 #' @param globalpar Use global par file (`parfile_original_backup.sso`, which is
-#' automatically copied from original `ss.par` or `ss3.par` depending on SS3 
+#' automatically copied from original `ss.par` or `ss3.par` depending on SS3
 #' version) for all runs instead of the par file from each successive run
 #' @param parlinenum Line number in par file to change (if usepar = TRUE).
 #' Can be a vector if you are profiling multiple parameters at the same time.
@@ -539,7 +539,7 @@ profile <- function(dir,
         file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""),
           overwrite = overwrite
         )
-        file.copy(parfile, paste(parfile,"_", i, ".sso", sep = ""),
+        file.copy(parfile, paste(parfile, "_", i, ".sso", sep = ""),
           overwrite = overwrite
         )
       }
