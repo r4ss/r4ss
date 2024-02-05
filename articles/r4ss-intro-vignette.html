@@ -365,7 +365,10 @@ biomass target can be modified in the forecast file</p>
 <p>The <code><a href="../reference/SS_write.html">SS_write()</a></code> function can be used to write out the
 modified stock synthesis input R objects into input files:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/SS_write.html">SS_write</a></span><span class="op">(</span><span class="va">inputs</span>, dir <span class="op">=</span> <span class="va">new_mod_path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/SS_write.html">SS_write</a></span><span class="op">(</span><span class="va">inputs</span>, dir <span class="op">=</span> <span class="va">new_mod_path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in r4ss::SS_write(inputs, dir = new_mod_path, overwrite = TRUE):</span></span>
+<span><span class="co">#&gt; parfile name assumed to be 'ss3.par' because it was not specified by a recent</span></span>
+<span><span class="co">#&gt; version of SS_write()</span></span></code></pre></div>
 <p>If you make changes to the input model files that render the file
 unparsable by Stock Synthesis, the <code><a href="../reference/SS_write.html">SS_write()</a></code> function may
 throw an error (and hopefully provide an informative message about why).
@@ -592,7 +595,7 @@ make a copy of the model to avoid changing the original model files</p>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
 <span><span class="co">#&gt; to</span></span>
-<span><span class="co">#&gt;  /tmp/RtmpEYxEb5/simple_mod</span></span>
+<span><span class="co">#&gt;  /tmp/RtmpeX6A7J/simple_mod</span></span>
 <span><span class="co">#&gt; copying complete</span></span>
 <span><span class="co"># copy over the Report file to provide information about the last run</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span></span>
