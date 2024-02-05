@@ -62,7 +62,7 @@ get_par_name <- function(dir, verbose = TRUE) {
       )
     }
   }
-  
+
   # return file name as a string
   return(parfile)
 }

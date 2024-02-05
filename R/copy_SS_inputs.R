@@ -195,7 +195,7 @@ copy_SS_inputs <- function(dir.old = NULL,
     parfile <- get_par_name(dir.old)
     # if there's no .par file then don't report results for it
     # even if copy_par == TRUE
-    if (!is.na(parfile)) { 
+    if (!is.na(parfile)) {
       results[7] <- file.copy(
         from = file.path(dir.old, parfile),
         to = file.path(dir.new, parfile),
