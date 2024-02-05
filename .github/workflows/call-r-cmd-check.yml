@@ -13,5 +13,5 @@ jobs:
   call-workflow-extra:
     # this step runs the r4ss tests again, after downloading ss3 exes and the
     # nmfs-ost/ss3-test-models repo.
-    uses: r4ss/r4ss/.github/workflows/r4ss-extra-tests.yml@ss.par-fix
+    uses: r4ss/r4ss/.github/workflows/r4ss-extra-tests.yml@main
 
