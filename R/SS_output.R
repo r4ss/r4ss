@@ -2239,7 +2239,8 @@ SS_output <-
           sizentune <- type.convert(sizentune, as.is = TRUE)
           stats[["Size_Comp_Fit_Summary"]] <- sizentune
           # remove extra summary rows of fit_size_comps
-          fit_size_comps <- fit_size_comps[fit_size_comps[["Fleet_Name"]] %in% FleetNames, ]
+          fit_size_comps <- fit_size_comps %>% 
+            dplyr::filter(Fleet_Name %in% FleetNames & Fleet %in% 1:nfleets)
         } # end check for non-empty fit_size_comps
       } else {
         # formatting used for earlier 3.30 versions (prior to 3.30.12)
