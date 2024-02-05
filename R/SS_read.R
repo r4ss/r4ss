@@ -92,22 +92,27 @@ SS_read <- function(dir = getwd(),
   }
 
   par <- NULL
-  if (file.exists(file.path(dir, "ss.par"))) {
+  parfile <- get_par_name(dir)
+  
+  # if par file exists, try to read it
+  if (!is.na(parfile)) {
     try(
       {
         if (ctl[["ReadVersion"]] == "3.24") {
-          par <- r4ss::SS_readpar_3.24(file.path(dir, "ss.par"),
+          par <- r4ss::SS_readpar_3.24(file.path(dir, parfile),
             datsource = dat,
             ctlsource = ctl,
             verbose = verbose
           )
         } else {
-          par <- r4ss::SS_readpar_3.30(file.path(dir, "ss.par"),
+          par <- r4ss::SS_readpar_3.30(file.path(dir, parfile),
             datsource = dat,
             ctlsource = ctl,
             verbose = verbose
           )
         }
+        # record parfile name for use by SS_write()
+        par[["parfile"]] <- parfile
       },
       silent = !verbose
     )

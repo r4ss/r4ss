@@ -22,7 +22,8 @@ test_that("models can be read and written", {
     fore <- SS_readforecast(file.path(m, "forecast.ss"), verbose = FALSE)
     dat <- SS_readdat(file.path(m, start[["datfile"]]), verbose = FALSE)
     ctl <- SS_readctl(file.path(m, start[["ctlfile"]]), datlist = dat)
-    par <- SS_readpar_3.30(file.path(m, "ss.par"),
+    parfile <- get_par_name(m)
+    par <- SS_readpar_3.30(file.path(m, parfile),
       datsource = dat,
       ctlsource = ctl,
       verbose = FALSE
@@ -48,7 +49,7 @@ test_that("models can be read and written", {
     #### Checks related to SS_write* functions
     files <- file.path(m, c(
       "starter.ss", "forecast.ss", start[["datfile"]],
-      start[["ctlfile"]], "ss.par"
+      start[["ctlfile"]], parfile
     ))
     # remove files
     lapply(files, function(x) file.remove(x))
@@ -59,7 +60,7 @@ test_that("models can be read and written", {
     SS_writeforecast(fore, dir = m, verbose = FALSE)
     SS_writedat(dat, outfile = file.path(m, start[["datfile"]]), verbose = FALSE)
     SS_writectl(ctl, outfile = file.path(m, start[["ctlfile"]]), verbose = FALSE)
-    SS_writepar_3.30(par, outfile = file.path(m, "ss.par"), verbose = FALSE)
+    par2 <- SS_writepar_3.30(par, outfile = file.path(m, parfile), verbose = FALSE)
 
     # confirm that they got written
     lapply(files, function(x) expect_true(file.exists(x)))
@@ -91,7 +92,7 @@ test_that("empty files lead to NULL or error", {
   ))
 })
 
-test_that("ss_read works with a raw github URL", {
+test_that("SS_read works with a raw github URL", {
   skip_if_offline(host = "github.com")
   list_objs <- SS_read(
     dir =

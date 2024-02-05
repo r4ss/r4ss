@@ -13,7 +13,7 @@ sim_small <- file.path(tmp_path, "extdata", "simple_small")
 
 test_that("SS_readpars functions work ", {
   par_3.30 <- SS_readpar_3.30(
-    parfile = file.path(sim_small, "ss.par"),
+    parfile = file.path(sim_small, list.files(sim_small, pattern = ".par$")),
     datsource = file.path(sim_small, "data.ss"),
     ctlsource = file.path(sim_small, "control.ss"),
     verbose = FALSE
