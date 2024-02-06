@@ -21,7 +21,7 @@ file_increment <- function(i, verbose = FALSE,
   if (verbose) {
     message("Renaming output files to have names like Report", i, ".sso")
   }
-  ignore <- file.rename(
+  ignore <- file.copy(
     from = dir(pattern = pattern),
     to = gsub("par", "par_", gsub(
       "\\.sso|(\\.par)",
