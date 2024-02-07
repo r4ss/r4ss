@@ -169,9 +169,9 @@ jitter <- function(dir = getwd(),
     Njitter <- 1:Njitter
   }
 
-  likesaved <- furrr::future_map_dbl(Njitter, function(.x) {
-    iterate_jitter(
-      i = .x,
+  likesaved <- furrr::future_map_dbl(
+      .x = Njitter,
+      .f = iterate_jitter,
       dir = dir,
       printlikes = printlikes,
       exe = exe,
