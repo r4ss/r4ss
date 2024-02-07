@@ -2,7 +2,7 @@
 % Please edit documentation in R/file_increment.R
 \name{file_increment}
 \alias{file_increment}
-\title{Rename Stock Synthesis files by adding integer value}
+\title{Rename key Stock Synthesis output files by adding integer value}
 \usage{
 file_increment(
   i,
@@ -32,6 +32,9 @@ name before the extension.
 The \code{.par} file, which is the only file extension searched for
 with the default entry that does not end in \code{.sso}, is
 modified differently.\verb{_i.sso} is added to the file name.
+}
+\seealso{
+\code{\link[=jitter]{jitter()}}
 }
 \author{
 Kelli F. Johnson
