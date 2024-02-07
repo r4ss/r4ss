@@ -179,7 +179,6 @@ jitter <- function(dir = getwd(),
       init_values_src = starter[["init_values_src"]],
       ...
     )
-  })
 
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
