@@ -258,7 +258,7 @@ iterate_jitter <- function(i,
   )
 
   # run model
-  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose)
+  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
   # Only save stuff if it converged
   if ("Report.sso" %in% list.files(path = jitter_dir)) {
     rep <- SS_read_summary(file.path(jitter_dir, "ss_summary.sso"))
