@@ -209,7 +209,7 @@ SSplotYield <-
 
     # number of years to consider
     Nyrs <- nrow(df)
-    browser()
+
     # calculate surplus production as difference in total biomass adjusted for catch
     df[["sprod"]][1:(Nyrs - 1)] <-
       df[["mean_Bio_all"]][2:Nyrs] -
