@@ -170,14 +170,14 @@ jitter <- function(dir = getwd(),
   }
 
   likesaved <- furrr::future_map_dbl(
-      .x = Njitter,
-      .f = iterate_jitter,
-      printlikes = printlikes,
-      exe = exe,
-      verbose = verbose,
-      init_values_src = starter[["init_values_src"]],
-      ...
-    )
+    .x = Njitter,
+    .f = iterate_jitter,
+    printlikes = printlikes,
+    exe = exe,
+    verbose = verbose,
+    init_values_src = starter[["init_values_src"]],
+    ...
+  )
 
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
@@ -205,9 +205,9 @@ jitter <- function(dir = getwd(),
       )
     }
   )
-  if(verbose){
+  if (verbose) {
     message("Finished running jitters, running last few clean-up steps")
-    }
+  }
 
   # delete jitter model directory
   purrr::walk(Njitter, ~ unlink(paste0("jitter", .x), recursive = TRUE))
@@ -230,11 +230,10 @@ jitter <- function(dir = getwd(),
 #' Execute a single jittered model run
 #'
 #' @param i Index of the jitter iteration.
-#' @param dir Directory of the base model to be jittered
-#' @param  printlikes A logical value specifying if the likelihood values should
+#' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
-#' @template  exe
-#' @template  verbose
+#' @template exe
+#' @template verbose
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   Cannot be `NULL`. Defaults to zero (initial values read from control file).
@@ -256,10 +255,10 @@ iterate_jitter <- function(i,
     verbose = verbose, copy_exe = TRUE,
     copy_par = as.logical(init_values_src)
   )
-  
-  if(verbose){
+
+  if (verbose) {
     message(paste0("Starting run of jitter", i))
-    }
+  }
 
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)

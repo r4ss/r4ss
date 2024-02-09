@@ -6,7 +6,6 @@
 \usage{
 iterate_jitter(
   i,
-  dir = getwd(),
   printlikes = TRUE,
   exe = "ss3",
   verbose = FALSE,
@@ -16,8 +15,6 @@ iterate_jitter(
 }
 \arguments{
 \item{i}{Index of the jitter iteration.}
-
-\item{dir}{Directory of the base model to be jittered}
 
 \item{printlikes}{A logical value specifying if the likelihood values should
 be printed to the console.}
