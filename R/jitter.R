@@ -169,21 +169,19 @@ jitter <- function(dir = getwd(),
     Njitter <- 1:Njitter
   }
 
-  likesaved <- furrr::future_map_dbl(Njitter, function(.x) {
-    iterate_jitter(
-      i = .x,
-      dir = dir,
-      printlikes = printlikes,
-      exe = exe,
-      verbose = verbose,
-      init_values_src = starter[["init_values_src"]],
-      ...
-    )
-  })
+  likesaved <- furrr::future_map_dbl(
+    .x = Njitter,
+    .f = iterate_jitter,
+    printlikes = printlikes,
+    exe = exe,
+    verbose = verbose,
+    init_values_src = starter[["init_values_src"]],
+    ...
+  )
 
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
-    path = file.path(dir, paste0("jitter", .x)),
+    path = paste0("jitter", .x),
     pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
   ))
 
@@ -207,6 +205,9 @@ jitter <- function(dir = getwd(),
       )
     }
   )
+  if (verbose) {
+    message("Finished running jitters, running last few clean-up steps")
+  }
 
   # delete jitter model directory
   purrr::walk(Njitter, ~ unlink(paste0("jitter", .x), recursive = TRUE))
@@ -229,11 +230,10 @@ jitter <- function(dir = getwd(),
 #' Execute a single jittered model run
 #'
 #' @param i Index of the jitter iteration.
-#' @param dir Directory of the base model to be jittered
-#' @param  printlikes A logical value specifying if the likelihood values should
+#' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
-#' @template  exe
-#' @template  verbose
+#' @template exe
+#' @template verbose
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   Cannot be `NULL`. Defaults to zero (initial values read from control file).
@@ -244,18 +244,22 @@ jitter <- function(dir = getwd(),
 #' @return Negative log-likelihood of one jittered model
 #'
 iterate_jitter <- function(i,
-                           dir = getwd(),
                            printlikes = TRUE,
-                           exe = "ss",
+                           exe = "ss3",
                            verbose = FALSE,
                            init_values_src = 0,
                            ...) {
-  jitter_dir <- file.path(dir, paste0("jitter", i))
+  jitter_dir <- paste0("jitter", i)
   copy_SS_inputs(
-    dir.old = dir, dir.new = jitter_dir, overwrite = TRUE,
+    dir.old = getwd(), dir.new = jitter_dir, overwrite = TRUE,
     verbose = verbose, copy_exe = TRUE,
     copy_par = as.logical(init_values_src)
   )
+
+  if (verbose) {
+    message(paste0("Starting run of jitter", i))
+  }
+
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
   # Only save stuff if it converged
