@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Ian G. Taylor
 and Kathryn L. Doering</h4>
             
-            <h4 data-toc-skip class="date">2024-02-05</h4>
+            <h4 data-toc-skip class="date">2024-02-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r4ss/r4ss/blob/HEAD/vignettes/r4ss-intro-vignette.Rmd" class="external-link"><code>vignettes/r4ss-intro-vignette.Rmd</code></a></small>
       <div class="d-none name"><code>r4ss-intro-vignette.Rmd</code></div>
@@ -419,7 +419,11 @@ with differences among operating systems automatically. Another
 advantage of <code><a href="../reference/run.html">run()</a></code> is that there is no need to change the
 working directory.</p>
 <p>If the executable in a different folder than the model, specify
-either the absolute or relative path to the executable.</p>
+either the absolute or relative path to the executable. Note that
+executables for v3.30.22.1 and after are named ss3.exe, ss3_linux, and
+ss3_osx <em>unless</em> you download the executables using
+<code><a href="../reference/get_ss3_exe.html">get_ss3_exe()</a></code> which gives them the names ss3.exe (for
+windows) and ss3 (for linux/osx) regardless of the version.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use the absolute exe path in the call on a Windows computer.</span></span>
 <span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span>, exe <span class="op">=</span> <span class="st">"c:/SS/SSv3.30.19.01_Apr15/ss.exe"</span><span class="op">)</span></span>
@@ -595,7 +599,7 @@ make a copy of the model to avoid changing the original model files</p>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
 <span><span class="co">#&gt; to</span></span>
-<span><span class="co">#&gt;  /tmp/RtmpBdrzQ1/simple_mod</span></span>
+<span><span class="co">#&gt;  /tmp/Rtmpxjgt8J/simple_mod</span></span>
 <span><span class="co">#&gt; copying complete</span></span>
 <span><span class="co"># copy over the Report file to provide information about the last run</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span></span>
