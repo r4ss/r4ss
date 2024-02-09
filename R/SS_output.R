@@ -3669,6 +3669,8 @@ SS_output <-
       yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[, 1]) - 1))), ]
       yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
       names(yielddat) <- names
+      # remove lines that say "ready for equilcalc" or "ready for loops"
+      yielddat <- yielddat %>% dplyr::filter(SPRloop != "ready") 
       yielddat <- type.convert(yielddat, as.is = TRUE)
     } else {
       yielddat <- NA
