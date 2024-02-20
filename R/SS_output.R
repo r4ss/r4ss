@@ -3671,7 +3671,7 @@ SS_output <-
       names(yielddat) <- names
       # remove lines that say "ready for equilcalc" or "ready for loops"
       if ("SPRloop" %in% names) { # column not present in early SS3 versions
-        yielddat <- yielddat %>% dplyr::filter(SPRloop != "ready") 
+        yielddat <- yielddat %>% dplyr::filter(SPRloop != "ready")
       }
       yielddat <- type.convert(yielddat, as.is = TRUE)
     } else {
