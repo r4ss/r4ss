@@ -116,7 +116,7 @@ SS_write <- function(inputlist,
   }
 
   if ("par" %in% names(inputlist)) {
-    if (is.null(inputlist[["par"]][["parfile"]])) {
+    if (!is.null(inputlist[["par"]][["parfile"]])) {
       inputlist[["par"]][["parfile"]] <- "ss3.par"
       warning(
         "parfile name assumed to be 'ss3.par' because it was not specified",
