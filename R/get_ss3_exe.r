@@ -64,7 +64,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         tag, "/ss_win.exe"
       )
       try_ss3 <- tryCatch(
-        utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb"),
+        suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")),
         error = function(e) "ss name not right for this version, trying ss3"
       )
 
@@ -88,7 +88,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         tag, "/ss_osx"
       )
       try_ss3 <- tryCatch(
-        utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb"),
+        suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
         error = function(e) "ss name not right for this version, trying ss3"
       )
 
@@ -114,7 +114,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           tag, "/ss_linux"
         )
         try_ss3 <- tryCatch(
-          utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb"),
+          suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
           error = function(e) "ss name not right for this version, trying ss3"
         )
 
