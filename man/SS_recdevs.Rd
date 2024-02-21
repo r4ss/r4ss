@@ -11,7 +11,7 @@ SS_recdevs(
   recdevs = NULL,
   rescale = TRUE,
   scaleyrs = NULL,
-  dir = "working_directory",
+  dir = getwd(),
   ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   verbose = TRUE,
@@ -59,8 +59,11 @@ non-NULL value. Default=NULL.}
 }
 \description{
 A function to insert a vector of recruitment deviations into the control
-file for simulation studies. This can also be achieved by using the .par
-file, but Ian Taylor prefers this approach for no good reason.
+file for simulation studies. This function was written in 2010, long before
+the functions to read and write the input files were created. An alternative
+approach would be to read the control file, add the recdevs, and then write
+it again, but this function still works so there's no immediate need to
+streamline that alternative approach.
 }
 \author{
 Ian Taylor
