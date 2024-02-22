@@ -61,17 +61,17 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     } else {
       url <- paste0(
         "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-        tag, "/ss_win.exe"
+        tag, "/ss3_win.exe"
       )
-      try_ss3 <- tryCatch(
-        utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb"),
-        error = function(e) "ss name not right for this version, trying ss3"
+      try_ss <- tryCatch(
+        suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")),
+        error = function(e) "ss3 name not right for this version, trying ss"
       )
 
-      if (try_ss3 == "ss name not right for this version, trying ss3") {
+      if (try_ss == "ss3 name not right for this version, trying ss") {
         url <- paste0(
           "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-          tag, "/ss3_win.exe"
+          tag, "/ss_win.exe"
         )
         utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
       }
@@ -85,17 +85,17 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     if (substr(R.version[["os"]], 1, 6) == "darwin") {
       url <- paste0(
         "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-        tag, "/ss_osx"
+        tag, "/ss3_osx"
       )
-      try_ss3 <- tryCatch(
-        utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb"),
-        error = function(e) "ss name not right for this version, trying ss3"
+      try_ss <- tryCatch(
+        suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
+        error = function(e) "ss3 name not right for this version, trying ss"
       )
 
-      if (try_ss3 == "ss name not right for this version, trying ss3") {
+      if (try_ss == "ss3 name not right for this version, trying ss") {
         url <- paste0(
           "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-          tag, "/ss3_osx"
+          tag, "/ss_osx"
         )
         utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
       }
@@ -111,17 +111,17 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       if (R.version[["os"]] == "linux-gnu") {
         url <- paste0(
           "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-          tag, "/ss_linux"
+          tag, "/ss3_linux"
         )
-        try_ss3 <- tryCatch(
-          utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb"),
-          error = function(e) "ss name not right for this version, trying ss3"
+        try_ss <- tryCatch(
+          suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
+          error = function(e) "ss3 name not right for this version, trying ss"
         )
 
-        if (try_ss3 == "ss name not right for this version, trying ss3") {
+        if (try_ss == "ss3 name not right for this version, trying ss") {
           url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-            tag, "/ss3_linux"
+            tag, "/ss_linux"
           )
           utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
         }
