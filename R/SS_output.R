@@ -3067,11 +3067,15 @@ SS_output <-
 
 
     if (depletion_basis %in% c(1, 3:4)) {
-      starter <- SS_readstarter(
-        file = file.path(dir, "starter.ss"),
-        verbose = verbose
-      )
-      depletion_multiplier <- starter[["depl_denom_frac"]]
+      if (file.exists(file.path(dir, "starter.ss"))) {
+        starter <- SS_readstarter(
+          file = file.path(dir, "starter.ss"),
+          verbose = verbose
+        )
+        depletion_multiplier <- starter[["depl_denom_frac"]]
+      } else {
+        depletion_multiplier <- NULL  
+      }
     } else {
       depletion_multiplier <- 1
     }
@@ -3080,6 +3084,13 @@ SS_output <-
     if (Bratio_denominator == "no_depletion_basis") {
       Bratio_label <- "no_depletion_basis"
     } else {
+      # get depletion_multiplier if no starter file was available
+      # will be rounded to nearest % so potentially less accurate than
+      # value in the starter file
+      if (is.null(depletion_multiplier)) {
+        depletion_multiplier <- 
+          as.numeric(strsplit(Bratio_denominator, "%")[[1]][1])/100
+      }
       # create Bratio label for use in various plots
       if (grepl(pattern = "100", x = Bratio_denominator)) {
         # exclude 100% if present
