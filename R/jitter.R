@@ -98,7 +98,7 @@ SS_RunJitter <-
 #' profilesummary[["pars"]]
 #' }
 #'
-jitter <- function(dir = getwd(),
+jitter <- function(dir = NULL,
                    mydir = lifecycle::deprecated(),
                    Intern = lifecycle::deprecated(),
                    Njitter,
@@ -125,12 +125,14 @@ jitter <- function(dir = getwd(),
     )
     dir <- mydir
   }
+  
+  if(is.null(dir)){dir <- getwd()}
 
   # check for executable and keep cleaned name of executable file
   exe <- check_exe(exe = exe, dir = dir, verbose = verbose)[["exe"]]
 
   # Determine working directory on start and return upon exit
-  startdir <- getwd()
+  startdir <- dir
   on.exit(setwd(startdir))
   setwd(dir)
 
@@ -251,7 +253,7 @@ iterate_jitter <- function(i,
                            ...) {
   jitter_dir <- paste0("jitter", i)
   copy_SS_inputs(
-    dir.old = getwd(), dir.new = jitter_dir, overwrite = TRUE,
+    dir.old = dir, dir.new = jitter_dir, overwrite = TRUE,
     verbose = verbose, copy_exe = TRUE,
     copy_par = as.logical(init_values_src)
   )
