@@ -178,6 +178,7 @@ jitter <- function(dir = NULL,
     exe = exe,
     verbose = verbose,
     init_values_src = starter[["init_values_src"]],
+    dir = dir,
     ...
   )
 
@@ -250,8 +251,10 @@ iterate_jitter <- function(i,
                            exe = "ss3",
                            verbose = FALSE,
                            init_values_src = 0,
+                           dir = NULL,
                            ...) {
   jitter_dir <- paste0("jitter", i)
+  if(is.null(dir)){dir <- getwd()}
   copy_SS_inputs(
     dir.old = dir, dir.new = jitter_dir, overwrite = TRUE,
     verbose = verbose, copy_exe = TRUE,
