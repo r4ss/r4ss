@@ -32,7 +32,7 @@
 #' @param forecastplot add points from forecast years
 #' @param uncertainty add intervals around quantities for which uncertainty is
 #' available
-#' @template bioscale 
+#' @template bioscale
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
 #' @template plot
