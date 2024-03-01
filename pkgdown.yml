@@ -1,10 +1,10 @@
-pandoc: 2.19.2
+pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   example-plots: example-plots.html
   r4ss-intro-vignette: r4ss-intro-vignette.html
-last_built: 2024-02-22T21:03Z
+last_built: 2024-03-01T21:21Z
 urls:
   reference: https://r4ss.github.io/r4ss/reference
   article: https://r4ss.github.io/r4ss/articles

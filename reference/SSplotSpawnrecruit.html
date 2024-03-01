@@ -70,7 +70,7 @@
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Spawning output (relative to "</span>, <span class="fu">italic</span><span class="op">(</span><span class="va">B</span><span class="op">)</span><span class="op">[</span><span class="fl">0</span><span class="op">]</span>, <span class="st">")"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Recruitment (relative to  "</span>, <span class="fu">italic</span><span class="op">(</span><span class="va">R</span><span class="op">)</span><span class="op">[</span><span class="fl">0</span><span class="op">]</span>, <span class="st">")"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    <span class="st">"Log recruitment deviation"</span><span class="op">)</span>,</span>
-<span>  bioscale <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  bioscale <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  plotdir <span class="op">=</span> <span class="st">"default"</span>,</span>
 <span>  pwidth <span class="op">=</span> <span class="fl">6.5</span>,</span>
 <span>  pheight <span class="op">=</span> <span class="fl">6.5</span>,</span>
@@ -135,8 +135,11 @@ relationship making spawning output not equal to spawning biomass.</p></dd>
 
 
 <dt>bioscale</dt>
-<dd><p>multiplier on spawning biomass, set to 0.5 for single-sex
-models</p></dd>
+<dd><p>scaling for spawning biomass. Default = 1.
+Previously this was set to
+0.5 for single-sex models, and 1.0 for all others, but now single-sex
+models are assumed to use the -1 option for Nsexes in the data file so the
+scaling is done automatically by SS3.</p></dd>
 
 
 <dt>plotdir</dt>
