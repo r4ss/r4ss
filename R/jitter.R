@@ -107,6 +107,7 @@ jitter <- function(dir = NULL,
                    init_values_src = NULL,
                    exe = "ss3",
                    verbose = FALSE,
+                   extras = NULL,
                    ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
@@ -179,6 +180,7 @@ jitter <- function(dir = NULL,
     verbose = verbose,
     init_values_src = starter[["init_values_src"]],
     dir = dir,
+    extras = extras,
     ...
   )
 
@@ -252,6 +254,7 @@ iterate_jitter <- function(i,
                            verbose = FALSE,
                            init_values_src = 0,
                            dir = NULL,
+                           extras = NULL,
                            ...) {
   jitter_dir <- file.path(dir, paste0("jitter", i))
   copy_SS_inputs(
@@ -265,7 +268,7 @@ iterate_jitter <- function(i,
   }
 
   # run model
-  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
+  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, extras = extras, ...)
   # Only save stuff if it converged
   if ("Report.sso" %in% list.files(path = jitter_dir)) {
     rep <- SS_read_summary(file.path(jitter_dir, "ss_summary.sso"))
