@@ -184,7 +184,7 @@ jitter <- function(dir = NULL,
 
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
-    path = paste0("jitter", .x),
+    path = paste0(dir, "jitter", .x),
     pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
   ))
 
@@ -202,7 +202,7 @@ jitter <- function(dir = NULL,
     list(Njitter, to_copy, new_name),
     function(.i, .x, .y) {
       file.copy(
-        from = file.path(paste0("jitter", .i), .x),
+        from = file.path(paste0(dir, "jitter", .i), .x),
         to = .y,
         overwrite = TRUE
       )
@@ -213,7 +213,7 @@ jitter <- function(dir = NULL,
   }
 
   # delete jitter model directory
-  purrr::walk(Njitter, ~ unlink(paste0("jitter", .x), recursive = TRUE))
+  purrr::walk(Njitter, ~ unlink(paste0(dir, "jitter", .x), recursive = TRUE))
 
   # only necessary if the file_increment line is maintained.
   pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
