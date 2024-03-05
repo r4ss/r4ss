@@ -135,7 +135,7 @@ jitter <- function(dir = NULL,
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
-  setwd(dir)
+  # setwd(dir)
 
   if (verbose) {
     message("Temporarily changing working directory to:\n", dir)
