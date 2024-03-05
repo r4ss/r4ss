@@ -133,9 +133,9 @@ jitter <- function(dir = NULL,
   exe <- check_exe(exe = exe, dir = dir, verbose = verbose)[["exe"]]
 
   # Determine working directory on start and return upon exit
-  startdir <- dir
-  on.exit(setwd(startdir))
-  setwd(dir)
+  # startdir <- dir
+  # on.exit(setwd(startdir))
+  # setwd(dir)
 
   if (verbose) {
     message("Temporarily changing working directory to:\n", dir)
