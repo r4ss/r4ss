@@ -193,32 +193,35 @@ SSplotYield <-
       }
     } # end equilibrium yield plots
 
-    # timeseries excluding equilibrium conditions or forecasts
-    ts <- timeseries[!timeseries[["Era"]] %in% c("VIRG", "FORE"), ]
-
-    # get total dead catch
-    stringB <- "dead(B)"
-    catchmat <- as.matrix(ts[, substr(names(ts), 1, nchar(stringB)) == stringB])
-    # aggregate catch across fleets
-    catch <- rowSums(catchmat)
-
-    # aggregate catch and biomass across seasons and areas
-    catch_agg <- aggregate(x = catch, by = list(ts[["Yr"]]), FUN = sum)[["x"]]
-    Bio_all <- aggregate(x = ts[["Bio_all"]], by = list(ts[["Yr"]]), FUN = mean)[["x"]]
-    Bio_SSB <- aggregate(x = ts[["SpawnBio"]], by = list(ts[["Yr"]]), FUN = mean, na.rm = TRUE)[["x"]]
+    # make dataframe summarizing key value by year (across seasons when present)
+    df <- timeseries |>
+      # timeseries excluding equilibrium conditions or forecasts
+      dplyr::filter(!Era %in% c("VIRG", "FORE")) |>
+      # add up dead fish from all fleets
+      dplyr::mutate(catch_tot = rowSums(pick(starts_with("dead(B)")), na.rm = TRUE)) |>
+      # summarize key columns
+      dplyr::group_by(Yr) |>
+      dplyr::summarise(
+        mean_Bio_all = mean(Bio_all),
+        mean_SpawnBio = mean(SpawnBio, na.rm = TRUE),
+        catch_tot = sum(catch_tot)
+      )
 
     # number of years to consider
-    Nyrs <- length(Bio_all)
+    Nyrs <- nrow(df)
+    browser()
+    # calculate surplus production as difference in total biomass adjusted for catch
+    df[["sprod"]][1:(Nyrs - 1)] <-
+      df[["mean_Bio_all"]][2:Nyrs] -
+      df[["mean_Bio_all"]][1:(Nyrs - 1)] +
+      df[["catch_tot"]][1:(Nyrs - 1)]
 
-    # function to calculate and plot surplus production
-    sprodfunc <- function(bio, xlab) {
-      sprod <- rep(NA, Nyrs)
-      # calculate surplus production as difference in biomass adjusted for catch
-      sprod[1:(Nyrs - 1)] <- bio[2:Nyrs] - bio[1:(Nyrs - 1)] + catch_agg[1:(Nyrs - 1)]
-      sprodgood <- !is.na(sprod)
-      bio_good <- bio[sprodgood]
-      sprod_good <- sprod[sprodgood]
-      xlim <- c(0, max(bio_good, na.rm = TRUE))
+    df <- df |> dplyr::filter(!is.na(sprod))
+
+    # function to plot surplus production
+    sprodfunc <- function(x_col, xlab) {
+      x <- dplyr::pull(bio_col)
+      xlim <- c(0, max(x, na.rm = TRUE))
       ylim <- c(min(0, sprod_good, na.rm = TRUE), max(sprod_good, na.rm = TRUE))
       # make empty plot
       if (!add) {
@@ -267,7 +270,7 @@ SSplotYield <-
 
     if (3 %in% subplots) {
       if (plot) {
-        sprodfunc(bio = Bio_all, xlab = labels[3])
+        sprodfunc(bio = summary_df[["mean_Bio_all"]], xlab = labels[3])
       }
       if (print) {
         file <- "yield3_surplus_production.png"
@@ -284,14 +287,14 @@ SSplotYield <-
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
-        sprodfunc(bio = Bio_all, xlab = labels[3])
+        sprodfunc(bio = summary_df[["mean_Bio_all"]], xlab = labels[3])
         dev.off()
       }
     }
 
     if (4 %in% subplots) {
       if (plot) {
-        sprodfunc(bio = Bio_SSB, xlab = labels[6])
+        sprodfunc(bio = summary_df[["mean_SpawnBio"]], xlab = labels[6])
       }
       if (print) {
         file <- "yield4_surplus_production.png"
@@ -309,7 +312,7 @@ SSplotYield <-
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
-        sprodfunc(bio = Bio_SSB, xlab = labels[6])
+        sprodfunc(bio = summary_df[["mean_SpawnBio"]], xlab = labels[6])
         dev.off()
       }
     }
