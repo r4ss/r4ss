@@ -80,8 +80,10 @@ copy step.
 \examples{
 \dontrun{
 # read the model output
-model <- SS_output(dir = system.file("extdata/simple_small", package = "r4ss"),
-  printstats = FALSE, verbose = FALSE)
+model <- SS_output(
+  dir = system.file("extdata/simple_small", package = "r4ss"),
+  printstats = FALSE, verbose = FALSE
+)
 # run get_SIS_info:
 info <- get_SIS_info(model, stock = "SimpleExample", month = 1)
 }
