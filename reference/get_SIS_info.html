@@ -75,13 +75,23 @@ copy step.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_SIS_info</span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
-<span>  dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dir <span class="op">=</span> <span class="va">model</span><span class="op">[[</span><span class="st">"inputs"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"dir"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  writecsv <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  stock <span class="op">=</span> <span class="st">"StockName"</span>,</span>
-<span>  final_year <span class="op">=</span> <span class="fl">2019</span>,</span>
-<span>  data_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assessment_type <span class="op">=</span> <span class="st">"Operational"</span>,</span>
+<span>  final_year <span class="op">=</span> <span class="va">model</span><span class="op">[[</span><span class="st">"endyr"</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span>,</span>
+<span>  data_year <span class="op">=</span> <span class="va">model</span><span class="op">[[</span><span class="st">"endyr"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  <span class="va">month</span>,</span>
 <span>  sciencecenter <span class="op">=</span> <span class="st">"NWFSC"</span>,</span>
-<span>  Mgt_Council <span class="op">=</span> <span class="st">"NA"</span></span>
+<span>  Mgt_Council <span class="op">=</span> <span class="st">"PFMC"</span>,</span>
+<span>  SpawnOutputLabel <span class="op">=</span> <span class="va">model</span><span class="op">[[</span><span class="st">"SpawnOutputLabel"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  contact <span class="op">=</span> <span class="st">"first.last@noaa.gov"</span>,</span>
+<span>  review_result <span class="op">=</span> <span class="st">"XXXX"</span>,</span>
+<span>  catch_input_data <span class="op">=</span> <span class="st">"XXXX"</span>,</span>
+<span>  abundance_input_data <span class="op">=</span> <span class="st">"XXXX"</span>,</span>
+<span>  bio_input_data <span class="op">=</span> <span class="st">"XXXX"</span>,</span>
+<span>  comp_input_data <span class="op">=</span> <span class="st">"XXXX"</span>,</span>
+<span>  ecosystem_linkage <span class="op">=</span> <span class="st">"XXXX"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,9 +102,7 @@ copy step.</p>
 
 
 <dt>dir</dt>
-<dd><p>A file path to the directory of interest.
-The default value is <code>dir = NULL</code>, which leads to using
-the current working directory.</p></dd>
+<dd><p>Directory in which to write the CSV files.</p></dd>
 
 
 <dt>writecsv</dt>
@@ -105,6 +113,11 @@ is an additional input</p></dd>
 
 <dt>stock</dt>
 <dd><p>String to prepend id info to filename for CSV file</p></dd>
+
+
+<dt>assessment_type</dt>
+<dd><p>"Operational" or "Stock Monitoring Updates"
+(or perhaps additional options as well)</p></dd>
 
 
 <dt>final_year</dt>
@@ -121,8 +134,44 @@ is an additional input</p></dd>
 
 
 <dt>Mgt_Council</dt>
-<dd><p>Council jurisdiction. Currently the only option
-outside of the default is Gulf of Mexico (<code>"GM"</code>)</p></dd>
+<dd><p>Council jurisdiction. Currently only
+<code>"PFMC"</code> (Pacific Fishery Management Council) and <code>"GM"</code>
+(Gulf of Mexico) are the only options.</p></dd>
+
+
+<dt>SpawnOutputLabel</dt>
+<dd><p>Units for spawning output if not in mt
+(e.g. "Millions of eggs"). In the future this can be included in the
+<code>model</code> list created by <code><a href="SS_output.html">r4ss::SS_output()</a></code></p></dd>
+
+
+<dt>contact</dt>
+<dd><p>Name and/or email address for lead author.</p></dd>
+
+
+<dt>review_result</dt>
+<dd><p>Something like "Full Acceptance"</p></dd>
+
+
+<dt>catch_input_data</dt>
+<dd><p>Qualitative category for catch input data</p></dd>
+
+
+<dt>abundance_input_data</dt>
+<dd><p>Qualitative category for abundance input data</p></dd>
+
+
+<dt>bio_input_data</dt>
+<dd><p>Qualitative category for biological input data</p></dd>
+
+
+<dt>comp_input_data</dt>
+<dd><p>Qualitative category for size/age composition input
+data</p></dd>
+
+
+<dt>ecosystem_linkage</dt>
+<dd><p>Qualitative category for ecosystem linkage</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -137,12 +186,11 @@ outside of the default is Gulf of Mexico (<code>"GM"</code>)</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># directory with the model output</span></span></span>
-<span class="r-in"><span><span class="va">mydir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"r4ss"</span><span class="op">)</span>, <span class="st">"extdata/simple_small"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># read the model output</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_output.html">SS_output</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">mydir</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_output.html">SS_output</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/simple_small"</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  printstats <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># run get_SIS_info:</span></span></span>
-<span class="r-in"><span><span class="va">info</span> <span class="op">&lt;-</span> <span class="fu">get_SIS_info</span><span class="op">(</span><span class="va">model</span>, stock <span class="op">=</span> <span class="st">"SimpleExample"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">info</span> <span class="op">&lt;-</span> <span class="fu">get_SIS_info</span><span class="op">(</span><span class="va">model</span>, stock <span class="op">=</span> <span class="st">"SimpleExample"</span>, month <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
