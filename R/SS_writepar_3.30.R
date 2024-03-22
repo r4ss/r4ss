@@ -1,4 +1,4 @@
-#' write ss.par file from SS version 3.30
+#' write .par file from SS version 3.30
 #'
 #' Write Stock Synthesis (version 3.30) parameter file from list object in R to file.
 #'

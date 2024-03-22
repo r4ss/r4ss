@@ -32,11 +32,7 @@
 #' @param forecastplot add points from forecast years
 #' @param uncertainty add intervals around quantities for which uncertainty is
 #' available
-#' @param bioscale scaling for spawning biomass. Default = 1.
-#' Previously this was set to
-#' 0.5 for single-sex models, and 1.0 for all others, but now single-sex
-#' models are assumed to use the -1 option for Nsexes in the data file so the
-#' scaling is done automatically by SS.
+#' @template bioscale
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
 #' @template plot

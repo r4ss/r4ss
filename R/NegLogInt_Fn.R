@@ -104,7 +104,7 @@ NegLogInt_Fn <- function(dir = getwd(),
   check_exe(exe = exe, dir = dir, verbose = verbose)
 
   # frequently used files
-  parfile <- "ss.par"
+  parfile <- get_par_name(dir)
   stdfile <- "ss.std"
   corfile <- "ss.cor"
 

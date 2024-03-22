@@ -15,8 +15,7 @@
 #' @param labels vector containing x-axis label for models with spawning biomass
 #' in metric tons, y-axis label, and alternative x-axis for models with a fecundity
 #' relationship making spawning output not equal to spawning biomass.
-#' @param bioscale multiplier on spawning biomass, set to 0.5 for single-sex
-#' models
+#' @template bioscale
 #' @template plotdir
 #' @template pwidth
 #' @template pheight
@@ -64,7 +63,7 @@ SSplotSpawnrecruit <-
              expression(paste("Recruitment (relative to  ", italic(R)[0], ")")),
              "Log recruitment deviation"
            ),
-           bioscale = "default",
+           bioscale = 1,
            plotdir = "default",
            pwidth = 6.5, pheight = 6.5, punits = "in", res = 300, ptsize = 10,
            verbose = TRUE,
@@ -117,12 +116,6 @@ SSplotSpawnrecruit <-
       xlab <- labels[4]
       ylab <- labels[5]
     }
-
-    # scaling factor for single sex models
-    if (bioscale == "default") {
-      if (nsexes == 1) bioscale <- 0.5 else bioscale <- 1
-    }
-
 
     if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
     if (minyr == "default") minyr <- min(recruit[["Yr"]])

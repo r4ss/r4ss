@@ -19,6 +19,9 @@ check_inputlist <- function(inputlist) {
     stop("inputlist is empty")
   }
 
+  if (!any(elements %in% names(inputlist))) {
+    stop("input does not look like a list created by SS_read()")
+  }
   # check for whether wtatage is required and if so, add it to the
   # vector of elements
   if ((!is.null(inputlist[["wtatage"]])) & inputlist[["ctl"]][["EmpiricalWAA"]]) {

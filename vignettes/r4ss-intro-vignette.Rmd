@@ -272,7 +272,10 @@ operating systems automatically. Another advantage of `run()` is that
 there is no need to change the working directory.
 
 If the executable in a different folder than the model, specify either
-the absolute or relative path to the executable.
+the absolute or relative path to the executable. Note that executables for 
+v3.30.22.1 and after are named ss3.exe, ss3_linux, and ss3_osx *unless* you 
+download the executables using `get_ss3_exe()` which gives them the names 
+ss3.exe (for windows) and ss3 (for linux/osx) regardless of the version. 
 ```{r exe-in-diff-dir, eval=FALSE}
 # use the absolute exe path in the call on a Windows computer.
 run(dir = new_mod_path, exe = "c:/SS/SSv3.30.19.01_Apr15/ss.exe")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_writepar_3.30.R
 \name{SS_writepar_3.30}
 \alias{SS_writepar_3.30}
-\title{write ss.par file from SS version 3.30}
+\title{write .par file from SS version 3.30}
 \usage{
 SS_writepar_3.30(parlist, outfile, overwrite = TRUE, verbose = FALSE)
 }

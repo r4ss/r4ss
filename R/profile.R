@@ -35,8 +35,8 @@ SS_profile <- function(...) {
 #' profiling multiple parameters at the same time.
 #' @param usepar Use PAR file from previous profile step for starting values?
 #' @param globalpar Use global par file (`parfile_original_backup.sso`, which is
-#' automatically copied from original `ss.par`) for all runs instead
-#' of the par file from each successive run
+#' automatically copied from original `ss.par` or `ss3.par` depending on SS3
+#' version) for all runs instead of the par file from each successive run
 #' @param parlinenum Line number in par file to change (if usepar = TRUE).
 #' Can be a vector if you are profiling multiple parameters at the same time.
 #' @param parstring String in par file preceding line number to change as
@@ -377,7 +377,11 @@ profile <- function(dir,
     )
   }
   setwd(dir)
-  
+
+  # note: std file name is independent of executable name
+  stdfile <- file.path(dir, "ss.std")
+  parfile <- get_par_name(dir)
+
   # read starter file to get input file names and check various things
   starter.file <- dir()[tolower(dir()) == "starter.ss"]
   if (length(starter.file) == 0) {
@@ -428,7 +432,7 @@ profile <- function(dir,
   
   # back up par file
   if (usepar) {
-    file.copy("ss.par", "parfile_original_backup.sso")
+    file.copy(parfile, "parfile_original_backup.sso")
   }
   
   # run loop over profile values
@@ -494,7 +498,7 @@ profile <- function(dir,
         if (globalpar) {
           par <- readLines("parfile_original_backup.sso")
         } else {
-          par <- readLines("ss.par")
+          par <- readLines(parfile)
         }
         # loop over the number of parameters (typically just 1)
         for (ipar in 1:npars) {
@@ -528,7 +532,11 @@ profile <- function(dir,
         message(paste0(note, collapse = "\n"))
         # write new par file
         writeLines(par, paste0("ss_input_par", i, ".ss"))
+<<<<<<< HEAD
         writeLines(par, file.path(profile_dir, "ss.par"))
+=======
+        writeLines(par, parfile)
+>>>>>>> main
       }
       
       # run model
@@ -566,11 +574,38 @@ profile <- function(dir,
         likevec <- as.numeric(like[["logL.Lambda"]])
         names(likevec) <- like[["Component"]]
       } else {
+<<<<<<< HEAD
         # No good report file:
         goodrep <- FALSE
         converged <- FALSE
         max_grad <- NA
         likevec <- rep(NA, 10)
+=======
+        # add a placeholder row of NA values if no good report file
+        liketable <- rbind(liketable, rep(NA, 10))
+      }
+
+      # rename output files
+      if (saveoutput) {
+        file.copy("Report.sso", paste("Report", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("CompReport.sso", paste("CompReport", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("covar.sso", paste("covar", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("warning.sso", paste("warning", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""),
+          overwrite = overwrite
+        )
+        file.copy(parfile, paste(parfile, "_", i, ".sso", sep = ""),
+          overwrite = overwrite
+        )
+>>>>>>> main
       }
       return(list(goodrep = goodrep,
                   converged = converged,
