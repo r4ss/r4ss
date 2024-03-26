@@ -27,6 +27,8 @@ SS_RunJitter <-
 #' @param dir Directory where model files are located.
 #' @param mydir Deprecated. Use `dir` instead.
 #' @param Intern Deprecated. Use `show_in_console` instead.
+#' @param parallel A logical value specifying if jitters should be run in parallel
+#'   or sequentially. Default is FALSE.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be run,
 #'   else `1:Njitter` will be executed.
