@@ -27,8 +27,6 @@ SS_RunJitter <-
 #' @param dir Directory where model files are located.
 #' @param mydir Deprecated. Use `dir` instead.
 #' @param Intern Deprecated. Use `show_in_console` instead.
-#' @param parallel A logical value specifying if jitters should be run in parallel
-#'   or sequentially. Default is FALSE.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
 #'   If `length(Njitter) > 1` only the iterations specified will be run,
 #'   else `1:Njitter` will be executed.
@@ -82,11 +80,14 @@ SS_RunJitter <-
 #' )
 #'
 #' #### Run same jitter in parallel
+#' ncores <- parallelly::availableCores(omit = 1)
+#' future::plan(future::multisession, workers = ncores)
 #' jit.likes <- jitter(
-#'   dir = modeldir, parallel = TRUE, Njitter = numjitter,
+#'   dir = modeldir,Njitter = numjitter,
 #'   jitter_fraction = 0.1, init_value_src = 1
 #' )
-#'
+#' future::plan(future::sequential)
+#' 
 #' #### Read in results using other r4ss functions
 #' # (note that un-jittered model can be read using keyvec=0:numjitter)
 #' profilemodels <- SSgetoutput(dirvec = modeldir, keyvec = 1:numjitter, getcovar = FALSE)
@@ -99,7 +100,6 @@ SS_RunJitter <-
 #' }
 #'
 jitter <- function(dir = NULL,
-                   parallel = FALSE,
                    mydir = lifecycle::deprecated(),
                    Intern = lifecycle::deprecated(),
                    Njitter,
@@ -134,17 +134,10 @@ jitter <- function(dir = NULL,
   exe <- check_exe(exe = exe, dir = dir, verbose = verbose)[["exe"]]
   
   # Determine working directory on start and return upon exit
-  startdir <- getwd()
-  on.exit(setwd(startdir))
-  
-  setwd(dir)
-  
-  if (parallel == TRUE){
-    ncores <- parallelly::availableCores(omit = 1)
-    future::plan(future::multisession, workers = ncores)
-  } else {
-    future::plan(future::sequential)
-  }
+  # startdir <- getwd()
+  # on.exit(setwd(startdir))
+  # 
+  # setwd(dir)
   
   if (verbose) {
     message("Temporarily changing working directory to:\n", dir)
@@ -157,7 +150,7 @@ jitter <- function(dir = NULL,
     message("Checking starter file")
   }
   # read starter file to test for non-zero jitter value
-  starter <- SS_readstarter(verbose = verbose)
+  starter <- SS_readstarter(file = file.path(dir, "starter.ss"), verbose = verbose)
   starter[["parmtrace"]] <- ifelse(starter[["parmtrace"]] == 0, 1, starter[["parmtrace"]])
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
     stop("Change the jitter value in the starter file to be > 0\n",
@@ -171,8 +164,8 @@ jitter <- function(dir = NULL,
   if (!is.null(init_values_src)) {
     starter[["init_values_src"]] <- init_values_src
   }
-  r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
-  
+  r4ss::SS_writestarter(dir = dir, starter, overwrite = TRUE, verbose = FALSE)
+
   # I'm not sure if this is necessary anymore
   file_increment(0, verbose = verbose)
   
@@ -227,7 +220,7 @@ jitter <- function(dir = NULL,
   purrr::walk(Njitter, ~ unlink(file.path(dir, paste0("jitter", .x)), recursive = TRUE))
   
   # only necessary if the file_increment line is maintained.
-  pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
+  pattern0 <- list.files(path = dir, pattern = "[a-z_]0\\.sso")
   file.copy(
     from = pattern0,
     to = gsub("([a-zA-Z])0|_0\\.sso", "\\1", pattern0),
