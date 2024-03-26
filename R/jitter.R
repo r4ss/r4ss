@@ -80,10 +80,8 @@ SS_RunJitter <-
 #' )
 #'
 #' #### Run same jitter in parallel
-#' ncores <- parallel::detectCores() - 1
-#' future::plan(future::multisession, workers = ncores)
 #' jit.likes <- jitter(
-#'   dir = modeldir, Njitter = numjitter,
+#'   dir = modeldir, parallel = TRUE, Njitter = numjitter,
 #'   jitter_fraction = 0.1, init_value_src = 1
 #' )
 #'
@@ -99,6 +97,7 @@ SS_RunJitter <-
 #' }
 #'
 jitter <- function(dir = NULL,
+                   parallel = FALSE,
                    mydir = lifecycle::deprecated(),
                    Intern = lifecycle::deprecated(),
                    Njitter,
@@ -128,15 +127,23 @@ jitter <- function(dir = NULL,
   }
   
   if(is.null(dir)){dir <- getwd()}
-
+  
   # check for executable and keep cleaned name of executable file
   exe <- check_exe(exe = exe, dir = dir, verbose = verbose)[["exe"]]
-
+  
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
-  # setwd(dir)
-
+  
+  setwd(dir)
+  
+  if (parallel == TRUE){
+    ncores <- parallelly::availableCores(omit = 1)
+    future::plan(future::multisession, workers = ncores)
+  } else {
+    future::plan(future::sequential)
+  }
+  
   if (verbose) {
     message("Temporarily changing working directory to:\n", dir)
     if (!file.exists("Report.sso")) {
@@ -152,8 +159,8 @@ jitter <- function(dir = NULL,
   starter[["parmtrace"]] <- ifelse(starter[["parmtrace"]] == 0, 1, starter[["parmtrace"]])
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
     stop("Change the jitter value in the starter file to be > 0\n",
-      "or change the 'jitter_fraction' argument to be > 0.",
-      call. = FALSE
+         "or change the 'jitter_fraction' argument to be > 0.",
+         call. = FALSE
     )
   }
   if (!is.null(jitter_fraction)) {
@@ -163,15 +170,15 @@ jitter <- function(dir = NULL,
     starter[["init_values_src"]] <- init_values_src
   }
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
-
+  
   # I'm not sure if this is necessary anymore
   file_increment(0, verbose = verbose)
-
+  
   # check length of Njitter input
   if (length(Njitter) == 1) {
     Njitter <- 1:Njitter
   }
-
+  
   likesaved <- furrr::future_map_dbl(
     .x = Njitter,
     .f = iterate_jitter,
@@ -183,13 +190,13 @@ jitter <- function(dir = NULL,
     extras = extras,
     ...
   )
-
+  
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
     path = file.path(dir, paste0("jitter", .x)),
     pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
   ))
-
+  
   new_name <- purrr::imap(to_copy, ~ gsub(
     pattern = "par",
     replacement = "par_",
@@ -199,7 +206,7 @@ jitter <- function(dir = NULL,
       x = .x
     )
   ))
-
+  
   purrr::pwalk(
     list(Njitter, to_copy, new_name),
     function(.i, .x, .y) {
@@ -213,10 +220,10 @@ jitter <- function(dir = NULL,
   if (verbose) {
     message("Finished running jitters, running last few clean-up steps")
   }
-
+  
   # delete jitter model directory
   purrr::walk(Njitter, ~ unlink(file.path(dir, paste0("jitter", .x)), recursive = TRUE))
-
+  
   # only necessary if the file_increment line is maintained.
   pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
   file.copy(
@@ -224,7 +231,7 @@ jitter <- function(dir = NULL,
     to = gsub("([a-zA-Z])0|_0\\.sso", "\\1", pattern0),
     overwrite = TRUE
   )
-
+  
   if (printlikes) {
     message("Table of likelihood values:")
     print(table(likesaved))
@@ -262,11 +269,11 @@ iterate_jitter <- function(i,
     verbose = verbose, copy_exe = TRUE,
     copy_par = as.logical(init_values_src)
   )
-
+  
   if (verbose) {
     message(paste0("Starting run of jitter", i))
   }
-
+  
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, extras = extras, ...)
   # Only save stuff if it converged
