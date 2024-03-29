@@ -17,8 +17,9 @@
 #' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson
 #' @return An invisible list is returned.
-#' The first element is the directory that was provided in the argument `dir`.
-#' The second element is the result of `normalizePath(dir)`,
+#' The first element (`dir`) is the directory that was provided in the
+#' argument `dir`.
+#' The second element (`path`) is the result of `normalizePath(dir)`,
 #' which gives the full path.
 #' The remaining four to six elements are list objects from reading in
 #' the following input files:
@@ -27,7 +28,8 @@
 #' * starter
 #' * forecast
 #' * wtatage (will be NULL if not required by the model)
-#' * par (will be null if control and par do not match)
+#' * par (will be NULL if not required by model or if control and par
+#' do not match)
 #'
 #' @export
 #' @seealso [SS_write()] can be used to write the input files using the list
@@ -82,52 +84,60 @@ SS_read <- function(dir = getwd(),
     file = file.path(dir, ifelse(ss_new, "forecast.ss_new", "forecast.ss")),
     verbose = verbose
   )
-  if (ctl[["EmpiricalWAA"]]) {
-    wtatage <- r4ss::SS_readwtatage(
-      file = file.path(dir, ifelse(ss_new, "wtatage.ss_new", "wtatage.ss")),
-      verbose = verbose
-    )
-  } else {
-    wtatage <- NULL
-  }
-
-  par <- NULL
-  parfile <- get_par_name(dir)
-
-  # if par file exists, try to read it
-  if (!is.na(parfile)) {
-    try(
-      {
-        if (ctl[["ReadVersion"]] == "3.24") {
-          par <- r4ss::SS_readpar_3.24(file.path(dir, parfile),
-            datsource = dat,
-            ctlsource = ctl,
-            verbose = verbose
-          )
-        } else {
-          par <- r4ss::SS_readpar_3.30(file.path(dir, parfile),
-            datsource = dat,
-            ctlsource = ctl,
-            verbose = verbose
-          )
-        }
-        # record parfile name for use by SS_write()
-        par[["parfile"]] <- parfile
-      },
-      silent = !verbose
-    )
-  }
-
 
   # return a list of the lists for each file
-  invisible(list(
+  return_list <- list(
     dir = dir,
     path = normalizePath(dir, mustWork = FALSE),
     dat = dat,
     ctl = ctl,
     start = start,
-    fore = fore,
-    wtatage = wtatage,
-    par = par
-  ))
+    fore = fore
+  )
+
+  # only read weight-at-age file if required by the model
+  if (ctl[["EmpiricalWAA"]]) {
+    wtatage <- r4ss::SS_readwtatage(
+      file = file.path(dir, ifelse(ss_new, "wtatage.ss_new", "wtatage.ss")),
+      verbose = verbose
+    )
+    return_list[["wtatage"]] <- wtatage
+  }
+
+  # only read .par file if required by the model
+  if (start[["init_values_src"]] == 1) {
+    par <- NULL
+    # figure out name of par file
+    parfile <- get_par_name(dir)
+
+    # if par file exists, try to read it
+    if (!is.na(parfile)) {
+      try(
+        {
+          if (ctl[["ReadVersion"]] == "3.24") {
+            par <- r4ss::SS_readpar_3.24(file.path(dir, parfile),
+              datsource = dat,
+              ctlsource = ctl,
+              verbose = verbose
+            )
+          } else {
+            par <- r4ss::SS_readpar_3.30(file.path(dir, parfile),
+              datsource = dat,
+              ctlsource = ctl,
+              verbose = verbose
+            )
+          }
+          # record parfile name for use by SS_write()
+          par[["parfile"]] <- parfile
+        },
+        silent = !verbose
+      )
+    } else {
+      warning("Model set to use .par file but no file found.")
+    }
+    return_list[["par"]] <- par
+  }
+
+  # return a list of the lists for each file
+  invisible(return_list)
 }
