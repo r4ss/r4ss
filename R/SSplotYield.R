@@ -211,29 +211,32 @@ SSplotYield <-
     Nyrs <- nrow(df)
 
     # calculate surplus production as difference in total biomass adjusted for catch
+    df[["sprod"]] <- NA
     df[["sprod"]][1:(Nyrs - 1)] <-
       df[["mean_Bio_all"]][2:Nyrs] -
       df[["mean_Bio_all"]][1:(Nyrs - 1)] +
       df[["catch_tot"]][1:(Nyrs - 1)]
 
+    # remove any rows with NA values
     df <- df |> dplyr::filter(!is.na(sprod))
 
     # function to plot surplus production
-    sprodfunc <- function(x_col, xlab) {
-      x <- dplyr::pull(bio_col)
+    sprodfunc <- function(bio_col, xlab) {
+      x <- df[[bio_col]]
+      y <- df[["sprod"]]
       xlim <- c(0, max(x, na.rm = TRUE))
-      ylim <- c(min(0, sprod_good, na.rm = TRUE), max(sprod_good, na.rm = TRUE))
+      ylim <- c(min(0, y, na.rm = TRUE), max(y, na.rm = TRUE))
       # make empty plot
       if (!add) {
         plot(0, ylim = ylim, xlim = xlim, xlab = xlab, ylab = labels[4], type = "n")
       }
       # add lines
-      lines(bio_good, sprod_good, col = col2)
+      lines(x, y, col = col2)
       # make arrows
       old_warn <- options()[["warn"]] # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
-      s <- seq(length(sprod_good) - 1)
-      arrows(bio_good[s], sprod_good[s], bio_good[s + 1], sprod_good[s + 1],
+      s <- seq(length(y) - 1)
+      arrows(x[s], y[s], x[s + 1], y[s + 1],
         length = 0.06, angle = 20, col = col2, lwd = 1.2
       )
       options(warn = old_warn) # returning to old value
@@ -242,7 +245,7 @@ SSplotYield <-
       abline(h = 0, col = "grey")
       abline(v = 0, col = "grey")
       # add blue point at start
-      points(bio_good[1], sprod_good[1], col = col2, bg = "white", pch = 21)
+      points(x[1], y[1], col = col2, bg = "white", pch = 21)
     } # end sprodfunc
 
     # function to plot time series of Yield per recruit
@@ -270,7 +273,7 @@ SSplotYield <-
 
     if (3 %in% subplots) {
       if (plot) {
-        sprodfunc(bio = summary_df[["mean_Bio_all"]], xlab = labels[3])
+        sprodfunc(bio_col = "mean_Bio_all", xlab = labels[3])
       }
       if (print) {
         file <- "yield3_surplus_production.png"
@@ -287,14 +290,14 @@ SSplotYield <-
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
-        sprodfunc(bio = summary_df[["mean_Bio_all"]], xlab = labels[3])
+        sprodfunc(bio_col = "mean_Bio_all", xlab = labels[3])
         dev.off()
       }
     }
 
     if (4 %in% subplots) {
       if (plot) {
-        sprodfunc(bio = summary_df[["mean_SpawnBio"]], xlab = labels[6])
+        sprodfunc(bio_col = "mean_SpawnBio", xlab = labels[6])
       }
       if (print) {
         file <- "yield4_surplus_production.png"
@@ -312,7 +315,7 @@ SSplotYield <-
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
-        sprodfunc(bio = summary_df[["mean_SpawnBio"]], xlab = labels[6])
+        sprodfunc(bio_col = "mean_SpawnBio", xlab = labels[6])
         dev.off()
       }
     }
