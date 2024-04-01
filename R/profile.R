@@ -383,9 +383,9 @@ profile <- function(dir,
   parfile <- get_par_name(dir)
 
   # read starter file to get input file names and check various things
-  starter.file <- dir(dir)[tolower(dir()) == "starter.ss"]
+  starter.file <- dir(dir)[tolower(dir(dir)) == "starter.ss"]
   if (length(starter.file) == 0) {
-    stop("starter.ss not found in", dir)
+    stop("starter.ss not found in ", dir)
   }
   starter <- SS_readstarter(file.path(dir, starter.file), verbose = FALSE)
   # check for new control file
@@ -469,7 +469,7 @@ profile <- function(dir,
                      overwrite = TRUE, copy_exe = TRUE, 
                      copy_par = usepar, verbose = verbose)
       SS_changepars(
-        dir = dir, ctlfile = oldctlfile, 
+        ctlfile = file.path(dir, oldctlfile), 
         newctlfile = file.path(profile_dir, newctlfile),
         linenums = linenum, strings = string,
         newvals = newvals, estimate = FALSE,
