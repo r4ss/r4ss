@@ -257,8 +257,8 @@ profile <- function(dir,
                     conv_criteria = 0.01,
                     ...) {
   # Ensure wd is not changed by the function
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
+  # orig_wd <- getwd()
+  # on.exit(setwd(orig_wd))
   
   # deprecated variable warnings
   # soft deprecated for now, but fully deprecate in the future.
@@ -272,7 +272,7 @@ profile <- function(dir,
   }
   if (lifecycle::is_present(read_like)) {
     lifecycle::deprecate_warn(
-      when = "1.49.2", # not sure if this is right
+      when = "1.49.3",
       what = "profile(read_like)"
     )
   }
@@ -369,25 +369,25 @@ profile <- function(dir,
     )
   }
   
-  # change working directory
-  if (verbose) {
-    message(
-      "Changing working directory to ", dir, ",\n",
-      " but will be changed back on exit from function."
-    )
-  }
-  setwd(dir)
+  # # change working directory
+  # if (verbose) {
+  #   message(
+  #     "Changing working directory to ", dir, ",\n",
+  #     " but will be changed back on exit from function."
+  #   )
+  # }
+  # setwd(dir)
 
   # note: std file name is independent of executable name
   stdfile <- file.path(dir, "ss.std")
   parfile <- get_par_name(dir)
 
   # read starter file to get input file names and check various things
-  starter.file <- dir()[tolower(dir()) == "starter.ss"]
+  starter.file <- dir(dir)[tolower(dir()) == "starter.ss"]
   if (length(starter.file) == 0) {
     stop("starter.ss not found in", dir)
   }
-  starter <- SS_readstarter(starter.file, verbose = FALSE)
+  starter <- SS_readstarter(file.path(dir, starter.file), verbose = FALSE)
   # check for new control file
   if (starter[["ctlfile"]] != newctlfile) {
     stop(
@@ -432,15 +432,16 @@ profile <- function(dir,
   
   # back up par file
   if (usepar) {
-    file.copy(parfile, "parfile_original_backup.sso")
+    file.copy(file.path(dir, parfile), 
+              file.path(dir, "parfile_original_backup.sso"))
   }
   
   # run loop over profile values
   res <- furrr::future_map(whichruns, function(i) { 
-    profile_dir <- paste0("profile", i)
+    profile_dir <- file.path(dir, paste0("profile", i))
     # check for presence of ReportN.sso files. If present and overwrite=FALSE,
     # then don't bother running anything
-    newrepfiles <- c(paste0("Report", i, ".sso"),
+    newrepfiles <- c(file.path(dir, paste0("Report", i, ".sso")),
                      file.path(profile_dir, "Report.sso"))
     if (!overwrite & any(file.exists(newrepfiles))) {
       # Cannot think of scenario where both temp directory and ReportN.sso exist
@@ -463,12 +464,12 @@ profile <- function(dir,
         # get row as a vector (passing a data.frame to SS_changepars caused error)
         newvals <- as.numeric(profilevec[i, ])
       }
-      copy_SS_inputs(dir.old = getwd(), 
+      copy_SS_inputs(dir.old = dir, 
                      dir.new = profile_dir,
                      overwrite = TRUE, copy_exe = TRUE, 
                      copy_par = usepar, verbose = verbose)
       SS_changepars(
-        dir = NULL, ctlfile = oldctlfile, 
+        dir = dir, ctlfile = oldctlfile, 
         newctlfile = file.path(profile_dir, newctlfile),
         linenums = linenum, strings = string,
         newvals = newvals, estimate = FALSE,
@@ -485,7 +486,7 @@ profile <- function(dir,
           "No estimated parameter in phase 1.\n",
           "Switching ", par_to_change, " from phase 2 to phase 1." 
         )
-        SS_changepars(dir = file.path(profile_dir), 
+        SS_changepars(dir = profile_dir, 
                       ctlfile = newctlfile,
                       newctlfile = newctlfile, 
                       strings = par_to_change,
@@ -496,9 +497,9 @@ profile <- function(dir,
         # alternatively change initial values in the par file
         # read file
         if (globalpar) {
-          par <- readLines("parfile_original_backup.sso")
+          par <- readLines(file.path(dir, "parfile_original_backup.sso"))
         } else {
-          par <- readLines(parfile)
+          par <- readLines(file.path(dir, parfile))
         }
         # loop over the number of parameters (typically just 1)
         for (ipar in 1:npars) {
@@ -531,12 +532,8 @@ profile <- function(dir,
         par <- c(par, "#", note)
         message(paste0(note, collapse = "\n"))
         # write new par file
-        writeLines(par, paste0("ss_input_par", i, ".ss"))
-<<<<<<< HEAD
-        writeLines(par, file.path(profile_dir, "ss.par"))
-=======
-        writeLines(par, parfile)
->>>>>>> main
+        writeLines(par, file.path(dir, paste0("ss_input_par", i, ".ss")))
+        writeLines(par, file.path(profile_dir, parfile))
       }
       
       # run model
@@ -546,17 +543,16 @@ profile <- function(dir,
       # look for non-zero report file and read LIKELIHOOD table
       if (file.exists(repfile_loc) & file.info(repfile_loc)$size > 0) {
         goodrep <- TRUE
-        # move ss.par file into main directory if needed to start next run
+        # move par file into main directory if needed to start next run
         if(usepar & !globalpar) {
-          file.copy(from = file.path(profile_dir, "ss.par"),
-                    to = "ss.par", 
+          file.copy(from = file.path(profile_dir, parfile),
+                    to = file.path(dir, parfile), 
                     overwrite = TRUE)
         }
         # read first 400 lines of Report.sso
         Rep <- readLines(repfile_loc, n = 400)
         # check for convergence
         convergence_line <- grep('Convergence_Level', Rep)
-        # I think stringr is already imported? Otherwise I need regex help.
         # Search for substring > 1 character with only: numbers, ., -, and e
         max_grad <- as.numeric(
           stringr::str_extract(Rep[convergence_line],
@@ -574,38 +570,11 @@ profile <- function(dir,
         likevec <- as.numeric(like[["logL.Lambda"]])
         names(likevec) <- like[["Component"]]
       } else {
-<<<<<<< HEAD
         # No good report file:
         goodrep <- FALSE
         converged <- FALSE
         max_grad <- NA
         likevec <- rep(NA, 10)
-=======
-        # add a placeholder row of NA values if no good report file
-        liketable <- rbind(liketable, rep(NA, 10))
-      }
-
-      # rename output files
-      if (saveoutput) {
-        file.copy("Report.sso", paste("Report", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("CompReport.sso", paste("CompReport", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("covar.sso", paste("covar", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("warning.sso", paste("warning", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy(parfile, paste(parfile, "_", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
->>>>>>> main
       }
       return(list(goodrep = goodrep,
                   converged = converged,
@@ -618,38 +587,38 @@ profile <- function(dir,
   # move and rename output files
   if (saveoutput) {
     purrr::walk(whichruns, function(i) {
-      profile_dir <- file.path(getwd(), paste0("profile", i))
+      profile_dir <- file.path(dir, paste0("profile", i))
       if (file.exists(file.path(profile_dir, "Report.sso")) & 
           file.info(file.path(profile_dir, "Report.sso"))$size > 0) {
         file.copy(file.path(profile_dir, "Report.sso"), 
-                  paste0("Report", i, ".sso"),
+                  file.path(dir, paste0("Report", i, ".sso")),
                   overwrite = overwrite
         )
         file.copy(file.path(profile_dir, "CompReport.sso"), 
-                  paste0("CompReport", i, ".sso"),
+                  file.path(dir, paste0("CompReport", i, ".sso")),
                   overwrite = overwrite
         )
         file.copy(file.path(profile_dir, "covar.sso"), 
-                  paste0("covar", i, ".sso"),
+                  file.path(dir, paste0("covar", i, ".sso")),
                   overwrite = overwrite
         )
         file.copy(file.path(profile_dir, "warning.sso"),
-                  paste0("warning", i, ".sso"),
+                  file.path(dir, paste0("warning", i, ".sso")),
                   overwrite = overwrite
         )
         file.copy(file.path(profile_dir, "admodel.hes"),
-                  paste0("admodel", i, ".hes"),
+                  file.path(paste0("admodel", i, ".hes")),
                   overwrite = overwrite
         )
-        file.copy(file.path(profile_dir, "ss.par"),
-                  paste0("ss.par_", i, ".sso"),
+        file.copy(file.path(profile_dir, parfile),
+                  file.path(paste0(parfile, "_", i, ".sso")),
                   overwrite = overwrite
         )
       }
     })
   }
   # delete profile subdirectories
-  purrr::walk(whichruns, ~ unlink(paste0("profile", .x), recursive = TRUE))
+  purrr::walk(whichruns, ~ unlink(file.path(dir, paste0("profile", .x)), recursive = TRUE))
   
   # res is NULL for any values that didn't run due to existing report file.
   res_keep <- which(!sapply(res, is.null))
