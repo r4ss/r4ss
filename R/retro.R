@@ -76,7 +76,7 @@ SS_doRetro <-
 #' )
 #'
 #' ## run retrospectives in parallel
-#' ncores <- parallelly::availableCores() - 1
+#' ncores <- parallelly::availableCores(omit = 1)
 #' future::plan(future::multisession, workers = ncores)
 #' retro(
 #'   dir = mydir,
