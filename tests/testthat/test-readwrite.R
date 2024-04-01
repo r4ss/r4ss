@@ -75,7 +75,7 @@ test_that("models can be read and written", {
     # write all files at once
     SS_write(inputlist = allfiles, dir = allfiles[["dir"]])
     # confirm that they got written
-    lapply(files[files != parfile], function(x) expect_true(file.exists(x)))
+    lapply(files[basename(files) != parfile], function(x) expect_true(file.exists(x)))
   }
 
   # todo: run the models with no est to make sure the written files work with SS
