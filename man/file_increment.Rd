@@ -5,12 +5,15 @@
 \title{Rename key Stock Synthesis output files by adding integer value}
 \usage{
 file_increment(
+  path,
   i,
   verbose = FALSE,
   pattern = "^[CcPRw][a-zA-Z]+\\\\.sso|summary\\\\.sso|\\\\.par$"
 )
 }
 \arguments{
+\item{path}{Directory where model files are located.}
+
 \item{i}{An integer value to append to the file name before the
 \code{.sso} extension.}
 

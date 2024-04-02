@@ -10,6 +10,8 @@ iterate_jitter(
   exe = "ss3",
   verbose = FALSE,
   init_values_src = 0,
+  dir = NULL,
+  extras = NULL,
   ...
 )
 }
