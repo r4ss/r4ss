@@ -27,7 +27,7 @@ file_increment <- function(path, i, verbose = FALSE,
     from = dir(path = path, pattern = pattern, full.names = TRUE),
     to = gsub("par", "par_", gsub(
       "\\.sso|(\\.par)",
-      paste0("\\1", 0, ".sso"), dir(path = path, pattern = pattern, full.names = TRUE)
+      paste0("\\1", i, ".sso"), dir(path = path, pattern = pattern, full.names = TRUE)
     ))
   )
   return(invisible(ignore))
