@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
   workflow_call:
 
-name: run-tests
+name: run-extra-tests-for-code-coverage
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
