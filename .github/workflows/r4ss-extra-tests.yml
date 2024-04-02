@@ -74,14 +74,14 @@ jobs:
           sudo chmod a+x ss3
           mv ss3 inst/extdata/simple_3.24/ss3
         
-          - name: Test coverage
-          run: |
-            covr::codecov(
-              quiet = FALSE,
-              clean = FALSE,
-              install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "r4ss")
-            )
-          shell: Rscript {0}
+      - name: Test coverage
+        run: |
+          covr::codecov(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "r4ss")
+          )
+        shell: Rscript {0}
   
       - name: Show testthat output
         if: always()
