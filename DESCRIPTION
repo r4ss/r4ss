@@ -79,6 +79,7 @@ Suggests:
     gtools,
     knitr,
     maps,
+    parallelly,
     pso,
     reshape2,
     rmarkdown,

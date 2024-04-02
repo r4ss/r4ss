@@ -153,7 +153,7 @@ SS_profile <- function(...) {
 #' SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
 #' 
 #' # run same profile in parallel
-#' ncores <- parallelly::availableCores() - 1
+#' ncores <- parallelly::availableCores(omit = 1)
 #' future::plan(future::multisession, workers = ncores)
 #' prof.table <- profile(
 #'   dir = dir_prof,
@@ -256,10 +256,6 @@ profile <- function(dir,
                     verbose = TRUE,
                     conv_criteria = 0.01,
                     ...) {
-  # Ensure wd is not changed by the function
-  # orig_wd <- getwd()
-  # on.exit(setwd(orig_wd))
-  
   # deprecated variable warnings
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterctlfile)) {
@@ -276,9 +272,9 @@ profile <- function(dir,
       what = "profile(read_like)"
     )
   }
-  
+
   # check for executable
-  check_exe(exe = exe, dir = dir, verbose = verbose)
+  exe_path <- check_exe(exe = exe, dir = dir, verbose = verbose)
   
   # figure out which line to change in control file
   # if not using par file, info still needed to set phase negative in control file
@@ -368,15 +364,6 @@ profile <- function(dir,
       ",\n  out of n = ", n
     )
   }
-  
-  # # change working directory
-  # if (verbose) {
-  #   message(
-  #     "Changing working directory to ", dir, ",\n",
-  #     " but will be changed back on exit from function."
-  #   )
-  # }
-  # setwd(dir)
 
   # note: std file name is independent of executable name
   stdfile <- file.path(dir, "ss.std")
@@ -427,7 +414,7 @@ profile <- function(dir,
     )
     # save current strategy as oplan, and change it to sequential, all in one step!
     oplan <- future::plan(future::sequential) 
-    on.exit(future::plan(oplan), add = TRUE)
+    on.exit(future::plan(oplan))
   }
   
   # back up par file
@@ -435,6 +422,10 @@ profile <- function(dir,
     file.copy(file.path(dir, parfile), 
               file.path(dir, "parfile_original_backup.sso"))
   }
+  
+  # copy oldctlfile to newctlfile. This is what will be copied to the subdirectories.
+  file.copy(from = file.path(dir, oldctlfile),
+            to = file.path(dir, newctlfile))
   
   # run loop over profile values
   res <- furrr::future_map(whichruns, function(i) { 
@@ -466,11 +457,13 @@ profile <- function(dir,
       }
       copy_SS_inputs(dir.old = dir, 
                      dir.new = profile_dir,
-                     overwrite = TRUE, copy_exe = TRUE, 
+                     overwrite = TRUE, 
+                     copy_exe = exe_path$path == dir, 
                      copy_par = usepar, verbose = verbose)
       SS_changepars(
-        ctlfile = file.path(dir, oldctlfile), 
-        newctlfile = file.path(profile_dir, newctlfile),
+        dir = profile_dir,
+        ctlfile = newctlfile, 
+        newctlfile = newctlfile,
         linenums = linenum, strings = string,
         newvals = newvals, estimate = FALSE,
         verbose = TRUE, repeat.vals = TRUE
