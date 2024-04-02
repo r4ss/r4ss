@@ -50,7 +50,8 @@ SS_RunJitter <-
 #'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
-#' @importFrom furrr future_map_dbl
+#' @import furrr
+#' @import purrr
 #' @family run functions
 #' @details This function will loop through models using the default strategy set by the
 #' `future` package in the current working environment. In general, this means models
