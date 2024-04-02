@@ -50,7 +50,7 @@ SS_doRetro <-
 #'
 #' @author Ian G. Taylor, James T. Thorson, Kathryn L. Doering, Kiva L. Oken
 #' @export
-#' @importFrom furrr future_walk
+#' @import furrr
 #' @seealso [SSgetoutput()]
 #' @family run functions
 #' @examples
