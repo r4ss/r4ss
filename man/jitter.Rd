@@ -5,7 +5,7 @@
 \title{Iteratively run Stock Synthesis with jittered starting values}
 \usage{
 jitter(
-  dir = getwd(),
+  dir = NULL,
   mydir = lifecycle::deprecated(),
   Intern = lifecycle::deprecated(),
   Njitter,
@@ -14,6 +14,7 @@ jitter(
   init_values_src = NULL,
   exe = "ss3",
   verbose = FALSE,
+  extras = NULL,
   ...
 )
 }
@@ -93,12 +94,13 @@ jit.likes <- jitter(
 )
 
 #### Run same jitter in parallel
-ncores <- parallel::detectCores() - 1
+ncores <- parallelly::availableCores(omit = 1)
 future::plan(future::multisession, workers = ncores)
 jit.likes <- jitter(
-  dir = modeldir, Njitter = numjitter,
+  dir = modeldir,Njitter = numjitter,
   jitter_fraction = 0.1, init_value_src = 1
 )
+future::plan(future::sequential)
 
 #### Read in results using other r4ss functions
 # (note that un-jittered model can be read using keyvec=0:numjitter)

@@ -132,15 +132,18 @@ test_that("jitter runs on simple_small model", {
     # error expected when no exe found
     expect_error(jitter(
       dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = FALSE, verbose = TRUE,
+      printlikes = FALSE, verbose = TRUE, exe = "ss3"
     ))
     # starter file shouldn't have changed if exe check failed
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
     expect_equal(starter$jitter_fraction, 0)
   } else {
+    run_results_jit_init <- run(dir = dir.jit)
+    expect_true(run_results_jit_init == "ran model")
+  
     likesaved <- jitter(
       dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = FALSE, verbose = TRUE, show_in_console = FALSE
+      printlikes = TRUE, verbose = TRUE, show_in_console = FALSE, exe = "ss3"
     )
     # confirm that likelihoods were returned by function
     expect_true(is.vector(likesaved) & length(likesaved) == 2)

@@ -167,7 +167,7 @@ jitter <- function(dir = NULL,
   r4ss::SS_writestarter(dir = dir, starter, overwrite = TRUE, verbose = FALSE)
 
   # I'm not sure if this is necessary anymore
-  file_increment(0, verbose = verbose)
+  file_increment(path = dir, 0, verbose = verbose)
   
   # check length of Njitter input
   if (length(Njitter) == 1) {
@@ -207,7 +207,7 @@ jitter <- function(dir = NULL,
     function(.i, .x, .y) {
       file.copy(
         from = file.path(dir, paste0("jitter", .i), .x),
-        to = .y,
+        to = file.path(dir, .y),
         overwrite = TRUE
       )
     }
