@@ -47,7 +47,7 @@ SS_RunJitter <-
 #' `show_in_console`, and `skipfinished`.
 #'
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
-#' Kathryn L. Doering, Kiva L. Oken
+#' Kathryn L. Doering, Kiva L. Oken, Elizabeth F. Perl
 #'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
