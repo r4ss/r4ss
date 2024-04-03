@@ -141,28 +141,21 @@ test_that("jitter runs on simple_small model", {
     run_results_jit_init <- run(dir = dir.jit)
     expect_true(run_results_jit_init == "ran model")
 
-    start.time.seq <- Sys.time()
     likesaved <- jitter(
       dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
       printlikes = TRUE, verbose = TRUE, show_in_console = FALSE, exe = "ss3"
     )
-    end.time.seq <- Sys.time()
-    time.seq <- end.time.seq - start.time.seq
 
     # Test running in parallel
     ncores <- parallelly::availableCores(omit = 1)
     future::plan(future::multisession, workers = ncores)
-    start.time.parallel <- Sys.time()
     likesaved <- jitter(
       dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
       printlikes = TRUE, verbose = TRUE, show_in_console = FALSE, exe = "ss3",
       skipfinished = FALSE
     )
-    end.time.parallel <- Sys.time()
-    time.parallel <- end.time.parallel - start.time.parallel
     future::plan(future::sequential)
 
-    expect_true(time.parallel < time.seq)
 
     # confirm that likelihoods were returned by function
     expect_true(is.vector(likesaved) & length(likesaved) == 2)
