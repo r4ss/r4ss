@@ -44,6 +44,8 @@ is an additional input}
 
 \item{data_year}{Last year of of timeseries data}
 
+\item{month}{Month to get SIS info from}
+
 \item{sciencecenter}{Origin of assessment report}
 
 \item{Mgt_Council}{Council jurisdiction. Currently only

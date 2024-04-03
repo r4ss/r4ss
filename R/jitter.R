@@ -42,8 +42,9 @@ SS_RunJitter <-
 #'   The default is `NULL`, which will leave the starter file unchanged.
 #' @template exe
 #' @template verbose
+#' @template extras
 #' @param ... Additional arguments passed to [r4ss::run()], such as
-#' `extras`, `show_in_console`, and `skipfinished`.
+#' `show_in_console`, and `skipfinished`.
 #'
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
 #' Kathryn L. Doering, Kiva L. Oken
@@ -240,6 +241,8 @@ jitter <- function(dir = NULL,
 #' @param i Index of the jitter iteration.
 #' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
+#' @param dir Directory where model files are located.
+#' @template extras
 #' @template exe
 #' @template verbose
 #' @param init_values_src Either zero or one, specifying if the initial values to

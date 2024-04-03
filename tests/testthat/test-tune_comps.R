@@ -67,7 +67,7 @@ test_that("tune_comps() works with francis", {
   skip_if(
     (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
       (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
-    message = "skipping test that requires SS executable"
+    message = "skipping test that requires SS3 executable"
   )
   test <- tune_comps(
     replist = NULL, fleets = "all",
@@ -83,7 +83,7 @@ test_that("tune_comps() works with MI and up tuning", {
   skip_if(
     (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
       (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
-    message = "skipping test that requires SS executable"
+    message = "skipping test that requires SS3 executable"
   )
   test <- tune_comps(
     replist = NULL, fleets = "all",
@@ -99,7 +99,7 @@ test_that("tune_comps() works with DM", {
   skip_if(
     (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
       (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
-    message = "skipping test that requires SS executable"
+    message = "skipping test that requires SS3 executable"
   )
   test <- tune_comps(
     replist = NULL, fleets = "all",
@@ -127,7 +127,7 @@ test_that("tune_comps() works with none", {
   skip_if(
     (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
       (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
-    message = "skipping test that requires SS executable"
+    message = "skipping test that requires SS3 executable"
   )
   test <- tune_comps(
     option = "none",
@@ -143,7 +143,7 @@ test_that("tune_comps() works with multiple iterations", {
   skip_if(
     (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &
       (!file.exists(file.path(runs_path, "simple_small", "ss3.exe"))),
-    message = "skipping test that requires SS executable"
+    message = "skipping test that requires SS3 executable"
   )
   test <- tune_comps(
     replist = NULL, fleets = "all",
