@@ -315,7 +315,6 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[1:2]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.text.align = 0,
         panel.grid.minor = element_blank()
       ) +
       scale_shape_manual(
@@ -358,7 +357,10 @@ SS_Sensi_plot <- function(model.summaries,
       scale_x_continuous(breaks = 2:(model.summaries[["n"]]), labels = unique(Dev.quants.ggplot[["Model_name"]])) +
       # scale_y_continuous(limits=ylims.in[1:2])+
       coord_cartesian(ylim = ylims.in[1:2]) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), legend.text.align = 0, panel.grid.minor = element_blank()) +
+      theme(
+        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+        panel.grid.minor = element_blank()
+      ) +
       scale_shape_manual(
         values = c(15:18, 12),
         name = "",
@@ -421,7 +423,6 @@ SS_Sensi_plot <- function(model.summaries,
           spawn.lab.curr
         )
       ) +
-      theme(legend.text.align = 0) +
       labs(x = " ", y = " ") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
       geom_hline(yintercept = 0, lwd = 0.5, color = "gray") +
@@ -440,7 +441,6 @@ SS_Sensi_plot <- function(model.summaries,
         axis.text.x = element_blank(),
         panel.grid.minor = element_blank()
       ) +
-      theme(legend.text.align = 0) +
       labs(x = " ", y = "Relative change") +
       scale_colour_manual(
         values = four.colors[3],
@@ -465,10 +465,8 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[9:10]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.text.align = 0,
         panel.grid.minor = element_blank()
       ) +
-      #          legend.text=element_text(size=rel(1)))+
       scale_shape_manual(
         values = c(16, 17),
         name = "",
@@ -523,7 +521,6 @@ SS_Sensi_plot <- function(model.summaries,
           spawn.lab.curr
         )
       ) +
-      theme(legend.text.align = 0) +
       labs(x = " ", y = " ") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
       geom_hline(yintercept = 0, lwd = 0.5, color = "gray") +
@@ -543,7 +540,6 @@ SS_Sensi_plot <- function(model.summaries,
         axis.text.x = element_blank(),
         panel.grid.minor = element_blank()
       ) +
-      theme(legend.text.align = 0) +
       labs(x = " ", y = "Log relative change") +
       scale_colour_manual(
         values = four.colors[3],
@@ -568,10 +564,8 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[9:10]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.text.align = 0,
         panel.grid.minor = element_blank()
       ) +
-      #          legend.text=element_text(size=7.5))+
       scale_shape_manual(
         values = c(16, 17),
         name = "",
@@ -607,7 +601,6 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[3:4]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.text.align = 0,
         panel.grid.minor = element_blank()
       ) +
       scale_colour_manual(
@@ -633,7 +626,6 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[3:4]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.text.align = 0,
         panel.grid.minor = element_blank()
       ) +
       scale_colour_manual(
@@ -661,8 +653,6 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[5:6]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        # panel.grid.minor = element_blank(),
-        legend.text.align = 0
       ) +
       scale_colour_manual(
         values = four.colors[2],
@@ -683,12 +673,9 @@ SS_Sensi_plot <- function(model.summaries,
       geom_rect(aes(xmin = 1, xmax = model.summaries[["n"]] + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries[["n"]]), minor_breaks = NULL, labels = unique(Dev.quants.ggplot.SBt[["Model_name"]])) +
-      # scale_y_continuous(limits=ylims.in[5:6])+
       coord_cartesian(ylim = ylims.in[5:6]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        # panel.grid.minor = element_blank(),
-        legend.text.align = 0
       ) +
       scale_colour_manual(
         values = four.colors[2],
@@ -714,7 +701,6 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[7:8]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.text.align = 0,
         panel.grid.minor = element_blank()
       ) +
       labs(x = " ", y = "Relative change") +
@@ -742,7 +728,6 @@ SS_Sensi_plot <- function(model.summaries,
       coord_cartesian(ylim = ylims.in[7:8]) +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.text.align = 0,
         panel.grid.minor = element_blank()
       ) +
       labs(x = " ", y = "Relative change") +
