@@ -64,6 +64,8 @@
 <span>  exe <span class="op">=</span> <span class="st">"ss3"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  init_values_src <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  extras <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -98,6 +100,15 @@ to the screen.</p></dd>
 <dd><p>Either zero or one, specifying if the initial values to
 jitter should be read from the control file or from the par file, respectively.
 Cannot be <code>NULL</code>. Defaults to zero (initial values read from control file).</p></dd>
+
+
+<dt>dir</dt>
+<dd><p>Directory where model files are located.</p></dd>
+
+
+<dt>extras</dt>
+<dd><p>Additional ADMB command line arguments passed
+to the executable, such as "-nohess"</p></dd>
 
 
 <dt>...</dt>

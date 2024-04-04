@@ -65,7 +65,7 @@ in the format Report1.sso, Report2.sso, etc.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">jitter</span><span class="op">(</span></span>
-<span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mydir <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  Intern <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">Njitter</span>,</span>
@@ -74,6 +74,7 @@ in the format Report1.sso, Report2.sso, etc.</p>
 <span>  init_values_src <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  exe <span class="op">=</span> <span class="st">"ss3"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  extras <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -132,9 +133,14 @@ included.</p></dd>
 to the screen.</p></dd>
 
 
+<dt>extras</dt>
+<dd><p>Additional ADMB command line arguments passed
+to the executable, such as "-nohess"</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code><a href="run.html">run()</a></code>, such as
-<code>extras</code>, <code>show_in_console</code>, and <code>skipfinished</code>.</p></dd>
+<code>show_in_console</code>, and <code>skipfinished</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -189,12 +195,13 @@ Kathryn L. Doering, Kiva L. Oken</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### Run same jitter in parallel</span></span></span>
-<span class="r-in"><span><span class="va">ncores</span> <span class="op">&lt;-</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">ncores</span> <span class="op">&lt;-</span> <span class="fu">parallelly</span><span class="fu">::</span><span class="fu"><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">availableCores</a></span><span class="op">(</span>omit <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="va"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span>, workers <span class="op">=</span> <span class="va">ncores</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">jit.likes</span> <span class="op">&lt;-</span> <span class="fu">jitter</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">modeldir</span>, Njitter <span class="op">=</span> <span class="va">numjitter</span>,</span></span>
+<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">modeldir</span>,Njitter <span class="op">=</span> <span class="va">numjitter</span>,</span></span>
 <span class="r-in"><span>  jitter_fraction <span class="op">=</span> <span class="fl">0.1</span>, init_value_src <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="va"><a href="https://future.futureverse.org/reference/sequential.html" class="external-link">sequential</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### Read in results using other r4ss functions</span></span></span>
 <span class="r-in"><span><span class="co"># (note that un-jittered model can be read using keyvec=0:numjitter)</span></span></span>

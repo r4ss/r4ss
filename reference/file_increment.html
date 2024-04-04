@@ -62,6 +62,7 @@ name before the extension.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">file_increment</span><span class="op">(</span></span>
+<span>  <span class="va">path</span>,</span>
 <span>  <span class="va">i</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  pattern <span class="op">=</span> <span class="st">"^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"</span></span>
@@ -70,7 +71,11 @@ name before the extension.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>i</dt>
+    <dl><dt>path</dt>
+<dd><p>Directory where model files are located.</p></dd>
+
+
+<dt>i</dt>
 <dd><p>An integer value to append to the file name before the
 <code>.sso</code> extension.</p></dd>
 
