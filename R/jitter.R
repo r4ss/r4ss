@@ -42,15 +42,17 @@ SS_RunJitter <-
 #'   The default is `NULL`, which will leave the starter file unchanged.
 #' @template exe
 #' @template verbose
+#' @template extras
 #' @param ... Additional arguments passed to [r4ss::run()], such as
-#' `extras`, `show_in_console`, and `skipfinished`.
+#' `show_in_console`, and `skipfinished`.
 #'
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
-#' Kathryn L. Doering, Kiva L. Oken
+#' Kathryn L. Doering, Kiva L. Oken, Elizabeth F. Perl
 #'
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export
-#' @importFrom furrr future_map_dbl
+#' @import furrr
+#' @importFrom purrr map imap walk pwalk
 #' @family run functions
 #' @details This function will loop through models using the default strategy set by the
 #' `future` package in the current working environment. In general, this means models
@@ -80,13 +82,14 @@ SS_RunJitter <-
 #' )
 #'
 #' #### Run same jitter in parallel
-#' ncores <- parallel::detectCores() - 1
+#' ncores <- parallelly::availableCores(omit = 1)
 #' future::plan(future::multisession, workers = ncores)
 #' jit.likes <- jitter(
-#'   dir = modeldir, Njitter = numjitter,
+#'   dir = modeldir,Njitter = numjitter,
 #'   jitter_fraction = 0.1, init_value_src = 1
 #' )
-#'
+#' future::plan(future::sequential)
+#' 
 #' #### Read in results using other r4ss functions
 #' # (note that un-jittered model can be read using keyvec=0:numjitter)
 #' profilemodels <- SSgetoutput(dirvec = modeldir, keyvec = 1:numjitter, getcovar = FALSE)
@@ -98,7 +101,7 @@ SS_RunJitter <-
 #' profilesummary[["pars"]]
 #' }
 #'
-jitter <- function(dir = getwd(),
+jitter <- function(dir = NULL,
                    mydir = lifecycle::deprecated(),
                    Intern = lifecycle::deprecated(),
                    Njitter,
@@ -107,6 +110,7 @@ jitter <- function(dir = getwd(),
                    init_values_src = NULL,
                    exe = "ss3",
                    verbose = FALSE,
+                   extras = NULL,
                    ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
@@ -125,15 +129,18 @@ jitter <- function(dir = getwd(),
     )
     dir <- mydir
   }
-
+  
+  if(is.null(dir)){dir <- getwd()}
+  
   # check for executable and keep cleaned name of executable file
   exe <- check_exe(exe = exe, dir = dir, verbose = verbose)[["exe"]]
-
+  
   # Determine working directory on start and return upon exit
-  startdir <- getwd()
-  on.exit(setwd(startdir))
-  setwd(dir)
-
+  # startdir <- getwd()
+  # on.exit(setwd(startdir))
+  # 
+  # setwd(dir)
+  
   if (verbose) {
     message("Temporarily changing working directory to:\n", dir)
     if (!file.exists("Report.sso")) {
@@ -145,12 +152,12 @@ jitter <- function(dir = getwd(),
     message("Checking starter file")
   }
   # read starter file to test for non-zero jitter value
-  starter <- SS_readstarter(verbose = verbose)
+  starter <- SS_readstarter(file = file.path(dir, "starter.ss"), verbose = verbose)
   starter[["parmtrace"]] <- ifelse(starter[["parmtrace"]] == 0, 1, starter[["parmtrace"]])
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
     stop("Change the jitter value in the starter file to be > 0\n",
-      "or change the 'jitter_fraction' argument to be > 0.",
-      call. = FALSE
+         "or change the 'jitter_fraction' argument to be > 0.",
+         call. = FALSE
     )
   }
   if (!is.null(jitter_fraction)) {
@@ -159,16 +166,16 @@ jitter <- function(dir = getwd(),
   if (!is.null(init_values_src)) {
     starter[["init_values_src"]] <- init_values_src
   }
-  r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE)
+  r4ss::SS_writestarter(dir = dir, starter, overwrite = TRUE, verbose = FALSE)
 
   # I'm not sure if this is necessary anymore
-  file_increment(0, verbose = verbose)
-
+  file_increment(path = dir, 0, verbose = verbose)
+  
   # check length of Njitter input
   if (length(Njitter) == 1) {
     Njitter <- 1:Njitter
   }
-
+  
   likesaved <- furrr::future_map_dbl(
     .x = Njitter,
     .f = iterate_jitter,
@@ -176,15 +183,17 @@ jitter <- function(dir = getwd(),
     exe = exe,
     verbose = verbose,
     init_values_src = starter[["init_values_src"]],
+    dir = dir,
+    extras = extras,
     ...
   )
-
+  
   # rename output files and move them to base model directory
   to_copy <- purrr::map(Njitter, ~ list.files(
-    path = paste0("jitter", .x),
+    path = file.path(dir, paste0("jitter", .x)),
     pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
   ))
-
+  
   new_name <- purrr::imap(to_copy, ~ gsub(
     pattern = "par",
     replacement = "par_",
@@ -194,13 +203,13 @@ jitter <- function(dir = getwd(),
       x = .x
     )
   ))
-
+  
   purrr::pwalk(
     list(Njitter, to_copy, new_name),
     function(.i, .x, .y) {
       file.copy(
-        from = file.path(paste0("jitter", .i), .x),
-        to = .y,
+        from = file.path(dir, paste0("jitter", .i), .x),
+        to = file.path(dir, .y),
         overwrite = TRUE
       )
     }
@@ -208,18 +217,18 @@ jitter <- function(dir = getwd(),
   if (verbose) {
     message("Finished running jitters, running last few clean-up steps")
   }
-
+  
   # delete jitter model directory
-  purrr::walk(Njitter, ~ unlink(paste0("jitter", .x), recursive = TRUE))
-
+  purrr::walk(Njitter, ~ unlink(file.path(dir, paste0("jitter", .x)), recursive = TRUE))
+  
   # only necessary if the file_increment line is maintained.
-  pattern0 <- list.files(pattern = "[a-z_]0\\.sso")
+  pattern0 <- list.files(path = dir, pattern = "[a-z_]0\\.sso")
   file.copy(
     from = pattern0,
     to = gsub("([a-zA-Z])0|_0\\.sso", "\\1", pattern0),
     overwrite = TRUE
   )
-
+  
   if (printlikes) {
     message("Table of likelihood values:")
     print(table(likesaved))
@@ -232,6 +241,8 @@ jitter <- function(dir = getwd(),
 #' @param i Index of the jitter iteration.
 #' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
+#' @param dir Directory where model files are located.
+#' @template extras
 #' @template exe
 #' @template verbose
 #' @param init_values_src Either zero or one, specifying if the initial values to
@@ -248,20 +259,22 @@ iterate_jitter <- function(i,
                            exe = "ss3",
                            verbose = FALSE,
                            init_values_src = 0,
+                           dir = NULL,
+                           extras = NULL,
                            ...) {
-  jitter_dir <- paste0("jitter", i)
+  jitter_dir <- file.path(dir, paste0("jitter", i))
   copy_SS_inputs(
-    dir.old = getwd(), dir.new = jitter_dir, overwrite = TRUE,
+    dir.old = dir, dir.new = jitter_dir, overwrite = TRUE,
     verbose = verbose, copy_exe = TRUE,
     copy_par = as.logical(init_values_src)
   )
-
+  
   if (verbose) {
     message(paste0("Starting run of jitter", i))
   }
-
+  
   # run model
-  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, ...)
+  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, extras = extras, ...)
   # Only save stuff if it converged
   if ("Report.sso" %in% list.files(path = jitter_dir)) {
     rep <- SS_read_summary(file.path(jitter_dir, "ss_summary.sso"))

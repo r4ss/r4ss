@@ -42,11 +42,11 @@ test_that("download_models() works when the dir doesn't exist", {
 test_that("download_models() fails when the branch doesn't exist", {
   temp_dir_branch_dne <- file.path(save_models_dir, "diff_branch_dne")
   dir.create(temp_dir_branch_dne)
-  expect_error(
+  expect_warning(expect_error(
     download_models(
       dir = temp_dir_branch_dne,
       branch = "not_existing_branch"
     ),
     "not be downloaded"
-  )
+  ))
 })

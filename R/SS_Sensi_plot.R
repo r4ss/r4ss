@@ -342,7 +342,7 @@ SS_Sensi_plot <- function(model.summaries,
       ) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
-      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), linewidth = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), color = c("darkgreen", "darkred")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
     ggsave(file.path(dir, "Sensi_REplot_all.png"))
 
@@ -383,7 +383,7 @@ SS_Sensi_plot <- function(model.summaries,
       ) +
       labs(x = sensi_xlab, y = "Log relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
-      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), linewidth = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), color = c("darkgreen", "darkred")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
     ggsave(file.path(dir, "Sensi_logREplot_all.png"))
   }
@@ -447,7 +447,7 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries[["n"]] + 1), (model.summaries[["n"]] + 1)), y = c(TRP + 0.1, LRP - 0.1), label = c("TRP", "LRP"), linewidth = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 1), (model.summaries[["n"]] + 1)), y = c(TRP + 0.1, LRP - 0.1), label = c("TRP", "LRP"), color = c("darkgreen", "darkred")) +
       geom_hline(yintercept = c(TRP, LRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
@@ -550,7 +550,7 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries[["n"]] + 1), (model.summaries[["n"]] + 1)), y = c(logTRP + 0.08, logLRP - 0.08), label = c("TRP", "LRP"), linewidth = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 1), (model.summaries[["n"]] + 1)), y = c(logTRP + 0.08, logLRP - 0.08), label = c("TRP", "LRP"), color = c("darkgreen", "darkred")) +
       geom_hline(yintercept = c(logTRP, logLRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
@@ -723,7 +723,7 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), linewidth = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), color = c("darkgreen", "darkred")) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
       geom_hline(yintercept = c(TRP, LRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
@@ -751,7 +751,7 @@ SS_Sensi_plot <- function(model.summaries,
         name = "",
         labels = spawn.lab.ratio
       ) +
-      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), linewidth = c(3, 3), color = c("darkgreen", "darkred")) +
+      annotate("text", x = c((model.summaries[["n"]] + 2), (model.summaries[["n"]] + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), color = c("darkgreen", "darkred")) +
       labs(x = sensi_xlab, y = "Log Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
       geom_hline(yintercept = c(logTRP, logLRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
