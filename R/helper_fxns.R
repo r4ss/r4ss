@@ -181,7 +181,7 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @param legendsp Space between legend labels
 #' @param col Optional vector of colors to be used for lines. Input NULL
 #' @param pch Optional vector of plot character values
-#' @param pt.cex Adjust the cex of points.  
+#' @param pt.cex Adjust the cex of points.
 #' @param lty Optional vector of line types
 #' @param lwd Optional vector of line widths
 #' @param type Type parameter passed to points (default 'o' overplots points on

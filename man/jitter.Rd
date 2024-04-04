@@ -100,7 +100,7 @@ jit.likes <- jitter(
 ncores <- parallelly::availableCores(omit = 1)
 future::plan(future::multisession, workers = ncores)
 jit.likes <- jitter(
-  dir = modeldir,Njitter = numjitter,
+  dir = modeldir, Njitter = numjitter,
   jitter_fraction = 0.1, init_value_src = 1
 )
 future::plan(future::sequential)
@@ -128,6 +128,6 @@ Other run functions:
 }
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
-Kathryn L. Doering, Kiva L. Oken
+Kathryn L. Doering, Kiva L. Oken, Elizabeth F. Perl
 }
 \concept{run functions}
