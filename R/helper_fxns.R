@@ -197,6 +197,7 @@ add_legend <- function(legendlabels,
                        legendsp = 0.9,
                        col = NULL,
                        pch = NULL,
+                       pt.cex = 0.7,
                        lty = 1,
                        lwd = 2,
                        type = "l") {
@@ -225,7 +226,7 @@ add_legend <- function(legendlabels,
     pch = legend.pch[legendorder],
     bty = "n",
     ncol = legendncol,
-    pt.cex = 0.7,
+    pt.cex = pt.cex[legendorder],
     cex = legendcex,
     y.intersp = legendsp
   )
