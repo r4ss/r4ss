@@ -181,6 +181,7 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @param legendsp Space between legend labels
 #' @param col Optional vector of colors to be used for lines. Input NULL
 #' @param pch Optional vector of plot character values
+#' @param pt.cex Adjust the cex of points.  
 #' @param lty Optional vector of line types
 #' @param lwd Optional vector of line widths
 #' @param type Type parameter passed to points (default 'o' overplots points on
@@ -197,6 +198,7 @@ add_legend <- function(legendlabels,
                        legendsp = 0.9,
                        col = NULL,
                        pch = NULL,
+                       pt.cex = 0.7,
                        lty = 1,
                        lwd = 2,
                        type = "l") {
@@ -225,7 +227,7 @@ add_legend <- function(legendlabels,
     pch = legend.pch[legendorder],
     bty = "n",
     ncol = legendncol,
-    pt.cex = 0.7,
+    pt.cex = pt.cex[legendorder],
     cex = legendcex,
     y.intersp = legendsp
   )
