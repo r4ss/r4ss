@@ -29,8 +29,8 @@ test_that("models can be read and written", {
     start$init_values_src <- 1
     # write changes to starter
     SS_writestarter(
-      start,
-      file.path(tag_mod_par, "starter.ss"),
+      mylist = start,
+      dir = tag_mod_par,
       overwrite = TRUE
     )
     # add new model to vector of all models
