@@ -31,17 +31,22 @@ test_that("test-models work with SS_output() and SS_plots()", {
   message("Will run SS_output() and SS_plots() on models:\n  ", paste(basename(all_mods),
     collapse = ",\n  "
   ))
-  for (m in all_mods) {
-    message("Now running without estimation: ", basename(m))
-    run(m, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
+
+  #' Run test models with the purpose of being called using the furrr package to
+  #' run in parallel.
+  #'
+  #' @param models list of test models to run
+  run_models <- function(models){
+    message("Now running without estimation: ", basename(models))
+    run(models, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
 
     #### Check for presence of Report.sso
-    if (!"Report.sso" %in% dir(m)) {
-      warning("No Report.sso file in ", m)
+    if (!"Report.sso" %in% dir(models)) {
+      warning("No Report.sso file in ", models)
     } else {
       #### Checks related to SS_output()
       message("Running SS_output()")
-      out <- SS_output(m, verbose = FALSE, printstats = FALSE)
+      out <- SS_output(models, verbose = FALSE, printstats = FALSE)
       expect_true(is.list(out))
       expect_equal(tail(names(out), 1), "inputs")
 
@@ -51,4 +56,12 @@ test_that("test-models work with SS_output() and SS_plots()", {
       expect_true("data_plot2.png" %in% plots$file)
     }
   }
+
+
+  ncores <- parallelly::availableCores(omit = 1)
+  future::plan(future::multisession, workers = ncores)
+  
+  furrr::future_map_dbl(
+        .x = all_mods,
+        .f = run_models)
 })
