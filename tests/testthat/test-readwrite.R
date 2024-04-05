@@ -11,6 +11,32 @@ test_that("models can be read and written", {
     full.names = TRUE,
     recursive = FALSE
   )
+  # modify a complex model to use use the .par file so that it
+  # tests reading and writing the par file
+  tag_mod <- all_mods[grepl("tagging_mirrored_sel", all_mods)]
+  expect_true(length(tag_mod) == 1)
+  if (length(tag_mod) == 1) {
+    tag_mod_par <- file.path(dirname(tag_mod), "tagging_mirrored_sel_par")
+    # copy input files
+    copy_SS_inputs(
+      dir.old = tag_mod,
+      dir.new = tag_mod_par,
+      copy_par = TRUE
+    )
+    # read starter file
+    start <- SS_readstarter(file.path(tag_mod_par, "starter.ss"))
+    # tell it to read the par file
+    start$init_values_src <- 1
+    # write changes to starter
+    SS_writestarter(
+      start,
+      file.path(tag_mod_par, "starter.ss"),
+      overwrite = TRUE
+    )
+    # add new model to vector of all models
+    all_mods <- c(all_mods, tag_mod_par)
+  }
+
   message("Will read and write models:\n  ", paste(basename(all_mods),
     collapse = ",\n  "
   ))
