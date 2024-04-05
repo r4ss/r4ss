@@ -33,7 +33,7 @@ test_that("check_exe() fails or succeeds as expected", {
 
 ###############################################################################
 
-test_that("retro() and populate_multiple_folders() both work", {
+test_that("retro(), SSplotRetroRecruits(), and populate_multiple_folders() all work", {
   # skip if no executable in model path
   skip_if(
     (!file.exists(file.path(path_simple_small, "ss3"))) &
@@ -64,17 +64,25 @@ test_that("retro() and populate_multiple_folders() both work", {
   )
   # summarize the model output
   retroSummary <- SSsummarize(retroModels)
+
   # set the fector of ending years
   endyrvec <- retroSummary$endyrs + retro_years
   SSplotComparisons(retroSummary,
     endyrvec = endyrvec,
     legendlabels = paste("Data", retro_years, "years")
   )
+
   # calculate Mohn's rho values
   # TODO: add better tests for mohns rho. Some values aren't calcualted b/c they
   # are missing in the summaries for this model run.
   mohns_rho <- SSmohnsrho(retroSummary)
   expect_length(mohns_rho, 12)
+
+  # run SSplotRetroRecruits()
+  SSplotRetroRecruits(retroSummary,
+   endyrvec = endyrvec, cohorts = retroModels[[1]]$endyr + retro_years - 1,
+   relative = FALSE, legend = FALSE
+  )
 
   # Additional tests of populate_multiple_folders()
   #

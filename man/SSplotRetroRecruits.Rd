@@ -83,7 +83,7 @@ SSplotRetroRecruits(retroSummary,
   relative = TRUE, legend = FALSE
 )
 # second without scaling
-SSplotRetroDevs(retroSummary,
+SSplotRetroRecruits(retroSummary,
   endyrvec = endyrvec, cohorts = 1999:2012,
   relative = FALSE, legend = FALSE
 )
