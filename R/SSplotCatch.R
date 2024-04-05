@@ -393,20 +393,6 @@ SSplotCatch <-
       return(TRUE)
     } # end linefunc
 
-    # function for stacked polygons
-    stackfunc <- function(ymat, ylab, x = catchyrs, hashyrs = NULL) {
-      ## call to function in plotrix (formerly copied into r4ss)
-      if (length(order) == ncol(ymat)) ymat <- ymat[, order]
-      stackpoly(
-        x = x, y = ymat, border = "black",
-        xlab = xlab, ylab = ylab, col = fleetcols[order], x.hash = hashyrs
-      )
-      if (showlegend) {
-        legend(legendloc, fill = fleetcols[!ghost], legend = fleetnames[!ghost], bty = "n")
-      }
-      return(TRUE)
-    } # end stackfunc
-
     barfunc <- function(ymat, ylab, ymax = NULL, x = catchyrs, add = FALSE) {
       # adding labels to barplot as suggested by Mike Prager on R email list:
       #    http://tolstoy.newcastle.edu.au/R/e2/help/07/03/13013.html
