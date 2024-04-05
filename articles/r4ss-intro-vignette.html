@@ -243,8 +243,7 @@ same order as they appear in the text file. Use <code><a href="https://rdrr.io/r
 see all the list components:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">inputs</span><span class="op">)</span> <span class="co"># see the elements of the big list</span></span>
-<span><span class="co">#&gt; [1] "dir"     "path"    "dat"     "ctl"     "start"   "fore"    "wtatage"</span></span>
-<span><span class="co">#&gt; [8] "par"</span></span>
+<span><span class="co">#&gt; [1] "dir"   "path"  "dat"   "ctl"   "start" "fore"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">inputs</span><span class="op">$</span><span class="va">start</span><span class="op">)</span> <span class="co"># see names of the list components of starter file</span></span>
 <span><span class="co">#&gt;  [1] "sourcefile"             "type"                   "SSversion"             </span></span>
 <span><span class="co">#&gt;  [4] "datfile"                "ctlfile"                "init_values_src"       </span></span>
@@ -596,7 +595,7 @@ make a copy of the model to avoid changing the original model files</p>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
 <span><span class="co">#&gt; to</span></span>
-<span><span class="co">#&gt;  /tmp/RtmpX7aVWn/simple_mod</span></span>
+<span><span class="co">#&gt;  /tmp/RtmpqyGl9H/simple_mod</span></span>
 <span><span class="co">#&gt; copying complete</span></span>
 <span><span class="co"># copy over the Report file to provide information about the last run</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span></span>
