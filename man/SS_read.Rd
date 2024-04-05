@@ -19,8 +19,9 @@ to the screen.}
 }
 \value{
 An invisible list is returned.
-The first element is the directory that was provided in the argument \code{dir}.
-The second element is the result of \code{normalizePath(dir)},
+The first element (\code{dir}) is the directory that was provided in the
+argument \code{dir}.
+The second element (\code{path}) is the result of \code{normalizePath(dir)},
 which gives the full path.
 The remaining four to six elements are list objects from reading in
 the following input files:
@@ -30,7 +31,8 @@ the following input files:
 \item starter
 \item forecast
 \item wtatage (will be NULL if not required by the model)
-\item par (will be null if control and par do not match)
+\item par (will be NULL if not required by model or if control and par
+do not match)
 }
 }
 \description{

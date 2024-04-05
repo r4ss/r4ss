@@ -93,7 +93,7 @@ modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE
 numjitter <- 25
 jit.likes <- jitter(
   dir = modeldir, Njitter = numjitter,
-  jitter_fraction = 0.1, init_value_src = 1
+  jitter_fraction = 0.1, init_values_src = 1
 )
 
 #### Run same jitter in parallel
@@ -101,7 +101,7 @@ ncores <- parallelly::availableCores(omit = 1)
 future::plan(future::multisession, workers = ncores)
 jit.likes <- jitter(
   dir = modeldir, Njitter = numjitter,
-  jitter_fraction = 0.1, init_value_src = 1
+  jitter_fraction = 0.1, init_values_src = 1
 )
 future::plan(future::sequential)
 
