@@ -1,6 +1,6 @@
 context("Read output and make plots for all test-models")
 
-test_that("test-models work with SS_output() and SS_plots()", {
+furrr_test_that("test-models work with SS_output() and SS_plots()", {
   skip_if(!file.exists(system.file("extdata", "models", package = "r4ss")),
     message = "No 'models' folder in 'extdata'"
   )
