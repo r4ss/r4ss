@@ -44,7 +44,7 @@ is an additional input}
 
 \item{data_year}{Last year of of timeseries data}
 
-\item{month}{Month to get SIS info from}
+\item{month}{Month when assessment was conducted (within \code{final_year})}
 
 \item{sciencecenter}{Origin of assessment report}
 
