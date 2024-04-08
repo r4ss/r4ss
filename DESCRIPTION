@@ -62,16 +62,16 @@ Imports:
     dplyr,
     forcats,
     furrr,
+    future,
     ggplot2,
     gh,
     kableExtra,
     lifecycle,
     magrittr,
     purrr,
+    purrr,
     stringr,
-    tidyr,
-    future,
-    purrr
+    tidyr
 Suggests: 
     flextable,
     ggpubr,
