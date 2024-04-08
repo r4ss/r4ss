@@ -63,8 +63,8 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   ctl_num <- suppressWarnings(t(apply(ctl, 1, as.numeric))) # transpose needed to match dimensions of ctl
   # warning suppression temporarily turns off "Warning: NAs introduced by coercion"
   num_cnt <- apply(ctl_num, 1, function(x) sum(!is.na(x)))
-  num_cnt7 <- apply(ctl_num[,1:7], 1, function(x) sum(!is.na(x)))
-  num_cnt14 <- apply(ctl_num[,1:14], 1, function(x) sum(!is.na(x)))
+  num_cnt7 <- apply(ctl_num[, 1:7], 1, function(x) sum(!is.na(x)))
+  num_cnt14 <- apply(ctl_num[, 1:14], 1, function(x) sum(!is.na(x)))
 
   parlines7 <- ctl[num_cnt7 == 7 & is.na(ctl_num[, 8]), ]
   parlines14 <- ctl[num_cnt14 == 14 & is.na(ctl_num[, 15]), ]
