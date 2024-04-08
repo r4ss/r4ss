@@ -187,7 +187,7 @@ results <- SSplotProfile(profilesummary, # summary object
 SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
 
 # run same profile in parallel
-ncores <- parallelly::availableCores() - 1
+ncores <- parallelly::availableCores(omit = 1)
 future::plan(future::multisession, workers = ncores)
 prof.table <- profile(
   dir = dir_prof,
