@@ -40,11 +40,15 @@ test_that("retro() and populate_multiple_folders() both work", {
       (!file.exists(file.path(path_simple_small, "ss3.exe"))),
     message = "skipping test that requires SS3 executable"
   )
+  # ensure retro runs in parallel (more likely to cause errors)
+  future::plan(future::multisession, workers = parallelly::availableCores(omit = 1))
   retro(
     dir = path_simple_small,
     oldsubdir = "", newsubdir = "retrospectives", years = retro_years,
     show_in_console = FALSE
   )
+  # shut down cluster
+  future::plan(future::sequential)
   retro_subdirs <- file.path(
     path_simple_small, "retrospectives",
     paste0("retro", retro_years)
@@ -198,12 +202,16 @@ test_that("profile functions run on simple_small model", {
   starter$ctlfile <- "control_modified.ss"
   # write modified starter file
   SS_writestarter(starter, dir = dir.prof, overwrite = TRUE)
+  # ensure profile runs in parallel (more likely to cause errors)
+  future::plan(future::multisession, workers = parallelly::availableCores(omit = 1))
   # run profile
   prof.table <- profile(
     dir = dir.prof,
     oldctlfile = "control.ss",
     string = "R0", profilevec = c(8.5, 9)
   )
+  # shut down cluster
+  future::plan(future::sequential)
   # read model output
   prof.out <- SSgetoutput(dirvec = dir.prof, keyvec = 1:2)
   # summarize output

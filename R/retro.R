@@ -76,12 +76,13 @@ SS_doRetro <-
 #' )
 #'
 #' ## run retrospectives in parallel
-#' ncores <- parallel::detectCores() - 1
+#' ncores <- parallelly::availableCores(omit = 1)
 #' future::plan(future::multisession, workers = ncores)
 #' retro(
 #'   dir = mydir,
 #'   years = 0:-5
 #' )
+#' future::plan(future::sequential)
 #' }
 #'
 retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),

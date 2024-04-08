@@ -54,17 +54,23 @@ SS_profile <- function(...) {
 #' is the length of profilevec.
 #' @param prior_check Check to make sure the starter file is set to include
 #' the prior likelihood contribution in the total likelihood.  Default = TRUE.
-#' @param read_like Read the table of likelihoods from each model as it finishes.
-#' Default = TRUE. Changing to FALSE should allow the function to play through
-#' even if something is wrong with reading the table.
+#' @param read_like Deprecated.
 #' @template exe
 #' @template verbose
+#' @param conv_criteria Maximum gradient for a model to be considered converged.
+#' Defaults to 0.01.
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #' @note The starting values used in this profile are not ideal and some models
 #' may not converge. Care should be taken in using an automated tool like this,
 #' and some models are likely to require rerunning with alternate starting
 #' values.
+#' 
+#' To run multiple models simultaneously using parallel computing, see 
+#' [future::plan()]. However, when running models in parallel, you cannot 
+#' iteratively adapt the starting values using `usepar = TRUE` and 
+#' `globalpar = FALSE`. This increases the chances that some of your models do 
+#' not converge.
 #'
 #' Also, someday this function will be improved to work directly with the
 #' plotting function [SSplotProfile()], but they don't yet work well
@@ -72,7 +78,7 @@ SS_profile <- function(...) {
 #' be read using [SSgetoutput()] or by multiple calls to
 #' [SS_output()] before sending to [SSplotProfile()].
 #' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson,
-#' Chantel R. Wetzel, James T. Thorson
+#' Chantel R. Wetzel, James T. Thorson, Kiva L. Oken
 #' @export
 #' @seealso [SSgetoutput()],
 #' [SS_changepars()], [SS_parlines()]
@@ -117,7 +123,7 @@ SS_profile <- function(...) {
 #' h.vec <- seq(0.3, 0.9, .1)
 #' Nprofile <- length(h.vec)
 #' # run profile command
-#' profile <- profile(
+#' prof.table <- profile(
 #'   dir = dir_prof,
 #'   oldctlfile = "control.ss",
 #'   newctlfile = "control_modified.ss",
@@ -145,6 +151,18 @@ SS_profile <- function(...) {
 #'
 #' # make timeseries plots comparing models in profile
 #' SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
+#' 
+#' # run same profile in parallel
+#' ncores <- parallelly::availableCores(omit = 1)
+#' future::plan(future::multisession, workers = ncores)
+#' prof.table <- profile(
+#'   dir = dir_prof,
+#'   oldctlfile = "control.ss",
+#'   newctlfile = "control_modified.ss",
+#'   string = "steep", # subset of parameter label
+#'   profilevec = h.vec
+#' )
+#' future::plan(future::sequential)
 #'
 #' ###########################################################################
 #' # example two-dimensional profile
@@ -233,14 +251,11 @@ profile <- function(dir,
                     overwrite = TRUE,
                     whichruns = NULL,
                     prior_check = TRUE,
-                    read_like = TRUE,
+                    read_like = lifecycle::deprecated(),
                     exe = "ss3",
                     verbose = TRUE,
+                    conv_criteria = 0.01,
                     ...) {
-  # Ensure wd is not changed by the function
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-
   # deprecated variable warnings
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterctlfile)) {
@@ -251,10 +266,20 @@ profile <- function(dir,
     )
     oldctlfile <- masterctlfile
   }
+  if (lifecycle::is_present(read_like)) {
+    lifecycle::deprecate_warn(
+      when = "1.49.3",
+      what = "profile(read_like)"
+    )
+  }
 
+  if(is.null(dir)){
+    dir <- getwd()
+  }
+  
   # check for executable
-  check_exe(exe = exe, dir = dir, verbose = verbose)
-
+  exe_path <- check_exe(exe = exe, dir = dir, verbose = verbose)
+  
   # figure out which line to change in control file
   # if not using par file, info still needed to set phase negative in control file
   if (is.null(linenum) & is.null(string)) {
@@ -277,7 +302,7 @@ profile <- function(dir,
       )
     }
   }
-
+  
   # count parameters to profile over (typically just 1)
   if (!is.null(linenum)) {
     npars <- length(linenum)
@@ -297,7 +322,7 @@ profile <- function(dir,
   if (is.na(npars) || npars < 1) {
     stop("Problem with the number of parameters to profile over. npars = ", npars)
   }
-
+  
   # figure out length of profile vec and sort out which runs to do
   if (is.null(profilevec)) {
     stop("Missing input 'profilevec'")
@@ -306,7 +331,7 @@ profile <- function(dir,
     n <- length(profilevec)
   } else {
     if ((!is.data.frame(profilevec) & !is.matrix(profilevec)) ||
-      ncol(profilevec) != npars) {
+        ncol(profilevec) != npars) {
       stop(
         "'profilevec' should be a data.frame or a matrix with ",
         npars, " columns"
@@ -316,7 +341,7 @@ profile <- function(dir,
     if (any(unlist(lapply(profilevec, FUN = length)) != n)) {
       stop("Each element in the 'profilevec' list should have length ", n)
     }
-
+    
     if (verbose) {
       if (!is.null(string)) {
         profilevec_df <- data.frame(profilevec)
@@ -328,7 +353,7 @@ profile <- function(dir,
       }
     }
   }
-
+  
   # subset runs if requested
   if (is.null(whichruns)) {
     whichruns <- 1:n
@@ -344,30 +369,16 @@ profile <- function(dir,
     )
   }
 
-  # places to store convergence and likelihood info
-  converged <- rep(NA, n)
-  totallike <- rep(NA, n)
-  liketable <- NULL
-
-  # change working directory
-  if (verbose) {
-    message(
-      "Changing working directory to ", dir, ",\n",
-      " but will be changed back on exit from function."
-    )
-  }
-  setwd(dir)
-
   # note: std file name is independent of executable name
   stdfile <- file.path(dir, "ss.std")
   parfile <- get_par_name(dir)
 
   # read starter file to get input file names and check various things
-  starter.file <- dir()[tolower(dir()) == "starter.ss"]
+  starter.file <- dir(dir)[tolower(dir(dir)) == "starter.ss"]
   if (length(starter.file) == 0) {
-    stop("starter.ss not found in", dir)
+    stop("starter.ss not found in ", dir)
   }
-  starter <- SS_readstarter(starter.file, verbose = FALSE)
+  starter <- SS_readstarter(file.path(dir, starter.file), verbose = FALSE)
   # check for new control file
   if (starter[["ctlfile"]] != newctlfile) {
     stop(
@@ -398,25 +409,45 @@ profile <- function(dir,
       " profile(..., usepar = TRUE)."
     )
   }
-
+  # check for consistency of par settings and future settings
+  if(usepar & !globalpar & !is(future::plan(), 'sequential')) {
+    message(
+      "usepar = TRUE and globalpar = FALSE, but you are attempting to run\n",
+      "the profile in parallel. Changing future strategy to sequential.\n",
+      "It will return to your original strategy upon exit."
+    )
+    # save current strategy as oplan, and change it to sequential, all in one step!
+    oplan <- future::plan(future::sequential) 
+    on.exit(future::plan(oplan))
+  }
+  
   # back up par file
   if (usepar) {
-    file.copy(parfile, "parfile_original_backup.sso")
+    file.copy(file.path(dir, parfile), 
+              file.path(dir, "parfile_original_backup.sso"))
   }
-
+  
+  # copy oldctlfile to newctlfile. This is what will be copied to the subdirectories.
+  file.copy(from = file.path(dir, oldctlfile),
+            to = file.path(dir, newctlfile))
+  
   # run loop over profile values
-  for (i in whichruns) {
+  res <- furrr::future_map(whichruns, function(i) { 
+    profile_dir <- file.path(dir, paste0("profile", i))
     # check for presence of ReportN.sso files. If present and overwrite=FALSE,
     # then don't bother running anything
-    newrepfile <- paste("Report", i, ".sso", sep = "")
-    if (!overwrite & file.exists(newrepfile)) {
+    newrepfiles <- c(file.path(dir, paste0("Report", i, ".sso")),
+                     file.path(profile_dir, "Report.sso"))
+    if (!overwrite & any(file.exists(newrepfiles))) {
+      # Cannot think of scenario where both temp directory and ReportN.sso exist
+      # Even if they do, this still works, it just prints out a little weird.
       message(
         "skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
-        "  and file exists: ", newrepfile
+        "  and file exists: ", newrepfiles[file.exists(newrepfiles)]
       )
     } else {
       message("running profile i=", i, "/", n)
-
+      
       # change initial values in the control file
       # this also sets phase negative which is needed even when par file is used
       # dir set as NULL because the wd was already changed to dir earlier in the
@@ -428,31 +459,44 @@ profile <- function(dir,
         # get row as a vector (passing a data.frame to SS_changepars caused error)
         newvals <- as.numeric(profilevec[i, ])
       }
+      copy_SS_inputs(dir.old = dir, 
+                     dir.new = profile_dir,
+                     overwrite = TRUE, 
+                     copy_exe = exe_path$path == dir, 
+                     copy_par = usepar, verbose = verbose)
       SS_changepars(
-        dir = NULL, ctlfile = oldctlfile, newctlfile = newctlfile,
+        dir = profile_dir,
+        ctlfile = newctlfile, 
+        newctlfile = newctlfile,
         linenums = linenum, strings = string,
         newvals = newvals, estimate = FALSE,
         verbose = TRUE, repeat.vals = TRUE
       )
-
+      
       # read parameter lines of control file
-      ctltable_new <- SS_parlines(ctlfile = newctlfile)
+      ctltable_new <- SS_parlines(ctlfile = file.path(profile_dir, newctlfile))
       # which parameters are estimated in phase 1
       if (!any(ctltable_new[["PHASE"]] == 1)) {
-        warning(
-          "At least one parameter needs to be estimated in phase 1.\n",
-          "Edit control file to add a parameter\n",
-          "which isn't being profiled over to phase 1."
+        phase2pars <- ctltable_new[which(ctltable_new[["PHASE"]]==2), "Label"]
+        par_to_change <- sort(phase2pars)[1]
+        message(
+          "No estimated parameter in phase 1.\n",
+          "Switching ", par_to_change, " from phase 2 to phase 1." 
         )
+        SS_changepars(dir = profile_dir, 
+                      ctlfile = newctlfile,
+                      newctlfile = newctlfile, 
+                      strings = par_to_change,
+                      newphs = 1, verbose = FALSE)
       }
-
+      
       if (usepar) {
         # alternatively change initial values in the par file
         # read file
         if (globalpar) {
-          par <- readLines("parfile_original_backup.sso")
+          par <- readLines(file.path(dir, "parfile_original_backup.sso"))
         } else {
-          par <- readLines(parfile)
+          par <- readLines(file.path(dir, parfile))
         }
         # loop over the number of parameters (typically just 1)
         for (ipar in 1:npars) {
@@ -473,8 +517,8 @@ profile <- function(dir,
           }
           # replace value
           par[parlinenum[ipar]] <- ifelse(npars > 1,
-            profilevec[i, ipar],
-            profilevec[i]
+                                          profilevec[i, ipar],
+                                          profilevec[i]
           )
         }
         # add new header
@@ -485,73 +529,107 @@ profile <- function(dir,
         par <- c(par, "#", note)
         message(paste0(note, collapse = "\n"))
         # write new par file
-        writeLines(par, paste0("ss_input_par", i, ".ss"))
-        writeLines(par, parfile)
+        writeLines(par, file.path(dir, paste0("ss_input_par", i, ".ss")))
+        writeLines(par, file.path(profile_dir, parfile))
       }
-      if (file.exists(stdfile)) {
-        file.remove(stdfile)
-      }
-      if (file.exists("Report.sso")) {
-        file.remove("Report.sso")
-      }
-
+      
       # run model
-      run(dir = dir, verbose = verbose, exe = exe, ...)
-
-      # check for convergence
-      converged[i] <- file.exists(stdfile)
-      # onegood tracks whether there is at least one non-empty Report file
-      onegood <- FALSE
+      run(dir = profile_dir, verbose = verbose, exe = exe, ...)
+      
+      repfile_loc <- file.path(profile_dir, "Report.sso")
       # look for non-zero report file and read LIKELIHOOD table
-      if (read_like && file.exists("Report.sso") &
-        file.info("Report.sso")$size > 0) {
-        onegood <- TRUE
+      if (file.exists(repfile_loc) & file.info(repfile_loc)$size > 0) {
+        goodrep <- TRUE
+        # move par file into main directory if needed to start next run
+        if(usepar & !globalpar) {
+          file.copy(from = file.path(profile_dir, parfile),
+                    to = file.path(dir, parfile), 
+                    overwrite = TRUE)
+        }
         # read first 400 lines of Report.sso
-        Rep <- readLines("Report.sso", n = 400)
+        Rep <- readLines(repfile_loc, n = 400)
+        # check for convergence
+        convergence_line <- grep('Convergence_Level', Rep)
+        # Search for substring > 1 character with only: numbers, ., -, and e
+        max_grad <- as.numeric(
+          stringr::str_extract(Rep[convergence_line],
+                               '[[:digit:]|\\.|\\-|e]{2,}')
+        )
+        converged <- max_grad <= conv_criteria
         # calculate range of rows with LIKELIHOOD table
         skip <- grep("LIKELIHOOD", Rep)[2]
         nrows <- grep("Crash_Pen", Rep) - skip - 1
         # read Report again to just get LIKELIHOOD table
-        like <- read.table("Report.sso",
-          skip = skip,
-          nrows = nrows, header = TRUE, fill = TRUE
+        like <- read.table(repfile_loc,
+                           skip = skip,
+                           nrows = nrows, header = TRUE, fill = TRUE
         )
-        liketable <- rbind(liketable, as.numeric(like[["logL.Lambda"]]))
+        likevec <- as.numeric(like[["logL.Lambda"]])
+        names(likevec) <- like[["Component"]]
       } else {
-        # add a placeholder row of NA values if no good report file
-        liketable <- rbind(liketable, rep(NA, 10))
+        # No good report file:
+        goodrep <- FALSE
+        converged <- FALSE
+        max_grad <- NA
+        likevec <- rep(NA, 10)
       }
-
-      # rename output files
-      if (saveoutput) {
-        file.copy("Report.sso", paste("Report", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("CompReport.sso", paste("CompReport", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("covar.sso", paste("covar", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("warning.sso", paste("warning", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy("admodel.hes", paste("admodel", i, ".hes", sep = ""),
-          overwrite = overwrite
-        )
-        file.copy(parfile, paste(parfile, "_", i, ".sso", sep = ""),
-          overwrite = overwrite
-        )
-      }
+      return(list(goodrep = goodrep,
+                  converged = converged,
+                  max_grad = max_grad,
+                  likevec = likevec
+      ))
     } # end running stuff
-  } # end loop of whichruns
-  if (onegood) {
-    liketable <- as.data.frame(liketable)
-    names(liketable) <- like[["Component"]]
-    bigtable <- cbind(profilevec[whichruns], converged[whichruns], liketable)
-    names(bigtable)[1] <- "Value"
-    return(bigtable)
-  } else {
-    stop("Error: no good Report.sso files created in profile")
+  }) # end loop of whichruns
+  
+  # move and rename output files
+  if (saveoutput) {
+    purrr::walk(whichruns, function(i) {
+      profile_dir <- file.path(dir, paste0("profile", i))
+      if (file.exists(file.path(profile_dir, "Report.sso")) & 
+          file.info(file.path(profile_dir, "Report.sso"))$size > 0) {
+        file.copy(file.path(profile_dir, "Report.sso"), 
+                  file.path(dir, paste0("Report", i, ".sso")),
+                  overwrite = overwrite
+        )
+        file.copy(file.path(profile_dir, "CompReport.sso"), 
+                  file.path(dir, paste0("CompReport", i, ".sso")),
+                  overwrite = overwrite
+        )
+        file.copy(file.path(profile_dir, "covar.sso"), 
+                  file.path(dir, paste0("covar", i, ".sso")),
+                  overwrite = overwrite
+        )
+        file.copy(file.path(profile_dir, "warning.sso"),
+                  file.path(dir, paste0("warning", i, ".sso")),
+                  overwrite = overwrite
+        )
+        file.copy(file.path(profile_dir, "admodel.hes"),
+                  file.path(paste0("admodel", i, ".hes")),
+                  overwrite = overwrite
+        )
+        file.copy(file.path(profile_dir, parfile),
+                  file.path(paste0(parfile, "_", i, ".sso")),
+                  overwrite = overwrite
+        )
+      }
+    })
   }
+  # delete profile subdirectories
+  purrr::walk(whichruns, ~ unlink(file.path(dir, paste0("profile", .x)), recursive = TRUE))
+  
+  # res is NULL for any values that didn't run due to existing report file.
+  res_keep <- which(!sapply(res, is.null))
+  res_clean <- res[res_keep]
+  
+  goodrep <- sapply(res_clean, function(x) x[["goodrep"]])
+  if(!any(goodrep)) stop("Error: no good Report.sso files created in profile")
+
+  # organize output data frame
+  liketable <- as.data.frame(t(sapply(res_clean, function(x) x[["likevec"]])))
+  bigtable <- cbind(Value = profilevec[whichruns[res_keep]],
+                    converged = sapply(res_clean, function(x) x[["converged"]]),
+                    liketable,
+                    max_grad = sapply(res_clean, function(x) x[["max_grad"]]))
+  return(bigtable)
+  # return(res)
 } # end function

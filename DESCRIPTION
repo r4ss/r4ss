@@ -69,7 +69,9 @@ Imports:
     magrittr,
     purrr,
     stringr,
-    tidyr
+    tidyr,
+    future,
+    purrr
 Suggests: 
     flextable,
     ggpubr,
@@ -77,6 +79,7 @@ Suggests:
     gtools,
     knitr,
     maps,
+    parallelly,
     pso,
     reshape2,
     rmarkdown,
