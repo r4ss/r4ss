@@ -78,7 +78,7 @@ SS_profile <- function(...) {
 #' be read using [SSgetoutput()] or by multiple calls to
 #' [SS_output()] before sending to [SSplotProfile()].
 #' @author Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson,
-#' Chantel R. Wetzel, James T. Thorson
+#' Chantel R. Wetzel, James T. Thorson, Kiva L. Oken
 #' @export
 #' @seealso [SSgetoutput()],
 #' [SS_changepars()], [SS_parlines()]

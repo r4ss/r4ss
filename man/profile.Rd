@@ -289,7 +289,7 @@ Other profile functions:
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson,
-Chantel R. Wetzel, James T. Thorson
+Chantel R. Wetzel, James T. Thorson, Kiva L. Oken
 }
 \concept{profile functions}
 \concept{run functions}

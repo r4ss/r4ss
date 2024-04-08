@@ -137,5 +137,5 @@ SS_changepars(
 \code{\link[=SS_parlines]{SS_parlines()}}, \code{\link[=profile]{profile()}}
 }
 \author{
-Ian Taylor, Christine Stawitz, Chantel Wetzel
+Ian Taylor, Christine Stawitz, Chantel Wetzel, Kiva L. Oken
 }

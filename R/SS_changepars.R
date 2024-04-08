@@ -68,7 +68,7 @@
 #'   the vector of values needs to be in the same order as either
 #'   `linenums` or `strings`.
 #' @template verbose
-#' @author Ian Taylor, Christine Stawitz, Chantel Wetzel
+#' @author Ian Taylor, Christine Stawitz, Chantel Wetzel, Kiva L. Oken
 #' @seealso [SS_parlines()], [profile()]
 #' @export
 #' @examples
