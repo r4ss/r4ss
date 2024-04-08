@@ -77,9 +77,10 @@ function was formerly called <code><a href="SS_profile.html">SS_profile()</a></c
 <span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  whichruns <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prior_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  read_like <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  read_like <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  exe <span class="op">=</span> <span class="st">"ss3"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  conv_criteria <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -166,9 +167,7 @@ the prior likelihood contribution in the total likelihood.  Default = TRUE.</p><
 
 
 <dt>read_like</dt>
-<dd><p>Read the table of likelihoods from each model as it finishes.
-Default = TRUE. Changing to FALSE should allow the function to play through
-even if something is wrong with reading the table.</p></dd>
+<dd><p>Deprecated.</p></dd>
 
 
 <dt>exe</dt>
@@ -186,6 +185,11 @@ included.</p></dd>
 to the screen.</p></dd>
 
 
+<dt>conv_criteria</dt>
+<dd><p>Maximum gradient for a model to be considered converged.
+Defaults to 0.01.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code><a href="run.html">run()</a></code>, such as
 <code>extras</code>, <code>show_in_console</code>, and <code>skipfinished</code>.</p></dd>
@@ -197,6 +201,11 @@ to the screen.</p></dd>
 may not converge. Care should be taken in using an automated tool like this,
 and some models are likely to require rerunning with alternate starting
 values.</p>
+<p>To run multiple models simultaneously using parallel computing, see
+<code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code>. However, when running models in parallel, you cannot
+iteratively adapt the starting values using <code>usepar = TRUE</code> and
+<code>globalpar = FALSE</code>. This increases the chances that some of your models do
+not converge.</p>
 <p>Also, someday this function will be improved to work directly with the
 plotting function <code><a href="SSplotProfile.html">SSplotProfile()</a></code>, but they don't yet work well
 together. Thus, even if <code>profile()</code> is used, the output should
@@ -221,7 +230,7 @@ be read using <code><a href="SSgetoutput.html">SSgetoutput()</a></code> or by mu
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson,
-Chantel R. Wetzel, James T. Thorson</p>
+Chantel R. Wetzel, James T. Thorson, Kiva L. Oken</p>
     </div>
 
     <div class="section level2">
@@ -264,7 +273,7 @@ Chantel R. Wetzel, James T. Thorson</p>
 <span class="r-in"><span><span class="va">h.vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.9</span>, <span class="fl">.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Nprofile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">h.vec</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># run profile command</span></span></span>
-<span class="r-in"><span><span class="va">profile</span> <span class="op">&lt;-</span> <span class="fu">profile</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">prof.table</span> <span class="op">&lt;-</span> <span class="fu">profile</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  dir <span class="op">=</span> <span class="va">dir_prof</span>,</span></span>
 <span class="r-in"><span>  oldctlfile <span class="op">=</span> <span class="st">"control.ss"</span>,</span></span>
 <span class="r-in"><span>  newctlfile <span class="op">=</span> <span class="st">"control_modified.ss"</span>,</span></span>
@@ -292,6 +301,18 @@ Chantel R. Wetzel, James T. Thorson</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># make timeseries plots comparing models in profile</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="SSplotComparisons.html">SSplotComparisons</a></span><span class="op">(</span><span class="va">profilesummary</span>, legendlabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"h ="</span>, <span class="va">h.vec</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># run same profile in parallel</span></span></span>
+<span class="r-in"><span><span class="va">ncores</span> <span class="op">&lt;-</span> <span class="fu">parallelly</span><span class="fu">::</span><span class="fu"><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">availableCores</a></span><span class="op">(</span>omit <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="va"><a href="https://future.futureverse.org/reference/multisession.html" class="external-link">multisession</a></span>, workers <span class="op">=</span> <span class="va">ncores</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">prof.table</span> <span class="op">&lt;-</span> <span class="fu">profile</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dir <span class="op">=</span> <span class="va">dir_prof</span>,</span></span>
+<span class="r-in"><span>  oldctlfile <span class="op">=</span> <span class="st">"control.ss"</span>,</span></span>
+<span class="r-in"><span>  newctlfile <span class="op">=</span> <span class="st">"control_modified.ss"</span>,</span></span>
+<span class="r-in"><span>  string <span class="op">=</span> <span class="st">"steep"</span>, <span class="co"># subset of parameter label</span></span></span>
+<span class="r-in"><span>  profilevec <span class="op">=</span> <span class="va">h.vec</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="va"><a href="https://future.futureverse.org/reference/sequential.html" class="external-link">sequential</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###########################################################################</span></span></span>
 <span class="r-in"><span><span class="co"># example two-dimensional profile</span></span></span>
