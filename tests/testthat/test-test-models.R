@@ -36,43 +36,44 @@ test_that("test-models work with SS_output() and SS_plots()", {
   #' run in parallel.
   #'
   #' @param models list of test models to run
-  run_models <- function(models){
+  run_models <- function(models) {
     message("Now running without estimation: ", basename(models))
     run(models, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
-    }
+  }
 
   ncores <- parallelly::availableCores(omit = 1)
   future::plan(future::multisession, workers = ncores)
-    
-  furrr::future_map(.x = all_mods, .f = function(x, dir_exe){
-    message("Now running without estimation: ", basename(x))
-      run(x, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
-  },
-  dir_exe = dir_exe)
 
-  out <- furrr::future_map(.x = all_mods, .f = function(x){
+  furrr::future_map(
+    .x = all_mods, .f = function(x, dir_exe) {
+      message("Now running without estimation: ", basename(x))
+      run(x, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
+    },
+    dir_exe = dir_exe
+  )
+
+  out <- furrr::future_map(.x = all_mods, .f = function(x) {
     if (!"Report.sso" %in% dir(x)) {
-        warning("No Report.sso file in ", x)
-      } else {
-        #### Checks related to SS_output()
-        message("Running SS_output()")
-        SS_output(x, verbose = FALSE, printstats = FALSE)
-      }
+      warning("No Report.sso file in ", x)
+    } else {
+      #### Checks related to SS_output()
+      message("Running SS_output()")
+      SS_output(x, verbose = FALSE, printstats = FALSE)
+    }
   })
 
   expect_true(all(unlist(purrr::map(out, is.list))))
   expect_true(length(out) == length(all_mods))
-  expect_setequal(unlist(purrr::map(out, function(x){
+  expect_setequal(unlist(purrr::map(out, function(x) {
     tail(names(x), 1)
-    })), "inputs")
+  })), "inputs")
 
-  plots <- furrr::future_map(.x = out, .f = function(x){
-        message("Running SS_plots()")
-        SS_plots(x, verbose = FALSE)
-      })
+  plots <- furrr::future_map(.x = out, .f = function(x) {
+    message("Running SS_plots()")
+    SS_plots(x, verbose = FALSE)
+  })
 
-  expect_true(all(unlist(purrr::map(plots, function(x){
+  expect_true(all(unlist(purrr::map(plots, function(x) {
     "data_plot2.png" %in% x$file
-    }))))
-
+  }))))
 })
