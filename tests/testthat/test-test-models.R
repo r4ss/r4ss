@@ -13,7 +13,7 @@ test_that("test-models work with SS_output() and SS_plots()", {
   skip_if(
     (!file.exists(file.path(dir_exe, "ss3")) &
       !file.exists(file.path(dir_exe, "ss3.exe"))),
-    message = paste("skipping test: no exe called 'ss' found in", dir_exe)
+    message = paste("skipping test: no exe called 'ss3' found in", dir_exe)
   )
   # temporary directory
   mod_path <- file.path(tempdir(check = TRUE), "test-test-models")

@@ -115,32 +115,28 @@ SS_write <- function(inputlist,
     )
   }
 
-  if ("par" %in% names(inputlist)) {
-    if (!is.null(inputlist[["par"]][["parfile"]])) {
+  # only write par file if present in list
+  if (!is.null(inputlist[["par"]])) {
+    # assume default name if not present--would have been added by SS_read()
+    if (is.null(inputlist[["par"]][["parfile"]])) {
       inputlist[["par"]][["parfile"]] <- "ss3.par"
-      warning(
-        "parfile name assumed to be 'ss3.par' because it was not specified",
-        " by a recent version of SS_write()"
-      )
     }
-    if (!is.null(inputlist[["par"]])) {
-      try(
-        {
-          if (inputlist[["ctl"]][["ReadVersion"]] == "3.24") {
-            par <- r4ss::SS_writepar_3.24(inputlist[["par"]],
-              outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
-              verbose = verbose
-            )
-          } else {
-            par <- r4ss::SS_writepar_3.30(inputlist[["par"]],
-              outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
-              verbose = verbose
-            )
-          }
-        },
-        silent = !verbose
-      )
-    }
+    try(
+      {
+        if (inputlist[["ctl"]][["ReadVersion"]] == "3.24") {
+          par <- r4ss::SS_writepar_3.24(inputlist[["par"]],
+            outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
+            verbose = verbose
+          )
+        } else {
+          par <- r4ss::SS_writepar_3.30(inputlist[["par"]],
+            outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
+            verbose = verbose
+          )
+        }
+      },
+      silent = !verbose
+    )
   }
 
   # message noting that all files have been written

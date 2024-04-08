@@ -18,6 +18,7 @@
 #' @param final_year Year of assessment and reference points
 #' (typically will be `model[["endyr"]] + 1`)
 #' @param data_year Last year of of timeseries data
+#' @param month Month when assessment was conducted (within `final_year`)
 #' @param sciencecenter Origin of assessment report
 #' @param Mgt_Council Council jurisdiction. Currently only
 #' `"PFMC"` (Pacific Fishery Management Council) and `"GM"`
