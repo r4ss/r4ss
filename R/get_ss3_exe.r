@@ -85,17 +85,17 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       if (substr(R.version[["os"]], 1, 6) == "darwin" && R.version[["arch"]] == "aarch64"){
         url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-            tag, "/ss3_osx_m2"
+            tag, "/ss3_osx_arm64"
         )
-        try_M2 <- tryCatch(
+        try_arm64 <- tryCatch(
             suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
-            error = function(e) "ss3 executable not available for macOS M2 chip 
+            error = function(e) "ss3 executable not available for macOS arm64 architecture 
             computers for versions prior to v.3.30.21.1"
           )
 
-        if(try_M2 == "ss3 executable not available for macOS M2 chip computers for 
+        if(try_arm64 == "ss3 executable not available for macOS arm64 architecture computers for 
         versions prior to v.3.30.21.1"){
-          print(try_M2)
+          print(try_arm64)
         } else {
           Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
           download_location <- file.path(dir, "ss3")
