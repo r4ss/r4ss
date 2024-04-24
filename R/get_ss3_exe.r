@@ -94,7 +94,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           )
 
         if(try_arm64 == "ss3 executable not available for macOS arm64 architecture computers for 
-        versions prior to v.3.30.21.1"){
+        versions prior to v.3.30.22.1"){
           print(try_arm64)
         } else {
           Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
