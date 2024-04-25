@@ -296,8 +296,8 @@ get_SIS_info <- function(model,
       "excluding from output for SIS."
     )
     # remove redundant F_values column
-    header_info <- header_info |> dplyr::select(-F_values)
-    tab <- tab |> dplyr::select(-F_values)
+    header_info <- header_info %>% dplyr::select(-F_values)
+    tab <- tab %>% dplyr::select(-F_values)
   } else {
     # info on Exploitation rate (whatever is chosen for the F_YYYY quants)
     header_info["Category", "F_values"] <- "Fmort"
