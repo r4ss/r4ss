@@ -143,7 +143,7 @@ test_that("jitter runs on simple_small model", {
     expect_equal(starter$jitter_fraction, 0)
   } else {
     run_results_jit_init <- run(dir = dir.jit)
-    expect_true(run_results_jit_init == "ran model")
+    expect_true(all(unlist(run_results_jit_init == "ran model")))
 
     likesaved <- jitter(
       dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
@@ -242,7 +242,7 @@ test_that("Run an SS3 model and read the hessian", {
   )
   expect_true(copy_results)
   run_results <- run(dir = file.path(tmp_path, "test_mod_run"))
-  expect_true(run_results == "ran model")
+  expect_true(all(unlist(run_results == "ran model")))
   hes <- getADMBHessian(
     hesfile = file.path(tmp_path, "test_mod_run", "admodel.hes")
   )
