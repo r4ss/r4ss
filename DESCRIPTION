@@ -69,7 +69,6 @@ Imports:
     lifecycle,
     magrittr,
     purrr,
-    purrr,
     stringr,
     tidyr
 Suggests: 
