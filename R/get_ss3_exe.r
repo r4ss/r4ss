@@ -43,14 +43,6 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     }
   }
 
-  if(!grepl("Schannel",curl::curl_version()$ssl_version)){
-    stop(
-      "Please do the following:\n",
-      "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
-      "2. Restart your R session\n",
-      "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1m (Schannel) (note the numbers may be different)\n",
-      "4. Try remotes::install_github() (e.g., devtools::install_github('tidyverse/dplyr')). It should work and continue to work in future R sessions.")
-  } else {
     if (is.null(dir)) {
       dir <- getwd()
       message("No directory provided, the executable will be downloaded to the working directory")
@@ -61,6 +53,14 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     }
 
     if (.Platform[["OS.type"]] == "windows") {
+      if(!grepl("Schannel",curl::curl_version()$ssl_version)){
+        stop(
+          "Please do the following:\n",
+          "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
+          "2. Restart your R session\n",
+          "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1 (Schannel) (note the numbers may be different)\n",
+          "4. Try remotes::install_github() (e.g., devtools::install_github('tidyverse/dplyr')). It should work and continue to work in future R sessions.")
+      }
       if (.Platform[["r_arch"]] == "x32") { # nocov start
         warning(
           "Stock Synthesis binary is not available for 32-bit ",
