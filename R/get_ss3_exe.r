@@ -100,7 +100,6 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           error = function(e) "ss3 executable not available for macOS arm64 architecture
               computers for versions prior to v.3.30.22.1"
         )
-
         if (try_arm64 == "ss3 executable not available for macOS arm64 architecture computers for
           versions prior to v.3.30.22.1") {
           print(try_arm64)
@@ -170,5 +169,4 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       }
     }
     return(invisible(download_location))
-  } 
 }
