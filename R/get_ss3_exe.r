@@ -42,7 +42,6 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       tag <- version
     }
   }
-
     if (is.null(dir)) {
       dir <- getwd()
       message("No directory provided, the executable will be downloaded to the working directory")
@@ -68,7 +67,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           warning = function(w) "ss name not right for this version, trying ss3"
         )
 
-        try_ss3 <- NULL
+        try_ss3 <- 0
         if (try_ss == "ss name not right for this version, trying ss3") {
           url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
