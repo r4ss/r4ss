@@ -60,43 +60,39 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       } else {
         url <- paste0(
           "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-          tag, "/ss3_win.exe"
+          tag, "/ss_win.exe"
         )
-        try_ss3 <- tryCatch.W.E(
-          utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
+        try_ss <- tryCatch(
+          utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb"),
+          warning = function(w) "ss name not right for this version, trying ss3"
         )
 
-        try_ss$warning <- NULL
-        if (try_ss3 == "ss name not right for this version, trying ss3") {
+        try_ss3 <- 0
+        if (try_ss == "ss name not right for this version, trying ss3") {
           url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-            tag, "/ss_win.exe"
+            tag, "/ss3_win.exe"
           )
-          try_ss <- tryCatch.W.E.(
-            utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
-          )
+          try_ss3 <- utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
           # try_ss3 <- tryCatch(
           #   suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")),
           #   error = function(e) "OpenSSL error"
           # )
         }
 
-        if(!is.null(try_ss3$warning) | !is.null(try_ss$warning)){
-            if(grepl("status was 'SSL connect error'", try_ss3$warning) | grepl("status was 'SSL connect error'", try_ss$warning)){
-                warning(
-                    "Possible error with connect OpenSSL. Please do the following:\n",
-                    "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
-                    "2. Restart your R session\n",
-                    "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1 (Schannel) (note the numbers may be different)\n",
-                    "4. Try remotes::install_github() (e.g., devtools::install_github('tidyverse/dplyr')). It should work and continue to work in future R sessions."
-                    )
-            }
+        if(try_ss == 0 | try_ss3 == 0){
+          download_location <- file.path(dir, "ss3.exe")
+            message(paste0(
+              "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
+              download_location))
         } else {
-                download_location <- file.path(dir, "ss3.exe")
-                message(paste0(
-                    "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
-                    download_location))
-            }
+           warning(
+            "Possible error with connect OpenSSL. Please do the following:\n",
+            "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
+            "2. Restart your R session\n",
+            "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1 (Schannel) (note the numbers may be different)\n",
+            "4. Try remotes::install_github() (e.g., devtools::install_github('tidyverse/dplyr')). It should work and continue to work in future R sessions.")
+        }
       }
     } else {
       if (substr(R.version[["os"]], 1, 6) == "darwin" && R.version[["arch"]] == "aarch64") {
@@ -178,18 +174,4 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       }
     }
     return(invisible(download_location))
-}
-
-#' @param expr function to evaluate
-#' @return A warning if something went wrong with the function evaluated
-#' @author Kelli Johnson
-tryCatch.W.E <- function(expr) {
-    W <- NULL
-    w.handler <- function(w) { # warning handler
-      W <<- w
-      invokeRestart("muffleWarning")
-    }
-    list(value = withCallingHandlers(tryCatch(expr, error = function(e) e),
-                                   warning = w.handler),
-       warning = W)
 }
