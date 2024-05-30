@@ -46,11 +46,10 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       dir <- getwd()
       message("No directory provided, the executable will be downloaded to the working directory")
     }
-
+    
     if (!dir.exists(dir)) {
       stop("Directory doesn't exist: ", dir)
     }
-
     if (.Platform[["OS.type"]] == "windows") {
       if (.Platform[["r_arch"]] == "x32") { # nocov start
         warning(
@@ -66,38 +65,37 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
         )
 
-        try_ss$warning <- NULL
-        if (try_ss3 == "ss name not right for this version, trying ss3") {
+        
+        if (!is.null(try_ss3$warning)) {
           url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
             tag, "/ss_win.exe"
           )
-          try_ss <- tryCatch.W.E.(
+          try_ss <- tryCatch.W.E(
             utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
-          )
+          ) 
           # try_ss3 <- tryCatch(
           #   suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")),
           #   error = function(e) "OpenSSL error"
           # )
-        }
-
-        if(!is.null(try_ss3$warning) | !is.null(try_ss$warning)){
-            if(grepl("status was 'SSL connect error'", try_ss3$warning) | grepl("status was 'SSL connect error'", try_ss$warning)){
-                warning(
-                    "Possible error with connect OpenSSL. Please do the following:\n",
-                    "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
-                    "2. Restart your R session\n",
-                    "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1 (Schannel) (note the numbers may be different)\n",
-                    "4. Try remotes::install_github() (e.g., devtools::install_github('tidyverse/dplyr')). It should work and continue to work in future R sessions."
-                    )
-            }
         } else {
+            try_ss <- list(value = NULL, warning = NULL)
+          }
+        if(is.null(try_ss3$warning) || is.null(try_ss$warning)){
                 download_location <- file.path(dir, "ss3.exe")
                 message(paste0(
                     "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
                     download_location))
+          } else {
+              warning(
+                  "Possible error with connect OpenSSL. Please do the following:\n",
+                  "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
+                  "2. Restart your R session\n",
+                  "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1 (Schannel) (note the numbers may be different)\n",
+                  "4. Try remotes::install_github() (e.g., devtools::install_github('tidyverse/dplyr')). It should work and continue to work in future R sessions."
+                    )
             }
-      }
+       }
     } else {
       if (substr(R.version[["os"]], 1, 6) == "darwin" && R.version[["arch"]] == "aarch64") {
         url <- paste0(
@@ -180,9 +178,14 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     return(invisible(download_location))
 }
 
+#' tryCatch with warning and error
+#'
+#' Get warning and error from tryCatch
+#'
 #' @param expr function to evaluate
 #' @return A warning if something went wrong with the function evaluated
 #' @author Kelli Johnson
+#' @export
 tryCatch.W.E <- function(expr) {
     W <- NULL
     w.handler <- function(w) { # warning handler

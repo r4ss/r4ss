@@ -23,7 +23,7 @@
 #' To view the version tags available go to
 #' https://github.com/nmfs-ost/ss3-source-code/tags
 
-get_ss3_exe <- function(dir = NULL, version = NULL) {
+get_ss3_exe_og <- function(dir = NULL, version = NULL) {
   # Get latest release if version not specified
   if (is.null(version)) {
     latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1)
