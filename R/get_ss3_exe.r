@@ -67,7 +67,8 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb"),
           warning = function(w) "ss name not right for this version, trying ss3"
         )
-      
+
+        try_ss3 <- NULL
         if (try_ss == "ss name not right for this version, trying ss3") {
           url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
