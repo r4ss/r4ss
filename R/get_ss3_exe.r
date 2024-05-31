@@ -83,7 +83,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           }
         
         try_warns <- c(try_ss3$warning, try_ss$warning)
-        if(any(grepl("OpenSSL", try_warns))){
+        if(any(grepl("SSL connect error", try_warns))){
           warning(
                 "Possible error with connect OpenSSL. Please do the following:\n",
                 "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
