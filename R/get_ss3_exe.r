@@ -81,19 +81,20 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         } else {
             try_ss <- list(value = NULL, warning = NULL)
           }
-        if(is.null(try_ss3$warning) || is.null(try_ss$warning)){
-                download_location <- file.path(dir, "ss3.exe")
+        
+        try_warns <- c(try_ss3$warning, try_ss$warning)
+        if(any(grepl("OpenSSL", try_warns))){
+          warning(
+                "Possible error with connect OpenSSL. Please do the following:\n",
+                "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
+                "2. Restart your R session\n",
+                "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1 (Schannel) (note the numbers may be different)"
+                  )
+          } else {
+            download_location <- file.path(dir, "ss3.exe")
                 message(paste0(
                     "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
                     download_location))
-          } else {
-              warning(
-                  "Possible error with connect OpenSSL. Please do the following:\n",
-                  "1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
-                  "2. Restart your R session\n",
-                  "3. Run curl::curl_version()$ssl_version and confirm the return is OpenSSL/1.1.1 (Schannel) (note the numbers may be different)\n",
-                  "4. Try remotes::install_github() (e.g., devtools::install_github('tidyverse/dplyr')). It should work and continue to work in future R sessions."
-                    )
             }
        }
     } else {
