@@ -1466,35 +1466,46 @@ SSplotComps <-
                       CompError <- data_info[sub, "error_type"]
                     }
 
-                    # D-M option 1 (linear)
-                    if (CompError == 1) {
-                      Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
-                      # note: in caption below &#920 = Theta
+                    if(length(CompError)!=0){
+                      # D-M option 1 (linear)
+                      if (CompError == 1) {
+                        Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
+                        # note: in caption below &#920 = Theta
+                        caption_extra <-
+                          paste0(
+                            ".<br>'N input' is the input sample size. ",
+                            "'N adj.' is the sample size after adjustment by the ",
+                            "Dirichlet-Multinomial <i>&#920</i> parameter based on the ",
+                            "formula N adj. = 1 / (1+<i>&#920</i>) + N * <i>&#920</i> / (1+<i>&#920</i>). ",
+                            "<br>For this fleet, <i>&#920</i> = ", round(Theta, 3),
+                            " and the sample size multiplier is approximately ",
+                            "<i>&#920</i> / (1+<i>&#920</i>) = ", round(Theta / (1 + Theta), 3),
+                            "."
+                          )
+                      }
+                      # D-M option 2 (saturating)
+                      if (CompError == 2) {
+                        beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
+                        # note: in captions below &#946 = beta
+                        caption_extra <-
+                          paste0(
+                            ".<br>'N input' is the input sample size. ",
+                            "'N adj.' is the sample size after adjustment by the ",
+                            "Dirichlet-Multinomial <i>&#946</i> parameter based on the ",
+                            "formula N adj. = (N + N<i>&#946</i>) / (N + <i>&#946</i>). ",
+                            "<br><br>For this fleet, <i>&#946</i> = ", round(beta, 1),
+                            ". But due to the saturating functional form, there is no single ",
+                            "approximate sample size multiplier."
+                          )
+                      }
+                    }else{
                       caption_extra <-
                         paste0(
                           ".<br>'N input' is the input sample size. ",
                           "'N adj.' is the sample size after adjustment by the ",
-                          "Dirichlet-Multinomial <i>&#920</i> parameter based on the ",
-                          "formula N adj. = 1 / (1+<i>&#920</i>) + N * <i>&#920</i> / (1+<i>&#920</i>). ",
-                          "<br>For this fleet, <i>&#920</i> = ", round(Theta, 3),
-                          " and the sample size multiplier is approximately ",
-                          "<i>&#920</i> / (1+<i>&#920</i>) = ", round(Theta / (1 + Theta), 3),
-                          "."
-                        )
-                    }
-                    # D-M option 2 (saturating)
-                    if (CompError == 2) {
-                      beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ParmSelect])
-                      # note: in captions below &#946 = beta
-                      caption_extra <-
-                        paste0(
-                          ".<br>'N input' is the input sample size. ",
-                          "'N adj.' is the sample size after adjustment by the ",
-                          "Dirichlet-Multinomial <i>&#946</i> parameter based on the ",
-                          "formula N adj. = (N + N<i>&#946</i>) / (N + <i>&#946</i>). ",
-                          "<br><br>For this fleet, <i>&#946</i> = ", round(beta, 1),
-                          ". But due to the saturating functional form, there is no single ",
-                          "approximate sample size multiplier."
+                          "Dirichlet-Multinomial parameter. ",
+                          "<br><br>Due to bugs in the partition weighting feature further ",
+                          "information is not available at this time.<br><br>"
                         )
                     }
                     caption_extra <- paste0(
