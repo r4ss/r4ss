@@ -5,9 +5,9 @@
 #_User_info_available_at:https://vlab.noaa.gov/group/stock-synthesis
 #_Source_code_at:_https://github.com/nmfs-ost/ss3-source-code
 
-StartTime: Wed Feb 21 17:10:16 2024
-EndTime: Wed Feb 21 17:10:38 2024
-This run took: 0 hours, 0 minutes, 22 seconds.
+StartTime: Thu Jun 13 14:38:45 2024
+EndTime: Thu Jun 13 14:39:19 2024
+This run took: 0 hours, 0 minutes, 34 seconds.
 Data_File: data.ss
 Control_File: control.ss
 
