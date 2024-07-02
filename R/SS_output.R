@@ -1877,66 +1877,6 @@ SS_output <-
       }
     }
 
-    # sigma_R
-    # accounting for additional Bmsy/Bzero line introduced in 3.24U
-    # should be now robust up through 3.24AZ (if that ever gets created)
-    if (SS_versionNumeric >= 3.30 |
-      substring(SS_version, 1, 9) %in% paste0("SS-V3.24", LETTERS[21:26]) |
-      substring(SS_version, 1, 10) %in% paste0("SS-V3.24A", LETTERS)) {
-      last_row_index <- 11
-    } else {
-      last_row_index <- 10
-    }
-    srhead <- match_report_table("SPAWN_RECRUIT", 0,
-      "SPAWN_RECRUIT", last_row_index,
-      cols = 1:6
-    )
-    # account for extra blank line in early 3.30 versions (at least 3.30.01)
-    if (all(srhead[7, ] == "")) {
-      last_row_index <- 12
-      srhead <- match_report_table("SPAWN_RECRUIT", 0,
-        "SPAWN_RECRUIT", last_row_index,
-        cols = 1:6
-      )
-    }
-    if (is.null(srhead)) {
-      # if there's no SPAWN_RECRUIT section (presumably because minimal
-      # output was chosen in the starter file)
-      rmse_table <- NULL
-      breakpoints_for_bias_adjustment_ramp <- NULL
-      sigma_R_in <- parameters["SR_sigmaR", "Value"]
-    } else {
-      # if SPAWN_RECRUIT is present
-
-      # get table of info on root mean squared error of recdevs (rmse)
-      rmse_table <- as.data.frame(srhead[-(1:(last_row_index - 1)), 1:5])
-      rmse_table <- rmse_table[!grepl("SpawnBio", rmse_table[, 2]), ]
-      rmse_table <- type.convert(rmse_table, as.is = TRUE)
-      names(rmse_table) <- srhead[last_row_index - 1, 1:5]
-      names(rmse_table)[4] <- "RMSE_over_sigmaR"
-      row.names(rmse_table) <- NULL
-
-      # info on sigmaR as input or estimated
-      sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
-
-      # info on recdev method
-      if (any(srhead[1, ] == "RecDev_method:")) {
-        RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] |> as.numeric()
-      } else {
-        RecDev_method <- NULL
-      }
-
-      # Bias adjustment ramp
-      biascol <- grep("breakpoints_for_bias", srhead)
-      breakpoints_for_bias_adjustment_ramp <- srhead[
-        grep("breakpoints_for_bias", srhead[, biascol]), 1:5
-      ]
-      colnames(breakpoints_for_bias_adjustment_ramp) <- c(
-        "last_yr_early",
-        "first_yr_full", "last_yr_full", "first_yr_recent", "max_bias_adj"
-      )
-      rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
-    }
     # add placeholder objects in case there's no SPAWN_RECRUIT section 
     # (presumably because minimal output was chosen in the starter file)
     rmse_table <- NULL
@@ -1981,7 +1921,7 @@ SS_output <-
       sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 1]), 2])
   
       # info on recdev method
-      RecDev_method <- srhead[grep("RecDev_method:", srhead[,1]), 2] |> 
+      RecDev_method <- srhead[grep("RecDev_method:", srhead[,1]), 2] %>% 
         as.numeric()
       RecDev_method <- NULL
     } else {
@@ -2025,7 +1965,7 @@ SS_output <-
   
         # info on recdev method
         if (any(srhead[1, ] == "RecDev_method:")) {
-          RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] |> as.numeric()
+          RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] %>% as.numeric()
         } else {
           RecDev_method <- NULL
         }
