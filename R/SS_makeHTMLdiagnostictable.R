@@ -92,9 +92,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
     format = "html",
     escape = FALSE,
     row.names = FALSE
-  ) %>%
-    kableExtra::kable_styling() %>%
-    kableExtra::scroll_box(width = "100%", height = table_height) %>%
+  ) |>
+    kableExtra::kable_styling() |>
+    kableExtra::scroll_box(width = "100%", height = table_height) |>
     add_scope_to_table_headers()
 
   filename <- c(filename, "parameterchecks.html")
@@ -115,8 +115,8 @@ SS_makeHTMLdiagnostictable <- function(replist,
   # calculate parameter pairs with high correlations
   if (!is.null(replist[["CoVar"]]) && replist[["N_estimated_parameters"]] > 1) {
     # names of active parameters
-    activepars <- replist[["parameters"]] %>%
-      dplyr::filter(!is.na(Active_Cnt)) %>%
+    activepars <- replist[["parameters"]] |>
+      dplyr::filter(!is.na(Active_Cnt)) |>
       dplyr::pull(Label)
     # Remove forecast recdevs which are typically all zero and
     # uncorrelated with everything else
@@ -133,9 +133,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
     )
 
     # create table of parameter pairs with highest correlations
-    high_cor_table <- cor_table %>%
-      dplyr::select(label.i, label.j, corr) %>%
-      dplyr::arrange(dplyr::desc(abs(corr))) %>%
+    high_cor_table <- cor_table |>
+      dplyr::select(label.i, label.j, corr) |>
+      dplyr::arrange(dplyr::desc(abs(corr))) |>
       head(ncor)
 
     high_cor_table[["corr"]] <-
@@ -148,9 +148,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
       format = "html",
       escape = FALSE,
       row.names = FALSE
-    ) %>%
-      kableExtra::kable_styling() %>%
-      kableExtra::scroll_box(width = "100%", height = "200px") %>%
+    ) |>
+      kableExtra::kable_styling() |>
+      kableExtra::scroll_box(width = "100%", height = "200px") |>
       add_scope_to_table_headers()
 
     # save table to file
@@ -185,8 +185,8 @@ SS_makeHTMLdiagnostictable <- function(replist,
           max(correlations)
       }
     }
-    low_cor_table <- low_cor_table %>%
-      dplyr::arrange(abs(max_correlation)) %>%
+    low_cor_table <- low_cor_table |>
+      dplyr::arrange(abs(max_correlation)) |>
       head(ncor)
 
     low_cor_table[["max_correlation"]] <-
@@ -199,9 +199,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
       format = "html",
       escape = FALSE,
       row.names = FALSE
-    ) %>%
-      kableExtra::kable_styling() %>%
-      kableExtra::scroll_box(width = "100%", height = "200px") %>%
+    ) |>
+      kableExtra::kable_styling() |>
+      kableExtra::scroll_box(width = "100%", height = "200px") |>
       add_scope_to_table_headers()
 
     # save table to file
