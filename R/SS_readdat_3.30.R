@@ -219,7 +219,7 @@ SS_readdat_3.30 <-
       )
     }
     if (verbose) {
-      message("Read Fleet information.")
+      message("Read fleet information.")
     }
 
     datlist[["fleetnames"]] <- datlist[["fleetinfo"]][["fleetname"]]
@@ -265,7 +265,7 @@ SS_readdat_3.30 <-
     ## CPUE data  ----
     datlist[["CPUEinfo"]] <- get.df(dat, ind, datlist[["Nfleets"]])
     # note SD_Report column wasn't present in early 3.30 versions of SS
-    CPUEinfo_names <- c("Fleet", "Units", "Errtype", "SD_Report")
+    CPUEinfo_names <- c("fleet", "units", "errtype", "SD_report")
     colnames(datlist[["CPUEinfo"]]) <- CPUEinfo_names[1:ncol(datlist[["CPUEinfo"]])]
     rownames(datlist[["CPUEinfo"]]) <- datlist[["fleetnames"]]
 
@@ -277,7 +277,7 @@ SS_readdat_3.30 <-
     CPUE <- get.df(dat, ind)
     if (!is.null(CPUE)) {
       datlist[["CPUE"]] <- CPUE
-      colnames(datlist[["CPUE"]]) <- c("year", "seas", "index", "obs", "se_log")
+      colnames(datlist[["CPUE"]]) <- c("year", "month", "index", "obs", "se_log")
     } else {
       datlist[["CPUE"]] <- NULL
     }
@@ -289,13 +289,13 @@ SS_readdat_3.30 <-
     if (datlist[["N_discard_fleets"]]) {
       ## Discard info data
       datlist[["discard_fleet_info"]] <- get.df(dat, ind, datlist[["N_discard_fleets"]])
-      colnames(datlist[["discard_fleet_info"]]) <- c("Fleet", "Units", "Errtype")
+      colnames(datlist[["discard_fleet_info"]]) <- c("fleet", "units", "errtype")
       rownames(datlist[["discard_fleet_info"]]) <-
-        datlist[["fleetnames"]][as.numeric(datlist[["discard_fleet_info"]][["Fleet"]])]
+        datlist[["fleetnames"]][as.numeric(datlist[["discard_fleet_info"]][["fleet"]])]
 
       ## Discard data
       datlist[["discard_data"]] <- get.df(dat, ind)
-      colnames(datlist[["discard_data"]]) <- c("Yr", "Seas", "Flt", "Discard", "Std_in")
+      colnames(datlist[["discard_data"]]) <- c("year", "month", "fleet", "obs", "stderr")
       if (verbose) {
         message("Read discards.")
       }
@@ -311,8 +311,8 @@ SS_readdat_3.30 <-
       datlist[["meanbodywt"]] <- get.df(dat, ind)
       if (!is.null(datlist[["meanbodywt"]])) {
         colnames(datlist[["meanbodywt"]]) <- c(
-          "Year", "Seas", "Fleet", "Partition", "Type",
-          "Value", "Std_in"
+          "year", "month", "fleet", "part", "type",
+          "obs", "stderr"
         )
       }
       if (verbose) {
@@ -383,7 +383,7 @@ SS_readdat_3.30 <-
       if (!is.null(datlist[["lencomp"]])) {
         colnames(datlist[["lencomp"]]) <-
           c(
-            "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
+            "year", "month", "fleet", "sex", "part", "Nsamp",
             if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("l", datlist[["lbin_vector"]])
             } else {
@@ -463,8 +463,8 @@ SS_readdat_3.30 <-
       if (!is.null(datlist[["agecomp"]])) {
         colnames(datlist[["agecomp"]]) <-
           c(
-            "Yr", "Seas", "FltSvy", "Sex",
-            "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
+            "year", "month", "fleet", "sex",
+            "part", "ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
             if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("a", datlist[["agebin_vector"]])
             } else {
@@ -547,7 +547,7 @@ SS_readdat_3.30 <-
 
       colnames(datlist[["MeanSize_at_Age_obs"]]) <-
         c(
-          "Yr", "Seas", "FltSvy", "Sex", "Part", "AgeErr", "Ignore",
+          "year", "month", "fleet", "sex", "part", "ageerr", "ignore",
           if (abs(datlist[["Nsexes"]]) == 1) {
             paste0("a", datlist[["agebin_vector"]])
           } else {
@@ -596,7 +596,7 @@ SS_readdat_3.30 <-
 
     if (datlist[["N_environ_variables"]]) {
       datlist[["envdat"]] <- get.df(dat, ind)
-      colnames(datlist[["envdat"]]) <- c("Yr", "Variable", "Value")
+      colnames(datlist[["envdat"]]) <- c("year", "variable", "value")
 
       if (verbose) {
         message("Read environmental variable data.")
@@ -639,8 +639,7 @@ SS_readdat_3.30 <-
         datlist[["sizefreq_data_list"]][[imethod]] <- get.df(dat, ind, Nrows)
         colnames(datlist[["sizefreq_data_list"]][[imethod]]) <-
           c(
-            "Method", "Yr", "Seas", "FltSvy",
-            "Sex", "Part", "Nsamp",
+            "method", "year", "month", "fleet", "sex", "part", "Nsamp",
             if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("a", datlist[["sizefreq_bins_list"]][[imethod]])
             } else {
@@ -692,8 +691,8 @@ SS_readdat_3.30 <-
         Ncols <- 8
         datlist[["tag_releases"]] <- get.df(dat, ind, datlist[["N_tag_groups"]])
         colnames(datlist[["tag_releases"]]) <- c(
-          "TG", "Area", "Yr", "Season",
-          "tfill", "Sex", "Age", "Nrelease"
+          "TG", "area", "year", "seas",
+          "tfill", "sex", "age", "Nrelease"
         )
       } else {
         datlist[["tag_releases"]] <- NULL
@@ -702,7 +701,7 @@ SS_readdat_3.30 <-
       if (datlist[["N_recap_events"]] > 0) {
         Ncols <- 5
         datlist[["tag_recaps"]] <- get.df(dat, ind, datlist[["N_recap_events"]])
-        colnames(datlist[["tag_recaps"]]) <- c("TG", "Yr", "Season", "Fleet", "Nrecap")
+        colnames(datlist[["tag_recaps"]]) <- c("TG", "year", "seas", "fleet", "Nrecap")
         if (verbose) {
           message("Read tag recapture data.")
         }
@@ -770,7 +769,7 @@ SS_readdat_3.30 <-
       datlist[["fleetinfo2"]] <- NULL
     }
     if (!is.null(datlist[["discard_fleet_info"]])) {
-      colnames(datlist[["discard_fleet_info"]]) <- c("Fleet", "units", "errtype")
+      colnames(datlist[["discard_fleet_info"]]) <- c("fleet", "units", "errtype")
     }
     # compatibility: create the old format catch matrix
     datlist[["catch"]] <- datlist[["catch"]][datlist[["catch"]][, 1] >= -999, ]
