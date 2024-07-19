@@ -1,7 +1,7 @@
 Type: Package
 Package: r4ss
 Title: R Code for Stock Synthesis
-Version: 1.49.2
+Version: 1.49.3
 Authors@R: c(
     person("Ian G.", "Taylor", , "Ian.Taylor@noaa.gov", role = c("aut", "cre")),
     person("Ian J.", "Stewart", role = "aut"),
@@ -91,4 +91,4 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
