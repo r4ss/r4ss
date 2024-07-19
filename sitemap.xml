@@ -1,489 +1,165 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://r4ss.github.io/r4ss/404.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_A@LComp.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_AgeComp.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Bio.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Catch.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_CompDat.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Data.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_DiagnosticTables.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Discard.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Index.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_LenComp.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Mean@A.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Mnwt.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Numbers.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Pars.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_S-R.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_SPR.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Sel.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Timeseries.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Yield.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/correlationcheck.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/lowcorrelationcheck.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/BigSkate/parameterchecks.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/articles/example-plots.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/articles/r4ss-intro-vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/DoProjectPlots.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/NegLogInt_Fn.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/PinerPlot.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSMethod.Cond.TA1.8.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSMethod.TA1.8.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_ForeCatch.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_RunJitter.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_Sensi_plot.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_changepars.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_decision_table_stuff.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_doRetro.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_fitbiasramp.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_html.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_makeHTMLdiagnostictable.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_output.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_parlines.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_plots.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_profile.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_read.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_read_summary.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readctl.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readctl_3.24.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readctl_3.30.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readdat.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readdat_2.00.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readdat_3.00.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readdat_3.24.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readdat_3.30.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readforecast.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readpar_3.24.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readpar_3.30.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readstarter.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_readwtatage.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_recdevs.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_splitdat.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_tune_comps.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_varadjust.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_write.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writectl.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writectl_3.24.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writectl_3.30.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writedat.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writedat_3.24.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writedat_3.30.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writeforecast.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writepar_3.24.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writepar_3.30.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writestarter.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SS_writewtatage.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSbiologytables.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSdiagsTime2Year.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSexecutivesummary.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSgetMCMC.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSgetoutput.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSmakeMmatrix.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSmohnsrho.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotAgeMatrix.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotBiology.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotCatch.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotCohortCatch.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotComparisons.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotComps.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotData.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotDiscard.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotDynamicB0.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotIndices.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotMCMC_ExtraSelex.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotMnwt.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotMovementMap.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotMovementRates.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotNumbers.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotPars.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotProfile.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotRecdevs.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotRecdist.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotRetroRecruits.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotSPR.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotSelex.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotSexRatio.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotSpawnrecruit.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotSummaryF.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotTags.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotTimeseries.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSplotYield.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSsummarize.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SStableComparisons.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/SSunavailableSpawningOutput.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/TSCplot.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/add_legend.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/bubble3.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/calc_var_adjust.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/check_exe.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/check_inputlist.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/copy_SS_inputs.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/download_models.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/file_increment.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/getADMBHessian.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_SIS_info.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_areacols.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_comments.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_dat_new_name.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_last_phase.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_par_name.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_ss3_exe.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_tuning_table.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/get_tv_parlabs.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/is.wholenumber.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/iterate_jitter.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/jitter.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/make_multifig.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/make_multifig_sexratio.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/mcmc.nuisance.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/mcmc.out.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/mountains.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/plotCI.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/populate_multiple_folders.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/profile.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/r4ss-package.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/read.admbFit.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/retro.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/rich.colors.short.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/run.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/save_png.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/selShapes.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/sspar.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/stackpoly.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/translate_3.30_to_3.24_Q_setup.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/translate_3.30_to_3.24_var_adjust.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/tune_comps.html</loc>
-  </url>
-  <url>
-    <loc>https://r4ss.github.io/r4ss/reference/write_fwf4.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://r4ss.github.io/r4ss/404.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_A@LComp.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_AgeComp.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Bio.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Catch.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_CompDat.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Data.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_DiagnosticTables.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Discard.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Index.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_LenComp.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Mean@A.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Mnwt.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Numbers.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Pars.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_S-R.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_SPR.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Sel.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Timeseries.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/_SS_output_Yield.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/correlationcheck.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/index.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/lowcorrelationcheck.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/BigSkate/parameterchecks.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/articles/example-plots.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/articles/index.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/articles/r4ss-intro-vignette.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/authors.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/index.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/news/index.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/DoProjectPlots.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/NegLogInt_Fn.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/PinerPlot.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSMethod.Cond.TA1.8.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSMethod.TA1.8.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_ForeCatch.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_RunJitter.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_Sensi_plot.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_changepars.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_decision_table_stuff.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_doRetro.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_fitbiasramp.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_html.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_makeHTMLdiagnostictable.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_output.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_parlines.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_plots.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_profile.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_read.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_read_summary.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readctl.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readctl_3.24.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readctl_3.30.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readdat.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readdat_2.00.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readdat_3.00.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readdat_3.24.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readdat_3.30.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readforecast.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readpar_3.24.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readpar_3.30.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readstarter.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_readwtatage.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_recdevs.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_splitdat.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_tune_comps.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_varadjust.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_write.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writectl.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writectl_3.24.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writectl_3.30.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writedat.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writedat_3.24.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writedat_3.30.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writeforecast.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writepar_3.24.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writepar_3.30.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writestarter.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SS_writewtatage.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSbiologytables.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSdiagsTime2Year.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSexecutivesummary.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSgetMCMC.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSgetoutput.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSmakeMmatrix.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSmohnsrho.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotAgeMatrix.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotBiology.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotCatch.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotCohortCatch.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotComparisons.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotComps.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotData.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotDiscard.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotDynamicB0.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotIndices.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotMCMC_ExtraSelex.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotMnwt.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotMovementMap.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotMovementRates.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotNumbers.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotPars.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotProfile.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotRecdevs.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotRecdist.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotRetroRecruits.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotSPR.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotSelex.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotSexRatio.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotSpawnrecruit.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotSummaryF.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotTags.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotTimeseries.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSplotYield.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSsummarize.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SStableComparisons.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/SSunavailableSpawningOutput.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/TSCplot.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/add_legend.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/bubble3.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/calc_var_adjust.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/check_exe.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/check_inputlist.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/copy_SS_inputs.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/download_models.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/file_increment.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/getADMBHessian.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_SIS_info.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_areacols.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_comments.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_dat_new_name.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_last_phase.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_par_name.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_ss3_exe.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_tuning_table.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_tv_parlabs.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/index.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/is.wholenumber.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/iterate_jitter.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/jitter.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/make_multifig.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/make_multifig_sexratio.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/mcmc.nuisance.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/mcmc.out.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/mountains.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/plotCI.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/populate_multiple_folders.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/profile.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/r4ss-package.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/read.admbFit.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/retro.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/rich.colors.short.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/run.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/save_png.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/selShapes.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/sspar.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/stackpoly.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/translate_3.30_to_3.24_Q_setup.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/translate_3.30_to_3.24_var_adjust.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/tune_comps.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/write_fwf4.html</loc></url>
 </urlset>
+
