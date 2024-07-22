@@ -654,12 +654,12 @@ SS_readdat_3.30 <-
               NULL
             }
           )
-        if (any(datlist[["sizefreq_data_list"]][[imethod]][, "Method"] != imethod)) {
+        if (any(datlist[["sizefreq_data_list"]][[imethod]][, "method"] != imethod)) {
           stop(
             "Problem with method in size frequency data:\n",
             "Expecting method: ", imethod, "\n",
             "Read method(s): ",
-            paste(unique(datlist[["sizefreq_data_list"]][["Method"]]), collapse = ", ")
+            paste(unique(datlist[["sizefreq_data_list"]][["method"]]), collapse = ", ")
           )
         }
       }
