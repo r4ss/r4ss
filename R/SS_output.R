@@ -2278,32 +2278,32 @@ SS_output <-
           # map select columns from fit_len_comps to lendbase
           # (can expand to other columns like MV_T_parm in the future)
           if (nrow(lendbase) > 0) {
-            lendbase <- fit_len_comps |>
-              dplyr::rename(Like_sum = Like) |> # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) |>
-              dplyr::left_join(lendbase, .)
+            fit_len_comps_select <- fit_len_comps |> 
+              dplyr::rename(Like_sum = Like) |>  # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            lendbase <- dplyr::left_join(lendbase, fit_len_comps_select)
           }
           # add info to age comp data
           if (nrow(agedbase) > 0) {
-            agedbase <- fit_age_comps |>
+            fit_age_comps_select <- fit_age_comps |>
               dplyr::rename(Like_sum = Like) |> # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) |>
-              dplyr::left_join(agedbase, .)
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            agedbase <- dplyr::left_join(agedbase, fit_age_comps_select)
           }
           # add info to conditional age-at-length comp data
           if (nrow(condbase) > 0) {
-            condbase <- fit_age_comps |>
+            fit_cond_age_select <- fit_age_comps |>
               dplyr::rename(Like_sum = Like) |> # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) |>
-              dplyr::left_join(condbase, .)
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            condbase <- dplyr::left_join(condbase, fit_cond_age_select)
           }
           # add info to generalized size comp data
           if (nrow(sizedbase) > 0) {
-            sizedbase <- fit_size_comps |>
+            fit_size_comps_select <- fit_size_comps |>
               dplyr::rename(Like_sum = Like) |> # like for vector not bin
               dplyr::rename(method = Method) |> # making it match what's in sizedbase
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM, method) |>
-              dplyr::left_join(sizedbase, .)
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM, method)
+            sizedbase <- dplyr::left_join(sizedbase, fit_size_comps_select)
           }
         } # end test for whether CompReport.sso info is available
         # end approach used starting in 3.30.21
