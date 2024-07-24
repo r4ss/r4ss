@@ -107,8 +107,8 @@ SSplotTags <-
 
         # Get overdispersion parameter from model output
         parameters <- replist[["parameters"]]
-        overdispersion <- parameters %>%
-          dplyr::filter(stringr::str_detect(.data[["Label"]], "TG_overdispersion_")) %>%
+        overdispersion <- parameters |>
+          dplyr::filter(stringr::str_detect(.data[["Label"]], "TG_overdispersion_")) |>
           dplyr::select(.data[["Value"]]) # grabs the overdispersion parms for each Tag Group
         tau <- overdispersion[["Value"]][1]
 
@@ -120,7 +120,7 @@ SSplotTags <-
         CI_down <- stats::qnbinom(c(0.975), size = k[i], mu = mu[i])
         CI_up <- stats::qnbinom(c(0.025), size = k[i], mu = mu[i])
         new_tagdbase2 <- cbind(tagdbase2, CI_up, CI_down)
-        new_tagdbase2 <- new_tagdbase2 %>%
+        new_tagdbase2 <- new_tagdbase2 |>
           dplyr::mutate(
             CI_down = ifelse(is.nan(CI_down), NA, CI_down),
             CI_up = ifelse(is.nan(CI_up), NA, CI_up)
@@ -316,13 +316,13 @@ SSplotTags <-
       expected_by_fleets <- as.data.frame(rep(tagdbase2[["Exp"]], each = max_num_fleets))
       names(expected_by_fleets)[1] <- "Expected" # rename column
       new_tagdata <- cbind(tagdata, expected_by_fleets) # bind new column to tagdata dataframe
-      fleet_numbers <- new_tagdata %>%
+      fleet_numbers <- new_tagdata |>
         dplyr::mutate(
           Numbers_Obs = round(.data[["Obs"]] * .data[["Nsamp_adj"]]),
           Numbers_Exp = round(.data[["Exp"]] * .data[["Expected"]])
         ) # generate exp. and obs. recaptures by fleet
-      fleet_numbers2 <- fleet_numbers %>%
-        dplyr::group_by(.data[["Fleet"]], .data[["Yr"]]) %>%
+      fleet_numbers2 <- fleet_numbers |>
+        dplyr::group_by(.data[["Fleet"]], .data[["Yr"]]) |>
         dplyr::summarize(sum_exp = sum(.data[["Numbers_Exp"]]), sum_obs = sum(.data[["Numbers_Obs"]]))
 
       fleet_numbers2[["fleet_title"]] <- paste("Fleet_", as.character(fleet_numbers2[["Fleet"]]), sep = "")
@@ -344,7 +344,7 @@ SSplotTags <-
       }
 
       # Calculate Pearson Residuals by fleet
-      fleetnumbers_PRs <- fleet_numbers %>%
+      fleetnumbers_PRs <- fleet_numbers |>
         dplyr::mutate(Pearson = (.data[["Numbers_Obs"]] - .data[["Numbers_Exp"]]) / sqrt(.data[["Numbers_Exp"]]))
 
       fleetnumbers_PRs[["Pearson"]][is.nan(fleetnumbers_PRs[["Pearson"]])] <- NA

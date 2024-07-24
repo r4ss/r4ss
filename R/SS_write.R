@@ -28,7 +28,7 @@
 #' inputlist[["start"]][["init_values_src"]] <- 1
 #'
 #' # modify the data file (remove age comps from years prior to 1990)
-#' inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] %>%
+#' inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] |>
 #'   dplyr::filter(Yr >= 1990)
 #'
 #' # modify the control file (turn off early recdevs and change range of yrs)

@@ -710,7 +710,7 @@ SS_output <-
         names(Length_comp_error_controls)[names(Length_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
         # remove extra column with hash symbols
-        Length_comp_error_controls <- Length_comp_error_controls %>%
+        Length_comp_error_controls <- Length_comp_error_controls |>
           dplyr::select(-NoName)
       }
 
@@ -731,7 +731,7 @@ SS_output <-
         names(Age_comp_error_controls)[names(Age_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
         # remove extra column with hash symbols
-        Age_comp_error_controls <- Age_comp_error_controls %>%
+        Age_comp_error_controls <- Age_comp_error_controls |>
           dplyr::select(-NoName)
       }
 
@@ -741,7 +741,7 @@ SS_output <-
           match_report_table("Size_comp_error_controls",
             adjust1 = 1,
             header = TRUE, type.convert = TRUE
-          ) %>%
+          ) |>
           dplyr::rename(Sz_method = "#_Sz_method") # remove hash from header
       }
       # end read of 3.30.12+ DEFINITIONS
@@ -886,8 +886,8 @@ SS_output <-
         # after the release of 3.30.21)
 
         # all values identical except for Cum_obs and Cum_exp
-        duplicates <- compdbase %>%
-          dplyr::select(-Cum_obs, -Cum_exp) %>%
+        duplicates <- compdbase |>
+          dplyr::select(-Cum_obs, -Cum_exp) |>
           duplicated()
         if (verbose) {
           message(
@@ -1904,7 +1904,7 @@ SS_output <-
 
       # info on recdev method
       if (any(srhead[1, ] == "RecDev_method:")) {
-        RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] %>% as.numeric()
+        RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] |> as.numeric()
       } else {
         RecDev_method <- NULL
       }
@@ -2219,7 +2219,7 @@ SS_output <-
           sizentune <- type.convert(sizentune, as.is = TRUE)
           stats[["Size_Comp_Fit_Summary"]] <- sizentune
           # remove extra summary rows of fit_size_comps
-          fit_size_comps <- fit_size_comps %>%
+          fit_size_comps <- fit_size_comps |>
             dplyr::filter(Fleet_Name %in% FleetNames & Fleet %in% 1:nfleets)
         } # end check for non-empty fit_size_comps
       } else {
@@ -2278,32 +2278,32 @@ SS_output <-
           # map select columns from fit_len_comps to lendbase
           # (can expand to other columns like MV_T_parm in the future)
           if (nrow(lendbase) > 0) {
-            lendbase <- fit_len_comps %>%
-              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
-              dplyr::left_join(lendbase, .)
+            fit_len_comps_select <- fit_len_comps |> 
+              dplyr::rename(Like_sum = Like) |>  # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            lendbase <- dplyr::left_join(lendbase, fit_len_comps_select)
           }
           # add info to age comp data
           if (nrow(agedbase) > 0) {
-            agedbase <- fit_age_comps %>%
-              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
-              dplyr::left_join(agedbase, .)
+            fit_age_comps_select <- fit_age_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            agedbase <- dplyr::left_join(agedbase, fit_age_comps_select)
           }
           # add info to conditional age-at-length comp data
           if (nrow(condbase) > 0) {
-            condbase <- fit_age_comps %>%
-              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
-              dplyr::left_join(condbase, .)
+            fit_cond_age_select <- fit_age_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            condbase <- dplyr::left_join(condbase, fit_cond_age_select)
           }
           # add info to generalized size comp data
           if (nrow(sizedbase) > 0) {
-            sizedbase <- fit_size_comps %>%
-              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
-              dplyr::rename(method = Method) %>% # making it match what's in sizedbase
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM, method) %>%
-              dplyr::left_join(sizedbase, .)
+            fit_size_comps_select <- fit_size_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
+              dplyr::rename(method = Method) |> # making it match what's in sizedbase
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM, method)
+            sizedbase <- dplyr::left_join(sizedbase, fit_size_comps_select)
           }
         } # end test for whether CompReport.sso info is available
         # end approach used starting in 3.30.21
@@ -3682,7 +3682,7 @@ SS_output <-
       names(yielddat) <- names
       # remove lines that say "ready for equilcalc" or "ready for loops"
       if ("SPRloop" %in% names) { # column not present in early SS3 versions
-        yielddat <- yielddat %>% dplyr::filter(SPRloop != "ready")
+        yielddat <- yielddat |> dplyr::filter(SPRloop != "ready")
       }
       yielddat <- type.convert(yielddat, as.is = TRUE)
     } else {
