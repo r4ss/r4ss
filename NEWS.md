@@ -1,3 +1,7 @@
+# r4ss 1.49.3 (24 July 2024)
+* Replaces magrittr pipe %>% with native pipe |>
+* Minimum R version is now 4.1.0
+
 # r4ss 1.48.0 (27 March 2023)
 * Bug fixes and cosmetic changes
   * Use {pkgdown} to develop a better website

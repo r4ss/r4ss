@@ -67,7 +67,6 @@ Imports:
     gh,
     kableExtra,
     lifecycle,
-    magrittr,
     purrr,
     stringr,
     tidyr

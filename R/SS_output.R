@@ -2278,8 +2278,8 @@ SS_output <-
           # map select columns from fit_len_comps to lendbase
           # (can expand to other columns like MV_T_parm in the future)
           if (nrow(lendbase) > 0) {
-            fit_len_comps_select <- fit_len_comps |> 
-              dplyr::rename(Like_sum = Like) |>  # like for vector not bin
+            fit_len_comps_select <- fit_len_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
             lendbase <- dplyr::left_join(lendbase, fit_len_comps_select)
           }
