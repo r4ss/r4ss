@@ -56,7 +56,7 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   wtatage <- wtatagelines[-(1:skip), ]
   # problems with header so simply manually replacing column names
   wtatage_names <- c(
-    "Yr", "Seas", "Sex", "Bio_Pattern", "BirthSeas", "Fleet",
+    "year", "seas", "sex", "bio_pattern", "birthseas", "fleet",
     0:accuage
   )
   # new comment line in 3.30
