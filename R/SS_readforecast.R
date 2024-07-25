@@ -350,9 +350,9 @@ SS_readforecast <- function(file = "forecast.ss",
       }
       forelist <- add_elem(forelist, "InputBasis")
       if (forelist[["InputBasis"]] == -1) {
-        forelist <- add_df(forelist, ncol = 5, col.names = c("Year", "Seas", "Fleet", "Catch or F", "Basis"), name = "ForeCatch")
+        forelist <- add_df(forelist, ncol = 5, col.names = c("year", "seas", "fleet", "catch_or_F", "basis"), name = "ForeCatch")
       } else {
-        forelist <- add_df(forelist, ncol = 4, col.names = c("Year", "Seas", "Fleet", "Catch or F"), name = "ForeCatch")
+        forelist <- add_df(forelist, ncol = 4, col.names = c("year", "seas", "fleet", "Catch_or_F"), name = "ForeCatch")
       }
     }
     if (forelist$".dat"[forelist$".i"] == 999) {
