@@ -7,6 +7,12 @@ on:
       - 'tests/**'
       - 'vignettes/**'
     branches: [main]
+  pull_request:
+    paths:
+      - 'R/**'
+      - 'tests/**'
+      - 'vignettes/**'
+    branches: [main]
 name: call-doc-and-style-r
 jobs:
   call-workflow:
