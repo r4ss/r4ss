@@ -332,7 +332,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     ))
     i <- i + N_lencomp * Ncols
     names(lencomp) <- c(
-      "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
+      "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("l", lbin_vector, sep = "")
       } else {
@@ -392,7 +392,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     ))
     i <- i + N_agecomp * Ncols
     names(agecomp) <- c(
-      "Yr", "Seas", "FltSvy", "Gender", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
+      "Yr", "Seas", "FltSvy", "Sex", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
@@ -421,7 +421,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
     ))
     i <- i + N_MeanSize_at_Age_obs * Ncols
     names(MeanSize_at_Age_obs) <- c(
-      "Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
+      "Yr", "Seas", "FltSvy", "Sex", "Part", "AgeErr", "Ignore",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
@@ -499,7 +499,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
       ))
       names(sizefreq_data_tmp) <-
         c(
-          "Method", "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
+          "Method", "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
           if (datlist[["Nsexes"]] == 1) {
             paste("a", sizefreq_bins_list[[imethod]], sep = "")
           } else {
@@ -558,7 +558,7 @@ SS_readdat_3.00 <- function(file, verbose = TRUE,
       Ncols <- 8
       tag_releases <- data.frame(matrix(allnums[i:(i + N_tag_groups * Ncols - 1)], nrow = N_tag_groups, ncol = Ncols, byrow = TRUE))
       i <- i + N_tag_groups * Ncols
-      names(tag_releases) <- c("TG", "Area", "Yr", "Season", "tfill", "Gender", "Age", "Nrelease")
+      names(tag_releases) <- c("TG", "Area", "Yr", "Season", "tfill", "Sex", "Age", "Nrelease")
       if (verbose) {
         message("Head of tag release data:\n")
         print(head(tag_releases))

@@ -5,7 +5,7 @@
 #' @export
 #' @return Returns a data frame with a variable number of columns based on the
 #' number of ages that are included in the file. Though, the first columns
-#' will always be `Yr`, `Seas`, `Sex`, `Bio_Pattern`, `BirthSeas`, and `Fleet`.
+#' will always be `year`, `seas`, `sex`, `bio_pattern`, `birthSeas`, and `fleet`.
 #' The seventh column will be age zero.
 #' The last or next to last column will be the maximum age included
 #' in the weight-at-age data. For Stock Synthesis versions 3.30 and greater,
@@ -56,7 +56,7 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   wtatage <- wtatagelines[-(1:skip), ]
   # problems with header so simply manually replacing column names
   wtatage_names <- c(
-    "Yr", "Seas", "Sex", "Bio_Pattern", "BirthSeas", "Fleet",
+    "year", "seas", "sex", "bio_pattern", "birthseas", "fleet",
     0:accuage
   )
   # new comment line in 3.30
@@ -65,6 +65,6 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   }
   names(wtatage) <- wtatage_names
   # Remove terminator line
-  wtatage <- wtatage[wtatage[["Yr"]] > -9998, ]
+  wtatage <- wtatage[wtatage[["year"]] > -9998, ]
   return(wtatage)
 }
