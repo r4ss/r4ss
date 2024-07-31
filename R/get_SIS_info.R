@@ -172,7 +172,14 @@ get_SIS_info <- function(model,
   F_tab <- F_tab[F_tab[["Year"]] %in% years, ]
 
   # SPR-related quantities
-  spr_tab <- model[["sprseries"]][, c("Yr", "SPR_report", "Tot_Exploit", "SPR")]
+  if("Tot_Exploit" %in% names(model[["sprseries"]])){
+    spr_tab <- model[["sprseries"]][, c("Yr", "SPR_report", "Tot_Exploit", "SPR")]
+  } else {
+    spr_tab <- model[["sprseries"]][, c("Yr", "SPR")]
+    from_ann_ts <- model[["annual_time_series"]][, c("Yr", "SPR_report", "Tot_Exploit")]
+    spr_tab <- merge(from_ann_ts, spr_tab, by = "Yr")
+  }
+
   names(spr_tab)[1] <- "Year"
   if (model[["SPRratioLabel"]] != "1-SPR") {
     # add 1-SPR if it does not exist as SPR_report already
