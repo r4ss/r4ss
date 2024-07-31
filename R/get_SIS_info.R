@@ -172,7 +172,7 @@ get_SIS_info <- function(model,
   F_tab <- F_tab[F_tab[["Year"]] %in% years, ]
 
   # SPR-related quantities
-  if("Tot_Exploit" %in% names(model[["sprseries"]])){
+  if ("Tot_Exploit" %in% names(model[["sprseries"]])) {
     spr_tab <- model[["sprseries"]][, c("Yr", "SPR_report", "Tot_Exploit", "SPR")]
   } else {
     spr_tab <- model[["sprseries"]][, c("Yr", "SPR")]

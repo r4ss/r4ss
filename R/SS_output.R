@@ -3253,11 +3253,11 @@ SS_output <-
 
     # Yield and SPR time-series
     spr <- match_report_table("SPR_SERIES", 5, header = TRUE)
-    if(any(names(spr)=="NoName")){
-      names(spr) <- spr[1,]
-      spr <- spr[-1,]
-    # Add this section for 3.30.23 separation of the spr table into the spr 
-    # series and the annual time series
+    if (any(names(spr) == "NoName")) {
+      names(spr) <- spr[1, ]
+      spr <- spr[-1, ]
+      # Add this section for 3.30.23 separation of the spr table into the spr
+      # series and the annual time series
       ann_ts <- match_report_table("ANNUAL_TIME_SERIES", 6, header = TRUE)
     }
 
@@ -3283,9 +3283,9 @@ SS_output <-
       stats[["last_years_SPR"]] <- spr[["spr"]][nrow(spr)]
       stats[["SPRratioLabel"]] <- managementratiolabels[1, 2]
 
-      # Add this section for 3.30.23 separation of the spr table into the spr 
+      # Add this section for 3.30.23 separation of the spr table into the spr
       # series and the annual time series
-      if(exists("ann_ts")){
+      if (exists("ann_ts")) {
         ann_ts <- df.rename(ann_ts,
           oldnames = c("year", "SPR_std", "F_std", "dead_catch_B/bio_smry"),
           newnames = c("Yr", "SPR_report", "F_report", "Tot_Exploit")
@@ -3299,7 +3299,7 @@ SS_output <-
     }
     returndat[["sprseries"]] <- spr
 
-    if(exists("ann_ts")){
+    if (exists("ann_ts")) {
       returndat[["annual_time_series"]] <- ann_ts
     }
 
