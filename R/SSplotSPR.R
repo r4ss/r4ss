@@ -80,7 +80,7 @@ SSplotSPR <-
       return()
     }
     # at least one non-converged model had NaN values for all years
-    if (all(is.nan(sprseries[["spr"]]))) {
+    if (all(is.nan(sprseries[["SPR"]]))) {
       warning("NaN values in SPR series, skipping plots")
       return()
     }
@@ -117,10 +117,10 @@ SSplotSPR <-
       if (!add) {
         plot(0,
           xlab = labels[1], ylab = labels[2], xlim = range(sprseries[["Yr"]][good]),
-          ylim = c(0, max(1, max(sprseries[["spr"]][!is.na(sprseries[["spr"]])]))), type = "n"
+          ylim = c(0, max(1, max(sprseries[["SPR"]][!is.na(sprseries[["SPR"]])]))), type = "n"
         )
       }
-      lines(sprseries[["Yr"]][good], sprseries[["spr"]][good], type = "o", col = col2)
+      lines(sprseries[["Yr"]][good], sprseries[["SPR"]][good], type = "o", col = col2)
       if (sprtarg > 0) {
         abline(h = sprtarg, col = col4, lty = 2)
       }
@@ -163,7 +163,7 @@ SSplotSPR <-
               xlab = labels[1], ylab = labels[3], ylim = c(0, 1), type = "n"
             )
           }
-          lines(sprseries[["Yr"]][good], (1 - sprseries[["spr"]][good]), type = "o", col = col2)
+          lines(sprseries[["Yr"]][good], (1 - sprseries[["SPR"]][good]), type = "o", col = col2)
           if (sprtarg > 0) {
             abline(h = (1 - sprtarg), col = col4, lty = 2)
           }

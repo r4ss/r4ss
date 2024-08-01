@@ -3252,16 +3252,17 @@ SS_output <-
     returndat[["DF_mnwgt"]] <- DF_mnwgt
 
     # Yield and SPR time-series
-    spr <- match_report_table("SPR_SERIES", 5, header = TRUE)
-    if (any(names(spr) == "NoName")) {
-      names(spr) <- spr[1, ]
-      spr <- spr[-1, ]
-      # Add this section for 3.30.23 separation of the spr table into the spr
-      # series and the annual time series
-      ann_ts <- match_report_table("ANNUAL_TIME_SERIES", 6, header = TRUE)
+    if (!is.na(match_report_line("reports_per_recruit_quantities_using_current_year_biology",
+      obj = rawrep[, 2]
+    ))
+    ) { 
+      # check for new format starting with 3.30.23
+      spr <- match_report_table("SPR_SERIES", 6, header = TRUE)
+    } else {
+      spr <- match_report_table("SPR_SERIES", 5, header = TRUE)
     }
 
-    # read again if missing using capitalization prior to 3.30.15.06
+    # read SPR table again if missing using capitalization prior to 3.30.15.06
     if (is.null(spr)) {
       spr <- match_report_table("SPR_series", 5, header = TRUE)
     }
@@ -3269,40 +3270,36 @@ SS_output <-
     if (!is.null(spr)) {
       # clean up SPR output
       # make older SS output names match current SS output conventions
+      # note: SPR_std and SPR_report have switched back and forth over the years
+      # but as of 3.30.23 is SPR_std
       names(spr) <- gsub(pattern = "SPB", replacement = "SSB", names(spr))
       spr <- df.rename(spr,
-        oldnames = c("Year", "spawn_bio", "SPR_std", "Y/R", "F_std"),
-        newnames = c("Yr", "SpawnBio", "SPR_report", "YPR", "F_report")
+        oldnames = c("Year", "spawn_bio", "SPR_report", "Y/R", "F_report"),
+        newnames = c("Yr", "SpawnBio", "SPR_std", "YPR", "F_std")
       )
+      # additional conversions starting in 3.30.23
+      spr <- df.rename(spr,
+        oldnames = c("Bio_all", "Bio_Smry", "SSB_unfished", "SSBfished"),
+        newnames = c("Bio_all_eq", "Bio_Smry_eq", "SSB_unfished_eq", "SSBfished_eq")
+      )
+
       spr[spr == "_"] <- NA
       spr[spr == "&"] <- NA
       spr[spr == "-1.#IND"] <- NA
       spr <- type.convert(spr, as.is = TRUE)
-      # spr <- spr[spr[["Year"]] <= endyr,]
-      spr[["spr"]] <- spr[["SPR"]]
-      stats[["last_years_SPR"]] <- spr[["spr"]][nrow(spr)]
       stats[["SPRratioLabel"]] <- managementratiolabels[1, 2]
-
-      # Add this section for 3.30.23 separation of the spr table into the spr
-      # series and the annual time series
-      if (exists("ann_ts")) {
-        ann_ts <- df.rename(ann_ts,
-          oldnames = c("year", "SPR_std", "F_std", "dead_catch_B/bio_smry"),
-          newnames = c("Yr", "SPR_report", "F_report", "Tot_Exploit")
-        )
-        ann_ts[ann_ts == "_"] <- NA
-        ann_ts[ann_ts == "&"] <- NA
-        ann_ts[ann_ts == "-1.#IND"] <- NA
-        ann_ts <- type.convert(ann_ts, as.is = TRUE)
-        stats[["last_years_SPRratio"]] <- ann_ts[["SPR_report"]][nrow(ann_ts)]
-      }
     }
+
+    # Add this section for 3.30.23 separation of the spr table into the spr
+    # series and the annual time series
+    ann_ts <- match_report_table("ANNUAL_TIME_SERIES", 
+      adjust1 = 9,
+      header = TRUE,
+      type.convert = TRUE
+    )
+
     returndat[["sprseries"]] <- spr
-
-    if (exists("ann_ts")) {
-      returndat[["annual_time_series"]] <- ann_ts
-    }
-
+    returndat[["annual_time_series"]] <- ann_ts
     returndat[["managementratiolabels"]] <- managementratiolabels
     returndat[["F_report_basis"]] <- managementratiolabels[["Label"]][2]
     returndat[["sprtarg"]] <- sprtarg
