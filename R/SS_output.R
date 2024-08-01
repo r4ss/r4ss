@@ -3255,7 +3255,7 @@ SS_output <-
     if (!is.na(match_report_line("reports_per_recruit_quantities_using_current_year_biology",
       obj = rawrep[, 2]
     ))
-    ) { 
+    ) {
       # check for new format starting with 3.30.23
       spr <- match_report_table("SPR_SERIES", 6, header = TRUE)
     } else {
@@ -3292,7 +3292,7 @@ SS_output <-
 
     # Add this section for 3.30.23 separation of the spr table into the spr
     # series and the annual time series
-    ann_ts <- match_report_table("ANNUAL_TIME_SERIES", 
+    ann_ts <- match_report_table("ANNUAL_TIME_SERIES",
       adjust1 = 9,
       header = TRUE,
       type.convert = TRUE
