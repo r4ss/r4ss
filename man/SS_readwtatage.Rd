@@ -17,7 +17,7 @@ to the screen.}
 \value{
 Returns a data frame with a variable number of columns based on the
 number of ages that are included in the file. Though, the first columns
-will always be \code{Yr}, \code{Seas}, \code{Sex}, \code{Bio_Pattern}, \code{BirthSeas}, and \code{Fleet}.
+will always be \code{year}, \code{seas}, \code{sex}, \code{bio_pattern}, \code{birthSeas}, and \code{fleet}.
 The seventh column will be age zero.
 The last or next to last column will be the maximum age included
 in the weight-at-age data. For Stock Synthesis versions 3.30 and greater,

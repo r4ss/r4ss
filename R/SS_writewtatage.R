@@ -66,15 +66,15 @@ SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
   writeLines("# fleet -2 contains maturity*fecundity")
 
   # Check for terminal line in data frame
-  mylist <- mylist[order(mylist[["Yr"]], mylist[["Fleet"]], mylist[["Seas"]]), ]
-  if (any(mylist[["Yr"]] < -9998)) {
+  mylist <- mylist[order(mylist[["year"]], mylist[["fleet"]], mylist[["seas"]]), ]
+  if (any(mylist[["year"]] < -9998)) {
     mylist <- mylist[c(
-      which(mylist[["Yr"]] >= -9998),
-      which(mylist[["Yr"]] < -9998)
+      which(mylist[["year"]] >= -9998),
+      which(mylist[["year"]] < -9998)
     ), ]
   } else {
     mylist <- rbind(mylist, mylist[1, ])
-    mylist[NROW(mylist), "Yr"] <- -9999
+    mylist[NROW(mylist), "year"] <- -9999
   }
   colnames(mylist)[1] <- paste0("#", colnames(mylist)[1])
   print.data.frame(mylist, row.names = FALSE, strip.white = TRUE, max = dim(mylist)[1] * dim(mylist)[2])
