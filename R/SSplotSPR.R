@@ -338,7 +338,8 @@ SSplotSPR <-
         yr = shared_yrs,
         Bratio = Bratio_vals,
         SPRratio = SPRratio_vals,
-        col = rev(rich.colors.short(n = length(shared_yrs)))
+        col = viridis(length(shared_yrs))
+        # col = rev(rich.colors.short(n = length(shared_yrs)))
       )
       # make empty plot
       plot(phase_df[["Bratio_vals"]],

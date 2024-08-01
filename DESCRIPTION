@@ -69,7 +69,8 @@ Imports:
     lifecycle,
     purrr,
     stringr,
-    tidyr
+    tidyr,
+    viridis
 Suggests: 
     flextable,
     ggpubr,
