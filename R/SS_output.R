@@ -3294,14 +3294,11 @@ SS_output <-
     # series and the annual time series
     ann_ts <- match_report_table("ANNUAL_TIME_SERIES",
       adjust1 = 9,
-      header = TRUE,
-      type.convert = TRUE
-    )
-    ann_ts <- df.rename(ann_ts,
-      oldnames = c("year", "tot_exploit"),
-      newnames = c("Yr", "Tot_Exploit")
+      header = TRUE
     )
     ann_ts[ann_ts == "_"] <- NA
+    ann_ts[ann_ts == "&"] <- NA
+    ann_ts[ann_ts == "-1.#IND"] <- NA    
     ann_ts <- type.convert(ann_ts, as.is = TRUE)
 
     returndat[["sprseries"]] <- spr

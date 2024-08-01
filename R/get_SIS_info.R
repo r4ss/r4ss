@@ -177,6 +177,8 @@ get_SIS_info <- function(model,
   } else {
     spr_tab <- model[["sprseries"]][, c("Yr", "SPR")]
     from_ann_ts <- model[["annual_time_series"]][, c("Yr", "SPR_std", "Tot_Exploit")]
+    from_ann_ts[["Yr"]] <- from_ann_ts[["year"]]
+    from_ann_ts[["Tot_Exploit"]] <- from_ann_ts[["tot_exploit"]]
     spr_tab <- merge(from_ann_ts, spr_tab, by = "Yr")
   }
 
