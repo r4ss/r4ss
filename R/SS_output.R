@@ -3298,9 +3298,9 @@ SS_output <-
       type.convert = TRUE
     )
     ann_ts <- df.rename(ann_ts,
-        oldnames = c("year", "tot_exploit"),
-        newnames = c("Yr", "Tot_Exploit")
-      )
+      oldnames = c("year", "tot_exploit"),
+      newnames = c("Yr", "Tot_Exploit")
+    )
     ann_ts[ann_ts == "_"] <- NA
     ann_ts <- type.convert(ann_ts, as.is = TRUE)
 
