@@ -3298,7 +3298,7 @@ SS_output <-
     )
     ann_ts[ann_ts == "_"] <- NA
     ann_ts[ann_ts == "&"] <- NA
-    ann_ts[ann_ts == "-1.#IND"] <- NA    
+    ann_ts[ann_ts == "-1.#IND"] <- NA
     ann_ts <- type.convert(ann_ts, as.is = TRUE)
 
     returndat[["sprseries"]] <- spr
