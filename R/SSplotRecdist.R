@@ -67,7 +67,7 @@ SSplotRecdist <-
     }
     # rescale to sum to 1.0 to work better if sex ratio is skewed
     # see https://github.com/nmfs-ost/ss3-source-code/issues/611 for explanation
-    recmat <- recmat/sum(recmat)
+    recmat <- recmat / sum(recmat)
 
     recdistfun <- function() {
       image(areavec, seasvec, recmat,
