@@ -21,7 +21,7 @@ test_that("populate_multiple_folders runs", {
   expect_true(all(copy_info[["results.files"]]))
   lapply(copy_info[["dir"]], function(d) {
     expect_true(file.exists(file.path(temp_path, d)))
-    # count of files should be 4 for the models included in this test but 
+    # count of files should be 4 for the models included in this test but
     # will be 5 if run locally and a model with wtatage is included
     expect_true(length(list.files(file.path(temp_path, d))) %in% 4:5)
   })
