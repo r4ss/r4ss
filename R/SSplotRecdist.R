@@ -65,6 +65,9 @@ SSplotRecdist <-
         }
       }
     }
+    # rescale to sum to 1.0 to work better if sex ratio is skewed
+    # see https://github.com/nmfs-ost/ss3-source-code/issues/611 for explanation
+    recmat <- recmat/sum(recmat)
 
     recdistfun <- function() {
       image(areavec, seasvec, recmat,
@@ -101,6 +104,6 @@ SSplotRecdist <-
       dev.off()
     }
 
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Recruitment"
+    if (!is.null(plotinfo)) plotinfo[["category"]] <- "S-R"
     return(invisible(plotinfo))
   }
