@@ -2845,8 +2845,9 @@ SS_output <-
       "EXPLOITATION", 20,
       header = FALSE
     )
-    # check for new header info added in 3.30.13_beta (14 Feb. 2019)
-    if (exploitation_head[1, 1] == "Info:") {
+    # check for new header info added in 3.30.13_beta (Feb 2019)
+    # "Info:" changed to "NOTE:" with 3.30.23 (Jul 2024)
+    if (exploitation_head[1, 1] %in% c("Info:", "NOTE:")) {
       # NOTE: add read of additional header info here
       exploitation <- match_report_table("EXPLOITATION",
         which(exploitation_head[, 1] == "Yr"),
