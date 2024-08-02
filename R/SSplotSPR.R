@@ -20,10 +20,10 @@
 #' @param col3 third color used
 #' @param col4 fourth color used
 #' @param sprtarg F/SPR proxy target. "default" chooses based on model output,
-#' where models which have SPR_report_basis = 0 or 1 specified in the starter
+#' where models which have SPR_std_basis = 0 or 1 specified in the starter
 #' file will use the SPR target specified in the forecast file. Models which
-#' have SPR_report_basis = 2 will use SPR at MSY for the SPR target
-#' and models which have the SPR_report_basis = 3 will use
+#' have SPR_std_basis = 2 will use SPR at MSY for the SPR target
+#' and models which have the SPR_std_basis = 3 will use
 #' SPR at Btarget for the SPR target in these plots. Zero or negative values of
 #' sprtarg input here will cause no horizontal line to be plotted.
 #' @param btarg target depletion to be used in plots showing depletion. May be

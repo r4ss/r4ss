@@ -3305,7 +3305,7 @@ SS_output <-
     returndat[["sprseries"]] <- spr
     returndat[["annual_time_series"]] <- ann_ts
     returndat[["managementratiolabels"]] <- managementratiolabels
-    returndat[["F_report_basis"]] <- managementratiolabels[["Label"]][2]
+    returndat[["F_std_basis"]] <- managementratiolabels[["Label"]][2]
     returndat[["sprtarg"]] <- sprtarg
     returndat[["btarg"]] <- btarg
 

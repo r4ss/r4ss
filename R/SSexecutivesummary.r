@@ -419,7 +419,7 @@ SSexecutivesummary <- function(replist,
   }
 
   spr_type <- replist[["SPRratioLabel"]]
-  f_type <- ifelse(replist[["F_report_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
+  f_type <- ifelse(replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
     "Fill in F method"
   )
 
@@ -738,7 +738,7 @@ SSexecutivesummary <- function(replist,
   }
 
   spr_type <- replist[["SPRratioLabel"]] # strsplit(base[grep(spr.name,base)]," ")[[1]][3]
-  f_type <- ifelse(replist[["F_report_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
+  f_type <- ifelse(replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
     "Fill in F method"
   )
   adj.spr <- Get.Values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
