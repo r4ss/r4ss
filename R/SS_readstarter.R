@@ -151,11 +151,11 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
     message("  SPR_basis = ", mylist[["SPR_basis"]])
   }
-  mylist[["F_report_units"]] <- allnums[i]
+  mylist[["F_std_units"]] <- allnums[i]
   i <- i + 1
   if (
-    !is.na(mylist[["F_report_units"]]) &&
-      mylist[["F_report_units"]] %in% 4:5
+    !is.na(mylist[["F_std_units"]]) &&
+      mylist[["F_std_units"]] %in% 4:5
   ) {
     mylist[["F_age_range"]] <- allnums[i]
     i <- i + 1
@@ -165,10 +165,10 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     mylist[["F_age_range"]] <- NA
     mylist[["F_age_range"]][2] <- NA
   }
-  mylist[["F_report_basis"]] <- allnums[i]
+  mylist[["F_std_basis"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("  F_report_basis = ", mylist[["F_report_basis"]])
+    message("  F_std_basis = ", mylist[["F_std_basis"]])
   }
 
   # last value in vector of numerical values

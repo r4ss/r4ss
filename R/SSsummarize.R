@@ -286,7 +286,7 @@ SSsummarize <- function(biglist,
       quantsSD[dernames == quantstemp[["Label"]][iquant], imodel] <- quantstemp[["StdDev"]][iquant]
     }
     SPRratioLabels <- c(SPRratioLabels, stats[["SPRratioLabel"]])
-    FvalueLabels <- c(FvalueLabels, stats[["F_report_basis"]])
+    FvalueLabels <- c(FvalueLabels, stats[["F_std_basis"]])
     sprtargs <- c(sprtargs, stats[["sprtarg"]])
     btargs <- c(btargs, stats[["btarg"]])
     minbthreshs <- c(minbthreshs, stats[["minbthresh"]])

@@ -18,3 +18,4 @@ jobs:
     uses: nmfs-fish-tools/ghactions4r/.github/workflows/doc-and-style-r.yml@main
     with: 
       run-rm_dollar_sign: true
+      commit-directly: true
