@@ -164,7 +164,7 @@ SS_writedat_3.30 <- function(datlist,
         quote = FALSE,
         rownames = FALSE,
         colnames = FALSE,
-        digits = 6
+        digits = 8
       )
     }
   }
