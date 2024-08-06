@@ -12,7 +12,9 @@ SSplotRecdist(
   seasnames = NULL,
   xlab = "",
   ylab = "",
-  main = "Distribution of recruitment by area and season",
+  main = "distribution of recruitment by area and season",
+  period = c("Initial", "Benchmark", "End year"),
+  sexes = 1:2,
   plotdir = "default",
   pwidth = 6.5,
   pheight = 5,
@@ -41,6 +43,12 @@ enough)}
 enough)}
 
 \item{main}{title for plot}
+
+\item{period}{period of recruitment distribution to show among the options
+"Initial", "Benchmark", and "End year"}
+
+\item{sexes}{either 1 to only plot female distribution, 2 for males, or 1:2
+to make both plots}
 
 \item{plotdir}{Directory where PNG files will be written.}
 

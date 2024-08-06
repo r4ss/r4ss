@@ -1807,8 +1807,8 @@ SS_output <-
       )
       # calculate first season with recruitment
       first_seas_with_recruits <-
-          min(recruitment_dist[["Seas"]][recruitment_dist$"recr_dist_F" > 0])
-      
+        min(recruitment_dist[["Seas"]][recruitment_dist$"recr_dist_F" > 0])
+
       # starting in SSv3.24Q there are additional tables
       # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
       # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
@@ -1832,7 +1832,8 @@ SS_output <-
           }
           recruit_dist_timeseries <- match_report_table(
             "RECRUITMENT_DIST_TIMESERIES", 1,
-            header = FALSE, type.convert = FALSE)
+            header = FALSE, type.convert = FALSE
+          )
         }
         # rename columns to format used starting with 3.30.23
         recruit_dist_Bmark <- df.rename(recruit_dist_Bmark,
