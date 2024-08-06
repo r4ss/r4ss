@@ -1820,6 +1820,7 @@ SS_output <-
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_FORECAST", 1,
             header = TRUE, type.convert = TRUE
           )
+          recruit_dist_timeseries <- NULL
         } else {
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_endyr", 1,
             header = TRUE, type.convert = TRUE
