@@ -104,10 +104,14 @@ SSplotRecdist <-
       recmat[, , 1] <- recmat[, , 1] / sum(recmat[, , 1])
     }
     recdistfun <- function(sex) {
-      image(areavec, seasvec, recmat[, , sex],
-        axes = F, xlab = xlab, ylab = ylab,
-        main = paste(period, main), cex.main = cex.main
-      )
+      if (is.matrix(recmat[, , sex])) {
+        image(areavec, seasvec, recmat[, , sex],
+          axes = F, xlab = xlab, ylab = ylab,
+          main = paste(period, main), cex.main = cex.main
+        )
+      } else {
+        warning("Problem with format of recruitment distribution info")
+      }
       axis(1, at = areavec, labels = areanames)
       axis(2, at = seasvec, labels = seasnames)
       box()
