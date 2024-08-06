@@ -57,7 +57,9 @@ file.</p>
 <span>  seasnames <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  main <span class="op">=</span> <span class="st">"Distribution of recruitment by area and season"</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"distribution of recruitment by area and season"</span>,</span>
+<span>  period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Initial"</span>, <span class="st">"Benchmark"</span>, <span class="st">"End year"</span><span class="op">)</span>,</span>
+<span>  sexes <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
 <span>  plotdir <span class="op">=</span> <span class="st">"default"</span>,</span>
 <span>  pwidth <span class="op">=</span> <span class="fl">6.5</span>,</span>
 <span>  pheight <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -105,6 +107,16 @@ enough)</p></dd>
 
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>title for plot</p></dd>
+
+
+<dt id="arg-period">period<a class="anchor" aria-label="anchor" href="#arg-period"></a></dt>
+<dd><p>period of recruitment distribution to show among the options
+"Initial", "Benchmark", and "End year"</p></dd>
+
+
+<dt id="arg-sexes">sexes<a class="anchor" aria-label="anchor" href="#arg-sexes"></a></dt>
+<dd><p>either 1 to only plot female distribution, 2 for males, or 1:2
+to make both plots</p></dd>
 
 
 <dt id="arg-plotdir">plotdir<a class="anchor" aria-label="anchor" href="#arg-plotdir"></a></dt>
