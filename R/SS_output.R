@@ -1800,14 +1800,15 @@ SS_output <-
       header = TRUE, type.convert = TRUE
     )
     if (!is.null(recruitment_dist)) {
+      # convert to new column header used starting with 3.30.23
+      recruitment_dist <- df.rename(recruitment_dist,
+        oldnames = c("Frac/sex", "Value"),
+        newnames = c("recr_dist_F", "recr_dist_F")
+      )
       # calculate first season with recruitment
-      if ("Frac/sex" %in% names(recruitment_dist)) {
-        first_seas_with_recruits <-
-          min(recruitment_dist[["Seas"]][recruitment_dist$"Frac/sex" > 0])
-      } else {
-        first_seas_with_recruits <-
-          min(recruitment_dist[["Seas"]][recruitment_dist[["Value"]] > 0])
-      }
+      first_seas_with_recruits <-
+          min(recruitment_dist[["Seas"]][recruitment_dist$"recr_dist_F" > 0])
+      
       # starting in SSv3.24Q there are additional tables
       # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
       # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
@@ -1828,12 +1829,26 @@ SS_output <-
             tmp_brk_line <- grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]]) - 1
             recruit_dist_endyr <- recruit_dist_endyr[seq_len(tmp_brk_line), ]
           }
+          recruit_dist_timeseries <- match_report_table(
+            "RECRUITMENT_DIST_TIMESERIES", 1,
+            header = FALSE, type.convert = FALSE)
         }
+        # rename columns to format used starting with 3.30.23
+        recruit_dist_Bmark <- df.rename(recruit_dist_Bmark,
+          oldnames = c("Frac/sex", "Value"),
+          newnames = c("recr_dist_F", "recr_dist_F")
+        )
+        recruit_dist_endyr <- df.rename(recruit_dist_endyr,
+          oldnames = c("Frac/sex", "Value"),
+          newnames = c("recr_dist_F", "recr_dist_F")
+        )
+
         # bundle original and extra tables into a list
         recruitment_dist <- list(
           recruit_dist = recruitment_dist,
           recruit_dist_Bmark = recruit_dist_Bmark,
-          recruit_dist_endyr = recruit_dist_endyr
+          recruit_dist_endyr = recruit_dist_endyr,
+          recruit_dist_timeseries = recruit_dist_timeseries
         )
       }
     }
@@ -3506,7 +3521,10 @@ SS_output <-
     returndat[["discard_at_age"]] <- discard_at_age
 
     # catch at age
-    catage <- match_report_table("CATCH_AT_AGE", 1,
+    catage <- match_report_table("CATCH_AT_AGE",
+      # skip note added in 3.30.23:
+      # "#_NOTE: catage is based on: sel_dead_num = sel * (retain + (1-retain)*discmort)"
+      adjust1 = ifelse(is.na(match_report_line("catage", obj = rawrep[, 2])), yes = 1, no = 2),
       header = TRUE, type.convert = TRUE
     )
     returndat[["catage"]] <- catage
