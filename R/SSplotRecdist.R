@@ -17,6 +17,8 @@
 #' @param main title for plot
 #' @param period period of recruitment distribution to show among the options
 #' "Initial", "Benchmark", and "End year"
+#' @param sexes either 1 to only plot female distribution, 2 for males, or 1:2 
+#' to make both plots
 #' @template plotdir
 #' @template pwidth
 #' @template pheight
@@ -36,6 +38,7 @@ SSplotRecdist <-
            ylab = "",
            main = "distribution of recruitment by area and season",
            period = c("Initial", "Benchmark", "End year"),
+           sexes = 1:2,
            plotdir = "default",
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            verbose = TRUE) {
@@ -53,12 +56,7 @@ SSplotRecdist <-
     nseasons <- replist[["nseasons"]]
     nsexes <- 1
     recdist <- replist[["recruitment_dist"]]
-    # prior to 3.30.23, 2-sex models only reported female recdist so treating 
-    # as 1-sex model with values representing the distribution of all recruits 
-    # assuming no time-varying sex ratio
-    if ("recr_dist_M" %in% names(recdist)) {
-      nsexes <- 2
-    }
+
     # if version 3.24Q or beyond, recdist is a list, so choose the 
     # period requested by the function (defaults to initial)
     if ("recruit_dist_endyr" %in% names(recdist)) {
@@ -68,6 +66,16 @@ SSplotRecdist <-
         period == "End year" ~ recdist[["recruit_dist_endyr"]] # third choice
       )
     }
+    # prior to 3.30.23, 2-sex models only reported female recdist so treating 
+    # as 1-sex model with values representing the distribution of all recruits 
+    # assuming no time-varying sex ratio
+    if ("recr_dist_M" %in% names(recdist)) {
+      nsexes <- 2
+      sexes <- sexes[sexes %in% 1:2]
+    } else {
+      sexes <- 1
+    }
+
 
     areavec <- 1:nareas
     seasvec <- 1:nseasons
@@ -114,7 +122,7 @@ SSplotRecdist <-
     rownames(recmat) <- areanames
     colnames(recmat) <- seasnames
     # make plots
-    for (sex in 1:nsexes) 
+    for (sex in sexes) 
     {
       sexlabel <- "recruits"
       if (nsexes == 2 & "recr_dist_M" %in% names(recdist)) {
