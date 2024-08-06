@@ -17,7 +17,7 @@
 #' @param main title for plot
 #' @param period period of recruitment distribution to show among the options
 #' "Initial", "Benchmark", and "End year"
-#' @param sexes either 1 to only plot female distribution, 2 for males, or 1:2 
+#' @param sexes either 1 to only plot female distribution, 2 for males, or 1:2
 #' to make both plots
 #' @template plotdir
 #' @template pwidth
@@ -57,7 +57,7 @@ SSplotRecdist <-
     nsexes <- 1
     recdist <- replist[["recruitment_dist"]]
 
-    # if version 3.24Q or beyond, recdist is a list, so choose the 
+    # if version 3.24Q or beyond, recdist is a list, so choose the
     # period requested by the function (defaults to initial)
     if ("recruit_dist_endyr" %in% names(recdist)) {
       recdist <- dplyr::case_when(
@@ -66,8 +66,8 @@ SSplotRecdist <-
         period == "End year" ~ recdist[["recruit_dist_endyr"]] # third choice
       )
     }
-    # prior to 3.30.23, 2-sex models only reported female recdist so treating 
-    # as 1-sex model with values representing the distribution of all recruits 
+    # prior to 3.30.23, 2-sex models only reported female recdist so treating
+    # as 1-sex model with values representing the distribution of all recruits
     # assuming no time-varying sex ratio
     if ("recr_dist_M" %in% names(recdist)) {
       nsexes <- 2
@@ -81,14 +81,14 @@ SSplotRecdist <-
     seasvec <- 1:nseasons
     if (is.null(areanames)) areanames <- paste("Area", 1:nareas, sep = "")
     if (is.null(seasnames)) seasnames <- paste("Season", 1:nseasons, sep = "")
-    
+
     # use table of recruit distribution to make 3D array
     recmat <- array(0, c(nareas, nseasons, nsexes))
     for (iarea in areavec) {
       for (iseas in seasvec) {
         if (replist[["SS_versionNumeric"]] == 3.3) { # At least 3.30.16 has this format, not sure when added to 3.30 versions
           recmat[iarea, iseas, 1] <- sum(recdist[["recr_dist_F"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas])
-          if (nsexes == 2){ # new column for males added in 3.30.23
+          if (nsexes == 2) { # new column for males added in 3.30.23
             recmat[iarea, iseas, 2] <- sum(recdist[["recr_dist_M"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas])
           }
         } else {
@@ -101,10 +101,10 @@ SSplotRecdist <-
     # only required for 2-sex models before male selectivity was reported
     # for which the female-only distributions will not sum to 1.0
     if (nsexes == 1 & sum(recmat) < 1) {
-      recmat[,,1] <- recmat[,,1] / sum(recmat[,,1])
+      recmat[, , 1] <- recmat[, , 1] / sum(recmat[, , 1])
     }
     recdistfun <- function(sex) {
-      image(areavec, seasvec, recmat[,,sex],
+      image(areavec, seasvec, recmat[, , sex],
         axes = F, xlab = xlab, ylab = ylab,
         main = paste(period, main), cex.main = cex.main
       )
@@ -122,19 +122,19 @@ SSplotRecdist <-
     rownames(recmat) <- areanames
     colnames(recmat) <- seasnames
     # make plots
-    for (sex in sexes) 
+    for (sex in sexes)
     {
       sexlabel <- "recruits"
       if (nsexes == 2 & "recr_dist_M" %in% names(recdist)) {
         sexlabel <- c("females", "males")[sex]
-      } 
+      }
       message1 <- paste("recruitment distribution of", sexlabel, "by area and season:\n")
       if (nsexes == 1) {
         message1 <- "recruitment distribution by area and season:\n"
       }
       message(
         message1,
-        paste0(utils::capture.output(recmat[,,sex]), collapse = "\n")
+        paste0(utils::capture.output(recmat[, , sex]), collapse = "\n")
       )
       if (plot) recdistfun(sex)
       if (print) {
