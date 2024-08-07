@@ -108,7 +108,7 @@ SSplotRecdist <-
     # that Ian could not replicate locally, so adding this warning to
     # avoid crash
     for (sex in sexes) {
-      if (!is.matrix(recmat[, , 1])) {
+      if (!is.matrix(recmat[, , sex])) {
         warning("Problem with format of recruitment distribution info")
         return()
       }
