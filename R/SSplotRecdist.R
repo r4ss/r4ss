@@ -113,9 +113,11 @@ SSplotRecdist <-
         return()
       }
     }
-
     recdistfun <- function(sex) {
-      image(areavec, seasvec, recmat[, , sex],
+      recmat_sex <- unlist(recmat[, , sex])
+      mode(recmat_sex) = "numeric"
+
+      image(areavec, seasvec, recmat_sex,
         axes = F, xlab = xlab, ylab = ylab,
         main = paste(period, main), cex.main = cex.main
       )
@@ -133,7 +135,7 @@ SSplotRecdist <-
     rownames(recmat) <- areanames
     colnames(recmat) <- seasnames
     # make plots
-    for (sex in sexes)
+    for (sex in 1:length(sexes))
     {
       sexlabel <- "recruits"
       if (nsexes == 2 & "recr_dist_M" %in% names(recdist)) {
@@ -156,7 +158,7 @@ SSplotRecdist <-
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
-        recdistfun()
+        recdistfun(sex)
         dev.off()
       }
     }
