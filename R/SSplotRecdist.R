@@ -135,7 +135,7 @@ SSplotRecdist <-
     rownames(recmat) <- areanames
     colnames(recmat) <- seasnames
     # make plots
-    for (sex in 1:length(sexes))
+    for (sex in sexes)
     {
       sexlabel <- "recruits"
       if (nsexes == 2 & "recr_dist_M" %in% names(recdist)) {
