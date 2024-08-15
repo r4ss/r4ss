@@ -115,7 +115,7 @@ SSplotRecdist <-
     }
     recdistfun <- function(sex) {
       recmat_sex <- unlist(recmat[, , sex])
-      mode(recmat_sex) = "numeric"
+      mode(recmat_sex) <- "numeric"
 
       image(areavec, seasvec, recmat_sex,
         axes = F, xlab = xlab, ylab = ylab,
