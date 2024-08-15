@@ -113,9 +113,11 @@ SSplotRecdist <-
         return()
       }
     }
-
     recdistfun <- function(sex) {
-      image(areavec, seasvec, recmat[, , sex],
+      recmat_sex <- unlist(recmat[, , sex])
+      mode(recmat_sex) <- "numeric"
+
+      image(areavec, seasvec, recmat_sex,
         axes = F, xlab = xlab, ylab = ylab,
         main = paste(period, main), cex.main = cex.main
       )
@@ -156,7 +158,7 @@ SSplotRecdist <-
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
-        recdistfun()
+        recdistfun(sex)
         dev.off()
       }
     }
