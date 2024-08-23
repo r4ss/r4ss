@@ -205,7 +205,12 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   if (length(grep("F_rate", parvals)) > 0) {
     temp_Frate_1 <- datlist[["catch"]]
     temp_Frate_1 <- temp_Frate_1[order(temp_Frate_1[["fleet"]], temp_Frate_1[["year"]], temp_Frate_1[["seas"]]), ]
-    temp_Frate_1 <- temp_Frate_1[is.element(temp_Frate_1[["fleet"]], ctllist[["F_4_Fleet_Parms"]][["Fleet"]][ctllist[["F_4_Fleet_Parms"]][["first_parm_phase"]] != 99]), , drop = FALSE]
+    #This option filters the catch data frame to only include values for fleets that
+    #have estimated parameters when using F_method=4 which allows some fleets to
+    #have F parameters and some to use the hybrid method.
+    if(!is.null(ctllist[["F_4_Fleet_Parms"]])){
+      temp_Frate_1 <- temp_Frate_1[is.element(temp_Frate_1[["fleet"]], ctllist[["F_4_Fleet_Parms"]][["Fleet"]][ctllist[["F_4_Fleet_Parms"]][["first_parm_phase"]] != 99]), , drop = FALSE]
+    }
     temp_Frate_1 <- temp_Frate_1[temp_Frate_1[["year"]] > 0, 1:4, drop = FALSE]
     temp_Frate_2 <- temp_Frate_1[temp_Frate_1[["catch"]] > 0, , drop = FALSE]
     if (length(temp_Frate_1[, 1]) == length(grep("F_rate", parvals))) {
