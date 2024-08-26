@@ -607,7 +607,7 @@ SS_readdat_3.30 <-
 
     ## Size frequency methods ----
     datlist[["N_sizefreq_methods_rd"]] <- get.val(dat, ind)
-    if (datlist[["N_sizefreq_methods_rd"]] == -1) {
+    if (datlist[["N_sizefreq_methods_rd"]] <= -1) {
       # new code added for 3.30.20 to support D-M likelihood
       datlist[["N_sizefreq_methods"]] <- get.val(dat, ind)
     } else {
