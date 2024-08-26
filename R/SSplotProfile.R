@@ -342,33 +342,33 @@ SSplotProfile <-
     ))
 
     # intuitive profile.label using profile.string
-    if(is.null(profile.label)){
-      if(grepl("steep", profile.string)){
+    if (is.null(profile.label)) {
+      if (grepl("steep", profile.string)) {
         profile.label <- "Spawner-recruit steepness (h)"
-      } 
-      if(grepl("R0", profile.string)){
+      }
+      if (grepl("R0", profile.string)) {
         profile.label <- paste0("Log of unfished equilibrium recruitment, ", expression(log(R[0])))
       }
-      if(grepl("NatM", profile.string) & grepl("Fem", profile.string)){
+      if (grepl("NatM", profile.string) & grepl("Fem", profile.string)) {
         profile.label <- "Female natural mortality (M)"
       }
-      if(grepl("NatM", profile.string) & grepl("Mal", profile.string)){
+      if (grepl("NatM", profile.string) & grepl("Mal", profile.string)) {
         profile.label <- "Male natural mortality (M)"
       }
-      if(grepl("LnQ", profile.string)){
+      if (grepl("LnQ", profile.string)) {
         profile.label <- paste0("Log of catchability, ", expression(log(q)))
       }
-      if(grepl("sigmaR", profile.string)){
+      if (grepl("sigmaR", profile.string)) {
         profile.label <- "SigmaR"
       }
-      if(grepl("L_at_Amax", profile.string) & grepl("Fem", profile.string)){
+      if (grepl("L_at_Amax", profile.string) & grepl("Fem", profile.string)) {
         profile.label <- "Female length at Amax"
       }
-      if(grepl("L_at_Amax", profile.string) & grepl("Mal", profile.string)){
+      if (grepl("L_at_Amax", profile.string) & grepl("Mal", profile.string)) {
         profile.label <- "Male length at Amax"
       }
-      if(is.null(profile.label)){
-        stop("The profile.string parameter is either not correct or not in the list 
+      if (is.null(profile.label)) {
+        stop("The profile.string parameter is either not correct or not in the list
         of parameters to automatically generate a profile.label for. Please fix profile.string
         to match one that is the parameters list OR manually enter in a profile.label in the function")
       }

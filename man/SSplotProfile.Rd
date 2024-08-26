@@ -10,7 +10,7 @@ SSplotProfile(
   print = FALSE,
   models = "all",
   profile.string = "steep",
-  profile.label = "Spawner-recruit steepness (h)",
+  profile.label = NULL,
   exact = FALSE,
   ylab = "Change in -log-likelihood",
   components = c("TOTAL", "Catch", "Equil_catch", "Survey", "Discard", "Mean_body_wt",
@@ -62,12 +62,12 @@ SSplotProfile(
 \item{print}{Print to PNG files?}
 
 \item{models}{Optional subset of the models described in
-\code{summaryoutput}.  Either "all" or a vector of numbers indicating
+\code{summaryoutput}. Either "all" or a vector of numbers indicating
 columns in summary tables.}
 
 \item{profile.string}{Character string used to find parameter over which the
 profile was conducted. If \code{exact=FALSE}, this can be a substring of
-one of the SS parameter labels found in the Report.sso file.
+one of the SS3 parameter labels found in the Report.sso file.
 For instance, the default input 'steep'
 matches the parameter 'SR_BH_steep'. If \code{exact=TRUE}, then
 profile.string needs to be an exact match to the parameter label.}
