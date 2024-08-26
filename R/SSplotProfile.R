@@ -9,11 +9,11 @@
 #' @template plot
 #' @template print
 #' @param models Optional subset of the models described in
-#' `summaryoutput`.  Either "all" or a vector of numbers indicating
+#' `summaryoutput`. Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param profile.string Character string used to find parameter over which the
 #' profile was conducted. If `exact=FALSE`, this can be a substring of
-#' one of the SS parameter labels found in the Report.sso file.
+#' one of the SS3 parameter labels found in the Report.sso file.
 #' For instance, the default input 'steep'
 #' matches the parameter 'SR_BH_steep'. If `exact=TRUE`, then
 #' profile.string needs to be an exact match to the parameter label.
@@ -86,7 +86,7 @@ SSplotProfile <-
            plot = TRUE, print = FALSE,
            models = "all",
            profile.string = "steep",
-           profile.label = "Spawner-recruit steepness (h)",
+           profile.label = NULL,
            exact = FALSE,
            ylab = "Change in -log-likelihood",
            components =
@@ -340,6 +340,39 @@ SSplotProfile <-
       NULL,
       2
     ))
+
+    # intuitive profile.label using profile.string
+    if(is.null(profile.label)){
+      if(grepl("steep", profile.string)){
+        profile.label <- "Spawner-recruit steepness (h)"
+      } 
+      if(grepl("R0", profile.string)){
+        profile.label <- paste0("Log of unfished equilibrium recruitment, ", expression(log(R[0])))
+      }
+      if(grepl("NatM", profile.string) & grepl("Fem", profile.string)){
+        profile.label <- "Female natural mortality (M)"
+      }
+      if(grepl("NatM", profile.string) & grepl("Mal", profile.string)){
+        profile.label <- "Male natural mortality (M)"
+      }
+      if(grepl("LnQ", profile.string)){
+        profile.label <- paste0("Log of catchability, ", expression(log(q)))
+      }
+      if(grepl("sigmaR", profile.string)){
+        profile.label <- "SigmaR"
+      }
+      if(grepl("L_at_Amax", profile.string) & grepl("Fem", profile.string)){
+        profile.label <- "Female length at Amax"
+      }
+      if(grepl("L_at_Amax", profile.string) & grepl("Mal", profile.string)){
+        profile.label <- "Male length at Amax"
+      }
+      if(is.null(profile.label)){
+        stop("The profile.string parameter is either not correct or not in the list 
+        of parameters to automatically generate a profile.label for. Please fix profile.string
+        to match one that is the parameters list OR manually enter in a profile.label in the function")
+      }
+    }
 
     # make plot
     plotprofile <- function() {
