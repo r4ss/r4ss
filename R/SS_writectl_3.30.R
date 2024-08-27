@@ -1,4 +1,4 @@
-#' write control file for SS version 3.30
+#' write control file for SS3 version 3.30
 #'
 #' write Stock Synthesis control file from list object in R which was created
 #'   using [SS_readctl()].This function is designed to be called
@@ -23,7 +23,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     stop(
       "ReadVersion must be '3.30', but is ", ctllist[["ReadVersion"]], ". ",
       "Please make sure the control file list object is created from a 3.30",
-      " SS model and not an earlier version."
+      " SS3 model and not an earlier version."
     )
   }
 
@@ -35,12 +35,11 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       file.remove(outfile)
     }
   }
-
   if (verbose) message("Opening connection to ", outfile, "\n")
   zz <- file(outfile, open = "at") # open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
 
-  # wl = write a line with a single value to an SS control file.
+  # wl = write a line with a single value to an SS3 control file.
   # @param name The name of the list component in ctllist to find
   # @param comment A comment to put after the value on the line. If no "#" is
   # included at the beginning, then "#_" is added to the beginning of the comment
@@ -61,7 +60,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     }
   }
 
-  # wl = write a line with a vector of values to an SS control file.
+  # wl = write a line with a vector of values to an SS3 control file.
   # @param name The name of the list component in ctllist to find
   # @param comment A comment to put after the value on the line. If no "#" is
   # included at the beginning, then "#_" is added to the beginning of the comment
@@ -163,7 +162,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   add_file_header(ctllist, con = zz)
 
   # Write the contents ----
-  # Make comments as consistent with SS 3.30 as possible.
+  # Make comments as consistent with SS3 3.30 as possible.
   # Beginning of ctl file ----
 
   wl("EmpiricalWAA",
@@ -319,7 +318,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   if (!ctllist[["GrowthModel"]] %in% c(1:5, 8)) {
     stop(
       "The GrowthModel", ctllist[["GrowthModel"]], "in ctllist ", ctllist,
-      " is not an option in SS 3.30. Valid growth options are 1-5 and 8."
+      " is not an option in SS3 3.30. Valid growth options are 1-5 and 8."
     )
   }
   writeComment("#", con = zz)
@@ -729,7 +728,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
   if (verbose) {
     warning(
       "Please note that time varying parameters for tagging not yet ",
-      "implemented as of SS version 3.30.13"
+      "implemented as of SS3 version 3.30.13"
     )
   }
   # Var Adj ----
