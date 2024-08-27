@@ -117,19 +117,15 @@ run <- function(dir = getwd(),
           if (grepl("'CreateProcess' failed to run", err)) { 
             stop(
               "There is a problem with the SS3 executable, perhaps due to mismatch ",
-              "with the operating system."
+              "with the operating system. Please make sure that you have the correct",
+              "executable and it is named appropriately for your operating system"
             )
           } else {
             err
           }
         }
       )
-      if (length(console_output) > 0 && console_output[1] == 127) {
-        stop(
-          "There is a problem with the executable, perhaps due to mismatch ",
-          "with the operating system."
-        )
-      }
+
       # write console output to file if not shown in console
       if (!show_in_console) {
         writeLines(
