@@ -470,7 +470,7 @@ add_file_header <- function(filelist, con) {
   Comments <- c(Comments, paste0(
     "#C file created using an r4ss function"
   ))
-  Comments <- c(Comments, paste("#C file write time:", format(Sys.time(),'%Y-%m-%d  %H:%M:%S')))
+  Comments <- c(Comments, paste("#C file write time:", format(Sys.time(), "%Y-%m-%d  %H:%M:%S")))
   # write all comments
   for (ln in Comments) {
     writeComment(text = ln, con = con)
