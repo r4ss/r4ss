@@ -579,8 +579,6 @@ SSplotCatch <-
           myname <- gsub(pattern = badstrings[i], replacement = " ", x = myname, fixed = T)
         }
         myname <- gsub(" ", "_", myname)
-        myname <- gsub("+", "and", myname)
-        # myname <- gsub(paste(c("[(]", "[)]"), collapse = "|"), "", myname)
         file <- paste0("catch", myname, ".png")
         # default caption is based on the subplot_names vector defined at the top
         caption <- substring(myname, 3)
