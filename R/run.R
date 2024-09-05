@@ -113,8 +113,8 @@ run <- function(dir = getwd(),
           ),
           stderr = ""
         ),
-        error = function(err){
-          if (grepl("'CreateProcess' failed to run", err)) { 
+        error = function(err) {
+          if (grepl("'CreateProcess' failed to run", err)) {
             stop(
               "There is a problem with the SS3 executable, perhaps due to mismatch ",
               "with the operating system. Please make sure that you have the correct",
