@@ -276,8 +276,8 @@ SSplotComps <-
         filenamestart <- "comp_lenfit_"
         titledata <- "Length comps, "
       }
-      if (!is.null(replist$Length_comp_error_controls) &&
-        any(replist$Length_comp_error_controls$mintailcomp >= 0)
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
       ) {
         tail_warning <- TRUE
       }
@@ -292,8 +292,8 @@ SSplotComps <-
         filenamestart <- "comp_gstlenfit_"
         titledata <- "Excluded length comps, "
       }
-      if (!is.null(replist$Length_comp_error_controls) &&
-        any(replist$Length_comp_error_controls$mintailcomp >= 0)
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
       ) {
         tail_warning <- TRUE
       }
@@ -355,8 +355,8 @@ SSplotComps <-
         filenamestart <- "comp_agefit_"
         titledata <- "Age comps, "
       }
-      if (!is.null(replist$Age_comp_error_controls) &&
-        any(replist$Age_comp_error_controls$mintailcomp >= 0)
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
       ) {
         tail_warning <- TRUE
       }
@@ -382,8 +382,8 @@ SSplotComps <-
         filenamestart <- "comp_gstagefit_"
         titledata <- "Excluded age comps, "
       }
-      if (!is.null(replist$Age_comp_error_controls) &&
-        any(replist$Age_comp_error_controls$mintailcomp >= 0)
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
       ) {
         tail_warning <- TRUE
       }
