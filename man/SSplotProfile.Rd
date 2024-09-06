@@ -73,7 +73,9 @@ matches the parameter 'SR_BH_steep'. If \code{exact=TRUE}, then
 profile.string needs to be an exact match to the parameter label.}
 
 \item{profile.label}{Label for x-axis describing the parameter over which
-the profile was conducted.}
+the profile was conducted. NULL value will be replaced by an informative
+label if the parameter label contains one of the follow strings:
+"steep", "R0", "NatM", "L_at_Amax", "sigmaR", or "LnQ".}
 
 \item{exact}{Should the \code{profile.string} have to match the parameter
 label exactly, or is a substring OK.}
