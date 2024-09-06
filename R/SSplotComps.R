@@ -2042,7 +2042,7 @@ SSplotComps <-
                   filenamestart,
                   ifelse(whichplot == 8,
                     "data_weighting_timeseries_",
-                    "data_weighting_TA1.8_"
+                    "data_weighting_TA1-8_"
                   ),
                   fleetnames[f], ".png"
                 )
@@ -2137,9 +2137,9 @@ SSplotComps <-
                   filenamestart,
                   ifelse(whichplot == 10,
                     "data_weighting_timeseries_condAge",
-                    "data_weighting_TA1.8_condAge"
+                    "data_weighting_TA1-8_condAge"
                   ),
-                  fleetnames[f], ".png"
+                  gsub(" ", "", fleetnames[f]), ".png"
                 )
                 # not using save_png because caption isn't available until after
                 # plot is created
