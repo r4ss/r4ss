@@ -1115,28 +1115,6 @@ SSexecutivesummary <- function(replist,
   } # end check for es_only == FALSE
 
   # ======================================================================
-  # Likelihoods
-  # ======================================================================
-  if (es_only == FALSE) {
-    csv_name <- "likelihoods.csv"
-
-    like <- cbind(
-      rownames(replist[["likelihoods_used"]]),
-      replist[["likelihoods_used"]][["values"]]
-    )
-    colnames(like) <- c("Label", "Total")
-    like[, 1] <- gsub("\\_", " ", like[, 1])
-    write.csv(like, file = file.path(csv.dir, csv_name), row.names = FALSE)
-
-    caption <- c(
-      caption,
-      "Negative log-likelihood components by data type."
-    )
-    tex.label <- c(tex.label, "likes")
-    filename <- c(filename, csv_name)
-  } # end check for es_only == FALSE
-
-  # ======================================================================
   # Write out table with all the captions for each executive summary table
   # ======================================================================
 
