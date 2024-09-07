@@ -265,6 +265,7 @@ SSplotComps <-
     titlesex <- ifelse(printsex, titlesex, "")
 
     # a few quantities related to data type and plot number
+    tail_warning <- FALSE
     if (kind == "LEN") {
       dbase_kind <- lendbase
       kindlab <- labels[1]
@@ -274,6 +275,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_lenfit_"
         titledata <- "Length comps, "
+      }
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "GSTLEN") {
@@ -285,6 +291,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_gstlenfit_"
         titledata <- "Excluded length comps, "
+      }
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "SIZE") {
@@ -344,6 +355,11 @@ SSplotComps <-
         filenamestart <- "comp_agefit_"
         titledata <- "Age comps, "
       }
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
+      }
     }
     if (kind == "cond") {
       dbase_kind <- condbase
@@ -365,6 +381,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_gstagefit_"
         titledata <- "Excluded age comps, "
+      }
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "GSTcond") {
@@ -591,6 +612,14 @@ SSplotComps <-
                   for (ipage in 1:npages) {
                     pagetext <- ""
                     caption <- caption1
+                    # add warning about tail compression
+                    if (ipage == 1 & tail_warning) {
+                      caption <- paste0(
+                        caption, ".\n <br> ",
+                        "Note: tail compression in use makes aggregated plots more difficult to interpret."
+                      )
+                    }
+                    # add warning about partitions
                     if (max_n_mkt > 0 & ipage == 1) {
                       caption <-
                         paste0(
@@ -601,6 +630,8 @@ SSplotComps <-
                           " the whole catch.\n"
                         )
                     }
+                    # remove double period if present
+                    caption <- gsub("..", ".", caption, fixed = TRUE)
                     if (npages > 1) {
                       pagetext <- paste("_page", ipage, sep = "")
                       caption <- paste(caption, "<br> (plot ", ipage, " of ", npages, ")", sep = "")
