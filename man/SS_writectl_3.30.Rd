@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_writectl_3.30.R
 \name{SS_writectl_3.30}
 \alias{SS_writectl_3.30}
-\title{write control file for SS version 3.30}
+\title{write control file for SS3 version 3.30}
 \usage{
 SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose = FALSE)
 }

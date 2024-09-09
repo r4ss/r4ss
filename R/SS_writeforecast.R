@@ -66,11 +66,8 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
 
   SSversion <- mylist[["SSversion"]]
 
-  writeLines("#C forecast file written by R function SS_writeforecast")
-  writeLines("#C rerun model to get more complete formatting in forecast.ss_new")
-  writeLines(paste("#C should work with SS version:", SSversion))
-  writeLines(paste("#C file write time:", Sys.time()))
-  writeLines("#")
+  # write a header
+  add_file_header(mylist, con = zz)
 
   wl("benchmarks")
   wl("MSY")

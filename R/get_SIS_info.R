@@ -172,14 +172,23 @@ get_SIS_info <- function(model,
   F_tab <- F_tab[F_tab[["Year"]] %in% years, ]
 
   # SPR-related quantities
-  spr_tab <- model[["sprseries"]][, c("Yr", "SPR_report", "Tot_Exploit", "SPR")]
+  if ("Tot_Exploit" %in% names(model[["sprseries"]])) {
+    spr_tab <- model[["sprseries"]][, c("Yr", "SPR_std", "Tot_Exploit", "SPR")]
+  } else {
+    spr_tab <- model[["sprseries"]][, c("Yr", "SPR")]
+    from_ann_ts <- model[["annual_time_series"]][, c("Yr", "SPR_std", "Tot_Exploit")]
+    from_ann_ts[["Yr"]] <- from_ann_ts[["year"]]
+    from_ann_ts[["Tot_Exploit"]] <- from_ann_ts[["tot_exploit"]]
+    spr_tab <- merge(from_ann_ts, spr_tab, by = "Yr")
+  }
+
   names(spr_tab)[1] <- "Year"
   if (model[["SPRratioLabel"]] != "1-SPR") {
-    # add 1-SPR if it does not exist as SPR_report already
+    # add 1-SPR if it does not exist as SPR_std already
     spr_tab[["1-SPR"]] <- 1 - spr_tab[["SPR"]]
-    spr_tab <- spr_tab[, c("Year", "SPR_report", "Tot_Exploit", "1-SPR")]
+    spr_tab <- spr_tab[, c("Year", "SPR_std", "Tot_Exploit", "1-SPR")]
   } else {
-    spr_tab <- spr_tab[, c("Year", "SPR_report", "Tot_Exploit")]
+    spr_tab <- spr_tab[, c("Year", "SPR_std", "Tot_Exploit")]
   }
   # filter years
   spr_tab <- spr_tab[spr_tab[["Year"]] %in% years, ]
@@ -198,14 +207,14 @@ get_SIS_info <- function(model,
   # replace NA with 0 in exploitation rate for years with 0 catch
   tab[["F_values"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
   # again for 8th column (SPR-ratio)
-  tab[["SPR_report"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
+  tab[["SPR_std"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
 
   # replace values with NA for years beyond the data years
   if (Mgt_Council == "PFMC") {
     tab[tab[["Year"]] > data_year, "Catch_bio"] <- NA
     tab[tab[["Year"]] > data_year, "Catch_n"] <- NA
     tab[tab[["Year"]] > data_year, "F_values"] <- NA
-    tab[tab[["Year"]] > data_year, "SPR_report"] <- NA
+    tab[tab[["Year"]] > data_year, "SPR_std"] <- NA
     tab[tab[["Year"]] > data_year, "Tot_Exploit"] <- NA
     if ("1-SPR" %in% names(tab)) {
       tab[tab[["Year"]] > data_year, "1-SPR"] <- NA
@@ -290,7 +299,7 @@ get_SIS_info <- function(model,
   header_info["Unit", "Catch_n"] <- "Number x 1000"
 
   # check for redundancy between F_values and Tot_Exploit columns
-  if (model[["F_report_basis"]] == "_abs_F;_with_F=Exploit(bio)") {
+  if (model[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)") {
     message(
       "F_YYYY values are redundant with Tot_Exploit column in SPR series, ",
       "excluding from output for SIS."
@@ -307,8 +316,8 @@ get_SIS_info <- function(model,
         Mgt_Council == "GM" ~ "XXXX", # fill in value here
         TRUE ~ "XXXX" # any other Mgt_Council
       )
-    # clean up F_report_basis (e.g. "_abs_F;_with_F=sum(full_Fs)" to "abs F; with F=sum(full Fs)")
-    header_info["Description", "F_values"] <- gsub("_", " ", gsub("^_", "", model[["F_report_basis"]]))
+    # clean up F_std_basis (e.g. "_abs_F;_with_F=sum(full_Fs)" to "abs F; with F=sum(full Fs)")
+    header_info["Description", "F_values"] <- gsub("_", " ", gsub("^_", "", model[["F_std_basis"]]))
 
     header_info["Unit", "F_values"] <- "Rate"
   }
@@ -325,18 +334,18 @@ get_SIS_info <- function(model,
     paste0("Relative Exploitation Rate (Catch/", summary_bio_label, ")")
   header_info["Unit", "Tot_Exploit"] <- "Rate"
 
-  # info on SPR_report (whatever is chosen for SPR ratio)
-  header_info["Category", "SPR_report"] <- "Fmort"
-  header_info["Primary", "SPR_report"] <-
+  # info on SPR_std (whatever is chosen for SPR ratio)
+  header_info["Category", "SPR_std"] <- "Fmort"
+  header_info["Primary", "SPR_std"] <-
     dplyr::case_when(
       Mgt_Council == "PFMC" ~ "Y", # often used as primary by PFMC
       Mgt_Council == "GM" ~ "XXXX", # fill in value here
       TRUE ~ "XXXX" # any other Mgt_Council
     )
-  header_info["Description", "SPR_report"] <- model[["SPRratioLabel"]]
-  header_info["Unit", "SPR_report"] <- "Rate"
+  header_info["Description", "SPR_std"] <- model[["SPRratioLabel"]]
+  header_info["Unit", "SPR_std"] <- "Rate"
 
-  # If SPR_report is not "1-SPR" (e.g. if it's a ratio of 1-SPR to something else)
+  # If SPR_std is not "1-SPR" (e.g. if it's a ratio of 1-SPR to something else)
   # then add column with 1 - SPR
   if (model[["SPRratioLabel"]] != "1-SPR") {
     header_info["Category", "1-SPR"] <- "Fmort"
@@ -346,8 +355,8 @@ get_SIS_info <- function(model,
         Mgt_Council == "GM" ~ "XXXX", # fill in value here
         TRUE ~ "XXXX" # any other Mgt_Council
       )
-    # change the value from the SPR_report set above
-    header_info["Primary", "SPR_report"] <-
+    # change the value from the SPR_std set above
+    header_info["Primary", "SPR_std"] <-
       dplyr::case_when(
         Mgt_Council == "PFMC" ~ "N", # SPR_ratio is not primary if not equal to 1-SPR
         Mgt_Council == "GM" ~ "XXXX", # fill in value here
@@ -454,7 +463,7 @@ get_SIS_info <- function(model,
   if (Mgt_Council == "PFMC") {
     best_F_column <- "1-SPR"
     if (!best_F_column %in% names(tab)) {
-      best_F_column <- "SPR_report"
+      best_F_column <- "SPR_std"
     }
     Best_F_Est <- tab[tab[["Year"]] == data_year, best_F_column]
     F_basis <- "Equilibrium SPR"

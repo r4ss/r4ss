@@ -440,8 +440,8 @@ tune_comps <- function(replist = NULL, fleets = "all",
       )
     }
     # determine which fleets specified by user are included in model
-    fleets_len <- fleets[fleets %in% unique(dat[["lencomp"]][, "FltSvy"])]
-    fleets_age <- fleets[fleets %in% unique(dat[["agecomp"]][, "FltSvy"])]
+    fleets_len <- fleets[fleets %in% unique(dat[["lencomp"]][, "fleet"])]
+    fleets_age <- fleets[fleets %in% unique(dat[["agecomp"]][, "fleet"])]
 
     # 1. specify the parameters in the data file need to do dirichlet MN
     if (!is.null(dat[["lencomp"]])) {

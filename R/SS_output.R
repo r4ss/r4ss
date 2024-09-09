@@ -1800,14 +1800,15 @@ SS_output <-
       header = TRUE, type.convert = TRUE
     )
     if (!is.null(recruitment_dist)) {
+      # convert to new column header used starting with 3.30.23
+      recruitment_dist <- df.rename(recruitment_dist,
+        oldnames = c("Frac/sex", "Value"),
+        newnames = c("recr_dist_F", "recr_dist_F")
+      )
       # calculate first season with recruitment
-      if ("Frac/sex" %in% names(recruitment_dist)) {
-        first_seas_with_recruits <-
-          min(recruitment_dist[["Seas"]][recruitment_dist$"Frac/sex" > 0])
-      } else {
-        first_seas_with_recruits <-
-          min(recruitment_dist[["Seas"]][recruitment_dist[["Value"]] > 0])
-      }
+      first_seas_with_recruits <-
+        min(recruitment_dist[["Seas"]][recruitment_dist$"recr_dist_F" > 0])
+
       # starting in SSv3.24Q there are additional tables
       # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
       # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
@@ -1819,6 +1820,7 @@ SS_output <-
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_FORECAST", 1,
             header = TRUE, type.convert = TRUE
           )
+          recruit_dist_timeseries <- NULL
         } else {
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_endyr", 1,
             header = TRUE, type.convert = TRUE
@@ -1828,12 +1830,27 @@ SS_output <-
             tmp_brk_line <- grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]]) - 1
             recruit_dist_endyr <- recruit_dist_endyr[seq_len(tmp_brk_line), ]
           }
+          recruit_dist_timeseries <- match_report_table(
+            "RECRUITMENT_DIST_TIMESERIES", 1,
+            header = FALSE, type.convert = FALSE
+          )
         }
+        # rename columns to format used starting with 3.30.23
+        recruit_dist_Bmark <- df.rename(recruit_dist_Bmark,
+          oldnames = c("Frac/sex", "Value"),
+          newnames = c("recr_dist_F", "recr_dist_F")
+        )
+        recruit_dist_endyr <- df.rename(recruit_dist_endyr,
+          oldnames = c("Frac/sex", "Value"),
+          newnames = c("recr_dist_F", "recr_dist_F")
+        )
+
         # bundle original and extra tables into a list
         recruitment_dist <- list(
           recruit_dist = recruitment_dist,
           recruit_dist_Bmark = recruit_dist_Bmark,
-          recruit_dist_endyr = recruit_dist_endyr
+          recruit_dist_endyr = recruit_dist_endyr,
+          recruit_dist_timeseries = recruit_dist_timeseries
         )
       }
     }
@@ -2900,8 +2917,9 @@ SS_output <-
       "EXPLOITATION", 20,
       header = FALSE
     )
-    # check for new header info added in 3.30.13_beta (14 Feb. 2019)
-    if (exploitation_head[1, 1] == "Info:") {
+    # check for new header info added in 3.30.13_beta (Feb 2019)
+    # "Info:" changed to "NOTE:" with 3.30.23 (Jul 2024)
+    if (exploitation_head[1, 1] %in% c("Info:", "NOTE:")) {
       # NOTE: add read of additional header info here
       exploitation <- match_report_table("EXPLOITATION",
         which(exploitation_head[, 1] == "Yr"),
@@ -3307,8 +3325,17 @@ SS_output <-
     returndat[["DF_mnwgt"]] <- DF_mnwgt
 
     # Yield and SPR time-series
-    spr <- match_report_table("SPR_SERIES", 5, header = TRUE)
-    # read again if missing using capitalization prior to 3.30.15.06
+    if (!is.na(match_report_line("reports_per_recruit_quantities_using_current_year_biology",
+      obj = rawrep[, 2]
+    ))
+    ) {
+      # check for new format starting with 3.30.23
+      spr <- match_report_table("SPR_SERIES", 6, header = TRUE)
+    } else {
+      spr <- match_report_table("SPR_SERIES", 5, header = TRUE)
+    }
+
+    # read SPR table again if missing using capitalization prior to 3.30.15.06
     if (is.null(spr)) {
       spr <- match_report_table("SPR_series", 5, header = TRUE)
     }
@@ -3316,25 +3343,41 @@ SS_output <-
     if (!is.null(spr)) {
       # clean up SPR output
       # make older SS output names match current SS output conventions
+      # note: SPR_std and SPR_report have switched back and forth over the years
+      # but as of 3.30.23 is SPR_std
       names(spr) <- gsub(pattern = "SPB", replacement = "SSB", names(spr))
       spr <- df.rename(spr,
-        oldnames = c("Year", "spawn_bio", "SPR_std", "Y/R", "F_std"),
-        newnames = c("Yr", "SpawnBio", "SPR_report", "YPR", "F_report")
+        oldnames = c("Year", "spawn_bio", "SPR_report", "Y/R", "F_report"),
+        newnames = c("Yr", "SpawnBio", "SPR_std", "YPR", "F_std")
       )
+      # additional conversions starting in 3.30.23
+      spr <- df.rename(spr,
+        oldnames = c("Bio_all", "Bio_Smry", "SSB_unfished", "SSBfished"),
+        newnames = c("Bio_all_eq", "Bio_Smry_eq", "SSB_unfished_eq", "SSBfished_eq")
+      )
+
       spr[spr == "_"] <- NA
       spr[spr == "&"] <- NA
       spr[spr == "-1.#IND"] <- NA
       spr <- type.convert(spr, as.is = TRUE)
-      # spr <- spr[spr[["Year"]] <= endyr,]
-      spr[["spr"]] <- spr[["SPR"]]
-      stats[["last_years_SPR"]] <- spr[["spr"]][nrow(spr)]
       stats[["SPRratioLabel"]] <- managementratiolabels[1, 2]
-      stats[["last_years_SPRratio"]] <- spr[["SPR_std"]][nrow(spr)]
     }
-    returndat[["sprseries"]] <- spr
 
+    # Add this section for 3.30.23 separation of the spr table into the spr
+    # series and the annual time series
+    ann_ts <- match_report_table("ANNUAL_TIME_SERIES",
+      adjust1 = 9,
+      header = TRUE
+    )
+    ann_ts[ann_ts == "_"] <- NA
+    ann_ts[ann_ts == "&"] <- NA
+    ann_ts[ann_ts == "-1.#IND"] <- NA
+    ann_ts <- type.convert(ann_ts, as.is = TRUE)
+
+    returndat[["sprseries"]] <- spr
+    returndat[["annual_time_series"]] <- ann_ts
     returndat[["managementratiolabels"]] <- managementratiolabels
-    returndat[["F_report_basis"]] <- managementratiolabels[["Label"]][2]
+    returndat[["F_std_basis"]] <- managementratiolabels[["Label"]][2]
     returndat[["sprtarg"]] <- sprtarg
     returndat[["btarg"]] <- btarg
 
@@ -3535,7 +3578,10 @@ SS_output <-
     returndat[["discard_at_age"]] <- discard_at_age
 
     # catch at age
-    catage <- match_report_table("CATCH_AT_AGE", 1,
+    catage <- match_report_table("CATCH_AT_AGE",
+      # skip note added in 3.30.23:
+      # "#_NOTE: catage is based on: sel_dead_num = sel * (retain + (1-retain)*discmort)"
+      adjust1 = ifelse(is.na(match_report_line("catage", obj = rawrep[, 2])), yes = 1, no = 2),
       header = TRUE, type.convert = TRUE
     )
     returndat[["catage"]] <- catage

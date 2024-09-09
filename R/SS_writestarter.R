@@ -83,11 +83,8 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
     }
   }
 
-  writeLines("#C starter file written by R function SS_writestarter")
-  writeLines("#C rerun model to get more complete formatting in starter.ss_new")
-  writeLines(paste("#C should work with SS version:", mylist[["SSversion"]]))
-  writeLines(paste("#C file write time:", Sys.time()))
-  writeLines("#")
+  # write a header
+  add_file_header(mylist, con = zz)
 
   # strings for control and data file names
   wl("datfile")
@@ -128,11 +125,11 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
   wl("depl_basis")
   wl("depl_denom_frac")
   wl("SPR_basis")
-  wl("F_report_units")
-  if (mylist[["F_report_units"]] %in% 4:5) {
+  wl("F_std_units")
+  if (mylist[["F_std_units"]] %in% 4:5) {
     cat(mylist[["F_age_range"]], "#_F_age_range\n")
   }
-  wl("F_report_basis")
+  wl("F_std_basis")
   # only write ALK_tolerance if this is SSv3.30 (value didn't exist in 3.24)
   if (mylist[["final"]] == 3.3) {
     wl("MCMC_output_detail")

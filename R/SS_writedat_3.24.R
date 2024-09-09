@@ -309,7 +309,7 @@ SS_writedat_3.24 <- function(datlist,
     writeComment("#_sizefreq_bins_list")
     #  lapply(datlist[["sizefreq_bins_list"]],FUN=function(line){writeLines(paste(line,collapse=" "))})
     wl.list("sizefreq_bins_list")
-    #  writeLines("#_Year season Fleet Gender Partition SampleSize <data> ")
+    #  writeLines("#_Year season Fleet Sex Partition SampleSize <data> ")
     lapply(datlist[["sizefreq_data_list"]], printdf)
   }
   # write tagging data

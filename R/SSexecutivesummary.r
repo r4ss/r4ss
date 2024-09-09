@@ -419,7 +419,7 @@ SSexecutivesummary <- function(replist,
   }
 
   spr_type <- replist[["SPRratioLabel"]]
-  f_type <- ifelse(replist[["F_report_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
+  f_type <- ifelse(replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
     "Fill in F method"
   )
 
@@ -738,7 +738,7 @@ SSexecutivesummary <- function(replist,
   }
 
   spr_type <- replist[["SPRratioLabel"]] # strsplit(base[grep(spr.name,base)]," ")[[1]][3]
-  f_type <- ifelse(replist[["F_report_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
+  f_type <- ifelse(replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
     "Fill in F method"
   )
   adj.spr <- Get.Values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
@@ -1112,28 +1112,6 @@ SSexecutivesummary <- function(replist,
         write.csv(batage.f, file.path(csv.dir, "batage_f.csv"), row.names = FALSE)
       }
     } # end check for detailed output
-  } # end check for es_only == FALSE
-
-  # ======================================================================
-  # Likelihoods
-  # ======================================================================
-  if (es_only == FALSE) {
-    csv_name <- "likelihoods.csv"
-
-    like <- cbind(
-      rownames(replist[["likelihoods_used"]]),
-      replist[["likelihoods_used"]][["values"]]
-    )
-    colnames(like) <- c("Label", "Total")
-    like[, 1] <- gsub("\\_", " ", like[, 1])
-    write.csv(like, file = file.path(csv.dir, csv_name), row.names = FALSE)
-
-    caption <- c(
-      caption,
-      "Negative log-likelihood components by data type."
-    )
-    tex.label <- c(tex.label, "likes")
-    filename <- c(filename, csv_name)
   } # end check for es_only == FALSE
 
   # ======================================================================
