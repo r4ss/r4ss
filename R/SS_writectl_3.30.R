@@ -705,7 +705,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
         ctllist[["pars_2D_AR"]][grepl(
           pattern = paste0("fleet", fleet),
           x = rownames(ctllist[["pars_2D_AR"]])
-        ),]
+        ), ]
       )
     }
     writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
