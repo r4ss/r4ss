@@ -55,7 +55,7 @@ total.</p>
 <span>  print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  models <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  profile.string <span class="op">=</span> <span class="st">"steep"</span>,</span>
-<span>  profile.label <span class="op">=</span> <span class="st">"Spawner-recruit steepness (h)"</span>,</span>
+<span>  profile.label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  exact <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="st">"Change in -log-likelihood"</span>,</span>
 <span>  components <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TOTAL"</span>, <span class="st">"Catch"</span>, <span class="st">"Equil_catch"</span>, <span class="st">"Survey"</span>, <span class="st">"Discard"</span>, <span class="st">"Mean_body_wt"</span>,</span>
@@ -118,14 +118,14 @@ total.</p>
 
 <dt id="arg-models">models<a class="anchor" aria-label="anchor" href="#arg-models"></a></dt>
 <dd><p>Optional subset of the models described in
-<code>summaryoutput</code>.  Either "all" or a vector of numbers indicating
+<code>summaryoutput</code>. Either "all" or a vector of numbers indicating
 columns in summary tables.</p></dd>
 
 
 <dt id="arg-profile-string">profile.string<a class="anchor" aria-label="anchor" href="#arg-profile-string"></a></dt>
 <dd><p>Character string used to find parameter over which the
 profile was conducted. If <code>exact=FALSE</code>, this can be a substring of
-one of the SS parameter labels found in the Report.sso file.
+one of the SS3 parameter labels found in the Report.sso file.
 For instance, the default input 'steep'
 matches the parameter 'SR_BH_steep'. If <code>exact=TRUE</code>, then
 profile.string needs to be an exact match to the parameter label.</p></dd>
@@ -133,7 +133,9 @@ profile.string needs to be an exact match to the parameter label.</p></dd>
 
 <dt id="arg-profile-label">profile.label<a class="anchor" aria-label="anchor" href="#arg-profile-label"></a></dt>
 <dd><p>Label for x-axis describing the parameter over which
-the profile was conducted.</p></dd>
+the profile was conducted. NULL value will be replaced by an informative
+label if the parameter label contains one of the follow strings:
+"steep", "R0", "NatM", "L_at_Amax", "sigmaR", or "LnQ".</p></dd>
 
 
 <dt id="arg-exact">exact<a class="anchor" aria-label="anchor" href="#arg-exact"></a></dt>
