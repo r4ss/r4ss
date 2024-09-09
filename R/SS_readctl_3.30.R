@@ -1359,7 +1359,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
         "sig_amax", "use_rho", "l1/a2", "devphase", "before_range", "after_range"
       )
       x$.i <- x$.i + 11
-      sigma_sel_ages <- specs2D$amin:specs2D$sig_amax
+      sigma_sel_ages <- specs2D[["amin"]]:specs2D[["sig_amax"]]
       n_par_vals <- (2 + length(sigma_sel_ages)) * 7
       # read parameter rows
       par2D <- as.data.frame(
@@ -1371,9 +1371,9 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
       colnames(par2D) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE")
       # parameter labels
       rownames(par2D) <- c(
-        paste0("sigma_sel_fleet", specs2D$fleet, "_age", sigma_sel_ages),
-        paste0("rho_year_fleet", specs2D$fleet),
-        paste0("rho_age_fleet", specs2D$fleet)
+        paste0("sigma_sel_fleet", specs2D[["fleet"]], "_age", sigma_sel_ages),
+        paste0("rho_year_fleet", specs2D[["fleet"]]),
+        paste0("rho_age_fleet", specs2D[["fleet"]])
       )
       x[[".i"]] <- x[[".i"]] + n_par_vals
       x[["specs_2D_AR"]] <- rbind(x[["specs_2D_AR"]], specs2D)
