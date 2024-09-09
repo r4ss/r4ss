@@ -698,8 +698,16 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     writeComment("#_no 2D_AR1 selex offset used", con = zz)
   } else if (ctllist[["Use_2D_AR1_selectivity"]] == 1) {
     writeComment("#_specifications for 2D_AR1 and associated parameters", con = zz)
-    printdf("specs_2D_AR")
-    printdf("pars_2D_AR")
+    for (irow in 1:nrow(ctllist[["specs_2D_AR"]])) {
+      printdf(ctllist[["specs_2D_AR"]][irow, ])
+      fleet <- ctllist[["specs_2D_AR"]][irow, "fleet"]
+      printdf(
+        ctllist[["pars_2D_AR"]][grepl(
+          pattern = paste0("fleet", fleet),
+          x = rownames(ctllist[["pars_2D_AR"]])
+        ),]
+      )
+    }
     writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
   } else {
     stop(
