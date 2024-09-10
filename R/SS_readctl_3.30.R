@@ -1347,34 +1347,48 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   ctllist <- add_elem(ctllist, name = "Use_2D_AR1_selectivity")
   if (ctllist[["Use_2D_AR1_selectivity"]] == 1) {
     add_2dar <- function(x) {
-      end <- x$.i
-      while (length(grep("^-9999", x$.dat[end])) == 0) {
-        end <- end + 1
-      }
-      n2dfleets <- length(x$.dat[x$.i:(end - 1)]) / (11 + 3 * 7)
-      par2D <- matrix(x$.dat[(end - 3 * 7 * n2dfleets):(end - 1)],
-        nrow = 3 * n2dfleets, byrow = TRUE
-      )
-      colnames(par2D) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE")
-      names2D <- c("sigma_sel", "rho_year", "rho_age")
-      rownames(par2D) <- sprintf(
-        paste0(names2D, ":%d"),
-        rep(1:n2dfleets, each = 3)
-      )
-      specs2D <- matrix(x$.dat[x$.i:(x$.i + 10 * n2dfleets)],
-        nrow = n2dfleets, byrow = TRUE
-      )
+      # function to read 2D_AR selectivity info for a single fleet
+      # (info for additional fleets follows the previous)
+
+      # read 10-element row with specs for individual fleet
+      specs2D <- as.data.frame(matrix(x$.dat[x$.i:(x$.i + 10)],
+        nrow = 1
+      ), stringsAsFactors = FALSE)
       colnames(specs2D) <- c(
         "fleet", "ymin", "ymax", "amin", "amax",
         "sig_amax", "use_rho", "l1/a2", "devphase", "before_range", "after_range"
       )
-      rownames(specs2D) <- paste0("2d_AR specs:", 1:n2dfleets)
-      x[["specs_2D_AR"]] <- as.data.frame(specs2D, stringsAsFactors = FALSE)
-      x[["pars_2D_AR"]] <- as.data.frame(par2D, stringsAsFactors = FALSE)
-      x[[".i"]] <- end + 11
+      x$.i <- x$.i + 11
+      sigma_sel_ages <- specs2D[["amin"]]:specs2D[["sig_amax"]]
+      n_par_vals <- (2 + length(sigma_sel_ages)) * 7
+      # read parameter rows
+      par2D <- as.data.frame(
+        matrix(x$.dat[x$.i + 1:n_par_vals - 1],
+          nrow = 2 + length(sigma_sel_ages), byrow = TRUE
+        ),
+        stringsAsFactors = FALSE
+      )
+      colnames(par2D) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE")
+      # parameter labels
+      rownames(par2D) <- c(
+        paste0("sigma_sel_fleet", specs2D[["fleet"]], "_age", sigma_sel_ages),
+        paste0("rho_year_fleet", specs2D[["fleet"]]),
+        paste0("rho_age_fleet", specs2D[["fleet"]])
+      )
+      x[[".i"]] <- x[[".i"]] + n_par_vals
+      x[["specs_2D_AR"]] <- rbind(x[["specs_2D_AR"]], specs2D)
+      x[["pars_2D_AR"]] <- rbind(x[["pars_2D_AR"]], par2D)
       return(x)
     }
-    ctllist <- add_2dar(x = ctllist)
+    # placeholder dataframes to add info to for each fleet with 2D_AR selectivity
+    ctllist[["specs_2D_AR"]] <- NULL
+    ctllist[["pars_2D_AR"]] <- NULL
+    # add info one fleet at a time until -9999 row is reached
+    while (length(grep("^-9999", ctllist$.dat[ctllist$.i])) == 0) {
+      ctllist <- add_2dar(x = ctllist)
+    }
+    # account for length of -9999 row
+    ctllist[[".i"]] <- ctllist[[".i"]] + 11
   }
 
   # tagging ----
