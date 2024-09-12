@@ -103,7 +103,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
     indexUncertainty = TRUE
   )
   # confirm that function finished
-  expect_equal(length(comparison_plots), 17)
+  expect_equal(length(comparison_plots), 19)
 
   # make table of comparisons
   simple_table <- SStableComparisons(simple_summary, verbose = FALSE)
