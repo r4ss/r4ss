@@ -13,6 +13,8 @@
 #'   \item 2  spawning biomass with uncertainty intervals
 #'   \item 3  biomass ratio (hopefully equal to fraction of unfished)
 #'   \item 4  biomass ratio with uncertainty
+#'   \item 18  summary biomass
+#'   \item 19  summary biomass with uncertainty
 #'   \item 5  SPR ratio
 #'   \item 6  SPR ratio with uncertainty
 #'   \item 7  F value
@@ -217,7 +219,9 @@ SSplotComparisons <-
              "Management target", # 10
              "Minimum stock size threshold", # 11
              "Spawning output", # 12
-             "Harvest rate" # 13
+             "Harvest rate", # 13
+             "Summary biomass (t)", #14
+             "Age X+ biomass (t)" #15
            ),
            col = NULL, shadecol = NULL,
            pch = NULL, lty = 1, lwd = 2,
@@ -353,6 +357,9 @@ SSplotComparisons <-
     Bratio <- summaryoutput[["Bratio"]]
     BratioLower <- summaryoutput[["BratioLower"]]
     BratioUpper <- summaryoutput[["BratioUpper"]]
+    SmryBio <- summaryoutput[["SmryBio"]]
+    SmryBioLower <- summaryoutput[["SmryBioLower"]]
+    SmryBioUpper <- summaryoutput[["SmryBioUpper"]]
     SPRratio <- summaryoutput[["SPRratio"]]
     SPRratioLower <- summaryoutput[["SPRratioLower"]]
     SPRratioUpper <- summaryoutput[["SPRratioUpper"]]
@@ -593,7 +600,7 @@ SSplotComparisons <-
 
       ### get MCMC for SpawnBio
       tmp <- grep("SSB", names(mcmc[[imodel]])) # try it to see what you get
-      # exclude rows that aren't part of the timseries
+      # exclude rows that aren't part of the timeseries
       tmp2 <- c(
         grep("SSB_unfished", names(mcmc[[imodel]]), ignore.case = TRUE),
         grep("SSB_Btgt", names(mcmc[[imodel]]), ignore.case = TRUE),
@@ -626,6 +633,20 @@ SSplotComparisons <-
         Bratio[, imodel] <- med[match(Bratio[["Label"]], mcmclabs)]
         BratioLower[, imodel] <- lower[match(BratioLower[["Label"]], mcmclabs)]
         BratioUpper[, imodel] <- upper[match(BratioUpper[["Label"]], mcmclabs)]
+      }
+
+      ### get MCMC for SmryBio
+      tmp <- grep("SmryBio", names(mcmc[[imodel]])) # try it to see what you get
+      if (length(tmp) > 0) { # there are some mcmc values to use
+        # subset of columns from MCMC for this model
+        mcmc.tmp <- mcmc[[imodel]][, tmp]
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
+        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
+        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
+        SmryBio[, imodel] <- med[match(SmryBio[["Label"]], mcmclabs)]
+        SmryBioLower[, imodel] <- lower[match(SmryBioLower[["Label"]], mcmclabs)]
+        SmryBioUpper[, imodel] <- upper[match(SmryBioUpper[["Label"]], mcmclabs)]
       }
 
       ### get MCMC for SPRratio
@@ -758,8 +779,18 @@ SSplotComparisons <-
 
     ## equ <- -(1:2) # IGT 2020/3/12: this variable seems to not be used
 
-    # function to plot spawning biomass
-    plotSpawnBio <- function(show_uncertainty = TRUE) {
+    # function to plot spawning biomass (option 1) or summary biomass (option 2)
+    plotBio <- function(option, show_uncertainty = TRUE) {
+      if (option == 1) {
+        Bio <- SpawnBio
+        BioUpper <- SpawnBioUpper
+        BioLower <- SpawnBioLower
+      }
+      if (option != 1) {
+        Bio <- SmryBio
+        BioUpper <- SmryBioUpper
+        BioLower <- SmryBioLower
+      }
       # only show uncertainty if values are present for at least one model
       if (!any(uncertainty)) {
         show_uncertainty <- FALSE
@@ -767,23 +798,23 @@ SSplotComparisons <-
       # get axis limits
       if (is.null(xlim)) {
         if (show_equilibrium) {
-          xlim <- range(SpawnBio[["Yr"]])
+          xlim <- range(Bio[["Yr"]]) + c(-0.2, 0.2)
         } else {
-          xlim <- range(SpawnBio[["Yr"]][-c(1, 2)])
+          xlim <- range(Bio[["Yr"]][-c(1, 2)]) + c(-0.2, 0.2)
         }
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
         }
       }
-      ylim <- ylimAdj * range(0, SpawnBio[
-        SpawnBio[["Yr"]] >= xlim[1] &
-          SpawnBio[["Yr"]] <= xlim[2],
+      ylim <- ylimAdj * range(0, Bio[
+        Bio[["Yr"]] >= xlim[1] &
+          Bio[["Yr"]] <= xlim[2],
         models
       ], na.rm = TRUE)
       if (show_uncertainty) {
-        ylim <- range(ylim, ylimAdj * SpawnBioUpper[
-          SpawnBio[["Yr"]] >= xlim[1] &
-            SpawnBio[["Yr"]] <= xlim[2],
+        ylim <- range(ylim, ylimAdj * BioUpper[
+          Bio[["Yr"]] >= xlim[1] &
+            Bio[["Yr"]] <= xlim[2],
           models[uncertainty]
         ], na.rm = TRUE)
       }
@@ -795,13 +826,22 @@ SSplotComparisons <-
           " for spawning output than others"
         )
       }
-      # if either SpawnOutputUnits is unknown or in numbers,
-      # use label "Spawning output"
-      if (all(is.na(SpawnOutputUnits)) || any(SpawnOutputUnits == "numbers")) {
-        ylab <- labels[12] # numbers
+      if (option == 1) {
+        # if either SpawnOutputUnits is unknown or in numbers,
+        # use label "Spawning output"
+        if (all(is.na(SpawnOutputUnits)) || any(SpawnOutputUnits == "numbers")) {
+          ylab <- labels[12] # numbers
+        } else {
+          # otherwise (if all are in "biomass"), use "Spawning biomass"
+          ylab <- labels[2] # biomass
+        }
       } else {
-        # otherwise (if all are in "biomass"), use "Spawning biomass"
-        ylab <- labels[2] # biomass
+        # summary biomass
+        ylab <- labels[14]
+        summary_age <- unique(summaryoutput[["summary_ages"]])
+        if (length(summary_age) == 1) {
+          ylab <- gsub("X", summary_age, labels[15])
+        }
       }
 
       # do some scaling of y-axis
@@ -829,37 +869,37 @@ SSplotComparisons <-
       if (show_uncertainty) {
         # add shading for undertainty
         addpoly(
-          yrvec = SpawnBio[["Yr"]][-(1:2)], lower = SpawnBioLower[-(1:2), ],
-          upper = SpawnBioUpper[-(1:2), ]
+          yrvec = Bio[["Yr"]][-(1:2)], lower = BioLower[-(1:2), ],
+          upper = BioUpper[-(1:2), ]
         )
         # equilibrium spawning biomass year by model
-        xEqu <- SpawnBio[["Yr"]][2] - (1:nlines) / nlines
+        xEqu <- Bio[["Yr"]][2] - (1:nlines) / nlines
       } else {
         # equilibrium spawning biomass year by model
-        xEqu <- rep(SpawnBio[["Yr"]][2], nlines)
+        xEqu <- rep(Bio[["Yr"]][2], nlines)
       }
       # draw points and lines
       if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
-        matplot(SpawnBio[["Yr"]][-(1:2)], SpawnBio[-(1:2), models],
+        matplot(Bio[["Yr"]][-(1:2)], Bio[-(1:2), models],
           col = col, pch = pch, lty = lty, lwd = lwd, type = type,
           ylim = ylim, add = TRUE
         )
       } else {
         # spread out points with interval equal to spacepoints and
         # staggering equal to staggerpoints
-        matplot(SpawnBio[["Yr"]][-(1:2)], SpawnBio[-(1:2), models],
+        matplot(Bio[["Yr"]][-(1:2)], Bio[-(1:2), models],
           col = col, lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
         )
-        SpawnBio2 <- SpawnBio
+        Bio2 <- Bio
         for (iline in 1:nlines) {
           imodel <- models[iline]
-          SpawnBio2[
-            (SpawnBio2[["Yr"]] - initpoint) %% spacepoints !=
+          Bio2[
+            (Bio2[["Yr"]] - initpoint) %% spacepoints !=
               (staggerpoints * iline) %% spacepoints,
             imodel
           ] <- NA
         }
-        matplot(SpawnBio2[["Yr"]][-(1:2)], SpawnBio2[-(1:2), models],
+        matplot(Bio2[["Yr"]][-(1:2)], Bio2[-(1:2), models],
           col = col, pch = pch, lwd = lwd, type = "p", ylim = ylim, add = TRUE
         )
       }
@@ -871,9 +911,9 @@ SSplotComparisons <-
         if (show_uncertainty) {
           arrows(
             x0 = xEqu[models[uncertainty]],
-            y0 = as.numeric(SpawnBioLower[1, models[uncertainty]]),
+            y0 = as.numeric(BioLower[1, models[uncertainty]]),
             x1 = xEqu[models[uncertainty]],
-            y1 = as.numeric(SpawnBioUpper[1, models[uncertainty]]),
+            y1 = as.numeric(BioUpper[1, models[uncertainty]]),
             length = 0.01, angle = 90, code = 3, col = col[uncertainty],
             lwd = 2
           )
@@ -881,7 +921,7 @@ SSplotComparisons <-
         options(warn = old_warn) # returning to old value
         ## add points at equilibrium values
         points(
-          x = xEqu, SpawnBio[1, models], col = col, pch = pch,
+          x = xEqu, Bio[1, models], col = col, pch = pch,
           cex = 1.2, lwd = lwd
         )
       }
@@ -2252,11 +2292,11 @@ SSplotComparisons <-
         message("subplot 1: spawning biomass")
       }
       if (plot) {
-        ymax_vec[1] <- plotSpawnBio(show_uncertainty = FALSE)
+        ymax_vec[1] <- plotBio(option = 1, show_uncertainty = FALSE)
       }
       if (print) {
         save_png_comparisons("compare1_spawnbio.png")
-        ymax_vec[1] <- plotSpawnBio(show_uncertainty = FALSE)
+        ymax_vec[1] <- plotBio(option = 1, show_uncertainty = FALSE)
         dev.off()
       }
     }
@@ -2268,11 +2308,11 @@ SSplotComparisons <-
           message("subplot 2: spawning biomass with uncertainty intervals")
         }
         if (plot) {
-          ymax_vec[2] <- plotSpawnBio(show_uncertainty = TRUE)
+          ymax_vec[2] <- plotBio(option = 1, show_uncertainty = TRUE)
         }
         if (print) {
           save_png_comparisons("compare2_spawnbio_uncertainty.png")
-          ymax_vec[2] <- plotSpawnBio(show_uncertainty = TRUE)
+          ymax_vec[2] <- plotBio(option = 1, show_uncertainty = TRUE)
           dev.off()
         }
       }
@@ -2306,6 +2346,38 @@ SSplotComparisons <-
         if (print) {
           save_png_comparisons("compare4_Bratio_uncertainty.png")
           ymax_vec[4] <- plotBratio(show_uncertainty = TRUE)
+          dev.off()
+        }
+      }
+    }
+
+    # subplot 18: summary biomass
+    if (18 %in% subplots) {
+      if (verbose) {
+        message("subplot 18: summary biomass")
+      }
+      if (plot) {
+        ymax_vec[18] <- plotBio(option = 2, show_uncertainty = FALSE)
+      }
+      if (print) {
+        save_png_comparisons("compare18_spawnbio.png")
+        ymax_vec[18] <- plotBio(option = 2, show_uncertainty = FALSE)
+        dev.off()
+      }
+    }
+
+    # subplot 19: summary biomass with uncertainty intervals
+    if (19 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplot 19: summary biomass with uncertainty intervals")
+        }
+        if (plot) {
+          ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
+        }
+        if (print) {
+          save_png_comparisons("compare19_spawnbio_uncertainty.png")
+          ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
           dev.off()
         }
       }
