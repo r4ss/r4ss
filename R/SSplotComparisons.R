@@ -360,6 +360,12 @@ SSplotComparisons <-
     SmryBio <- summaryoutput[["SmryBio"]]
     SmryBioLower <- summaryoutput[["SmryBioLower"]]
     SmryBioUpper <- summaryoutput[["SmryBioUpper"]]
+    # if SmryBioUnfished is the final label, it's because one of the models is older, probably 3.24
+    if (tail(SmryBio$Label, 1) == "SmryBio_Unfished") {
+      SmryBio <- SmryBio |> dplyr::filter(Label != "SmryBio_Unfished")
+      SmryBioLower <- SmryBioLower |> dplyr::filter(Label != "SmryBio_Unfished")
+      SmryBioUpper <- SmryBioUpper |> dplyr::filter(Label != "SmryBio_Unfished")
+    } 
     SPRratio <- summaryoutput[["SPRratio"]]
     SPRratioLower <- summaryoutput[["SPRratioLower"]]
     SPRratioUpper <- summaryoutput[["SPRratioUpper"]]
@@ -798,9 +804,9 @@ SSplotComparisons <-
       # get axis limits
       if (is.null(xlim)) {
         if (show_equilibrium) {
-          xlim <- range(Bio[["Yr"]]) + c(-0.2, 0.2)
+          xlim <- range(Bio[["Yr"]], na.rm = TRUE) + c(-0.2, 0.2)
         } else {
-          xlim <- range(Bio[["Yr"]][-c(1, 2)]) + c(-0.2, 0.2)
+          xlim <- range(Bio[["Yr"]][-c(1, 2)], na.rm = TRUE) + c(-0.2, 0.2)
         }
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
