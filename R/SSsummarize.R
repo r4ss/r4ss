@@ -118,8 +118,10 @@ SSsummarize <- function(biglist,
   }
   # check summary biomass age
   if (length(unique(summary_ages)) > 1) {
-    warning("Age used in summary biomass calculations differs among models:",
-    paste(summary_ages, collapse = " "))
+    warning(
+      "Age used in summary biomass calculations differs among models:",
+      paste(summary_ages, collapse = " ")
+    )
   }
   # notes about what runs were used
   sim <- NULL
