@@ -567,6 +567,7 @@ SSsummarize <- function(biglist,
   SmryBiorows <- grep("SmryBio_", quants[["Label"]])
   # exclude "unfished" value--though may be useful in the future
   SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_unfished", quants[["Label"]]))
+  SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_Unfished", quants[["Label"]]))
 
   # identify summary biomass parameters
   SmryBio <- quants[SmryBiorows, ]
