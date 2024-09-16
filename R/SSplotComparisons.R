@@ -2367,7 +2367,7 @@ SSplotComparisons <-
         ymax_vec[18] <- plotBio(option = 2, show_uncertainty = FALSE)
       }
       if (print) {
-        save_png_comparisons("compare18_spawnbio.png")
+        save_png_comparisons("compare18_smrybio.png")
         ymax_vec[18] <- plotBio(option = 2, show_uncertainty = FALSE)
         dev.off()
       }
@@ -2383,7 +2383,7 @@ SSplotComparisons <-
           ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
         }
         if (print) {
-          save_png_comparisons("compare19_spawnbio_uncertainty.png")
+          save_png_comparisons("compare19_smrybio_uncertainty.png")
           ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
           dev.off()
         }
