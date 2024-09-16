@@ -220,8 +220,8 @@ SSplotComparisons <-
              "Minimum stock size threshold", # 11
              "Spawning output", # 12
              "Harvest rate", # 13
-             "Summary biomass (t)", #14
-             "Age X+ biomass (t)" #15
+             "Summary biomass (t)", # 14
+             "Age X+ biomass (t)" # 15
            ),
            col = NULL, shadecol = NULL,
            pch = NULL, lty = 1, lwd = 2,
@@ -361,11 +361,12 @@ SSplotComparisons <-
     SmryBioLower <- summaryoutput[["SmryBioLower"]]
     SmryBioUpper <- summaryoutput[["SmryBioUpper"]]
     # if SmryBioUnfished is the final label, it's because one of the models is older, probably 3.24
-    if (tail(SmryBio$Label, 1) == "SmryBio_Unfished") {
+    if (!is.na(tail(SmryBio[["Label"]], 1)) &&
+      tail(SmryBio[["Label"]], 1) == "SmryBio_Unfished") {
       SmryBio <- SmryBio |> dplyr::filter(Label != "SmryBio_Unfished")
       SmryBioLower <- SmryBioLower |> dplyr::filter(Label != "SmryBio_Unfished")
       SmryBioUpper <- SmryBioUpper |> dplyr::filter(Label != "SmryBio_Unfished")
-    } 
+    }
     SPRratio <- summaryoutput[["SPRratio"]]
     SPRratioLower <- summaryoutput[["SPRratioLower"]]
     SPRratioUpper <- summaryoutput[["SPRratioUpper"]]
