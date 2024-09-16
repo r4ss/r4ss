@@ -1921,7 +1921,7 @@ SS_output <-
       sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 1]), 2])
   
       # info on recdev method
-      RecDev_method <- srhead[grep("RecDev_method:", srhead[,1]), 2] %>% 
+      RecDev_method <- srhead[grep("RecDev_method:", srhead[,1]), 2] |> 
         as.numeric()
       RecDev_method <- NULL
     } else {
@@ -1965,7 +1965,7 @@ SS_output <-
   
         # info on recdev method
         if (any(srhead[1, ] == "RecDev_method:")) {
-          RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] %>% as.numeric()
+          RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] |> as.numeric()
         } else {
           RecDev_method <- NULL
         }
