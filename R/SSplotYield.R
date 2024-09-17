@@ -43,9 +43,9 @@ SSplotYield <-
            add = FALSE, plot = TRUE, print = FALSE,
            labels = c(
              "Fraction unfished", # 1
-             "Equilibrium yield (mt)", # 2
-             "Total biomass (mt)", # 3
-             "Surplus production (mt)", # 4
+             "Equilibrium yield (t)", # 2
+             "Total biomass (t)", # 3
+             "Surplus production (t)", # 4
              "Yield per recruit (kg)" # 5
            ),
            col = "blue", col2 = "black", lty = 1, lwd = 2, cex.main = 1,

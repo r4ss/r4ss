@@ -3,7 +3,7 @@
 #' Plots the spawning output with and without fishing mortality
 #'
 #' @template replist
-#' @param ylab Y-axis label. Default is "Spawning biomass (mt)" which is replaced
+#' @param ylab Y-axis label. Default is "Spawning biomass (t)" which is replaced
 #' by `replist[["SpawnOutputLabel"]]` for models with 
 #' `replist[["SpawnOutputUnits"]] == "numbers"`
 #' @param equilibrium Show equilibrium in plot? Applies whether "yrs" is specified
@@ -42,7 +42,7 @@
 #' @export
 #' @seealso [SSplotTimeseries()]
 SSplotDynamicB0 <- function(replist,
-                            ylab = "Spawning biomass (mt)",
+                            ylab = "Spawning biomass (t)",
                             equilibrium = TRUE,
                             forecast = FALSE,
                             yrs = "all",
@@ -72,7 +72,7 @@ SSplotDynamicB0 <- function(replist,
   if (is.null(replist[["SpawnOutputUnits"]]) ||
     is.na(replist[["SpawnOutputUnits"]]) ||
     replist[["SpawnOutputUnits"]] == "numbers") { # quantity from test in SS_output
-    if (ylab == "Spawning biomass (mt)") {
+    if (ylab == "Spawning biomass (t)") {
       ylab <- replist[["SpawnOutputLabel"]]
     }
   }

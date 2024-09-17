@@ -174,7 +174,7 @@ SSplotComps <-
              "Frequency", # 8
              "Weight", # 9
              "Length", # 10
-             "(mt)", # 11
+             "(t)", # 11
              "(numbers x1000)", # 12
              "Stdev (Age)", # 13
              "Conditional AAL plot, ", # 14
