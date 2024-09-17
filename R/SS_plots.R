@@ -248,6 +248,12 @@ SS_plots <-
       )
     }
 
+    if (is.null(replist[["SpawnOutputLabel"]])) {
+      warning('Setting replist$SpawnOutputLabel <- "Spawning output"',
+      ' because the replist input is from an older version of r4ss',
+      ' which did not include this output')
+      replist$SpawnOutputLabel <- "Spawning output"
+    }
 
     # get quantities from the big list
     nfleets <- replist[["nfleets"]]
