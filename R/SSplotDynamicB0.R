@@ -4,7 +4,7 @@
 #'
 #' @template replist
 #' @param ylab Y-axis label. Default is "Spawning biomass (t)" which is replaced
-#' by `replist[["SpawnOutputLabel"]]` for models with 
+#' by `replist[["SpawnOutputLabel"]]` for models with
 #' `replist[["SpawnOutputUnits"]] == "numbers"`
 #' @param equilibrium Show equilibrium in plot? Applies whether "yrs" is specified
 #' or not.

@@ -444,7 +444,7 @@ SSplotTimeseries <-
         if (subplot == 7) {
           file <- "ts7_Spawning_output.png"
           if (uncertainty) {
-            # this name is silly ("with_95_asymptotic_intervals_intervals" 
+            # this name is silly ("with_95_asymptotic_intervals_intervals"
             # should just be "intervals"), but changing it would break stuff
             file <- "ts7_Spawning_output_with_95_intervals.png"
           }

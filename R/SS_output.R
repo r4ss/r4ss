@@ -29,7 +29,7 @@
 #' @param NoCompOK Allow the function to work without a CompReport file.
 #' @param aalmaxbinrange The largest length bin range allowed for composition
 #' data to be considered as conditional age-at-length data.
-#' @param SpawnOutputLabel An alternative to "Spawning output" for use in 
+#' @param SpawnOutputLabel An alternative to "Spawning output" for use in
 #' figure axis labels and table headers.
 #' @return Many values are returned. Complete list would be quite long, but
 #' should probably be created at some point in the future.
