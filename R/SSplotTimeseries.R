@@ -445,12 +445,12 @@ SSplotTimeseries <-
         file <- gsub(pattern = " ", replacement = "_", x = file, fixed = TRUE)
 
         # use old (not-quite) standardized file name even if using custom SpawnOutputLabel
-        if (subplot == 7 & labels[7] != "Spawning output") {
+        if (subplot == 7) {
           file <- "ts7_Spawning_output.png"
           if (uncertainty) {
             # this name is silly ("with_95_asymptotic_intervals_intervals" 
             # should just be "intervals"), but changing it would break stuff
-            file <- "ts7_Spawning_output_with_95_asymptotic_intervals_intervals.png"
+            file <- "ts7_Spawning_output_with_95_intervals.png"
           }
         }
 
