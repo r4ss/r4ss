@@ -12,7 +12,7 @@ SSplotSpawnrecruit(
   print = FALSE,
   xlim = NULL,
   ylim = NULL,
-  labels = c("Spawning biomass (mt)", "Recruitment (1,000s)",
+  labels = c("Spawning biomass (t)", "Recruitment (1,000s)",
     replist[["SpawnOutputLabel"]], expression(paste("Spawning output (relative to ",
     italic(B)[0], ")")), expression(paste("Recruitment (relative to  ", italic(R)[0],
     ")")), "Log recruitment deviation"),
