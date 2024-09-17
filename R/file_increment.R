@@ -1,4 +1,4 @@
-#' Rename Stock Synthesis files by adding integer value
+#' Rename key Stock Synthesis output files by adding integer value
 #'
 #' Rename files found with `pattern` by adding `i` to their
 #' name before the extension.
@@ -7,6 +7,7 @@
 #' The `.par` file, which is the only file extension searched for
 #' with the default entry that does not end in `.sso`, is
 #' modified differently.`_i.sso` is added to the file name.
+#' @param path Directory where model files are located.
 #' @param i An integer value to append to the file name before the
 #' `.sso` extension.
 #' @template verbose
@@ -15,17 +16,18 @@
 #' @author Kelli F. Johnson
 #' @returns Invisibly returns a vector of logical values specifying
 #' whether or not the file was successfully renamed.
-#'
-file_increment <- function(i, verbose = FALSE,
+#' @seealso [jitter()]
+file_increment <- function(path, i, verbose = FALSE,
                            pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$") {
   if (verbose) {
     message("Renaming output files to have names like Report", i, ".sso")
   }
-  ignore <- file.rename(
-    from = dir(pattern = pattern),
+
+  ignore <- file.copy(
+    from = dir(path = path, pattern = pattern, full.names = TRUE),
     to = gsub("par", "par_", gsub(
       "\\.sso|(\\.par)",
-      paste0("\\1", i, ".sso"), dir(pattern = pattern)
+      paste0("\\1", i, ".sso"), dir(path = path, pattern = pattern, full.names = TRUE)
     ))
   )
   return(invisible(ignore))

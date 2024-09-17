@@ -11,6 +11,32 @@ test_that("models can be read and written", {
     full.names = TRUE,
     recursive = FALSE
   )
+  # modify a complex model to use use the .par file so that it
+  # tests reading and writing the par file
+  tag_mod <- all_mods[grepl("tagging_mirrored_sel", all_mods)]
+  expect_true(length(tag_mod) == 1)
+  if (length(tag_mod) == 1) {
+    tag_mod_par <- file.path(dirname(tag_mod), "tagging_mirrored_sel_par")
+    # copy input files
+    copy_SS_inputs(
+      dir.old = tag_mod,
+      dir.new = tag_mod_par,
+      copy_par = TRUE
+    )
+    # read starter file
+    start <- SS_readstarter(file.path(tag_mod_par, "starter.ss"))
+    # tell it to read the par file
+    start$init_values_src <- 1
+    # write changes to starter
+    SS_writestarter(
+      mylist = start,
+      dir = tag_mod_par,
+      overwrite = TRUE
+    )
+    # add new model to vector of all models
+    all_mods <- c(all_mods, tag_mod_par)
+  }
+
   message("Will read and write models:\n  ", paste(basename(all_mods),
     collapse = ",\n  "
   ))
@@ -22,7 +48,8 @@ test_that("models can be read and written", {
     fore <- SS_readforecast(file.path(m, "forecast.ss"), verbose = FALSE)
     dat <- SS_readdat(file.path(m, start[["datfile"]]), verbose = FALSE)
     ctl <- SS_readctl(file.path(m, start[["ctlfile"]]), datlist = dat)
-    par <- SS_readpar_3.30(file.path(m, "ss.par"),
+    parfile <- get_par_name(m)
+    par <- SS_readpar_3.30(file.path(m, parfile),
       datsource = dat,
       ctlsource = ctl,
       verbose = FALSE
@@ -48,7 +75,7 @@ test_that("models can be read and written", {
     #### Checks related to SS_write* functions
     files <- file.path(m, c(
       "starter.ss", "forecast.ss", start[["datfile"]],
-      start[["ctlfile"]], "ss.par"
+      start[["ctlfile"]], parfile
     ))
     # remove files
     lapply(files, function(x) file.remove(x))
@@ -59,7 +86,7 @@ test_that("models can be read and written", {
     SS_writeforecast(fore, dir = m, verbose = FALSE)
     SS_writedat(dat, outfile = file.path(m, start[["datfile"]]), verbose = FALSE)
     SS_writectl(ctl, outfile = file.path(m, start[["ctlfile"]]), verbose = FALSE)
-    SS_writepar_3.30(par, outfile = file.path(m, "ss.par"), verbose = FALSE)
+    par2 <- SS_writepar_3.30(par, outfile = file.path(m, parfile), verbose = FALSE)
 
     # confirm that they got written
     lapply(files, function(x) expect_true(file.exists(x)))
@@ -74,7 +101,7 @@ test_that("models can be read and written", {
     # write all files at once
     SS_write(inputlist = allfiles, dir = allfiles[["dir"]])
     # confirm that they got written
-    lapply(files, function(x) expect_true(file.exists(x)))
+    lapply(files[basename(files) != parfile], function(x) expect_true(file.exists(x)))
   }
 
   # todo: run the models with no est to make sure the written files work with SS
@@ -91,15 +118,14 @@ test_that("empty files lead to NULL or error", {
   ))
 })
 
-test_that("ss_read works with a raw github URL", {
+test_that("SS_read works with a raw github URL", {
   skip_if_offline(host = "github.com")
   list_objs <- SS_read(
     dir =
-      "https://raw.githubusercontent.com/nmfs-stock-synthesis/test-models/main/models/Simple"
+      "https://raw.githubusercontent.com/nmfs-ost/ss3-test-models/main/models/Simple"
   )
   expect_true(is.list(list_objs))
   expect_equal(names(list_objs), c(
-    "dir", "path", "dat", "ctl", "start", "fore",
-    "wtatage", "par"
+    "dir", "path", "dat", "ctl", "start", "fore"
   ))
 })

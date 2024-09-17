@@ -11,8 +11,7 @@
 
 Stock Synthesis is a fisheries stock assessment model written in ADMB by
 Rick Methot. The Stock Synthesis software and many other associated
-materials are available on the NOAA Virtual Laboratory at
-[https://vlab.noaa.gov/web/stock-synthesis/home](https://vlab.noaa.gov/web/stock-synthesis/home).
+materials are available in the [Stock Synthesis GitHub repository](https://github.com/nmfs-ost/ss3-source-code) and other repositories under the [nmfs-ost organization](https://github.com/nmfs-ost).
 The r4ss package is a collection of R functions for interacting with
 Stock Synthesis. It is based on the original work of Ian Stewart begun
 around 2005 and released as an open source R package in 2009. The
@@ -56,9 +55,11 @@ library(r4ss)
 ```
 
 To get notifications about r4ss, you can watch this GitHub project or
-follow messages on the [forums on Stock Synthesis
-VLab](https://vlab.noaa.gov/web/stock-synthesis/public-forums). Note
-that to subscribe to the Stock Synthesis VLab forums, an account is
+follow issues and discussions in the [Stock Synthesis GitHub repository](https://github.com/nmfs-ost/ss3-source-code).
+Additionally, you can follow messages on the [forums on Stock Synthesis
+VLab](https://vlab.noaa.gov/web/stock-synthesis/public-forums), however, 
+most communications about Stock Synthesis are distributed via GitHub rather than VLab. 
+Note that to subscribe to the Stock Synthesis VLab forums, an account is
 required, but those without an account may still view and post forum
 messages.
 

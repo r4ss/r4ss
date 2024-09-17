@@ -28,7 +28,7 @@
 #' inputlist[["start"]][["init_values_src"]] <- 1
 #'
 #' # modify the data file (remove age comps from years prior to 1990)
-#' inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] %>%
+#' inputlist[["dat"]][["agecomp"]] <- inputlist[["dat"]][["agecomp"]] |>
 #'   dplyr::filter(Yr >= 1990)
 #'
 #' # modify the control file (turn off early recdevs and change range of yrs)
@@ -46,6 +46,9 @@ SS_write <- function(inputlist,
                      dir = "",
                      overwrite = FALSE,
                      verbose = FALSE) {
+  # check for contents of inputlist
+  check_inputlist(inputlist)
+
   # create directory if not already there
   if (dir != "") {
     if (!dir.exists(dir)) {
@@ -55,9 +58,6 @@ SS_write <- function(inputlist,
       dir.create(dir, recursive = TRUE)
     }
   }
-
-  # check for contents of inputlist
-  check_inputlist(inputlist)
 
   # write starter file
   if ("start" %in% names(inputlist)) {
@@ -115,26 +115,28 @@ SS_write <- function(inputlist,
     )
   }
 
-
-  if ("par" %in% names(inputlist)) {
-    if (!is.null(inputlist[["par"]])) {
-      try(
-        {
-          if (inputlist[["ctl"]][["ReadVersion"]] == "3.24") {
-            par <- r4ss::SS_writepar_3.24(inputlist[["par"]],
-              outfile = file.path(dir, "ss.par"),
-              verbose = verbose
-            )
-          } else {
-            par <- r4ss::SS_writepar_3.30(inputlist[["par"]],
-              outfile = file.path(dir, "ss.par"),
-              verbose = verbose
-            )
-          }
-        },
-        silent = !verbose
-      )
+  # only write par file if present in list
+  if (!is.null(inputlist[["par"]])) {
+    # assume default name if not present--would have been added by SS_read()
+    if (is.null(inputlist[["par"]][["parfile"]])) {
+      inputlist[["par"]][["parfile"]] <- "ss3.par"
     }
+    try(
+      {
+        if (inputlist[["ctl"]][["ReadVersion"]] == "3.24") {
+          par <- r4ss::SS_writepar_3.24(inputlist[["par"]],
+            outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
+            verbose = verbose
+          )
+        } else {
+          par <- r4ss::SS_writepar_3.30(inputlist[["par"]],
+            outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
+            verbose = verbose
+          )
+        }
+      },
+      silent = !verbose
+    )
   }
 
   # message noting that all files have been written

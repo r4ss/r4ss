@@ -22,3 +22,6 @@ the file new data file was named \code{data.ss_new}.
 \verb{_echo} was added to the name when the file was parsed into three separate
 files.
 }
+\seealso{
+\link{get_par_name}
+}

@@ -4,7 +4,7 @@
 #' `SS_write()` function.
 #'
 #' @param inputlist List created by the `SS_read()` function with
-#' elements "dat", "ctl", "start", "fore", and (optionally) "wtatage".
+#' elements "dat", "ctl", "start", "fore", and (optionally) "wtatage" and "par".
 #' @author Kelli F. Johnson, Ian G. Taylor
 #' @return Either TRUE if the input list is valid, or FALSE if not, with
 #' a warning about which elements are missing.
@@ -19,10 +19,18 @@ check_inputlist <- function(inputlist) {
     stop("inputlist is empty")
   }
 
+  if (!any(elements %in% names(inputlist))) {
+    stop("input does not look like a list created by SS_read()")
+  }
   # check for whether wtatage is required and if so, add it to the
   # vector of elements
-  if ((!is.null(inputlist[["wtatage"]])) & inputlist[["ctl"]][["EmpiricalWAA"]]) {
+  if (inputlist[["ctl"]][["EmpiricalWAA"]]) {
     elements <- c(elements, "wtatage")
+  }
+  # check for whether par is required and if so, add it to the
+  # vector of elements
+  if (inputlist[["start"]][["init_values_src"]] == 1) {
+    elements <- c(elements, "par")
   }
 
   missingnames <- elements[!elements %in% names(inputlist)]

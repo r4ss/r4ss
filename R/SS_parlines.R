@@ -60,20 +60,12 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   ctl <- ctl[!grepl("blocks_per_pattern", ctl[, 8]), ]
   nrows <- nrow(ctl)
 
-  ctl_num <- matrix(NA, nrows, ncol(ctl)) # copy of ctl converted to numerical values or NA
-  num_cnt <- rep(NA, nrows) # count of number of numerical values in each row
-  num_cnt7 <- rep(NA, nrows) # count of number of numerical values in first 7 values of each row
-  num_cnt14 <- rep(NA, nrows) # count of number of numerical values in first 14 values of each row
-  orig_warn <- getOption("warn", default = 0) # save the user's original setting.
-  options(warn = -1) # temporarily turn off "Warning: NAs introduced by coercion"
-  for (irow in 1:nrows) {
-    ctl_num[irow, ] <- as.numeric(ctl[irow, ])
-    num_cnt[irow] <- sum(!is.na(ctl_num[irow, ]))
-    num_cnt7[irow] <- sum(!is.na(ctl_num[irow, 1:7]))
-    num_cnt14[irow] <- sum(!is.na(ctl_num[irow, 1:14]))
-  }
+  ctl_num <- suppressWarnings(t(apply(ctl, 1, as.numeric))) # transpose needed to match dimensions of ctl
+  # warning suppression temporarily turns off "Warning: NAs introduced by coercion"
+  num_cnt <- apply(ctl_num, 1, function(x) sum(!is.na(x)))
+  num_cnt7 <- apply(ctl_num[, 1:7], 1, function(x) sum(!is.na(x)))
+  num_cnt14 <- apply(ctl_num[, 1:14], 1, function(x) sum(!is.na(x)))
 
-  options(warn = orig_warn) # turn warnings to original setting
   parlines7 <- ctl[num_cnt7 == 7 & is.na(ctl_num[, 8]), ]
   parlines14 <- ctl[num_cnt14 == 14 & is.na(ctl_num[, 15]), ]
 

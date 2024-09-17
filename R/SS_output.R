@@ -214,35 +214,12 @@ SS_output <-
     repfile <- file.path(dir, repfile)
 
     # figure out which par file to read
-    parfile <- dir(dir, pattern = ".par$")
-    if (length(parfile) > 1) {
-      parinfo <- file.info(file.path(dir, parfile))
-      parfile <- parfile[!parinfo[["isdir"]] & # exclude directories
-        parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])] # pick most recently changed file
+    parfile <- get_par_name(dir)
 
-      # if there are still duplicates (with the same 'mtime' value),
-      # choose anything called "ss.par"
-      if (length(parfile) > 1 && any(parfile == "ss.par")) {
-        parfile <- "ss.par"
-      }
-      # if there are still duplicates after all that, choose the first one
-      if (length(parfile) > 1) {
-        parfile <- parfile[1]
-      }
-      if (verbose) {
-        message(
-          "Multiple files in directory match pattern *.par\n",
-          "choosing most recently modified:", parfile
-        )
-      }
-    }
-    if (length(parfile) == 0) {
+    if (is.na(parfile)) {
       if (!hidewarn) {
         message("Some stats skipped because the .par file not found.")
       }
-      parfile <- NA
-    } else {
-      parfile <- file.path(dir, parfile)
     }
 
     # read three rows to get start time and version number from rep file
@@ -509,23 +486,27 @@ SS_output <-
     flush.console()
 
     # check for use of temporary files
-    logfile <- dir(dir, pattern = ".log$")
-    logfile <- logfile[logfile != "fmin.log"]
-    if (length(logfile) > 1) {
-      filetimes <- file.info(file.path(dir, logfile))$mtime
-      logfile <- logfile[filetimes == max(filetimes)]
+    logfile_name <- dir(dir, pattern = ".log$")
+    logfile_name <- logfile_name[logfile_name != "fmin.log"]
+    if (length(logfile_name) > 1) {
+      filetimes <- file.info(file.path(dir, logfile_name))$mtime
+      logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
         message(
           "Multiple files in directory match pattern *.log\n",
-          "choosing most recently modified file:", logfile, "\n"
+          "choosing most recently modified file:", logfile_name, "\n"
         )
       }
     }
-    if (length(logfile) == 1 && file.info(file.path(dir, logfile))$size > 0) {
-      logfile <- readLines(file.path(dir, logfile))
+    if (length(logfile_name) == 1 &&
+      file.info(file.path(dir, logfile_name))$size > 0) {
+      logfile <- readLines(file.path(dir, logfile_name))
       logfile <- grep("^size", logfile, value = TRUE)
       if (length(logfile) == 0) {
-        warning("Error reading ss.log. Check the file, it should contain rows starting with 'size'")
+        warning(
+          logfile_name,
+          " does not contain information on the size of temporary files."
+        )
         logfile <- NA
       } else {
         logfile <- tidyr::separate(as.data.frame(logfile),
@@ -627,6 +608,7 @@ SS_output <-
     # placeholders for tables added in 3.30.21
     Length_comp_error_controls <- NULL
     Age_comp_error_controls <- NULL
+    Size_comp_error_controls <- NULL
 
     if ("Jitter:" %in% rawdefs[["X1"]]) {
       get.def <- function(string) {
@@ -712,6 +694,7 @@ SS_output <-
       seasfracs <- seasfracs - seasdurations / 2 # should be mid-point of each season as a fraction of the year
 
       # end DEFINITIONS elements in 3.30.12-3.30.20
+
       if ("Length_comp_error_controls" %in% rawdefs[["X1"]]) {
         # read table of length comp error controls (added 3.30.21)
         Length_comp_error_controls <-
@@ -730,7 +713,7 @@ SS_output <-
         names(Length_comp_error_controls)[names(Length_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
         # remove extra column with hash symbols
-        Length_comp_error_controls <- Length_comp_error_controls %>%
+        Length_comp_error_controls <- Length_comp_error_controls |>
           dplyr::select(-NoName)
       }
 
@@ -751,8 +734,18 @@ SS_output <-
         names(Age_comp_error_controls)[names(Age_comp_error_controls) == "NoName"] <-
           c("NoName", "Fleet_name")
         # remove extra column with hash symbols
-        Age_comp_error_controls <- Age_comp_error_controls %>%
+        Age_comp_error_controls <- Age_comp_error_controls |>
           dplyr::select(-NoName)
+      }
+
+      if ("Size_comp_error_controls" %in% rawdefs[["X1"]]) {
+        # read table of age comp error controls (added 3.30.21)
+        Size_comp_error_controls <-
+          match_report_table("Size_comp_error_controls",
+            adjust1 = 1,
+            header = TRUE, type.convert = TRUE
+          ) |>
+          dplyr::rename(Sz_method = "#_Sz_method") # remove hash from header
       }
       # end read of 3.30.12+ DEFINITIONS
     } else {
@@ -896,8 +889,8 @@ SS_output <-
         # after the release of 3.30.21)
 
         # all values identical except for Cum_obs and Cum_exp
-        duplicates <- compdbase %>%
-          dplyr::select(-Cum_obs, -Cum_exp) %>%
+        duplicates <- compdbase |>
+          dplyr::select(-Cum_obs, -Cum_exp) |>
           duplicated()
         if (verbose) {
           message(
@@ -1414,7 +1407,10 @@ SS_output <-
     rownames(parameters) <- ParmLabels
 
     if (!is.na(parfile)) {
-      parline <- read.table(parfile, fill = TRUE, comment.char = "", nrows = 1)
+      parline <- read.table(file.path(dir, parfile),
+        fill = TRUE,
+        comment.char = "", nrows = 1
+      )
     } else {
       parline <- matrix(NA, 1, 16)
     }
@@ -1807,14 +1803,15 @@ SS_output <-
       header = TRUE, type.convert = TRUE
     )
     if (!is.null(recruitment_dist)) {
+      # convert to new column header used starting with 3.30.23
+      recruitment_dist <- df.rename(recruitment_dist,
+        oldnames = c("Frac/sex", "Value"),
+        newnames = c("recr_dist_F", "recr_dist_F")
+      )
       # calculate first season with recruitment
-      if ("Frac/sex" %in% names(recruitment_dist)) {
-        first_seas_with_recruits <-
-          min(recruitment_dist[["Seas"]][recruitment_dist$"Frac/sex" > 0])
-      } else {
-        first_seas_with_recruits <-
-          min(recruitment_dist[["Seas"]][recruitment_dist[["Value"]] > 0])
-      }
+      first_seas_with_recruits <-
+        min(recruitment_dist[["Seas"]][recruitment_dist$"recr_dist_F" > 0])
+
       # starting in SSv3.24Q there are additional tables
       # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
       # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
@@ -1826,6 +1823,7 @@ SS_output <-
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_FORECAST", 1,
             header = TRUE, type.convert = TRUE
           )
+          recruit_dist_timeseries <- NULL
         } else {
           recruit_dist_endyr <- match_report_table("RECRUITMENT_DIST_endyr", 1,
             header = TRUE, type.convert = TRUE
@@ -1835,12 +1833,27 @@ SS_output <-
             tmp_brk_line <- grep("RECRUITMENT_DIST_TIMESERIES", recruit_dist_endyr[["Settle#"]]) - 1
             recruit_dist_endyr <- recruit_dist_endyr[seq_len(tmp_brk_line), ]
           }
+          recruit_dist_timeseries <- match_report_table(
+            "RECRUITMENT_DIST_TIMESERIES", 1,
+            header = FALSE, type.convert = FALSE
+          )
         }
+        # rename columns to format used starting with 3.30.23
+        recruit_dist_Bmark <- df.rename(recruit_dist_Bmark,
+          oldnames = c("Frac/sex", "Value"),
+          newnames = c("recr_dist_F", "recr_dist_F")
+        )
+        recruit_dist_endyr <- df.rename(recruit_dist_endyr,
+          oldnames = c("Frac/sex", "Value"),
+          newnames = c("recr_dist_F", "recr_dist_F")
+        )
+
         # bundle original and extra tables into a list
         recruitment_dist <- list(
           recruit_dist = recruitment_dist,
           recruit_dist_Bmark = recruit_dist_Bmark,
-          recruit_dist_endyr = recruit_dist_endyr
+          recruit_dist_endyr = recruit_dist_endyr,
+          recruit_dist_timeseries = recruit_dist_timeseries
         )
       }
     }
@@ -1911,7 +1924,7 @@ SS_output <-
 
       # info on recdev method
       if (any(srhead[1, ] == "RecDev_method:")) {
-        RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] %>% as.numeric()
+        RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] |> as.numeric()
       } else {
         RecDev_method <- NULL
       }
@@ -2226,7 +2239,8 @@ SS_output <-
           sizentune <- type.convert(sizentune, as.is = TRUE)
           stats[["Size_Comp_Fit_Summary"]] <- sizentune
           # remove extra summary rows of fit_size_comps
-          fit_size_comps <- fit_size_comps[fit_size_comps[["Fleet_Name"]] %in% FleetNames, ]
+          fit_size_comps <- fit_size_comps |>
+            dplyr::filter(Fleet_Name %in% FleetNames & Fleet %in% 1:nfleets)
         } # end check for non-empty fit_size_comps
       } else {
         # formatting used for earlier 3.30 versions (prior to 3.30.12)
@@ -2284,25 +2298,33 @@ SS_output <-
           # map select columns from fit_len_comps to lendbase
           # (can expand to other columns like MV_T_parm in the future)
           if (nrow(lendbase) > 0) {
-            lendbase <- fit_len_comps %>%
-              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
-              dplyr::left_join(lendbase, .)
+            fit_len_comps_select <- fit_len_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            lendbase <- dplyr::left_join(lendbase, fit_len_comps_select)
           }
-          # repeat for other parts of CompReport.sso
+          # add info to age comp data
           if (nrow(agedbase) > 0) {
-            agedbase <- fit_age_comps %>%
-              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
-              dplyr::left_join(agedbase, .)
+            fit_age_comps_select <- fit_age_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            agedbase <- dplyr::left_join(agedbase, fit_age_comps_select)
           }
+          # add info to conditional age-at-length comp data
           if (nrow(condbase) > 0) {
-            condbase <- fit_age_comps %>%
-              dplyr::rename(Like_sum = Like) %>% # like for vector not bin
-              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM) %>%
-              dplyr::left_join(condbase, .)
+            fit_cond_age_select <- fit_age_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
+            condbase <- dplyr::left_join(condbase, fit_cond_age_select)
           }
-          # IGT 28 Jan 2023: need to add support for DM for generalized size comps
+          # add info to generalized size comp data
+          if (nrow(sizedbase) > 0) {
+            fit_size_comps_select <- fit_size_comps |>
+              dplyr::rename(Like_sum = Like) |> # like for vector not bin
+              dplyr::rename(method = Method) |> # making it match what's in sizedbase
+              dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM, method)
+            sizedbase <- dplyr::left_join(sizedbase, fit_size_comps_select)
+          }
         } # end test for whether CompReport.sso info is available
         # end approach used starting in 3.30.21
       } else {
@@ -2547,6 +2569,7 @@ SS_output <-
     returndat[["ALK_tolerance"]] <- return.def("ALK_tolerance")
     returndat[["Length_comp_error_controls"]] <- Length_comp_error_controls
     returndat[["Age_comp_error_controls"]] <- Age_comp_error_controls
+    returndat[["Size_comp_error_controls"]] <- Size_comp_error_controls
     returndat[["nforecastyears"]] <- nforecastyears
     returndat[["morph_indexing"]] <- morph_indexing
     returndat[["MGparmAdj"]] <- MGparmAdj
@@ -2568,7 +2591,7 @@ SS_output <-
       header = TRUE, type.convert = TRUE
     )
     # updated BIOLOGY table names based on change July 2022 change
-    # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/348
+    # https://github.com/nmfs-ost/ss3-source-code/issues/348
     biology <- df.rename(biology,
       oldnames = c("Low", "Mean_Size", "Wt_len", "Wt_len_F", "Mat_len", "Spawn", "Wt_len_M", "Fecundity"),
       newnames = c("Len_lo", "Len_mean", "Wt_F", "Wt_F", "Mat", "Mat*Fec", "Wt_M", "Fec")
@@ -2842,8 +2865,9 @@ SS_output <-
       "EXPLOITATION", 20,
       header = FALSE
     )
-    # check for new header info added in 3.30.13_beta (14 Feb. 2019)
-    if (exploitation_head[1, 1] == "Info:") {
+    # check for new header info added in 3.30.13_beta (Feb 2019)
+    # "Info:" changed to "NOTE:" with 3.30.23 (Jul 2024)
+    if (exploitation_head[1, 1] %in% c("Info:", "NOTE:")) {
       # NOTE: add read of additional header info here
       exploitation <- match_report_table("EXPLOITATION",
         which(exploitation_head[, 1] == "Yr"),
@@ -3064,11 +3088,15 @@ SS_output <-
 
 
     if (depletion_basis %in% c(1, 3:4)) {
-      starter <- SS_readstarter(
-        file = file.path(dir, "starter.ss"),
-        verbose = verbose
-      )
-      depletion_multiplier <- starter[["depl_denom_frac"]]
+      if (file.exists(file.path(dir, "starter.ss"))) {
+        starter <- SS_readstarter(
+          file = file.path(dir, "starter.ss"),
+          verbose = verbose
+        )
+        depletion_multiplier <- starter[["depl_denom_frac"]]
+      } else {
+        depletion_multiplier <- NULL
+      }
     } else {
       depletion_multiplier <- 1
     }
@@ -3077,6 +3105,13 @@ SS_output <-
     if (Bratio_denominator == "no_depletion_basis") {
       Bratio_label <- "no_depletion_basis"
     } else {
+      # get depletion_multiplier if no starter file was available
+      # will be rounded to nearest % so potentially less accurate than
+      # value in the starter file
+      if (is.null(depletion_multiplier)) {
+        depletion_multiplier <-
+          as.numeric(strsplit(Bratio_denominator, "%")[[1]][1]) / 100
+      }
       # create Bratio label for use in various plots
       if (grepl(pattern = "100", x = Bratio_denominator)) {
         # exclude 100% if present
@@ -3238,8 +3273,17 @@ SS_output <-
     returndat[["DF_mnwgt"]] <- DF_mnwgt
 
     # Yield and SPR time-series
-    spr <- match_report_table("SPR_SERIES", 5, header = TRUE)
-    # read again if missing using capitalization prior to 3.30.15.06
+    if (!is.na(match_report_line("reports_per_recruit_quantities_using_current_year_biology",
+      obj = rawrep[, 2]
+    ))
+    ) {
+      # check for new format starting with 3.30.23
+      spr <- match_report_table("SPR_SERIES", 6, header = TRUE)
+    } else {
+      spr <- match_report_table("SPR_SERIES", 5, header = TRUE)
+    }
+
+    # read SPR table again if missing using capitalization prior to 3.30.15.06
     if (is.null(spr)) {
       spr <- match_report_table("SPR_series", 5, header = TRUE)
     }
@@ -3247,25 +3291,41 @@ SS_output <-
     if (!is.null(spr)) {
       # clean up SPR output
       # make older SS output names match current SS output conventions
+      # note: SPR_std and SPR_report have switched back and forth over the years
+      # but as of 3.30.23 is SPR_std
       names(spr) <- gsub(pattern = "SPB", replacement = "SSB", names(spr))
       spr <- df.rename(spr,
-        oldnames = c("Year", "spawn_bio", "SPR_std", "Y/R", "F_std"),
-        newnames = c("Yr", "SpawnBio", "SPR_report", "YPR", "F_report")
+        oldnames = c("Year", "spawn_bio", "SPR_report", "Y/R", "F_report"),
+        newnames = c("Yr", "SpawnBio", "SPR_std", "YPR", "F_std")
       )
+      # additional conversions starting in 3.30.23
+      spr <- df.rename(spr,
+        oldnames = c("Bio_all", "Bio_Smry", "SSB_unfished", "SSBfished"),
+        newnames = c("Bio_all_eq", "Bio_Smry_eq", "SSB_unfished_eq", "SSBfished_eq")
+      )
+
       spr[spr == "_"] <- NA
       spr[spr == "&"] <- NA
       spr[spr == "-1.#IND"] <- NA
       spr <- type.convert(spr, as.is = TRUE)
-      # spr <- spr[spr[["Year"]] <= endyr,]
-      spr[["spr"]] <- spr[["SPR"]]
-      stats[["last_years_SPR"]] <- spr[["spr"]][nrow(spr)]
       stats[["SPRratioLabel"]] <- managementratiolabels[1, 2]
-      stats[["last_years_SPRratio"]] <- spr[["SPR_std"]][nrow(spr)]
     }
-    returndat[["sprseries"]] <- spr
 
+    # Add this section for 3.30.23 separation of the spr table into the spr
+    # series and the annual time series
+    ann_ts <- match_report_table("ANNUAL_TIME_SERIES",
+      adjust1 = 9,
+      header = TRUE
+    )
+    ann_ts[ann_ts == "_"] <- NA
+    ann_ts[ann_ts == "&"] <- NA
+    ann_ts[ann_ts == "-1.#IND"] <- NA
+    ann_ts <- type.convert(ann_ts, as.is = TRUE)
+
+    returndat[["sprseries"]] <- spr
+    returndat[["annual_time_series"]] <- ann_ts
     returndat[["managementratiolabels"]] <- managementratiolabels
-    returndat[["F_report_basis"]] <- managementratiolabels[["Label"]][2]
+    returndat[["F_std_basis"]] <- managementratiolabels[["Label"]][2]
     returndat[["SpawnOutputLabel"]] <- SpawnOutputLabel
     returndat[["sprtarg"]] <- sprtarg
     returndat[["btarg"]] <- btarg
@@ -3380,7 +3440,7 @@ SS_output <-
       }
 
       # work-around for missing SE_input values 3.30.16
-      # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/169
+      # https://github.com/nmfs-ost/ss3-source-code/issues/169
       # https://github.com/r4ss/r4ss/issues/324
       badrows <- which(cpue[["Use"]] == "")
       if (length(badrows) > 0) {
@@ -3467,7 +3527,10 @@ SS_output <-
     returndat[["discard_at_age"]] <- discard_at_age
 
     # catch at age
-    catage <- match_report_table("CATCH_AT_AGE", 1,
+    catage <- match_report_table("CATCH_AT_AGE",
+      # skip note added in 3.30.23:
+      # "#_NOTE: catage is based on: sel_dead_num = sel * (retain + (1-retain)*discmort)"
+      adjust1 = ifelse(is.na(match_report_line("catage", obj = rawrep[, 2])), yes = 1, no = 2),
       header = TRUE, type.convert = TRUE
     )
     returndat[["catage"]] <- catage
@@ -3667,6 +3730,10 @@ SS_output <-
       yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[, 1]) - 1))), ]
       yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
       names(yielddat) <- names
+      # remove lines that say "ready for equilcalc" or "ready for loops"
+      if ("SPRloop" %in% names) { # column not present in early SS3 versions
+        yielddat <- yielddat |> dplyr::filter(SPRloop != "ready")
+      }
       yielddat <- type.convert(yielddat, as.is = TRUE)
     } else {
       yielddat <- NA

@@ -1,9 +1,11 @@
 #' Insert a vector of recruitment deviations into the control file.
 #'
 #' A function to insert a vector of recruitment deviations into the control
-#' file for simulation studies. This can also be achieved by using the .par
-#' file, but Ian Taylor prefers this approach for no good reason.
-#'
+#' file for simulation studies. This function was written in 2010, long before
+#' the functions to read and write the input files were created. An alternative
+#' approach would be to read the control file, add the recdevs, and then write
+#' it again, but this function still works so there's no immediate need to
+#' streamline that alternative approach.
 #'
 #' @param fyr First year of the recdev vector.
 #' @param lyr Last year of the recdev vector.
@@ -30,33 +32,15 @@
 SS_recdevs <-
   function(fyr, lyr, ctl = NULL, recdevs = NULL,
            rescale = TRUE, scaleyrs = NULL,
-           dir = "working_directory",
+           dir = getwd(),
            ctlfile = "control.ss_new",
            newctlfile = "control_modified.ss",
            verbose = TRUE, writectl = TRUE, returnctl = FALSE,
            newmaxbias = NULL) {
-    ################################################################################
-    #
-    # SS_recdevs March 31, 2010.
-    # This function comes with no warranty or guarantee of accuracy
-    #
-    # Purpose: Add newly generated stochastic recruitment deviation inputs to the Control file for SSv3
-    # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-    # Returns: writes a new control file and/or returns a character vector of all lines of the control file
-    # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/
-    # Required packages: none
-    #
-    ################################################################################
-
-    # notes on inputs:
-    # fyr              first year
-    # lyr              last year
-    # ctl              input file name?
-    # recdevs          input vector of devs
-    # rescale          rescale to zero center and have standard error = sigmaR?
-
+    # Determine working directory on start and return upon exit
     current_wd <- getwd()
-    if (dir != "working_directory") setwd(dir)
+    on.exit(setwd(current_wd))
+    setwd(dir)
 
     # define a general function for reading values from control file
     readfun <- function(string, maxlen = Inf) {
@@ -64,9 +48,13 @@ SS_recdevs <-
       if (length(line1) < 1) stop("no line contains the phrase, '", string, "'", sep = "")
       if (length(line1) > 1) stop("more than one line contains the phrase, '", string, "'", sep = "")
 
+      # split parameter line at hash mark
       splitline <- strsplit(ctl[line1], "#")[[1]]
-      vecstrings <- strsplit(splitline[1], " +")[[1]]
+      # split along all blank spaces, including tabs
+      vecstrings <- strsplit(splitline[1], "[[:blank:]]+")[[1]]
+      # convert to numeric
       vec <- as.numeric(vecstrings[vecstrings != ""])
+      # check for length
       if (length(vec) > maxlen) {
         stop(paste("this line has more than ", maxlen, " value", c("s", "")[1 + (maxlen == 1)], ": ", ctl[line1], sep = ""))
       }
@@ -81,7 +69,9 @@ SS_recdevs <-
 
     # make sure model includes recdevs and get some information
     do_recdev <- readfun("do_recdev", maxlen = 1)
-    if (do_recdev == 0) stop("do_recdev should be set to 1 or 2")
+    if (do_recdev == 0) {
+      stop("do_recdev should be set to 1 or 2")
+    }
     yrs <- fyr:lyr
     Nrecdevs <- lyr - fyr + 1
     phase <- readfun("recdev phase", maxlen = 1)

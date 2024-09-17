@@ -8,7 +8,7 @@ check_inputlist(inputlist)
 }
 \arguments{
 \item{inputlist}{List created by the \code{SS_read()} function with
-elements "dat", "ctl", "start", "fore", and (optionally) "wtatage".}
+elements "dat", "ctl", "start", "fore", and (optionally) "wtatage" and "par".}
 }
 \value{
 Either TRUE if the input list is valid, or FALSE if not, with

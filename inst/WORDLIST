@@ -4,6 +4,7 @@ ACL
 ADMB
 ALK
 Ageing
+Amax
 Aquat
 Arni
 Asel
@@ -37,9 +38,9 @@ Iteratively
 Jeffreys
 Jolla
 Kiva
-LaTex
 LaTreese
 Legault
+LnQ
 Lsel
 MGparm
 MSY
@@ -52,6 +53,7 @@ Mohn's
 NMFS
 NOAA
 NWFSC
+NatM
 Nfleet
 Nsexes
 Nsurveys
@@ -63,7 +65,6 @@ Piner's
 README
 Rdata
 Rebuilder
-ReferencePoints
 Rescale
 RunJitter
 SELEX
@@ -87,8 +88,6 @@ Venables
 Watal
 Xxis
 YYYY
-abc
-acl
 admodel
 agedbase
 agefactors
@@ -143,7 +142,6 @@ filenaming
 fishres
 fleetnames
 forecastplot
-formatting
 fsu
 fwf
 gdata
@@ -205,9 +203,10 @@ nmfs
 noaa
 nohess
 num
-ofl
 ogive
 optim
+ost
+osx
 outfile
 overfished
 overfishing

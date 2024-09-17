@@ -12,6 +12,7 @@
 #' @return A string with the name of the data .ss_new file. If not found, will
 #'  be NA. Both of strings are searched for using `dir(pattern = )` and
 #'  if both exist, then `data_echo.ss_new` is returned.
+#' @seealso [get_par_name]
 #'
 get_dat_new_name <- function(dir) {
   datname <- tail(
@@ -20,6 +21,52 @@ get_dat_new_name <- function(dir) {
   )
   ifelse(length(datname) == 0, NA, datname)
 }
+
+#' Get the name of the .par file in a directory
+#'
+#' In previous versions of Stock Synthesis,
+#' @template dir
+#' @template verbose
+#' @return A string with the name of the .par file. If not found, will
+#'  be NA. If multiple files exist, preference is given to ss3.par
+#' (default as of 3.30.22.1), followed by ss.par, followed by the most recently
+#' modified file with a *.par extension (choosing the first if two were modified
+#' at the same time).
+#' @seealso [get_dat_new_name]
+
+get_par_name <- function(dir, verbose = TRUE) {
+  parfile <- dir(dir, pattern = ".par$")
+
+  # if no .par file found, return NA
+  if (length(parfile) == 0) {
+    return(NA)
+  }
+
+  # if more than 1 .par file
+  if (length(parfile) > 1) {
+    # get info on all files that match the pattern
+    parinfo <- file.info(file.path(dir, parfile))
+
+    parfile <- dplyr::case_when(
+      any(parfile == "ss3.par") ~ "ss3.par", # first choice
+      any(parfile == "ss.par") ~ "ss.par", # second choice
+      # last choice is most recently changed file (excluding directories)
+      TRUE ~ parfile[!parinfo[["isdir"]] &
+        parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])][1]
+    )
+
+    if (verbose) {
+      message(
+        "Multiple files in directory match pattern *.par, choosing based on the",
+        " preferences described in the help for get_par_name(): ", parfile
+      )
+    }
+  }
+
+  # return file name as a string
+  return(parfile)
+}
+
 
 #' Allow Multi-Plots
 #' Set the par() to options suitable for ss3diags multi plots.
@@ -134,6 +181,7 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @param legendsp Space between legend labels
 #' @param col Optional vector of colors to be used for lines. Input NULL
 #' @param pch Optional vector of plot character values
+#' @param pt.cex Adjust the cex of points.
 #' @param lty Optional vector of line types
 #' @param lwd Optional vector of line widths
 #' @param type Type parameter passed to points (default 'o' overplots points on
@@ -150,6 +198,7 @@ add_legend <- function(legendlabels,
                        legendsp = 0.9,
                        col = NULL,
                        pch = NULL,
+                       pt.cex = 0.7,
                        lty = 1,
                        lwd = 2,
                        type = "l") {
@@ -178,7 +227,7 @@ add_legend <- function(legendlabels,
     pch = legend.pch[legendorder],
     bty = "n",
     ncol = legendncol,
-    pt.cex = 0.7,
+    pt.cex = pt.cex[legendorder],
     cex = legendcex,
     y.intersp = legendsp
   )
@@ -367,4 +416,64 @@ calc_var_adjust <- function(data, type = c("CV", "sd")) {
   )
   # return the table
   return(calc)
+}
+
+#' Add a comment line to the input files
+#'
+#' Used by the SS_write* functions.
+#' @param text Comment to write
+#' @param con File to write to (passed to `con` input to `writeLines()`)
+#' @param ... Additional arguments passed to `writeLines()`
+
+
+writeComment <- function(text, con, ...) {
+  if (length(grep(x = text, pattern = "^#")) != length(text)) {
+    text <- paste("#_", text, sep = "")
+  }
+  writeLines(text = text, con = con, ...)
+}
+
+#' Add header comments to the input files
+#'
+#' Lines starting with #C at the top of the file are carried over to the
+#' *.ss_new files by Stock Synthesis
+#' This function modifies any existing header to add or replace lines
+#' written by r4ss that state the write time of the file.
+#'
+#' @param filelist An object created by one of the r4ss::SS_read* functions.
+#' @param con File to write to (passed to `con` input to `writeLines()`)
+#' @author Yukio Takeuchi, Ian G. Taylor
+#'
+add_file_header <- function(filelist, con) {
+  # #C means this header will be maintained in control.ss_new file
+  # created from a SS3 model run using this control file.
+
+  # the writeComment() function is defined within each of the SS_write*
+  # functions in order
+
+  if (is.null(filelist[["Comments"]])) {
+    # empty placeholder for comments
+    Comments <- NULL
+  } else {
+    Comments <-
+      sapply(filelist[["Comments"]], function(x) {
+        if (!grepl(x, pattern = "^#C")) {
+          x <- paste0("#C_", x)
+        }
+        x
+      })
+    # remove comments added by earlier runs of this function
+    Comments <- Comments[!grepl("file created using", Comments) &
+      !grepl("file write time", Comments)]
+  }
+  # add new comments
+  Comments <- c(Comments, paste0(
+    "#C file created using an r4ss function"
+  ))
+  Comments <- c(Comments, paste("#C file write time:", format(Sys.time(), "%Y-%m-%d  %H:%M:%S")))
+  # write all comments
+  for (ln in Comments) {
+    writeComment(text = ln, con = con)
+  }
+  writeComment("#", con = con)
 }

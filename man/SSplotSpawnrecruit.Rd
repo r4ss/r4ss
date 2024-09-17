@@ -12,11 +12,15 @@ SSplotSpawnrecruit(
   print = FALSE,
   xlim = NULL,
   ylim = NULL,
-  labels = c("Spawning biomass (mt)", "Recruitment (1,000s)",
-    replist[["SpawnOutputLabel"]], expression(paste("Spawning output (relative to ",
-    italic(B)[0], ")")), expression(paste("Recruitment (relative to  ", italic(R)[0],
-    ")")), "Log recruitment deviation"),
-  bioscale = "default",
+  labels = c(
+    "Spawning biomass (mt)", 
+    "Recruitment (1,000s)", 
+    replist[["SpawnOutputLabel"]],
+    expression(paste("Spawning output (relative to ", italic(B)[0], ")")),
+    expression(paste("Recruitment (relative to  ", italic(R)[0], ")")),
+    "Log recruitment deviation"
+  ),
+  bioscale = 1,
   plotdir = "default",
   pwidth = 6.5,
   pheight = 6.5,
@@ -62,8 +66,11 @@ SSplotSpawnrecruit(
 in metric tons, y-axis label, and alternative x-axis for models with a fecundity
 relationship making spawning output not equal to spawning biomass.}
 
-\item{bioscale}{multiplier on spawning biomass, set to 0.5 for single-sex
-models}
+\item{bioscale}{scaling for spawning biomass. Default = 1.
+Previously this was set to
+0.5 for single-sex models, and 1.0 for all others, but now single-sex
+models are assumed to use the -1 option for Nsexes in the data file so the
+scaling is done automatically by SS3.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 

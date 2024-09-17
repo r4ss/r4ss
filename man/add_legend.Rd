@@ -13,6 +13,7 @@ add_legend(
   legendsp = 0.9,
   col = NULL,
   pch = NULL,
+  pt.cex = 0.7,
   lty = 1,
   lwd = 2,
   type = "l"
@@ -39,6 +40,8 @@ which is represented in the summary input object.}
 \item{col}{Optional vector of colors to be used for lines. Input NULL}
 
 \item{pch}{Optional vector of plot character values}
+
+\item{pt.cex}{Adjust the cex of points.}
 
 \item{lty}{Optional vector of line types}
 

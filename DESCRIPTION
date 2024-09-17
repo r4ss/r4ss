@@ -1,7 +1,7 @@
 Type: Package
 Package: r4ss
 Title: R Code for Stock Synthesis
-Version: 1.49.1
+Version: 1.50.0
 Authors@R: c(
     person("Ian G.", "Taylor", , "Ian.Taylor@noaa.gov", role = c("aut", "cre")),
     person("Ian J.", "Stewart", role = "aut"),
@@ -55,20 +55,22 @@ License: GPL-3
 URL: https://github.com/r4ss/r4ss, https://r4ss.github.io/r4ss/
 BugReports: https://github.com/r4ss/r4ss/issues
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports:
     coda,
     corpcor,
     dplyr,
     forcats,
     furrr,
+    future,
     ggplot2,
     gh,
     kableExtra,
     lifecycle,
-    magrittr,
+    purrr,
     stringr,
-    tidyr
+    tidyr,
+    viridis
 Suggests: 
     flextable,
     ggpubr,
@@ -76,6 +78,7 @@ Suggests:
     gtools,
     knitr,
     maps,
+    parallelly,
     pso,
     reshape2,
     rmarkdown,
@@ -88,4 +91,4 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

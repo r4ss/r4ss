@@ -293,7 +293,7 @@ SS_readforecast <- function(file = "forecast.ss",
     forelist <- add_elem(forelist, "Flimitfraction")
 
     if (forelist[["Flimitfraction"]] < 0) {
-      forelist <- add_df(forelist, ncol = 2, col.names = c("Year", "Fraction"), name = "Flimitfraction_m")
+      forelist <- add_df(forelist, ncol = 2, col.names = c("year", "fraction"), name = "Flimitfraction_m")
     }
 
     forelist <- add_elem(forelist, "N_forecast_loops")
@@ -329,30 +329,30 @@ SS_readforecast <- function(file = "forecast.ss",
         forelist[["ForeCatch"]] <- NULL
       } else {
         if (forelist[["InputBasis"]] == -1) {
-          forelist <- add_df(forelist, nrows = forelist[["Ncatch"]], ncol = 5, col.names = c("Year", "Seas", "Fleet", "Catch or F", "Basis"), name = "ForeCatch")
+          forelist <- add_df(forelist, nrows = forelist[["Ncatch"]], ncol = 5, col.names = c("year", "seas", "fleet", "catch_or_F", "basis"), name = "ForeCatch")
         } else {
-          forelist <- add_df(forelist, nrows = forelist[["Ncatch"]], ncol = 4, col.names = c("Year", "Seas", "Fleet", "Catch or F"), name = "ForeCatch")
+          forelist <- add_df(forelist, nrows = forelist[["Ncatch"]], ncol = 4, col.names = c("year", "seas", "fleet", "catch_or_F"), name = "ForeCatch")
         }
       }
     } else {
       if (forelist[["fleet_relative_F"]] == 2) {
-        forelist <- add_df(forelist, ncol = 3, col.names = c("Season", "Fleet", "Relative F"), name = "vals_fleet_relative_f")
+        forelist <- add_df(forelist, ncol = 3, col.names = c("seas", "fleet", "Relative F"), name = "vals_fleet_relative_f")
       }
-      forelist <- add_df(forelist, ncol = 2, col.names = c("Fleet", "Max Catch"), name = "max_totalcatch_by_fleet")
-      forelist <- add_df(forelist, ncol = 2, col.names = c("Area", "Max Catch"), name = "max_totalcatch_by_area")
-      forelist <- add_df(forelist, ncol = 2, col.names = c("Fleet", "Group"), name = "fleet_assignment_to_allocation_group")
+      forelist <- add_df(forelist, ncol = 2, col.names = c("fleet", "max_catch"), name = "max_totalcatch_by_fleet")
+      forelist <- add_df(forelist, ncol = 2, col.names = c("area", "max_catch"), name = "max_totalcatch_by_area")
+      forelist <- add_df(forelist, ncol = 2, col.names = c("fleet", "group"), name = "fleet_assignment_to_allocation_group")
       if (!is.null(forelist[["fleet_assignment_to_allocation_group"]])) {
         forelist[["N_allocation_groups"]] <- max(forelist[["fleet_assignment_to_allocation_group"]][, 2])
-        forelist <- add_df(forelist, ncol = (forelist[["N_allocation_groups"]] + 1), col.names = c("Year", paste0("Group ", 1:forelist[["N_allocation_groups"]])), name = "allocation_among_groups")
+        forelist <- add_df(forelist, ncol = (forelist[["N_allocation_groups"]] + 1), col.names = c("year", paste0("group ", 1:forelist[["N_allocation_groups"]])), name = "allocation_among_groups")
       } else {
         forelist[["N_allocation_groups"]] <- 0
         forelist[["allocation_among_groups"]] <- NULL
       }
       forelist <- add_elem(forelist, "InputBasis")
       if (forelist[["InputBasis"]] == -1) {
-        forelist <- add_df(forelist, ncol = 5, col.names = c("Year", "Seas", "Fleet", "Catch or F", "Basis"), name = "ForeCatch")
+        forelist <- add_df(forelist, ncol = 5, col.names = c("year", "seas", "fleet", "catch_or_F", "basis"), name = "ForeCatch")
       } else {
-        forelist <- add_df(forelist, ncol = 4, col.names = c("Year", "Seas", "Fleet", "Catch or F"), name = "ForeCatch")
+        forelist <- add_df(forelist, ncol = 4, col.names = c("year", "seas", "fleet", "catch_or_F"), name = "ForeCatch")
       }
     }
     if (forelist$".dat"[forelist$".i"] == 999) {

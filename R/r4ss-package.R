@@ -1,6 +1,6 @@
 #' @import coda
 #' @import dplyr
-#' @import magrittr
+#' @import viridis
 #' @importFrom corpcor pseudoinverse
 #' @importFrom grDevices adjustcolor col2rgb colorRampPalette
 #'   dev.new dev.off graphics.off

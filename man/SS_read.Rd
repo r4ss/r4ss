@@ -19,8 +19,9 @@ to the screen.}
 }
 \value{
 An invisible list is returned.
-The first element is the directory that was provided in the argument \code{dir}.
-The second element is the result of \code{normalizePath(dir)},
+The first element (\code{dir}) is the directory that was provided in the
+argument \code{dir}.
+The second element (\code{path}) is the result of \code{normalizePath(dir)},
 which gives the full path.
 The remaining four to six elements are list objects from reading in
 the following input files:
@@ -30,7 +31,8 @@ the following input files:
 \item starter
 \item forecast
 \item wtatage (will be NULL if not required by the model)
-\item par (will be null if control and par do not match)
+\item par (will be NULL if not required by model or if control and par
+do not match)
 }
 }
 \description{
@@ -48,13 +50,13 @@ the control and data files.
 inputs <- SS_read(
   dir = system.file("extdata", "simple_small", package = "r4ss")
 )
-# Read in an example from GitHub stored in user-examples,
+# Read in an example from GitHub stored in ss3-user-examples,
 # wrapped in `dontrun` because it requires an Internet connection
 \dontrun{
 webexample <- SS_read(dir = file.path(
   "https://raw.githubusercontent.com",
-  "nmfs-stock-synthesis",
-  "user-examples",
+  "nmfs-ost",
+  "ss3-user-examples",
   "main",
   "model_files",
   "simple_long_wtatage"
@@ -70,11 +72,11 @@ Other read/write functions:
 \code{\link{SS_readdat}()},
 \code{\link{SS_readforecast}()},
 \code{\link{SS_readstarter}()},
+\code{\link{SS_write}()},
 \code{\link{SS_writectl}()},
 \code{\link{SS_writedat}()},
 \code{\link{SS_writeforecast}()},
-\code{\link{SS_writestarter}()},
-\code{\link{SS_write}()}
+\code{\link{SS_writestarter}()}
 }
 \author{
 Ian G. Taylor, Kelli F. Johnson

@@ -50,7 +50,7 @@ SS_doRetro <-
 #'
 #' @author Ian G. Taylor, James T. Thorson, Kathryn L. Doering, Kiva L. Oken
 #' @export
-#' @importFrom furrr future_walk
+#' @import furrr
 #' @seealso [SSgetoutput()]
 #' @family run functions
 #' @examples
@@ -76,12 +76,13 @@ SS_doRetro <-
 #' )
 #'
 #' ## run retrospectives in parallel
-#' ncores <- parallel::detectCores() - 1
+#' ncores <- parallelly::availableCores(omit = 1)
 #' future::plan(future::multisession, workers = ncores)
 #' retro(
 #'   dir = mydir,
 #'   years = 0:-5
 #' )
+#' future::plan(future::sequential)
 #' }
 #'
 retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),

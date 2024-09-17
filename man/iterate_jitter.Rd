@@ -6,18 +6,17 @@
 \usage{
 iterate_jitter(
   i,
-  dir = getwd(),
   printlikes = TRUE,
-  exe = "ss",
+  exe = "ss3",
   verbose = FALSE,
   init_values_src = 0,
+  dir = NULL,
+  extras = NULL,
   ...
 )
 }
 \arguments{
 \item{i}{Index of the jitter iteration.}
-
-\item{dir}{Directory of the base model to be jittered}
 
 \item{printlikes}{A logical value specifying if the likelihood values should
 be printed to the console.}
@@ -36,6 +35,11 @@ to the screen.}
 \item{init_values_src}{Either zero or one, specifying if the initial values to
 jitter should be read from the control file or from the par file, respectively.
 Cannot be \code{NULL}. Defaults to zero (initial values read from control file).}
+
+\item{dir}{Directory where model files are located.}
+
+\item{extras}{Additional ADMB command line arguments passed
+to the executable, such as "-nohess"}
 
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}}
 }

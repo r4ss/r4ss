@@ -1,4 +1,4 @@
-#V3.30.21.00;_safe;_compile_date:_Feb 10 2023;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.1
+#V3.30.22.1;_safe;_compile_date:_Jan 30 2024;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.1
 #C forecast file written by R function SS_writeforecast
 #C rerun model to get more complete formatting in forecast.ss_new
 #C should work with SS version: 3.3
@@ -19,27 +19,47 @@
 # where none and simple require no input after this line; simple sets forecast F same as end year F
 10 # N forecast years 
 0.2 # Fmult (only used for Do_Forecast==5) such that apical_F(f)=Fmult*relF(f)
-#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_mean recruits, end_recruits  (enter actual year, or values of 0 or -integer to be rel. endyr)
+#_Fcast_years for averaging:  beg_selex, end_selex, beg_relF, end_relF, beg_mean recruits, end_recruits  (enter actual year, or values of 0 or -integer to be rel. endyr)
  0 0 0 0 0 0
 #  2022 2022 2022 2022 2022 2022
-0 # Forecast selectivity (0=fcast selex is mean from year range; 1=fcast selectivity from annual time-vary parms)
+0 # Forecast selectivity (0=fcast selex is mean from year range; 1=fcast selectivity from time-vary parms). NOTE: logic reverses in new format
+# A revised protocol for the Fcast_yr specification is available and recommended. Template is below.
+#
+#-12345  # code to invoke new format for expanded fcast year controls
+# biology and selectivity vectors are updated annually in the forecast according to timevary parameters, so check end year of blocks and dev vectors
+# input in this section directs creation of means over historical years to override any time_vary changes
+# Factors implemented so far: 1=M, 4=recr_dist, 5=migration, 10=selectivity, 11=rel_F, 12=recruitment
+# rel_F and Recruitment also have additional controls later in forecast.ss
+# input as list: Factor, method (0, 1), st_yr, end_yr
+# Terminate with -9999 for Factor
+# st_yr and end_yr input can be actual year; <=0 sets rel. to timeseries endyr; Except -999 for st_yr sets to first year if time series
+# Method = 0 (or omitted) continue using time_vary parms; 1  use mean of derived factor over specified year range
+# Factor method st_yr end_yr 
+# 10 1 0 0 # selectivity; use:  10 1 0 0
+# 11 1 0 0 # rel_F; use:  11 1 0 0
+# 12 1 0 0 # recruitment; use:  12 1 0 0
+#-9999 0 0 0
+#
 1 # Control rule method (0: none; 1: ramp does catch=f(SSB), buffer on F; 2: ramp does F=f(SSB), buffer on F; 3: ramp does catch=f(SSB), buffer on catch; 4: ramp does F=f(SSB), buffer on catch) 
 # values for top, bottom and buffer exist, but not used when Policy=0
 0.4 # Control rule inflection for constant F (as frac of Bzero, e.g. 0.40); must be > control rule cutoff, or set to -1 to use Bmsy/SSB_unf 
 0.1 # Control rule cutoff for no F (as frac of Bzero, e.g. 0.10) 
 0.75 # Buffer:  enter Control rule target as fraction of Flimit (e.g. 0.75), negative value invokes list of [year, scalar] with filling from year to YrMax 
+#
 3 #_N forecast loops (1=OFL only; 2=ABC; 3=get F from forecast ABC catch with allocations applied)
-3 #_First forecast loop with stochastic recruitment
-1 #_Forecast recruitment:  0= spawn_recr; 1=value*spawn_recr_fxn; 2=value*VirginRecr; 3=recent mean from yr range above (need to set phase to -1 in control to get constant recruitment in MCMC)
-1 # value is multiplier of SRR 
-0 #_Forecast loop control #5 (reserved for future bells&whistles) 
-2050  #FirstYear for caps and allocations (should be after years with fixed inputs) 
+3 # First forecast loop with stochastic recruitment
+1 # Forecast base recruitment:  0= spawn_recr; 1=mult*spawn_recr_fxn; 2=mult*VirginRecr; 3=deprecated; 4=mult*mean_over_yr_range
+# for option 4, set phase for fore_recr_devs to -1 in control to get constant mean in MCMC, else devs will be applied
+1 # multiplier on base recruitment 
+0 # not used
+#
+2050  # FirstYear for caps and allocations (should be after years with fixed inputs) 
 0 # stddev of log(realized catch/target catch) in forecast (set value>0.0 to cause active impl_error)
 0 # Do West Coast gfish rebuilder output: 0=no; 1=yes 
 1999 # Rebuilder:  first year catch could have been set to zero (Ydecl)(-1 to set to 1999)
 2002 # Rebuilder:  year for current age structure (Yinit) (-1 to set to endyear+1)
-1 # fleet relative F:  1=use first-last alloc year; 2=read seas, fleet, alloc list below
-# Note that fleet allocation is used directly as average F if Do_Forecast=4 
+1 # fleet relative F:  1=use mean over year range; 2=read seas, fleet, alloc list below
+# Note that fleet allocation values is used directly as F if Do_Forecast=4 
 2 # basis for fcast catch tuning and for fcast catch caps and allocation  (2=deadbio; 3=retainbio; 5=deadnum; 6=retainnum); NOTE: same units for all fleets
 # Conditional input if relative F choice = 2
 # enter list of:  season,  fleet, relF; if used, terminate with season=-9999

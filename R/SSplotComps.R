@@ -265,6 +265,7 @@ SSplotComps <-
     titlesex <- ifelse(printsex, titlesex, "")
 
     # a few quantities related to data type and plot number
+    tail_warning <- FALSE
     if (kind == "LEN") {
       dbase_kind <- lendbase
       kindlab <- labels[1]
@@ -274,6 +275,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_lenfit_"
         titledata <- "Length comps, "
+      }
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "GSTLEN") {
@@ -285,6 +291,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_gstlenfit_"
         titledata <- "Excluded length comps, "
+      }
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "SIZE") {
@@ -344,6 +355,11 @@ SSplotComps <-
         filenamestart <- "comp_agefit_"
         titledata <- "Age comps, "
       }
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
+      }
     }
     if (kind == "cond") {
       dbase_kind <- condbase
@@ -365,6 +381,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_gstagefit_"
         titledata <- "Excluded age comps, "
+      }
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "GSTcond") {
@@ -591,6 +612,14 @@ SSplotComps <-
                   for (ipage in 1:npages) {
                     pagetext <- ""
                     caption <- caption1
+                    # add warning about tail compression
+                    if (ipage == 1 & tail_warning) {
+                      caption <- paste0(
+                        caption, ".\n <br> ",
+                        "Note: tail compression in use makes aggregated plots more difficult to interpret."
+                      )
+                    }
+                    # add warning about partitions
                     if (max_n_mkt > 0 & ipage == 1) {
                       caption <-
                         paste0(
@@ -601,6 +630,8 @@ SSplotComps <-
                           " the whole catch.\n"
                         )
                     }
+                    # remove double period if present
+                    caption <- gsub("..", ".", caption, fixed = TRUE)
                     if (npages > 1) {
                       pagetext <- paste("_page", ipage, sep = "")
                       caption <- paste(caption, "<br> (plot ", ipage, " of ", npages, ")", sep = "")
@@ -1273,7 +1304,9 @@ SSplotComps <-
             data_info <- replist[["len_data_info"]]
           }
         }
-
+        if (kind %in% c("SIZE")) {
+          data_info <- replist[["Size_comp_error_controls"]]
+        } # output wasn't available in earlier versions of SS3
 
         # loop over partitions (discard, retain, total)
         for (j in unique(dbasef[["Part"]])) {
@@ -1444,12 +1477,25 @@ SSplotComps <-
                     if ("partition" %in% names(data_info)) { # added in 3.30.21
                       sub <- data_info[["Fleet"]] == f & data_info[["partition"]] == j
                     } else {
-                      # earlier version without partition weighting
-                      # has one row per fleet so no "fleet" column
-                      sub <- f
+                      if ("Fleet" %in% names(data_info)) {
+                        # partition weighting not available for all comp types,
+                        # so can't rely on "partition" to distinguish
+                        sub <- data_info[["Fleet"]] == f
+                      } else {
+                        # earlier version without partition weighting
+                        # has one row per fleet so no "fleet" column
+                        sub <- f
+                      }
                     }
-                    ParmSelect <- data_info[sub, "ParmSelect"]
-                    CompError <- data_info[sub, "CompError"]
+                    if (kind != "SIZE") {
+                      ParmSelect <- data_info[sub, "ParmSelect"]
+                      CompError <- data_info[sub, "CompError"]
+                    } else {
+                      # Size_comp_error_controls have different format
+                      sub <- sizemethod
+                      ParmSelect <- data_info[sub, "error_parm_ID"]
+                      CompError <- data_info[sub, "error_type"]
+                    }
 
                     # D-M option 1 (linear)
                     if (CompError == 1) {
@@ -2027,7 +2073,7 @@ SSplotComps <-
                   filenamestart,
                   ifelse(whichplot == 8,
                     "data_weighting_timeseries_",
-                    "data_weighting_TA1.8_"
+                    "data_weighting_TA1-8_"
                   ),
                   fleetnames[f], ".png"
                 )
@@ -2122,9 +2168,9 @@ SSplotComps <-
                   filenamestart,
                   ifelse(whichplot == 10,
                     "data_weighting_timeseries_condAge",
-                    "data_weighting_TA1.8_condAge"
+                    "data_weighting_TA1-8_condAge"
                   ),
-                  fleetnames[f], ".png"
+                  gsub(" ", "", fleetnames[f]), ".png"
                 )
                 # not using save_png because caption isn't available until after
                 # plot is created

@@ -115,7 +115,8 @@ columns in summary tables.}
 
 \item{endyrvec}{Optional single year or vector of years representing the
 final year of values to show for each model. By default it is set to the
-ending year specified in each model.}
+ending year specified in each model. If the number of models is subset using
+the \code{models} input then \code{endyr} needs to be shortened as well.}
 
 \item{indexfleets}{Fleet numbers for each model to compare
 indices of abundance. Can take different forms:

@@ -20,9 +20,10 @@ profile(
   overwrite = TRUE,
   whichruns = NULL,
   prior_check = TRUE,
-  read_like = TRUE,
+  read_like = lifecycle::deprecated(),
   exe = "ss3",
   verbose = TRUE,
+  conv_criteria = 0.01,
   ...
 )
 }
@@ -53,8 +54,8 @@ matrix with a column for each parameter.}
 \item{usepar}{Use PAR file from previous profile step for starting values?}
 
 \item{globalpar}{Use global par file (\code{parfile_original_backup.sso}, which is
-automatically copied from original \code{ss.par}) for all runs instead
-of the par file from each successive run}
+automatically copied from original \code{ss.par} or \code{ss3.par} depending on SS3
+version) for all runs instead of the par file from each successive run}
 
 \item{parlinenum}{Line number in par file to change (if usepar = TRUE).
 Can be a vector if you are profiling multiple parameters at the same time.}
@@ -76,9 +77,7 @@ is the length of profilevec.}
 \item{prior_check}{Check to make sure the starter file is set to include
 the prior likelihood contribution in the total likelihood.  Default = TRUE.}
 
-\item{read_like}{Read the table of likelihoods from each model as it finishes.
-Default = TRUE. Changing to FALSE should allow the function to play through
-even if something is wrong with reading the table.}
+\item{read_like}{Deprecated.}
 
 \item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can
@@ -90,6 +89,9 @@ included.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{conv_criteria}{Maximum gradient for a model to be considered converged.
+Defaults to 0.01.}
 
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
 \code{extras}, \code{show_in_console}, and \code{skipfinished}.}
@@ -103,6 +105,12 @@ The starting values used in this profile are not ideal and some models
 may not converge. Care should be taken in using an automated tool like this,
 and some models are likely to require rerunning with alternate starting
 values.
+
+To run multiple models simultaneously using parallel computing, see
+\code{\link[future:plan]{future::plan()}}. However, when running models in parallel, you cannot
+iteratively adapt the starting values using \code{usepar = TRUE} and
+\code{globalpar = FALSE}. This increases the chances that some of your models do
+not converge.
 
 Also, someday this function will be improved to work directly with the
 plotting function \code{\link[=SSplotProfile]{SSplotProfile()}}, but they don't yet work well
@@ -149,7 +157,7 @@ SS_writestarter(starter, dir = dir_prof, overwrite = TRUE)
 h.vec <- seq(0.3, 0.9, .1)
 Nprofile <- length(h.vec)
 # run profile command
-profile <- profile(
+prof.table <- profile(
   dir = dir_prof,
   oldctlfile = "control.ss",
   newctlfile = "control_modified.ss",
@@ -177,6 +185,18 @@ results <- SSplotProfile(profilesummary, # summary object
 
 # make timeseries plots comparing models in profile
 SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
+
+# run same profile in parallel
+ncores <- parallelly::availableCores(omit = 1)
+future::plan(future::multisession, workers = ncores)
+prof.table <- profile(
+  dir = dir_prof,
+  oldctlfile = "control.ss",
+  newctlfile = "control_modified.ss",
+  string = "steep", # subset of parameter label
+  profilevec = h.vec
+)
+future::plan(future::sequential)
 
 ###########################################################################
 # example two-dimensional profile
@@ -269,7 +289,7 @@ Other profile functions:
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson,
-Chantel R. Wetzel, James T. Thorson
+Chantel R. Wetzel, James T. Thorson, Kiva L. Oken
 }
 \concept{profile functions}
 \concept{run functions}
