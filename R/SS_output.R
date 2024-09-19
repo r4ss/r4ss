@@ -30,7 +30,11 @@
 #' @param aalmaxbinrange The largest length bin range allowed for composition
 #' data to be considered as conditional age-at-length data.
 #' @param SpawnOutputLabel An alternative to "Spawning output" for use in
-#' figure axis labels and table headers.
+#' figure axis labels and table headers for models that include a fecundity 
+#' relationship. This provides an option to provide the units, e.g. 
+#' `SpawnOutputLabel = "Spawning output (trillions of eggs)"`. 
+#' This needs to be a user input because the units depend on the choice of 
+#' fecundity parameters which are calculated outside of the SS3 model.
 #' @return Many values are returned. Complete list would be quite long, but
 #' should probably be created at some point in the future.
 #' @author Ian Stewart, Ian Taylor
