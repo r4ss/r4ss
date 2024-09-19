@@ -93,7 +93,7 @@ TSCplot <- function(SSout,
   if (yrs[1] == "default") yrs <- unique(sort(SSout[["timeseries"]][["Yr"]][ind]))
 
   # get catches + discards summed over areas
-  deadCatch <- SSplotCatch(SSout, plot = FALSE, verbose = FALSE)$totcatchmat
+  deadCatch <- SSplotCatch(SSout, plot = FALSE, verbose = FALSE)[["totcatchmat"]]
   if (ncol(deadCatch) > 2) { # sum over fisheries
     deadCatch <- cbind(apply(deadCatch[, -ncol(deadCatch)], 1, sum), deadCatch[, ncol(deadCatch)])
   }
@@ -155,7 +155,7 @@ TSCplot <- function(SSout,
   )
   points(xpts[ind], SP[["Depl"]][ind], pch = pchDepl, col = colDepl)
   axis(4, at = seq(ylimDepl[1], ylimDepl[2], 0.1), cex.axis = cex.axis)
-  mtext(c("Year", "Total mortality catch (mt)", "Depletion"), side = c(1, 2, 4), line = labelLines, cex = 1.5)
+  mtext(c("Year", "Total mortality catch (t)", "Depletion"), side = c(1, 2, 4), line = labelLines, cex = 1.5)
 
   if (!is.null(makePDF)) {
     dev.off()

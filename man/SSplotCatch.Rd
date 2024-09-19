@@ -29,7 +29,7 @@ SSplotCatch(
   order = "default",
   xlab = "Year",
   labels = c("Harvest rate/Year", "Continuous F", "Landings", "Total catch",
-    "Predicted discards", "Discard fraction", "(mt)", "(numbers x1000)",
+    "Predicted discards", "Discard fraction", "(t)", "(numbers x1000)",
     "Observed and expected", "aggregated across seasons"),
   catchasnumbers = NULL,
   catchbars = TRUE,

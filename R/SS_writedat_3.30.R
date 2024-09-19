@@ -55,8 +55,8 @@ SS_writedat_3.30 <- function(datlist,
     }
   }
 
-  oldwidth <- options()$width
-  oldmax.print <- options()$max.print
+  oldwidth <- options()[["width"]]
+  oldmax.print <- options()[["max.print"]]
   options(width = 5000, max.print = 9999999)
 
   if (verbose) {

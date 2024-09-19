@@ -174,7 +174,7 @@ SSplotComps <-
              "Frequency", # 8
              "Weight", # 9
              "Length", # 10
-             "(mt)", # 11
+             "(t)", # 11
              "(numbers x1000)", # 12
              "Stdev (Age)", # 13
              "Conditional AAL plot, ", # 14
@@ -1182,7 +1182,7 @@ SSplotComps <-
             )
             ### alternative way with legends on the side
             ### (probably not as good once the partition has been added)
-            # mtext(namesvec[ipanel],side=2,line=4.5,cex=par()$cex)
+            # mtext(namesvec[ipanel],side=2,line=4.5,cex=par()[["cex"]])
 
 
             # add lines for growth of individual cohorts if requested
@@ -1210,14 +1210,14 @@ SSplotComps <-
               }
             }
 
-            if (par()$mfg[1] == par()$mfg[3] | ipanel == tail(panelvec, 1)) {
+            if (par()[["mfg"]][1] == par()[["mfg"]][3] | ipanel == tail(panelvec, 1)) {
               # label all years on x-axis of last panel
               axis(1, at = xaxislab)
             } else {
               # or just tick marks for other panels
               axis(1, at = xaxislab, labels = rep("", length(xaxislab)))
             }
-            if (par()$mfg[1] == 1) {
+            if (par()[["mfg"]][1] == 1) {
               # add title after making first panel
               title(main = ptitle, outer = TRUE, xlab = labels[3], ylab = kindlab)
             }
@@ -2000,7 +2000,7 @@ SSplotComps <-
                 abline(0, 1, col = "black", lty = 1)
                 # add loess smoother if there's at least 6 points with a range greater than 2
                 if (smooth & length(unique(dbasegood2[["Nsamp_adj"]])) > 6 & diff(range(dbasegood2[["Nsamp_adj"]])) > 2) {
-                  old_warn <- options()$warn # previous warnings setting
+                  old_warn <- options()[["warn"]] # previous warnings setting
                   options(warn = -1) # turn off loess warnings
                   psmooth <- loess(dbasegood2[["effN"]] ~ dbasegood2[["Nsamp_adj"]], degree = 1)
                   options(warn = old_warn) # returning to old value

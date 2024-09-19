@@ -43,9 +43,9 @@ SSplotYield <-
            add = FALSE, plot = TRUE, print = FALSE,
            labels = c(
              "Fraction unfished", # 1
-             "Equilibrium yield (mt)", # 2
-             "Total biomass (mt)", # 3
-             "Surplus production (mt)", # 4
+             "Equilibrium yield (t)", # 2
+             "Total biomass (t)", # 3
+             "Surplus production (t)", # 4
              "Yield per recruit (kg)" # 5
            ),
            col = "blue", col2 = "black", lty = 1, lwd = 2, cex.main = 1,
@@ -196,8 +196,8 @@ SSplotYield <-
     catch <- rowSums(catchmat)
 
     # aggregate catch and biomass across seasons and areas
-    catch_agg <- aggregate(x = catch, by = list(ts[["Yr"]]), FUN = sum)$x
-    Bio_agg <- aggregate(x = ts[["Bio_all"]], by = list(ts[["Yr"]]), FUN = sum)$x
+    catch_agg <- aggregate(x = catch, by = list(ts[["Yr"]]), FUN = sum)[["x"]]
+    Bio_agg <- aggregate(x = ts[["Bio_all"]], by = list(ts[["Yr"]]), FUN = sum)[["x"]]
 
     # number of years to consider
     Nyrs <- length(Bio_agg)
@@ -219,7 +219,7 @@ SSplotYield <-
       # add lines
       lines(Bio_agg_good, sprod_good, col = col2)
       # make arrows
-      old_warn <- options()$warn # previous setting
+      old_warn <- options()[["warn"]] # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
       s <- seq(length(sprod_good) - 1)
       arrows(Bio_agg_good[s], sprod_good[s], Bio_agg_good[s + 1], sprod_good[s + 1],

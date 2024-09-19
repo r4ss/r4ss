@@ -29,6 +29,12 @@
 #' @param NoCompOK Allow the function to work without a CompReport file.
 #' @param aalmaxbinrange The largest length bin range allowed for composition
 #' data to be considered as conditional age-at-length data.
+#' @param SpawnOutputLabel An alternative to "Spawning output" for use in
+#' figure axis labels and table headers for models that include a fecundity
+#' relationship. This provides an option to provide the units, e.g.
+#' `SpawnOutputLabel = "Spawning output (trillions of eggs)"`.
+#' This needs to be a user input because the units depend on the choice of
+#' fecundity parameters which are calculated outside of the SS3 model.
 #' @return Many values are returned. Complete list would be quite long, but
 #' should probably be created at some point in the future.
 #' @author Ian Stewart, Ian Taylor
@@ -64,7 +70,8 @@ SS_output <-
            printstats = TRUE,
            hidewarn = FALSE,
            NoCompOK = TRUE,
-           aalmaxbinrange = 4) {
+           aalmaxbinrange = 4,
+           SpawnOutputLabel = "Spawning output") {
     flush.console()
 
     #################################################################################
@@ -221,7 +228,7 @@ SS_output <-
 
     # read three rows to get start time and version number from rep file
     if (file.exists(repfile)) {
-      if (file.info(repfile)$size > 0) {
+      if (file.info(repfile)[["size"]] > 0) {
         if (verbose) {
           message("Getting header info from:\n  ", repfile)
         }
@@ -396,7 +403,7 @@ SS_output <-
     # where it occurred in older SS versions)
     if (forecast) {
       forecastname <- file.path(dir, forefile)
-      temp <- file.info(forecastname)$size
+      temp <- file.info(forecastname)[["size"]]
       if (is.na(temp) | temp == 0) {
         if (verbose) {
           message("Forecast-report.sso file is missing or empty.")
@@ -486,7 +493,7 @@ SS_output <-
     logfile_name <- dir(dir, pattern = ".log$")
     logfile_name <- logfile_name[logfile_name != "fmin.log"]
     if (length(logfile_name) > 1) {
-      filetimes <- file.info(file.path(dir, logfile_name))$mtime
+      filetimes <- file.info(file.path(dir, logfile_name))[["mtime"]]
       logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
         message(
@@ -496,7 +503,7 @@ SS_output <-
       }
     }
     if (length(logfile_name) == 1 &&
-      file.info(file.path(dir, logfile_name))$size > 0) {
+      file.info(file.path(dir, logfile_name))[["size"]] > 0) {
       logfile <- readLines(file.path(dir, logfile_name))
       logfile <- grep("^size", logfile, value = TRUE)
       if (length(logfile) == 0) {
@@ -3323,6 +3330,7 @@ SS_output <-
     returndat[["annual_time_series"]] <- ann_ts
     returndat[["managementratiolabels"]] <- managementratiolabels
     returndat[["F_std_basis"]] <- managementratiolabels[["Label"]][2]
+    returndat[["SpawnOutputLabel"]] <- SpawnOutputLabel
     returndat[["sprtarg"]] <- sprtarg
     returndat[["btarg"]] <- btarg
 
@@ -3661,7 +3669,7 @@ SS_output <-
           # filter out empty elements
           Matrix.Info <- Matrix.Info[Matrix.Info != ""]
           # combine elements to form a label in the dimnames
-          dimnames(ALK)$Matrix[i] <- paste(Matrix.Info, collapse = " ")
+          dimnames(ALK)[["Matrix"]][i] <- paste(Matrix.Info, collapse = " ")
         }
         returndat[["ALK"]] <- ALK
       } # end check for keyword present

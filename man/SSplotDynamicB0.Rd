@@ -6,7 +6,7 @@
 \usage{
 SSplotDynamicB0(
   replist,
-  ylab = "Spawning biomass (mt)",
+  ylab = "Spawning biomass (t)",
   equilibrium = TRUE,
   forecast = FALSE,
   yrs = "all",
@@ -34,8 +34,9 @@ SSplotDynamicB0(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{ylab}{Y-axis label. Default is "Spawning biomass (mt)" which is replaced
-by "Spawning output" for models with \code{replist[["SpawnOutputUnits"]] == "numbers"}}
+\item{ylab}{Y-axis label. Default is "Spawning biomass (t)" which is replaced
+by \code{replist[["SpawnOutputLabel"]]} for models with
+\code{replist[["SpawnOutputUnits"]] == "numbers"}}
 
 \item{equilibrium}{Show equilibrium in plot? Applies whether "yrs" is specified
 or not.}

@@ -41,12 +41,12 @@ SSplotTimeseries(
 Numbering of subplots is as follows, where the spawning biomass plots
 (7 to 10) are provided first when this function is called by \code{\link[=SS_plots]{SS_plots()}}:
 \itemize{
-\item 1 Total biomass (mt) with forecast
+\item 1 Total biomass (t) with forecast
 \item 2 Total biomass by area (spatial models only)
-\item 3 Total biomass (mt) at beginning of spawning season with forecast
-\item 4 Summary biomass (mt) with forecast
-\item 5 Summary biomass (mt) by area (spatial models only)
-\item 6 Summary biomass (mt) at beginning of season 1 with forecast
+\item 3 Total biomass (t) at beginning of spawning season with forecast
+\item 4 Summary biomass (t) with forecast
+\item 5 Summary biomass (t) by area (spatial models only)
+\item 6 Summary biomass (t) at beginning of season 1 with forecast
 \item 7 Spawning output with forecast with ~95\% asymptotic intervals
 \item 8 Spawning output by area (spatial models only)
 \item 9 Relative spawning output with forecast with ~95\% asymptotic intervals

@@ -49,8 +49,8 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   }
 
   # temporarily change the number of characters per line for printing to R console
-  oldwidth <- options()$width
-  oldmax.print <- options()$max.print
+  oldwidth <- options()[["width"]]
+  oldmax.print <- options()[["max.print"]]
   options(width = 5000, max.print = 9999999)
 
   # open file connection if requested
