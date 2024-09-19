@@ -76,6 +76,7 @@ SSsummarize <- function(biglist,
   }
   # accumulator age for each model
   accuages <- rep(NA, n)
+  summary_ages <- rep(NA, n)
 
   # do the loop
   for (imodel in 1:n) {
@@ -86,6 +87,8 @@ SSsummarize <- function(biglist,
     likenames <- union(likenames, rownames(stats[["likelihoods_used"]]))
     # accumulator age for each model
     accuages[imodel] <- stats[["accuage"]]
+    # summary biomass age for each model
+    summary_ages[imodel] <- stats[["summary_age"]]
   }
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
@@ -101,6 +104,7 @@ SSsummarize <- function(biglist,
   indices <- NULL
   sizesel <- NULL
   agesel <- NULL
+  # check accumulator age
   accuage <- max(accuages)
   if (all(accuages == accuage)) {
     growth <- as.data.frame(matrix(NA, nrow = accuage + 1, ncol = n))
@@ -111,6 +115,13 @@ SSsummarize <- function(biglist,
       "accumulator ages among models"
     )
     growth <- NULL
+  }
+  # check summary biomass age
+  if (length(unique(summary_ages)) > 1) {
+    warning(
+      "Age used in summary biomass calculations differs among models:",
+      paste(summary_ages, collapse = " ")
+    )
   }
   # notes about what runs were used
   sim <- NULL
@@ -554,6 +565,57 @@ SSsummarize <- function(biglist,
     recdevs <- recdevsSD <- recdevsLower <- recdevsUpper <- NULL
   }
 
+  # Summary biomass (range of ages defined in starter file and
+  # presence in derived quantities depends on "read specs for more stddev
+  # reporting" at the bottom of the control file)
+
+  # rows numbers of derived quantities that start with "SmryBio_"
+  SmryBiorows <- grep("SmryBio_", quants[["Label"]])
+  # exclude "unfished" value--though may be useful in the future
+  SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_unfished", quants[["Label"]]))
+  SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_Unfished", quants[["Label"]]))
+
+  # identify summary biomass parameters
+  SmryBio <- quants[SmryBiorows, ]
+  SmryBioSD <- quantsSD[SmryBiorows, ]
+
+  if (nrow(SmryBio) > 0) {
+    # if summary biomass found in derived quanties of any model
+    # add year values for Virgin and Initial years
+    minyr <- min(SmryBio[["Yr"]], na.rm = TRUE)
+    SmryBio[["Yr"]][grep("SmryBio_Virg", SmryBio[["Label"]])] <- minyr - 2
+    SmryBio[["Yr"]][grep("SmryBio_InitEq", SmryBio[["Label"]])] <- minyr - 1
+    SmryBioSD[["Yr"]] <- SmryBio[["Yr"]]
+  } else {
+    # if not in derived quantities, create empty dataframe based on SpawnBio
+    SmryBio <- SpawnBio
+    SmryBio[, 1:n] <- NA
+    SmryBio[["Label"]] <- NA
+    SmryBioSD <- SmryBio
+  }
+  SmryBio <- SmryBio[order(SmryBio[["Yr"]]), ]
+  SmryBioSD <- SmryBioSD[order(SmryBioSD[["Yr"]]), ]
+  # add any missing values using timeseries
+  for (imodel in 1:n) {
+    yrs <- stats[["timeseries"]][["Yr"]]
+    # if there are NA values within the range of years of timeseries
+    if (any(is.na(SmryBio[SmryBio[["Yr"]] %in% yrs, imodel]))) {
+      SmryBio[SmryBio[["Yr"]] %in% yrs, imodel] <-
+        biglist[[imodel]][["timeseries"]] |>
+        dplyr::filter(Yr %in% yrs) |>
+        dplyr::select(Bio_smry)
+    }
+  }
+
+  SmryBioLower <- SmryBioUpper <- SmryBioSD
+  SmryBioLower[, 1:n] <- qnorm(
+    p = lowerCI, mean = as.matrix(SmryBio[, 1:n]),
+    sd = as.matrix(SmryBioSD[, 1:n])
+  )
+  SmryBioUpper[, 1:n] <- qnorm(
+    p = upperCI, mean = as.matrix(SmryBio[, 1:n]),
+    sd = as.matrix(SmryBioSD[, 1:n])
+  )
 
   # function to merge duplicate rows caused by different parameter labels
   # that are associated with the same year, such as the recdev for 2016
@@ -691,6 +753,10 @@ SSsummarize <- function(biglist,
   mylist[["recdevsSD"]] <- merge.duplicates(sort.fn(recdevsSD))
   mylist[["recdevsLower"]] <- merge.duplicates(sort.fn(recdevsLower))
   mylist[["recdevsUpper"]] <- merge.duplicates(sort.fn(recdevsUpper))
+  mylist[["SmryBio"]] <- sort.fn(SmryBio)
+  mylist[["SmryBioSD"]] <- sort.fn(SmryBioSD)
+  mylist[["SmryBioLower"]] <- sort.fn(SmryBioLower)
+  mylist[["SmryBioUpper"]] <- sort.fn(SmryBioUpper)
   mylist[["growth"]] <- growth
   mylist[["sizesel"]] <- sizesel
   mylist[["agesel"]] <- agesel
@@ -702,6 +768,8 @@ SSsummarize <- function(biglist,
   mylist[["SpawnOutputLabels"]] <- SpawnOutputLabels
   mylist[["FleetNames"]] <- FleetNames
   mylist[["mcmc"]] <- mcmc
+  mylist[["accuages"]] <- accuages
+  mylist[["summary_ages"]] <- summary_ages
   # mylist[["lbinspop"]]   <- as.numeric(names(stats[["sizeselex"]])[-(1:5)])
 
   if (verbose) {

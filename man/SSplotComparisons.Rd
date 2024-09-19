@@ -22,7 +22,8 @@ SSplotComparisons(
   labels = c("Year", "Spawning biomass (t)", "Fraction of unfished",
     "Age-0 recruits (1,000s)", "Recruitment deviations", "Index", "Log index",
     "SPR-related quantity", "Density", "Management target",
-    "Minimum stock size threshold", "Spawning output", "Harvest rate"),
+    "Minimum stock size threshold", "Spawning output", "Harvest rate",
+    "Summary biomass (t)", "Age X+ biomass (t)"),
   col = NULL,
   shadecol = NULL,
   pch = NULL,
@@ -84,6 +85,8 @@ Numbering of subplots is as follows:
 \item 2  spawning biomass with uncertainty intervals
 \item 3  biomass ratio (hopefully equal to fraction of unfished)
 \item 4  biomass ratio with uncertainty
+\item 18  summary biomass
+\item 19  summary biomass with uncertainty
 \item 5  SPR ratio
 \item 6  SPR ratio with uncertainty
 \item 7  F value
