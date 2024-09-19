@@ -67,7 +67,8 @@ multiple models, where the collection was created using the
 <span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Year"</span>, <span class="st">"Spawning biomass (t)"</span>, <span class="st">"Fraction of unfished"</span>,</span>
 <span>    <span class="st">"Age-0 recruits (1,000s)"</span>, <span class="st">"Recruitment deviations"</span>, <span class="st">"Index"</span>, <span class="st">"Log index"</span>,</span>
 <span>    <span class="st">"SPR-related quantity"</span>, <span class="st">"Density"</span>, <span class="st">"Management target"</span>,</span>
-<span>    <span class="st">"Minimum stock size threshold"</span>, <span class="st">"Spawning output"</span>, <span class="st">"Harvest rate"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"Minimum stock size threshold"</span>, <span class="st">"Spawning output"</span>, <span class="st">"Harvest rate"</span>,</span>
+<span>    <span class="st">"Summary biomass (t)"</span>, <span class="st">"Age X+ biomass (t)"</span><span class="op">)</span>,</span>
 <span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shadecol <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pch <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -134,6 +135,8 @@ Numbering of subplots is as follows:</p><ul><li><p>1  spawning biomass</p></li>
 <li><p>2  spawning biomass with uncertainty intervals</p></li>
 <li><p>3  biomass ratio (hopefully equal to fraction of unfished)</p></li>
 <li><p>4  biomass ratio with uncertainty</p></li>
+<li><p>18  summary biomass</p></li>
+<li><p>19  summary biomass with uncertainty</p></li>
 <li><p>5  SPR ratio</p></li>
 <li><p>6  SPR ratio with uncertainty</p></li>
 <li><p>7  F value</p></li>
@@ -527,7 +530,7 @@ useful to turn off. Defaults to TRUE.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
