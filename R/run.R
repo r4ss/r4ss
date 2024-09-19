@@ -149,9 +149,9 @@ run <- function(dir = getwd(),
       # 0 if the run completed with no issues
       # various other possible codes if the run fails
       results <- dplyr::case_when(
-        grepl("Run has completed", tail(console_output, 1)) ~ "ran model", # 3.30.19 and earlier
-        grepl("Finished running model", tail(console_output, 1)) ~ "ran model", # 3.30.20 format
-        grepl("Fatal Error", tail(console_output, 5)) ~ "model run failed",
+        any(grepl("Run has completed", tail(console_output, 5))) ~ "ran model", # 3.30.19 and earlier
+        any(grepl("Finished running model", tail(console_output, 5))) ~ "ran model", # 3.30.20 format
+        any(grepl("Fatal Error", tail(console_output, 5))) ~ "model run failed",
         console_output[1] == 0 ~ "ran model",
         console_output[1] > 0 ~ "model run failed",
         TRUE ~ "unknown run status"
