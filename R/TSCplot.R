@@ -93,7 +93,7 @@ TSCplot <- function(SSout,
   if (yrs[1] == "default") yrs <- unique(sort(SSout[["timeseries"]][["Yr"]][ind]))
 
   # get catches + discards summed over areas
-  deadCatch <- SSplotCatch(SSout, plot = FALSE, verbose = FALSE)$totcatchmat
+  deadCatch <- SSplotCatch(SSout, plot = FALSE, verbose = FALSE)[["totcatchmat"]]
   if (ncol(deadCatch) > 2) { # sum over fisheries
     deadCatch <- cbind(apply(deadCatch[, -ncol(deadCatch)], 1, sum), deadCatch[, ncol(deadCatch)])
   }

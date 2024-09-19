@@ -548,7 +548,7 @@ profile <- function(dir,
 
       repfile_loc <- file.path(profile_dir, "Report.sso")
       # look for non-zero report file and read LIKELIHOOD table
-      if (file.exists(repfile_loc) & file.info(repfile_loc)$size > 0) {
+      if (file.exists(repfile_loc) & file.info(repfile_loc)[["size"]] > 0) {
         goodrep <- TRUE
         # move par file into main directory if needed to start next run
         if (usepar & !globalpar) {
@@ -601,7 +601,7 @@ profile <- function(dir,
     purrr::walk(whichruns, function(i) {
       profile_dir <- file.path(dir, paste0("profile", i))
       if (file.exists(file.path(profile_dir, "Report.sso")) &
-        file.info(file.path(profile_dir, "Report.sso"))$size > 0) {
+        file.info(file.path(profile_dir, "Report.sso"))[["size"]] > 0) {
         file.copy(file.path(profile_dir, "Report.sso"),
           file.path(dir, paste0("Report", i, ".sso")),
           overwrite = overwrite

@@ -481,14 +481,14 @@ SSplotTimeseries <-
       if (subplot %in% 9:10 & replist[["Bratio_label"]] == "B/B_0") {
         if (btarg < 1) {
           abline(h = btarg, col = "red")
-          text(max(startyr, minyr) + 4, btarg + 0.02 * diff(par()$usr[3:4]),
+          text(max(startyr, minyr) + 4, btarg + 0.02 * diff(par()[["usr"]][3:4]),
             labels[10],
             adj = 0
           )
         }
         if (minbthresh < 1) {
           abline(h = minbthresh, col = "red")
-          text(max(startyr, minyr) + 4, minbthresh + 0.02 * diff(par()$usr[3:4]),
+          text(max(startyr, minyr) + 4, minbthresh + 0.02 * diff(par()[["usr"]][3:4]),
             labels[11],
             adj = 0
           )
@@ -609,7 +609,7 @@ SSplotTimeseries <-
               points(stdtable[["Yr"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
             }
             if (subplot == 11) { # confidence intervals as error bars because recruitment is more variable
-              old_warn <- options()$warn # previous setting
+              old_warn <- options()[["warn"]] # previous setting
               options(warn = -1) # turn off "zero-length arrow" warning
               # note that Yr rather than YrSeas is used here because recruitment is summed across seasons in multi-season models
               arrows(

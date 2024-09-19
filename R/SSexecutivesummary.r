@@ -661,10 +661,10 @@ SSexecutivesummary <- function(replist,
     )
   }
 
-  ofl.fore <- Get.Values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)$dq
-  abc.fore <- Get.Values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)$dq
-  ssb.fore <- Get.Values(replist = replist, label = sb.name, yrs = fore, ci_value)$dq
-  fraction_unfished.fore <- Get.Values(replist = replist, label = "Bratio", yrs = fore, ci_value)$dq
+  ofl.fore <- Get.Values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)[["dq"]]
+  abc.fore <- Get.Values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)[["dq"]]
+  ssb.fore <- Get.Values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
+  fraction_unfished.fore <- Get.Values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
 
   if (!is.null(forecast_ofl)) {
     n <- length(forecast_ofl)

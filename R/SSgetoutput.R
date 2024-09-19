@@ -107,7 +107,7 @@ SSgetoutput <-
       if (verbose) {
         message("reading output from ", fullfile)
       }
-      repfilesize <- file.info(fullfile)$size
+      repfilesize <- file.info(fullfile)[["size"]]
 
       output <- NA
       if (!is.na(repfilesize) && repfilesize > 0) { # if there's a non-empty file

@@ -473,7 +473,7 @@ make_multifig <-
 
         # adding uncertainty for mean length or weight at age plots
         if (doSD) {
-          old_warn <- options()$warn # previous settings for warnings
+          old_warn <- options()[["warn"]] # previous settings for warnings
           options(warn = -1) # turn off "zero-length arrow" warning
           # make arrows showing uncertainty for unsexed fish
           if (length(ptsx_i0) > 0) {

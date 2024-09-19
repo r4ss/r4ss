@@ -51,7 +51,7 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
   }
 
   # record current max characters per line and then expand in case of long lines
-  oldwidth <- options()$width
+  oldwidth <- options()[["width"]]
   options(width = 1000)
 
   if (verbose) message("opening connection to", outfile)

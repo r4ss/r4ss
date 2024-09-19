@@ -46,7 +46,7 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
   }
 
   # preliminary setup
-  oldwidth <- options()$width
+  oldwidth <- options()[["width"]]
   options(width = 1000)
 
   if (verbose) message("opening connection to", outfile)

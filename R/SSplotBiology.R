@@ -597,7 +597,7 @@ SSplotBiology <-
       # function to add uncertainty estimates to mean length at age or M at age
 
       # previous settings for warnings
-      old_warn <- options()$warn
+      old_warn <- options()[["warn"]]
       # turn off "zero-length arrow" warning
       options(warn = -1)
       # confirm presence of table of values and request to add to plot
@@ -765,7 +765,7 @@ SSplotBiology <-
       plot(0,
         type = "n",
         xaxs = "i", xlim = c(0, 1.0 * lab1max),
-        yaxs = "i", ylim = par()$usr[3:4],
+        yaxs = "i", ylim = par()[["usr"]][3:4],
         axes = FALSE
       )
       if (option == 1) {

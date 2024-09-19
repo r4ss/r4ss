@@ -162,7 +162,7 @@ SSplotRecdevs <-
             ## abline(h=ymax*1,col=col3,lty=3)
             ## ypts <- pretty(0:1)
             ## axis(side=4,at=ymax*ypts,label=ypts)
-            ## mtext("Bias adjustment fraction",side=4,line=3,cex=par()$cex)
+            ## mtext("Bias adjustment fraction",side=4,line=3,cex=par()[["cex"]])
           }
         } # end if uncertainty==TRUE
 

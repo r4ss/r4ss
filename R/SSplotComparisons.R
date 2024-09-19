@@ -317,7 +317,7 @@ SSplotComparisons <-
     #     legendloc <- "topleft"
     #   }
     #   if (is.numeric(legendloc)) {
-    #     Usr <- par()$usr
+    #     Usr <- par()[["usr"]]
     #     legendloc <- list(
     #       x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
     #       y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3])
@@ -922,7 +922,7 @@ SSplotComparisons <-
 
       if (show_equilibrium) {
         ## add arrows for equilibrium values
-        old_warn <- options()$warn # previous setting
+        old_warn <- options()[["warn"]] # previous setting
         options(warn = -1) # turn off "zero-length arrow" warning
         if (show_uncertainty) {
           arrows(
@@ -959,8 +959,8 @@ SSplotComparisons <-
           max(endyrvec) > 1 + max(endyrs) &
           shadeForecast) {
           rect(
-            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
-            xright = par()$usr[2], ytop = par()$usr[4],
+            xleft = max(endyrs) + 1, ybottom = par()[["usr"]][3],
+            xright = par()[["usr"]][2], ytop = par()[["usr"]][4],
             col = gray(0, alpha = 0.1), border = NA
           )
         }
@@ -1049,7 +1049,7 @@ SSplotComparisons <-
       }
 
 
-      yticks <- pretty(par()$yaxp[1:2])
+      yticks <- pretty(par()[["yaxp"]][1:2])
       if (btarg > 0) {
         abline(h = btarg, col = "red", lty = 2)
         text(min(Bratio[["Yr"]]) + 4, btarg + 0.03, labels[10], adj = 0)
@@ -1077,8 +1077,8 @@ SSplotComparisons <-
           max(endyrvec) > 1 + max(endyrs) &
           shadeForecast) {
           rect(
-            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
-            xright = par()$usr[2], ytop = par()$usr[4],
+            xleft = max(endyrs) + 1, ybottom = par()[["usr"]][3],
+            xright = par()[["usr"]][2], ytop = par()[["usr"]][4],
             col = gray(0, alpha = 0.1), border = NA
           )
         }
@@ -1141,7 +1141,7 @@ SSplotComparisons <-
 
           # store current margin parameters
           # save old margins
-          newmar <- oldmar <- par()$mar
+          newmar <- oldmar <- par()[["mar"]]
           # match right-hand margin value to left-hand value
           newmar[4] <- newmar[2]
           # update graphics parameters
@@ -1192,7 +1192,7 @@ SSplotComparisons <-
           )
           mtext(
             side = 2, text = SPRratioLabel,
-            line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+            line = par()[["mgp"]][1], col = par()[["col.lab"]], cex = par()[["cex.lab"]]
           )
         } else {
           # draw line at sprtarg
@@ -1208,14 +1208,14 @@ SSplotComparisons <-
             axis(4, at = yticks, labels = yticks * (1 - sprtarg), las = 1)
             mtext(
               side = 4, text = "1 - SPR",
-              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+              line = par()[["mgp"]][1], col = par()[["col.lab"]], cex = par()[["cex.lab"]]
             )
             # line below has round to be more accurate
             # than the floor which is used
             # in the test above and in SS
             mtext(
               side = 2, text = paste("(1-SPR)/(1-SPR_", 100 * sprtarg, "%)", sep = ""),
-              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+              line = par()[["mgp"]][1], col = par()[["col.lab"]], cex = par()[["cex.lab"]]
             )
           } else {
             message(
@@ -1225,14 +1225,14 @@ SSplotComparisons <-
             )
             mtext(
               side = 2, text = SPRratioLabel,
-              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+              line = par()[["mgp"]][1], col = par()[["col.lab"]], cex = par()[["cex.lab"]]
             )
           }
         }
       } else {
         mtext(
           side = 2, text = SPRratioLabel,
-          line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+          line = par()[["mgp"]][1], col = par()[["col.lab"]], cex = par()[["cex.lab"]]
         )
       }
       if (!add) {
@@ -1250,8 +1250,8 @@ SSplotComparisons <-
           max(endyrvec) > 1 + max(endyrs) &
           shadeForecast) {
           rect(
-            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
-            xright = par()$usr[2], ytop = par()$usr[4],
+            xleft = max(endyrs) + 1, ybottom = par()[["usr"]][3],
+            xright = par()[["usr"]][2], ytop = par()[["usr"]][4],
             col = gray(0, alpha = 0.1), border = NA
           )
         }
@@ -1356,7 +1356,7 @@ SSplotComparisons <-
       abline(h = 0, col = "grey")
       mtext(
         side = 2, text = FvalueLabel,
-        line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+        line = par()[["mgp"]][1], col = par()[["col.lab"]], cex = par()[["cex.lab"]]
       )
       box()
       if (legend) {
@@ -1478,7 +1478,7 @@ SSplotComparisons <-
             ## plot all but equilbrium values
             xvec <- recruits[["Yr"]]
             if (nlines > 1) xvec <- xvec + 0.4 * iline / nlines - 0.2
-            old_warn <- options()$warn # previous setting
+            old_warn <- options()[["warn"]] # previous setting
             options(warn = -1) # turn off "zero-length arrow" warning
             # arrows (-2 in vectors below is to remove initial year recruitment)
             arrows(
@@ -1530,8 +1530,8 @@ SSplotComparisons <-
           max(endyrvec) > 1 + max(endyrs) &
           shadeForecast) {
           rect(
-            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
-            xright = par()$usr[2], ytop = par()$usr[4],
+            xleft = max(endyrs) + 1, ybottom = par()[["usr"]][3],
+            xright = par()[["usr"]][2], ytop = par()[["usr"]][4],
             col = gray(0, alpha = 0.1), border = NA
           )
         }
@@ -1641,8 +1641,8 @@ SSplotComparisons <-
           max(endyrvec) > 1 + max(endyrs) &
           shadeForecast) {
           rect(
-            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
-            xright = par()$usr[2], ytop = par()$usr[4],
+            xleft = max(endyrs) + 1, ybottom = par()[["usr"]][3],
+            xright = par()[["usr"]][2], ytop = par()[["usr"]][4],
             col = gray(0, alpha = 0.1), border = NA
           )
         }
@@ -2083,11 +2083,11 @@ SSplotComparisons <-
         if (grepl("Bratio", parname)) {
           if (btarg > 0) {
             abline(v = btarg, col = "red", lty = 2)
-            text(btarg + 0.03, par()$usr[4], labels[10], adj = 1.05, srt = 90)
+            text(btarg + 0.03, par()[["usr"]][4], labels[10], adj = 1.05, srt = 90)
           }
           if (minbthresh > 0) {
             abline(v = minbthresh, col = "red", lty = 2)
-            text(minbthresh + 0.03, par()$usr[4], labels[11],
+            text(minbthresh + 0.03, par()[["usr"]][4], labels[11],
               adj = 1.05, srt = 90
             )
           }
@@ -2249,7 +2249,7 @@ SSplotComparisons <-
           abline(h = 0, col = "grey")
           xticks <- pretty(xlim)
           axis(1, at = xticks, labels = format(xticks / xunits))
-          theLine <- par()$mgp[1]
+          theLine <- par()[["mgp"]][1]
           if (cumulative) {
             axis(2,
               at = symbolsQuants, labels = format(symbolsQuants),
@@ -2258,12 +2258,12 @@ SSplotComparisons <-
             mtext(
               side = 2, line = theLine,
               text = "Cumulative Probability",
-              col = par()$col.lab, cex = par()$cex.lab
+              col = par()[["col.lab"]], cex = par()[["cex.lab"]]
             )
           } else {
             mtext(
               side = 2, line = theLine, text = labels[9],
-              col = par()$col.lab, cex = par()$cex.lab
+              col = par()[["col.lab"]], cex = par()[["cex.lab"]]
             )
           }
           box()

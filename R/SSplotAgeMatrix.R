@@ -121,7 +121,7 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
       return()
     }
     # age bins
-    ybins <- agebins.tmp <- sort(unique(as.numeric(dimnames(array)$ObsAgeBin)))
+    ybins <- agebins.tmp <- sort(unique(as.numeric(dimnames(array)[["ObsAgeBin"]])))
     if (is.na(ybins[1])) {
       return(NULL)
     }
