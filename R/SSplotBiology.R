@@ -151,7 +151,7 @@ SSplotBiology <-
       if (is.null(replist[["endgrowth"]])) {
         message(
           "Skipping biology plots because model output doesn't include\n",
-          " biology-at-age information ($endgrowth), likely because\n",
+          " biology-at-age information (endgrowth), likely because\n",
           " brief output was specified in starter.ss."
         )
         return()
