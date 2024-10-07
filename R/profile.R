@@ -619,11 +619,11 @@ profile <- function(dir,
           overwrite = overwrite
         )
         file.copy(file.path(profile_dir, "admodel.hes"),
-          file.path(paste0("admodel", i, ".hes")),
+          file.path(dir, paste0("admodel", i, ".hes")),
           overwrite = overwrite
         )
         file.copy(file.path(profile_dir, parfile),
-          file.path(paste0(parfile, "_", i, ".sso")),
+          file.path(dir, paste0(parfile, "_", i, ".sso")),
           overwrite = overwrite
         )
       }
