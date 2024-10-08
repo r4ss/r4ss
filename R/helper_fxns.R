@@ -11,7 +11,9 @@
 #' @template dir
 #' @return A string with the name of the data .ss_new file. If not found, will
 #'  be NA. Both of strings are searched for using `dir(pattern = )` and
-#'  if both exist, then `data_echo.ss_new` is returned.
+#'  if both exist, then `data_echo.ss_new` is returned. If the `dir` input 
+#'  points to github, then `dir()` doesn't work and `data_echo.ss_new` is 
+#'  always returned.
 #' @seealso [get_par_name]
 #'
 get_dat_new_name <- function(dir) {
@@ -19,6 +21,10 @@ get_dat_new_name <- function(dir) {
     dir(path = dir, pattern = "data_?e?c?h?o?\\.ss_new"),
     1
   )
+  # dir() doesn't work for github, assume newer filename
+  if (grepl("raw.githubusercontent", dir)) {
+    datname <- "data_echo.ss_new"
+  }
   ifelse(length(datname) == 0, NA, datname)
 }
 
