@@ -69,7 +69,9 @@ the current working directory.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A string with the name of the data .ss_new file. If not found, will
 be NA. Both of strings are searched for using <code>dir(pattern = )</code> and
-if both exist, then <code>data_echo.ss_new</code> is returned.</p>
+if both exist, then <code>data_echo.ss_new</code> is returned. If the <code>dir</code> input
+points to github, then <code><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir()</a></code> doesn't work and <code>data_echo.ss_new</code> is
+always returned.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
