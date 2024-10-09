@@ -845,7 +845,7 @@ SSplotComparisons <-
       if (option == 1) {
         # if either SpawnOutputUnits is unknown or in numbers,
         # use label "Spawning output"
-        if (all(is.na(SpawnOutputUnits)) || any(SpawnOutputUnits == "numbers")) {
+        if (all(is.na(SpawnOutputUnits)) || any(SpawnOutputUnits == "numbers", na.rm = TRUE)) {
           ylab <- SpawnOutputLabel # numbers
         } else {
           # otherwise (if all are in "biomass"), use "Spawning biomass"
