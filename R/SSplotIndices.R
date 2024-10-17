@@ -677,7 +677,7 @@ SSplotIndices <-
         }
         if (print) {
           if (1 %in% subplots & datplot) {
-            file <- paste0("index1_cpuedata_", Fleet, ".png")
+            file <- paste0("index1_cpuedata_", gsub(" ", "", Fleet), ".png")
             caption <- paste0(
               "Index data for ", Fleet, ". ",
               "Lines indicate 95% uncertainty interval around index values ",
@@ -694,7 +694,7 @@ SSplotIndices <-
             dev.off()
           }
           if (2 %in% subplots) {
-            file <- paste0("index2_cpuefit_", Fleet, ".png")
+            file <- paste0("index2_cpuefit_", gsub(" ", "", Fleet), ".png")
             caption <- paste0(
               "Fit to index data for ", Fleet, ". ",
               "Lines indicate 95% uncertainty interval around index values ",
@@ -711,7 +711,7 @@ SSplotIndices <-
             dev.off()
           }
           if (3 %in% subplots) {
-            file <- paste0("index3_obs_vs_exp_", Fleet, ".png")
+            file <- paste0("index3_obs_vs_exp_", gsub(" ", "", Fleet), ".png")
             caption <- paste("Observed vs. expected index values with smoother for", Fleet)
             plotinfo <- save_png(
               plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
@@ -742,7 +742,7 @@ SSplotIndices <-
           # print subplots 4-6 to PNG files
           if (print) {
             if (4 %in% subplots & datplot) {
-              file <- paste0("index4_logcpuedata_", Fleet, ".png")
+              file <- paste0("index4_logcpuedata_", gsub(" ", "", Fleet), ".png")
               caption <- paste0(
                 "Log index data for ", Fleet, ". ",
                 "Lines indicate 95% uncertainty interval around index values ",
@@ -759,7 +759,7 @@ SSplotIndices <-
               dev.off()
             }
             if (5 %in% subplots) {
-              file <- paste0("index5_logcpuefit_", Fleet, ".png")
+              file <- paste0("index5_logcpuefit_", gsub(" ", "", Fleet), ".png")
               caption <- paste0(
                 "Fit to log index data on log scale for ", Fleet, ". ",
                 "Lines indicate 95% uncertainty interval around index values ",
@@ -776,7 +776,7 @@ SSplotIndices <-
               dev.off()
             }
             if (6 %in% subplots) {
-              file <- paste0("index6_log_obs_vs_exp_", Fleet, ".png")
+              file <- paste0("index6_log_obs_vs_exp_", gsub(" ", "", Fleet), ".png")
               caption <- paste("log(observed) vs. log(expected) index values with smoother for", Fleet)
               plotinfo <- save_png(
                 plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
@@ -801,7 +801,7 @@ SSplotIndices <-
 
         if (print) {
           if (7 %in% subplots & time) {
-            file <- paste0("index7_timevarying_q_", Fleet, ".png")
+            file <- paste0("index7_timevarying_q_", gsub(" ", "", Fleet), ".png")
             caption <- paste("Timeseries of catchability for", Fleet)
             plotinfo <- save_png(
               plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
@@ -812,7 +812,7 @@ SSplotIndices <-
             dev.off()
           }
           if (8 %in% subplots & time2) {
-            file <- paste0("index8_q_vs_vuln_bio_", Fleet, ".png")
+            file <- paste0("index8_q_vs_vuln_bio_", gsub(" ", "", Fleet), ".png")
             caption <-
               paste0(
                 "Catchability vs. vulnerable biomass for fleet ", Fleet, "<br> \n",
@@ -844,7 +844,7 @@ SSplotIndices <-
         if (print) {
           #### residuals based on total uncertainty
           if (10 %in% subplots & all(cpueuse[["Obs"]] >= 0)) {
-            file <- paste0("index10_resids_SE_total_", Fleet, ".png")
+            file <- paste0("index10_resids_SE_total_", gsub(" ", "", Fleet), ".png")
             caption <- paste0("Residuals of fit to index for ", Fleet, ".")
             if (error == 0) {
               caption <- paste0(
@@ -873,7 +873,7 @@ SSplotIndices <-
             show_input_uncertainty &&
             any(!is.null(cpueuse[["SE_input"]][include])) &&
             any(cpueuse[["SE_input"]] > cpueuse[["SE"]])) {
-            file <- paste0("index11_resids_SE_input_", Fleet, ".png")
+            file <- paste0("index11_resids_SE_input_", gsub(" ", "", Fleet), ".png")
             caption <- paste0("Residuals for fit to index for ", Fleet, ".")
             if (error == 0) {
               caption <- paste0(
@@ -899,7 +899,7 @@ SSplotIndices <-
           }
           #### simple deviation plot
           if (12 %in% subplots) {
-            file <- paste0("index12_resids_SE_total_", Fleet, ".png")
+            file <- paste0("index12_resids_SE_total_", gsub(" ", "", Fleet), ".png")
             caption <- paste0("Deviations for fit to index for ", Fleet, ".")
             if (error != -1) {
               # lognormal or T-distributed error

@@ -181,9 +181,9 @@
 #' @param scalebubbles scale data-only bubbles by sample size, not just
 #' proportion within sample? Default=FALSE.
 #' @param tslabels Either NULL to have default labels for timeseries plots or
-#' a vector of appropriate length (currently 11) with labels for each figure
+#' a vector of appropriate length with labels for each figure
 #' @param catlabels Either NULL to have default labels for catch plots or
-#' a vector of appropriate length (currently 10) with labels for each figure
+#' a vector of appropriate length with labels for each figure
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1.0.
 #' @param showmle Show MLE estimate and asymptotic variance estimate with blue
@@ -248,6 +248,14 @@ SS_plots <-
       )
     }
 
+    if (is.null(replist[["SpawnOutputLabel"]])) {
+      warning(
+        'Setting replist[["SpawnOutputLabel"]] <- "Spawning output"',
+        " because the replist input is from an older version of r4ss",
+        " which did not include this output"
+      )
+      replist[["SpawnOutputLabel"]] <- "Spawning output"
+    }
 
     # get quantities from the big list
     nfleets <- replist[["nfleets"]]
@@ -347,7 +355,7 @@ SS_plots <-
     if (png | pdf) {
       # get info on directory where subfolder will go
       # (typically folder with model output files)
-      dir.isdir <- file.info(dir)$isdir
+      dir.isdir <- file.info(dir)[["isdir"]]
       # create directory
       if (is.na(dir.isdir) | !dir.isdir) {
         message("Directory doesn't exist, attempting to create:\n", dir)
@@ -356,7 +364,7 @@ SS_plots <-
       # test again (even though failure to create dir should have already caused error)
       # get info on directory where subfolder will go
       # (typically folder with model output files)
-      dir.isdir <- file.info(dir)$isdir
+      dir.isdir <- file.info(dir)[["isdir"]]
       # create
       if (is.na(dir.isdir) | !dir.isdir) {
         stop("Not able to create directory:\n", dir, "\n")
@@ -372,7 +380,7 @@ SS_plots <-
 
       # figure out path to where PNG files will go
       plotdir <- file.path(dir, printfolder)
-      plotdir.isdir <- file.info(plotdir)$isdir
+      plotdir.isdir <- file.info(plotdir)[["isdir"]]
       if (is.na(plotdir.isdir) | !plotdir.isdir) {
         dir.create(plotdir)
       }
@@ -433,7 +441,7 @@ SS_plots <-
       par(mfcol = c(rows, cols))
     }
     if (pdf) {
-      mar0 <- par()$mar # current margins
+      mar0 <- par()[["mar"]] # current margins
       par(mar = rep(0, 4))
       plot(0, type = "n", xlab = "", ylab = "", axes = FALSE, xlim = c(0, 1), ylim = c(0, 1))
       y <- 0.9
@@ -458,8 +466,8 @@ SS_plots <-
       }
       par(mar = mar0) # replace margins
     }
-    mar0 <- par()$mar # current inner margins
-    oma0 <- par()$oma # current outer margins
+    mar0 <- par()[["mar"]] # current inner margins
+    oma0 <- par()[["oma"]] # current outer margins
 
     ##########################################
     # Biology plots (mean weight, maturity, fecundity, spawning output)
@@ -1483,13 +1491,13 @@ SS_plots <-
 
       # restore default single panel settings if needed
       # conditional because if adding to existing plot may mess up layout
-      if (any(par()$mfcol != c(rows, cols))) {
+      if (any(par()[["mfcol"]] != c(rows, cols))) {
         par(mfcol = c(rows, cols))
       }
-      if (any(par()$mar != mar0)) {
+      if (any(par()[["mar"]] != mar0)) {
         par(mar = mar0)
       }
-      if (any(par()$oma != oma0)) {
+      if (any(par()[["oma"]] != oma0)) {
         par(oma = oma0)
       }
 

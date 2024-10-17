@@ -9,16 +9,18 @@
 #' @template plot
 #' @template print
 #' @param models Optional subset of the models described in
-#' `summaryoutput`.  Either "all" or a vector of numbers indicating
+#' `summaryoutput`. Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param profile.string Character string used to find parameter over which the
 #' profile was conducted. If `exact=FALSE`, this can be a substring of
-#' one of the SS parameter labels found in the Report.sso file.
+#' one of the SS3 parameter labels found in the Report.sso file.
 #' For instance, the default input 'steep'
 #' matches the parameter 'SR_BH_steep'. If `exact=TRUE`, then
 #' profile.string needs to be an exact match to the parameter label.
 #' @param profile.label Label for x-axis describing the parameter over which
-#' the profile was conducted.
+#' the profile was conducted. NULL value will be replaced by an informative
+#' label if the parameter label contains one of the follow strings:
+#' "steep", "R0", "NatM", "L_at_Amax", "sigmaR", or "LnQ".
 #' @param exact Should the `profile.string` have to match the parameter
 #' label exactly, or is a substring OK.
 #' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
@@ -86,7 +88,7 @@ SSplotProfile <-
            plot = TRUE, print = FALSE,
            models = "all",
            profile.string = "steep",
-           profile.label = "Spawner-recruit steepness (h)",
+           profile.label = NULL,
            exact = FALSE,
            ylab = "Change in -log-likelihood",
            components =
@@ -340,6 +342,43 @@ SSplotProfile <-
       NULL,
       2
     ))
+
+    # intuitive profile.label using the parameter label
+    if (is.null(profile.label)) {
+      if (grepl("steep", parlabel)) {
+        profile.label <- "Spawner-recruit steepness (h)"
+      }
+      if (grepl("R0", parlabel)) {
+        profile.label <- paste0("Log of unfished equilibrium recruitment, ", expression(log(R[0])))
+      }
+      if (grepl("NatM", parlabel) && grepl("Fem", parlabel)) {
+        profile.label <- "Female natural mortality (M)"
+      }
+      if (grepl("NatM", parlabel) && grepl("Mal", parlabel)) {
+        profile.label <- "Male natural mortality (M)"
+      }
+      if (grepl("LnQ", parlabel)) {
+        profile.label <- paste0("Log of catchability, ", expression(log(q)))
+      }
+      if (grepl("sigmaR", parlabel)) {
+        profile.label <- "SigmaR"
+      }
+      if (grepl("L_at_Amax", parlabel) && grepl("Fem", parlabel)) {
+        profile.label <- "Female length at Amax"
+      }
+      if (grepl("L_at_Amax", parlabel) && grepl("Mal", parlabel)) {
+        profile.label <- "Male length at Amax"
+      }
+      if (is.null(profile.label)) {
+        # use parameter label for x-axis label
+        profile.label <- parlabel
+        message(
+          "The input profile.label = NULL and the parameter label doesn't ",
+          "correspond to an automatically generated label. ",
+          "Setting profile.label equal to the parameter label."
+        )
+      }
+    }
 
     # make plot
     plotprofile <- function() {

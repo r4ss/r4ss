@@ -58,7 +58,7 @@ write_fwf4 <- function(x,
                        width = NULL,
                        eol = "\n",
                        qmethod = c("escape", "double"),
-                       digits = 6,
+                       digits = 8,
                        checkNA = TRUE,
                        checkInfty = TRUE,
                        checkError = TRUE) {

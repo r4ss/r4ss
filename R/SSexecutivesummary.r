@@ -234,8 +234,8 @@ SSexecutivesummary <- function(replist,
   # Spawning Biomass or Spawning Output?
   # ======================================================================
   if (replist[["SpawnOutputUnits"]] == "numbers") {
-    sb.label <- paste0("Spawning Output (", so_units, ")")
-    sb.text.name <- "spawning output"
+    sb.label <- replist[["SpawnOutputLabel"]]
+    sb.text.name <- tolower(sb.label)
     sb_short <- "SO"
   } else {
     sb.label <- "Spawning Biomass (mt)"
@@ -661,10 +661,10 @@ SSexecutivesummary <- function(replist,
     )
   }
 
-  ofl.fore <- Get.Values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)$dq
-  abc.fore <- Get.Values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)$dq
-  ssb.fore <- Get.Values(replist = replist, label = sb.name, yrs = fore, ci_value)$dq
-  fraction_unfished.fore <- Get.Values(replist = replist, label = "Bratio", yrs = fore, ci_value)$dq
+  ofl.fore <- Get.Values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)[["dq"]]
+  abc.fore <- Get.Values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)[["dq"]]
+  ssb.fore <- Get.Values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
+  fraction_unfished.fore <- Get.Values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
 
   if (!is.null(forecast_ofl)) {
     n <- length(forecast_ofl)
@@ -1112,28 +1112,6 @@ SSexecutivesummary <- function(replist,
         write.csv(batage.f, file.path(csv.dir, "batage_f.csv"), row.names = FALSE)
       }
     } # end check for detailed output
-  } # end check for es_only == FALSE
-
-  # ======================================================================
-  # Likelihoods
-  # ======================================================================
-  if (es_only == FALSE) {
-    csv_name <- "likelihoods.csv"
-
-    like <- cbind(
-      rownames(replist[["likelihoods_used"]]),
-      replist[["likelihoods_used"]][["values"]]
-    )
-    colnames(like) <- c("Label", "Total")
-    like[, 1] <- gsub("\\_", " ", like[, 1])
-    write.csv(like, file = file.path(csv.dir, csv_name), row.names = FALSE)
-
-    caption <- c(
-      caption,
-      "Negative log-likelihood components by data type."
-    )
-    tex.label <- c(tex.label, "likes")
-    filename <- c(filename, csv_name)
   } # end check for es_only == FALSE
 
   # ======================================================================

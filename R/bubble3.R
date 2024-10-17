@@ -162,7 +162,7 @@ bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
   # add points
   points(x, y, pch = pch, cex = cex, col = col, bg = bg)
   # do things for legend
-  if (legend & all(par()$mfg[1:2] == 1)) {
+  if (legend & all(par()[["mfg"]][1:2] == 1)) {
     # set labels
     legend.lab <- format(legend.z, scientific = FALSE, drop0trailing = TRUE)
     # add legend

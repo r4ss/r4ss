@@ -22,7 +22,8 @@ SS_output(
   printstats = TRUE,
   hidewarn = FALSE,
   NoCompOK = TRUE,
-  aalmaxbinrange = 4
+  aalmaxbinrange = 4,
+  SpawnOutputLabel = "Spawning output"
 )
 }
 \arguments{
@@ -67,6 +68,13 @@ to the screen.}
 
 \item{aalmaxbinrange}{The largest length bin range allowed for composition
 data to be considered as conditional age-at-length data.}
+
+\item{SpawnOutputLabel}{An alternative to "Spawning output" for use in
+figure axis labels and table headers for models that include a fecundity
+relationship. This provides an option to provide the units, e.g.
+\code{SpawnOutputLabel = "Spawning output (trillions of eggs)"}.
+This needs to be a user input because the units depend on the choice of
+fecundity parameters which are calculated outside of the SS3 model.}
 }
 \value{
 Many values are returned. Complete list would be quite long, but

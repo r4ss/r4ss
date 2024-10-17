@@ -103,18 +103,29 @@ run <- function(dir = getwd(),
         )
       }
       # call system2() to actually run the model
-      console_output <- system2(
-        command = command,
-        args = extras,
-        stdout = ifelse(show_in_console,
-          "",
-          TRUE
+      console_output <- tryCatch(
+        system2(
+          command = command,
+          args = extras,
+          stdout = ifelse(show_in_console,
+            "",
+            TRUE
+          ),
+          stderr = ""
         ),
-        stderr = ifelse(show_in_console,
-          "",
-          TRUE
-        )
+        error = function(err) {
+          if (grepl("'CreateProcess' failed to run", err)) {
+            stop(
+              "There is a problem with the SS3 executable, perhaps due to mismatch ",
+              "with the operating system. Please make sure that you have the correct",
+              "executable and it is named appropriately for your operating system"
+            )
+          } else {
+            err
+          }
+        }
       )
+
       # write console output to file if not shown in console
       if (!show_in_console) {
         writeLines(
@@ -138,9 +149,9 @@ run <- function(dir = getwd(),
       # 0 if the run completed with no issues
       # various other possible codes if the run fails
       results <- dplyr::case_when(
-        grepl("Run has completed", tail(console_output, 1)) ~ "ran model", # 3.30.19 and earlier
-        grepl("Finished running model", tail(console_output, 1)) ~ "ran model", # 3.30.20 format
-        grepl("Fatal Error", tail(console_output, 5)) ~ "model run failed",
+        any(grepl("Run has completed", tail(console_output, 5))) ~ "ran model", # 3.30.19 and earlier
+        any(grepl("Finished running model", tail(console_output, 5))) ~ "ran model", # 3.30.20 format
+        any(grepl("Fatal Error", tail(console_output, 5))) ~ "model run failed",
         console_output[1] == 0 ~ "ran model",
         console_output[1] > 0 ~ "model run failed",
         TRUE ~ "unknown run status"

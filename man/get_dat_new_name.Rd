@@ -14,7 +14,9 @@ the current working directory.}
 \value{
 A string with the name of the data .ss_new file. If not found, will
 be NA. Both of strings are searched for using \code{dir(pattern = )} and
-if both exist, then \code{data_echo.ss_new} is returned.
+if both exist, then \code{data_echo.ss_new} is returned. If the \code{dir} input
+points to github, then \code{dir()} doesn't work and \code{data_echo.ss_new} is
+always returned.
 }
 \description{
 In previous versions of Stock Synthesis,

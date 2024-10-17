@@ -352,7 +352,7 @@ NegLogInt_Fn <- function(dir = getwd(),
     # Estimate new bias ramp
     if (ReDoBiasRamp == TRUE &
       stdfile %in% list.files(dir) &
-      file.info(file.path(dir, stdfile))$size > 0) {
+      file.info(file.path(dir, stdfile))[["size"]] > 0) {
       # try reading output
       SsOutput <- try(SS_output(dir, covar = TRUE, forecast = FALSE, verbose = F, printstats = F), silent = TRUE)
       if (inherits(SsOutput, "try-error")) {
@@ -371,7 +371,7 @@ NegLogInt_Fn <- function(dir = getwd(),
 
   # Check for STD
   Converged <- FALSE
-  if (stdfile %in% list.files(dir) & file.info(file.path(dir, stdfile))$size > 0) {
+  if (stdfile %in% list.files(dir) & file.info(file.path(dir, stdfile))[["size"]] > 0) {
     Converged <- TRUE
   }
 
@@ -499,7 +499,7 @@ NegLogInt_Fn <- function(dir = getwd(),
 
         # Version 1 -- use full hessian
         if (IntI == 1) {
-          LnDet[IntI] <- determinant(Hess, logarithm = TRUE)$modulus[[1]]
+          LnDet[IntI] <- determinant(Hess, logarithm = TRUE)[["modulus"]][[1]]
         }
         if (IntI >= 2) LnDet[IntI] <- 0
 
@@ -509,13 +509,13 @@ NegLogInt_Fn <- function(dir = getwd(),
         ##   #Hess2 <- cov * solve(scale %o% scale)
         ##   #Which2 <- 38 + 1:46
         ##   LnDet[IntI] <- determinant(Hess[Int_num_List[[IntI]],Int_num_List[[IntI]]],
-        ##            logarithm=TRUE)$modulus[[1]]
+        ##            logarithm=TRUE)[["modulus"]][[1]]
         ## }
         ## #Version 6 -- use subset of covariance calculated from COR file
         ## if(Version==6){
         ##   Cov <- DIAG[["cov"]]
         ##   LnDet[IntI] <- -1 * determinant(Cov[Int_num_List[[IntI]],Int_num_List[[IntI]]],
-        ##                                  logarithm=TRUE)$modulus[[1]]
+        ##                                  logarithm=TRUE)[["modulus"]][[1]]
         ## }
       }
     }

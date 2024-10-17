@@ -43,8 +43,8 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
     }
   }
 
-  oldwidth <- options()$width
-  oldmax.print <- options()$max.print
+  oldwidth <- options()[["width"]]
+  oldmax.print <- options()[["max.print"]]
   options(width = 5000, max.print = 9999999)
 
   if (verbose) message("opening connection to", outfile)

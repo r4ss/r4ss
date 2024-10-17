@@ -95,7 +95,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   )
 
   # save warnings settings and then turn off "NAs introduced" warning
-  old_warn <- options()$warn
+  old_warn <- options()[["warn"]]
   options(warn = -1)
 
   if (version == "3.24") { # should work whether "version" is character or numeric
@@ -203,8 +203,8 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   zz <- file(newctlfile, open = "at")
   sink(zz)
   # change maximum number of columns
-  oldwidth <- options()$width
-  oldmax.print <- options()$max.print
+  oldwidth <- options()[["width"]]
+  oldmax.print <- options()[["max.print"]]
   options(width = 5000, max.print = 9999999)
 
   printdf <- function(dataframe) {

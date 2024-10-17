@@ -139,7 +139,7 @@ SS_fitbiasramp <-
     biasadjfit <- function(pars, yr, std, sigmaR, transform,
                            is.forecast, eps = .1) {
       # calculate the goodness of the fit of the estimated ramp and values to the model output
-      biasadj <- biasadjfun(yr = yr, vec = pars, transform = transform)$biasadj
+      biasadj <- biasadjfun(yr = yr, vec = pars, transform = transform)[["biasadj"]]
       compare <- 1 - (std / sigmaR)^2
       if (exclude_forecast) {
         biasadj <- biasadj[!is.forecast]

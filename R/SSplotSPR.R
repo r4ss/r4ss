@@ -354,7 +354,7 @@ SSplotSPR <-
         yaxs = "i"
       )
       # deal with warnings about zero-length arrow
-      old_warn <- options()$warn # previous setting
+      old_warn <- options()[["warn"]] # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
       # add arrows
       arrows(
@@ -477,7 +477,7 @@ SSplotSPR <-
       }
 
       # deal with warnings about zero-length arrow
-      old_warn <- options()$warn # previous setting
+      old_warn <- options()[["warn"]] # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
       arrows(
         x0 = phase_df[-nrow(phase_df), "Bratio"],

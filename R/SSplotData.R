@@ -350,7 +350,7 @@ SSplotData <- function(replist,
     xlim <- c(-1, 1) + range(typetable2[["yr"]], na.rm = TRUE)
     yval <- 0
     # count number of unique combinations of fleet and data type
-    ymax <- sum(as.data.frame(table(typetable2[["fleet"]], typetable2[["itype"]]))$Freq > 0)
+    ymax <- sum(as.data.frame(table(typetable2[["fleet"]], typetable2[["itype"]]))[["Freq"]] > 0)
     main.temp <- ""
     if (mainTitle) {
       main.temp <- if (datasize) {

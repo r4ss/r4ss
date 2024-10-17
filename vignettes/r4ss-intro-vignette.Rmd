@@ -12,7 +12,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo = FALSE, message = FALSE}
+```{r, settings, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = T, comment = "#>")
 options(tibble.print_min = 4L, tibble.print_max = 4L)
 library(r4ss)
@@ -73,7 +73,7 @@ The most important two functions are `SS_output()` and `SS_plots()`, the
 first for reading the output from a Stock Synthesis model and the second
 for making a large set of plots illustrating that output. 
 
-```{r, eval=FALSE, echo=TRUE, message=FALSE}
+```{r, read-output, eval=FALSE, echo=TRUE, message=FALSE}
 # it's useful to create a variable for the directory with the model output
 mydir <- file.path(
   path.package("r4ss"),
@@ -108,12 +108,12 @@ necessary ones. Groups of plots to generate in the call to `SS_plots()`
 can be specified through the `plot` argument. For example, if only the
 plots of Catch were desired, call: 
 
-```{r, eval=FALSE}
+```{r, make-plots, eval=FALSE}
 SS_plots(replist = replist, plot = 7)
 ```
 
 If only plots of catch and discards were desired, the user could call:
-```{r, eval=FALSE}
+```{r, make-subset-of-plots, eval=FALSE}
 SS_plots(replist = replist, plot = c(7, 9))
 ```
 The documentation for the `plot` argument in the help file for
@@ -129,7 +129,7 @@ tracker](https://github.com/r4ss/r4ss/issues). For example, if there was
 a bug in the conditional age-at-length fits (plot set 18), exclude the
 plot: 
 
-```{r, eval=FALSE}
+```{r, skip-plot, eval=FALSE}
 SS_plots(replist, plot = c(1:17, 19:26))
 ```
 
@@ -141,7 +141,7 @@ Synthesis files and running Stock Synthesis models is possible.
 We'll demonstrate this by creating a new model from a model in the
 `r4ss` package.
 
-```{r}
+```{r, setup-paths}
 # initial model to modify
 mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
 # create a new directory to put a new, modified version of the model
@@ -150,7 +150,7 @@ new_mod_path <- "simple_new"
 Use the r4ss utility function to copy over the model files from
 `mod_path` to `new_mod_path`:
 
-```{r}
+```{r, copy-inputs}
 copy_SS_inputs(dir.old = mod_path, dir.new = new_mod_path)
 ```
 
@@ -162,7 +162,7 @@ several folders of Stock Synthesis model inputs.
 Stock Synthesis files can be read in as list objects in R using the
 `SS_read()` function.
 
-```{r, eval=TRUE}
+```{r, read-inputs, eval=TRUE}
 inputs <- r4ss::SS_read(dir = new_mod_path)
 # can also separately run the functions called by SS_read():
 # SS_readstarter(), SS_readdat(), SS_readctl(), SS_readforecast(),
@@ -176,14 +176,14 @@ as a larger list. The components of the
 list should be in the same order as they appear in the text file. Use
 `names()` to see all the list components:
 
-```{r}
+```{r, names-of-inputs}
 names(inputs) # see the elements of the big list
 names(inputs$start) # see names of the list components of starter file
 ```
 Or reference a specific element to see the components. For example, we
 can look at the mortality and growth parameter section (MG_parms):
 
-```{r}
+```{r, show-inputs}
 inputs$ctl$MG_parms
 ```
 
@@ -191,7 +191,7 @@ inputs$ctl$MG_parms
 You could make basic or large structural changes to your model in R. For
 example, the initial value of M can be changed:
 
-```{r}
+```{r, show-M-parameters}
 # view the initial value
 inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
 # change it to 0.2
@@ -208,7 +208,7 @@ names of the list elements. For example, the source code for
 
 Settings in other files can also be modified. For example, the biomass
 target can be modified in the forecast file
-```{r}
+```{r, change-Btarget}
 inputs$fore$Btarget
 inputs$fore$Btarget <- 0.45
 inputs$fore$Btarget
@@ -219,7 +219,7 @@ inputs$fore$Btarget
 The `SS_write()` function can be used to write out the modified stock
 synthesis input R objects into input files:
 
-```{r}
+```{r, write-inputs}
 r4ss::SS_write(inputs, dir = new_mod_path, overwrite = TRUE)
 ```
 
@@ -239,7 +239,7 @@ The [latest release of the Stock Synthesis executable](https://github.com/nmfs-o
 or other releases found by entering a character string of a version tag (list of 
 tags is available [here](https://github.com/nmfs-ost/ss3-source-code/tags)) 
 can be downloaded from the Stock Synthesis GitHub page using the function:
-```{r, eval = FALSE}
+```{r, get-executable, eval = FALSE}
 # Default with no version downloads the latest release
 r4ss::get_ss3_exe()
 
@@ -331,7 +331,7 @@ to create a copy of your original Stock Synthesis model that the
 retrospective is run on, just in case there are problems with the run.
 For example, a five year retrospective could be done:
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, results=FALSE}
+```{r, setup-retros, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, results=FALSE}
 # create a temporary path for the retrospective analyses to run and download the
 # ss3 exe
 old_mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
@@ -342,7 +342,7 @@ get_ss3_exe(dir = new_mod_path)
 ```
 
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
+```{r, run-retro, eval=TRUE, message=FALSE, warning=FALSE}
 # run the retrospective analyses
 retro(
   dir = new_mod_path, # wherever the model files are
@@ -359,7 +359,7 @@ a different run of the retrospective (removing 0 to 5 years of data).
 After the retrospective models have run, the results can be used as a
 diagnostic:
 
-```{r, eval=TRUE, warning=FALSE, message=FALSE, out.width="75%"}
+```{r, get-retro-output, eval=TRUE, warning=FALSE, message=FALSE, out.width="75%"}
 # load the 6 models
 retroModels <- SSgetoutput(dirvec = file.path(
   new_mod_path, "retrospectives",
@@ -370,7 +370,7 @@ retroSummary <- SSsummarize(retroModels)
 # create a vector of the ending year of the retrospectives
 endyrvec <- retroSummary[["endyrs"]] + 0:-5
 # make plots comparing the 6 models
-# showing 2 out of the 17 plots done by SSplotComparisons
+# showing 2 out of the 19 plots done by SSplotComparisons
 SSplotComparisons(retroSummary,
   endyrvec = endyrvec,
   legendlabels = paste("Data", 0:-5, "years"),
@@ -381,11 +381,11 @@ SSplotComparisons(retroSummary,
 )
 ```
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, retro-figure, eval = FALSE, echo = TRUE}
 knitr::include_graphics(file.path(new_mod_path, "compare2_spawnbio_uncertainty.png"))
 ```
 
-```{r, echo = FALSE, eval = FALSE}
+```{r, move-png-file, echo = FALSE, eval = FALSE}
 fls <- list.files(new_mod_path, pattern = "*.png", full.name = TRUE)
 to <- here::here("vignettes")
 file.copy(fls, to = to)
@@ -394,7 +394,7 @@ file.copy(fls, to = to)
 ![Illustration of the second comparison plot created by the `SSplotComparisons()`
 function.](compare2_spawnbio_uncertainty.png){ width=75% } 
 
-```{r, eval = FALSE}
+```{r, SSmohnsrho, eval = FALSE}
 # calculate Mohn's rho, a diagnostic value
 rho_output <- SSmohnsrho(
   summaryoutput = retroSummary,
@@ -414,7 +414,7 @@ specified by the user. For a stock Synthesis model in a folder called
 `jitter_dir` jittering starting values can be run 100 times (note this
 could take a while as they will be run in sequence):
 
-```{r, eval=FALSE}
+```{r, jitter, eval=FALSE}
 # define a new directory
 jitter_dir <- file.path(mod_path, "jitter")
 # copy over the stock synthesis model files to the new directory
@@ -458,7 +458,7 @@ transform it into different tuning methods.
 As an example, we will illustrate how to run Francis tuning on an
 example Stock Synthesis model built into the r4ss package. First, we
 make a copy of the model to avoid changing the original model files 
-```{r}
+```{r, setup-tuning}
 # define a new directory in a temporary location
 mod_path <- file.path(tempdir(), "simple_mod")
 # Path to simple model in r4ss and copy files to mod_path
@@ -481,7 +481,7 @@ The following call to `tune_comps()` runs Francis weighting for 1
 iteration and allows upweighting. Assume that an executable called
 "ss or ss.exe" is available in the mod_path folder.
  
-```{r, eval=FALSE}
+```{r, tune-comps, eval=FALSE}
 tune_info <- tune_comps(
   option = "Francis",
   niters_tuning = 1,
@@ -499,7 +499,7 @@ to a new folder, then the `tune_comps()` function could be used to
 add Dirichlet-multinomial parameters (1 for each fleet with composition
 data and for each type of composition data) and re-run the model.
 
-```{r, eval=FALSE}
+```{r, DM-tuning, eval=FALSE}
 # create additional temporary directory
 mod_path_dm <- file.path(tempdir(), "simple_mod_dm")
 # copy model files

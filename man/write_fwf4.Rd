@@ -20,7 +20,7 @@ write_fwf4(
   width = NULL,
   eol = "\\n",
   qmethod = c("escape", "double"),
-  digits = 6,
+  digits = 8,
   checkNA = TRUE,
   checkInfty = TRUE,
   checkError = TRUE

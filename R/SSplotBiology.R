@@ -93,7 +93,7 @@ SSplotBiology <-
              "Age (yr)", # 2
              "Maturity", # 3
              "Mean weight (kg) in last year", # 4
-             "Spawning output", # 5
+             replist[["SpawnOutputLabel"]], # 5
              "Length (cm, beginning of the year)", # 6
              "Natural mortality", # 7
              "Female weight (kg)", # 8
@@ -151,7 +151,7 @@ SSplotBiology <-
       if (is.null(replist[["endgrowth"]])) {
         message(
           "Skipping biology plots because model output doesn't include\n",
-          " biology-at-age information ($endgrowth), likely because\n",
+          " biology-at-age information (endgrowth), likely because\n",
           " brief output was specified in starter.ss."
         )
         return()
@@ -597,7 +597,7 @@ SSplotBiology <-
       # function to add uncertainty estimates to mean length at age or M at age
 
       # previous settings for warnings
-      old_warn <- options()$warn
+      old_warn <- options()[["warn"]]
       # turn off "zero-length arrow" warning
       options(warn = -1)
       # confirm presence of table of values and request to add to plot
@@ -765,7 +765,7 @@ SSplotBiology <-
       plot(0,
         type = "n",
         xaxs = "i", xlim = c(0, 1.0 * lab1max),
-        yaxs = "i", ylim = par()$usr[3:4],
+        yaxs = "i", ylim = par()[["usr"]][3:4],
         axes = FALSE
       )
       if (option == 1) {

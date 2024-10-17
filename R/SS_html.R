@@ -381,7 +381,7 @@ SS_html <- function(replist = NULL,
     # check for presence of file
     # alternative location for file in the path is relative to the working directory
     htmlhome2 <- file.path(getwd(), htmlhome)
-    if (is.na(file.info(htmlhome2)$size)) {
+    if (is.na(file.info(htmlhome2)[["size"]])) {
       browseURL(htmlhome)
     } else {
       browseURL(htmlhome2)

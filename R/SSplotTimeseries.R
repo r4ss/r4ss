@@ -9,12 +9,12 @@
 #' Numbering of subplots is as follows, where the spawning biomass plots
 #' (7 to 10) are provided first when this function is called by [SS_plots()]:
 #' \itemize{
-#'   \item 1 Total biomass (mt) with forecast
+#'   \item 1 Total biomass (t) with forecast
 #'   \item 2 Total biomass by area (spatial models only)
-#'   \item 3 Total biomass (mt) at beginning of spawning season with forecast
-#'   \item 4 Summary biomass (mt) with forecast
-#'   \item 5 Summary biomass (mt) by area (spatial models only)
-#'   \item 6 Summary biomass (mt) at beginning of season 1 with forecast
+#'   \item 3 Total biomass (t) at beginning of spawning season with forecast
+#'   \item 4 Summary biomass (t) with forecast
+#'   \item 5 Summary biomass (t) by area (spatial models only)
+#'   \item 6 Summary biomass (t) at beginning of season 1 with forecast
 #'   \item 7 Spawning output with forecast with ~95% asymptotic intervals
 #'   \item 8 Spawning output by area (spatial models only)
 #'   \item 9 Relative spawning output with forecast with ~95% asymptotic intervals
@@ -89,13 +89,13 @@ SSplotTimeseries <-
     # this function independently
     if (is.null(labels)) {
       labels <- c(
-        "Total biomass (mt)", # 1
-        "Total biomass (mt) at beginning of season", # 2
-        "Summary biomass (mt)", # 3
-        "Summary biomass (mt) at beginning of season", # 4
-        "Spawning biomass (mt)", # 5
+        "Total biomass (t)", # 1
+        "Total biomass (t) at beginning of season", # 2
+        "Summary biomass (t)", # 3
+        "Summary biomass (t) at beginning of season", # 4
+        "Spawning biomass (t)", # 5
         "Relative spawning biomass", # 6
-        "Spawning output", # 7
+        replist[["SpawnOutputLabel"]], # 7
         "Age-0 recruits (1,000s)", # 8
         "Fraction of total Age-0 recruits", # 9
         "Management target", # 10
@@ -424,6 +424,7 @@ SSplotTimeseries <-
         # adjust file names
         caption <- main
         file <- main
+
         if (subplot %in% 9:10 & grepl(":", main)) {
           # remove extra stuff like "B/B_0" from file
           file <- strsplit(main, split = ":")[[1]][1]
@@ -438,6 +439,16 @@ SSplotTimeseries <-
         file <- paste("ts", subplot, "_", file, ".png", sep = "")
         # replace any spaces with underscores
         file <- gsub(pattern = " ", replacement = "_", x = file, fixed = TRUE)
+
+        # use old (not-quite) standardized file name even if using custom SpawnOutputLabel
+        if (subplot == 7) {
+          file <- "ts7_Spawning_output.png"
+          if (uncertainty) {
+            # this name is silly ("with_95_asymptotic_intervals_intervals"
+            # should just be "intervals"), but changing it would break stuff
+            file <- "ts7_Spawning_output_with_95_intervals.png"
+          }
+        }
 
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
@@ -470,14 +481,14 @@ SSplotTimeseries <-
       if (subplot %in% 9:10 & replist[["Bratio_label"]] == "B/B_0") {
         if (btarg < 1) {
           abline(h = btarg, col = "red")
-          text(max(startyr, minyr) + 4, btarg + 0.02 * diff(par()$usr[3:4]),
+          text(max(startyr, minyr) + 4, btarg + 0.02 * diff(par()[["usr"]][3:4]),
             labels[10],
             adj = 0
           )
         }
         if (minbthresh < 1) {
           abline(h = minbthresh, col = "red")
-          text(max(startyr, minyr) + 4, minbthresh + 0.02 * diff(par()$usr[3:4]),
+          text(max(startyr, minyr) + 4, minbthresh + 0.02 * diff(par()[["usr"]][3:4]),
             labels[11],
             adj = 0
           )
@@ -598,7 +609,7 @@ SSplotTimeseries <-
               points(stdtable[["Yr"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
             }
             if (subplot == 11) { # confidence intervals as error bars because recruitment is more variable
-              old_warn <- options()$warn # previous setting
+              old_warn <- options()[["warn"]] # previous setting
               options(warn = -1) # turn off "zero-length arrow" warning
               # note that Yr rather than YrSeas is used here because recruitment is summed across seasons in multi-season models
               arrows(

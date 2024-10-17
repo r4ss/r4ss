@@ -131,7 +131,7 @@ SSplotDiscard <-
           caption <- title
           ylab <- labels[3]
           if (replist[["catch_units"]][ifleet] == 1) {
-            ylab <- paste(ylab, "(mt)")
+            ylab <- paste(ylab, "(t)")
           }
           if (replist[["catch_units"]][ifleet] == 2) {
             ylab <- paste(ylab, "(1000's)")

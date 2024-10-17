@@ -46,7 +46,7 @@ SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "defau
 
   # figure out path to where PNG files will go
   plotdir <- file.path(dir, printfolder)
-  plotdir.isdir <- file.info(plotdir)$isdir
+  plotdir.isdir <- file.info(plotdir)[["isdir"]]
   if (is.na(plotdir.isdir) | !plotdir.isdir) {
     dir.create(plotdir)
   }

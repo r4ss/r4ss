@@ -174,7 +174,7 @@ SSplotComps <-
              "Frequency", # 8
              "Weight", # 9
              "Length", # 10
-             "(mt)", # 11
+             "(t)", # 11
              "(numbers x1000)", # 12
              "Stdev (Age)", # 13
              "Conditional AAL plot, ", # 14
@@ -265,6 +265,7 @@ SSplotComps <-
     titlesex <- ifelse(printsex, titlesex, "")
 
     # a few quantities related to data type and plot number
+    tail_warning <- FALSE
     if (kind == "LEN") {
       dbase_kind <- lendbase
       kindlab <- labels[1]
@@ -274,6 +275,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_lenfit_"
         titledata <- "Length comps, "
+      }
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "GSTLEN") {
@@ -285,6 +291,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_gstlenfit_"
         titledata <- "Excluded length comps, "
+      }
+      if (!is.null(replist[["Length_comp_error_controls"]]) &&
+        any(replist[["Length_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "SIZE") {
@@ -344,6 +355,11 @@ SSplotComps <-
         filenamestart <- "comp_agefit_"
         titledata <- "Age comps, "
       }
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
+      }
     }
     if (kind == "cond") {
       dbase_kind <- condbase
@@ -365,6 +381,11 @@ SSplotComps <-
       } else {
         filenamestart <- "comp_gstagefit_"
         titledata <- "Excluded age comps, "
+      }
+      if (!is.null(replist[["Age_comp_error_controls"]]) &&
+        any(replist[["Age_comp_error_controls"]][["mintailcomp"]] >= 0)
+      ) {
+        tail_warning <- TRUE
       }
     }
     if (kind == "GSTcond") {
@@ -591,6 +612,14 @@ SSplotComps <-
                   for (ipage in 1:npages) {
                     pagetext <- ""
                     caption <- caption1
+                    # add warning about tail compression
+                    if (ipage == 1 & tail_warning) {
+                      caption <- paste0(
+                        caption, ".\n <br> ",
+                        "Note: tail compression in use makes aggregated plots more difficult to interpret."
+                      )
+                    }
+                    # add warning about partitions
                     if (max_n_mkt > 0 & ipage == 1) {
                       caption <-
                         paste0(
@@ -601,6 +630,8 @@ SSplotComps <-
                           " the whole catch.\n"
                         )
                     }
+                    # remove double period if present
+                    caption <- gsub("..", ".", caption, fixed = TRUE)
                     if (npages > 1) {
                       pagetext <- paste("_page", ipage, sep = "")
                       caption <- paste(caption, "<br> (plot ", ipage, " of ", npages, ")", sep = "")
@@ -1151,7 +1182,7 @@ SSplotComps <-
             )
             ### alternative way with legends on the side
             ### (probably not as good once the partition has been added)
-            # mtext(namesvec[ipanel],side=2,line=4.5,cex=par()$cex)
+            # mtext(namesvec[ipanel],side=2,line=4.5,cex=par()[["cex"]])
 
 
             # add lines for growth of individual cohorts if requested
@@ -1179,14 +1210,14 @@ SSplotComps <-
               }
             }
 
-            if (par()$mfg[1] == par()$mfg[3] | ipanel == tail(panelvec, 1)) {
+            if (par()[["mfg"]][1] == par()[["mfg"]][3] | ipanel == tail(panelvec, 1)) {
               # label all years on x-axis of last panel
               axis(1, at = xaxislab)
             } else {
               # or just tick marks for other panels
               axis(1, at = xaxislab, labels = rep("", length(xaxislab)))
             }
-            if (par()$mfg[1] == 1) {
+            if (par()[["mfg"]][1] == 1) {
               # add title after making first panel
               title(main = ptitle, outer = TRUE, xlab = labels[3], ylab = kindlab)
             }
@@ -1969,7 +2000,7 @@ SSplotComps <-
                 abline(0, 1, col = "black", lty = 1)
                 # add loess smoother if there's at least 6 points with a range greater than 2
                 if (smooth & length(unique(dbasegood2[["Nsamp_adj"]])) > 6 & diff(range(dbasegood2[["Nsamp_adj"]])) > 2) {
-                  old_warn <- options()$warn # previous warnings setting
+                  old_warn <- options()[["warn"]] # previous warnings setting
                   options(warn = -1) # turn off loess warnings
                   psmooth <- loess(dbasegood2[["effN"]] ~ dbasegood2[["Nsamp_adj"]], degree = 1)
                   options(warn = old_warn) # returning to old value
@@ -2042,7 +2073,7 @@ SSplotComps <-
                   filenamestart,
                   ifelse(whichplot == 8,
                     "data_weighting_timeseries_",
-                    "data_weighting_TA1.8_"
+                    "data_weighting_TA1-8_"
                   ),
                   fleetnames[f], ".png"
                 )
@@ -2137,9 +2168,9 @@ SSplotComps <-
                   filenamestart,
                   ifelse(whichplot == 10,
                     "data_weighting_timeseries_condAge",
-                    "data_weighting_TA1.8_condAge"
+                    "data_weighting_TA1-8_condAge"
                   ),
-                  fleetnames[f], ".png"
+                  gsub(" ", "", fleetnames[f]), ".png"
                 )
                 # not using save_png because caption isn't available until after
                 # plot is created
