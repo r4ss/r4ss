@@ -1723,6 +1723,10 @@ SS_output <-
 
     # replace SPB with SSB as changed in SS version 3.30.10.00 (29 Nov. 2017)
     der[["Label"]] <- gsub("SPB_", "SSB_", der[["Label"]], fixed = TRUE)
+    # change capitalization of Recr_virgin to Recr_Virgin 
+    # (temporary change while discussing capitalization)
+    der[["Label"]] <- gsub("Recr_virgin", "Recr_Virgin", der[["Label"]], fixed = TRUE)
+
     # set rownames equal to Label column
     # (skipping any duplicates, such as ln(SPB)_YYYY for models with limited year range)
     rownames(der)[!duplicated(der[["Label"]])] <- der[["Label"]][!duplicated(der[["Label"]])]
