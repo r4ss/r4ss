@@ -6,8 +6,8 @@
 <!-- # commenting out version badges which were misleading (CRAN not recommended and GitHub number is only most recent release, not the current code) -->
 <!-- [![cran version](http://www.r-pkg.org/badges/version/r4ss)](https://cran.r-project.org/package=r4ss)
 [![github](https://img.shields.io/github/v/release/r4ss/r4ss?color=brightgreen&label=GitHub)](https://github.com/r4ss/r4ss/releases/latest) -->
-[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/r4ss?)](https://github.com/metacran/cranlogs.app)
-[![](https://cranlogs.r-pkg.org/badges/r4ss?color=FFD700)](https://www.r-pkg.org/pkg/r4ss)
+<!-- [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/r4ss?)](https://github.com/metacran/cranlogs.app) -->
+<!-- [![](https://cranlogs.r-pkg.org/badges/r4ss?color=FFD700)](https://www.r-pkg.org/pkg/r4ss) -->
 
 Stock Synthesis is a fisheries stock assessment model written in ADMB by
 Rick Methot. The Stock Synthesis software and many other associated
