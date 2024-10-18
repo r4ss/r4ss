@@ -814,7 +814,7 @@ SSplotComparisons <-
       # get axis limits
       if (is.null(xlim)) {
         if (show_equilibrium) {
-          xlim <- range(Bio[["Yr"]], na.rm = TRUE) + c(-0.2, 0.2)
+          xlim <- range(Bio[["Yr"]], na.rm = TRUE) + c(-0.5, 0.5)
         } else {
           xlim <- range(Bio[["Yr"]][-c(1, 2)], na.rm = TRUE) + c(-0.2, 0.2)
         }
@@ -2385,16 +2385,23 @@ SSplotComparisons <-
     # subplot 19: summary biomass with uncertainty intervals
     if (19 %in% subplots) {
       if (any(uncertainty)) {
-        if (verbose) {
-          message("subplot 19: summary biomass with uncertainty intervals")
-        }
-        if (plot) {
-          ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
-        }
-        if (print) {
-          save_png_comparisons("compare19_smrybio_uncertainty.png")
-          ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
-          dev.off()
+        if (all(is.na(summaryoutput[["SmryBioSD"]][["Label"]]))) {
+          if (verbose) {
+            message("skipping subplot 19 summary biomass with uncertainty ",
+              "because no models include summary biomass as a derived quantity")
+          }
+        } else {
+          if (verbose) {
+            message("subplot 19: summary biomass with uncertainty intervals")
+          }
+          if (plot) {
+            ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
+          }
+          if (print) {
+            save_png_comparisons("compare19_smrybio_uncertainty.png")
+            ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
+            dev.off()
+          }
         }
       }
     }
