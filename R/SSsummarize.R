@@ -2,7 +2,8 @@
 #'
 #' Summarize various quantities from the model output collected by
 #' [SSgetoutput()] and return them in a list of tables and vectors.
-#'
+#' If the models have incompatible dimensions, some quantities can't be 
+#' compared via this function, such as selectivity.
 #'
 #' @param biglist A list of lists, one for each model. The individual lists can
 #' be created by [SS_output()] or the list of lists can be
@@ -566,24 +567,25 @@ SSsummarize <- function(biglist,
   }
 
   # Summary biomass (range of ages defined in starter file and
-  # presence in derived quantities depends on "read specs for more stddev
+  # present in derived quantities depends on "read specs for more stddev
   # reporting" at the bottom of the control file)
 
   # rows numbers of derived quantities that start with "SmryBio_"
   SmryBiorows <- grep("SmryBio_", quants[["Label"]])
-  # exclude "unfished" value--though may be useful in the future
+  # exclude "unfished" value which is reported separately from the timeseries--
+  # though may be useful in the future
   SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_unfished", quants[["Label"]]))
   SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_Unfished", quants[["Label"]]))
 
-  # identify summary biomass parameters
+  # identify summary biomass values in derived quantities
   SmryBio <- quants[SmryBiorows, ]
   SmryBioSD <- quantsSD[SmryBiorows, ]
   
-  # add rows based on what's in SpawnBio (which spans full range of years for all models)
-  # create empty dataframe based on SpawnBio
-  SmryBio_extras <- SpawnBio
-  SmryBio_extras[, 1:n] <- NA
-  SmryBio_extras[["Label"]] <- NA
+  # create dataframe full of NAs based on SpawnBio to fill in any missing years
+  # SpawnBio always spans full range of years included in any model
+  SmryBio_extras <- SpawnBio[-(1:2), ] # exclude VIRG and INIT years as these should be added from one of the models
+  SmryBio_extras[, 1:n] <- NA # remove SpawnBio values
+  SmryBio_extras[["Label"]] <- NA # remove SpawnBio labels
   # only those years that aren't yet in the main dataframe
   SmryBio_extras <- SmryBio_extras |> dplyr::filter(!Yr %in% SmryBio[["Yr"]])
   SmryBioSD_extras <- SmryBio_extras
@@ -591,7 +593,7 @@ SSsummarize <- function(biglist,
   SmryBio <- rbind(SmryBio, SmryBio_extras)
   SmryBioSD <- rbind(SmryBioSD, SmryBio_extras)
   # add year values for Virgin and Initial years (if present)
-  minyr <- min(SmryBio[["Yr"]], na.rm = TRUE)
+  minyr <- min(SpawnBio[["Yr"]], na.rm = TRUE) + 2 # startyr of model is 2 larger than minyr in table
   SmryBio[["Yr"]][grep("SmryBio_Virg", SmryBio[["Label"]])] <- minyr - 2
   SmryBio[["Yr"]][grep("SmryBio_InitEq", SmryBio[["Label"]])] <- minyr - 1
   SmryBioSD[["Yr"]] <- SmryBio[["Yr"]]
@@ -602,18 +604,20 @@ SSsummarize <- function(biglist,
   # add any missing values using timeseries
   # TODO: need to get VIRG and INIT values from timeseries
   for (imodel in 1:n) {
-    # all years within timeseries for this model
+    # renumber years of timeseries so that models with different starting years
+    # have VIRG and INIT values associated with the same numerical year
+    ts <- biglist[[imodel]][["timeseries"]]
+    ts[ts$Era == "VIRG", "Yr"] <- minyr - 2
+    ts[ts$Era == "INIT", "Yr"] <- minyr - 1    
+    # get all years within modified timeseries for this model
     # excluding virgin summary biomass
-    yrs <- biglist[[imodel]][["timeseries"]] |> 
-      dplyr::filter(Era != "VIRG") |>
-      dplyr::pull(Yr)
+    yrs <- ts |> dplyr::pull(Yr)
     # years within range above that have NA in table 
     # (may be all years in model if not included in derived quantities)
     NA_yrs <- intersect(yrs, SmryBio[["Yr"]][is.na(SmryBio[, imodel])])
     if (length(NA_yrs) > 0) {
       # filter years to only include those with NA values
-      SmryBio[SmryBio[["Yr"]] %in% NA_yrs, imodel] <-
-        biglist[[imodel]][["timeseries"]] |>
+      SmryBio[SmryBio[["Yr"]] %in% NA_yrs, imodel] <- ts |>
         dplyr::filter(Yr %in% NA_yrs) |>
         dplyr::pull(Bio_smry)
     }
