@@ -57,6 +57,8 @@ to the screen.}
 \description{
 Summarize various quantities from the model output collected by
 \code{\link[=SSgetoutput]{SSgetoutput()}} and return them in a list of tables and vectors.
+If the models have incompatible dimensions, some quantities can't be
+compared via this function, such as selectivity.
 }
 \seealso{
 \code{\link[=SSgetoutput]{SSgetoutput()}}
