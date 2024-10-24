@@ -102,12 +102,12 @@ test_that("SSsummarize and SSplotComparisons both work", {
     plotdir = temp_path, verbose = FALSE,
     indexUncertainty = TRUE
   )
-  # confirm that function finished 
+  # confirm that function finished
   # (present of plot 19 depends on having SmryBio in derived quants)
   if (all(is.na(simple_summary[["SmryBioSD"]][["Label"]]))) {
-    expect_equal(length(comparison_plots), 18)  
+    expect_equal(length(comparison_plots), 18)
   } else {
-    expect_equal(length(comparison_plots), 19)  
+    expect_equal(length(comparison_plots), 19)
   }
 
   # make table of comparisons

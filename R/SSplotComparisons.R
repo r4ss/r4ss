@@ -2387,8 +2387,10 @@ SSplotComparisons <-
       if (any(uncertainty)) {
         if (all(is.na(summaryoutput[["SmryBioSD"]][["Label"]]))) {
           if (verbose) {
-            message("skipping subplot 19 summary biomass with uncertainty ",
-              "because no models include summary biomass as a derived quantity")
+            message(
+              "skipping subplot 19 summary biomass with uncertainty ",
+              "because no models include summary biomass as a derived quantity"
+            )
           }
         } else {
           if (verbose) {

@@ -2,7 +2,7 @@
 #'
 #' Summarize various quantities from the model output collected by
 #' [SSgetoutput()] and return them in a list of tables and vectors.
-#' If the models have incompatible dimensions, some quantities can't be 
+#' If the models have incompatible dimensions, some quantities can't be
 #' compared via this function, such as selectivity.
 #'
 #' @param biglist A list of lists, one for each model. The individual lists can
@@ -580,7 +580,7 @@ SSsummarize <- function(biglist,
   # identify summary biomass values in derived quantities
   SmryBio <- quants[SmryBiorows, ]
   SmryBioSD <- quantsSD[SmryBiorows, ]
-  
+
   # create dataframe full of NAs based on SpawnBio to fill in any missing years
   # SpawnBio always spans full range of years included in any model
   SmryBio_extras <- SpawnBio[-(1:2), ] # exclude VIRG and INIT years as these should be added from one of the models
@@ -607,12 +607,12 @@ SSsummarize <- function(biglist,
     # renumber years of timeseries so that models with different starting years
     # have VIRG and INIT values associated with the same numerical year
     ts <- biglist[[imodel]][["timeseries"]]
-    ts[ts$Era == "VIRG", "Yr"] <- minyr - 2
-    ts[ts$Era == "INIT", "Yr"] <- minyr - 1    
+    ts[ts[["Era"]] == "VIRG", "Yr"] <- minyr - 2
+    ts[ts[["Era"]] == "INIT", "Yr"] <- minyr - 1
     # get all years within modified timeseries for this model
     # excluding virgin summary biomass
     yrs <- ts |> dplyr::pull(Yr)
-    # years within range above that have NA in table 
+    # years within range above that have NA in table
     # (may be all years in model if not included in derived quantities)
     NA_yrs <- intersect(yrs, SmryBio[["Yr"]][is.na(SmryBio[, imodel])])
     if (length(NA_yrs) > 0) {
