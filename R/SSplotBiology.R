@@ -1609,6 +1609,11 @@ SSplotBiology <-
                     pattern = "%", replacement = "percent", x = file,
                     fixed = TRUE
                   )
+                  # replace : which which cause problems for filename
+                  file <- gsub(
+                    pattern = ":", replacement = "_", x = file,
+                    fixed = TRUE
+                  )
                   caption <- "Time-varying mortality and growth parameters"
                   plotinfo <- save_png(
                     plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
