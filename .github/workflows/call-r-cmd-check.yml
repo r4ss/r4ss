@@ -7,17 +7,8 @@ on:
       - '.github/**'
       - 'README.md'
   workflow_dispatch:
+  
 jobs:
-  update-ubuntu:
-    runs-on: ubuntu-latest
-    steps:
-      - name: update ubuntu
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-          sudo apt-get install --only-upgrade libstdc++6
-            
   call-workflow:      
     uses: nmfs-fish-tools/ghactions4r/.github/workflows/r-cmd-check.yml@main
     
