@@ -10,7 +10,7 @@ on:
   
 jobs:
   call-workflow:      
-    uses: nmfs-fish-tools/ghactions4r/.github/workflows/r-cmd-check.yml@update-linux-libraries
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/r-cmd-check.yml@main
     
   # call-workflow-extra:
   #   # this step runs the r4ss tests again, after downloading ss3 exes and the
