@@ -199,12 +199,20 @@ SSplotYield <-
       dplyr::filter(!Era %in% c("VIRG", "FORE")) |>
       # add up dead fish from all fleets
       dplyr::mutate(catch_tot = rowSums(pick(starts_with("dead(B)")), na.rm = TRUE)) |>
-      # summarize key columns
+      # sum by areas
+      dplyr::group_by(Yr, Seas) |>
+      dplyr::summarise(
+        sum_Bio_all = sum(Bio_all),
+        sum_SpawnBio = sum(SpawnBio, na.rm = TRUE),
+        sum_catch_tot = sum(catch_tot)
+      ) |>
+      dplyr::ungroup() |>
+      # average across seasons
       dplyr::group_by(Yr) |>
       dplyr::summarise(
-        mean_Bio_all = mean(Bio_all),
-        mean_SpawnBio = mean(SpawnBio, na.rm = TRUE),
-        catch_tot = sum(catch_tot)
+        mean_Bio_all = mean(sum_Bio_all),
+        mean_SpawnBio = mean(sum_SpawnBio, na.rm = TRUE),
+        catch_tot = sum(sum_catch_tot)
       )
 
     # number of years to consider
