@@ -203,7 +203,7 @@ SSplotYield <-
       dplyr::group_by(Yr, Seas) |>
       dplyr::summarise(
         sum_Bio_all = sum(Bio_all),
-        sum_SpawnBio = sum(SpawnBio, na.rm = TRUE),
+        sum_SpawnBio = sum(SpawnBio),
         sum_catch_tot = sum(catch_tot)
       ) |>
       dplyr::ungroup() |>
