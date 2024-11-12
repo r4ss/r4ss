@@ -90,13 +90,13 @@ production is based on Walters et al. (2008).
 }
 \references{
 Walters, Hilborn, and Christensen, 2008, Surplus production
-dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
-Sci. 65: 2536-2551
+dynamics in declining and recovering fish populations. \emph{Can. J. Fish. Aquat.
+Sci.} 65: 2536-2551. \url{https://doi.org/10.1139/F08-170}.
 
 Forrest, Kronlund, Cleary, and Grinnell. 2023. An
 evidence-based approach for selecting a limit reference point for Pacific
-herring (Clupea pallasii) stocks in British Columbia, Canada. Can J. Fish.
-Aquat. Sci. 80: 1071-1083. https://doi.org/10.1139/cjfas-2022-0168
+herring (\emph{Clupea pallasii}) stocks in British Columbia, Canada. \emph{Can. J. Fish.
+Aquat. Sci.} 80: 1071-1083. \url{https://doi.org/10.1139/cjfas-2022-0168}.
 }
 \seealso{
 \code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}

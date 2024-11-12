@@ -36,12 +36,12 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 #' @references Walters, Hilborn, and Christensen, 2008, Surplus production
-#' dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
-#' Sci. 65: 2536-2551
+#' dynamics in declining and recovering fish populations. *Can. J. Fish. Aquat.
+#' Sci.* 65: 2536-2551. <https://doi.org/10.1139/F08-170>.
 #' @references Forrest, Kronlund, Cleary, and Grinnell. 2023. An
 #' evidence-based approach for selecting a limit reference point for Pacific
-#' herring (Clupea pallasii) stocks in British Columbia, Canada. Can J. Fish.
-#' Aquat. Sci. 80: 1071-1083. https://doi.org/10.1139/cjfas-2022-0168
+#' herring (*Clupea pallasii*) stocks in British Columbia, Canada. *Can. J. Fish.
+#' Aquat. Sci.* 80: 1071-1083. <https://doi.org/10.1139/cjfas-2022-0168>.
 SSplotYield <-
   function(replist,
            subplots = 1:5,
@@ -291,7 +291,7 @@ SSplotYield <-
             "<blockquote>Walters, Hilborn, and  Christensen, 2008,",
             "Surplus production dynamics in declining and",
             "recovering fish populations. <i>Can. J. Fish. Aquat. Sci.</i>",
-            "65: 2536-2551.</blockquote>"
+            "65: 2536-2551. <a href='https://doi.org/10.1139/F08-170'>https://doi.org/10.1139/F08-170</a>.</blockquote>"
           )
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
@@ -314,9 +314,9 @@ SSplotYield <-
             "Surplus production vs. spawning biomass plot. For interpretation, see<br>",
             "<blockquote>Forrest, Kronlund, Cleary, and Grinnell. 2023. An",
             "evidence-based approach for selecting a limit reference point for Pacific",
-            "herring (Clupea pallasii) stocks in British Columbia, Canada. Can J. Fish.",
-            "Aquat. Sci. 80: 1071-1083.",
-            "<a href='https://doi.org/10.1139/cjfas-2022-0168'>https://doi.org/10.1139/cjfas-2022-0168</a></blockquote>"
+            "herring (<i>Clupea pallasii</i>) stocks in British Columbia, Canada. <i>Can. J. Fish.",
+            "Aquat. Sci.</i> 80: 1071-1083.",
+            "<a href='https://doi.org/10.1139/cjfas-2022-0168'>https://doi.org/10.1139/cjfas-2022-0168</a>.</blockquote>"
           )
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
