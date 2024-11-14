@@ -611,14 +611,15 @@ SSsummarize <- function(biglist,
     ts[ts[["Era"]] == "INIT", "Yr"] <- minyr - 1
     # get all years within modified timeseries for this model
     # excluding virgin summary biomass
-    yrs <- ts |> dplyr::pull(Yr)
+    yrs <- ts |> dplyr::pull(Yr) |> unique()
+
     # years within range above that have NA in table
     # (may be all years in model if not included in derived quantities)
     NA_yrs <- intersect(yrs, SmryBio[["Yr"]][is.na(SmryBio[, imodel])])
     if (length(NA_yrs) > 0) {
       # filter years to only include those with NA values
       SmryBio[SmryBio[["Yr"]] %in% NA_yrs, imodel] <- ts |>
-        dplyr::filter(Yr %in% NA_yrs) |>
+        dplyr::filter(Yr %in% NA_yrs & Seas == 1) |>
         dplyr::pull(Bio_smry)
     }
   }
