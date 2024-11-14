@@ -611,7 +611,9 @@ SSsummarize <- function(biglist,
     ts[ts[["Era"]] == "INIT", "Yr"] <- minyr - 1
     # get all years within modified timeseries for this model
     # excluding virgin summary biomass
-    yrs <- ts |> dplyr::pull(Yr) |> unique()
+    yrs <- ts |>
+      dplyr::pull(Yr) |>
+      unique()
 
     # years within range above that have NA in table
     # (may be all years in model if not included in derived quantities)
