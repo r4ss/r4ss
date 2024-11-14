@@ -9,4 +9,4 @@ on:
     tags: ['*']
 jobs:
   call-workflow:
-    uses: nmfs-fish-tools/ghactions4r/.github/workflows/update-pkgdown.yml@linux-pkgs-update-pkgdown
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/update-pkgdown.yml@main
