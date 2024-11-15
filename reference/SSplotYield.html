@@ -35,7 +35,7 @@ production is based on Walters et al. (2008)."><meta property="og:image" content
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Plot yield and surplus production.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r4ss/r4ss/blob/try-updated-pkgdown-branch/R/SSplotYield.R" class="external-link"><code>R/SSplotYield.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r4ss/r4ss/blob/main/R/SSplotYield.R" class="external-link"><code>R/SSplotYield.R</code></a></small>
       <div class="d-none name"><code>SSplotYield.Rd</code></div>
     </div>
 
@@ -48,13 +48,13 @@ production is based on Walters et al. (2008).</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SSplotYield</span><span class="op">(</span></span>
 <span>  <span class="va">replist</span>,</span>
-<span>  subplots <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
+<span>  subplots <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  refpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSY"</span>, <span class="st">"Btgt"</span>, <span class="st">"SPR"</span>, <span class="st">"Current"</span><span class="op">)</span>,</span>
 <span>  add <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Fraction unfished"</span>, <span class="st">"Equilibrium yield (t)"</span>, <span class="st">"Total biomass (t)"</span>,</span>
-<span>    <span class="st">"Surplus production (t)"</span>, <span class="st">"Yield per recruit (kg)"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"Surplus production (t)"</span>, <span class="st">"Yield per recruit (kg)"</span>, <span class="st">"Spawning output"</span><span class="op">)</span>,</span>
 <span>  col <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>  col2 <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>  lty <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -82,7 +82,9 @@ production is based on Walters et al. (2008).</p>
 <dd><p>vector controlling which subplots to create
 Numbering of subplots is as follows:</p><ul><li><p>1 yield curve</p></li>
 <li><p>2 yield curve with reference points</p></li>
-<li><p>3 surplus production vs. biomass plots (Walters et al. 2008)</p></li>
+<li><p>3 surplus production vs. total biomass plots (Walters et al. 2008)</p></li>
+<li><p>4 surplus production vs. spawning biomass plots (Forrest et al. 2023)</p></li>
+<li><p>5 yield per recruit plot</p></li>
 </ul></dd>
 
 
@@ -167,8 +169,12 @@ to the screen.</p></dd>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Walters, Hilborn, and Christensen, 2008, Surplus production
-dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
-Sci. 65: 2536-2551</p>
+dynamics in declining and recovering fish populations. <em>Can. J. Fish. Aquat.
+Sci.</em> 65: 2536-2551. <a href="https://doi.org/10.1139/F08-170" class="external-link">https://doi.org/10.1139/F08-170</a>.</p>
+<p>Forrest, Kronlund, Cleary, and Grinnell. 2023. An
+evidence-based approach for selecting a limit reference point for Pacific
+herring (<em>Clupea pallasii</em>) stocks in British Columbia, Canada. <em>Can. J. Fish.
+Aquat. Sci.</em> 80: 1071-1083. <a href="https://doi.org/10.1139/cjfas-2022-0168" class="external-link">https://doi.org/10.1139/cjfas-2022-0168</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
