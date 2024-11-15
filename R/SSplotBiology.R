@@ -385,14 +385,11 @@ SSplotBiology <-
           }
         }
       } else { ## if empirical weight-at-age IS used
-        wtmat <- wtatage[wtatage[["Fleet"]] == -1 &
-          wtatage[["Sex"]] == sex &
-          wtatage[["Seas"]] == seas, -(2:6)]
+        wtmat <- wtatage[wtatage[["fleet"]] == -1 &
+          wtatage[["sex"]] == sex &
+          wtatage[["seas"]] == seas, -(2:6)]
         wtmat <- clean_wtatage(wtmat)
         if (!is.null(wtmat)) {
-          ## persp(x=abs(wtmat[["Yr"]]), y=0:accuage,
-          ##       z=as.matrix(wtmat[,-1]),
-          ##       theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight", main="")
           makeimage(wtmat, main = "")
         }
       }
@@ -426,13 +423,13 @@ SSplotBiology <-
         }
       } else {
         # if empirical weight-at-age IS used
-        fecmat <- wtatage[wtatage[["Fleet"]] == -2 & wtatage[["Sex"]] == 1, ]
+        fecmat <- wtatage[wtatage[["fleet"]] == -2 & wtatage[["sex"]] == 1, ]
         if (nrow(fecmat) > 1) {
           # figure out which seasons have fecundity values (maybe always only one?)
-          fecseasons <- sort(unique(fecmat[["Seas"]]))
+          fecseasons <- sort(unique(fecmat[["seas"]]))
           seas_label <- NULL
           for (iseas in fecseasons) {
-            fecmat_seas <- fecmat[fecmat[["Seas"]] == iseas, -(2:6)]
+            fecmat_seas <- fecmat[fecmat[["seas"]] == iseas, -(2:6)]
             # label the season only if a multi-season model
             # also testing for length of fecseasons, but that's probably redundant
             if (nseasons > 1 | length(fecseasons) > 1) {
@@ -452,7 +449,7 @@ SSplotBiology <-
     }
 
     makeimage <- function(mat, main = "") {
-      yrvec <- abs(mat[["Yr"]])
+      yrvec <- abs(mat[["year"]])
       ##### this stuff was used to add a row of mean values
       ## if(is.null(meanvec)){
       ##   meanvec <- mat[,1]
