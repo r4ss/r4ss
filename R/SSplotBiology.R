@@ -58,6 +58,7 @@
 #' @template labels
 #' @template pwidth
 #' @template pheight
+#' @template pheight_tall
 #' @template punits
 #' @template res
 #' @template ptsize
@@ -104,7 +105,7 @@ SSplotBiology <-
              "Hermaphroditism transition rate", # 13
              "Fraction females by age in ending year"
            ), # 14
-           pwidth = 6.5, pheight = 5.0,
+           pwidth = 6.5, pheight = 5.0, pheight_tall = 6.5,
            punits = "in", res = 300, ptsize = 10, cex.main = 1,
            mainTitle = TRUE, verbose = TRUE) {
     #### current (Aug 18, 2017) order of plots:
@@ -364,8 +365,8 @@ SSplotBiology <-
       ## This needs to be a function of sex since it can be called
       ## either once for a single sex model or twice to produce plots for
       ## each one.
-      x <- biology[["Len_mean"]]
       if (!wtatage_switch) { # if empirical weight-at-age is not used
+        x <- biology[["Len_mean"]]
         if (!add) {
           ymax <- max(biology[["Wt_F"]])
           if (nsexes > 1) ymax <- max(ymax, biology[["Wt_M"]])
@@ -1295,7 +1296,8 @@ SSplotBiology <-
         }
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          pheight = ifelse(wtatage_switch, pheight_tall, pheight), # weight-at-age matrix works better when taller
+          punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
         weight_plot(sex = 1)
@@ -1306,7 +1308,7 @@ SSplotBiology <-
           caption <- "Weight-at-age for males"
           plotinfo <- save_png(
             plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            pheight = pheight_tall, punits = punits, res = res, ptsize = ptsize,
             caption = caption
           )
           weight_plot(sex = 2)
@@ -1321,7 +1323,8 @@ SSplotBiology <-
         }
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          pheight = ifelse(wtatage_switch, pheight_tall, pheight), # spawning-output-at-age matrix works better when taller
+          punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
         maturity_plot()
