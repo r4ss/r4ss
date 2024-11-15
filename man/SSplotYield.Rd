@@ -6,13 +6,13 @@
 \usage{
 SSplotYield(
   replist,
-  subplots = 1:4,
+  subplots = 1:5,
   refpoints = c("MSY", "Btgt", "SPR", "Current"),
   add = FALSE,
   plot = TRUE,
   print = FALSE,
   labels = c("Fraction unfished", "Equilibrium yield (t)", "Total biomass (t)",
-    "Surplus production (t)", "Yield per recruit (kg)"),
+    "Surplus production (t)", "Yield per recruit (kg)", "Spawning output"),
   col = "blue",
   col2 = "black",
   lty = 1,
@@ -35,7 +35,9 @@ Numbering of subplots is as follows:
 \itemize{
 \item 1 yield curve
 \item 2 yield curve with reference points
-\item 3 surplus production vs. biomass plots (Walters et al. 2008)
+\item 3 surplus production vs. total biomass plots (Walters et al. 2008)
+\item 4 surplus production vs. spawning biomass plots (Forrest et al. 2023)
+\item 5 yield per recruit plot
 }}
 
 \item{refpoints}{character vector of which reference points to display in
@@ -88,8 +90,13 @@ production is based on Walters et al. (2008).
 }
 \references{
 Walters, Hilborn, and Christensen, 2008, Surplus production
-dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
-Sci. 65: 2536-2551
+dynamics in declining and recovering fish populations. \emph{Can. J. Fish. Aquat.
+Sci.} 65: 2536-2551. \url{https://doi.org/10.1139/F08-170}.
+
+Forrest, Kronlund, Cleary, and Grinnell. 2023. An
+evidence-based approach for selecting a limit reference point for Pacific
+herring (\emph{Clupea pallasii}) stocks in British Columbia, Canada. \emph{Can. J. Fish.
+Aquat. Sci.} 80: 1071-1083. \url{https://doi.org/10.1139/cjfas-2022-0168}.
 }
 \seealso{
 \code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}

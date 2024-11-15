@@ -10,7 +10,9 @@
 #' \itemize{
 #'   \item 1 yield curve
 #'   \item 2 yield curve with reference points
-#'   \item 3 surplus production vs. biomass plots (Walters et al. 2008)
+#'   \item 3 surplus production vs. total biomass plots (Walters et al. 2008)
+#'   \item 4 surplus production vs. spawning biomass plots (Forrest et al. 2023)
+#'   \item 5 yield per recruit plot
 #' }
 #' @param refpoints character vector of which reference points to display in
 #' subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.
@@ -34,11 +36,15 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 #' @references Walters, Hilborn, and Christensen, 2008, Surplus production
-#' dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
-#' Sci. 65: 2536-2551
+#' dynamics in declining and recovering fish populations. *Can. J. Fish. Aquat.
+#' Sci.* 65: 2536-2551. <https://doi.org/10.1139/F08-170>.
+#' @references Forrest, Kronlund, Cleary, and Grinnell. 2023. An
+#' evidence-based approach for selecting a limit reference point for Pacific
+#' herring (*Clupea pallasii*) stocks in British Columbia, Canada. *Can. J. Fish.
+#' Aquat. Sci.* 80: 1071-1083. <https://doi.org/10.1139/cjfas-2022-0168>.
 SSplotYield <-
   function(replist,
-           subplots = 1:4,
+           subplots = 1:5,
            refpoints = c("MSY", "Btgt", "SPR", "Current"),
            add = FALSE, plot = TRUE, print = FALSE,
            labels = c(
@@ -46,7 +52,8 @@ SSplotYield <-
              "Equilibrium yield (t)", # 2
              "Total biomass (t)", # 3
              "Surplus production (t)", # 4
-             "Yield per recruit (kg)" # 5
+             "Yield per recruit (kg)", # 5
+             "Spawning output" # 6
            ),
            col = "blue", col2 = "black", lty = 1, lwd = 2, cex.main = 1,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
@@ -184,45 +191,60 @@ SSplotYield <-
       } else {
         message("Skipped equilibrium yield plots: no equil_yield results in this model")
       }
-    }
+    } # end equilibrium yield plots
 
-    # timeseries excluding equilibrium conditions or forecasts
-    ts <- timeseries[!timeseries[["Era"]] %in% c("VIRG", "FORE"), ]
-
-    # get total dead catch
-    stringB <- "dead(B)"
-    catchmat <- as.matrix(ts[, substr(names(ts), 1, nchar(stringB)) == stringB])
-    # aggregate catch across fleets
-    catch <- rowSums(catchmat)
-
-    # aggregate catch and biomass across seasons and areas
-    catch_agg <- aggregate(x = catch, by = list(ts[["Yr"]]), FUN = sum)[["x"]]
-    Bio_agg <- aggregate(x = ts[["Bio_all"]], by = list(ts[["Yr"]]), FUN = sum)[["x"]]
+    # make dataframe summarizing key value by year (across seasons when present)
+    df <- timeseries |>
+      # timeseries excluding equilibrium conditions or forecasts
+      dplyr::filter(!Era %in% c("VIRG", "FORE")) |>
+      # add up dead fish from all fleets
+      dplyr::mutate(catch_tot = rowSums(pick(starts_with("dead(B)")), na.rm = TRUE)) |>
+      # sum by areas
+      dplyr::group_by(Yr, Seas) |>
+      dplyr::summarise(
+        sum_Bio_all = sum(Bio_all),
+        sum_SpawnBio = sum(SpawnBio),
+        sum_catch_tot = sum(catch_tot)
+      ) |>
+      dplyr::ungroup() |>
+      # average across seasons
+      dplyr::group_by(Yr) |>
+      dplyr::summarise(
+        mean_Bio_all = mean(sum_Bio_all),
+        mean_SpawnBio = mean(sum_SpawnBio, na.rm = TRUE),
+        catch_tot = sum(sum_catch_tot)
+      )
 
     # number of years to consider
-    Nyrs <- length(Bio_agg)
+    Nyrs <- nrow(df)
 
-    # function to calculate and plot surplus production
-    sprodfunc <- function() {
-      sprod <- rep(NA, Nyrs)
-      # calculate surplus production as difference in biomass adjusted for catch
-      sprod[1:(Nyrs - 1)] <- Bio_agg[2:Nyrs] - Bio_agg[1:(Nyrs - 1)] + catch_agg[1:(Nyrs - 1)]
-      sprodgood <- !is.na(sprod)
-      Bio_agg_good <- Bio_agg[sprodgood]
-      sprod_good <- sprod[sprodgood]
-      xlim <- c(0, max(Bio_agg_good, na.rm = TRUE))
-      ylim <- c(min(0, sprod_good, na.rm = TRUE), max(sprod_good, na.rm = TRUE))
+    # calculate surplus production as difference in total biomass adjusted for catch
+    df[["sprod"]] <- NA
+    df[["sprod"]][1:(Nyrs - 1)] <-
+      df[["mean_Bio_all"]][2:Nyrs] -
+      df[["mean_Bio_all"]][1:(Nyrs - 1)] +
+      df[["catch_tot"]][1:(Nyrs - 1)]
+
+    # remove any rows with NA values
+    df <- df |> dplyr::filter(!is.na(sprod))
+
+    # function to plot surplus production
+    sprodfunc <- function(bio_col, xlab) {
+      x <- df[[bio_col]]
+      y <- df[["sprod"]]
+      xlim <- c(0, max(x, na.rm = TRUE))
+      ylim <- c(min(0, y, na.rm = TRUE), max(y, na.rm = TRUE))
       # make empty plot
       if (!add) {
-        plot(0, ylim = ylim, xlim = xlim, xlab = labels[3], ylab = labels[4], type = "n")
+        plot(0, ylim = ylim, xlim = xlim, xlab = xlab, ylab = labels[4], type = "n")
       }
       # add lines
-      lines(Bio_agg_good, sprod_good, col = col2)
+      lines(x, y, col = col2)
       # make arrows
       old_warn <- options()[["warn"]] # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
-      s <- seq(length(sprod_good) - 1)
-      arrows(Bio_agg_good[s], sprod_good[s], Bio_agg_good[s + 1], sprod_good[s + 1],
+      s <- seq(length(y) - 1)
+      arrows(x[s], y[s], x[s + 1], y[s + 1],
         length = 0.06, angle = 20, col = col2, lwd = 1.2
       )
       options(warn = old_warn) # returning to old value
@@ -231,7 +253,7 @@ SSplotYield <-
       abline(h = 0, col = "grey")
       abline(v = 0, col = "grey")
       # add blue point at start
-      points(Bio_agg_good[1], sprod_good[1], col = col2, bg = "white", pch = 21)
+      points(x[1], y[1], col = col2, bg = "white", pch = 21)
     } # end sprodfunc
 
     # function to plot time series of Yield per recruit
@@ -259,29 +281,54 @@ SSplotYield <-
 
     if (3 %in% subplots) {
       if (plot) {
-        sprodfunc()
+        sprodfunc(bio_col = "mean_Bio_all", xlab = labels[3])
       }
       if (print) {
         file <- "yield3_surplus_production.png"
         caption <-
           paste(
-            "Surplus production vs. biomass plot. For interpretation, see<br>",
+            "Surplus production vs. total biomass plot. For interpretation, see<br>",
             "<blockquote>Walters, Hilborn, and  Christensen, 2008,",
             "Surplus production dynamics in declining and",
             "recovering fish populations. <i>Can. J. Fish. Aquat. Sci.</i>",
-            "65: 2536-2551.</blockquote>"
+            "65: 2536-2551. <a href='https://doi.org/10.1139/F08-170'>https://doi.org/10.1139/F08-170</a>.</blockquote>"
           )
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
-        sprodfunc()
+        sprodfunc(bio_col = "mean_Bio_all", xlab = labels[3])
         dev.off()
       }
     }
 
     if (4 %in% subplots) {
+      if (plot) {
+        sprodfunc(bio_col = "mean_SpawnBio", xlab = labels[6])
+      }
+      if (print) {
+        file <- "yield4_surplus_production.png"
+        caption <-
+          paste(
+            "Surplus production vs. spawning biomass plot. For interpretation, see<br>",
+            "<blockquote>Forrest, Kronlund, Cleary, and Grinnell. 2023. An",
+            "evidence-based approach for selecting a limit reference point for Pacific",
+            "herring (<i>Clupea pallasii</i>) stocks in British Columbia, Canada. <i>Can. J. Fish.",
+            "Aquat. Sci.</i> 80: 1071-1083.",
+            "<a href='https://doi.org/10.1139/cjfas-2022-0168'>https://doi.org/10.1139/cjfas-2022-0168</a>.</blockquote>"
+          )
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
+        sprodfunc(bio_col = "mean_SpawnBio", xlab = labels[6])
+        dev.off()
+      }
+    }
+
+    if (5 %in% subplots) {
       # stuff related to subplot 4 (YPR timeseries)
       sprseries <- replist[["sprseries"]]
       if (is.null(sprseries)) {
@@ -293,7 +340,7 @@ SSplotYield <-
           YPR_timeseries()
         }
         if (print) {
-          file <- "yield4_YPR_timeseries.png"
+          file <- "yield5_YPR_timeseries.png"
           caption <- "Time series of yield per recruit (kg)"
           plotinfo <- save_png(
             plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
