@@ -58,6 +58,7 @@
 #' @template labels
 #' @template pwidth
 #' @template pheight
+#' @template pheight_tall
 #' @template punits
 #' @template res
 #' @template ptsize
@@ -104,7 +105,7 @@ SSplotBiology <-
              "Hermaphroditism transition rate", # 13
              "Fraction females by age in ending year"
            ), # 14
-           pwidth = 6.5, pheight = 5.0,
+           pwidth = 6.5, pheight = 5.0, pheight_tall = 6.5,
            punits = "in", res = 300, ptsize = 10, cex.main = 1,
            mainTitle = TRUE, verbose = TRUE) {
     #### current (Aug 18, 2017) order of plots:
@@ -364,8 +365,8 @@ SSplotBiology <-
       ## This needs to be a function of sex since it can be called
       ## either once for a single sex model or twice to produce plots for
       ## each one.
-      x <- biology[["Len_mean"]]
       if (!wtatage_switch) { # if empirical weight-at-age is not used
+        x <- biology[["Len_mean"]]
         if (!add) {
           ymax <- max(biology[["Wt_F"]])
           if (nsexes > 1) ymax <- max(ymax, biology[["Wt_M"]])
@@ -385,14 +386,11 @@ SSplotBiology <-
           }
         }
       } else { ## if empirical weight-at-age IS used
-        wtmat <- wtatage[wtatage[["Fleet"]] == -1 &
-          wtatage[["Sex"]] == sex &
-          wtatage[["Seas"]] == seas, -(2:6)]
+        wtmat <- wtatage[wtatage[["fleet"]] == -1 &
+          wtatage[["sex"]] == sex &
+          wtatage[["seas"]] == seas, -(2:6)]
         wtmat <- clean_wtatage(wtmat)
         if (!is.null(wtmat)) {
-          ## persp(x=abs(wtmat[["Yr"]]), y=0:accuage,
-          ##       z=as.matrix(wtmat[,-1]),
-          ##       theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight", main="")
           makeimage(wtmat, main = "")
         }
       }
@@ -426,13 +424,13 @@ SSplotBiology <-
         }
       } else {
         # if empirical weight-at-age IS used
-        fecmat <- wtatage[wtatage[["Fleet"]] == -2 & wtatage[["Sex"]] == 1, ]
+        fecmat <- wtatage[wtatage[["fleet"]] == -2 & wtatage[["sex"]] == 1, ]
         if (nrow(fecmat) > 1) {
           # figure out which seasons have fecundity values (maybe always only one?)
-          fecseasons <- sort(unique(fecmat[["Seas"]]))
+          fecseasons <- sort(unique(fecmat[["seas"]]))
           seas_label <- NULL
           for (iseas in fecseasons) {
-            fecmat_seas <- fecmat[fecmat[["Seas"]] == iseas, -(2:6)]
+            fecmat_seas <- fecmat[fecmat[["seas"]] == iseas, -(2:6)]
             # label the season only if a multi-season model
             # also testing for length of fecseasons, but that's probably redundant
             if (nseasons > 1 | length(fecseasons) > 1) {
@@ -452,7 +450,7 @@ SSplotBiology <-
     }
 
     makeimage <- function(mat, main = "") {
-      yrvec <- abs(mat[["Yr"]])
+      yrvec <- abs(mat[["year"]])
       ##### this stuff was used to add a row of mean values
       ## if(is.null(meanvec)){
       ##   meanvec <- mat[,1]
@@ -1298,7 +1296,8 @@ SSplotBiology <-
         }
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          pheight = ifelse(wtatage_switch, pheight_tall, pheight), # weight-at-age matrix works better when taller
+          punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
         weight_plot(sex = 1)
@@ -1309,7 +1308,7 @@ SSplotBiology <-
           caption <- "Weight-at-age for males"
           plotinfo <- save_png(
             plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            pheight = pheight_tall, punits = punits, res = res, ptsize = ptsize,
             caption = caption
           )
           weight_plot(sex = 2)
@@ -1324,7 +1323,8 @@ SSplotBiology <-
         }
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          pheight = ifelse(wtatage_switch, pheight_tall, pheight), # spawning-output-at-age matrix works better when taller
+          punits = punits, res = res, ptsize = ptsize,
           caption = caption
         )
         maturity_plot()
