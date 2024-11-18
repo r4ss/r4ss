@@ -364,11 +364,11 @@ tune_comps <- function(replist = NULL, fleets = "all",
         )
         var_adj_unmodified <- var_adj
         var_adj <- var_adj[, 1:3]
-        colnames(var_adj) <- c("Data_type", "Fleet", "Value")
+        colnames(var_adj) <- c("factor", "fleet", "value")
         if (allow_up_tuning == FALSE) {
-          var_adj[["Value"]] <- ifelse(var_adj[["Value"]] > 1, 1, var_adj[["Value"]])
+          var_adj[["value"]] <- ifelse(var_adj[["value"]] > 1, 1, var_adj[["value"]])
         }
-        var_adj <- var_adj[var_adj[["Fleet"]] %in% fleets, ]
+        var_adj <- var_adj[var_adj[["fleet"]] %in% fleets, ]
         start <- SS_readstarter(file.path(dir, "starter.ss"),
           verbose = FALSE
         )
@@ -388,10 +388,10 @@ tune_comps <- function(replist = NULL, fleets = "all",
             # leave all var adj intact, unless they match data type and fleet in var_adj.
             cur_var_adj <- ctl[["Variance_adjustment_list"]]
             for (i in seq_len(nrow(var_adj))) {
-              tmp_fac <- var_adj[i, "Data_type"]
-              tmp_flt <- var_adj[i, "Fleet"]
-              tmp_row <- which(ctl[["Variance_adjustment_list"]][, "Data_type"] == tmp_fac &
-                ctl[["Variance_adjustment_list"]][, "Fleet"] == tmp_flt)
+              tmp_fac <- var_adj[i, "factor"]
+              tmp_flt <- var_adj[i, "fleet"]
+              tmp_row <- which(ctl[["Variance_adjustment_list"]][, "factor"] == tmp_fac &
+                ctl[["Variance_adjustment_list"]][, "fleet"] == tmp_flt)
               if (length(tmp_row) == 1) {
                 ctl[["Variance_adjustment_list"]][tmp_row, ] <- var_adj[i, ]
               } else if (length(tmp_row) == 0) {
@@ -497,7 +497,7 @@ tune_comps <- function(replist = NULL, fleets = "all",
       # filter out just data types 4, 5, and 7 for length, age, and size comps
       if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
         ctl[["Variance_adjustment_list"]] <-
-          ctl[["Variance_adjustment_list"]][!ctl[["Variance_adjustment_list"]][["Data_type"]] %in%
+          ctl[["Variance_adjustment_list"]][!ctl[["Variance_adjustment_list"]][["factor"]] %in%
             c(4, 5, 7), ]
       }
       # remove the list if there's nothing left
@@ -561,8 +561,8 @@ get_tuning_table <- function(replist, fleets,
   # check inputs
   # place to store info on data weighting
   tuning_table <- data.frame(
-    Data_type = integer(),
-    Fleet = integer(),
+    factor = integer(),
+    fleet = integer(),
     Var_adj = double(),
     Hash = character(),
     Old_Var_adj = double(),
@@ -586,22 +586,22 @@ get_tuning_table <- function(replist, fleets,
       if (type == "len") {
         # table of info from SS3
         tunetable <- replist[["Length_Comp_Fit_Summary"]]
-        Data_type <- 4 # code for Control file
-        has_marginal <- fleet %in% replist[["lendbase"]][["Fleet"]]
+        factor <- 4 # code for Control file
+        has_marginal <- fleet %in% replist[["lendbase"]][["fleet"]]
         has_conditional <- FALSE
       }
       if (type == "age") {
         # table of info from SS3
         tunetable <- replist[["Age_Comp_Fit_Summary"]]
-        Data_type <- 5 # code for Control file
-        has_marginal <- fleet %in% replist[["agedbase"]][["Fleet"]]
-        has_conditional <- fleet %in% replist[["condbase"]][["Fleet"]]
+        factor <- 5 # code for Control file
+        has_marginal <- fleet %in% replist[["agedbase"]][["fleet"]]
+        has_conditional <- fleet %in% replist[["condbase"]][["fleet"]]
       }
       if (type == "size") {
         # table of info from SS3
         tunetable <- replist[["Size_Comp_Fit_Summary"]]
-        Data_type <- 7 # code for Control file
-        has_marginal <- fleet %in% replist[["sizedbase"]][["Fleet"]]
+        factor <- 7 # code for Control file
+        has_marginal <- fleet %in% replist[["sizedbase"]][["fleet"]]
         has_conditional <- FALSE
       }
       if (has_marginal & has_conditional) {
@@ -643,10 +643,10 @@ get_tuning_table <- function(replist, fleets,
         # current value
         Curr_Var_Adj <- NA
         if ("Curr_Var_Adj" %in% names(tunetable)) {
-          Curr_Var_Adj <- tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
+          Curr_Var_Adj <- tunetable[["Curr_Var_Adj"]][tunetable[["fleet"]] == fleet]
         }
         if ("Var_Adj" %in% names(tunetable)) {
-          Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["Fleet"]] == fleet]
+          Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["fleet"]] == fleet]
         }
         if (is.na(Curr_Var_Adj)) {
           stop("Model output missing required values, perhaps due to an older version of SS3")
@@ -656,21 +656,21 @@ get_tuning_table <- function(replist, fleets,
         # that will later be multiplied by Curr_Var_Adj to get "New_MI"
         MI_mult <- NA
         if ("HarMean(effN)/mean(inputN*Adj)" %in% names(tunetable)) {
-          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable[["Fleet"]] == fleet]
+          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable[["fleet"]] == fleet]
         }
         if ("MeaneffN/MeaninputN" %in% names(tunetable)) {
-          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable[["Fleet"]] == fleet]
+          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable[["fleet"]] == fleet]
         }
-        if ("Data_type" %in% names(tunetable)) {
+        if ("factor" %in% names(tunetable)) {
           # starting with version 3.30.12
-          MI_mult <- tunetable[["Recommend_var_adj"]][tunetable[["Fleet"]] == fleet] /
-            tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
+          MI_mult <- tunetable[["Recommend_var_adj"]][tunetable[["fleet"]] == fleet] /
+            tunetable[["Curr_Var_Adj"]][tunetable[["fleet"]] == fleet]
         }
-        if (all(c("Data_type", "HarMean", "mean_Nsamp_adj") %in% names(tunetable))) {
+        if (all(c("factor", "HarMean", "mean_Nsamp_adj") %in% names(tunetable))) {
           # starting with version 3.30.16?
           MI_mult <-
-            tunetable[["HarMean"]][tunetable[["Fleet"]] == fleet] /
-              tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
+            tunetable[["HarMean"]][tunetable[["fleet"]] == fleet] /
+              tunetable[["mean_Nsamp_adj"]][tunetable[["fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
           stop("Model output missing required values, perhaps due to an older version of SS3")
@@ -679,8 +679,8 @@ get_tuning_table <- function(replist, fleets,
         # make new row for table
         newrow <-
           data.frame(
-            Data_type = Data_type,
-            Fleet = fleet,
+            factor = factor,
+            fleet = fleet,
             New_Var_adj = NA,
             hash = "#",
             Old_Var_adj = round(Curr_Var_Adj, digits),
@@ -715,7 +715,7 @@ get_tuning_table <- function(replist, fleets,
   if (option == "MI") {
     tuning_table[["New_Var_adj"]] <- tuning_table[["New_MI"]]
   }
-  names(tuning_table)[1] <- "#Data_type" # add hash to facilitate pasting into Control
+  names(tuning_table)[1] <- "#factor" # add hash to facilitate pasting into Control
   rownames(tuning_table) <- 1:nrow(tuning_table)
 
   # stuff related to generalized size frequency data

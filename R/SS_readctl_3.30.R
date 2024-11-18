@@ -789,7 +789,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
         name = "F_setup2", nrow = ctllist[["F_setup"]][3],
         ncol = 6,
         col.names = c(
-          "fleet", "yr", "seas", "Fvalue", "se",
+          "fleet", "year", "seas", "Fvalue", "se",
           "phase"
         )
       )
@@ -801,7 +801,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   if (ctllist[["F_Method"]] == 4) {
     ctllist <- add_df(
       ctllist = ctllist, ncol = 3,
-      col.names = c("Fleet", "start_F", "first_parm_phase"),
+      col.names = c("fleet", "start_F", "first_parm_phase"),
       name = "F_4_Fleet_Parms"
     )
     ctllist <- add_elem(ctllist, "F_iter")
@@ -1452,7 +1452,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   # Create 3.30 variance adjustments and reset DoVar_adjust if true.
   ctllist <- add_df(ctllist,
     name = "Variance_adjustment_list", nrow = NULL, ncol = 3,
-    col.names = c("Data_type", "Fleet", "Value")
+    col.names = c("factor", "fleet", "value")
   )
   if (!is.null(ctllist[["Variance_adjustment_list"]])) ctllist[["DoVar_adjust"]] <- 1
 
@@ -1752,10 +1752,10 @@ translate_3.30_to_3.24_var_adjust <- function(Variance_adjustment_list = NULL,
     if (nrow(Variance_adjustment_list) > 0) {
       for (j in seq_len(nrow(Variance_adjustment_list))) {
         Variance_adjustments[
-          Variance_adjustment_list[j, ][["Data_type"]],
-          Variance_adjustment_list[j, ][["Fleet"]]
+          Variance_adjustment_list[j, ][["factor"]],
+          Variance_adjustment_list[j, ][["fleet"]]
         ] <-
-          Variance_adjustment_list[j, ][["Value"]]
+          Variance_adjustment_list[j, ][["value"]]
       }
     }
   }

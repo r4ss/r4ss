@@ -209,7 +209,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     # have estimated parameters when using F_method=4 which allows some fleets to
     # have F parameters and some to use the hybrid method.
     if (!is.null(ctllist[["F_4_Fleet_Parms"]])) {
-      temp_Frate_1 <- temp_Frate_1[is.element(temp_Frate_1[["fleet"]], ctllist[["F_4_Fleet_Parms"]][["Fleet"]][ctllist[["F_4_Fleet_Parms"]][["first_parm_phase"]] != 99]), , drop = FALSE]
+      temp_Frate_1 <- temp_Frate_1[is.element(temp_Frate_1[["fleet"]], ctllist[["F_4_Fleet_Parms"]][["fleet"]][ctllist[["F_4_Fleet_Parms"]][["first_parm_phase"]] != 99]), , drop = FALSE]
     }
     temp_Frate_1 <- temp_Frate_1[temp_Frate_1[["year"]] > 0, 1:4, drop = FALSE]
     temp_Frate_2 <- temp_Frate_1[temp_Frate_1[["catch"]] > 0, , drop = FALSE]
