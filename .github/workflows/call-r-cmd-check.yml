@@ -10,8 +10,6 @@ on:
   
 jobs:
   call-workflow:
-    env: 
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     uses: nmfs-fish-tools/ghactions4r/.github/workflows/r-cmd-check.yml@add-additional-args-to-yaml
     # uses: nmfs-fish-tools/ghactions4r/.github/workflows/r-cmd-check.yml@main
     with:
