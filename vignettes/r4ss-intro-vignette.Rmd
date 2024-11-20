@@ -244,7 +244,7 @@ can be downloaded from the Stock Synthesis GitHub page using the function:
 r4ss::get_ss3_exe()
 
 # Download the latest release to a specific directory
-r4ss::get_ss3_exe(dir = new_mod_path)
+# r4ss::get_ss3_exe(dir = new_mod_path)
 
 # Adding a character string for a specific version using the GitHub tag
 r4ss::get_ss3_exe(dir = new_mod_path, version = "v3.30.18")
