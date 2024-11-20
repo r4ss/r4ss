@@ -9,7 +9,7 @@ on:
     tags: ['*']
 jobs:
   call-workflow:
-    uses: nmfs-fish-tools/ghactions4r/.github/workflows/update-pkgdown.yml@main
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/update-pkgdown.yml@add-input-option-workflows
     with:
       additional_args_ubuntu: |
         sudo apt-get update
