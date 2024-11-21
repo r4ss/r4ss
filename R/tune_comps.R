@@ -587,21 +587,21 @@ get_tuning_table <- function(replist, fleets,
         # table of info from SS3
         tunetable <- replist[["Length_Comp_Fit_Summary"]]
         factor <- 4 # code for Control file
-        has_marginal <- fleet %in% replist[["lendbase"]][["fleet"]]
+        has_marginal <- fleet %in% replist[["lendbase"]][["Fleet"]]
         has_conditional <- FALSE
       }
       if (type == "age") {
         # table of info from SS3
         tunetable <- replist[["Age_Comp_Fit_Summary"]]
         factor <- 5 # code for Control file
-        has_marginal <- fleet %in% replist[["agedbase"]][["fleet"]]
-        has_conditional <- fleet %in% replist[["condbase"]][["fleet"]]
+        has_marginal <- fleet %in% replist[["agedbase"]][["Fleet"]]
+        has_conditional <- fleet %in% replist[["condbase"]][["Fleet"]]
       }
       if (type == "size") {
         # table of info from SS3
         tunetable <- replist[["Size_Comp_Fit_Summary"]]
         factor <- 7 # code for Control file
-        has_marginal <- fleet %in% replist[["sizedbase"]][["fleet"]]
+        has_marginal <- fleet %in% replist[["sizedbase"]][["Fleet"]]
         has_conditional <- FALSE
       }
       if (has_marginal & has_conditional) {
@@ -643,10 +643,10 @@ get_tuning_table <- function(replist, fleets,
         # current value
         Curr_Var_Adj <- NA
         if ("Curr_Var_Adj" %in% names(tunetable)) {
-          Curr_Var_Adj <- tunetable[["Curr_Var_Adj"]][tunetable[["fleet"]] == fleet]
+          Curr_Var_Adj <- tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if ("Var_Adj" %in% names(tunetable)) {
-          Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["fleet"]] == fleet]
+          Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(Curr_Var_Adj)) {
           stop("Model output missing required values, perhaps due to an older version of SS3")
@@ -656,21 +656,21 @@ get_tuning_table <- function(replist, fleets,
         # that will later be multiplied by Curr_Var_Adj to get "New_MI"
         MI_mult <- NA
         if ("HarMean(effN)/mean(inputN*Adj)" %in% names(tunetable)) {
-          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable[["fleet"]] == fleet]
+          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable[["Fleet"]] == fleet]
         }
         if ("MeaneffN/MeaninputN" %in% names(tunetable)) {
-          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable[["fleet"]] == fleet]
+          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable[["Fleet"]] == fleet]
         }
         if ("factor" %in% names(tunetable)) {
           # starting with version 3.30.12
-          MI_mult <- tunetable[["Recommend_var_adj"]][tunetable[["fleet"]] == fleet] /
-            tunetable[["Curr_Var_Adj"]][tunetable[["fleet"]] == fleet]
+          MI_mult <- tunetable[["Recommend_var_adj"]][tunetable[["Fleet"]] == fleet] /
+            tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
-        if (all(c("factor", "HarMean", "mean_Nsamp_adj") %in% names(tunetable))) {
+        if (all(c("HarMean", "mean_Nsamp_adj") %in% names(tunetable))) {
           # starting with version 3.30.16?
           MI_mult <-
-            tunetable[["HarMean"]][tunetable[["fleet"]] == fleet] /
-              tunetable[["mean_Nsamp_adj"]][tunetable[["fleet"]] == fleet]
+            tunetable[["HarMean"]][tunetable[["Fleet"]] == fleet] /
+              tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
           stop("Model output missing required values, perhaps due to an older version of SS3")
