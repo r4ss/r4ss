@@ -3418,6 +3418,10 @@ SS_output <-
 
     # CPUE/Survey series - will not match if not found
     cpue <- match_report_table("INDEX_2", 1, "INDEX_2", ncpue + 1, header = TRUE)
+    # reread to account for note added in 3.30.23.1
+    if (!is.null(cpue) & names(cpue)[1] == "NOTE:") {
+      cpue <- match_report_table("INDEX_2", 2, "INDEX_2", ncpue + 2, header = TRUE)
+    }
     cpue[cpue == "_"] <- NA
     if (length(cpue) > 0) {
       # make older SS output names match current SS output conventions
