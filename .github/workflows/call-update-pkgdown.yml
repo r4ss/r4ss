@@ -9,4 +9,10 @@ on:
     tags: ['*']
 jobs:
   call-workflow:
-    uses: nmfs-fish-tools/ghactions4r/.github/workflows/update-pkgdown.yml@main
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/update-pkgdown.yml@add-additional-args-to-yaml
+    with:
+      additional_args_ubuntu: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt-get install --only-upgrade libstdc++6
