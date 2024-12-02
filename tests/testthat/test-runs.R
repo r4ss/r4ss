@@ -75,7 +75,7 @@ test_that("retro() and populate_multiple_folders() both work", {
     legendlabels = paste("Data", retro_years, "years")
   )
   # calculate Mohn's rho values
-  # TODO: add better tests for mohns rho. Some values aren't calcualted b/c they
+  # TODO: add better tests for mohns rho. Some values aren't calculated b/c they
   # are missing in the summaries for this model run.
   mohns_rho <- SSmohnsrho(retroSummary)
   expect_length(mohns_rho, 12)

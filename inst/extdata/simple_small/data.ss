@@ -1,14 +1,14 @@
-#V3.30.22.1;_safe;_compile_date:_Jan 30 2024;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.1
+#V3.30.23.00;_safe;_compile_date:_Nov  4 2024;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 #_Stock_Synthesis_is_a_work_of_the_U.S._Government_and_is_not_subject_to_copyright_protection_in_the_United_States.
 #_Foreign_copyrights_may_apply._See_copyright.txt_for_more_information.
 #_User_support_available_at:NMFS.Stock.Synthesis@noaa.gov
 #_User_info_available_at:https://vlab.noaa.gov/group/stock-synthesis
 #_Source_code_at:_https://github.com/nmfs-ost/ss3-source-code
 
-#_Start_time: Thu Jun 13 14:39:19 2024
+#_Start_time: Wed Nov  6 18:50:16 2024
 #_echo_input_data
 #C data file for simple example
-#V3.30.22.1;_safe;_compile_date:_Jan 30 2024;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.1
+#V3.30.23.00;_safe;_compile_date:_Nov  4 2024;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 2011 #_StartYr
 2022 #_EndYr
 1 #_Nseas
@@ -37,7 +37,7 @@
 #e:  last year of range
 #f:  not used
 # a   b   c   d   e   f 
-#_Catch data: yr, seas, fleet, catch, catch_se
+#_Catch data: year, seas, fleet, catch, catch_se
 #_catch_se:  standard error of log(catch)
 #_NOTE:  catch data is ignored for survey fleets
 -999 1 1 4153.75 0.2
@@ -56,15 +56,16 @@
 -9999 0 0 0 0
 #
 #_CPUE_and_surveyabundance_and_index_observations
-#_Units: 0=numbers; 1=biomass; 2=F; 30=spawnbio; 31=exp(recdev); 36=recdev; 32=spawnbio*recdev; 33=recruitment; 34=depletion(&see Qsetup); 35=parm_dev(&see Qsetup)
-#_Errtype:  -1=normal; 0=lognormal; 1=lognormal with bias correction; >1=df for T-dist
-#_SD_Report: 0=not; 1=include survey expected value with se
+#_units: 0=numbers; 1=biomass; 2=F; 30=spawnbio; 31=exp(recdev); 36=recdev; 32=spawnbio*recdev; 33=recruitment; 34=depletion(&see Qsetup); 35=parm_dev(&see Qsetup)
+#_errtype:  -1=normal; 0=lognormal; 1=lognormal with bias correction; >1=df for T-dist
+#_SD_report: 0=not; 1=include survey expected value with se
 #_note that link functions are specified in Q_setup section of control file
-#_Fleet Units Errtype SD_Report
+#_dataunits = 36 and 35 should use Q_type 5 to provide offset parameter
+#_fleet units errtype SD_report
 1 1 0 0 # FISHERY
 2 1 0 1 # SURVEY1
 3 0 0 0 # SURVEY2
-#_yr month fleet obs stderr
+#_year month fleet obs stderr
 2013 7 2 144745 0.3 #_ SURVEY1
 2016 7 2 63760.3 0.3 #_ SURVEY1
 2019 7 2 59242.9 0.3 #_ SURVEY1
@@ -88,13 +89,13 @@
 #_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal; -3 for trunc normal with CV
 # note: only enter units and errtype for fleets with discard 
 # note: discard data is the total for an entire season, so input of month here must be to a month in that season
-#_Fleet units errtype
+#_fleet units errtype
 # -9999 0 0 0.0 0.0 # terminator for discard data 
 #
 0 #_use meanbodysize_data (0/1)
 #_COND_0 #_DF_for_meanbodysize_T-distribution_like
 # note:  type=1 for mean length; type=2 for mean body weight 
-#_yr month fleet part type obs stderr
+#_year month fleet part type obs stderr
 #  -9999 0 0 0 0 0 0 # terminator for mean body size data 
 #
 # set up population length bin structure (note - irrelevant if not using size data and using empirical wtatage
@@ -116,11 +117,11 @@
 -1 0.0001 0 0 0 0 0.1 #_fleet:1_FISHERY
 -1 0.0001 0 0 0 0 0.1 #_fleet:2_SURVEY1
 -1 0.0001 0 0 0 0 0.1 #_fleet:3_SURVEY2
-# sex codes:  0=combined; 1=use female only; 2=use male only; 3=use both as joint sexxlength distribution
+# sex codes:  0=combined; 1=use female only; 2=use male only; 3=use both as joint sex*length distribution
 # partition codes:  (0=combined; 1=discard; 2=retained
 25 #_N_LengthBins; then enter lower edge of each length bin
  26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 68 72 76 80 90
-#_yr month fleet sex part Nsamp datavector(female-male)
+#_year month fleet sex part Nsamp datavector(female-male)
  2011 7 1 3 0 50 0 0 0 0 0 0 0 1 0 1 1 2 0 0 0 0 3 5 1 3 5 1 2 0 1 0 0 1 0 0 0 0 0 0 2 2 1 2 0 3 0 0 0 3 5 2 3 0 0 0
  2012 7 1 3 0 50 0 0 0 0 0 0 0 1 1 1 0 1 0 0 0 3 1 4 1 5 1 3 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 2 2 3 4 4 4 2 0 1 0 0
  2013 7 1 3 0 50 0 0 0 0 0 0 0 0 0 0 2 0 3 0 0 2 0 4 3 1 2 2 0 1 0 0 0 0 0 1 1 1 1 0 2 0 0 1 2 1 2 0 2 6 6 1 1 1 1 0
@@ -159,9 +160,9 @@
 -1 0.0001 0 0 0 0 0.1 #_fleet:2_SURVEY1
 -1 0.0001 0 0 0 0 0.1 #_fleet:3_SURVEY2
 1 #_Lbin_method_for_Age_Data: 1=poplenbins; 2=datalenbins; 3=lengths
-# sex codes:  0=combined; 1=use female only; 2=use male only; 3=use both as joint sexxlength distribution
+# sex codes:  0=combined; 1=use female only; 2=use male only; 3=use both as joint sex*length distribution
 # partition codes:  (0=combined; 1=discard; 2=retained
-#_yr month fleet sex part ageerr Lbin_lo Lbin_hi Nsamp datavector(female-male)
+#_year month fleet sex part ageerr Lbin_lo Lbin_hi Nsamp datavector(female-male)
  2011 7 1 3 0 2 1 -1 25 0 1 0 0 0 2 2 0 0 1 0 0 0 0 4 0 0 2 0 2 1 1 1 1 0 2 0 0 1 4
  2012 7 1 3 0 2 1 -1 25 0 0 2 0 1 1 1 2 1 1 0 0 1 0 2 0 1 1 1 0 1 0 2 1 0 2 1 1 1 1
  2013 7 1 3 0 2 1 -1 25 1 0 2 1 2 1 1 1 0 1 1 0 0 0 3 0 1 0 0 1 1 3 0 1 0 0 1 0 2 1
@@ -181,10 +182,10 @@
 -9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 #
 1 #_Use_MeanSize-at-Age_obs (0/1)
-# sex codes:  0=combined; 1=use female only; 2=use male only; 3=use both as joint sexxlength distribution
-# partition codes:  (0=combined; 1=discard; 2=retained
+# sex codes:  0=combined; 1=use female only; 2=use male only; 3=use both as joint sex*length distribution
+# partition codes:  0=combined; 1=discard; 2=retained
 # ageerr codes:  positive means mean length-at-age; negative means mean bodywt_at_age
-#_yr month fleet sex part ageerr ignore datavector(female-male)
+#_year month fleet sex part ageerr ignore datavector(female-male)
 #                                          samplesize(female-male)
  2011 7 1 3 0 1 2 31.1001 37.6247 44.5123 49.1577 55.1767 54.8937 57.8764 60.9767 63.407 65.7124 66.0334 66.4773 68.9837 66.6942 71.1547 33.5091 39.7331 44.3663 51.8999 58.3478 56.2476 56.8415 61.0979 62.6753 66.6534 63.2961 68.0089 70.3394 63.6221 64.0669 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5
  2022 7 1 3 0 1 2 34.0009 39.7221 47.1123 45.7161 53.0591 55.0899 59.624 59.0393 60.7682 62.2977 66.8939 69.1026 64.3979 70.8878 70.3055 29.1412 38.5441 43.7912 49.411 53.6436 51.6203 56.6552 58.4004 57.7949 60.8038 60.1757 68.7121 65.4931 71.1546 68.5105 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5
@@ -193,8 +194,8 @@
 -9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 #
 0 #_N_environ_variables
-# -2 in yr will subtract mean for that env_var; -1 will subtract mean and divide by stddev (e.g. Z-score)
-#Yr Variable Value
+# -2 in year will subtract mean for that env_var; -1 will subtract mean and divide by stddev (e.g. Z-score)
+#_year variable value
 #
 # Sizefreq data. Defined by method because a fleet can use multiple methods
 0 # N sizefreq methods to read (or -1 for expanded options)
@@ -203,10 +204,10 @@
 #
 0 #    morphcomp data(0/1) 
 #  Nobs, Nmorphs, mincomp
-#  yr, seas, type, partition, Nsamp, datavector_by_Nmorphs
+#_year, seas, type, partition, Nsamp, datavector_by_Nmorphs
 #
 0  #  Do dataread for selectivity priors(0/1)
-# Yr, Seas, Fleet,  Age/Size,  Bin,  selex_prior,  prior_sd
+#_year, seas, fleet, age/size, bin, selex_prior, prior_sd
 # feature not yet implemented
 #
 999
