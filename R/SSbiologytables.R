@@ -92,28 +92,39 @@ SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "defau
       selex.age <- data.frame(selex.age, print(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2))
     }
   }
-  colnames(selex.age) <- c("Age", paste0(FleetNames, "_f"), paste0(FleetNames, "_m"))
+  if (nsexes == 2) {
+    colnames(selex.age) <- c("Age", paste0(FleetNames, "_f"), paste0(FleetNames, "_m"))
+  } else {
+    colnames(selex.age) <- c("Age", FleetNames)
+  }
   write.csv(selex.age, paste0(plotdir, "/selectivity_by_age.csv"), row.names = F)
 
   # Selectivity by length and age
-  retnames <- NULL
-  selex.size <- selex.size.ret <- data.frame(Length = as.numeric(names(sizeselex[6:dim(sizeselex)[2]])))
-  for (j in 1:nsexes) {
-    for (i in 1:nfleets) {
-      find <- which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Lsel")
-      selex.size <- data.frame(selex.size, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2))
-
-      find <- which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Keep")
-      if (length(find) != 0) {
-        if (j == 1) {
-          retnames <- c(retnames, FleetNames[i])
+  if (!is.null(sizeselex)) {
+    retnames <- NULL
+    selex.size <- selex.size.ret <- data.frame(Length = as.numeric(names(sizeselex[6:dim(sizeselex)[2]])))
+    for (j in 1:nsexes) {
+      for (i in 1:nfleets) {
+        find <- which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Lsel")
+        selex.size <- data.frame(selex.size, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2))
+  
+        find <- which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Keep")
+        if (length(find) != 0) {
+          if (j == 1) {
+            retnames <- c(retnames, FleetNames[i])
+          }
+          selex.size.ret <- data.frame(selex.size.ret, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2))
         }
-        selex.size.ret <- data.frame(selex.size.ret, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2))
       }
     }
+   if (nsexes == 2) {
+    colnames(selex.size) <- c("Length", paste0(FleetNames, "_f"), paste0(FleetNames, "_m"))
+    colnames(selex.size.ret) <- c("Length", paste0(retnames, "_f"), paste0(retnames, "_m"))
+  } else {
+    colnames(selex.size) <- c("Length", FleetNames)
+    colnames(selex.size.ret) <- c("Length", retnames)
   }
-  colnames(selex.size) <- c("Length", paste0(FleetNames, "_f"), paste0(FleetNames, "_m"))
-  colnames(selex.size.ret) <- c("Length", paste0(retnames, "_f"), paste0(retnames, "_m"))
-  write.csv(selex.size, paste0(plotdir, "/selectivity_by_size.csv"), row.names = F)
-  write.csv(selex.size.ret, paste0(plotdir, "/retention_by_size.csv"), row.names = F)
+    write.csv(selex.size, paste0(plotdir, "/selectivity_by_size.csv"), row.names = F)
+    write.csv(selex.size.ret, paste0(plotdir, "/retention_by_size.csv"), row.names = F)
+  }
 }
