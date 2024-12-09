@@ -33,7 +33,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     stop("Directory doesn't exist: ", dir)
   }
 
-  if (dir == "/Users/runner/work/github-actions-test/github-actions-test") {
+  if (dir == "/Users/runner/work/r4ss/r4ss") {
     token <- ""
   } else {
     token <- NA_character_
