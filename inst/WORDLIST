@@ -49,6 +49,7 @@ Lsel
 MGparm
 MSY
 MULTIFAN
+Maechler
 Magnusson
 McAllister
 Methot
@@ -272,6 +273,7 @@ sizedbase
 spacepoints
 spawner
 sprtarg
+src
 ss
 sso
 stackpoly
@@ -281,6 +283,7 @@ stddev
 subfolder
 subfolders
 subfunctions
+svn
 tagdbase
 tagrelease
 tcl
@@ -291,6 +294,7 @@ timeseries
 tk
 tolerace
 topleft
+tryCatch
 tunings
 unfished
 unformatted
