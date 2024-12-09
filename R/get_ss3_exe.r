@@ -24,13 +24,28 @@
 #' https://github.com/nmfs-ost/ss3-source-code/tags
 
 get_ss3_exe <- function(dir = NULL, version = NULL) {
+  if (is.null(dir)) {
+    dir <- getwd()
+    message("No directory provided, the executable will be downloaded to the working directory")
+  }
+
+  if (!dir.exists(dir)) {
+    stop("Directory doesn't exist: ", dir)
+  }
+
+  if (dir == "/Users/runner/work/github-actions-test/github-actions-test") {
+    token <- ""
+  } else {
+    token <- NA_character_
+  }
+
   # Get latest release if version not specified
   if (is.null(version)) {
-    latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1, .token = NA_character_)
+    latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1, .token = token)
     tag <- latest_release[["tag_name"]]
   } else {
     # Otherwise get specified version
-    all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags", .token = NA_character_)
+    all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags", .token = token)
     df_tags <- as.data.frame(do.call(rbind, all_tags))
     tags <- unlist(df_tags[["name"]])
 
@@ -41,15 +56,6 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     } else {
       tag <- version
     }
-  }
-
-  if (is.null(dir)) {
-    dir <- getwd()
-    message("No directory provided, the executable will be downloaded to the working directory")
-  }
-
-  if (!dir.exists(dir)) {
-    stop("Directory doesn't exist: ", dir)
   }
 
   if (.Platform[["OS.type"]] == "windows") {
