@@ -35,7 +35,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
 
   # Get latest release if version not specified
   if (is.null(version)) {
-    if (dir == "/Users/runner/work/r4ss/r4ss") {
+    if (dir == "/Users/runner/work/r4ss/r4ss" || grepl("/var/folders", dir)) {
       latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1)
     } else {
       latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1, .token = NA_character_)
@@ -43,7 +43,7 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     tag <- latest_release[["tag_name"]]
   } else {
     # Otherwise get specified version
-    if (dir == "/Users/runner/work/r4ss/r4ss") {
+    if (dir == "/Users/runner/work/r4ss/r4ss" || grepl("/var/folders", dir)) {
       all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags")
     } else {
       all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags", .token = NA_character_)
