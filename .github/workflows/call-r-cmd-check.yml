@@ -4,16 +4,17 @@ name: call-r-cmd-check
 on: 
   push: 
     paths-ignore: 
-      - '.github/**'
+      # - '.github/**'
       - 'README.md'
   workflow_dispatch:
   
 jobs:
-  call-workflow:      
+  call-workflow:
     uses: nmfs-fish-tools/ghactions4r/.github/workflows/r-cmd-check.yml@main
-    
-  # call-workflow-extra:
-  #   # this step runs the r4ss tests again, after downloading ss3 exes and the
-  #   # nmfs-ost/ss3-test-models repo.
-  #   uses: r4ss/r4ss/.github/workflows/r4ss-extra-tests.yml@main
+    with:
+      additional_args_ubuntu: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt-get install --only-upgrade libstdc++6
 
