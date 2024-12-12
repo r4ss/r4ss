@@ -483,3 +483,30 @@ add_file_header <- function(filelist, con) {
   }
   writeComment("#", con = con)
 }
+
+
+#' Catch *and* save both errors and warnings, and in the case of
+#' a warning, also keep the computed result.
+#'
+#' Copied from
+#' https://svn.r-project.org/R/trunk/src/library/base/demo/error.catching.R
+#'
+#' @title tryCatch both warnings (with value) and errors
+#' @param expr an \R expression to evaluate
+#' @return a list with 'value' and 'warning', where
+#'   'value' may be an error caught.
+#' @author Martin Maechler;
+#' Copyright (C) 2010-2023  The R Core Team
+tryCatch.W.E <- function(expr) {
+  W <- NULL
+  w.handler <- function(w) { # warning handler
+    W <<- w
+    invokeRestart("muffleWarning")
+  }
+  list(
+    value = withCallingHandlers(tryCatch(expr, error = function(e) e),
+      warning = w.handler
+    ),
+    warning = W
+  )
+}
