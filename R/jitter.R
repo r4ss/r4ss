@@ -275,6 +275,11 @@ iterate_jitter <- function(i,
     message(paste0("Starting run of jitter", i))
   }
 
+  # pause briefly when running in parallel to ensure seeds differ
+  if(!is(future::plan(), "sequential")) {
+    Sys.sleep(i)
+  }
+  
   # run model
   r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, extras = extras, ...)
   # Only save stuff if it converged
