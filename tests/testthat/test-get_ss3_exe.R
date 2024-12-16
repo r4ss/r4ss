@@ -1,5 +1,6 @@
 # example_path <- system.file("extdata", package = "r4ss")
 temp_path <- file.path(tempdir(), "test_ss3_exe")
+temp_path
 dir.create(temp_path, showWarnings = FALSE)
 # remove all artifacts created from testing. (developers: simply comment out
 # the line below if you want to keep artifacts for troubleshooting purposes)
