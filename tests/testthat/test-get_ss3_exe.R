@@ -44,8 +44,12 @@ test_that("version warning", {
   expect_warning(try(get_ss3_exe(dir = temp_path, version = "v3.30.188"), silent = TRUE))
 })
 
+test_that("check working directory", {
+  capture_output(getwd(), print = TRUE)
+  expect_equal(getwd(), "/Users/runner/work/r4ss/r4ss")
+})
+
 test_that("working directory message", {
-  dir <- getwd()
   expect_message(download_loc <- get_ss3_exe())
   download_filepath <- gsub(".*: ", "", download_loc)
   file.remove(download_filepath)
