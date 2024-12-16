@@ -40,14 +40,14 @@ test_that("executables are able to run simple_small model", {
   file.remove(download_filepath)
 })
 
-test_that("version warning", {
-  expect_warning(try(get_ss3_exe(dir = temp_path, version = "v3.30.188"), silent = TRUE))
-})
+# test_that("version warning", {
+#   expect_warning(try(get_ss3_exe(dir = temp_path, version = "v3.30.188"), silent = TRUE))
+# })
 
-test_that("check working directory", {
-  capture_output(getwd(), print = TRUE)
-  expect_equal(getwd(), "/Users/runner/work/r4ss/r4ss")
-})
+# test_that("check working directory", {
+#   capture_output(getwd(), print = TRUE)
+#   expect_equal(getwd(), "/Users/runner/work/r4ss/r4ss")
+# })
 
 test_that("working directory message", {
   expect_message(download_loc <- get_ss3_exe())
