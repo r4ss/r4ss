@@ -10,9 +10,6 @@ test_that("executables are downloading default latest version", {
   download_filepath <- gsub(".*: ", "", download_loc)
   exe_name <- gsub(paste0(temp_path, "/"), "", download_filepath, fixed = TRUE)
   dir_temp <- file.path(temp_path, exe_name)
-  if (file.exists(download_filepath)) {
-    file.remove(download_filepath)
-  }
 
   expect_equal(dir_temp, download_filepath)
 })
@@ -22,7 +19,9 @@ test_that("executables are downloading with version", {
   download_filepath <- gsub(".*: ", "", download_loc)
   exe_name <- gsub(paste0(temp_path, "/"), "", download_filepath, fixed = TRUE)
   dir_temp <- file.path(temp_path, exe_name)
-  file.remove(download_filepath)
+  if (file.exists(download_filepath)) {
+    file.remove(download_filepath)
+  }
 
   expect_equal(dir_temp, download_filepath)
 })
@@ -46,6 +45,7 @@ test_that("version warning", {
 })
 
 test_that("working directory message", {
+  dir <- getwd()
   expect_message(download_loc <- get_ss3_exe())
   download_filepath <- gsub(".*: ", "", download_loc)
   file.remove(download_filepath)
