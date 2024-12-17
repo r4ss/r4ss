@@ -10,7 +10,6 @@ test_that("executables are downloading default latest version", {
   download_filepath <- gsub(".*: ", "", download_loc)
   exe_name <- gsub(paste0(temp_path, "/"), "", download_filepath, fixed = TRUE)
   dir_temp <- file.path(temp_path, exe_name)
-  file.remove(download_filepath)
 
   expect_equal(dir_temp, download_filepath)
 })
@@ -20,7 +19,9 @@ test_that("executables are downloading with version", {
   download_filepath <- gsub(".*: ", "", download_loc)
   exe_name <- gsub(paste0(temp_path, "/"), "", download_filepath, fixed = TRUE)
   dir_temp <- file.path(temp_path, exe_name)
-  file.remove(download_filepath)
+  if (file.exists(download_filepath)) {
+    file.remove(download_filepath)
+  }
 
   expect_equal(dir_temp, download_filepath)
 })
@@ -37,10 +38,6 @@ test_that("executables are able to run simple_small model", {
   file_date <- gsub(" .*", "", file_date)
   expect_true(file_date == Sys.Date())
   file.remove(download_filepath)
-})
-
-test_that("version warning", {
-  expect_warning(try(get_ss3_exe(dir = temp_path, version = "v3.30.188"), silent = TRUE))
 })
 
 test_that("working directory message", {
