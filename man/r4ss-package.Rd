@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of '{r4ss}' is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.22, from October 2023). Support for 3.24 models is only through the core functions for reading output and plotting.
+A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of '{r4ss}' is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.23.1, from December 2024). Support for 3.24 models is only through the core functions for reading output and plotting.
 }
 \examples{
 \dontrun{

@@ -1,3 +1,21 @@
+# r4ss 1.51.0 (18 December 2024)
+* Bug fixes
+* Compatibility with SS3 version 3.30.23 and 3.30.23.1
+
+# r4ss 1.50.0 (29 July 2024)
+* Bug fixes
+* Clean up columns names in functions for reading input files to match 
+the .ss_new files written by SS3 as shown in the table below.
+
+  old | new
+  -- | --
+  "Yr" | "year"
+  "Seas" | "month"
+  "FltSvy" | "fleet"
+  "Gender" | "sex"
+  "Part" | "part"
+  "Ageerr" | "ageerr"
+
 # r4ss 1.49.3 (24 July 2024)
 * Replaces magrittr pipe %>% with native pipe |>
 * Minimum R version is now 4.1.0
