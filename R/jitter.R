@@ -60,12 +60,15 @@ SS_RunJitter <-
 #' computing, see [future::plan()]
 #'
 #' Note that random number generation occurs outside of R directly in stock synthesis.
-#' When running jitters in parallel (i.e. `future` strategy is not `sequential`), no
+#' When running jitters in parallel (i.e. `future` strategy is not `sequential`), no formal
 #' steps are taken to ensure independence of random numbers generated across
-#' cores. While the likelihood of the cores using the exact same seed is infinitesimal,
-#' random numbers may not technically be considered statistically independent. If
-#' jitter results are only used  as a general heuristic for model convergence, this
-#' mild lack of independence should not matter much.
+#' cores. However, when running in parallel, there is a pause of i seconds before the
+#' ith jitter starts. The stock synthesis random number seed is based on the
+#' system time down to the second, so this is intended to produce random numbers
+#' from different seeds for each jitter. Random numbers may still not technically
+#' be considered statistically independent. If jitter results are only used as a
+#' general heuristic for model convergence, this mild lack of independence should
+#' not matter much.
 #'
 #' When running models in parallel, the transfer of large files leads to expensive
 #' overheads and parallel processing may not be faster. Covariance files are
@@ -273,6 +276,11 @@ iterate_jitter <- function(i,
 
   if (verbose) {
     message(paste0("Starting run of jitter", i))
+  }
+
+  # pause briefly when running in parallel to ensure seeds differ
+  if (!is(future::plan(), "sequential")) {
+    Sys.sleep(i)
   }
 
   # run model
