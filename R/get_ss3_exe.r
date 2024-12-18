@@ -84,7 +84,9 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
           "SSL connect error. Try changing the following settings:\n",
           "  1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
           "  2. Restart your R session\n",
-          "  3. Run curl::curl_version()[['ssl_version']] and confirm the result has parentheses around 'OpenSSL/x.x.x', not 'Schannel'.\n",
+          "  3. Run curl::curl_version()$ssl_version and confirm the result has parentheses around 'OpenSSL/x.x.x', not 'Schannel'.\n",
+          "  3. Run curl::curl_version()$ssl_version",
+          "  3. Run curl::curl_version()$ssl_version ",
           "  4. Try r4ss::get_ss3_exe() again."
         )
       }
