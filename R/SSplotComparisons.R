@@ -653,6 +653,10 @@ SSplotComparisons <-
 
       ### get MCMC for SmryBio
       tmp <- grep("SmryBio", names(mcmc[[imodel]])) # try it to see what you get
+      # remove SmryBio_unfished from names to focus on time series
+      tmp2 <- grep("SmryBio_unfished", names(mcmc[[imodel]]), ignore.case = TRUE)
+      tmp <- setdiff(tmp, tmp2)
+
       if (length(tmp) > 0) { # there are some mcmc values to use
         # subset of columns from MCMC for this model
         mcmc.tmp <- mcmc[[imodel]][, tmp]

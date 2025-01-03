@@ -41,6 +41,15 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
     strip.white = TRUE,
     fill = TRUE
   )
+
+  # if file only has one line, it may have been created during an MCMC run
+  if (nrow(wtatagelines) == 1) {
+    if (verbose) {
+      message("wtatage file only contains one line:", file)
+    }
+    return(NULL)
+  }
+  
   # check for NA is first 2 rows of 2nd column as indicator of version
   # prior to 3.30 where old models had additional number of lines input
   skip <- 1
