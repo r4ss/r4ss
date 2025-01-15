@@ -66,7 +66,7 @@
                         <h4 data-toc-skip class="author">Ian G. Taylor
 and Kathryn L. Doering</h4>
             
-            <h4 data-toc-skip class="date">2025-01-03</h4>
+            <h4 data-toc-skip class="date">2025-01-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r4ss/r4ss/blob/main/vignettes/r4ss-intro-vignette.Rmd" class="external-link"><code>vignettes/r4ss-intro-vignette.Rmd</code></a></small>
       <div class="d-none name"><code>r4ss-intro-vignette.Rmd</code></div>
@@ -74,8 +74,6 @@ and Kathryn L. Doering</h4>
 
     
     
-<pre><code><span><span class="co">## Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">##   object 'type_sum.accel' not found</span></span></code></pre>
 <p><strong>r4ss</strong> is an R package containing functions related to
 the <a href="https://vlab.noaa.gov/web/stock-synthesis" class="external-link">Stock Synthesis
 fisheries stock assessment modeling framework</a>. This vignette covers
@@ -89,7 +87,7 @@ installing the package and an overview of functions.</p>
 <p>The package can be run on OS X, Windows, or Linux. The CRAN version
 of r4ss is not as regularly updated and therefore may be out of date.
 Instead, it is recommended to install from GitHub:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak") # if needed</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"r4ss/r4ss"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -97,10 +95,10 @@ Instead, it is recommended to install from GitHub:</p>
 <h3 id="loading-the-package-and-reading-help-pages">Loading the package and reading help pages<a class="anchor" aria-label="anchor" href="#loading-the-package-and-reading-help-pages"></a>
 </h3>
 <p>You can then load the package with:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/r4ss/r4ss" class="external-link">"r4ss"</a></span><span class="op">)</span></span></code></pre></div>
 <p>And read the help files with:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">r4ss</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -115,7 +113,7 @@ a development version of the package that isn’t in the <code>main</code>
 branch yet, such as to test upcoming features.</p>
 <p>To install alternative versions of r4ss, provide a reference to the
 <code>install_github</code>, such as</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"r4ss/r4ss@1.46.1"</span><span class="op">)</span> <span class="co"># install r4ss version 1.46.1</span></span></code></pre></div>
 <p>where the <code>ref</code> input can be a release number, the name of
 a branch on GitHub, or a git SHA-1 code, which are <a href="https://github.com/r4ss/r4ss/commits/" class="external-link">listed with all code
@@ -129,7 +127,7 @@ changes committed</a>.</p>
 <code><a href="../reference/SS_plots.html">SS_plots()</a></code>, the first for reading the output from a Stock
 Synthesis model and the second for making a large set of plots
 illustrating that output.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># it's useful to create a variable for the directory with the model output</span></span>
 <span><span class="va">mydir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"r4ss"</span><span class="op">)</span>,</span>
@@ -163,11 +161,11 @@ plot only the necessary ones. Groups of plots to generate in the call to
 <code><a href="../reference/SS_plots.html">SS_plots()</a></code> can be specified through the <code>plot</code>
 argument. For example, if only the plots of Catch were desired,
 call:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/SS_plots.html">SS_plots</a></span><span class="op">(</span>replist <span class="op">=</span> <span class="va">replist</span>, plot <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></code></pre></div>
 <p>If only plots of catch and discards were desired, the user could
 call:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/SS_plots.html">SS_plots</a></span><span class="op">(</span>replist <span class="op">=</span> <span class="va">replist</span>, plot <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The documentation for the <code>plot</code> argument in the help file
 for <code><a href="../reference/SS_plots.html">SS_plots()</a></code> lists the corresponding numbers for each
@@ -180,7 +178,7 @@ In the long term, bugs typically get attention fairly quickly from
 maintainers when reported to the <a href="https://github.com/r4ss/r4ss/issues" class="external-link">r4ss issue tracker</a>. For
 example, if there was a bug in the conditional age-at-length fits (plot
 set 18), exclude the plot:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/SS_plots.html">SS_plots</a></span><span class="op">(</span><span class="va">replist</span>, plot <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">17</span>, <span class="fl">19</span><span class="op">:</span><span class="fl">26</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -192,14 +190,14 @@ modifying Stock Synthesis files and running Stock Synthesis models is
 possible.</p>
 <p>We’ll demonstrate this by creating a new model from a model in the
 <code>r4ss</code> package.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># initial model to modify</span></span>
 <span><span class="va">mod_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span></span>
 <span><span class="co"># create a new directory to put a new, modified version of the model</span></span>
 <span><span class="va">new_mod_path</span> <span class="op">&lt;-</span> <span class="st">"simple_new"</span></span></code></pre></div>
 <p>Use the r4ss utility function to copy over the model files from
 <code>mod_path</code> to <code>new_mod_path</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/copy_SS_inputs.html">copy_SS_inputs</a></span><span class="op">(</span>dir.old <span class="op">=</span> <span class="va">mod_path</span>, dir.new <span class="op">=</span> <span class="va">new_mod_path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
@@ -213,7 +211,7 @@ be used to copy several folders of Stock Synthesis model inputs.</p>
 </h3>
 <p>Stock Synthesis files can be read in as list objects in R using the
 <code><a href="../reference/SS_read.html">SS_read()</a></code> function.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/SS_read.html">SS_read</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span><span class="op">)</span></span>
 <span><span class="co"># can also separately run the functions called by SS_read():</span></span>
 <span><span class="co"># SS_readstarter(), SS_readdat(), SS_readctl(), SS_readforecast(),</span></span>
@@ -226,7 +224,7 @@ be used to copy several folders of Stock Synthesis model inputs.</p>
 grouped as a larger list. The components of the list should be in the
 same order as they appear in the text file. Use <code><a href="https://rdrr.io/r/base/names.html" class="external-link">names()</a></code> to
 see all the list components:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">inputs</span><span class="op">)</span> <span class="co"># see the elements of the big list</span></span>
 <span><span class="co">#&gt; [1] "dir"   "path"  "dat"   "ctl"   "start" "fore"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">inputs</span><span class="op">$</span><span class="va">start</span><span class="op">)</span> <span class="co"># see names of the list components of starter file</span></span>
@@ -245,7 +243,7 @@ see all the list components:</p>
 <p>Or reference a specific element to see the components. For example,
 we can look at the mortality and growth parameter section
 (MG_parms):</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inputs</span><span class="op">$</span><span class="va">ctl</span><span class="op">$</span><span class="va">MG_parms</span></span>
 <span><span class="co">#&gt;                         LO        HI        INIT       PRIOR PR_SD PR_type</span></span>
 <span><span class="co">#&gt; NatM_p_1_Fem_GP_1    5e-02  0.150000  0.10000000  0.10000000   0.8       0</span></span>
@@ -322,7 +320,7 @@ we can look at the mortality and growth parameter section
 </h3>
 <p>You could make basic or large structural changes to your model in R.
 For example, the initial value of M can be changed:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># view the initial value</span></span>
 <span><span class="va">inputs</span><span class="op">$</span><span class="va">ctl</span><span class="op">$</span><span class="va">MG_parms</span><span class="op">[</span><span class="st">"NatM_p_1_Fem_GP_1"</span>, <span class="st">"INIT"</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] 0.1</span></span>
@@ -336,7 +334,7 @@ names of the list elements. For example, the source code for
 <code><a href="../reference/SS_readctl.html">SS_readctl()</a></code> when using a SS3.30 file is located at <a href="https://github.com/r4ss/r4ss/blob/main/R/SS_readctl_3.30.R" class="external-link">https://github.com/r4ss/r4ss/blob/main/R/SS_readctl_3.30.R</a>.</p>
 <p>Settings in other files can also be modified. For example, the
 biomass target can be modified in the forecast file</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inputs</span><span class="op">$</span><span class="va">fore</span><span class="op">$</span><span class="va">Btarget</span></span>
 <span><span class="co">#&gt; [1] 0.4</span></span>
 <span><span class="va">inputs</span><span class="op">$</span><span class="va">fore</span><span class="op">$</span><span class="va">Btarget</span> <span class="op">&lt;-</span> <span class="fl">0.45</span></span>
@@ -348,7 +346,7 @@ biomass target can be modified in the forecast file</p>
 </h3>
 <p>The <code><a href="../reference/SS_write.html">SS_write()</a></code> function can be used to write out the
 modified stock synthesis input R objects into input files:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/SS_write.html">SS_write</a></span><span class="op">(</span><span class="va">inputs</span>, dir <span class="op">=</span> <span class="va">new_mod_path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>If you make changes to the input model files that render the file
 unparsable by Stock Synthesis, the <code><a href="../reference/SS_write.html">SS_write()</a></code> function may
@@ -370,7 +368,7 @@ entering a character string of a version tag (list of tags is available
 <a href="https://github.com/nmfs-ost/ss3-source-code/tags" class="external-link">here</a>) can
 be downloaded from the Stock Synthesis GitHub page using the
 function:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Default with no version downloads the latest release</span></span>
 <span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/get_ss3_exe.html">get_ss3_exe</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -392,7 +390,7 @@ depends on where the Stock Synthesis executable is on your computer. If
 the Stock Synthesis executable is in the same folder as the model that
 will be run, <code><a href="../reference/run.html">run()</a></code> can be used. Assuming the stock
 synthesis executable is called ss.exe:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span>, skipfinished <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Note this is similar to resetting the working directory and running
 the model with <code><a href="https://rdrr.io/r/base/system.html" class="external-link">system()</a></code> or <code>shell()</code>, but deals
@@ -405,7 +403,7 @@ executables for v3.30.22.1 and after are named ss3.exe, ss3_linux, and
 ss3_osx <em>unless</em> you download the executables using
 <code><a href="../reference/get_ss3_exe.html">get_ss3_exe()</a></code> which gives them the names ss3.exe (for
 windows) and ss3 (for linux/osx) regardless of the version.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use the absolute exe path in the call on a Windows computer.</span></span>
 <span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span>, exe <span class="op">=</span> <span class="st">"c:/SS/SSv3.30.19.01_Apr15/ss.exe"</span><span class="op">)</span></span>
 <span><span class="co"># use the absolute exe path in the call on linux.</span></span>
@@ -459,7 +457,7 @@ analyses starting from an existing Stock Synthesis model. Note that it
 is safest to create a copy of your original Stock Synthesis model that
 the retrospective is run on, just in case there are problems with the
 run. For example, a five year retrospective could be done:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a temporary path for the retrospective analyses to run and download the</span></span>
 <span><span class="co"># ss3 exe</span></span>
 <span><span class="va">old_mod_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span></span>
@@ -467,7 +465,7 @@ run. For example, a five year retrospective could be done:</p>
 <span><span class="va">all_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">old_mod_path</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="va">all_files</span>, to <span class="op">=</span> <span class="va">new_mod_path</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/get_ss3_exe.html">get_ss3_exe</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">new_mod_path</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the retrospective analyses</span></span>
 <span><span class="fu"><a href="../reference/retro.html">retro</a></span><span class="op">(</span></span>
 <span>  dir <span class="op">=</span> <span class="va">new_mod_path</span>, <span class="co"># wherever the model files are</span></span>
@@ -482,7 +480,7 @@ a different run of the retrospective (removing 0 to 5 years of
 data).</p>
 <p>After the retrospective models have run, the results can be used as a
 diagnostic:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load the 6 models</span></span>
 <span><span class="va">retroModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSgetoutput.html">SSgetoutput</a></span><span class="op">(</span>dirvec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
 <span>  <span class="va">new_mod_path</span>, <span class="st">"retrospectives"</span>,</span>
@@ -502,13 +500,13 @@ diagnostic:</p>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># don't plot to default graphics device</span></span>
 <span>  plotdir <span class="op">=</span> <span class="va">new_mod_path</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">new_mod_path</span>, <span class="st">"compare2_spawnbio_uncertainty.png"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
 <img src="compare2_spawnbio_uncertainty.png" style="width:75.0%" alt="Illustration of the second comparison plot created by the SSplotComparisons() function."><div class="figcaption">Illustration of the second comparison plot
 created by the <code><a href="../reference/SSplotComparisons.html">SSplotComparisons()</a></code> function.</div>
 </div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate Mohn's rho, a diagnostic value</span></span>
 <span><span class="va">rho_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSmohnsrho.html">SSmohnsrho</a></span><span class="op">(</span></span>
 <span>  summaryoutput <span class="op">=</span> <span class="va">retroSummary</span>,</span>
@@ -528,7 +526,7 @@ times specified by the user. For a stock Synthesis model in a folder
 called <code>jitter_dir</code> jittering starting values can be run 100
 times (note this could take a while as they will be run in
 sequence):</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define a new directory</span></span>
 <span><span class="va">jitter_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">mod_path</span>, <span class="st">"jitter"</span><span class="op">)</span></span>
 <span><span class="co"># copy over the stock synthesis model files to the new directory</span></span>
@@ -570,7 +568,7 @@ and transform it into different tuning methods.</p>
 <p>As an example, we will illustrate how to run Francis tuning on an
 example Stock Synthesis model built into the r4ss package. First, we
 make a copy of the model to avoid changing the original model files</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define a new directory in a temporary location</span></span>
 <span><span class="va">mod_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"simple_mod"</span><span class="op">)</span></span>
 <span><span class="co"># Path to simple model in r4ss and copy files to mod_path</span></span>
@@ -580,7 +578,7 @@ make a copy of the model to avoid changing the original model files</p>
 <span><span class="co">#&gt; copying files from</span></span>
 <span><span class="co">#&gt;  /home/runner/work/_temp/Library/r4ss/extdata/simple_small</span></span>
 <span><span class="co">#&gt; to</span></span>
-<span><span class="co">#&gt;  /tmp/Rtmpi9vPCL/simple_mod</span></span>
+<span><span class="co">#&gt;  /tmp/RtmpMLMtop/simple_mod</span></span>
 <span><span class="co">#&gt; copying complete</span></span>
 <span><span class="co"># copy over the Report file to provide information about the last run</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span></span>
@@ -598,7 +596,7 @@ make a copy of the model to avoid changing the original model files</p>
 weighting for 1 iteration and allows upweighting. Assume that an
 executable called “ss or ss.exe” is available in the mod_path
 folder.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tune_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tune_comps.html">tune_comps</a></span><span class="op">(</span></span>
 <span>  option <span class="op">=</span> <span class="st">"Francis"</span>,</span>
 <span>  niters_tuning <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -614,7 +612,7 @@ to a new folder, then the <code><a href="../reference/tune_comps.html">tune_comp
 used to add Dirichlet-multinomial parameters (1 for each fleet with
 composition data and for each type of composition data) and re-run the
 model.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create additional temporary directory</span></span>
 <span><span class="va">mod_path_dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"simple_mod_dm"</span><span class="op">)</span></span>
 <span><span class="co"># copy model files</span></span>
