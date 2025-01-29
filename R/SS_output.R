@@ -324,7 +324,7 @@ SS_output <-
       } else {
         FALSE
       }
-      if (file.exists(file.path(dir, compfile)) || comp_file_is_url) {
+      if (file.exists(compfile) || comp_file_is_url) {
         # non-NULL compfile input provided and file exists
         comphead <- readLines(con = compfile, n = 30)
         compskip <- grep("Composition_Database", comphead)
