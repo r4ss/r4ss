@@ -212,7 +212,7 @@ SS_output <-
     if (!is.character(dir) | length(dir) != 1) {
       stop("Input 'dir' should be a character string for a directory")
     }
-
+browser()
     # get info on output files created by Stock Synthesis
     shortrepfile <- repfile
     repfile <- file.path(dir, repfile)
@@ -236,7 +236,19 @@ SS_output <-
         stop("report file is empty: ", repfile)
       }
     } else {
-      stop("can't find report file: ", repfile)
+      if (grepl("https:", repfile)) {
+        con <- url(repfile)
+        check <- suppressWarnings(try(
+          open.connection(con, open = "rt", timeout = 2),
+          silent = TRUE
+        )[1])
+        suppressWarnings(try(close.connection(con), silent = TRUE))
+        if (!is.null(check)) {
+          stop("can't find report file: ", repfile)
+        }
+      } else {
+        stop("can't find report file: ", repfile)
+      }
     }
     rephead <- readLines(con = repfile, n = 50)
 
@@ -300,9 +312,20 @@ SS_output <-
         message("Skipping CompReport because 'compfile = NULL'")
       }
     } else {
-      if (file.exists(file.path(dir, compfile))) {
+      compfile <- file.path(dir, compfile)
+      comp_file_is_url <- if (grepl("https", compfile)) {
+        con <- url(compfile)
+        check <- suppressWarnings(try(
+          open.connection(con, open = "rt", timeout = 2),
+          silent = TRUE
+        )[1])
+        suppressWarnings(try(close.connection(con), silent = TRUE))
+        is.null(check)
+      } else {
+        FALSE
+      }
+      if (file.exists(file.path(dir, compfile)) || comp_file_is_url) {
         # non-NULL compfile input provided and file exists
-        compfile <- file.path(dir, compfile)
         comphead <- readLines(con = compfile, n = 30)
         compskip <- grep("Composition_Database", comphead)
         if (length(compskip) == 0) {
@@ -404,7 +427,18 @@ SS_output <-
     if (forecast) {
       forecastname <- file.path(dir, forefile)
       temp <- file.info(forecastname)[["size"]]
-      if (is.na(temp) | temp == 0) {
+      forecast_file_is_url <- if (grepl("https", forecastname)) {
+        con <- url(forecastname)
+        check <- suppressWarnings(try(
+          open.connection(con, open = "rt", timeout = 2),
+          silent = TRUE
+        )[1])
+        suppressWarnings(try(close.connection(con), silent = TRUE))
+        is.null(check)
+      } else {
+        FALSE
+      }
+      if (is.na(temp) | temp == 0 | forecast_file_is_url) {
         if (verbose) {
           message("Forecast-report.sso file is missing or empty.")
         }
@@ -545,7 +579,18 @@ SS_output <-
     # read warnings file
     if (warn) {
       warnname <- file.path(dir, warnfile)
-      if (!file.exists(warnname)) {
+      warning_file_is_url <- if (grepl("https", warnname)) {
+        con <- url(warnname)
+        check <- suppressWarnings(try(
+          open.connection(con, open = "rt", timeout = 2),
+          silent = TRUE
+        )[1])
+        suppressWarnings(try(close.connection(con), silent = TRUE))
+        is.null(check)
+      } else {
+        FALSE
+      }
+      if (!file.exists(warnname) | !warning_file_is_url) {
         # no warnings.sso file
         message(warnfile, " file not found")
         warnrows <- NA
