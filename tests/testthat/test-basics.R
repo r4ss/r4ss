@@ -258,7 +258,7 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
       verbose = FALSE,
       writeAll = TRUE
     ),
-    "Even though writeAll == TRUE, cannot write past list element Forecast"
+    "Even though writeAll == TRUE, cannot write past mylist[['Forecast']]"
   )
   expect_true(file.exists(file.path(temp_path, "fore_0_read_short.ss")))
 })
