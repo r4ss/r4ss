@@ -1406,67 +1406,61 @@ SSplotBiology <-
       growdatM <- growdat[growdat[["Morph"]] == morphs[2], ]
       MatAge_M <- growdatM[["M"]]
     }
-    # not sure what role M2 is playing here
-    M2 <- MGparmAdj[, c(1, grep("NatM", names(MGparmAdj)))]
-    # not sure when you could have ncol(M2) = NULL
-    if (!is.null(ncol(M2))) {
-      M2f <- M2[, c(1, grep("Fem", names(M2)))]
-      if (min(MatAge) != max(MatAge) & 21 %in% subplots) {
-        ymax <- 1.1 * max(MatAge)
-        if (nsexes > 1) {
-          ymax <- 1.1 * max(MatAge, MatAge_M)
+    if (min(MatAge) != max(MatAge) & 21 %in% subplots) {
+      ymax <- 1.1 * max(MatAge)
+      if (nsexes > 1) {
+        ymax <- 1.1 * max(MatAge, MatAge_M)
+      }
+
+      # function to plut natural mortality
+      mfunc <- function(add_uncertainty = TRUE) {
+        if (!add) {
+          plot(growdatF[["Age_Beg"]], MatAge,
+            col = colvec[col_index1], lwd = 2,
+            ylim = c(0, ymax), yaxs = "i", type = "n",
+            ylab = labels[7], xlab = labels[2], las = 1
+          )
+        }
+        lines(growdatF[["Age_Beg"]], MatAge, col = colvec[col_index1], lwd = 2, type = "o")
+
+        # add uncertainty in M-at-age (if available from derived_quants)
+        if (add_uncertainty) {
+          add_uncertainty_fn(std_table = NatM_std, sex = 1, age_offset = 0.0)
         }
 
-        # function to plut natural mortality
-        mfunc <- function(add_uncertainty = TRUE) {
-          if (!add) {
-            plot(growdatF[["Age_Beg"]], MatAge,
-              col = colvec[col_index1], lwd = 2,
-              ylim = c(0, ymax), yaxs = "i", type = "n",
-              ylab = labels[7], xlab = labels[2], las = 1
-            )
-          }
-          lines(growdatF[["Age_Beg"]], MatAge, col = colvec[col_index1], lwd = 2, type = "o")
+        if (nsexes > 1) {
+          growdatM <- growdat[growdat[["Morph"]] == morphs[2], ]
+          lines(growdatM[["Age_Beg"]], growdatM[["M"]],
+            lty = ltyvec[2], col = colvec[2],
+            lwd = 2, type = "o"
+          )
+          legend("bottomleft",
+            bty = "n", c("Females", "Males"), lty = ltyvec, lwd = 2,
+            col = c(colvec[col_index1], colvec[2])
+          )
 
           # add uncertainty in M-at-age (if available from derived_quants)
           if (add_uncertainty) {
-            add_uncertainty_fn(std_table = NatM_std, sex = 1, age_offset = 0.0)
-          }
-
-          if (nsexes > 1) {
-            growdatM <- growdat[growdat[["Morph"]] == morphs[2], ]
-            lines(growdatM[["Age_Beg"]], growdatM[["M"]],
-              lty = ltyvec[2], col = colvec[2],
-              lwd = 2, type = "o"
-            )
-            legend("bottomleft",
-              bty = "n", c("Females", "Males"), lty = ltyvec, lwd = 2,
-              col = c(colvec[col_index1], colvec[2])
-            )
-
-            # add uncertainty in M-at-age (if available from derived_quants)
-            if (add_uncertainty) {
-              add_uncertainty_fn(std_table = NatM_std, sex = 2, age_offset = 0.0)
-            }
+            add_uncertainty_fn(std_table = NatM_std, sex = 2, age_offset = 0.0)
           }
         }
+      }
 
-        # run function if requested to make plot
-        if (plot & 21 %in% subplots) {
-          mfunc()
-        }
-        # run function if requested to write figure to PNG file
-        if (print & 21 %in% subplots) {
-          file <- "bio21_natmort.png"
-          caption <- "Natural mortality"
-          plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
-            caption = caption
-          )
-          mfunc()
-          dev.off()
-        }
+      # run function if requested to make plot
+      if (plot & 21 %in% subplots) {
+        mfunc()
+      }
+      # run function if requested to write figure to PNG file
+      if (print & 21 %in% subplots) {
+        file <- "bio21_natmort.png"
+        caption <- "Natural mortality at age"
+        plotinfo <- save_png(
+          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          caption = caption
+        )
+        mfunc()
+        dev.off()
       }
     }
 
