@@ -74,9 +74,10 @@ SS_output <-
            SpawnOutputLabel = "Spawning output") {
     flush.console()
 
-    #################################################################################
-    ## embedded functions: emptytest, match_report_line and match_report_table
-    #################################################################################
+    ###########################################################################
+    ## embedded functions: emptytest, match_report_line, match_report_table,
+    ##                     file_is_empty
+    ###########################################################################
 
     emptytest <- function(x) {
       # function to help test for empty columns
@@ -199,6 +200,20 @@ SS_output <-
       return(df)
     }
 
+    file_is_empty <- function(file) {
+      if (grepl("https:", file)) {
+        con <- url(file)
+        check <- suppressWarnings(try(
+          open.connection(con, open = "rt", timeout = 2),
+          silent = TRUE
+        )[1])
+        suppressWarnings(try(close.connection(con), silent = TRUE))
+        return(!is.null(check))
+      } else {
+        return(!file.exists(file) | file.info(file)[["size"]] <= 0)
+      }
+    }
+
     # check inputs
     if (lifecycle::is_present(ncols)) {
       lifecycle::deprecate_warn(
@@ -227,28 +242,8 @@ SS_output <-
     }
 
     # read three rows to get start time and version number from rep file
-    if (file.exists(repfile)) {
-      if (file.info(repfile)[["size"]] > 0) {
-        if (verbose) {
-          message("Getting header info from:\n  ", repfile)
-        }
-      } else {
-        stop("report file is empty: ", repfile)
-      }
-    } else {
-      if (grepl("https:", repfile)) {
-        con <- url(repfile)
-        check <- suppressWarnings(try(
-          open.connection(con, open = "rt", timeout = 2),
-          silent = TRUE
-        )[1])
-        suppressWarnings(try(close.connection(con), silent = TRUE))
-        if (!is.null(check)) {
-          stop("can't find report file: ", repfile)
-        }
-      } else {
-        stop("can't find report file: ", repfile)
-      }
+    if (file_is_empty(repfile)) {
+      stop("can't find report file: ", repfile)
     }
     rephead <- readLines(con = repfile, n = 50)
 
@@ -313,18 +308,7 @@ SS_output <-
       }
     } else {
       compfile <- file.path(dir, compfile)
-      comp_file_is_url <- if (grepl("https", compfile)) {
-        con <- url(compfile)
-        check <- suppressWarnings(try(
-          open.connection(con, open = "rt", timeout = 2),
-          silent = TRUE
-        )[1])
-        suppressWarnings(try(close.connection(con), silent = TRUE))
-        is.null(check)
-      } else {
-        FALSE
-      }
-      if (file.exists(compfile) || comp_file_is_url) {
+      if (!file_is_empty(compfile)) {
         # non-NULL compfile input provided and file exists
         comphead <- readLines(con = compfile, n = 30)
         compskip <- grep("Composition_Database", comphead)
@@ -426,19 +410,7 @@ SS_output <-
     # where it occurred in older SS versions)
     if (forecast) {
       forecastname <- file.path(dir, forefile)
-      temp <- file.info(forecastname)[["size"]]
-      forecast_file_is_url <- if (grepl("https", forecastname)) {
-        con <- url(forecastname)
-        check <- suppressWarnings(try(
-          open.connection(con, open = "rt", timeout = 2),
-          silent = TRUE
-        )[1])
-        suppressWarnings(try(close.connection(con), silent = TRUE))
-        is.null(check)
-      } else {
-        FALSE
-      }
-      if (is.na(temp) | temp == 0 | forecast_file_is_url) {
+      if (file_is_empty(forecastname)) {
         if (verbose) {
           message("Forecast-report.sso file is missing or empty.")
         }
@@ -579,18 +551,7 @@ SS_output <-
     # read warnings file
     if (warn) {
       warnname <- file.path(dir, warnfile)
-      warning_file_is_url <- if (grepl("https", warnname)) {
-        con <- url(warnname)
-        check <- suppressWarnings(try(
-          open.connection(con, open = "rt", timeout = 2),
-          silent = TRUE
-        )[1])
-        suppressWarnings(try(close.connection(con), silent = TRUE))
-        is.null(check)
-      } else {
-        FALSE
-      }
-      if (!file.exists(warnname) | !warning_file_is_url) {
+      if (file_is_empty(warnname)) {
         # no warnings.sso file
         message(warnfile, " file not found")
         warnrows <- NA
