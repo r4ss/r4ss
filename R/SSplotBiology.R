@@ -1453,7 +1453,7 @@ SSplotBiology <-
       # run function if requested to write figure to PNG file
       if (print & 21 %in% subplots) {
         file <- "bio21_natmort.png"
-        caption <- "Natural mortality"
+        caption <- "Natural mortality at age"
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
           pheight = pheight, punits = punits, res = res, ptsize = ptsize,
