@@ -49,7 +49,7 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
     }
     return(NULL)
   }
-  
+
   # check for NA is first 2 rows of 2nd column as indicator of version
   # prior to 3.30 where old models had additional number of lines input
   skip <- 1
