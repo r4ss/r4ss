@@ -256,9 +256,10 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
       dir = temp_path,
       file = "fore_0_read_short.ss",
       verbose = FALSE,
-      writeAll = TRUE
+      writeAll = TRUE,
+      overwrite = TRUE
     ),
-    "Even though writeAll == TRUE, cannot write past list element Forecast"
+    "Even though writeAll == TRUE, r4ss"
   )
   expect_true(file.exists(file.path(temp_path, "fore_0_read_short.ss")))
 })

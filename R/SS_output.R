@@ -74,9 +74,10 @@ SS_output <-
            SpawnOutputLabel = "Spawning output") {
     flush.console()
 
-    #################################################################################
-    ## embedded functions: emptytest, match_report_line and match_report_table
-    #################################################################################
+    ###########################################################################
+    ## embedded functions: emptytest, match_report_line, match_report_table,
+    ##                     file_is_empty
+    ###########################################################################
 
     emptytest <- function(x) {
       # function to help test for empty columns
@@ -199,6 +200,20 @@ SS_output <-
       return(df)
     }
 
+    file_is_empty <- function(file) {
+      if (grepl("https:", file)) {
+        con <- url(file)
+        check <- suppressWarnings(try(
+          open.connection(con, open = "rt", timeout = 2),
+          silent = TRUE
+        )[1])
+        suppressWarnings(try(close.connection(con), silent = TRUE))
+        return(!is.null(check))
+      } else {
+        return(!file.exists(file) | file.info(file)[["size"]] <= 0)
+      }
+    }
+
     # check inputs
     if (lifecycle::is_present(ncols)) {
       lifecycle::deprecate_warn(
@@ -227,15 +242,7 @@ SS_output <-
     }
 
     # read three rows to get start time and version number from rep file
-    if (file.exists(repfile)) {
-      if (file.info(repfile)[["size"]] > 0) {
-        if (verbose) {
-          message("Getting header info from:\n  ", repfile)
-        }
-      } else {
-        stop("report file is empty: ", repfile)
-      }
-    } else {
+    if (file_is_empty(repfile)) {
       stop("can't find report file: ", repfile)
     }
     rephead <- readLines(con = repfile, n = 50)
@@ -300,9 +307,9 @@ SS_output <-
         message("Skipping CompReport because 'compfile = NULL'")
       }
     } else {
-      if (file.exists(file.path(dir, compfile))) {
+      compfile <- file.path(dir, compfile)
+      if (!file_is_empty(compfile)) {
         # non-NULL compfile input provided and file exists
-        compfile <- file.path(dir, compfile)
         comphead <- readLines(con = compfile, n = 30)
         compskip <- grep("Composition_Database", comphead)
         if (length(compskip) == 0) {
@@ -403,8 +410,7 @@ SS_output <-
     # where it occurred in older SS versions)
     if (forecast) {
       forecastname <- file.path(dir, forefile)
-      temp <- file.info(forecastname)[["size"]]
-      if (is.na(temp) | temp == 0) {
+      if (file_is_empty(forecastname)) {
         if (verbose) {
           message("Forecast-report.sso file is missing or empty.")
         }
@@ -545,7 +551,7 @@ SS_output <-
     # read warnings file
     if (warn) {
       warnname <- file.path(dir, warnfile)
-      if (!file.exists(warnname)) {
+      if (file_is_empty(warnname)) {
         # no warnings.sso file
         message(warnfile, " file not found")
         warnrows <- NA
