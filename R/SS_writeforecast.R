@@ -93,7 +93,7 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       # only continue beyond this point if Forecast is not 0 or writeAll==TRUE,
       # so do not do other processing.
       warning(
-        "Even though writeAll == TRUE, {r4ss} cannot write past ",
+        "Even though writeAll == TRUE, r4ss cannot write past ",
         "mylist[['Forecast']] because needed list elements past Forecast ",
         "in mylist are not available. But, the saved file will still be a ",
         "useable Stock Synthesis forecast file."
