@@ -53,7 +53,7 @@ jobs:
       - name: Install pak
         run: |
           R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/dev/')"
-          R -e "pak::lockfile_install('.github/pkg.lock')"
+          R -e "pak::pak_update()"
         shell: bash
 
       - uses: r-lib/actions/setup-r-dependencies@v2
