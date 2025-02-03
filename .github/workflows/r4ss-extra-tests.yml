@@ -52,8 +52,7 @@ jobs:
 
       - name: Install pak
         run: |
-          R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/dev/')"
-          R -e "pak::pak_update()"
+          R -e "install.packages(c('credentials','pak','bslib'))"
         shell: bash
 
       - uses: r-lib/actions/setup-r-dependencies@v2
