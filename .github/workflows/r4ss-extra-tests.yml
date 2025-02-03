@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-24.04-arm, r: 'release'}
+          - {os: ubuntu-22.04-arm, r: 'release'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
