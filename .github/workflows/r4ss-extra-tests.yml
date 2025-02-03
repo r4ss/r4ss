@@ -52,7 +52,7 @@ jobs:
 
       - name: Install pak
         run: |
-          R -e "install.packages(c('credentials','pak','bslib'))"
+          R -e "install.packages(c('credentials','pak','bslib','downlit'))"
         shell: bash
 
       - uses: r-lib/actions/setup-r-dependencies@v2
