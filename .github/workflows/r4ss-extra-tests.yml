@@ -51,11 +51,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install pak
-        run: |
-          R -e "install.packages(c('credentials','pak','bslib','downlit'))"
-        shell: bash
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
