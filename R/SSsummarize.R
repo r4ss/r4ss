@@ -621,7 +621,9 @@ SSsummarize <- function(biglist,
     if (length(NA_yrs) > 0) {
       # filter years to only include those with NA values
       SmryBio[SmryBio[["Yr"]] %in% NA_yrs, imodel] <- ts |>
-        dplyr::filter(Yr %in% NA_yrs & Seas == 1) |>
+        dplyr::filter(Yr %in% NA_yrs) |>
+        dplyr::group_by(Yr) |>
+        dplyr::summarize(Bio_smry = sum(Bio_smry)) |>
         dplyr::pull(Bio_smry)
     }
   }
