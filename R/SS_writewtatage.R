@@ -52,7 +52,7 @@ SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
   oldwidth <- options()[["width"]]
   options(width = 1000)
 
-  if (verbose) message("opening connection to", outfile, "\n")
+  if (verbose) message("opening connection to ", outfile, "\n")
   zz <- file(outfile, open = "at")
   on.exit(close(zz))
   sink(zz, split = verbose)

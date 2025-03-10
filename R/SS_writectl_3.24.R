@@ -47,7 +47,7 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE,
   oldmax.print <- options()[["max.print"]]
   options(width = 5000, max.print = 9999999)
 
-  if (verbose) message("opening connection to", outfile)
+  if (verbose) message("opening connection to ", outfile)
   zz <- file(outfile, open = "at")
   #  on.exit({if(sink.number()>0) sink();close(zz)})
   on.exit(close(zz))

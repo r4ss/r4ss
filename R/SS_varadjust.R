@@ -199,7 +199,7 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   }
 
   # open connection to file
-  if (verbose) message("opening connection to", newctlfile)
+  if (verbose) message("opening connection to ", newctlfile)
   zz <- file(newctlfile, open = "at")
   sink(zz)
   # change maximum number of columns

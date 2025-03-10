@@ -49,7 +49,7 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
   oldwidth <- options()[["width"]]
   options(width = 1000)
 
-  if (verbose) message("opening connection to", outfile)
+  if (verbose) message("opening connection to ", outfile)
   zz <- file(outfile, open = "at")
   sink(zz)
   wl <- function(name) {
