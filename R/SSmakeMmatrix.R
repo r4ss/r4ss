@@ -55,7 +55,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
 
   # open file connection if requested
   if (!is.null(outfile)) {
-    message("opening connection to", outfile)
+    message("opening connection to ", outfile)
     zz <- file(outfile, open = "at")
     sink(zz)
   }

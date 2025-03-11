@@ -47,14 +47,14 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
       file.remove(outfile)
     }
   } else {
-    if (verbose) message("writing new file:", outfile)
+    if (verbose) message("writing new file: ", outfile)
   }
 
   # record current max characters per line and then expand in case of long lines
   oldwidth <- options()[["width"]]
   options(width = 1000)
 
-  if (verbose) message("opening connection to", outfile)
+  if (verbose) message("opening connection to ", outfile)
   zz <- file(outfile, open = "at")
   sink(zz)
 
