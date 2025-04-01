@@ -11,7 +11,7 @@ SSexecutivesummary(
   es_only = FALSE,
   fleetnames = NULL,
   add_text = "model area",
-  so_units = "millions of eggs",
+  so_units = lifecycle::deprecated(),
   tables = lifecycle::deprecated(),
   divide_by_2 = FALSE,
   endyr = NULL,
@@ -48,11 +48,9 @@ leads to \code{"for the model area."}. Another thing to note is that a full
 stop is not needed but can be used because a full stop is appended to the
 end of the caption if it does not already exist.}
 
-\item{so_units}{A single character object specifying the unit of measurement
-that spawning output is reported in. The default is "millions of eggs".
-This text will be used in the table captions. If fecundity is equal to
-weight-at-length, then the units are hard-wired to \code{"mt"} regardless of
-what is used within this argument.}
+\item{so_units}{Deprecated as of version 1.51.0 because the function now
+relies on the \code{SpawnOutputLabel} argument passed to \code{SS_output()} which
+is used throughout the package.}
 
 \item{tables}{Deprecated as of version 1.49.1 because this function only
 takes 15 seconds to run and overwriting old tables should not be a problem

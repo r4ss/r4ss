@@ -23,11 +23,9 @@
 #'   leads to `"for the model area."`. Another thing to note is that a full
 #'   stop is not needed but can be used because a full stop is appended to the
 #'   end of the caption if it does not already exist.
-#' @param so_units A single character object specifying the unit of measurement
-#'   that spawning output is reported in. The default is "millions of eggs".
-#'   This text will be used in the table captions. If fecundity is equal to
-#'   weight-at-length, then the units are hard-wired to `"mt"` regardless of
-#'   what is used within this argument.
+#' @param so_units Deprecated as of version 1.51.0 because the function now
+#'   relies on the `SpawnOutputLabel` argument passed to `SS_output()` which
+#'   is used throughout the package.
 #' @param tables Deprecated as of version 1.49.1 because this function only
 #'   takes 15 seconds to run and overwriting old tables should not be a problem
 #'   if users are modifying the .csv files in a programmatic way. The function
@@ -71,7 +69,7 @@ SSexecutivesummary <- function(replist,
                                es_only = FALSE,
                                fleetnames = NULL,
                                add_text = "model area",
-                               so_units = "millions of eggs",
+                               so_units = lifecycle::deprecated(),
                                tables = lifecycle::deprecated(),
                                divide_by_2 = FALSE,
                                endyr = NULL,
@@ -99,6 +97,13 @@ SSexecutivesummary <- function(replist,
     lifecycle::deprecate_warn(
       when = "1.49.1",
       what = "SSexecutivesummary(match_digits)"
+    )
+  }
+  if (!missing(so_units)) {
+    lifecycle::deprecate_warn(
+      when = "1.51.0",
+      what = "SSexecutivesummary(so_units)",
+      with = "SS_output(SpawnOutputLabel)"
     )
   }
   csv.dir <- file.path(
@@ -356,6 +361,15 @@ SSexecutivesummary <- function(replist,
 
   recruits <- Get.Values(replist = replist, label = "Recr", years, ci_value)
 
+  # if median recruits is > million, convert to millions
+  recruit_scale <- "1,000s"
+  if (median(recruits[["dq"]]) > 1000) {
+    recruits[["dq"]] <- recruits[["dq"]] / 1000
+    recruits[["low"]] <- recruits[["low"]] / 1000
+    recruits[["high"]] <- recruits[["high"]] / 1000
+    recruit_scale <- "millions"
+  }
+
   if (length(main.yrs) > 0 | length(late.yrs) > 0 | length(fore.yrs) > 0) {
     # placeholder for devs
     devs <- NULL
@@ -395,7 +409,7 @@ SSexecutivesummary <- function(replist,
     devs.out[, 1], devs.out[, 2], devs.out[, 3]
   )
   colnames(es.c) <- c(
-    "Year", "Recruitment (1,000s)", "Lower Interval", "Upper Interval",
+    "Year", paste0("Recruitment (", recruit_scale, ")"), "Lower Interval", "Upper Interval",
     "Recruitment Deviations", "Lower Interval", "Upper Interval"
   )
   csv_name <- "c_Recr_ES.csv"
@@ -404,7 +418,7 @@ SSexecutivesummary <- function(replist,
   caption <- c(
     caption,
     paste0(
-      "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
+      "Estimated recent trend in recruitment (", recruit_scale, ") and recruitment deviations and the ", round(100 * ci_value, 0),
       " percent intervals for the ", add_text, "."
     )
   )
