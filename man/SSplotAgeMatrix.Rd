@@ -9,6 +9,8 @@ SSplotAgeMatrix(
   option = 1,
   slices = NULL,
   scale = NULL,
+  fleet = NULL,
+  year = NULL,
   add = FALSE,
   col.grid = "grey90",
   col.bars = grey(0, alpha = 0.5),
@@ -44,6 +46,10 @@ by these dimensions.}
 \item{scale}{Multiplier for bars showing distribution. Species with many ages
 benefit from expanded bars. NULL value causes function to attempt automatic
 scaling.}
+
+\item{fleet}{Optional input to scale the length at age matrix by catch-at-age for a given fleet. Also requires the \code{year} input.}
+
+\item{year}{Optional input to scale the length at age matrix by catch-at-age for a given year. Also requires the \code{fleet} input.}
 
 \item{add}{Add to existing plot}
 
