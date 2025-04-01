@@ -13,6 +13,8 @@
 #' number. Distribution of length at age (ALK) is ordered by season,
 #' sub-season, and then morph. A future version could allow subsetting plots
 #' by these dimensions.
+#' @param fleet Optional input to scale the length at age matrix by catch-at-age for a given fleet. Also requires the `year` input.
+#' @param year Optional input to scale the length at age matrix by catch-at-age for a given year. Also requires the `fleet` input.
 #' @param scale Multiplier for bars showing distribution. Species with many ages
 #' benefit from expanded bars. NULL value causes function to attempt automatic
 #' scaling.
@@ -40,7 +42,7 @@
 
 
 SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
-                            scale = NULL, add = FALSE,
+                            scale = NULL, fleet = NULL, year = NULL, add = FALSE,
                             col.grid = "grey90",
                             col.bars = grey(0, alpha = .5),
                             shift_hi = 0, shift_lo = 0,
@@ -176,12 +178,34 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
     if (option == 1) {
       # choose which morph/sex/etc of the array
       mat <- array[, , slice]
+      if (!is.null(fleet) && !is.null(year)) {
+        # scale the length at age matrix by catch-at-age for a given fleet and year
+        # extract sex based on string with format like "Seas: 1 Sub_Seas: 1 Morph: 2"
+        # sex is assumed to equal morph 
+        # (should work for without growth morphs, birth seasons, or platoons)
+        sex <- gsub("(.+)Morph: ", "", dimnames(array)[[3]][slice]) |>
+          as.numeric()
+        catage_yf <- replist[["catage"]] |>
+          dplyr::select(!XX) |> # remove duplicate column names
+          dplyr::filter(Fleet == fleet, Yr == year, Sex == sex) |>
+          dplyr::select(paste(0:replist[["accuage"]])) |>
+          as.numeric()
+        catage_marginal <- mat %*% catage_yf
+        # multiple all rows by the vector of catch-at-age values
+        mat <- sweep(mat, MARGIN = 2, catage_yf, `*`)
+        nages <- nages + 1
+        agevec <- c(agevec, max(agevec) + 2)
+        mat <- cbind(mat, catage_marginal)
+      }
       # need to figure out which slice corresponds to which
       # morph/sex/etc. for labeling purposes
       title <- titleStart
       info <- tolower(dimnames(array)[[3]][slice])
       if (!is.null(info)) {
         title <- paste0(title, "\nfor ", info)
+      }
+      if (!is.null(fleet) && !is.null(year)) {
+        title <- paste0(title, "\nfor fleet ", fleet, " in year ", year)
       }
     }
     if (option == 2) {
@@ -196,9 +220,15 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
     }
 
     if (!add) {
+      xlim <- c(0, 1.1 * max(agevec))
+      # add extra space to the right of the plot for the aggregated marginal composition
+      if (exists("catage_marginal")) {
+        xlim <- c(0, 1.2 * max(agevec))
+      }
       plot(0,
         type = "n", las = 1,
-        xlim = c(0, 1.1 * accuage), xaxs = "i",
+        xlim = xlim, 
+        xaxs = "i",
         ylim = c(0, ymax), yaxs = "i",
         xlab = xlab, ylab = ylab, main = title
       )
