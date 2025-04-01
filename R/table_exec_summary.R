@@ -1,13 +1,14 @@
 #' Create executive summary tables from an SS3 Report.sso file
 #'
-#' Take the output from `SS_output()` and create executive summary .csv files
+#' Take the output from `SS_output()` and create executive summary .rds files
 #' as required by the current Terms of Reference for U.S. West Coast
-#' groundfish assessments. Additionally, .csv files of historical catches,
-#' time-series, and numbers-at-age are created.
+#' groundfish assessments. Additionally, .rds files of historical catches,
+#' time-series, and numbers-at-age are created. A CSV file with captions is
+#' also created. This function is modified from `SSexecutivesummary()` 
+#' associated with the adoption of the {asar} template.
 #'
 #' @param replist List created by `r4ss::SS_output()`
-#' @param dir Directory where a new `tables` directory will be created,
-#'   which will be used to store the output from this function. The default is
+#' @param dir Directory where the .rds files will be written. The default is
 #'   the dir location where the Report.sso file is located.
 #' @param ci_value To calculate confidence intervals, the desired interval must
 #'   be specified. The default is 0.95.
@@ -40,7 +41,7 @@
 #' @author Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 #' @export
 #'
-write_r4ss_tables <- function(
+table_exec_summary <- function(
   replist,
   dir = NULL,
   ci_value = 0.95,
