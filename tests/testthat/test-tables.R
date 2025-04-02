@@ -21,8 +21,7 @@ simple_small <- SS_output(file.path(example_path, "simple_small"),
 table_exec_summary(simple_small, dir = temp_path)
 
 test_that("table_exec_summary() runs on simple_small model", {
-  expect_true("time_series.rds" %in% dir(file.path(temp_path, "tables")))
-  expect_true("table_labels.csv" %in% dir(file.path(temp_path, "tables")))
+  expect_true("time_series.rda" %in% dir(file.path(temp_path, "tables")))
 })
 
 # run SSexecutivesummary (older version of table_exec_summary)
