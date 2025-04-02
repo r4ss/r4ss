@@ -1,11 +1,14 @@
 #' Function to pull values and calculate confidence intervals from model output
+#' called from `r4ss::table_exec_summary()`.
 #'
-#' @param replist r4ss model output list created by `SS_output()`
-#' @param label description
-#' @param yrs Vector of years.
+#' @template replist
+#' @param label The parameter name to calculate confidence intervals for. The name
+#'  is based on the names in the `replist` object.
+#' @param yrs Vector of years to calculate confidence intervals for.
 #' @param ci_value To calculate confidence intervals, the desired interval must
 #'   be specified. The default is 0.95.
-#' @param single Default is FALSE
+#' @param single Calculate the confidence interval for a single year or parameter.
+#'   The default is FALSE.
 #'
 #' @return data frame with point estimate and confidence interval low and high values
 #' @author Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
