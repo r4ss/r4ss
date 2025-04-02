@@ -59,7 +59,7 @@ table_exec_summary <- function(
     "tables"
   )
   dir.create(rds_dir, showWarnings = FALSE)
-  nwfscSurvey::check_dir(dir = rds_dir, verbose = verbose)
+  check_dir(dir = rds_dir, verbose = verbose)
   
   # ============================================================================
   # Determine the model version and dimensions of the model
