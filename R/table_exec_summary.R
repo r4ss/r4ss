@@ -465,11 +465,15 @@ table_exec_summary <- function(
     temp <- replist[["timeseries"]][["Bio_smry"]][ind]
     smry.fore <- smry.fore + temp
   }
-  es.g <- data.frame(fore, ofl.fore, abc.fore, buffer, ssb.fore, fraction_unfished.fore)
-  colnames(es.g) <- c("Year", "OFL (mt)", "ABC (mt)", "Buffer", sb.label, "Fraction Unfished")
+  adopted_ofl <- adopted_acl <- rep(NA, length(fore))
+  es.g <- data.frame(fore, adopted_ofl, adopted_acl, assumed_catch, ofl.fore, buffer, 
+                     abc.fore, acl.fore, ssb.fore, fraction_unfished.fore)
+  colnames(es.g) <- c("Year", "Adopted OFL (mt)", "Adopted ACL (mt)", "Assumed Catch (mt)",
+                      "OFL (mt)", "Buffer", "ABC (mt)", "ACL (mt)", sb.label, "Fraction Unfished")
   projections <- list()
   projections$table <- es.g
-  projections$cap <- paste0("Projections of potential OFLs (mt), ABCs (mt), estimated ", sb.text.name, ", and fraction unfished.")
+  projections$cap <- paste0("Potential OFLs (mt), ABCs (mt), ACLs (mt), the buffer between the OFL and ABC, estimated ", sb.text.name, ", and fraction unfished with 
+                            adopted OFLs and ACLs and assumed catch for the first two years of the projection period.")
   save(projections, file = file.path(rda_dir, "projections.rda"))
   
   # ======================================================================
