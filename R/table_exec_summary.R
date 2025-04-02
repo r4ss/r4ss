@@ -451,14 +451,24 @@ table_exec_summary <- function(
   
   ofl.fore <- get_values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)[["dq"]]
   abc.fore <- get_values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)[["dq"]]
-  ssb.fore <- get_values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
+  acl.fore <- abc.fore
   buffer <- round(abc.fore / ofl.fore, 3)
+  assumed_catch <- c(abc.fore[1:2], rep(NA, length(fore) - 2))
+  if (length(ofl.fore) >= 2) {
+    ofl.fore[1:2] <- c(NA, NA)
+    abc.fore[1:2] <- c(NA, NA)
+    acl.fore[1:2] <- c(NA, NA)
+    buffer[1:2] <- c(NA, NA)
+  }
+  ssb.fore <- get_values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
   fraction_unfished.fore <- get_values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
-  
+  if(any(fraction_unfished.fore < replist$btarg)) {
+    replace <- which(fraction_unfished.fore < replist$btarg)
+    abc.fore[replace] <- buffer[replace] * ofl.fore[replace]
+  }
   if (nsexes == 1) {
     ssb.fore <- ssb.fore / sexfactor
   }
-  
   smry.fore <- 0
   for (a in 1:nareas) {
     ind <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% fore
