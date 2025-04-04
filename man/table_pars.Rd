@@ -5,30 +5,32 @@
 \title{Table of parameters}
 \usage{
 table_pars(
-  output,
+  replist,
   rows = NULL,
   caption =
-    "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
-  label = "table-pars-base"
+    "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model."
 )
 }
 \arguments{
-\item{output}{A list from \code{\link[=SS_output]{SS_output()}}.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{rows}{Which rows to include from the \code{parameters} table created by
 \code{\link[=SS_output]{SS_output()}}. NULL will cause all rows to be included.}
 
 \item{caption}{A character string for the caption.}
-
-\item{label}{A character string with the label for the table.
-No underscores allowed.}
 }
 \description{
 Table of parameters
 }
 \seealso{
-\code{\link[=table_pars_split]{table_pars_split()}}
+Other table functions: 
+\code{\link{table_compweight}()},
+\code{\link{table_exec_summary}()},
+\code{\link{table_outputconfig}()},
+\code{\link{table_parcounts}()},
+\code{\link{table_ts}()}
 }
 \author{
 Kelli F. Johnson
 }
+\concept{table functions}

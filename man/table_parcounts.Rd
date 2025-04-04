@@ -4,19 +4,49 @@
 \alias{table_parcounts}
 \title{Summarize the estimated parameters based on an SS3 control file}
 \usage{
-table_parcounts(output, dir = output$inputs$dir)
+table_parcounts(
+  replist,
+  inputs = NULL,
+  dir = NULL,
+  caption = "Estimated parameters in the model",
+  verbose = TRUE
+)
 }
 \arguments{
-\item{output}{Model output produced by \code{r4ss::SS_output()}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{dir}{A directory which contains a control file, if different
-from output$inputs$dir}
+\item{inputs}{An options list of inputs from the SS3 model created by \code{SS_read()}.
+If NULL, then the function will run \code{SS_read(replist$inputs$dir)} to get the inputs.}
 
-\item{ctlfile}{The filename for the control file}
+\item{dir}{Directory where the .rda files will be written. The default value
+is NULL where a table folder will be created where the Report.sso file is
+located associated with \code{replist}.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
-Summarize the estimated parameters based on an SS3 control file
+Requires either
+}
+\examples{
+\dontrun{
+# Load the model output
+output <- r4ss::SS_output()
+# Create the table
+table_parcounts <- table_parcounts(output)
+# filter for types with at least one estimated parameter
+table_parcounts$table |> dplyr::filter(Count > 0)
+}
+}
+\seealso{
+Other table functions: 
+\code{\link{table_compweight}()},
+\code{\link{table_exec_summary}()},
+\code{\link{table_outputconfig}()},
+\code{\link{table_pars}()},
+\code{\link{table_ts}()}
 }
 \author{
 Ian G. Taylor
 }
+\concept{table functions}

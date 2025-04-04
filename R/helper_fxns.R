@@ -510,3 +510,15 @@ tryCatch.W.E <- function(expr) {
     warning = W
   )
 }
+
+#' Check if the replist input is something that was created by SS_output()
+#'
+#' @param replist An object to test
+check_replist <- function(replist) {
+  if (is.null(replist) || !is.list(replist) || !"nfleets" %in% names(replist)) {
+    cli_abort(
+      "The input 'replist' should refer to an R object created by",
+      " the function 'SS_output'."
+    )
+  }
+}

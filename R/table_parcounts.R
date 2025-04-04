@@ -1,24 +1,47 @@
 #' Summarize the estimated parameters based on an SS3 control file
 #'
-#' @param output Model output produced by `r4ss::SS_output()`
-#' @param dir A directory which contains a control file, if different
-#' from output$inputs$dir
-#' @param ctlfile The filename for the control file
+#' Requires either
+#'
+#' @inheritParams table_exec_summary
+#' @param inputs An options list of inputs from the SS3 model created by `SS_read()`.
+#' If NULL, then the function will run `SS_read(replist$inputs$dir)` to get the inputs.
+#'
+#' @family table functions
 #' @export
+#' @examples
+#' \dontrun{
+#' # Load the model output
+#' output <- r4ss::SS_output()
+#' # Create the table
+#' table_parcounts <- table_parcounts(output)
+#' # filter for types with at least one estimated parameter
+#' table_parcounts$table |> dplyr::filter(Count > 0)
+#' }
 #' @author Ian G. Taylor
 
 table_parcounts <- function(
-    output,
-    dir = output$inputs$dir) {
+    replist,
+    inputs = NULL,
+    dir = NULL,
+    caption = "Estimated parameters in the model",
+    verbose = TRUE) {
   # check inputs
-  if (is.null(output) || !is.list(output) || !"nfleets" %in% names(output)) {
-    cli::cli_abort(
-      "The input 'output' should be a list created by 'r4ss::SS_output()'."
-    )
-  }
+  check_replist(replist)
 
-  files <- SS_read(dir)
-  ctl <- files[["ctl"]]
+  inputs <- SS_read(replist[["inputs"]][["dir"]], verbose = FALSE)
+  ctl <- inputs[["ctl"]]
+
+  # create the rda_dir
+  rda_dir <- file.path(
+    ifelse(
+      is.null(dir),
+      yes = replist[["inputs"]][["dir"]],
+      no = dir
+    ),
+    "tables"
+  )
+  dir.create(rda_dir, showWarnings = FALSE)
+  check_dir(dir = rda_dir)
 
   get_labs <- function(table) {
     if (!is.null(table)) {
@@ -30,7 +53,7 @@ table_parcounts <- function(
     }
   }
   # get parameter labels from model output
-  parlabs <- output$parameters %>%
+  parlabs <- replist$parameters %>%
     dplyr::filter(!is.na(Active_Cnt)) %>%
     dplyr::pull(Label)
 
@@ -130,7 +153,7 @@ table_parcounts <- function(
     )
   }
 
-  data <- rbind(
+  table <- rbind(
     data.frame(
       Type = "Total",
       Count = sum(data$Count)
@@ -138,5 +161,16 @@ table_parcounts <- function(
     data
   )
 
-  return(data)
+  # add the table to a list along with caption
+  table_parcounts <- list(
+    cap = caption,
+    table = data
+  )
+  # write the table to an rda file
+  if (verbose) {
+    cli::cli_alert_info("writing table to {file.path(rda_dir, 'table_parcounts.rda')}")
+  }
+  save(table_parcounts, file = file.path(rda_dir, "table_parcounts.rda"))
+
+  return(invisible(table_parcounts))
 }

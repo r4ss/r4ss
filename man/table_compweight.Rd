@@ -6,32 +6,53 @@
 (doesn't yet include other data types)}
 \usage{
 table_compweight(
-  output,
-  caption = paste("Data weightings applied to length and age compositions",
+  replist,
+  dir = NULL,
+  caption = paste("Data weightings applied to compositions",
     "according to the `Francis' method. `Obs.' refers to the number of unique",
     "composition vectors included in the likelihood. `N input' and `N adj.'",
     "refer to the sample sizes of those vectors before and after being adjusted",
     "by the the weights."),
   caption_CAAL = "`CAAL' is conditional age-at-length data.",
-  caption_extra = "",
-  label = "table-compweight-base"
+  verbose = TRUE
 )
 }
 \arguments{
-\item{output}{A list from \link{SS_output}.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
+
+\item{dir}{Directory where the .rda files will be written. The default value
+is NULL where a table folder will be created where the Report.sso file is
+located associated with \code{replist}.}
 
 \item{caption}{A character string for the caption.}
 
-\item{caption_extra}{Additional model-specific information pasted
-at the end of the caption}
+\item{caption_CAAL}{Additional text added to the caption for models with conditional age at length data.}
 
-\item{label}{A character string with the label for the table.
-No underscores allowed.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Table of length and age comp Francis weights
 (doesn't yet include other data types)
 }
+\examples{
+\dontrun{
+# Load the model output
+output <- r4ss::SS_output()
+# Create the table
+table_compweight(output)
+}
+
+}
+\seealso{
+Other table functions: 
+\code{\link{table_exec_summary}()},
+\code{\link{table_outputconfig}()},
+\code{\link{table_parcounts}()},
+\code{\link{table_pars}()},
+\code{\link{table_ts}()}
+}
 \author{
 Kelli F. Johnson, Ian G. Taylor
 }
+\concept{table functions}

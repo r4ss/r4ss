@@ -5,7 +5,7 @@
 #' 1. The user knows that the data will not be saved if `dir = NULL`.
 #' 2. The directory exists if it can be created.
 #' 3. The function fails if the directory cannot be created.
-#' 
+#'
 #' Note: this function was copied from the {nwfscSurvey} package:
 #' https://github.com/pfmc-assessments/nwfscSurvey/blob/main/R/check_dir.R
 #' rather than adding an additional dependency on that package.

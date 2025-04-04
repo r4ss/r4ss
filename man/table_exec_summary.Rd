@@ -16,15 +16,16 @@ table_exec_summary(
 )
 }
 \arguments{
-\item{replist}{List created by \code{r4ss::SS_output()}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{dir}{Directory where the .rds files will be written. The default is
-the dir location where the Report.sso file is located.}
+\item{dir}{Directory where the .rda files will be written. The default value
+is NULL where a table folder will be created where the Report.sso file is
+located associated with \code{replist}.}
 
 \item{ci_value}{To calculate confidence intervals, the desired interval must
 be specified. The default is 0.95.}
 
-\item{fleetnames}{String of fleetnames. Default is NULL which will use the
+\item{fleetnames}{String of fleet names. Default is NULL which will use the
 the model fleet names.}
 
 \item{so_units}{A single character object specifying the unit of measurement
@@ -42,26 +43,29 @@ models. Default value is \code{FALSE}. \code{TRUE} will lead to dividing values 
 which could be useful for catch-only updates. The default is \code{NULL}, which
 leads to using the ending year defined in Report.sso.}
 
-\item{verbose}{Print messages to the screen.}
-
-\item{add_text}{A single character object, where the default is \code{"model area"}. The text will be added to some of the table captions to indicate
-what the results apply to. Besides the default, one could use \code{"base model"}, \code{"sub-area model South of Point Conception."}, etc. Just know
-that the text will be appended to \code{"for the"}, and thus, the default text
-leads to \code{"for the model area."}. Another thing to note is that a full
-stop is not needed but can be used because a full stop is appended to the
-end of the caption if it does not already exist.}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \value{
-Individual .rds tables
+Individual .rda files containing a list of table and caption
 }
 \description{
-Take the output from \code{SS_output()} and create executive summary .rds files
+Take the output from \code{SS_output()} and create executive summary .rda files
 as required by the current Terms of Reference for U.S. West Coast
-groundfish assessments. Additionally, .rds files of historical catches,
+groundfish assessments. Additionally, .rda files of historical catches,
 time-series, and numbers-at-age are created. A CSV file with captions is
 also created. This function is modified from \code{SSexecutivesummary()}
 associated with the adoption of the {asar} template.
 }
+\seealso{
+Other table functions: 
+\code{\link{table_compweight}()},
+\code{\link{table_outputconfig}()},
+\code{\link{table_parcounts}()},
+\code{\link{table_pars}()},
+\code{\link{table_ts}()}
+}
 \author{
 Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 }
+\concept{table functions}

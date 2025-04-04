@@ -4,22 +4,51 @@
 \alias{table_outputconfig}
 \title{Create a table to summarize the configuration of the SS3 model}
 \usage{
-table_outputconfig(output, dir = NULL)
+table_outputconfig(replist, dir = NULL, verbose = TRUE)
 }
 \arguments{
-\item{output}{A list from `r4ss::SS_output``}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
+
+\item{dir}{Directory where the .rda files will be written. The default value
+is NULL where a table folder will be created where the Report.sso file is
+located associated with \code{replist}.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
+}
+\value{
+Returns invisibly and optionally saves an .rda files containing
+a list of table and caption
 }
 \description{
 Create a table to summarize the configuration of the SS3 model
 }
 \examples{
 \dontrun{
-  # Load the model output
-  output <- r4ss::SS_output()
-  # Create the table
-  table_outputconfig(output)
+# Load the model output
+output <- r4ss::SS_output()
+# Create the table
+table_outputconfig(output)
+
+# compare configuration for multiple models
+outputconfig1 <- table_outputconfig(output1)
+outputconfig2 <- table_outputconfig(output2)
+table_compare <- data.frame(
+  new_model = outputconfig1$table,
+  old_model = outputconfig2$table$Parameterization
+)
+names(table_compare) <- c("Section", "New model", "Old model")
 }
+}
+\seealso{
+Other table functions: 
+\code{\link{table_compweight}()},
+\code{\link{table_exec_summary}()},
+\code{\link{table_parcounts}()},
+\code{\link{table_pars}()},
+\code{\link{table_ts}()}
 }
 \author{
 Kelli F. Johnson, Ian G. Taylor
 }
+\concept{table functions}

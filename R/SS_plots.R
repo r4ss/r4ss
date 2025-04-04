@@ -241,12 +241,7 @@ SS_plots <-
     # in the future, this could be read from a file, or we could have multiple columns
     # in the table to choose from
 
-    if (is.null(replist) || !is.list(replist) || !"nfleets" %in% names(replist)) {
-      stop(
-        "The input 'replist' should refer to an R object created by",
-        " the function 'SS_output'."
-      )
-    }
+    check_replist(replist)
 
     if (is.null(replist[["SpawnOutputLabel"]])) {
       warning(
