@@ -64,7 +64,7 @@ table_config <- function(replist, dir = NULL, verbose = TRUE) {
       sprintf("%i+", replist[["summary_age"]]),
       replist[["nareas"]],
       replist[["nseasons"]],
-      replist[["ngpatterns"]],
+      ifelse(!is.null(replist[["ngpatterns"]]), replist[["ngpatterns"]], NA),
       replist[["startyr"]],
       replist[["endyr"]],
       sprintf(

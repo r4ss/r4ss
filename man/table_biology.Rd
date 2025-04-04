@@ -38,6 +38,7 @@ but that older version is now deprecated.
 }
 \seealso{
 Other table functions: 
+\code{\link{table_all}()},
 \code{\link{table_compweight}()},
 \code{\link{table_config}()},
 \code{\link{table_exec_summary}()},

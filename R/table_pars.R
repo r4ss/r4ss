@@ -30,15 +30,32 @@ table_pars <- function(replist,
 
   # Find sigma R
   sigmar <- replist[["parameters"]] |>
-    dplyr::filter(grepl("sigma", ignore.case = TRUE, Label)) |>
+    dplyr::filter(grepl("sigmaR", ignore.case = TRUE, Label)) |>
     dplyr::pull(Value)
   sigmar <- sprintf("%2.2f", sigmar)
   # to do - Could format the names
+
+  # Find sigmasel
+  sigmasel <- replist[["parameters"]] |>
+    dplyr::filter(grepl("sigmasel", ignore.case = TRUE, Label)) |>
+    dplyr::pull(Value)
+  if (length(sigmasel) == 0) {
+    sigmasel <- NA
+  }
+  if (length(sigmasel) > 1) {
+    sigmasel <- NA
+    cli::cli_alert_warning("More than one value for sigmasel found in the parameters table. Using NA for the prior on the 2DAR parameters.")
+  }
+  if (length(sigmasel) == 1) {
+    sigmasel <- sprintf("%2.2f", sigmasel)
+  }
+
 
   # default is all rows from the table
   if (is.null(rows)) {
     rows <- seq_along(replist[["parameters"]][["Value"]])
   }
+
   # make the table
   table <- replist[["parameters"]] |>
     dplyr::slice(rows) |>
@@ -60,7 +77,8 @@ table_pars <- function(replist,
         Pr_type == "Normal" ~ paste0("normal(", sprintf("%2.3f", Prior), ", ", psd, ")"),
         Pr_type == "No_prior" ~ "none",
         Pr_type == "Full_Beta" ~ paste0("beta(", pv, ", ", psd, ")"),
-        Pr_type == "dev" ~ paste0("normal(0.00, ", sigmar, ")"),
+        Pr_type == "dev" & !grepl("ARDEV", Label) ~ paste0("normal(0.00, ", sigmar, ")"),
+        Pr_type == "dev" & grepl("ARDEV", Label) ~ paste0("normal(0.00, ", sigmasel, ")"),
         TRUE ~ Pr_type
       )
     ) |>

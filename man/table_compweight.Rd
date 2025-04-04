@@ -46,6 +46,7 @@ table_compweight(output)
 }
 \seealso{
 Other table functions: 
+\code{\link{table_all}()},
 \code{\link{table_biology}()},
 \code{\link{table_config}()},
 \code{\link{table_exec_summary}()},

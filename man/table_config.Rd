@@ -42,6 +42,7 @@ names(table_compare) <- c("Section", "New model", "Old model")
 }
 \seealso{
 Other table functions: 
+\code{\link{table_all}()},
 \code{\link{table_biology}()},
 \code{\link{table_compweight}()},
 \code{\link{table_exec_summary}()},
