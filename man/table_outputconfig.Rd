@@ -35,7 +35,7 @@ outputconfig1 <- table_outputconfig(output1)
 outputconfig2 <- table_outputconfig(output2)
 table_compare <- data.frame(
   new_model = outputconfig1$table,
-  old_model = outputconfig2$table$Parameterization
+  old_model = outputconfig2$table$Configuration
 )
 names(table_compare) <- c("Section", "New model", "Old model")
 }

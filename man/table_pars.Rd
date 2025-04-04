@@ -6,18 +6,27 @@
 \usage{
 table_pars(
   replist,
+  dir = NULL,
   rows = NULL,
   caption =
-    "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model."
+    "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
+  verbose = TRUE
 )
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
+\item{dir}{Directory where the .rda files will be written. The default value
+is NULL where a table folder will be created where the Report.sso file is
+located associated with \code{replist}.}
+
 \item{rows}{Which rows to include from the \code{parameters} table created by
 \code{\link[=SS_output]{SS_output()}}. NULL will cause all rows to be included.}
 
 \item{caption}{A character string for the caption.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Table of parameters

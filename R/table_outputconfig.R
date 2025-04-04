@@ -19,7 +19,7 @@
 #' outputconfig2 <- table_outputconfig(output2)
 #' table_compare <- data.frame(
 #'   new_model = outputconfig1$table,
-#'   old_model = outputconfig2$table$Parameterization
+#'   old_model = outputconfig2$table$Configuration
 #' )
 #' names(table_compare) <- c("Section", "New model", "Old model")
 #' }
@@ -52,9 +52,9 @@ table_outputconfig <- function(replist, dir = NULL, verbose = TRUE) {
       "Data length bins",
       "Data age bins"
     ),
-    Parameterization = c(
+    Configuration = c(
       replist[["accuage"]],
-      ifelse(replist[["nsexes"]] == 2, "Females, males", "Females"),
+      ifelse(replist[["nsexes"]] == 2, "Females, males", "Sexes combined"),
       sprintf(
         "%i-%i cm by %i cm bins",
         replist[["lbinspop"]][1],
@@ -74,7 +74,7 @@ table_outputconfig <- function(replist, dir = NULL, verbose = TRUE) {
         replist[["lbins"]][2] - replist[["lbins"]][1]
       ),
       sprintf(
-        "%i-%i cm by %i year",
+        "%i-%i by %i year",
         replist[["agebins"]][1],
         dplyr::last(replist[["agebins"]]),
         replist[["agebins"]][2] - replist[["agebins"]][1]
@@ -85,7 +85,7 @@ table_outputconfig <- function(replist, dir = NULL, verbose = TRUE) {
   # add the table to a list along with caption
   table_outputconfig <- list(
     cap = "Specifications and structure of the model.",
-    table = data
+    table = table
   )
   # write to rda file
   if (verbose) {

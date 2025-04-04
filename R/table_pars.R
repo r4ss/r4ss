@@ -10,8 +10,11 @@
 #' @export
 
 table_pars <- function(replist,
+                       dir = NULL,
                        rows = NULL,
-                       caption = "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.") {
+                       caption = "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
+                       verbose = TRUE
+                       ) {
   # check the inputs
   check_replist(replist)
   # create the rda_dir
@@ -38,7 +41,7 @@ table_pars <- function(replist,
     rows <- seq_along(replist[["parameters"]][["Value"]])
   }
   # make the table
-  table_pars <- replist[["parameters"]] |>
+  table <- replist[["parameters"]] |>
     dplyr::slice(rows) |>
     dplyr::select(Label, Value, Phase, Min, Max, Pr_type, Prior, Parm_StDev, Pr_SD, Status) |>
     dplyr::mutate(
@@ -67,7 +70,7 @@ table_pars <- function(replist,
   # add the table to a list along with caption
   table_pars <- list(
     cap = caption,
-    table = data
+    table = table
   )
   # write the table to an rda file
   if (verbose) {
