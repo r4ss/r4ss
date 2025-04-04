@@ -20,10 +20,6 @@
 #'   This text will be used in the table captions. If fecundity is equal to
 #'   weight-at-length, then the units are hard-wired to `"mt"` regardless of
 #'   what is used within this argument.
-#' @param divide_by_2 A logical allowing the output to be based on single sex
-#'   values based on the new sex specification (-1) in SS3 for single sex
-#'   models. Default value is `FALSE`. `TRUE` will lead to dividing values by
-#'   2.
 #' @param endyr Optional input to choose a different ending year for tables,
 #'   which could be useful for catch-only updates. The default is `NULL`, which
 #'   leads to using the ending year defined in Report.sso.
@@ -41,7 +37,6 @@ table_exec_summary <- function(
     ci_value = 0.95,
     fleetnames = NULL,
     so_units = "biomass (mt)",
-    divide_by_2 = FALSE,
     endyr = NULL,
     verbose = TRUE) {
   check_replist(replist)
@@ -81,6 +76,11 @@ table_exec_summary <- function(
   all <- startyr:max(fore)
   nareas <- replist[["nareas"]]
 
+  SPRratioLabel <- replist[["SPRratioLabel"]]
+  if (is.null(SPRratioLabel)) {
+    SPRratioLabel <- "SPRratio"
+  }
+
   # ======================================================================
   # Determine the fleet name fisheries with catch
   # ======================================================================
@@ -98,29 +98,20 @@ table_exec_summary <- function(
   # ======================================================================
   # Two-sex or single-sex model
   # ======================================================================
-  if (replist[["nsexes"]] == 1 & !(divide_by_2)) {
-    if (verbose) {
-      cli_alert_info(
-        "Single sex model - ",
-        "spawning biomass NOT being divided by a factor of 2."
-      )
-    }
-  }
   nsexes <- replist[["nsexes"]]
-  sexfactor <- 1
-  if (divide_by_2) {
-    sexfactor <- 2
-  }
 
   # ======================================================================
   # Determine the number of growth patterns
   # ======================================================================
-  nmorphs <- replist[["ngpatterns"]]
+  ngpatterns <- replist[["ngpatterns"]]
+  if (is.null(ngpatterns)) {
+    ngpatterns <- 1
+  }
 
   # ======================================================================
   # Spawning Biomass or Spawning Output?
   # ======================================================================
-  if (replist[["SpawnOutputUnits"]] == "numbers") {
+  if (is.null(replist[["SpawnOutputUnits"]]) || replist[["SpawnOutputUnits"]] == "numbers") {
     sb.label <- replist[["SpawnOutputLabel"]]
     sb.text.name <- tolower(sb.label)
     sb_short <- "SO"
@@ -166,7 +157,7 @@ table_exec_summary <- function(
   catches_es$cap <- caption
 
   tables <- list()
-  tables[["catches_es"]] <- catches_es  
+  tables[["catches_es"]] <- catches_es
   save(catches_es, file = file.path(rda_dir, "catches_es.rda"))
 
   # ======================================================================
@@ -180,9 +171,9 @@ table_exec_summary <- function(
 
   ssb <- get_values(replist = replist, label = sb.name, years, ci_value)
   if (nsexes == 1) {
-    ssb[["dq"]] <- ssb[["dq"]] / sexfactor
-    ssb[["low"]] <- ssb[["low"]] / sexfactor
-    ssb[["high"]] <- ssb[["high"]] / sexfactor
+    ssb[["dq"]] <- ssb[["dq"]]
+    ssb[["low"]] <- ssb[["low"]]
+    ssb[["high"]] <- ssb[["high"]]
   }
   fraction_unfished <- get_values(
     replist = replist,
@@ -203,7 +194,7 @@ table_exec_summary <- function(
   ssb_es <- list()
   ssb_es$table <- es.b
   ssb_es$cap <- caption
-  tables[["ssb_es"]] <- ssb_es  
+  tables[["ssb_es"]] <- ssb_es
   save(ssb_es, file = file.path(rda_dir, "ssb_es.rda"))
 
   # ======================================================================
@@ -277,7 +268,7 @@ table_exec_summary <- function(
       "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
       " percent intervals."
     )
-  tables[["recr_es"]] <- recr_es  
+  tables[["recr_es"]] <- recr_es
   save(recr_es, file = file.path(rda_dir, "recr_es.rda"))
 
   # ======================================================================
@@ -287,19 +278,18 @@ table_exec_summary <- function(
     cli::cli_alert_info("Creating table of recent exploitation.")
   }
 
-  spr_type <- replist[["SPRratioLabel"]]
   f_type <- ifelse(replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
     "Fill in F method"
   )
 
-  if (stringr::str_detect(replist[["SPRratioLabel"]], "%")) {
+  if (stringr::str_detect(SPRratioLabel, "%")) {
     spr_label <- paste0(
-      substring(replist[["SPRratioLabel"]], 1, 14), " ",
-      substring(replist[["SPRratioLabel"]], 16, 17),
+      substring(SPRratioLabel, 1, 14), " ",
+      substring(SPRratioLabel, 16, 17),
       "%)"
     )
   } else {
-    spr_label <- replist[["SPRratioLabel"]]
+    spr_label <- SPRratioLabel
   }
 
   adj.spr <- get_values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
@@ -319,7 +309,7 @@ table_exec_summary <- function(
     "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
     " percent intervals."
   )
-  tables[["spr_es"]] <- spr_es  
+  tables[["spr_es"]] <- spr_es
   save(spr_es, file = file.path(rda_dir, "spr_es.rda"))
 
   # ======================================================================
@@ -375,10 +365,10 @@ table_exec_summary <- function(
 
   # Convert spawning ci_values for single-sex models
   if (nsexes == 1) {
-    ssb.virgin <- ssb.virgin / sexfactor
-    b.target <- b.target / sexfactor
-    b.spr <- b.spr / sexfactor
-    b.msy <- b.msy / sexfactor
+    ssb.virgin <- ssb.virgin
+    b.target <- b.target
+    b.spr <- b.spr
+    b.msy <- b.msy
   }
 
   suppressMessages(
@@ -412,7 +402,7 @@ table_exec_summary <- function(
     "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
     " percent intervals."
   )
-  tables[["reference_points"]] <- reference_points  
+  tables[["reference_points"]] <- reference_points
   save(reference_points, file = file.path(rda_dir, "reference_points.rda"))
 
   # ======================================================================
@@ -452,7 +442,7 @@ table_exec_summary <- function(
   recent_management <- list()
   recent_management$cap <- caption
   recent_management$table <- es.f
-  tables[["recent_management"]] <- recent_management  
+  tables[["recent_management"]] <- recent_management
   save(recent_management, file = file.path(rda_dir, "recent_management.rda"))
 
   # ======================================================================
@@ -482,7 +472,7 @@ table_exec_summary <- function(
     abc.fore[replace] <- buffer[replace] * ofl.fore[replace]
   }
   if (nsexes == 1) {
-    ssb.fore <- ssb.fore / sexfactor
+    ssb.fore <- ssb.fore
   }
   smry.fore <- 0
   for (a in 1:nareas) {
@@ -503,7 +493,7 @@ table_exec_summary <- function(
   projections$table <- es.g
   projections$cap <- paste0("Potential OFLs (mt), ABCs (mt), ACLs (mt), the buffer between the OFL and ABC, estimated ", sb.text.name, ", and fraction unfished with
                             adopted OFLs and ACLs and assumed catch for the first two years of the projection period.")
-  tables[["projections"]] <- projections  
+  tables[["projections"]] <- projections
   save(projections, file = file.path(rda_dir, "projections.rda"))
 
   # ======================================================================
@@ -540,7 +530,7 @@ table_exec_summary <- function(
   mortality <- list()
   mortality$cap <- caption
   mortality$table <- mortality.df
-  tables[["mortality"]] <- mortality  
+  tables[["mortality"]] <- mortality
   save(mortality, file = file.path(rda_dir, "mortality_all_years.rda"))
 
   # ======================================================================
@@ -565,8 +555,8 @@ table_exec_summary <- function(
   }
 
   if (nsexes == 1) {
-    ssb.all <- ssb.all / sexfactor
-    ssb.virgin <- ssb.virgin / sexfactor
+    ssb.all <- ssb.all
+    ssb.virgin <- ssb.virgin
   }
   fraction_unfished.all <- ssb.all / ssb.virgin
 
@@ -579,7 +569,6 @@ table_exec_summary <- function(
     }
   }
   expl.all <- total.dead.all / smry.all
-  spr_type <- replist[["SPRratioLabel"]]
 
   if (verbose) {
     cli::cli_alert_info(paste(
@@ -627,13 +616,13 @@ table_exec_summary <- function(
   colnames(ts.table) <- c(
     "Year", "Total Biomass (mt)", sb.label,
     paste0("Total Biomass ", smry.age, "+ (mt)"), "Fraction Unfished",
-    "Age-0 Recruits (1,000s)", "Total Mortality (mt)", spr_type,
+    "Age-0 Recruits (1,000s)", "Total Mortality (mt)", SPRratioLabel,
     "Exploitation Rate"
   )
   time_series <- list()
   time_series$cap <- "Time series of population estimates from the base model."
   time_series$table <- ts.table
-  tables[["time_series"]] <- time_series  
+  tables[["time_series"]] <- time_series
   save(time_series, file = file.path(rda_dir, "time_series.rda"))
 
   # ======================================================================
@@ -655,7 +644,7 @@ table_exec_summary <- function(
     if (nsexes == 1) {
       natage <- 0
       for (a in 1:nareas) {
-        for (b in 1:nmorphs) {
+        for (b in 1:ngpatterns) {
           ind <- replist[["natage"]][, "Yr"] >= startyr &
             replist[["natage"]][, "Area"] == a &
             replist[["natage"]][, "Bio_Pattern"] == b &
@@ -677,7 +666,7 @@ table_exec_summary <- function(
     if (nsexes == 2) {
       natage.f <- natage.m <- 0
       for (a in 1:nareas) {
-        for (b in 1:nmorphs) {
+        for (b in 1:ngpatterns) {
           ind <- replist[["natage"]][, "Yr"] >= startyr & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b & replist[["natage"]][, "Sex"] == 1 & replist[["natage"]][, "Beg/Mid"] == "B"
           temp <- replist[["natage"]][ind, get.ages]
           natage.f <- natage.f + temp
@@ -728,7 +717,7 @@ table_exec_summary <- function(
     if (nsexes == 1) {
       batage <- 0
       for (a in 1:nareas) {
-        for (b in 1:nmorphs) {
+        for (b in 1:ngpatterns) {
           ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
           temp <- replist[["batage"]][ind, get.ages]
           batage <- batage + temp
@@ -747,7 +736,7 @@ table_exec_summary <- function(
     if (nsexes == 2) {
       batage.f <- batage.m <- 0
       for (a in 1:nareas) {
-        for (b in 1:nmorphs) {
+        for (b in 1:ngpatterns) {
           ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
           temp <- replist[["batage"]][ind, get.ages]
           batage.f <- batage.f + temp

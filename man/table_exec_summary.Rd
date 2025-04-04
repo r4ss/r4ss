@@ -10,7 +10,6 @@ table_exec_summary(
   ci_value = 0.95,
   fleetnames = NULL,
   so_units = "biomass (mt)",
-  divide_by_2 = FALSE,
   endyr = NULL,
   verbose = TRUE
 )
@@ -34,11 +33,6 @@ This text will be used in the table captions. If fecundity is equal to
 weight-at-length, then the units are hard-wired to \code{"mt"} regardless of
 what is used within this argument.}
 
-\item{divide_by_2}{A logical allowing the output to be based on single sex
-values based on the new sex specification (-1) in SS3 for single sex
-models. Default value is \code{FALSE}. \code{TRUE} will lead to dividing values by
-2.}
-
 \item{endyr}{Optional input to choose a different ending year for tables,
 which could be useful for catch-only updates. The default is \code{NULL}, which
 leads to using the ending year defined in Report.sso.}
@@ -59,6 +53,7 @@ associated with the adoption of the {asar} template.
 }
 \seealso{
 Other table functions: 
+\code{\link{table_all}()},
 \code{\link{table_biology}()},
 \code{\link{table_compweight}()},
 \code{\link{table_config}()},
