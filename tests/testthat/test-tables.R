@@ -24,13 +24,6 @@ test_that("table_exec_summary() runs on simple_small model", {
   expect_true("time_series.rda" %in% dir(file.path(temp_path, "tables")))
 })
 
-# run SSexecutivesummary (older version of table_exec_summary)
-SSexecutivesummary(simple_small, plotfolder = temp_path)
-
-test_that("SSexecutivesummary() runs on simple_small model", {
-  expect_true("table_labels.csv" %in% dir(file.path(temp_path, "tables")))
-})
-
 # run table_pars
 table_pars_output <- table_pars(simple_small, dir = temp_path)
 
@@ -85,16 +78,38 @@ test_that("table_compweight() runs on simple_small model", {
 })
 
 
-# run table_outputconfig
-table_outputconfig_output <- table_outputconfig(simple_small, dir = temp_path)
+# run table_config
+table_config_output <- table_config(simple_small, dir = temp_path)
 
-test_that("table_outputconfig() runs on simple_small model", {
-  expect_true("table_outputconfig.rda" %in% dir(file.path(temp_path, "tables")))
-  expect_true(is.data.frame(table_outputconfig_output$table))
+test_that("table_config() runs on simple_small model", {
+  expect_true("table_config.rda" %in% dir(file.path(temp_path, "tables")))
+  expect_true(is.data.frame(table_config_output$table))
   expect_true(
-    table_outputconfig_output$table |>
+    table_config_output$table |>
       dplyr::filter(Section == "Data age bins") |>
       dplyr::pull(Configuration) ==
       "1-15 by 1 year"
+  )
+})
+
+# run table_biology
+table_biology_output <- table_biology(simple_small, dir = temp_path)
+
+test_that("table_biology() runs on simple_small model", {
+  expect_true("table_biology_at_age.rda" %in% dir(file.path(temp_path, "tables")))
+  expect_true(all(
+    names(table_biology_output$table) %in%
+      c(
+        "table_biology_at_age",
+        "table_selectivity_at_age",
+        "table_selectivity_at_length",
+        "table_retention_at_length"
+      )
+  ))
+  expect_equal(
+    table_biology_output$table_biology_at_age$table |>
+      dplyr::filter(Age == 20) |>
+      dplyr::pull(Ave_Wght_f),
+    3.97
   )
 })

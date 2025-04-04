@@ -12,18 +12,18 @@
 #' # Load the model output
 #' output <- r4ss::SS_output()
 #' # Create the table
-#' table_outputconfig(output)
+#' table_config(output)
 #'
 #' # compare configuration for multiple models
-#' outputconfig1 <- table_outputconfig(output1)
-#' outputconfig2 <- table_outputconfig(output2)
+#' config1 <- table_config(output1)
+#' config2 <- table_config(output2)
 #' table_compare <- data.frame(
-#'   new_model = outputconfig1$table,
-#'   old_model = outputconfig2$table$Configuration
+#'   new_model = config1$table,
+#'   old_model = config2$table$Configuration
 #' )
 #' names(table_compare) <- c("Section", "New model", "Old model")
 #' }
-table_outputconfig <- function(replist, dir = NULL, verbose = TRUE) {
+table_config <- function(replist, dir = NULL, verbose = TRUE) {
   # check the input
   check_replist(replist)
   # create the rda_dir
@@ -83,15 +83,15 @@ table_outputconfig <- function(replist, dir = NULL, verbose = TRUE) {
   )
 
   # add the table to a list along with caption
-  table_outputconfig <- list(
+  table_config <- list(
     cap = "Specifications and structure of the model.",
     table = table
   )
   # write to rda file
   if (verbose) {
-    cli::cli_alert_info("writing table to {file.path(rda_dir, 'table_outputconfig.rda')}")
+    cli::cli_alert_info("writing table to {file.path(rda_dir, 'table_config.rda')}")
   }
-  save(table_outputconfig, file = file.path(rda_dir, "table_outputconfig.rda"))
+  save(table_config, file = file.path(rda_dir, "table_config.rda"))
 
-  return(invisible(table_outputconfig))
+  return(invisible(table_config))
 }

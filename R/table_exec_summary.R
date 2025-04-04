@@ -56,6 +56,10 @@ table_exec_summary <- function(
   )
   dir.create(rda_dir, showWarnings = FALSE)
   check_dir(dir = rda_dir, verbose = verbose)
+  # write the table to an rda file
+  if (verbose) {
+    cli::cli_alert_info("writing tables to {rda_dir}")
+  }
 
   # ============================================================================
   # Determine the model version and dimensions of the model
@@ -96,7 +100,7 @@ table_exec_summary <- function(
   # ======================================================================
   if (replist[["nsexes"]] == 1 & !(divide_by_2)) {
     if (verbose) {
-      message(
+      cli_alert_info(
         "Single sex model - ",
         "spawning biomass NOT being divided by a factor of 2."
       )
@@ -130,7 +134,7 @@ table_exec_summary <- function(
   # ES Table a  Catches from the fisheries
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating table of catches by fleet for the last 10 years.")
+    cli::cli_alert_info("Creating table of catches by fleet for the last 10 years.")
   }
 
   catch <- fleet.names <- NULL
@@ -160,13 +164,16 @@ table_exec_summary <- function(
   catches_es <- list()
   catches_es$table <- es.a
   catches_es$cap <- caption
+
+  tables <- list()
+  tables[["catches_es"]] <- catches_es  
   save(catches_es, file = file.path(rda_dir, "catches_es.rda"))
 
   # ======================================================================
   # ES Table b Spawning Biomass and Fraction Unfished
   # ======================================================================
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Creating table of last 10 years of spawning biomass/output and fraction unfished."
     )
   }
@@ -196,13 +203,14 @@ table_exec_summary <- function(
   ssb_es <- list()
   ssb_es$table <- es.b
   ssb_es$cap <- caption
+  tables[["ssb_es"]] <- ssb_es  
   save(ssb_es, file = file.path(rda_dir, "ssb_es.rda"))
 
   # ======================================================================
   # ES Table c Recruitment
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating table of recent recruitment and deviations.")
+    cli::cli_alert_info("Creating table of recent recruitment and deviations.")
   }
   # figure out which years for Main, Late, and Forecast recruitmets overlap
   # the years we want
@@ -269,13 +277,14 @@ table_exec_summary <- function(
       "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
       " percent intervals."
     )
+  tables[["recr_es"]] <- recr_es  
   save(recr_es, file = file.path(rda_dir, "recr_es.rda"))
 
   # ======================================================================
   # ES Table d 1-SPR (%)
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating table of recent exploitation.")
+    cli::cli_alert_info("Creating table of recent exploitation.")
   }
 
   spr_type <- replist[["SPRratioLabel"]]
@@ -310,13 +319,14 @@ table_exec_summary <- function(
     "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
     " percent intervals."
   )
+  tables[["spr_es"]] <- spr_es  
   save(spr_es, file = file.path(rda_dir, "spr_es.rda"))
 
   # ======================================================================
   # ES Table e Reference Point Table
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating table of reference points.")
+    cli::cli_alert_info("Creating table of reference points.")
   }
 
   spr <- 100 * replist[["sprtarg"]]
@@ -402,13 +412,14 @@ table_exec_summary <- function(
     "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
     " percent intervals."
   )
+  tables[["reference_points"]] <- reference_points  
   save(reference_points, file = file.path(rda_dir, "reference_points.rda"))
 
   # ======================================================================
   # ES Table f is the historical harvest
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating table of recent management performance.")
+    cli::cli_alert_info("Creating table of recent management performance.")
   }
 
   ofl <- rep(NA, length(years) - 1)
@@ -441,13 +452,14 @@ table_exec_summary <- function(
   recent_management <- list()
   recent_management$cap <- caption
   recent_management$table <- es.f
+  tables[["recent_management"]] <- recent_management  
   save(recent_management, file = file.path(rda_dir, "recent_management.rda"))
 
   # ======================================================================
   # ES Table g  Predicted forecast values
   # ======================================================================
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Creating table of projected OFLs, ABCs, spawning biomass/output, and fraction unfished."
     )
   }
@@ -491,6 +503,7 @@ table_exec_summary <- function(
   projections$table <- es.g
   projections$cap <- paste0("Potential OFLs (mt), ABCs (mt), ACLs (mt), the buffer between the OFL and ABC, estimated ", sb.text.name, ", and fraction unfished with
                             adopted OFLs and ACLs and assumed catch for the first two years of the projection period.")
+  tables[["projections"]] <- projections  
   save(projections, file = file.path(rda_dir, "projections.rda"))
 
   # ======================================================================
@@ -527,13 +540,14 @@ table_exec_summary <- function(
   mortality <- list()
   mortality$cap <- caption
   mortality$table <- mortality.df
+  tables[["mortality"]] <- mortality  
   save(mortality, file = file.path(rda_dir, "mortality_all_years.rda"))
 
   # ======================================================================
   # Time-series Tables
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating time series table.")
+    cli::cli_alert_info("Creating time series table.")
   }
 
   ssb.virgin <- sum(replist[["timeseries"]][replist[["timeseries"]][["Era"]] == "VIRG", "SpawnBio"])
@@ -568,9 +582,11 @@ table_exec_summary <- function(
   spr_type <- replist[["SPRratioLabel"]]
 
   if (verbose) {
-    cli::cli_inform("Catch includes estimated discards for total dead.
-      Exploitation = Total dead (including discards) divided by the
-      summary biomass.")
+    cli::cli_alert_info(paste(
+      "Catch includes estimated discards for total dead.",
+      "Exploitation = Total dead (including discards) divided by the",
+      "summary biomass."
+    ), wrap = TRUE)
   }
 
   # SPRratio may not be reported for all years
@@ -617,18 +633,19 @@ table_exec_summary <- function(
   time_series <- list()
   time_series$cap <- "Time series of population estimates from the base model."
   time_series$table <- ts.table
+  tables[["time_series"]] <- time_series  
   save(time_series, file = file.path(rda_dir, "time_series.rda"))
 
   # ======================================================================
   # Numbers at age
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating numbers-at-age table.")
+    cli::cli_alert_info("Creating numbers-at-age table.")
   }
   check <- dim(replist[["natage"]])[2]
   if (is.null(check)) {
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Detailed age-structure is not in the report file, double check settings in the starter file."
       )
     }
@@ -639,7 +656,11 @@ table_exec_summary <- function(
       natage <- 0
       for (a in 1:nareas) {
         for (b in 1:nmorphs) {
-          ind <- replist[["natage"]][, "Yr"] >= startyr & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b & replist[["natage"]][, "Sex"] == 1 & replist[["natage"]][, "Beg/Mid"] == "B"
+          ind <- replist[["natage"]][, "Yr"] >= startyr &
+            replist[["natage"]][, "Area"] == a &
+            replist[["natage"]][, "Bio_Pattern"] == b &
+            replist[["natage"]][, "Sex"] == 1 &
+            replist[["natage"]][, "Beg/Mid"] == "B"
           temp <- replist[["natage"]][ind, get.ages]
           natage <- natage + temp
         }
@@ -649,6 +670,7 @@ table_exec_summary <- function(
       numbers_at_age <- list()
       numbers_at_age$cap <- "Numbers at age for the base model."
       numbers_at_age$table <- natage
+      tables[["numbers_at_age"]] <- numbers_at_age
       save(numbers_at_age, file = file.path(rda_dir, "numbers_at_age.rda"))
     }
 
@@ -672,6 +694,7 @@ table_exec_summary <- function(
       numbers_at_age_male <- list()
       numbers_at_age_male$cap <- "Numbers at age for males from the base model."
       numbers_at_age_male$table <- natage.m
+      tables[["numbers_at_age_male"]] <- numbers_at_age_male
       save(numbers_at_age_male, file = file.path(rda_dir, "numbers_at_age_male.rda"))
 
       colnames(natage.f) <- paste0("Age", 0:(length(get.ages) - 1))
@@ -679,6 +702,7 @@ table_exec_summary <- function(
       numbers_at_age_female <- list()
       numbers_at_age_female$cap <- "Numbers at age for females from the base model."
       numbers_at_age_female$table <- natage.f
+      tables[["numbers_at_age_female"]] <- numbers_at_age_female
       save(numbers_at_age_female, file = file.path(rda_dir, "numbers_at_age_female.rda"))
     }
   } # end check for detailed output
@@ -687,13 +711,13 @@ table_exec_summary <- function(
   # Biomass at age
   # ======================================================================
   if (verbose) {
-    cli::cli_inform("Creating biomass-at-age table.")
+    cli::cli_alert_info("Creating biomass-at-age table.")
   }
 
   check <- dim(replist[["batage"]])[2]
   if (is.null(check)) {
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Detailed age-structure is not in the report file, double check settings in the starter file."
       )
     }
@@ -716,6 +740,7 @@ table_exec_summary <- function(
       biomass_at_age <- list()
       biomass_at_age$cap <- "Biomass at age from the base model."
       biomass_at_age$table <- batage
+      tables[["biomass_at_age"]] <- biomass_at_age
       save(biomass_at_age, file = file.path(rda_dir, "biomass_at_age.rda"))
     }
 
@@ -738,6 +763,7 @@ table_exec_summary <- function(
       biomass_at_age_male <- list()
       biomass_at_age_male$cap <- "Biomass at age for male from the base model."
       biomass_at_age_male$table <- batage.m
+      tables[["biomass_at_age_male"]] <- biomass_at_age_male
       save(biomass_at_age_male, file = file.path(rda_dir, "biomass_at_age_male.rda"))
 
       colnames(batage.f) <- paste0("Age", 0:(length(get.ages) - 1))
@@ -745,7 +771,10 @@ table_exec_summary <- function(
       biomass_at_age_female <- list()
       biomass_at_age_female$cap <- "Biomass at age for female from the base model."
       biomass_at_age_female$table <- batage.m
+      tables[["biomass_at_age_female"]] <- biomass_at_age_female
       save(biomass_at_age_female, file = file.path(rda_dir, "biomass_at_age_female.rda"))
     }
   } # end check for detailed output
+
+  return(invisible(tables))
 }

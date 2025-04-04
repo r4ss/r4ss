@@ -40,9 +40,10 @@ table_parcounts$table |> dplyr::filter(Count > 0)
 }
 \seealso{
 Other table functions: 
+\code{\link{table_biology}()},
 \code{\link{table_compweight}()},
+\code{\link{table_config}()},
 \code{\link{table_exec_summary}()},
-\code{\link{table_outputconfig}()},
 \code{\link{table_pars}()},
 \code{\link{table_ts}()}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSexecutivesummary.r
 \name{SSexecutivesummary}
 \alias{SSexecutivesummary}
-\title{Create executive summary tables from an SS3 Report.sso file}
+\title{Deprecated function to create executive summary tables from an SS3 Report.sso file}
 \usage{
 SSexecutivesummary(
   replist,
@@ -98,7 +98,8 @@ Individual .csv files for each executive summary table and additional tables
 (catch, timeseries, numbers-at-age).
 }
 \description{
-Take the output from \code{SS_output()} and create executive summary .csv files
+Note: this function has been replaced by \code{\link[=table_exec_summary]{table_exec_summary()}}
+Take the output from \code{\link[=SS_output]{SS_output()}} and create executive summary .csv files
 as required by the current Terms of Reference for U.S. West Coast
 groundfish assessments. Additionally, .csv files of historical catches,
 time-series, and numbers-at-age are created.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSbiologytables.R
 \name{SSbiologytables}
 \alias{SSbiologytables}
-\title{A function to create a table of biology for assessment reporting:
+\title{Deprecated function to create a table of biology for assessment reporting:
 length, weight, \% mature, fecundity, and selectivity}
 \usage{
 SSbiologytables(
@@ -35,7 +35,7 @@ model yr strings to use for each fleet name. Default="default".}
 A csv files containing biology and selectivity tables
 }
 \description{
-Takes the object created by SS_output to create table for reporting
+Replaced by \code{\link[=table_biology]{table_biology()}}. Takes the object created by SS_output to create table for reporting
 for West Coast groundfish.  Works with Stock Synthesis versions 3.30.12
 and later.
 }

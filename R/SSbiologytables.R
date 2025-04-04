@@ -1,7 +1,7 @@
-#' A function to create a table of biology for assessment reporting:
+#' Deprecated function to create a table of biology for assessment reporting:
 #' length, weight, % mature, fecundity, and selectivity
 #'
-#' Takes the object created by SS_output to create table for reporting
+#' Replaced by [table_biology()]. Takes the object created by SS_output to create table for reporting
 #' for West Coast groundfish.  Works with Stock Synthesis versions 3.30.12
 #' and later.
 #'
@@ -22,6 +22,12 @@
 #' @export
 #'
 SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "default", fleetnames = "default", selexyr = "default") {
+  lifecycle::deprecate_warn(
+    when = "1.52.0",
+    what = "SSbiologytables()",
+    with = "table_biology()"
+  )
+
   print.numeric <- function(x, digits) {
     formatC(x, digits = digits, format = "f")
   }

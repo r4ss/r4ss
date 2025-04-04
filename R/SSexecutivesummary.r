@@ -1,6 +1,7 @@
-#' Create executive summary tables from an SS3 Report.sso file
+#' Deprecated function to create executive summary tables from an SS3 Report.sso file
 #'
-#' Take the output from `SS_output()` and create executive summary .csv files
+#' Note: this function has been replaced by [table_exec_summary()]
+#' Take the output from [SS_output()] and create executive summary .csv files
 #' as required by the current Terms of Reference for U.S. West Coast
 #' groundfish assessments. Additionally, .csv files of historical catches,
 #' time-series, and numbers-at-age are created.
@@ -83,6 +84,12 @@ SSexecutivesummary <- function(replist,
                                format = lifecycle::deprecated(),
                                match_digits = lifecycle::deprecated(),
                                verbose = TRUE) {
+  lifecycle::deprecate_warn(
+    when = "1.52.0",
+    what = "SSexecutivesummary()",
+    with = "table_exec_summary()"
+  )
+
   if (!missing(tables)) {
     lifecycle::deprecate_warn(
       when = "1.49.1",

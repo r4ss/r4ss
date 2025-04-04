@@ -36,6 +36,9 @@ table_compweight <- function(replist,
     ),
     "tables"
   )
+  dir.create(rda_dir, showWarnings = FALSE)
+  check_dir(dir = rda_dir, verbose = verbose)
+
   # figure out which fleets have conditional age at length data
   CAAL_fleets <- replist[["condbase"]][["Fleet"]] |> unique()
   Age_fleets <- replist[["agedbase"]][["Fleet"]] |> unique()

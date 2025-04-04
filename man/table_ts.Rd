@@ -34,9 +34,10 @@ table_ts(model)
 }
 \seealso{
 Other table functions: 
+\code{\link{table_biology}()},
 \code{\link{table_compweight}()},
+\code{\link{table_config}()},
 \code{\link{table_exec_summary}()},
-\code{\link{table_outputconfig}()},
 \code{\link{table_parcounts}()},
 \code{\link{table_pars}()}
 }
