@@ -22,6 +22,13 @@ get_values <- function(replist, label, yrs, ci_value, single = FALSE) {
 
   if (!single) {
     value <- dat[grep(label, dat[["Label"]]), ]
+    yrs_in_table <- suppressWarnings(as.numeric(gsub(".*_", "", value[["Label"]])))
+    yrs_in_table <- yrs_in_table[yrs_in_table %in% yrs]
+    if (!all(yrs %in% yrs_in_table)) {
+      yrs <- yrs_in_table
+      cli::cli_alert_warning("Years in the Report file do not match the years requested. Setting yrs to have range {range(yrs)}")
+    }
+
     value <- value[value[["Label"]] >= paste0(label, "_", yrs[1]) &
       value[["Label"]] <= paste0(label, "_", max(yrs)), ]
     dq <- value[["Value"]]

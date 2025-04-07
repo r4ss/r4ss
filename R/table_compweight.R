@@ -47,12 +47,28 @@ table_compweight <- function(replist,
     caption <- paste(caption, caption_CAAL)
   }
   # make table
+  Age_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]]
+  if (!is.null(Age_Comp_Fit_Summary)) {
+    CAAL_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]] |> dplyr::filter(Fleet %in% CAAL_fleets)
+    Age_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]] |> dplyr::filter(Fleet %in% Age_fleets)
+  } else {
+    CAAL_Comp_Fit_Summary <- NULL
+    Age_Comp_Fit_Summary <- NULL
+  }
+
   table <- dplyr::bind_rows(
     .id = "Type",
     Length = replist[["Length_Comp_Fit_Summary"]],
-    Age = replist[["Age_Comp_Fit_Summary"]] |> dplyr::filter(Fleet %in% Age_fleets),
-    CAAL = replist[["Age_Comp_Fit_Summary"]] |> dplyr::filter(Fleet %in% CAAL_fleets)
-  ) |>
+    Age = Age_Comp_Fit_Summary,
+    CAAL = CAAL_Comp_Fit_Summary
+  )
+  if (nrow(table) == 0) {
+    if (verbose) {
+      cli::cli_alert_warning("No composition data found in the model output.")
+    }
+    return(invisible(NULL))
+  }
+  table |>
     # dplyr::mutate(Fleet = get_fleet(col = "label_long")[match(Fleet_name, get_fleet(col = "fleet"))]) |>
     dplyr::mutate(Fleet = replist[["FleetNames"]][Fleet]) |>
     dplyr::mutate("Sum N adj." = mean_Nsamp_adj * Npos) |>

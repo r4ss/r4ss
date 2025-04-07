@@ -76,4 +76,14 @@ test_that("test-models work with SS_output() and SS_plots()", {
   expect_true(all(unlist(purrr::map(plots, function(x) {
     "data_plot2.png" %in% x$file
   }))))
+
+  tables <- furrr::future_map(.x = out, .f = function(x) {
+    message("Running table_all()")
+    table_all(x, verbose = FALSE)
+  })
+
+  expect_true(all(unlist(purrr::map(tables, function(x) {
+    "table_pars" %in% names(x)
+  }))))
+
 })

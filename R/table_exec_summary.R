@@ -71,9 +71,26 @@ table_exec_summary <- function(
     foreyr <- foreyr - (endyr - replist[["endyr"]])
   }
   years <- (endyr - 9):(endyr + 1)
-  fore <- (endyr + 1):(endyr + foreyr)
+  if (
+    is.na(foreyr) ||
+      endyr + 1 > max(replist[["timeseries"]][["Yr"]]) ||
+      !paste0("SSB_", endyr + 1) %in% replist[["derived_quants"]][["Label"]]
+  ) {
+    # if the forecast years are not in the timeseries don't use endyr + 1
+    cli::cli_alert_warning(
+      "Forecast years not in timeseries so endyr + 1 will not be in the tables."
+    )
+    foreyr <- 0
+    years <- (endyr - 9):endyr
+  }
+  if (foreyr >= 1) {
+    fore <- (endyr + 1):(endyr + foreyr)
+    years_all <- startyr:max(fore)
+  } else {
+    fore <- NULL
+    years_all <- startyr:endyr
+  }
   years_minus_final <- years[1:(length(years) - 1)]
-  all <- startyr:max(fore)
   nareas <- replist[["nareas"]]
 
   SPRratioLabel <- replist[["SPRratioLabel"]]
@@ -170,11 +187,6 @@ table_exec_summary <- function(
   }
 
   ssb <- get_values(replist = replist, label = sb.name, years, ci_value)
-  if (nsexes == 1) {
-    ssb[["dq"]] <- ssb[["dq"]]
-    ssb[["low"]] <- ssb[["low"]]
-    ssb[["high"]] <- ssb[["high"]]
-  }
   fraction_unfished <- get_values(
     replist = replist,
     label = "Bratio",
@@ -448,53 +460,57 @@ table_exec_summary <- function(
   # ======================================================================
   # ES Table g  Predicted forecast values
   # ======================================================================
-  if (verbose) {
-    cli::cli_alert_info(
-      "Creating table of projected OFLs, ABCs, spawning biomass/output, and fraction unfished."
-    )
-  }
+  if (verbose & is.null(fore)) {
+    cli::cli_alert_info("Skipping table of forecast values: no forecast available.")
+  } else {
+    if (verbose) {
+      cli::cli_alert_info(
+        "Creating table of projected OFLs, ABCs, spawning biomass/output, and fraction unfished."
+      )
+    }
 
-  ofl.fore <- get_values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)[["dq"]]
-  abc.fore <- get_values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)[["dq"]]
-  acl.fore <- abc.fore
-  buffer <- round(abc.fore / ofl.fore, 3)
-  assumed_catch <- c(abc.fore[1:2], rep(NA, length(fore) - 2))
-  if (length(ofl.fore) >= 2) {
-    ofl.fore[1:2] <- c(NA, NA)
-    abc.fore[1:2] <- c(NA, NA)
-    acl.fore[1:2] <- c(NA, NA)
-    buffer[1:2] <- c(NA, NA)
+    ofl.fore <- get_values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)[["dq"]]
+    abc.fore <- get_values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)[["dq"]]
+    acl.fore <- abc.fore
+    buffer <- round(abc.fore / ofl.fore, 3)
+    assumed_catch <- c(abc.fore[1:2], rep(NA, length(fore) - 2))
+    if (length(ofl.fore) >= 2) {
+      ofl.fore[1:2] <- c(NA, NA)
+      abc.fore[1:2] <- c(NA, NA)
+      acl.fore[1:2] <- c(NA, NA)
+      buffer[1:2] <- c(NA, NA)
+    }
+    ssb.fore <- get_values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
+    fraction_unfished.fore <- get_values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
+    if (any(fraction_unfished.fore < replist$btarg)) {
+      replace <- which(fraction_unfished.fore < replist$btarg)
+      abc.fore[replace] <- buffer[replace] * ofl.fore[replace]
+    }
+    if (nsexes == 1) {
+      ssb.fore <- ssb.fore
+    }
+    smry.fore <- 0
+    for (a in 1:nareas) {
+      ind <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% fore
+      temp <- replist[["timeseries"]][["Bio_smry"]][ind]
+      smry.fore <- smry.fore + temp
+    }
+    adopted_ofl <- adopted_acl <- rep(NA, length(fore))
+    es.g <- data.frame(
+      fore, adopted_ofl, adopted_acl, assumed_catch, ofl.fore, buffer,
+      abc.fore, acl.fore, ssb.fore, fraction_unfished.fore
+    )
+    colnames(es.g) <- c(
+      "Year", "Adopted OFL (mt)", "Adopted ACL (mt)", "Assumed Catch (mt)",
+      "OFL (mt)", "Buffer", "ABC (mt)", "ACL (mt)", sb.label, "Fraction Unfished"
+    )
+    projections <- list()
+    projections$table <- es.g
+    projections$cap <- paste0("Potential OFLs (mt), ABCs (mt), ACLs (mt), the buffer between the OFL and ABC, estimated ", sb.text.name, ", and fraction unfished with
+                              adopted OFLs and ACLs and assumed catch for the first two years of the projection period.")
+    tables[["projections"]] <- projections
+    save(projections, file = file.path(rda_dir, "projections.rda"))
   }
-  ssb.fore <- get_values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
-  fraction_unfished.fore <- get_values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
-  if (any(fraction_unfished.fore < replist$btarg)) {
-    replace <- which(fraction_unfished.fore < replist$btarg)
-    abc.fore[replace] <- buffer[replace] * ofl.fore[replace]
-  }
-  if (nsexes == 1) {
-    ssb.fore <- ssb.fore
-  }
-  smry.fore <- 0
-  for (a in 1:nareas) {
-    ind <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% fore
-    temp <- replist[["timeseries"]][["Bio_smry"]][ind]
-    smry.fore <- smry.fore + temp
-  }
-  adopted_ofl <- adopted_acl <- rep(NA, length(fore))
-  es.g <- data.frame(
-    fore, adopted_ofl, adopted_acl, assumed_catch, ofl.fore, buffer,
-    abc.fore, acl.fore, ssb.fore, fraction_unfished.fore
-  )
-  colnames(es.g) <- c(
-    "Year", "Adopted OFL (mt)", "Adopted ACL (mt)", "Assumed Catch (mt)",
-    "OFL (mt)", "Buffer", "ABC (mt)", "ACL (mt)", sb.label, "Fraction Unfished"
-  )
-  projections <- list()
-  projections$table <- es.g
-  projections$cap <- paste0("Potential OFLs (mt), ABCs (mt), ACLs (mt), the buffer between the OFL and ABC, estimated ", sb.text.name, ", and fraction unfished with
-                            adopted OFLs and ACLs and assumed catch for the first two years of the projection period.")
-  tables[["projections"]] <- projections
-  save(projections, file = file.path(rda_dir, "projections.rda"))
 
   # ======================================================================
   # Total catch when discards are estimated
@@ -543,7 +559,7 @@ table_exec_summary <- function(
   ssb.virgin <- sum(replist[["timeseries"]][replist[["timeseries"]][["Era"]] == "VIRG", "SpawnBio"])
   smry.all <- tot.bio.all <- recruits.all <- ssb.all <- total.dead.all <- 0
   for (a in 1:nareas) {
-    find <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% all
+    find <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% years_all
     smry <- replist[["timeseries"]][["Bio_smry"]][find]
     tot.bio <- replist[["timeseries"]][["Bio_all"]][find]
     recruits <- replist[["timeseries"]][["Recruit_0"]][find]
@@ -563,7 +579,7 @@ table_exec_summary <- function(
   total.dead.all <- 0
   for (i in 1:nfleets) {
     name <- paste0("dead(B):_", i)
-    dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% all, name]
+    dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_all, name]
     if (!is.null(dead)) {
       total.dead.all <- total.dead.all + dead
     }
@@ -593,17 +609,21 @@ table_exec_summary <- function(
   adj.spr.labels <- grep("SPRratio_", replist[["derived_quants"]][["Label"]], value = TRUE)
   # get year values associated with those labels
   adj.spr.yrs <- as.numeric(substring(adj.spr.labels, first = nchar("SPRratio_") + 1))
+  # filter to match range of years
+  adj.spr.labels <- adj.spr.labels[adj.spr.yrs %in% years_all]
+  adj.spr.yrs <- adj.spr.yrs[adj.spr.yrs %in% years_all]
   # vector of placeholder NA values for all years
-  adj.spr.all <- rep(NA, length(all))
+  adj.spr.all <- rep(NA, length(years_all))
   # replace NA with 0 values for early years which may have had no catch
   if (ind != 0) {
     adj.spr.all[1:ind] <- 0
   }
+
   # replace placeholders for years with reported SPRratio values
-  adj.spr.all[all %in% adj.spr.yrs] <- replist[["derived_quants"]][adj.spr.labels, "Value"]
+  adj.spr.all[years_all %in% adj.spr.yrs] <- replist[["derived_quants"]][adj.spr.labels, "Value"]
 
   ts.table <- data.frame(
-    all,
+    years_all,
     tot.bio.all,
     ssb.all,
     smry.all,
@@ -645,7 +665,7 @@ table_exec_summary <- function(
       natage <- 0
       for (a in 1:nareas) {
         for (b in 1:ngpatterns) {
-          ind <- replist[["natage"]][, "Yr"] >= startyr &
+          ind <- replist[["natage"]][, "Yr"] %in% years_all &
             replist[["natage"]][, "Area"] == a &
             replist[["natage"]][, "Bio_Pattern"] == b &
             replist[["natage"]][, "Sex"] == 1 &
@@ -655,7 +675,7 @@ table_exec_summary <- function(
         }
       }
       colnames(natage) <- paste0("Age", 0:(length(get.ages) - 1))
-      natage <- data.frame(Year = startyr:max(fore), natage)
+      natage <- data.frame(Year = years_all, natage)
       numbers_at_age <- list()
       numbers_at_age$cap <- "Numbers at age for the base model."
       numbers_at_age$table <- natage
@@ -667,11 +687,11 @@ table_exec_summary <- function(
       natage.f <- natage.m <- 0
       for (a in 1:nareas) {
         for (b in 1:ngpatterns) {
-          ind <- replist[["natage"]][, "Yr"] >= startyr & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b & replist[["natage"]][, "Sex"] == 1 & replist[["natage"]][, "Beg/Mid"] == "B"
+          ind <- replist[["natage"]][, "Yr"] %in% years_all & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b & replist[["natage"]][, "Sex"] == 1 & replist[["natage"]][, "Beg/Mid"] == "B"
           temp <- replist[["natage"]][ind, get.ages]
           natage.f <- natage.f + temp
 
-          ind <- replist[["natage"]][, "Yr"] >= startyr & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b &
+          ind <- replist[["natage"]][, "Yr"] %in% years_all & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b &
             replist[["natage"]][, "Sex"] == 2 & replist[["natage"]][, "Beg/Mid"] == "B"
           temp <- replist[["natage"]][ind, get.ages]
           natage.m <- natage.m + temp
@@ -679,7 +699,7 @@ table_exec_summary <- function(
       }
 
       colnames(natage.m) <- paste0("Age", 0:(length(get.ages) - 1))
-      natage.m <- data.frame(Year = startyr:max(fore), natage.m)
+      natage.m <- data.frame(Year = years_all, natage.m)
       numbers_at_age_male <- list()
       numbers_at_age_male$cap <- "Numbers at age for males from the base model."
       numbers_at_age_male$table <- natage.m
@@ -687,7 +707,7 @@ table_exec_summary <- function(
       save(numbers_at_age_male, file = file.path(rda_dir, "numbers_at_age_male.rda"))
 
       colnames(natage.f) <- paste0("Age", 0:(length(get.ages) - 1))
-      natage.f <- data.frame(Year = startyr:max(fore), natage.f)
+      natage.f <- data.frame(Year = years_all, natage.f)
       numbers_at_age_female <- list()
       numbers_at_age_female$cap <- "Numbers at age for females from the base model."
       numbers_at_age_female$table <- natage.f
@@ -718,14 +738,14 @@ table_exec_summary <- function(
       batage <- 0
       for (a in 1:nareas) {
         for (b in 1:ngpatterns) {
-          ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
+          ind <- replist[["batage"]][, "Yr"] %in% years_all & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
           temp <- replist[["batage"]][ind, get.ages]
           batage <- batage + temp
         }
       }
 
       colnames(batage) <- paste0("Age", 0:(length(get.ages) - 1))
-      batage <- data.frame(Year = startyr:max(fore), batage)
+      batage <- data.frame(Year = years_all, batage)
       biomass_at_age <- list()
       biomass_at_age$cap <- "Biomass at age from the base model."
       biomass_at_age$table <- batage
@@ -737,18 +757,18 @@ table_exec_summary <- function(
       batage.f <- batage.m <- 0
       for (a in 1:nareas) {
         for (b in 1:ngpatterns) {
-          ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
+          ind <- replist[["batage"]][, "Yr"] %in% years_all & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
           temp <- replist[["batage"]][ind, get.ages]
           batage.f <- batage.f + temp
 
-          ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b &
+          ind <- replist[["batage"]][, "Yr"] %in% years_all & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b &
             replist[["batage"]][, "Sex"] == 2 & replist[["batage"]][, "Beg/Mid"] == "B"
           temp <- replist[["batage"]][ind, get.ages]
           batage.m <- batage.m + temp
         }
       }
       colnames(batage.m) <- paste0("Age", 0:(length(get.ages) - 1))
-      batage.m <- data.frame(Year = startyr:max(fore), batage.m)
+      batage.m <- data.frame(Year = years_all, batage.m)
       biomass_at_age_male <- list()
       biomass_at_age_male$cap <- "Biomass at age for male from the base model."
       biomass_at_age_male$table <- batage.m
@@ -756,7 +776,7 @@ table_exec_summary <- function(
       save(biomass_at_age_male, file = file.path(rda_dir, "biomass_at_age_male.rda"))
 
       colnames(batage.f) <- paste0("Age", 0:(length(get.ages) - 1))
-      batage.f <- data.frame(Year = startyr:max(fore), batage.f)
+      batage.f <- data.frame(Year = years_all, batage.f)
       biomass_at_age_female <- list()
       biomass_at_age_female$cap <- "Biomass at age for female from the base model."
       biomass_at_age_female$table <- batage.m
