@@ -16,7 +16,7 @@ table_parcounts(
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{inputs}{An options list of inputs from the SS3 model created by \code{SS_read()}.
-If NULL, then the function will run \code{SS_read(replist$inputs$dir)} to get the inputs.}
+If NULL, then the function will run \code{SS_read(replist[["inputs"]][["dir"]])} to get the inputs.}
 
 \item{dir}{Directory where the .rda files will be written. The default value
 is NULL where a table folder will be created where the Report.sso file is
@@ -35,7 +35,7 @@ output <- r4ss::SS_output()
 # Create the table
 table_parcounts <- table_parcounts(output)
 # filter for types with at least one estimated parameter
-table_parcounts$table |> dplyr::filter(Count > 0)
+table_parcounts[["table"]] |> dplyr::filter(Count > 0)
 }
 }
 \seealso{

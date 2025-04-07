@@ -34,8 +34,8 @@ table_config(output)
 config1 <- table_config(output1)
 config2 <- table_config(output2)
 table_compare <- data.frame(
-  new_model = config1$table,
-  old_model = config2$table$Configuration
+  new_model = config1[["table"]],
+  old_model = config2[["table"]][["Configuration"]]
 )
 names(table_compare) <- c("Section", "New model", "Old model")
 }

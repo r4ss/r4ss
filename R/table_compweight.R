@@ -46,7 +46,7 @@ table_compweight <- function(replist,
   if (length(CAAL_fleets) > 0) {
     caption <- paste(caption, caption_CAAL)
   }
-  
+
   # gather parts for table
   Age_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]]
   if (!is.null(Age_Comp_Fit_Summary)) {

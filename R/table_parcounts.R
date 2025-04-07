@@ -4,7 +4,7 @@
 #'
 #' @inheritParams table_exec_summary
 #' @param inputs An options list of inputs from the SS3 model created by `SS_read()`.
-#' If NULL, then the function will run `SS_read(replist$inputs$dir)` to get the inputs.
+#' If NULL, then the function will run `SS_read(replist[["inputs"]][["dir"]])` to get the inputs.
 #'
 #' @family table functions
 #' @export
@@ -15,7 +15,7 @@
 #' # Create the table
 #' table_parcounts <- table_parcounts(output)
 #' # filter for types with at least one estimated parameter
-#' table_parcounts$table |> dplyr::filter(Count > 0)
+#' table_parcounts[["table"]] |> dplyr::filter(Count > 0)
 #' }
 #' @author Ian G. Taylor
 
@@ -53,25 +53,25 @@ table_parcounts <- function(
     }
   }
   # get parameter labels from model output
-  parlabs <- replist$parameters %>%
+  parlabs <- replist[["parameters"]] %>%
     dplyr::filter(!is.na(Active_Cnt)) %>%
     dplyr::pull(Label)
 
   # get parameter labels from control file
-  MGparms_labs <- get_labs(ctl$MG_parms)
-  MGparms_tv_labs <- get_labs(ctl$MG_parms_tv)
+  MGparms_labs <- get_labs(ctl[["MG_parms"]])
+  MGparms_tv_labs <- get_labs(ctl[["MG_parms_tv"]])
 
-  SRparms_labs <- get_labs(ctl$SR_parms)
-  SRparms_tv_labs <- get_labs(ctl$SR_parms_tv)
+  SRparms_labs <- get_labs(ctl[["SR_parms"]])
+  SRparms_tv_labs <- get_labs(ctl[["SR_parms_tv"]])
 
-  Qparms_labs <- get_labs(ctl$Q_parms)
-  Qparms_tv_labs <- get_labs(ctl$Q_parms_tv)
+  Qparms_labs <- get_labs(ctl[["Q_parms"]])
+  Qparms_tv_labs <- get_labs(ctl[["Q_parms_tv"]])
 
-  size_selex_parms_labs <- get_labs(ctl$size_selex_parms)
-  size_selex_parms_tv_labs <- get_labs(ctl$size_selex_parms_tv)
+  size_selex_parms_labs <- get_labs(ctl[["size_selex_parms"]])
+  size_selex_parms_tv_labs <- get_labs(ctl[["size_selex_parms_tv"]])
 
-  age_selex_parms_labs <- get_labs(ctl$age_selex_parms)
-  age_selex_parms_tv_labs <- get_labs(ctl$age_selex_parms_tv)
+  age_selex_parms_labs <- get_labs(ctl[["age_selex_parms"]])
+  age_selex_parms_tv_labs <- get_labs(ctl[["age_selex_parms_tv"]])
 
   data <- data.frame(
     Type = c(
@@ -142,7 +142,7 @@ table_parcounts <- function(
     )
   )
 
-  count1 <- sum(data$Count)
+  count1 <- sum(data[["Count"]])
   count2 <- length(parlabs)
 
   if (count1 != count2) {
@@ -156,7 +156,7 @@ table_parcounts <- function(
   table <- rbind(
     data.frame(
       Type = "Total",
-      Count = sum(data$Count)
+      Count = sum(data[["Count"]])
     ),
     data
   )
