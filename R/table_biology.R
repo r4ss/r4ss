@@ -124,7 +124,7 @@ table_biology <- function(
         round(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2)
       )
     }
-    
+
     for (i in 1:nfleets) {
       find <- which(
         ageselex[["Fleet"]] == i &
@@ -168,7 +168,7 @@ table_biology <- function(
   )
   tables[["table_selectivity_at_age"]] <- table_selectivity_at_age
   save(table_selectivity_at_age, file = file.path(rda_dir, "table_selectivity_at_age.rda"))
-  
+
   table_retention_at_age <- list(
     cap = "Retention at age for each fleet.",
     table = selex.age.ret
