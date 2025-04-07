@@ -31,9 +31,9 @@ table_ts <- function(
   dir.create(rda_dir, showWarnings = FALSE)
   check_dir(dir = rda_dir, verbose = verbose)
 
-  table <- replist[["annual_time_series"]] %>%
+  table <- replist[["annual_time_series"]] |>
     # dplyr::filter(!is.na(Deplete)) %>% # removes start year of model
-    dplyr::filter(Era %in% c("VIRG", "TIME")) %>%
+    dplyr::filter(Era %in% c("VIRG", "TIME")) |>
     dplyr::select(
       year, # 1
       SSB, # 2

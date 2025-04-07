@@ -45,16 +45,16 @@ table_parcounts <- function(
 
   get_labs <- function(table) {
     if (!is.null(table)) {
-      table %>%
-        dplyr::filter(PHASE > 0) %>%
+      table |>
+        dplyr::filter(PHASE > 0) |>
         rownames()
     } else {
       NULL
     }
   }
   # get parameter labels from model output
-  parlabs <- replist[["parameters"]] %>%
-    dplyr::filter(!is.na(Active_Cnt)) %>%
+  parlabs <- replist[["parameters"]] |>
+    dplyr::filter(!is.na(Active_Cnt)) |>
     dplyr::pull(Label)
 
   # get parameter labels from control file
