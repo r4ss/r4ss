@@ -170,8 +170,8 @@ table_exec_summary <- function(
     caption <- "Recent catches (mt) by fleet and total catch (mt) summed across fleets."
   }
   catches_es <- list()
-  catches_es$table <- es.a
-  catches_es$cap <- caption
+  catches_es[["table"]] <- es.a
+  catches_es[["cap"]] <- caption
 
   tables <- list()
   tables[["catches_es"]] <- catches_es
@@ -204,8 +204,8 @@ table_exec_summary <- function(
       " percent intervals."
     )
   ssb_es <- list()
-  ssb_es$table <- es.b
-  ssb_es$cap <- caption
+  ssb_es[["table"]] <- es.b
+  ssb_es[["cap"]] <- caption
   tables[["ssb_es"]] <- ssb_es
   save(ssb_es, file = file.path(rda_dir, "ssb_es.rda"))
 
@@ -274,8 +274,8 @@ table_exec_summary <- function(
     "Recruitment Deviations", "Lower Interval", "Upper Interval"
   )
   recr_es <- list()
-  recr_es$table <- es.c
-  recr_es$cap <-
+  recr_es[["table"]] <- es.c
+  recr_es[["cap"]] <-
     paste0(
       "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
       " percent intervals."
@@ -316,8 +316,8 @@ table_exec_summary <- function(
     f_type, "Lower Interval (Rate)", "Upper Interval (Rate)"
   )
   spr_es <- list()
-  spr_es$table <- es.d
-  spr_es$cap <- paste0(
+  spr_es[["table"]] <- es.d
+  spr_es[["cap"]] <- paste0(
     "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
     " percent intervals."
   )
@@ -409,8 +409,8 @@ table_exec_summary <- function(
   )
   colnames(es.e) <- c("Reference Point", "Estimate", "Lower Interval", "Upper Interval")
   reference_points <- list()
-  reference_points$table <- es.e
-  reference_points$cap <- paste0(
+  reference_points[["table"]] <- es.e
+  reference_points[["cap"]] <- paste0(
     "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
     " percent intervals."
   )
@@ -452,8 +452,8 @@ table_exec_summary <- function(
     caption <- "Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs), the annual catch limits (ACLs), and the total catch all in metric tons (mt)."
   }
   recent_management <- list()
-  recent_management$cap <- caption
-  recent_management$table <- es.f
+  recent_management[["cap"]] <- caption
+  recent_management[["table"]] <- es.f
   tables[["recent_management"]] <- recent_management
   save(recent_management, file = file.path(rda_dir, "recent_management.rda"))
 
@@ -482,8 +482,8 @@ table_exec_summary <- function(
     }
     ssb.fore <- get_values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
     fraction_unfished.fore <- get_values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
-    if (any(fraction_unfished.fore < replist$btarg)) {
-      replace <- which(fraction_unfished.fore < replist$btarg)
+    if (any(fraction_unfished.fore < replist[["btarg"]])) {
+      replace <- which(fraction_unfished.fore < replist[["btarg"]])
       abc.fore[replace] <- buffer[replace] * ofl.fore[replace]
     }
     if (nsexes == 1) {
@@ -505,8 +505,8 @@ table_exec_summary <- function(
       "OFL (mt)", "Buffer", "ABC (mt)", "ACL (mt)", sb.label, "Fraction Unfished"
     )
     projections <- list()
-    projections$table <- es.g
-    projections$cap <- paste0("Potential OFLs (mt), ABCs (mt), ACLs (mt), the buffer between the OFL and ABC, estimated ", sb.text.name, ", and fraction unfished with
+    projections[["table"]] <- es.g
+    projections[["cap"]] <- paste0("Potential OFLs (mt), ABCs (mt), ACLs (mt), the buffer between the OFL and ABC, estimated ", sb.text.name, ", and fraction unfished with
                               adopted OFLs and ACLs and assumed catch for the first two years of the projection period.")
     tables[["projections"]] <- projections
     save(projections, file = file.path(rda_dir, "projections.rda"))
@@ -544,8 +544,8 @@ table_exec_summary <- function(
   }
   mortality.df <- mortality
   mortality <- list()
-  mortality$cap <- caption
-  mortality$table <- mortality.df
+  mortality[["cap"]] <- caption
+  mortality[["table"]] <- mortality.df
   tables[["mortality"]] <- mortality
   save(mortality, file = file.path(rda_dir, "mortality_all_years.rda"))
 
@@ -640,8 +640,8 @@ table_exec_summary <- function(
     "Exploitation Rate"
   )
   time_series <- list()
-  time_series$cap <- "Time series of population estimates from the base model."
-  time_series$table <- ts.table
+  time_series[["cap"]] <- "Time series of population estimates from the base model."
+  time_series[["table"]] <- ts.table
   tables[["time_series"]] <- time_series
   save(time_series, file = file.path(rda_dir, "time_series.rda"))
 
@@ -677,8 +677,8 @@ table_exec_summary <- function(
       colnames(natage) <- paste0("Age", 0:(length(get.ages) - 1))
       natage <- data.frame(Year = years_all, natage)
       numbers_at_age <- list()
-      numbers_at_age$cap <- "Numbers at age for the base model."
-      numbers_at_age$table <- natage
+      numbers_at_age[["cap"]] <- "Numbers at age for the base model."
+      numbers_at_age[["table"]] <- natage
       tables[["numbers_at_age"]] <- numbers_at_age
       save(numbers_at_age, file = file.path(rda_dir, "numbers_at_age.rda"))
     }
@@ -701,16 +701,16 @@ table_exec_summary <- function(
       colnames(natage.m) <- paste0("Age", 0:(length(get.ages) - 1))
       natage.m <- data.frame(Year = years_all, natage.m)
       numbers_at_age_male <- list()
-      numbers_at_age_male$cap <- "Numbers at age for males from the base model."
-      numbers_at_age_male$table <- natage.m
+      numbers_at_age_male[["cap"]] <- "Numbers at age for males from the base model."
+      numbers_at_age_male[["table"]] <- natage.m
       tables[["numbers_at_age_male"]] <- numbers_at_age_male
       save(numbers_at_age_male, file = file.path(rda_dir, "numbers_at_age_male.rda"))
 
       colnames(natage.f) <- paste0("Age", 0:(length(get.ages) - 1))
       natage.f <- data.frame(Year = years_all, natage.f)
       numbers_at_age_female <- list()
-      numbers_at_age_female$cap <- "Numbers at age for females from the base model."
-      numbers_at_age_female$table <- natage.f
+      numbers_at_age_female[["cap"]] <- "Numbers at age for females from the base model."
+      numbers_at_age_female[["table"]] <- natage.f
       tables[["numbers_at_age_female"]] <- numbers_at_age_female
       save(numbers_at_age_female, file = file.path(rda_dir, "numbers_at_age_female.rda"))
     }
@@ -747,8 +747,8 @@ table_exec_summary <- function(
       colnames(batage) <- paste0("Age", 0:(length(get.ages) - 1))
       batage <- data.frame(Year = years_all, batage)
       biomass_at_age <- list()
-      biomass_at_age$cap <- "Biomass at age from the base model."
-      biomass_at_age$table <- batage
+      biomass_at_age[["cap"]] <- "Biomass at age from the base model."
+      biomass_at_age[["table"]] <- batage
       tables[["biomass_at_age"]] <- biomass_at_age
       save(biomass_at_age, file = file.path(rda_dir, "biomass_at_age.rda"))
     }
@@ -770,16 +770,16 @@ table_exec_summary <- function(
       colnames(batage.m) <- paste0("Age", 0:(length(get.ages) - 1))
       batage.m <- data.frame(Year = years_all, batage.m)
       biomass_at_age_male <- list()
-      biomass_at_age_male$cap <- "Biomass at age for male from the base model."
-      biomass_at_age_male$table <- batage.m
+      biomass_at_age_male[["cap"]] <- "Biomass at age for male from the base model."
+      biomass_at_age_male[["table"]] <- batage.m
       tables[["biomass_at_age_male"]] <- biomass_at_age_male
       save(biomass_at_age_male, file = file.path(rda_dir, "biomass_at_age_male.rda"))
 
       colnames(batage.f) <- paste0("Age", 0:(length(get.ages) - 1))
       batage.f <- data.frame(Year = years_all, batage.f)
       biomass_at_age_female <- list()
-      biomass_at_age_female$cap <- "Biomass at age for female from the base model."
-      biomass_at_age_female$table <- batage.m
+      biomass_at_age_female[["cap"]] <- "Biomass at age for female from the base model."
+      biomass_at_age_female[["table"]] <- batage.m
       tables[["biomass_at_age_female"]] <- biomass_at_age_female
       save(biomass_at_age_female, file = file.path(rda_dir, "biomass_at_age_female.rda"))
     }

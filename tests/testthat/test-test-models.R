@@ -85,5 +85,4 @@ test_that("test-models work with SS_output() and SS_plots()", {
   expect_true(all(unlist(purrr::map(tables, function(x) {
     "table_pars" %in% names(x)
   }))))
-
 })

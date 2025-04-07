@@ -64,11 +64,11 @@ table_biology <- function(
   tables <- list()
 
   bio_table <- TRUE
-  if (replist$wtatage_switch) {
+  if (replist[["wtatage_switch"]]) {
     cli::cli_alert_warning("Skipping biology table because the model uses empirical weight-at-age")
     bio_table <- FALSE
   }
-  if (is.null(replist$endgrowth)) {
+  if (is.null(replist[["endgrowth"]])) {
     cli::cli_alert_warning("Skipping biology table because the model doesn't include the 'endgrowth' output")
     bio_table <- FALSE
   }
