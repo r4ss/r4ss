@@ -8,7 +8,7 @@ table_parcounts(
   replist,
   inputs = NULL,
   dir = NULL,
-  caption = "Estimated parameters in the model",
+  caption = "Estimated parameters in the model.",
   verbose = TRUE
 )
 }
