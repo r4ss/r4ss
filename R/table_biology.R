@@ -109,6 +109,7 @@ table_biology <- function(
     save(table_biology_at_age, file = file.path(rda_dir, "table_biology_at_age.rda"))
   }
   # Selectivity by age
+  retnames <- NULL
   selex.age <- selex.age.ret <- data.frame(Age = 0:accuage)
   for (j in 1:nsexes) {
     for (i in 1:nfleets) {
@@ -123,22 +124,57 @@ table_biology <- function(
         round(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2)
       )
     }
+    
+    for (i in 1:nfleets) {
+      find <- which(
+        ageselex[["Fleet"]] == i &
+          ageselex[["Sex"]] == j &
+          ageselex[["Yr"]] == selexyr &
+          ageselex[["Factor"]] == "Aret"
+      )
+      if (length(find) != 0) {
+        if (j == 1) {
+          retnames <- c(retnames, FleetNames[i])
+        }
+        selex.age.ret <- data.frame(
+          selex.age.ret,
+          round(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2)
+        )
+      }
+    }
   }
   if (nsexes == 1) {
     colnames(selex.age) <- c("Age", FleetNames)
+    if (!is.null(retnames)) {
+      colnames(selex.age.ret) <- c("Age", retnames)
+    }
   } else {
     colnames(selex.age) <- c(
       "Age",
       paste0(FleetNames, "_f"),
       paste0(FleetNames, "_m")
     )
+    if (!is.null(retnames)) {
+      colnames(selex.age.ret) <- c(
+        "Age",
+        paste0(retnames, "_f"),
+        paste0(retnames, "_m")
+      )
+    }
   }
   table_selectivity_at_age <- list(
-    cap = "Selectivity at age for each fleet",
+    cap = "Selectivity at age for each fleet.",
     table = selex.age
   )
   tables[["table_selectivity_at_age"]] <- table_selectivity_at_age
   save(table_selectivity_at_age, file = file.path(rda_dir, "table_selectivity_at_age.rda"))
+  
+  table_retention_at_age <- list(
+    cap = "Retention at age for each fleet.",
+    table = selex.age.ret
+  )
+  tables[["table_retention_at_age"]] <- table_retention_at_age
+  save(table_retention_at_age, file = file.path(rda_dir, "table_retention_at_age.rda"))
 
   # selecitivity and retention by length
   if (!is.null(sizeselex)) {
@@ -194,15 +230,15 @@ table_biology <- function(
       )
     }
     table_selectivity_at_length <- list(
-      cap = "Selectivity at length for each fleet",
+      cap = "Selectivity at length for each fleet.",
       table = selex.size
     )
     tables[["table_selectivity_at_length"]] <- table_selectivity_at_length
     save(table_selectivity_at_length, file = file.path(rda_dir, "table_selectivity_at_length.rda"))
 
     table_retention_at_length <- list(
-      cap = "Retention at length for each fleet",
-      table = selex.size
+      cap = "Retention at length for each fleet.",
+      table = selex.size.ret
     )
     tables[["table_retention_at_length"]] <- table_retention_at_length
     save(table_retention_at_length, file = file.path(rda_dir, "table_retention_at_length.rda"))
