@@ -102,7 +102,7 @@ table_biology <- function(
     }
 
     table_biology_at_age <- list(
-      cap = "Biology at age",
+      cap = "Biology at age.",
       table = bio
     )
     tables[["table_biology_at_age"]] <- table_biology_at_age
