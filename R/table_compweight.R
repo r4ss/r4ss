@@ -46,7 +46,8 @@ table_compweight <- function(replist,
   if (length(CAAL_fleets) > 0) {
     caption <- paste(caption, caption_CAAL)
   }
-  # make table
+  
+  # gather parts for table
   Age_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]]
   if (!is.null(Age_Comp_Fit_Summary)) {
     CAAL_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]] |> dplyr::filter(Fleet %in% CAAL_fleets)
@@ -68,7 +69,9 @@ table_compweight <- function(replist,
     }
     return(invisible(NULL))
   }
-  table |>
+
+  # clean up table
+  table <- table |>
     # dplyr::mutate(Fleet = get_fleet(col = "label_long")[match(Fleet_name, get_fleet(col = "fleet"))]) |>
     dplyr::mutate(Fleet = replist[["FleetNames"]][Fleet]) |>
     dplyr::mutate("Sum N adj." = mean_Nsamp_adj * Npos) |>
