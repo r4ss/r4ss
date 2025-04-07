@@ -3,6 +3,7 @@
 #' Not necessarily a good idea but helpful for testing
 #'
 #' @inheritParams table_exec_summary
+#' @inheritParams table_biology
 #' @export
 #' @family table functions
 #' @author Ian G. Taylor

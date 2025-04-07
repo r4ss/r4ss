@@ -22,6 +22,9 @@ located associated with \code{replist}.}
 \item{fleetnames}{String of fleet names. Default is NULL which will use the
 the model fleet names.}
 
+\item{selexyr}{The year to summarize selectivity, the default is the final
+model year.}
+
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
