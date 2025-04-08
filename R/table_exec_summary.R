@@ -484,7 +484,8 @@ table_exec_summary <- function(
     fraction_unfished.fore <- get_values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
     if (any(fraction_unfished.fore < replist[["btarg"]])) {
       replace <- which(fraction_unfished.fore < replist[["btarg"]])
-      abc.fore[replace] <- buffer[replace] * ofl.fore[replace]
+      abc.fore[replace] <- NA
+      buffer[replace] <- NA
     }
     if (nsexes == 1) {
       ssb.fore <- ssb.fore
