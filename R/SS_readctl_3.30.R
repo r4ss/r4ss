@@ -1225,6 +1225,27 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
       }
       # Note that age_selex_Nparams[j] not used beyond this point.
     }
+    # do extra retention parameters (4 extra parameters)
+    if (ctllist[["age_selex_types"]][j, "Discard"] %in% 1:2) { # add 4 retention parameters
+      age_selex_label[[j]] <- c(
+        age_selex_label[[j]],
+        make_sel_lab("a", "PRet", 1:4, jn, j)
+      )
+    }
+    # note that for Discard = 3, no extra parameters are needed.
+    if (ctllist[["age_selex_types"]][j, "Discard"] == 4) { # add 7 dome shaped retention parameters
+      age_selex_label[[j]] <- c(
+        age_selex_label[[j]],
+        make_sel_lab("a", "PRet", 1:7, jn, j)
+      )
+    }
+
+    if (ctllist[["age_selex_types"]][j, "Discard"] %in% c(2, 4)) { # add 4 discard mortality parameters
+      age_selex_label[[j]] <- c(
+        age_selex_label[[j]],
+        make_sel_lab("a", "PDis", 1:4, jn, j)
+      )
+    }
     # do extra offset parameters
     if (ctllist[["age_selex_types"]][j, "Male"] == 1) {
       age_selex_label[[j]] <- c(
@@ -1323,7 +1344,10 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   }
   if (any(ctllist[["size_selex_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][5] != 0) {
-    tmp_parlab <- get_tv_parlabs(full_parms = ctllist[["size_selex_parms"]], ctllist[["Block_Design"]])
+    tmp_parlab <- get_tv_parlabs(
+      full_parms = ctllist[["size_selex_parms"]],
+      block_design = ctllist[["Block_Design"]]
+    )
     ctllist <- add_df(ctllist,
       name = "size_selex_parms_tv",
       nrow = length(tmp_parlab),
@@ -1334,7 +1358,10 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   }
   if (any(ctllist[["age_selex_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][5] != 0) {
-    tmp_parlab <- get_tv_parlabs(full_parms = ctllist[["age_selex_parms"]], ctllist[["Block_Design"]])
+    tmp_parlab <- get_tv_parlabs(
+      full_parms = ctllist[["age_selex_parms"]],
+      block_design = ctllist[["Block_Design"]]
+    )
     ctllist <- add_df(ctllist,
       name = "age_selex_parms_tv",
       nrow = length(tmp_parlab),
@@ -1716,7 +1743,7 @@ get_tv_parlabs <- function(full_parms,
         )
       )
     }
-  }
+  } # end loop_pars
   invisible(parlab)
 }
 
