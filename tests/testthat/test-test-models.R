@@ -77,10 +77,16 @@ test_that("test-models work with SS_output() and SS_plots()", {
     "data_plot2.png" %in% x$file
   }))))
 
-  tables <- furrr::future_map(.x = out, .f = function(x) {
-    message("Running table_all()")
-    table_all(x, verbose = FALSE)
-  })
+  # tables <- furrr::future_map(.x = out, .f = function(x) {
+  #   message("Running table_all()")
+  #   table_all(x, verbose = FALSE)
+  # })
+   
+  # furr command above was failing, so trying to loop over the list of model output
+  for (i in 1:length(out)) {
+    table_all(out[[i]], verbose = TRUE)
+  }
+
 
   ## was failing here but probably due to user error
   # expect_true(all(unlist(purrr::map(tables, function(x) {
