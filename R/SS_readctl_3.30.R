@@ -1175,8 +1175,8 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   # pattern 17 is a special case of number of params, so account for here.
   age_selex_Nparms <- ifelse(age_patterns == "17" &
     ctllist[["age_selex_types"]][, "Special"] > 0,
-    ctllist[["age_selex_types"]][, "Special"] + 1,
-    age_selex_Nparms
+  ctllist[["age_selex_types"]][, "Special"] + 1,
+  age_selex_Nparms
   )
 
   age_selex_label <- vector("list", length = Nfleets)
@@ -1239,7 +1239,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
         make_sel_lab("a", "PRet", 1:7, jn, j)
       )
     }
-    
+
     if (ctllist[["age_selex_types"]][j, "Discard"] %in% c(2, 4)) { # add 4 discard mortality parameters
       age_selex_label[[j]] <- c(
         age_selex_label[[j]],
@@ -1345,8 +1345,9 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   if (any(ctllist[["size_selex_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][5] != 0) {
     tmp_parlab <- get_tv_parlabs(
-      full_parms = ctllist[["size_selex_parms"]], 
-      block_design = ctllist[["Block_Design"]])
+      full_parms = ctllist[["size_selex_parms"]],
+      block_design = ctllist[["Block_Design"]]
+    )
     ctllist <- add_df(ctllist,
       name = "size_selex_parms_tv",
       nrow = length(tmp_parlab),
@@ -1358,8 +1359,9 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   if (any(ctllist[["age_selex_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist[["time_vary_auto_generation"]][5] != 0) {
     tmp_parlab <- get_tv_parlabs(
-      full_parms = ctllist[["age_selex_parms"]], 
-      block_design = ctllist[["Block_Design"]])
+      full_parms = ctllist[["age_selex_parms"]],
+      block_design = ctllist[["Block_Design"]]
+    )
     ctllist <- add_df(ctllist,
       name = "age_selex_parms_tv",
       nrow = length(tmp_parlab),
