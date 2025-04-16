@@ -81,7 +81,7 @@ test_that("test-models work with SS_output() and SS_plots()", {
   #   message("Running table_all()")
   #   table_all(x, verbose = FALSE)
   # })
-   
+
   # furr command above was failing, so trying to loop over the list of model output
   for (i in 1:length(out)) {
     table_all(out[[i]], verbose = TRUE)
