@@ -122,8 +122,10 @@
 <url><loc>https://r4ss.github.io/r4ss/reference/add_legend.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/bubble3.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/calc_var_adjust.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/check_dir.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/check_exe.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/check_inputlist.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/check_replist.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/copy_SS_inputs.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/download_models.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/file_increment.html</loc></url>
@@ -137,6 +139,7 @@
 <url><loc>https://r4ss.github.io/r4ss/reference/get_ss3_exe.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/get_tuning_table.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/get_tv_parlabs.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/get_values.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/index.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/is.wholenumber.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/iterate_jitter.html</loc></url>
@@ -156,8 +159,17 @@
 <url><loc>https://r4ss.github.io/r4ss/reference/run.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/save_png.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/selShapes.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/signif_string.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/sspar.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/stackpoly.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_all.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_biology.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_compweight.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_config.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_exec_summary.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_parcounts.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_pars.html</loc></url>
+<url><loc>https://r4ss.github.io/r4ss/reference/table_ts.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/translate_3.30_to_3.24_Q_setup.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/translate_3.30_to_3.24_var_adjust.html</loc></url>
 <url><loc>https://r4ss.github.io/r4ss/reference/tryCatch.W.E.html</loc></url>
