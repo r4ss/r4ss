@@ -1,3 +1,4 @@
+#' @import cli
 #' @import coda
 #' @import dplyr
 #' @import viridis

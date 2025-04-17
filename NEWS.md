@@ -1,3 +1,17 @@
+# r4ss 1.52.0 (April 2025)
+* Add several functions for making tables. The functions all save .rda files containing a list of dataframe and caption.
+  * `table_pars()` Information on all model parameters
+  * `table_parcounts()` Count of different parameter types
+  * `table_ts()` Annual time series of various quantities (biomass, recruitment, etc.)
+  * `table_config()` Description of model configurations (bins, age range, etc.)
+  * `table_compweights()` Composition weights and sample sizes if using the Francis method
+* Revised two existing functions and renamed them for consistency:
+  * `SSexecutivesummary()` -> `table_exec_summary()` makes a set of tables commonly used in the 
+    executive summary of Pacific Fishery Management Council (PFMC) stock assessments, but many may be 
+    useful for other assessments as well.
+  * `SStablebiology()` -> `table_biology()` tables of biology at age and selectivity at age and length
+
+
 # r4ss 1.51.0 (18 December 2024)
 * Bug fixes
 * Compatibility with SS3 version 3.30.23 and 3.30.23.1

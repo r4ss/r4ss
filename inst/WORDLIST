@@ -46,6 +46,7 @@ Kiva
 Kronlund
 LaTreese
 Legault
+Lingcod
 LnQ
 Lsel
 MGparm
@@ -65,6 +66,7 @@ Nfleet
 Nsexes
 Nsurveys
 OFL
+PFMC
 Param
 Pebesma
 Piner
@@ -93,6 +95,7 @@ Valerio
 Vec
 Venables
 Watal
+Wtlen
 Xxis
 YYYY
 admodel
@@ -104,6 +107,7 @@ al
 analysed
 areanames
 aren
+asar
 bluefin
 bodywt
 btarg
@@ -184,6 +188,7 @@ legy
 len
 lendbase
 linepos
+lingcod
 linux
 loess
 lty
@@ -211,6 +216,7 @@ nmfs
 noaa
 nohess
 num
+nwfscSurvey
 ogive
 optim
 ost
@@ -246,6 +252,7 @@ psoptim
 ptsx
 ptsy
 px
+rda
 readLines
 readctl
 readdat
@@ -256,6 +263,7 @@ recdevs
 recruitments
 reoptimize
 reoptimized
+replist
 rescaled
 rescaling
 retune
