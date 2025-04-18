@@ -564,7 +564,7 @@ SSplotPars <-
 
       # create new page of plots (and new png file) when the remainder after
       # division by the number of plots per page is 1
-      if (print & ipar %% (nrows * ncols) == 1) {
+      if (print & (nrows * ncols == 1 | ipar %% (nrows * ncols) == 1)) {
         # caption for HTML view of PNG files
         caption <- "Parameter distribution plots"
         pagetext <- ""
@@ -602,6 +602,7 @@ SSplotPars <-
         }
         # define filename
         file <- paste0("parameter_distributions", pagetext, ".png", sep = "")
+        cli::cli_alert_info("saving file to {plotdir}/{file}")
         # start png file and add to plotinfo
         plotinfo <- save_png(
           plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
