@@ -1,18 +1,17 @@
 # call a workflow that runs covr::codecov() to calculate code coverage
-name: call-calc_coverage
+name: call-calc_cov-summaries
 # on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
 # The default is to run the workflow on every push or pull request to every branch.
 on:
   workflow_dispatch:
-  # temporarily turn off
-  # push:
-  #   paths-ignore:
-  #     - '.github/**'
-  #     - 'README.md'
-  # pull_request:
-  #   paths-ignore:
-  #     - '.github/**'
-  #     - 'README.md'
+  push:
+    branches:
+      - main
+  pull_request:
+    types: 
+      - opened
+    branches:
+      - main
 jobs:
   call-workflow:
-    uses: nmfs-fish-tools/ghactions4r/.github/workflows/calc-coverage.yml@main
+    uses: nmfs-ost/ghactions4r/.github/workflows/calc-cov-summaries.yml@main
