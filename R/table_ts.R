@@ -19,6 +19,12 @@ table_ts <- function(
     verbose = TRUE) {
   # check the input
   check_replist(replist)
+  if (is.null(replist[["annual_time_series"]])) {
+    cli::cli_alert_warning(
+      "replist does not contain annual time series data, perhaps because of an older version of SS3 or reduced output."
+    )
+    return(NULL)
+  }
   # create the rda_dir
   rda_dir <- file.path(
     ifelse(
@@ -32,7 +38,6 @@ table_ts <- function(
   check_dir(dir = rda_dir, verbose = verbose)
 
   table <- replist[["annual_time_series"]] |>
-    # dplyr::filter(!is.na(Deplete)) %>% # removes start year of model
     dplyr::filter(Era %in% c("VIRG", "TIME")) |>
     dplyr::select(
       year, # 1
