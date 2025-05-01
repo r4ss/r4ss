@@ -294,15 +294,23 @@ table_exec_summary <- function(
     "Fill in F method"
   )
 
-  if (stringr::str_detect(SPRratioLabel, "%")) {
-    spr_label <- paste0(
-      substring(SPRratioLabel, 1, 14), " ",
-      substring(SPRratioLabel, 16, 17),
-      "%)"
-    )
-  } else {
-    spr_label <- SPRratioLabel
-  }
+  # clean up the label for whatever the SPR ratio
+  # unchanged is (1-SPR)/(1-SPR_MSY)
+  spr_label <- SPRratioLabel
+  # convert "SPR_50%" to "SPR50%"
+  # (\\d+) matches one or more digits and captures them as a group
+  spr_label <- gsub("SPR_(\\d+)%", "SPR\\1%", spr_label) 
+  # convert "SPR_at_B40%" to "SPR at B40%"
+  spr_label <- gsub("_at_", " at ", spr_label)
+  # convert "raw_SPR" to "SPR"
+  spr_label <- gsub("raw_", "", spr_label)
+
+  # additional text describing the SPR ratio
+  spr_text <- dplyr::case_when(
+    stringr::str_detect(spr_label, "/") ~ "relative fishing intensity ",
+    spr_label == "1-SPR" ~ "fishing intensity ",
+    TRUE ~ ""
+  )
 
   adj.spr <- get_values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
   f.value <- get_values(replist = replist, label = "F", years_minus_final, ci_value)
@@ -318,8 +326,8 @@ table_exec_summary <- function(
   spr_es <- list()
   spr_es[["table"]] <- es.d
   spr_es[["cap"]] <- paste0(
-    "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
-    " percent intervals."
+    "Estimated recent trend in ", spr_text, spr_label, " (where SPR is the spawning potential ratio), and the exploitation rate, along with the ", round(100 * ci_value, 0),
+    " percent intervals for both quantities."
   )
   tables[["spr_es"]] <- spr_es
   save(spr_es, file = file.path(rda_dir, "spr_es.rda"))
@@ -412,7 +420,9 @@ table_exec_summary <- function(
   reference_points[["table"]] <- es.e
   reference_points[["cap"]] <- paste0(
     "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
-    " percent intervals."
+    " percent intervals. ", 
+    sb_short, " is ", tolower(sb.label), # SO or SB
+    ", and MSY is maximum sustainable yield."
   )
   tables[["reference_points"]] <- reference_points
   save(reference_points, file = file.path(rda_dir, "reference_points.rda"))
