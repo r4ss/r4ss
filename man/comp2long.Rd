@@ -30,7 +30,7 @@ from wide to long format.
 }
 \details{
 If \code{x} is not a data frame, the function will look for data frames
-called \code{x$lencomp} or \code{x$dat$lencomp}.
+called \code{x[["lencomp"]]} or \code{x[["dat"]][["lencomp"]]}.
 }
 \note{
 In r4ss list objects, length composition data are stored as \code{lencomp},
@@ -42,7 +42,7 @@ while generalized size composition data are stored as
 path <- system.file("extdata", "simple_small", package = "r4ss")
 model <- SS_read(path)
 dat <- SS_readdat(file.path(path, "data.ss"), verbose = FALSE)
-x <- dat$lencomp
+x <- dat[["lencomp"]]
 
 # Main argument can be a data frame, dat list, or model list
 head(comp2long(x))

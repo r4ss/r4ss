@@ -11,7 +11,7 @@
 #'
 #' @details
 #' If \code{x} is not a data frame, the function will look for data frames
-#' called \code{x$lencomp} or \code{x$dat$lencomp}.
+#' called \code{x[["lencomp"]]} or \code{x[["dat"]][["lencomp"]]}.
 #'
 #' @return
 #' Data frame containing the columns
@@ -36,7 +36,7 @@
 #' path <- system.file("extdata", "simple_small", package = "r4ss")
 #' model <- SS_read(path)
 #' dat <- SS_readdat(file.path(path, "data.ss"), verbose = FALSE)
-#' x <- dat$lencomp
+#' x <- dat[["lencomp"]]
 #'
 #' # Main argument can be a data frame, dat list, or model list
 #' head(comp2long(x))
@@ -57,10 +57,10 @@
 comp2long <- function(x, measure = NULL, zero = TRUE) {
   # Look for data frame
   if (!is.data.frame(x)) {
-    if (is.list(x) && is.data.frame(x$lencomp)) {
-      x <- x$lencomp
-    } else if (is.list(x) && is.data.frame(x$dat$lencomp)) {
-      x <- x$dat$lencomp
+    if (is.list(x) && is.data.frame(x[["lencomp"]])) {
+      x <- x[["lencomp"]]
+    } else if (is.list(x) && is.data.frame(x[["dat"]][["lencomp"]])) {
+      x <- x[["dat"]][["lencomp"]]
     } else {
       stop("composition data not found")
     }
@@ -87,7 +87,7 @@ comp2long <- function(x, measure = NULL, zero = TRUE) {
   }
 
   # Store variables as a combined string
-  x$Nsamp <- format(x$Nsamp, trim = TRUE, digits = 12)
+  x[["Nsamp"]] <- format(x[["Nsamp"]], trim = TRUE, digits = 12)
   rowlab <- apply(x[cols], 1, paste, collapse = "|")
 
   # Prepare composition data
@@ -98,18 +98,18 @@ comp2long <- function(x, measure = NULL, zero = TRUE) {
 
   # Convert composition data to long format
   comp <- as.data.frame(as.table(x), stringsAsFactors = FALSE)
-  vars <- read.table(text = comp$Var1, sep = "|", col.names = cols)
-  comp$Var1 <- NULL
-  comp$Var2 <- type.convert(comp$Var2, as.is = TRUE)
+  vars <- read.table(text = comp[["Var1"]], sep = "|", col.names = cols)
+  comp[["Var1"]] <- NULL
+  comp[["Var2"]] <- type.convert(comp[["Var2"]], as.is = TRUE)
   names(comp) <- c(measure, "freq")
 
   # Combine vars and comp
   out <- data.frame(vars, comp)
   if (!method) {
-    out$method <- NULL
+    out[["method"]] <- NULL
   }
   if (!zero) {
-    out <- out[out$freq > 0, ]
+    out <- out[out[["freq"]] > 0, ]
   }
 
   out
