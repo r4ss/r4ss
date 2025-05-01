@@ -4,7 +4,7 @@
 #'
 #'
 #' @template replist
-#' @param subplots Vector of which plots to make 
+#' @param subplots Vector of which plots to make
 #' \itemize{
 #'   \item 1 data only
 #'   \item 2 data with fit
@@ -181,28 +181,30 @@ SSplotDiscard <-
           subplots <- setdiff(subplots, c(1, 3)) # don't do subplot 1 if datplot=FALSE
         }
         for (isubplot in subplots) { # loop over subplots (data only or with fit)
-          if (isubplot %in% c(1,3)) {
+          if (isubplot %in% c(1, 3)) {
             addfit <- FALSE
           } else {
             addfit <- TRUE
+          }
+          # file and caption not needed if print = FALSE, but easier to do it here
+          # since title2 is always needed
+          if (!addfit) {
+            file <- paste0("discard_data", FleetName, ".png")
+          } else {
+            file <- paste0("discard_fit", FleetName, ".png")
+          }
+          if (isubplot %in% 3:4) {
+            file <- gsub("discard_", "discard_log_", file)
+            caption2 <- gsub("fraction for", "fraction on a log scale for", caption)
+            title2 <- gsub("fraction for", "fraction on a log scale for", title)
+          } else {
+            caption2 <- caption
+            title2 <- title
           }
           if (plot) {
             dfracfunc(addfit = addfit, log = ifelse(isubplot %in% 3:4, TRUE, FALSE))
           }
           if (print) {
-            if (!addfit) {
-              file <- paste0("discard_data", FleetName, ".png")
-            } else {
-              file <- paste0("discard_fit", FleetName, ".png")
-            }
-            if (isubplot %in% 3:4) {
-              file <- gsub("discard_", "discard_log_", file)
-              caption2 <- gsub("fraction for", "fraction on a log scale for", caption)
-              title2 <- gsub("fraction for", "fraction on a log scale for", title)
-            } else {
-              caption2 <- caption
-              title2 <- title
-            }
             plotinfo <- save_png(
               plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
               pheight = pheight, punits = punits, res = res, ptsize = ptsize,
