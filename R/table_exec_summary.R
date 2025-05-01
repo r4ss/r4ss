@@ -299,7 +299,7 @@ table_exec_summary <- function(
   spr_label <- SPRratioLabel
   # convert "SPR_50%" to "SPR50%"
   # (\\d+) matches one or more digits and captures them as a group
-  spr_label <- gsub("SPR_(\\d+)%", "SPR\\1%", spr_label) 
+  spr_label <- gsub("SPR_(\\d+)%", "SPR\\1%", spr_label)
   # convert "SPR_at_B40%" to "SPR at B40%"
   spr_label <- gsub("_at_", " at ", spr_label)
   # convert "raw_SPR" to "SPR"
@@ -420,7 +420,7 @@ table_exec_summary <- function(
   reference_points[["table"]] <- es.e
   reference_points[["cap"]] <- paste0(
     "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
-    " percent intervals. ", 
+    " percent intervals. ",
     sb_short, " is ", tolower(sb.label), # SO or SB
     ", and MSY is maximum sustainable yield."
   )
