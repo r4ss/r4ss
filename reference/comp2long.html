@@ -75,7 +75,7 @@ or a list containing such a data frame.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If <code>x</code> is not a data frame, the function will look for data frames
-called <code>x$lencomp</code> or <code>x$dat$lencomp</code>.</p>
+called <code>x[["lencomp"]]</code> or <code>x[["dat"]][["lencomp"]]</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -93,12 +93,12 @@ files into r4ss list objects.</p></div>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Read composition data from example model</span></span></span>
 <span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_read.html">SS_read</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_read.html">SS_read</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_readdat.html">SS_readdat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">path</span>, <span class="st">"data.ss"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">lencomp</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">[[</span><span class="st">"lencomp"</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Main argument can be a data frame, dat list, or model list</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Main argument can be a list or data frame</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">inputs</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   year month fleet sex part Nsamp length freq</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 2011     7     1   3    0    50     26    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2012     7     1   3    0    50     26    0</span>
@@ -114,7 +114,7 @@ files into r4ss list objects.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 2014     7     1   3    0    50     26    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 2015     7     1   3    0    50     26    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 2016     7     1   3    0    50     26    1</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   year month fleet sex part Nsamp length freq</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 2011     7     1   3    0    50     26    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2012     7     1   3    0    50     26    0</span>
@@ -124,7 +124,7 @@ files into r4ss list objects.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 2016     7     1   3    0    50     26    1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Rename second to last column</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">model</span>, measure <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">x</span>, measure <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   year month fleet sex part Nsamp weight freq</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 2011     7     1   3    0    50     26    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2012     7     1   3    0    50     26    0</span>
@@ -134,9 +134,9 @@ files into r4ss list objects.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 2016     7     1   3    0    50     26    1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shrink output by omitting zero frequencies</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 800</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">model</span>, zero <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">comp2long</span><span class="op">(</span><span class="va">x</span>, zero <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 418</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
