@@ -6,7 +6,7 @@
 \usage{
 SSplotDiscard(
   replist,
-  subplots = 1:2,
+  subplots = 1:4,
   plot = TRUE,
   print = FALSE,
   plotdir = "default",
@@ -30,8 +30,14 @@ SSplotDiscard(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{subplots}{Vector of which plots to make (1 = data only, 2 = with fit).
-If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
+\item{subplots}{Vector of which plots to make
+\itemize{
+\item 1 data only
+\item 2 data with fit
+\item 3 data only (log scale)
+\item 4 data with fit (log scale)
+}
+If \code{plotdat = FALSE} then subplots 1 and 3 are not created, regardless of
 choice of \code{subplots}.}
 
 \item{plot}{Plot to active plot device?}
