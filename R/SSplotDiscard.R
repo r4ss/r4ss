@@ -4,8 +4,14 @@
 #'
 #'
 #' @template replist
-#' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
-#' If `plotdat = FALSE` then subplot 1 is not created, regardless of
+#' @param subplots Vector of which plots to make 
+#' \itemize{
+#'   \item 1 data only
+#'   \item 2 data with fit
+#'   \item 3 data only (log scale)
+#'   \item 4 data with fit (log scale)
+#' }
+#' If `plotdat = FALSE` then subplots 1 and 3 are not created, regardless of
 #' choice of `subplots`.
 #' @template plot
 #' @template print
@@ -34,7 +40,7 @@
 #' @export
 #' @seealso [SS_plots()]
 SSplotDiscard <-
-  function(replist, subplots = 1:2,
+  function(replist, subplots = 1:4,
            plot = TRUE, print = FALSE,
            plotdir = "default",
            fleets = "all",
@@ -118,7 +124,7 @@ SSplotDiscard <-
           liw <- -std * qt(0.025, DF_discard) # quantile of t-distribution
           uiw <- std * qt(0.975, DF_discard) # quantile of t-distribution
         }
-        liw[(ob - liw) < 0] <- ob[(ob - liw) < 0] # no negative limits
+        liw[(ob - liw) < 0] <- ob[(ob - liw) < 0] - 0.0001 # no negative limits
         xlim <- c((min(yr) - 3), (max(yr) + 3))
         ## three options for discard_units:
         ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
@@ -158,10 +164,10 @@ SSplotDiscard <-
         }
 
         # wrap up plot command in function
-        dfracfunc <- function(addfit) {
+        dfracfunc <- function(addfit, log = FALSE) {
           plotCI(
-            x = yr, y = ob, uiw = uiw, liw = liw,
-            ylab = ylab, xlab = labels[1], main = title,
+            x = yr, y = ob, uiw = uiw, liw = liw, log = ifelse(log, "y", ""),
+            ylab = ylab, xlab = labels[1], main = title2,
             ylo = 0, yhi = yhi, ymax = ymax,
             col = col2, sfrac = 0.005, lty = 1,
             xlim = xlim, pch = 21, bg = "white"
@@ -172,16 +178,16 @@ SSplotDiscard <-
 
         # make plots
         if (!datplot) {
-          subplots <- setdiff(subplots, 1) # don't do subplot 1 if datplot=FALSE
+          subplots <- setdiff(subplots, c(1, 3)) # don't do subplot 1 if datplot=FALSE
         }
         for (isubplot in subplots) { # loop over subplots (data only or with fit)
-          if (isubplot == 1) {
+          if (isubplot %in% c(1,3)) {
             addfit <- FALSE
           } else {
             addfit <- TRUE
           }
           if (plot) {
-            dfracfunc(addfit = addfit)
+            dfracfunc(addfit = addfit, log = ifelse(isubplot %in% 3:4, TRUE, FALSE))
           }
           if (print) {
             if (!addfit) {
@@ -189,12 +195,20 @@ SSplotDiscard <-
             } else {
               file <- paste0("discard_fit", FleetName, ".png")
             }
+            if (isubplot %in% 3:4) {
+              file <- gsub("discard_", "discard_log_", file)
+              caption2 <- gsub("fraction for", "fraction on a log scale for", caption)
+              title2 <- gsub("fraction for", "fraction on a log scale for", title)
+            } else {
+              caption2 <- caption
+              title2 <- title
+            }
             plotinfo <- save_png(
               plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
               pheight = pheight, punits = punits, res = res, ptsize = ptsize,
-              caption = caption
+              caption = caption2
             )
-            dfracfunc(addfit = addfit)
+            dfracfunc(addfit = addfit, log = ifelse(isubplot %in% 3:4, TRUE, FALSE))
             dev.off()
           }
         } # end loop over subplots

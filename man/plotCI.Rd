@@ -15,7 +15,8 @@ plotCI(
   sfrac = 0.01,
   ymax = NULL,
   add = FALSE,
-  col = "black"
+  col = "black",
+  log = ""
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ plotCI(
 \item{add}{Add points and intervals to existing plot? Default=FALSE.}
 
 \item{col}{Color for the points and lines.}
+
+\item{log}{Logarithmic scale for the y-axis? Should be "" or "y".}
 }
 \description{
 Given a set of x and y values and upper and lower bounds, this function
