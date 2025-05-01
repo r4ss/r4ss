@@ -34,21 +34,21 @@
 #' @examples
 #' # Read composition data from example model
 #' path <- system.file("extdata", "simple_small", package = "r4ss")
-#' model <- SS_read(path)
+#' inputs <- SS_read(path)
 #' dat <- SS_readdat(file.path(path, "data.ss"), verbose = FALSE)
 #' x <- dat[["lencomp"]]
 #'
-#' # Main argument can be a data frame, dat list, or model list
-#' head(comp2long(x))
+#' # Main argument can be a list or data frame
+#' head(comp2long(inputs))
 #' head(comp2long(dat))
-#' head(comp2long(model))
+#' head(comp2long(x))
 #'
 #' # Rename second to last column
-#' head(comp2long(model, measure = "weight"))
+#' head(comp2long(x, measure = "weight"))
 #'
 #' # Shrink output by omitting zero frequencies
-#' nrow(comp2long(model))
-#' nrow(comp2long(model, zero = FALSE))
+#' nrow(comp2long(x))
+#' nrow(comp2long(x, zero = FALSE))
 #'
 #' @importFrom utils read.table type.convert
 #'
