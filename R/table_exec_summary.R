@@ -201,7 +201,7 @@ table_exec_summary <- function(
   caption <-
     paste0(
       "Estimated recent trend in ", sb.text.name, " and the fraction unfished and the ", round(100 * ci_value, 0),
-      " percent intervals."
+      " percent confidence intervals."
     )
   ssb_es <- list()
   ssb_es[["table"]] <- es.b
@@ -278,7 +278,7 @@ table_exec_summary <- function(
   recr_es[["cap"]] <-
     paste0(
       "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
-      " percent intervals."
+      " percent confidence intervals."
     )
   tables[["recr_es"]] <- recr_es
   save(recr_es, file = file.path(rda_dir, "recr_es.rda"))
@@ -326,8 +326,8 @@ table_exec_summary <- function(
   spr_es <- list()
   spr_es[["table"]] <- es.d
   spr_es[["cap"]] <- paste0(
-    "Estimated recent trend in ", spr_text, spr_label, " (where SPR is the spawning potential ratio), and the exploitation rate, along with the ", round(100 * ci_value, 0),
-    " percent intervals for both quantities."
+    "Estimated recent trend in ", spr_text, spr_label, ", where SPR is the spawning potential ratio, and the exploitation rate, along with the ", round(100 * ci_value, 0),
+    " percent confidence intervals for both quantities."
   )
   tables[["spr_es"]] <- spr_es
   save(spr_es, file = file.path(rda_dir, "spr_es.rda"))
@@ -420,7 +420,7 @@ table_exec_summary <- function(
   reference_points[["table"]] <- es.e
   reference_points[["cap"]] <- paste0(
     "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
-    " percent intervals. ",
+    " percent confidence intervals. ",
     sb_short, " is ", tolower(sb.label), # SO or SB
     ", and MSY is maximum sustainable yield."
   )
