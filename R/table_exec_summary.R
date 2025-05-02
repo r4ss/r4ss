@@ -422,7 +422,7 @@ table_exec_summary <- function(
     "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
     " percent confidence intervals. ",
     sb_short, " is ", tolower(sb.label), # SO or SB
-    ", and MSY is maximum sustainable yield."
+    ", SPR is the spawning potential ratio, and MSY is maximum sustainable yield."
   )
   tables[["reference_points"]] <- reference_points
   save(reference_points, file = file.path(rda_dir, "reference_points.rda"))
