@@ -326,7 +326,7 @@ SSMethod.TA1.8 <-
       # define y-axis label
       ylab <- "Mean age" # default as age unless replaced below
       if (type == "len") {
-        ylab <- "Mean length"
+        ylab <- "Mean length (cm)"
       }
       if (type == "size") {
         # probably more efficient ways to sort out these labels,
