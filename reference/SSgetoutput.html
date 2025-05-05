@@ -56,7 +56,8 @@ individual objects or a list of lists.</p>
 <span>  ncols <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  listlists <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  underscore <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  save.lists <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  save.lists <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  SpawnOutputLabel <span class="op">=</span> <span class="st">"Spawning output"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -111,6 +112,15 @@ in keyvec. Default=FALSE.</p></dd>
 <dt id="arg-save-lists">save.lists<a class="anchor" aria-label="anchor" href="#arg-save-lists"></a></dt>
 <dd><p>Save each list of parsed output as a .Rdata file (with default
 filenaming convention based on iteration and date stamp.</p></dd>
+
+
+<dt id="arg-spawnoutputlabel">SpawnOutputLabel<a class="anchor" aria-label="anchor" href="#arg-spawnoutputlabel"></a></dt>
+<dd><p>An alternative to "Spawning output" for use in
+figure axis labels and table headers for models that include a fecundity
+relationship. This provides an option to provide the units, e.g.
+<code>SpawnOutputLabel = "Spawning output (trillions of eggs)"</code>.
+This needs to be a user input because the units depend on the choice of
+fecundity parameters which are calculated outside of the SS3 model.</p></dd>
 
 </dl></div>
     <div class="section level2">
