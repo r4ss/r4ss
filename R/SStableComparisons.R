@@ -45,8 +45,8 @@ SStableComparisons <- function(summaryoutput,
                                  "L_at_Amax",
                                  "VonBert_K",
                                  "SSB_Virg",
-                                 "Bratio_2023",
-                                 "SPRratio_2022"
+                                 "Bratio_2025",
+                                 "SPRratio_2024"
                                ),
                                digits = NULL,
                                modelnames = "default",
