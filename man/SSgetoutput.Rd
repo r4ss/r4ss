@@ -14,7 +14,8 @@ SSgetoutput(
   ncols = lifecycle::deprecated(),
   listlists = TRUE,
   underscore = FALSE,
-  save.lists = FALSE
+  save.lists = FALSE,
+  SpawnOutputLabel = "Spawning output"
 )
 }
 \arguments{
@@ -46,6 +47,13 @@ in keyvec. Default=FALSE.}
 
 \item{save.lists}{Save each list of parsed output as a .Rdata file (with default
 filenaming convention based on iteration and date stamp.}
+
+\item{SpawnOutputLabel}{An alternative to "Spawning output" for use in
+figure axis labels and table headers for models that include a fecundity
+relationship. This provides an option to provide the units, e.g.
+\code{SpawnOutputLabel = "Spawning output (trillions of eggs)"}.
+This needs to be a user input because the units depend on the choice of
+fecundity parameters which are calculated outside of the SS3 model.}
 }
 \description{
 Apply the function \code{\link[=SS_output]{SS_output()}} multiple times and save output as

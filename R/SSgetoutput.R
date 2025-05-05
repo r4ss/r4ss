@@ -22,13 +22,14 @@
 #' in keyvec. Default=FALSE.
 #' @param save.lists Save each list of parsed output as a .Rdata file (with default
 #' filenaming convention based on iteration and date stamp.
+#' @inheritParams SS_output
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()] [SSsummarize()]
 SSgetoutput <-
   function(keyvec = NULL, dirvec = NULL, getcovar = TRUE, getcomp = TRUE, forecast = TRUE,
            verbose = TRUE, ncols = lifecycle::deprecated(), listlists = TRUE, underscore = FALSE,
-           save.lists = FALSE) {
+           save.lists = FALSE, SpawnOutputLabel = "Spawning output") {
     if (lifecycle::is_present(ncols)) {
       lifecycle::deprecate_warn(
         when = "1.46.2",
@@ -116,6 +117,7 @@ SSgetoutput <-
           compfile = compFileName, NoCompOK = NoCompOK,
           warnfile = warnFileName, printstats = FALSE,
           covar = mycovar, forecast = forecast, verbose = FALSE,
+          SpawnOutputLabel = SpawnOutputLabel
         )
         if (is.null(output)) {
           # for some reason covarfile exists, but is old so SS_output rejects
@@ -124,6 +126,7 @@ SSgetoutput <-
             dir = mydir, repfile = repFileName, covarfile = covarname,
             compfile = compFileName, NoCompOK = NoCompOK, printstats = FALSE,
             covar = FALSE, forecast = forecast, verbose = FALSE,
+            SpawnOutputLabel = SpawnOutputLabel
           )
         }
         output[["key"]] <- as.character(key)
