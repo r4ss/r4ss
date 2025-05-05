@@ -74,7 +74,7 @@ plot_twopanel_comparison <- function(mods,
 
   if (!is.null(dir)) {
     if (verbose) {
-      cli::cli_alert_info("printing figure to ", file.path(dir, filename))
+      cli::cli_alert_info("printing figure to {file.path(dir, filename)}")
     }
     png(file.path(dir, filename),
       width = 6.5, height = 7.0, units = "in", pointsize = 10, res = 300
