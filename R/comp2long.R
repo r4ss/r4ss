@@ -70,7 +70,7 @@ comp2long <- function(x, measure = NULL, zero = TRUE) {
   # Check column names
   cols <- c("method", "year", "month", "fleet", "sex", "part", "Nsamp")
   if (!all(cols[-1] %in% names(x))) {
-    stop("'x' must contain '", paste(cols[-1], collapse = "', '"), "'")
+    stop("'x' must contain ", paste(cols[-1], collapse = ", "))
   }
 
   # Distinguish between length comps and generalized size comps
@@ -128,6 +128,75 @@ comp2long <- function(x, measure = NULL, zero = TRUE) {
   }
   out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
                    out[["month"]], out[["length"]]),]
+  row.names(out) <- NULL
+
+  out
+}
+
+age2long <- function(x, expand = FALSE, zero = TRUE) {
+  # Look for data frame
+  if (!is.data.frame(x)) {
+    if (is.list(x) && is.data.frame(x[["agecomp"]])) {
+      x <- x[["agecomp"]]
+    } else if (is.list(x) && is.data.frame(x[["dat"]][["agecomp"]])) {
+      x <- x[["dat"]][["agecomp"]]
+    } else {
+      stop("composition data not found")
+    }
+  }
+
+  # Check column names
+  cols <- c("year", "month", "fleet", "sex", "part", "ageerr", "Lbin_lo",
+            "Lbin_hi", "Nsamp")
+  if (!all(cols[-1] %in% names(x))) {
+    stop("'x' must contain ", paste(cols[-1], collapse = ", "))
+  }
+
+  # Simplify column names
+  names(x)[-seq(cols)] <- gsub("[a-z]", "", names(x)[-seq(cols)])
+
+  # Shuffle data frame if two sexes
+  if (all(x[["sex"]] == 3)) {
+    ncomp <- (ncol(x) - length(cols)) / 2
+    f <- x[seq(length(cols) + 1, length = ncomp)]
+    f <- cbind(x[cols], f)
+    f[["sex"]] <- "f"
+    m <- x[seq(length(cols) + ncomp + 1, length = ncomp)]
+    m <- cbind(x[cols], m)
+    m[["sex"]] <- "m"
+    x <- rbind(f, m)
+  }
+
+  # Store variables as a combined string
+  x[["Nsamp"]] <- format(x[["Nsamp"]], digits = 12)
+  rowlab <- apply(x[cols], 1, paste, collapse = "|")
+
+  # Prepare composition data
+  x <- x[!names(x) %in% cols]
+  x <- as.matrix(x)
+  row.names(x) <- rowlab
+
+  # Convert composition data to long format
+  comp <- as.data.frame(as.table(x), stringsAsFactors = FALSE)
+  vars <- read.table(text = comp[["Var1"]], sep = "|", col.names = cols)
+  comp[["Var1"]] <- NULL
+  comp[["Var2"]] <- type.convert(comp[["Var2"]], as.is = TRUE)
+  names(comp) <- c("age", "freq")
+
+  # Combine vars and comp
+  out <- data.frame(vars, comp)
+  if (!zero) {
+    out <- out[out[["freq"]] > 0, ]
+  }
+  out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
+                   out[["month"]], out[["age"]], out[["Lbin_lo"]]),]
+  if (expand) {
+    if (!is.integer(out[["freq"]])) {
+      stop("expand = TRUE requires composition frequencies to be integers")
+    }
+    out <- out[rep(seq_len(nrow(out)), out[["freq"]]),]
+    out[["freq"]] <- 1L
+  }
   row.names(out) <- NULL
 
   out
