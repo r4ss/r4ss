@@ -20,7 +20,8 @@
 #' \preformatted{method  year  month  fleet  sex  part  Nsamp  size  freq}
 #' for generalized size composition data.
 #'
-#' The second to last column can be named explicitly via the measure argument.
+#' The second to last column can be named explicitly via the \code{measure}
+#' argument.
 #'
 #' @note
 #' In r4ss list objects, length composition data are stored as \code{lencomp},
@@ -86,13 +87,27 @@ comp2long <- function(x, measure = NULL, zero = TRUE) {
     }
   }
 
+  # Simplify column names
+  names(x)[-seq(cols)] <- gsub("[a-z]", "", names(x)[-seq(cols)])
+
+  # Shuffle data frame if two sexes
+  if (all(x[["sex"]] == 3)) {
+    ncomp <- (ncol(x) - length(cols)) / 2
+    f <- x[seq(length(cols) + 1, length = ncomp)]
+    f <- cbind(x[cols], f)
+    f[["sex"]] <- "f"
+    m <- x[seq(length(cols) + ncomp + 1, length = ncomp)]
+    m <- cbind(x[cols], m)
+    m[["sex"]] <- "m"
+    x <- rbind(f, m)
+  }
+
   # Store variables as a combined string
-  x[["Nsamp"]] <- format(x[["Nsamp"]], trim = TRUE, digits = 12)
+  x[["Nsamp"]] <- format(x[["Nsamp"]], digits = 12)
   rowlab <- apply(x[cols], 1, paste, collapse = "|")
 
   # Prepare composition data
   x <- x[!names(x) %in% cols]
-  names(x) <- gsub("[a-z]", "", names(x))
   x <- as.matrix(x)
   row.names(x) <- rowlab
 
@@ -111,6 +126,9 @@ comp2long <- function(x, measure = NULL, zero = TRUE) {
   if (!zero) {
     out <- out[out[["freq"]] > 0, ]
   }
+  out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
+                   out[["month"]], out[["length"]]),]
+  row.names(out) <- NULL
 
   out
 }

@@ -22,7 +22,8 @@ for length composition data, or
 \preformatted{method  year  month  fleet  sex  part  Nsamp  size  freq}
 for generalized size composition data.
 
-The second to last column can be named explicitly via the measure argument.
+The second to last column can be named explicitly via the \code{measure}
+argument.
 }
 \description{
 Convert data frame containing length or generalized size composition data
