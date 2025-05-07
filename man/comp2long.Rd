@@ -2,41 +2,54 @@
 % Please edit documentation in R/comp2long.R
 \name{comp2long}
 \alias{comp2long}
+\alias{age2long}
+\alias{size2long}
 \title{Convert composition data to long format}
 \usage{
-comp2long(x, measure = NULL, zero = TRUE)
+comp2long(x, ...)
+
+age2long(x, expand = FALSE, zero = TRUE)
+
+size2long(x, measure = NULL, zero = TRUE)
 }
 \arguments{
-\item{x}{A data frame containing length or generalized size composition data,
-or a list containing such a data frame.}
+\item{x}{A data frame containing age, length, generalized size composition
+data, or a list containing such a data frame.}
+
+\item{...}{Passed to \code{age2long} or \code{size2long}.}
+
+\item{expand}{Whether to repeat recurring entries in the resulting data
+frame, so that the \code{freq} column is \code{1} for every entry.}
+
+\item{zero}{Whether zero frequencies should be included in the output.}
 
 \item{measure}{An optional string indicating the type of measurement, e.g.,
 \code{"weight"}.}
-
-\item{zero}{Whether zero frequencies should be included in the output.}
 }
 \value{
-Data frame containing the columns
-\preformatted{year  month  fleet  sex  part  Nsamp  length  freq}
-for length composition data, or
-\preformatted{method  year  month  fleet  sex  part  Nsamp  size  freq}
-for generalized size composition data.
-
-The second to last column can be named explicitly via the \code{measure}
-argument.
+Data frame containing the data in long format.
 }
 \description{
-Convert data frame containing length or generalized size composition data
-from wide to long format.
+Convert age, length, or generalized size composition data from wide to long
+format.
 }
 \details{
-If \code{x} is not a data frame, the function will look for data frames
-called \code{x[["lencomp"]]} or \code{x[["dat"]][["lencomp"]]}.
+The \code{age2long} function converts age compositions and \code{size2long}
+converts length or generalized size compositions. Alternatively, the wrapper
+function \code{comp2long} converts any composition data and will call either
+\code{age2long} or \code{size2long}, depending on the data type of \code{x}.
+
+If \code{x} is not a data frame, the function will look for \code{lencomp}
+inside the list.
+
+The \code{expand = TRUE} option is mainly useful for accessing conditional
+age-at-length, e.g., to produce a data frame that has the same number of rows
+as the number of otoliths.
 }
 \note{
-In r4ss list objects, length composition data are stored as \code{lencomp},
-while generalized size composition data are stored as
-\code{sizefreq_data_list[[i]]}.
+In r4ss input data objects, age composition data are stored as
+\code{agecomp}, length composition data as \code{lencomp}, and generalized
+size composition data as \code{sizefreq_data_list[[i]]}.
 }
 \examples{
 # Read composition data from example model
@@ -44,11 +57,13 @@ path <- system.file("extdata", "simple_small", package = "r4ss")
 inputs <- SS_read(path)
 dat <- SS_readdat(file.path(path, "data.ss"), verbose = FALSE)
 x <- dat[["lencomp"]]
+y <- dat[["agecomp"]]
 
 # Main argument can be a list or data frame
 head(comp2long(inputs))
 head(comp2long(dat))
 head(comp2long(x))
+head(comp2long(y))
 
 # Rename second to last column
 head(comp2long(x, measure = "weight"))
@@ -56,6 +71,15 @@ head(comp2long(x, measure = "weight"))
 # Shrink output by omitting zero frequencies
 nrow(comp2long(x))
 nrow(comp2long(x, zero = FALSE))
+nrow(comp2long(y))
+nrow(comp2long(y, zero = FALSE))
+
+# Expand output by repeating recurring entries
+nrow(comp2long(y, expand = TRUE))
+
+# Aggregate by sex
+aggregate(freq~sex, comp2long(x), sum)
+aggregate(freq~sex, comp2long(y), sum)
 
 }
 \seealso{

@@ -1,32 +1,37 @@
 #' Convert composition data to long format
 #'
-#' Convert data frame containing length or generalized size composition data
-#' from wide to long format.
+#' Convert age, length, or generalized size composition data from wide to long
+#' format.
 #'
-#' @param x A data frame containing length or generalized size composition data,
-#'        or a list containing such a data frame.
+#' @param x A data frame containing age, length, generalized size composition
+#'        data, or a list containing such a data frame.
+#' @param ... Passed to \code{age2long} or \code{size2long}.
+#' @param expand Whether to repeat recurring entries in the resulting data
+#'        frame, so that the \code{freq} column is \code{1} for every entry.
+#' @param zero Whether zero frequencies should be included in the output.
 #' @param measure An optional string indicating the type of measurement, e.g.,
 #'        \code{"weight"}.
-#' @param zero Whether zero frequencies should be included in the output.
 #'
 #' @details
-#' If \code{x} is not a data frame, the function will look for data frames
-#' called \code{x[["lencomp"]]} or \code{x[["dat"]][["lencomp"]]}.
+#' The \code{age2long} function converts age compositions and \code{size2long}
+#' converts length or generalized size compositions. Alternatively, the wrapper
+#' function \code{comp2long} converts any composition data and will call either
+#' \code{age2long} or \code{size2long}, depending on the data type of \code{x}.
+#'
+#' If \code{x} is not a data frame, the function will look for \code{lencomp}
+#' inside the list.
+#'
+#' The \code{expand = TRUE} option is mainly useful for accessing conditional
+#' age-at-length, e.g., to produce a data frame that has the same number of rows
+#' as the number of otoliths.
 #'
 #' @return
-#' Data frame containing the columns
-#' \preformatted{year  month  fleet  sex  part  Nsamp  length  freq}
-#' for length composition data, or
-#' \preformatted{method  year  month  fleet  sex  part  Nsamp  size  freq}
-#' for generalized size composition data.
-#'
-#' The second to last column can be named explicitly via the \code{measure}
-#' argument.
+#' Data frame containing the data in long format.
 #'
 #' @note
-#' In r4ss list objects, length composition data are stored as \code{lencomp},
-#' while generalized size composition data are stored as
-#' \code{sizefreq_data_list[[i]]}.
+#' In r4ss input data objects, age composition data are stored as
+#' \code{agecomp}, length composition data as \code{lencomp}, and generalized
+#' size composition data as \code{sizefreq_data_list[[i]]}.
 #'
 #' @seealso
 #' \code{\link{SS_read}} and \code{\link{SS_readdat}} read composition data from
@@ -38,11 +43,13 @@
 #' inputs <- SS_read(path)
 #' dat <- SS_readdat(file.path(path, "data.ss"), verbose = FALSE)
 #' x <- dat[["lencomp"]]
+#' y <- dat[["agecomp"]]
 #'
 #' # Main argument can be a list or data frame
 #' head(comp2long(inputs))
 #' head(comp2long(dat))
 #' head(comp2long(x))
+#' head(comp2long(y))
 #'
 #' # Rename second to last column
 #' head(comp2long(x, measure = "weight"))
@@ -50,12 +57,119 @@
 #' # Shrink output by omitting zero frequencies
 #' nrow(comp2long(x))
 #' nrow(comp2long(x, zero = FALSE))
+#' nrow(comp2long(y))
+#' nrow(comp2long(y, zero = FALSE))
 #'
+#' # Expand output by repeating recurring entries
+#' nrow(comp2long(y, expand = TRUE))
+#'
+#' # Aggregate by sex
+#' aggregate(freq~sex, comp2long(x), sum)
+#' aggregate(freq~sex, comp2long(y), sum)
+#'
+#' @importFrom stats aggregate
 #' @importFrom utils read.table type.convert
 #'
 #' @export
 
-comp2long <- function(x, measure = NULL, zero = TRUE) {
+comp2long <- function(x, ...) {
+  # Look for data frame
+  if (!is.data.frame(x)) {
+    if (is.list(x) && is.data.frame(x[["lencomp"]])) {
+      x <- x[["lencomp"]]
+    } else if (is.list(x) && is.data.frame(x[["dat"]][["lencomp"]])) {
+      x <- x[["dat"]][["lencomp"]]
+    } else {
+      stop("composition data not found")
+    }
+  }
+
+  # Call age2long() or size2long()
+  if ("ageerr" %in% names(x)) {
+    age2long(x, ...)
+  } else {
+    size2long(x, ...)
+  }
+}
+
+#' @rdname comp2long
+#'
+#' @export
+
+age2long <- function(x, expand = FALSE, zero = TRUE) {
+  # Look for data frame
+  if (!is.data.frame(x)) {
+    if (is.list(x) && is.data.frame(x[["agecomp"]])) {
+      x <- x[["agecomp"]]
+    } else if (is.list(x) && is.data.frame(x[["dat"]][["agecomp"]])) {
+      x <- x[["dat"]][["agecomp"]]
+    } else {
+      stop("composition data not found")
+    }
+  }
+
+  # Check column names
+  cols <- c("year", "month", "fleet", "sex", "part", "ageerr", "Lbin_lo",
+            "Lbin_hi", "Nsamp")
+  if (!all(cols[-1] %in% names(x))) {
+    stop("'x' must contain ", paste(cols[-1], collapse = ", "))
+  }
+
+  # Simplify column names
+  names(x)[-seq(cols)] <- gsub("[a-z]", "", names(x)[-seq(cols)])
+
+  # Shuffle data frame if two sexes
+  if (all(x[["sex"]] == 3)) {
+    ncomp <- (ncol(x) - length(cols)) / 2
+    f <- x[seq(length(cols) + 1, length = ncomp)]
+    f <- cbind(x[cols], f)
+    f[["sex"]] <- "f"
+    m <- x[seq(length(cols) + ncomp + 1, length = ncomp)]
+    m <- cbind(x[cols], m)
+    m[["sex"]] <- "m"
+    x <- rbind(f, m)
+  }
+
+  # Store variables as a combined string
+  x[["Nsamp"]] <- format(x[["Nsamp"]], digits = 12)
+  rowlab <- apply(x[cols], 1, paste, collapse = "|")
+
+  # Prepare composition data
+  x <- x[!names(x) %in% cols]
+  x <- as.matrix(x)
+  row.names(x) <- rowlab
+
+  # Convert composition data to long format
+  comp <- as.data.frame(as.table(x), stringsAsFactors = FALSE)
+  vars <- read.table(text = comp[["Var1"]], sep = "|", col.names = cols)
+  comp[["Var1"]] <- NULL
+  comp[["Var2"]] <- type.convert(comp[["Var2"]], as.is = TRUE)
+  names(comp) <- c("age", "freq")
+
+  # Combine vars and comp
+  out <- data.frame(vars, comp)
+  if (!zero) {
+    out <- out[out[["freq"]] > 0, ]
+  }
+  out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
+                   out[["month"]], out[["age"]], out[["Lbin_lo"]]),]
+  if (expand) {
+    if (!is.integer(out[["freq"]])) {
+      stop("expand = TRUE requires composition frequencies to be integers")
+    }
+    out <- out[rep(seq_len(nrow(out)), out[["freq"]]),]
+    out[["freq"]] <- 1L
+  }
+  row.names(out) <- NULL
+
+  out
+}
+
+#' @rdname comp2long
+#'
+#' @export
+
+size2long <- function(x, measure = NULL, zero = TRUE) {
   # Look for data frame
   if (!is.data.frame(x)) {
     if (is.list(x) && is.data.frame(x[["lencomp"]])) {
@@ -127,76 +241,7 @@ comp2long <- function(x, measure = NULL, zero = TRUE) {
     out <- out[out[["freq"]] > 0, ]
   }
   out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
-                   out[["month"]], out[["length"]]),]
-  row.names(out) <- NULL
-
-  out
-}
-
-age2long <- function(x, expand = FALSE, zero = TRUE) {
-  # Look for data frame
-  if (!is.data.frame(x)) {
-    if (is.list(x) && is.data.frame(x[["agecomp"]])) {
-      x <- x[["agecomp"]]
-    } else if (is.list(x) && is.data.frame(x[["dat"]][["agecomp"]])) {
-      x <- x[["dat"]][["agecomp"]]
-    } else {
-      stop("composition data not found")
-    }
-  }
-
-  # Check column names
-  cols <- c("year", "month", "fleet", "sex", "part", "ageerr", "Lbin_lo",
-            "Lbin_hi", "Nsamp")
-  if (!all(cols[-1] %in% names(x))) {
-    stop("'x' must contain ", paste(cols[-1], collapse = ", "))
-  }
-
-  # Simplify column names
-  names(x)[-seq(cols)] <- gsub("[a-z]", "", names(x)[-seq(cols)])
-
-  # Shuffle data frame if two sexes
-  if (all(x[["sex"]] == 3)) {
-    ncomp <- (ncol(x) - length(cols)) / 2
-    f <- x[seq(length(cols) + 1, length = ncomp)]
-    f <- cbind(x[cols], f)
-    f[["sex"]] <- "f"
-    m <- x[seq(length(cols) + ncomp + 1, length = ncomp)]
-    m <- cbind(x[cols], m)
-    m[["sex"]] <- "m"
-    x <- rbind(f, m)
-  }
-
-  # Store variables as a combined string
-  x[["Nsamp"]] <- format(x[["Nsamp"]], digits = 12)
-  rowlab <- apply(x[cols], 1, paste, collapse = "|")
-
-  # Prepare composition data
-  x <- x[!names(x) %in% cols]
-  x <- as.matrix(x)
-  row.names(x) <- rowlab
-
-  # Convert composition data to long format
-  comp <- as.data.frame(as.table(x), stringsAsFactors = FALSE)
-  vars <- read.table(text = comp[["Var1"]], sep = "|", col.names = cols)
-  comp[["Var1"]] <- NULL
-  comp[["Var2"]] <- type.convert(comp[["Var2"]], as.is = TRUE)
-  names(comp) <- c("age", "freq")
-
-  # Combine vars and comp
-  out <- data.frame(vars, comp)
-  if (!zero) {
-    out <- out[out[["freq"]] > 0, ]
-  }
-  out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
-                   out[["month"]], out[["age"]], out[["Lbin_lo"]]),]
-  if (expand) {
-    if (!is.integer(out[["freq"]])) {
-      stop("expand = TRUE requires composition frequencies to be integers")
-    }
-    out <- out[rep(seq_len(nrow(out)), out[["freq"]]),]
-    out[["freq"]] <- 1L
-  }
+                   out[["month"]], out[[measure]]),]
   row.names(out) <- NULL
 
   out
