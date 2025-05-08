@@ -68,7 +68,6 @@
 #' aggregate(freq~sex, comp2long(x), sum)
 #' aggregate(freq~sex, comp2long(y), sum)
 #'
-#' @importFrom stats aggregate
 #' @importFrom utils read.table type.convert
 #'
 #' @export
@@ -88,9 +87,10 @@ comp2long <- function(x, ...) {
       x <- x[["sizefreq_data_list"]][[1]]
     } else if (is.data.frame(x[["dat"]][["sizefreq_data_list"]][[1]])) {
       x <- x[["dat"]][["sizefreq_data_list"]][[1]]
-    } else {
-      stop("composition data not found")
     }
+  }
+  if (!is.data.frame(x)) {
+    stop("composition data not found")
   }
 
   # Call age2long() or size2long()
@@ -107,14 +107,15 @@ comp2long <- function(x, ...) {
 
 age2long <- function(x, expand = FALSE, zero = TRUE) {
   # Look for data frame
-  if (!is.data.frame(x)) {
+  if (!is.data.frame(x) && is.list(x)) {
     if (is.data.frame(x[["agecomp"]])) {
       x <- x[["agecomp"]]
     } else if (is.data.frame(x[["dat"]][["agecomp"]])) {
       x <- x[["dat"]][["agecomp"]]
-    } else {
-      stop("age composition data not found")
     }
+  }
+  if (!is.data.frame(x)) {
+    stop("age composition data not found")
   }
 
   # Check column names
@@ -180,7 +181,7 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
 
 size2long <- function(x, measure = NULL, zero = TRUE) {
   # Look for data frame
-  if (!is.data.frame(x)) {
+  if (!is.data.frame(x) && is.list(x)) {
     if (is.data.frame(x[["lencomp"]])) {
       x <- x[["lencomp"]]
     } else if (is.data.frame(x[["dat"]][["lencomp"]])) {
@@ -189,9 +190,10 @@ size2long <- function(x, measure = NULL, zero = TRUE) {
       x <- x[["sizefreq_data_list"]][[1]]
     } else if (is.data.frame(x[["dat"]][["sizefreq_data_list"]][[1]])) {
       x <- x[["dat"]][["sizefreq_data_list"]][[1]]
-    } else {
-      stop("size composition data not found")
     }
+  }
+  if (!is.data.frame(x)) {
+    stop("size composition data not found")
   }
 
   # Check column names
