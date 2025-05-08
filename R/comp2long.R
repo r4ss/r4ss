@@ -18,8 +18,9 @@
 #' function \code{comp2long} converts any composition data and will call either
 #' \code{age2long} or \code{size2long}, depending on the data type of \code{x}.
 #'
-#' If \code{x} is not a data frame, the function will look for \code{lencomp}
-#' inside the list.
+#' If \code{x} is not a data frame, the function will look for a data frame
+#' inside the list: first \code{lencomp}, then \code{agecomp}, and then
+#' \code{sizefreq_data_list[[1]]}.
 #'
 #' The \code{expand = TRUE} option is mainly useful for accessing conditional
 #' age-at-length, e.g., to produce a data frame that has the same number of rows
@@ -74,11 +75,19 @@
 
 comp2long <- function(x, ...) {
   # Look for data frame
-  if (!is.data.frame(x)) {
-    if (is.list(x) && is.data.frame(x[["lencomp"]])) {
+  if (!is.data.frame(x) && is.list(x)) {
+    if (is.data.frame(x[["lencomp"]])) {
       x <- x[["lencomp"]]
-    } else if (is.list(x) && is.data.frame(x[["dat"]][["lencomp"]])) {
+    } else if (is.data.frame(x[["dat"]][["lencomp"]])) {
       x <- x[["dat"]][["lencomp"]]
+    } else if (is.data.frame(x[["agecomp"]])) {
+      x <- x[["agecomp"]]
+    } else if (is.data.frame(x[["dat"]][["agecomp"]])) {
+      x <- x[["dat"]][["agecomp"]]
+    } else if (is.data.frame(x[["sizefreq_data_list"]][[1]])) {
+      x <- x[["sizefreq_data_list"]][[1]]
+    } else if (is.data.frame(x[["dat"]][["sizefreq_data_list"]][[1]])) {
+      x <- x[["dat"]][["sizefreq_data_list"]][[1]]
     } else {
       stop("composition data not found")
     }
@@ -99,12 +108,12 @@ comp2long <- function(x, ...) {
 age2long <- function(x, expand = FALSE, zero = TRUE) {
   # Look for data frame
   if (!is.data.frame(x)) {
-    if (is.list(x) && is.data.frame(x[["agecomp"]])) {
+    if (is.data.frame(x[["agecomp"]])) {
       x <- x[["agecomp"]]
-    } else if (is.list(x) && is.data.frame(x[["dat"]][["agecomp"]])) {
+    } else if (is.data.frame(x[["dat"]][["agecomp"]])) {
       x <- x[["dat"]][["agecomp"]]
     } else {
-      stop("composition data not found")
+      stop("age composition data not found")
     }
   }
 
@@ -172,12 +181,16 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
 size2long <- function(x, measure = NULL, zero = TRUE) {
   # Look for data frame
   if (!is.data.frame(x)) {
-    if (is.list(x) && is.data.frame(x[["lencomp"]])) {
+    if (is.data.frame(x[["lencomp"]])) {
       x <- x[["lencomp"]]
-    } else if (is.list(x) && is.data.frame(x[["dat"]][["lencomp"]])) {
+    } else if (is.data.frame(x[["dat"]][["lencomp"]])) {
       x <- x[["dat"]][["lencomp"]]
+    } else if (is.data.frame(x[["sizefreq_data_list"]][[1]])) {
+      x <- x[["sizefreq_data_list"]][[1]]
+    } else if (is.data.frame(x[["dat"]][["sizefreq_data_list"]][[1]])) {
+      x <- x[["dat"]][["sizefreq_data_list"]][[1]]
     } else {
-      stop("composition data not found")
+      stop("size composition data not found")
     }
   }
 

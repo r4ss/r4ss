@@ -39,8 +39,9 @@ converts length or generalized size compositions. Alternatively, the wrapper
 function \code{comp2long} converts any composition data and will call either
 \code{age2long} or \code{size2long}, depending on the data type of \code{x}.
 
-If \code{x} is not a data frame, the function will look for \code{lencomp}
-inside the list.
+If \code{x} is not a data frame, the function will look for a data frame
+inside the list: first \code{lencomp}, then \code{agecomp}, and then
+\code{sizefreq_data_list[[1]]}.
 
 The \code{expand = TRUE} option is mainly useful for accessing conditional
 age-at-length, e.g., to produce a data frame that has the same number of rows
