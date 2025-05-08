@@ -34,6 +34,8 @@
 #' \code{agecomp}, length composition data as \code{lencomp}, and generalized
 #' size composition data as \code{sizefreq_data_list[[i]]}.
 #'
+#' @author Arni Magnusson
+#'
 #' @seealso
 #' \code{\link{SS_read}} and \code{\link{SS_readdat}} read composition data from
 #' files into r4ss list objects.

@@ -87,3 +87,6 @@ aggregate(freq~sex, comp2long(y), sum)
 \code{\link{SS_read}} and \code{\link{SS_readdat}} read composition data from
 files into r4ss list objects.
 }
+\author{
+Arni Magnusson
+}
