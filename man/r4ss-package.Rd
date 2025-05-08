@@ -80,6 +80,7 @@ Authors:
   \item Eric Fletcher
   \item Elizabeth F. Gugliotti
   \item Kiva L. Oken
+  \item Arni Magnusson
 }
 
 }
