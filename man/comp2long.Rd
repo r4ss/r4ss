@@ -79,8 +79,8 @@ nrow(comp2long(y, zero = FALSE))
 nrow(comp2long(y, expand = TRUE))
 
 # Aggregate by sex
-aggregate(freq~sex, comp2long(x), sum)
-aggregate(freq~sex, comp2long(y), sum)
+aggregate(freq ~ sex, comp2long(x), sum)
+aggregate(freq ~ sex, comp2long(y), sum)
 
 }
 \seealso{

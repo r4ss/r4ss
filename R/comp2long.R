@@ -67,8 +67,8 @@
 #' nrow(comp2long(y, expand = TRUE))
 #'
 #' # Aggregate by sex
-#' aggregate(freq~sex, comp2long(x), sum)
-#' aggregate(freq~sex, comp2long(y), sum)
+#' aggregate(freq ~ sex, comp2long(x), sum)
+#' aggregate(freq ~ sex, comp2long(y), sum)
 #'
 #' @importFrom utils read.table type.convert
 #'
@@ -121,8 +121,10 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
   }
 
   # Check column names
-  cols <- c("year", "month", "fleet", "sex", "part", "ageerr", "Lbin_lo",
-            "Lbin_hi", "Nsamp")
+  cols <- c(
+    "year", "month", "fleet", "sex", "part", "ageerr", "Lbin_lo",
+    "Lbin_hi", "Nsamp"
+  )
   if (!all(cols[-1] %in% names(x))) {
     stop("'x' must contain ", paste(cols[-1], collapse = ", "))
   }
@@ -163,13 +165,15 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
   if (!zero) {
     out <- out[out[["freq"]] > 0, ]
   }
-  out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
-                   out[["month"]], out[["age"]], out[["Lbin_lo"]]),]
+  out <- out[order(
+    out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
+    out[["month"]], out[["age"]], out[["Lbin_lo"]]
+  ), ]
   if (expand) {
     if (!is.integer(out[["freq"]])) {
       stop("expand = TRUE requires composition frequencies to be integers")
     }
-    out <- out[rep(seq_len(nrow(out)), out[["freq"]]),]
+    out <- out[rep(seq_len(nrow(out)), out[["freq"]]), ]
     out[["freq"]] <- 1L
   }
   row.names(out) <- NULL
@@ -257,8 +261,10 @@ size2long <- function(x, measure = NULL, zero = TRUE) {
   if (!zero) {
     out <- out[out[["freq"]] > 0, ]
   }
-  out <- out[order(out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
-                   out[["month"]], out[[measure]]),]
+  out <- out[order(
+    out[["fleet"]], out[["part"]], out[["sex"]], out[["year"]],
+    out[["month"]], out[[measure]]
+  ), ]
   row.names(out) <- NULL
 
   out

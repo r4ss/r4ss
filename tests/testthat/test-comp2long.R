@@ -31,8 +31,8 @@ test_that("comp2long data format conversion works", {
   expect_equal(ny.expand, 400)
 
   # Aggregate by sex
-  x.agg <- aggregate(freq~sex, comp2long(x), sum)
-  y.agg <- aggregate(freq~sex, comp2long(y), sum)
+  x.agg <- aggregate(freq ~ sex, comp2long(x), sum)
+  y.agg <- aggregate(freq ~ sex, comp2long(y), sum)
   expect_equal(x.agg$freq, c(408, 392))
   expect_equal(y.agg$freq, c(216, 184))
 })
