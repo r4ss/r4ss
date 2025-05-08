@@ -1,0 +1,14 @@
+# Reusable workflow to calculate coverage add it to a badge that is stored on 
+# a branch in the repo called badges.
+# note that this has only been tested to build a badge with the main branch
+# coverage; it may not work to calculate coverage from other branches.
+name: call-create-cov-badge
+# on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
+# other option would be to run this on a schedule. Other build trigger options may not work well.
+on:
+  push:
+    branches:
+      - main
+jobs:
+  call-workflow:
+    uses: nmfs-fish-tools/ghactions4r/.github/workflows/create-cov-badge.yml@main
