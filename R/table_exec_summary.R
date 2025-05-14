@@ -441,13 +441,25 @@ table_exec_summary <- function(
   catch <- dead <- total.dead <- 0
   for (i in 1:nfleets) {
     name <- paste0("retain(B):_", i)
-    input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
-    catch <- cbind(catch, input.catch)
+    if (name %in% colnames(replist[["timeseries"]])) {
+      input.catch <- replist[["timeseries"]] |> 
+        dplyr::filter(Yr %in% years_minus_final) |> 
+        dplyr::group_by(Yr) |> 
+        dplyr::summarize(input.catch = sum(get(name))) |>
+        dplyr::pull(input.catch)
+      catch <- cbind(catch, input.catch)
+    }
 
     name <- paste0("dead(B):_", i)
-    dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
-    if (!is.null(dead)) {
-      total.dead <- total.dead + dead
+    if (name %in% colnames(replist[["timeseries"]])) {
+      dead <- replist[["timeseries"]] |> 
+        dplyr::filter(Yr %in% years_minus_final) |> 
+        dplyr::group_by(Yr) |> 
+        dplyr::summarize(dead = sum(get(name))) |>
+        dplyr::pull(dead)
+      if (!is.null(dead)) {
+        total.dead <- total.dead + dead
+      }
     }
   }
   total.catch <- apply(catch, 1, sum)
