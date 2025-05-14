@@ -438,31 +438,21 @@ table_exec_summary <- function(
   abc <- rep(NA, length(years) - 1)
   acl <- rep(NA, length(years) - 1)
 
-  catch <- dead <- total.dead <- 0
-  for (i in 1:nfleets) {
-    name <- paste0("retain(B):_", i)
-    if (name %in% colnames(replist[["timeseries"]])) {
-      input.catch <- replist[["timeseries"]] |> 
-        dplyr::filter(Yr %in% years_minus_final) |> 
-        dplyr::group_by(Yr) |> 
-        dplyr::summarize(input.catch = sum(get(name))) |>
-        dplyr::pull(input.catch)
-      catch <- cbind(catch, input.catch)
-    }
+  total.catch <- replist[["timeseries"]] |> 
+    dplyr::filter(Yr %in% years_minus_final) |> 
+    dplyr::select(Yr, dplyr::starts_with("retain(B):_")) |> 
+    dplyr::group_by(Yr) |> 
+    dplyr::summarize(dplyr::across(dplyr::everything(), sum)) |> 
+    dplyr::select(-Yr) |> 
+    rowSums()
 
-    name <- paste0("dead(B):_", i)
-    if (name %in% colnames(replist[["timeseries"]])) {
-      dead <- replist[["timeseries"]] |> 
-        dplyr::filter(Yr %in% years_minus_final) |> 
-        dplyr::group_by(Yr) |> 
-        dplyr::summarize(dead = sum(get(name))) |>
-        dplyr::pull(dead)
-      if (!is.null(dead)) {
-        total.dead <- total.dead + dead
-      }
-    }
-  }
-  total.catch <- apply(catch, 1, sum)
+  total.dead <- replist[["timeseries"]] |> 
+    dplyr::filter(Yr %in% years_minus_final) |> 
+    dplyr::select(Yr, dplyr::starts_with("dead(B):_")) |> 
+    dplyr::group_by(Yr) |> 
+    dplyr::summarize(dplyr::across(dplyr::everything(), sum)) |> 
+    dplyr::select(-Yr) |> 
+    rowSums()
 
   if (sum(total.catch) != sum(total.dead)) {
     es.f <- data.frame(years_minus_final, ofl, abc, acl, total.catch, total.dead)
