@@ -438,20 +438,20 @@ table_exec_summary <- function(
   abc <- rep(NA, length(years) - 1)
   acl <- rep(NA, length(years) - 1)
 
-  total.catch <- replist[["timeseries"]] |> 
-    dplyr::filter(Yr %in% years_minus_final) |> 
-    dplyr::select(Yr, dplyr::starts_with("retain(B):_")) |> 
-    dplyr::group_by(Yr) |> 
-    dplyr::summarize(dplyr::across(dplyr::everything(), sum)) |> 
-    dplyr::select(-Yr) |> 
+  total.catch <- replist[["timeseries"]] |>
+    dplyr::filter(Yr %in% years_minus_final) |>
+    dplyr::select(Yr, dplyr::starts_with("retain(B):_")) |>
+    dplyr::group_by(Yr) |>
+    dplyr::summarize(dplyr::across(dplyr::everything(), sum)) |>
+    dplyr::select(-Yr) |>
     rowSums()
 
-  total.dead <- replist[["timeseries"]] |> 
-    dplyr::filter(Yr %in% years_minus_final) |> 
-    dplyr::select(Yr, dplyr::starts_with("dead(B):_")) |> 
-    dplyr::group_by(Yr) |> 
-    dplyr::summarize(dplyr::across(dplyr::everything(), sum)) |> 
-    dplyr::select(-Yr) |> 
+  total.dead <- replist[["timeseries"]] |>
+    dplyr::filter(Yr %in% years_minus_final) |>
+    dplyr::select(Yr, dplyr::starts_with("dead(B):_")) |>
+    dplyr::group_by(Yr) |>
+    dplyr::summarize(dplyr::across(dplyr::everything(), sum)) |>
+    dplyr::select(-Yr) |>
     rowSums()
 
   if (sum(total.catch) != sum(total.dead)) {
