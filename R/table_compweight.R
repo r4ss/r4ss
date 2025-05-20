@@ -6,6 +6,8 @@
 #' @param caption_CAAL Additional text added to the caption for models with conditional age at length data.
 #' @family table functions
 #' @author Kelli F. Johnson, Ian G. Taylor
+#' @export
+#' @return A list containing the table and caption.
 #' @examples
 #' \dontrun{
 #' # Load the model output
