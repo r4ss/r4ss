@@ -1387,21 +1387,38 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
       )
       x$.i <- x$.i + 11
       sigma_sel_ages <- specs2D[["amin"]]:specs2D[["sig_amax"]]
-      n_par_vals <- (2 + length(sigma_sel_ages)) * 7
+      if (specs2D[["sig_amax"]] >= specs2D[["amax"]]) {
+        n_pars <- (2 + length(sigma_sel_ages)) * 7
+      } else {
+        n_pars <- 1
+      }
+      n_par_vals <- n_pars * 7
+
       # read parameter rows
       par2D <- as.data.frame(
         matrix(x$.dat[x$.i + 1:n_par_vals - 1],
-          nrow = 2 + length(sigma_sel_ages), byrow = TRUE
+          nrow = n_pars, byrow = TRUE
         ),
         stringsAsFactors = FALSE
       )
       colnames(par2D) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE")
       # parameter labels
-      rownames(par2D) <- c(
-        paste0("sigma_sel_fleet", specs2D[["fleet"]], "_age", sigma_sel_ages),
-        paste0("rho_year_fleet", specs2D[["fleet"]]),
-        paste0("rho_age_fleet", specs2D[["fleet"]])
-      )
+      if (n_pars == 1) {
+        agelab <- "_all"
+      } else {
+        agelab <- sigma_sel_ages
+      }
+      if (specs2D[["use_rho"]] == 1) {
+        rownames(par2D) <- c(
+          paste0("sigma_sel_fleet", specs2D[["fleet"]], "_age", agelab),
+          paste0("rho_year_fleet", specs2D[["fleet"]]),
+          paste0("rho_age_fleet", specs2D[["fleet"]])
+        )
+      } else {
+        rownames(par2D) <- c(
+          paste0("sigma_sel_fleet", specs2D[["fleet"]], "_age", agelab)
+        )
+      }
       x[[".i"]] <- x[[".i"]] + n_par_vals
       x[["specs_2D_AR"]] <- rbind(x[["specs_2D_AR"]], specs2D)
       x[["pars_2D_AR"]] <- rbind(x[["pars_2D_AR"]], par2D)

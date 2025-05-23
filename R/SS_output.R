@@ -1495,7 +1495,9 @@ SS_output <-
       # add columns to pars data.frame with info from labels
       seldev_pars[["Fleet"]] <- seldev_label_info[["X1"]]
       yr_col <- grep("^y\\d\\d\\d\\d$", seldev_label_info[1, ])
-      type_bin_col <- grep("^[aAlL][[:alpha:]]{0,3}\\d$", seldev_label_info[1, ])
+      # probably always the final column will be one that starts with
+      # A or L (upper or lower case) and ends with a bin number
+      type_bin_col <- grep("^[aAlL].*\\d+$", seldev_label_info[1, ])
       seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[[yr_col]], 2))
       # note: bin was indicated by "a" for length- and age-based selectivity
       # until early 2020 when separate "A" or "Lbin" codes were used
