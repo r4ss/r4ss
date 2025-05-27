@@ -981,7 +981,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
       # return upper y-limit
@@ -1098,7 +1099,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
       # return upper y-limit
@@ -1269,7 +1271,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
       box()
@@ -1371,7 +1374,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
 
@@ -1505,7 +1509,7 @@ SSplotComparisons <-
           }
         }
       }
-
+      grid()
       abline(h = 0, col = "grey")
       if (legend) {
         # add legend if requested
@@ -1516,7 +1520,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
       if (!add) {
@@ -1605,6 +1610,7 @@ SSplotComparisons <-
           yaxs = yaxs, las = 1
         )
         axis(2, las = 1)
+        grid()
         abline(h = 0, col = "grey")
       }
 
@@ -1661,7 +1667,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
       # return upper y-limit
@@ -1738,7 +1745,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
       # return upper y-limit
@@ -1869,7 +1877,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          type = type
         )
       }
 
@@ -2289,7 +2298,8 @@ SSplotComparisons <-
             col = col,
             pch = pch,
             lwd = lwd,
-            lty = lty
+            lty = lty,
+            type = type
           )
         }
       }

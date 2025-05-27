@@ -223,6 +223,21 @@ add_legend <- function(legendlabels,
   legend.pch <- -1
   if (type == "l") {
     legend.pch <- rep(NA, length(pch))
+  } 
+  if (type == "o") {
+    # pch is provided by SSplotComparisons() and has appropriate length
+    legend.pch <- pch
+    # pt.cex is not modified by SSplotComparisons() so need to check length
+    pt.cex <- dplyr::case_when(
+      length(pt.cex) == 1 ~ rep(pt.cex, length(legendlabels)),
+      length(pt.cex) > 1 & length(pt.cex) == length(legendlabels) ~ pt.cex,
+      TRUE ~ NA
+    )
+    if (is.na(pt.cex[[1]])) {
+      cli::cli_abort(
+        "The 'pt.cex' input should be a vector of length 1 or the same length as 'legendlabels'."
+      )
+    }
   }
   legend(legendloc,
     legend = legendlabels[legendorder],
