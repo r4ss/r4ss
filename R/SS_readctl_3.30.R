@@ -1388,9 +1388,12 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
       x$.i <- x$.i + 11
       sigma_sel_ages <- specs2D[["amin"]]:specs2D[["sig_amax"]]
       if (specs2D[["sig_amax"]] >= specs2D[["amax"]]) {
-        n_pars <- (2 + length(sigma_sel_ages)) * 7
+        n_pars <- length(sigma_sel_ages)
       } else {
         n_pars <- 1
+      }
+      if (specs2D[["use_rho"]] == 1) {
+        n_pars <- n_pars + 2 # add rho_year and rho_age
       }
       n_par_vals <- n_pars * 7
 
