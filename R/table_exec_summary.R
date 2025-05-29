@@ -39,19 +39,19 @@
 #' tables <- table_exec_summary(model)
 #' # load an individual table (list added to workspace includes
 #' # the table and caption)
-#' load(file.path(model$inputs$dir, "tables", "projections.rda"))
+#' load(file.path(model[["inputs"]][["dir"]], "tables", "projections.rda"))
 #'
 #' ### modify projections table for model that falls below target
 #' # get table from list saved above
-#' tab <- tables$projections$table
+#' tab <- tables[["projections"]][["table"]]
 #' # get buffers from forecast file
-#' buffers <- inputs$fore$Flimitfraction_m
+#' buffers <- inputs[["fore"]][["Flimitfraction_m"]]
 #' # which rows in the table are missing buffer and ABC values?
-#' NA_rows <- is.na(tab$Buffer)
+#' NA_rows <- is.na(tab[["Buffer"]])
 #' # fill in Buffer column from forecast file values
-#' tab$Buffer[NA_rows] <- buffers$fraction[match(tab$Year[NA_rows], buffers$year)]
+#' tab[["Buffer"]][NA_rows] <- buffers[["fraction"]][match(tab[["Year"]][NA_rows], buffers[["year"]])]
 #' # fill in ABC as product of Buffer and OFL
-#' tab[NA_rows, "ABC (mt)"] <- tab$Buffer[NA_rows] * tab$"OFL (mt)"[NA_rows]
+#' tab[NA_rows, "ABC (mt)"] <- tab[["Buffer"]][NA_rows] * tab$"OFL (mt)"[NA_rows]
 #' }
 table_exec_summary <- function(
     replist,
