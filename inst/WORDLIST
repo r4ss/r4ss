@@ -7,7 +7,6 @@ Ageerr
 Ageing
 Amax
 Aquat
-Arni
 Asel
 Ashleigh
 Athol
@@ -53,7 +52,6 @@ MGparm
 MSY
 MULTIFAN
 Maechler
-Magnusson
 McAllister
 Methot
 Mohn
@@ -302,6 +300,7 @@ tagrelease
 tcl
 tgt
 th
+tibble
 tidyr
 timeseries
 tk
