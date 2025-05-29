@@ -30,7 +30,29 @@
 #' @family table functions
 #' @author Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 #' @export
+#' @examples
+#' \dontrun{
+#' ### running function
+#' # read model output
+#' model <- SS_output(...)
+#' # run this function
+#' tables <- table_exec_summary(model)
+#' # load an individual table (list added to workspace includes
+#' # the table and caption)
+#' load(file.path(model[["inputs"]][["dir"]], "tables", "projections.rda"))
 #'
+#' ### modify projections table for model that falls below target
+#' # get table from list saved above
+#' tab <- tables[["projections"]][["table"]]
+#' # get buffers from forecast file
+#' buffers <- inputs[["fore"]][["Flimitfraction_m"]]
+#' # which rows in the table are missing buffer and ABC values?
+#' NA_rows <- is.na(tab[["Buffer"]])
+#' # fill in Buffer column from forecast file values
+#' tab[["Buffer"]][NA_rows] <- buffers[["fraction"]][match(tab[["Year"]][NA_rows], buffers[["year"]])]
+#' # fill in ABC as product of Buffer and OFL
+#' tab[NA_rows, "ABC (mt)"] <- tab[["Buffer"]][NA_rows] * tab$"OFL (mt)"[NA_rows]
+#' }
 table_exec_summary <- function(
     replist,
     dir = NULL,
@@ -498,6 +520,9 @@ table_exec_summary <- function(
       replace <- which(fraction_unfished.fore < replist[["btarg"]])
       abc.fore[replace] <- NA
       buffer[replace] <- NA
+      cli::cli_alert_warning(
+        "ABCs and buffers in projection table are NA for years below target. See example in the {.href [function help page](https://r4ss.github.io/r4ss/reference/table_exec_summary.html#ref-examples)} for how to replace NA values."
+      )
     }
     if (nsexes == 1) {
       ssb.fore <- ssb.fore

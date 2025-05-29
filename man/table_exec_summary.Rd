@@ -51,6 +51,30 @@ time-series, and numbers-at-age are created. A CSV file with captions is
 also created. This function is modified from \code{SSexecutivesummary()}
 associated with the adoption of the {asar} template.
 }
+\examples{
+\dontrun{
+### running function
+# read model output
+model <- SS_output(...)
+# run this function
+tables <- table_exec_summary(model)
+# load an individual table (list added to workspace includes
+# the table and caption)
+load(file.path(model[["inputs"]][["dir"]], "tables", "projections.rda"))
+
+### modify projections table for model that falls below target
+# get table from list saved above
+tab <- tables[["projections"]][["table"]]
+# get buffers from forecast file
+buffers <- inputs[["fore"]][["Flimitfraction_m"]]
+# which rows in the table are missing buffer and ABC values?
+NA_rows <- is.na(tab[["Buffer"]])
+# fill in Buffer column from forecast file values
+tab[["Buffer"]][NA_rows] <- buffers[["fraction"]][match(tab[["Year"]][NA_rows], buffers[["year"]])]
+# fill in ABC as product of Buffer and OFL
+tab[NA_rows, "ABC (mt)"] <- tab[["Buffer"]][NA_rows] * tab$"OFL (mt)"[NA_rows]
+}
+}
 \seealso{
 Other table functions: 
 \code{\link{table_all}()},
