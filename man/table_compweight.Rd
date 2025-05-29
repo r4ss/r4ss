@@ -31,6 +31,9 @@ located associated with \code{replist}.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }
+\value{
+A list containing the table and caption.
+}
 \description{
 Table of length and age comp Francis weights
 (doesn't yet include other data types)
