@@ -49,19 +49,24 @@
 #'
 #' @export
 
-SS_ForeCatch <- function(replist, yrs = 2021:2032,
-                         average = FALSE, avg.yrs = 2016:2020,
+SS_ForeCatch <- function(replist, yrs = 2025:2036,
+                         average = FALSE, avg.yrs = 2020:2024,
                          total = NULL, digits = 2,
                          dead = TRUE, zeros = FALSE) {
-  # function for creating table of fixed forecast catches
-  # based on values in the timeseries output
+  # check catch units
+  catch_units <- replist[["catch_units"]][replist[["fleet_type"]] == 1]
+  mixed_units <- FALSE
+  if (length(unique(catch_units)) > 1) {
+    mixed_units <- TRUE
+    cli::cli_alert_info("Catch units are not the same for all fleets, so units will match the settings for each fleet.")
+  }
   timeseries <- replist[["timeseries"]]
 
   # create new empty object to store stuff
   forecast_catches <- NULL
 
   if (!all(yrs %in% timeseries[["Yr"]])) {
-    warning("Not all requested years are present in timeseries output.")
+    cli::cli_alert_warning("Not all requested years are present in timeseries output.")
     yrs <- yrs[yrs %in% timeseries[["Yr"]]]
   }
   # if only one value for total is input, repeat for all years
@@ -129,7 +134,8 @@ SS_ForeCatch <- function(replist, yrs = 2021:2032,
     forecast_catches_y[["comment"]] <- ""
     forecast_catches_y[["comment"]][1] <- paste0(
       "#sum_for_", y, ": ",
-      sum(forecast_catches_y[["Catch"]])
+      sum(forecast_catches_y[["Catch"]]),
+      ifelse(mixed_units, " (mixed units)", "")
     )
     # add block for this year to other blocks
     forecast_catches <- rbind(forecast_catches, forecast_catches_y)
