@@ -132,6 +132,32 @@ to the screen.</p></dd>
     <p>Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co">### running function</span></span></span>
+<span class="r-in"><span><span class="co"># read model output</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_output.html">SS_output</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># run this function</span></span></span>
+<span class="r-in"><span><span class="va">tables</span> <span class="op">&lt;-</span> <span class="fu">table_exec_summary</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># load an individual table (list added to workspace includes</span></span></span>
+<span class="r-in"><span><span class="co"># the table and caption)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">model</span><span class="op">[[</span><span class="st">"inputs"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"dir"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"tables"</span>, <span class="st">"projections.rda"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### modify projections table for model that falls below target</span></span></span>
+<span class="r-in"><span><span class="co"># get table from list saved above</span></span></span>
+<span class="r-in"><span><span class="va">tab</span> <span class="op">&lt;-</span> <span class="va">tables</span><span class="op">[[</span><span class="st">"projections"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"table"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co"># get buffers from forecast file</span></span></span>
+<span class="r-in"><span><span class="va">buffers</span> <span class="op">&lt;-</span> <span class="va">inputs</span><span class="op">[[</span><span class="st">"fore"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Flimitfraction_m"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co"># which rows in the table are missing buffer and ABC values?</span></span></span>
+<span class="r-in"><span><span class="va">NA_rows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">tab</span><span class="op">[[</span><span class="st">"Buffer"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># fill in Buffer column from forecast file values</span></span></span>
+<span class="r-in"><span><span class="va">tab</span><span class="op">[[</span><span class="st">"Buffer"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">NA_rows</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">buffers</span><span class="op">[[</span><span class="st">"fraction"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">tab</span><span class="op">[[</span><span class="st">"Year"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">NA_rows</span><span class="op">]</span>, <span class="va">buffers</span><span class="op">[[</span><span class="st">"year"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co"># fill in ABC as product of Buffer and OFL</span></span></span>
+<span class="r-in"><span><span class="va">tab</span><span class="op">[</span><span class="va">NA_rows</span>, <span class="st">"ABC (mt)"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">tab</span><span class="op">[[</span><span class="st">"Buffer"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">NA_rows</span><span class="op">]</span> <span class="op">*</span> <span class="va">tab</span><span class="op">$</span><span class="st">"OFL (mt)"</span><span class="op">[</span><span class="va">NA_rows</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
