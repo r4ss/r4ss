@@ -5,7 +5,7 @@
 #' wrapper which calls SS_writectl_3.30() (previously also SS_writectl_3.24,
 #' but that function has been deprecated).
 #'
-#' @param ctllist List object created by [SS_readdat()].
+#' @param ctllist List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new control file.
 #' @template version
 #' @template overwrite
