@@ -56,7 +56,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
   # deprecated variable warnings -----
 
   # function to read Stock Synthesis data files
-
   if (verbose) {
     message("running SS_readctl_3.30")
   }
@@ -896,14 +895,22 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     {
       if ((ctllist[["Q_options"]][j, ][["float"]] == 0) || (ctllist[["Q_options"]][j, ][["float"]] == 1)) # handle float 0 or 1 as 1 parm sel
         {
-          flname <- fleetnames[ctllist[["Q_options"]][j, ][["fleet"]]]
-          comments_Q_type[[i]] <- paste0("LnQ_base_", flname, "(",
+        flname <- fleetnames[ctllist[["Q_options"]][j, ][["fleet"]]]
+         if(ctllist[["Q_options"]][j, ][["link"]] == 5)
+         {
+          comments_Q_type[[i]] <- paste0("Q_base_", flname, "(",
             ctllist[["Q_options"]][j, ][["fleet"]], ")",
             collapse = ""
           )
-          i <- i + 1
-          N_Q_parms <- N_Q_parms + 1
-        }
+         } else {
+           comments_Q_type[[i]] <- paste0("LnQ_base_", flname, "(",
+                                          ctllist[["Q_options"]][j, ][["fleet"]], ")",
+                                          collapse = ""
+           )
+         }
+        i <- i + 1
+        N_Q_parms <- N_Q_parms + 1
+      }
       if (ctllist[["Q_options"]][j, ][["link"]] == 3) # do power
         {
           flname <- fleetnames[ctllist[["Q_options"]][j, ][["fleet"]]]
@@ -924,6 +931,16 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
           i <- i + 1
           N_Q_parms <- N_Q_parms + 1
         }
+      if (ctllist[["Q_options"]][j, ][["link"]] == 5) # offset
+        {
+          flname <- fleetnames[ctllist[["Q_options"]][j, ][["fleet"]]]
+          comments_Q_type[[i]] <- paste0("Q_offset_", flname, "(",
+                                         ctllist[["Q_options"]][j, ][["fleet"]], ")",
+                                         collapse = ""
+          )
+          i <- i + 1
+          N_Q_parms <- N_Q_parms + 1
+        }
       if (ctllist[["Q_options"]][j, ][["extra_se"]] == 1) # do extra se
         {
           flname <- fleetnames[ctllist[["Q_options"]][j, ][["fleet"]]]
@@ -933,7 +950,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
           )
           i <- i + 1
           N_Q_parms <- N_Q_parms + 1
-        }
+      }
     }
   }
 
@@ -1048,7 +1065,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE,
     if (is.na(tmp_size_selex_Nparms)) {
       stop(
         "Pattern ", as.character(ctllist[["size_selex_types"]][j, "Pattern"]),
-        "was used for the size selectivity pattern fleet or survey, but it ",
+        " was used for the size selectivity pattern fleet or survey, but it",
         " is not valid."
       )
     }
