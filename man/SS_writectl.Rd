@@ -13,7 +13,7 @@ SS_writectl(
 )
 }
 \arguments{
-\item{ctllist}{List object created by \code{\link[=SS_readdat]{SS_readdat()}}.}
+\item{ctllist}{List object created by \code{\link[=SS_readctl]{SS_readctl()}}.}
 
 \item{outfile}{Filename for where to write new control file.}
 
