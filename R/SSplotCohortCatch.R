@@ -39,31 +39,32 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotCohortCatch <-
   function(
-      replist,
-      subplots = 1:2,
-      add = FALSE,
-      plot = TRUE,
-      print = FALSE,
-      cohortcols = "default",
-      cohortfrac = 1,
-      cohortvec = NULL,
-      cohortlabfrac = 0.1,
-      cohortlabvec = NULL,
-      lwd = 3,
-      plotdir = "default",
-      xlab = "Year",
-      labels = c(
-        "Age",
-        "Cumulative catch by cohort (in numbers x1000)",
-        "Cumulative catch by cohort (x1000 mt)"
-      ),
-      pwidth = 6.5,
-      pheight = 5.0,
-      punits = "in",
-      res = 300,
-      ptsize = 10,
-      cex.main = 1, # note: no plot titles yet implemented
-      verbose = TRUE) {
+    replist,
+    subplots = 1:2,
+    add = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    cohortcols = "default",
+    cohortfrac = 1,
+    cohortvec = NULL,
+    cohortlabfrac = 0.1,
+    cohortlabvec = NULL,
+    lwd = 3,
+    plotdir = "default",
+    xlab = "Year",
+    labels = c(
+      "Age",
+      "Cumulative catch by cohort (in numbers x1000)",
+      "Cumulative catch by cohort (x1000 mt)"
+    ),
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1, # note: no plot titles yet implemented
+    verbose = TRUE
+  ) {
     # plot catch-at-age contributions by cohort in units of numbers and biomass
     subplot_names <- c("1: catch by cohort")
 

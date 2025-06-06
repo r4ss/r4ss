@@ -38,18 +38,19 @@
 #' }
 #'
 SS_varadjust <- function(
-    dir = "C:/myfiles/mymodels/myrun/",
-    ctlfile = "control.ss_new",
-    newctlfile = "control_modified.ss",
-    keyword = "variance adjustments",
-    newtable = NULL,
-    newrow = NULL,
-    rownumber = NULL,
-    maxcols = 100,
-    maxrows = 100,
-    overwrite = FALSE,
-    version = "3.30",
-    verbose = TRUE) {
+  dir = "C:/myfiles/mymodels/myrun/",
+  ctlfile = "control.ss_new",
+  newctlfile = "control_modified.ss",
+  keyword = "variance adjustments",
+  newtable = NULL,
+  newrow = NULL,
+  rownumber = NULL,
+  maxcols = 100,
+  maxrows = 100,
+  overwrite = FALSE,
+  version = "3.30",
+  verbose = TRUE
+) {
   # check for consistency of inputs
   if (!is.null(newtable)) {
     if (!is.null(newrow)) {

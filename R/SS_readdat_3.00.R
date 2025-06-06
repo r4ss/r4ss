@@ -23,10 +23,11 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_3.00 <- function(
-    file,
-    verbose = TRUE,
-    echoall = lifecycle::deprecated(),
-    section = NULL) {
+  file,
+  verbose = TRUE,
+  echoall = lifecycle::deprecated(),
+  section = NULL
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",

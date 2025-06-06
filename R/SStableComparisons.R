@@ -28,34 +28,35 @@
 #' @seealso [SSsummarize()], [SSplotComparisons()],
 #' [SS_output()]
 SStableComparisons <- function(
-    summaryoutput,
-    models = "all",
-    likenames = c(
-      "TOTAL",
-      "Survey",
-      "Length_comp",
-      "Age_comp",
-      "priors",
-      "Size_at_age"
-    ),
-    names = c(
-      "Recr_Virgin",
-      "R0",
-      "steep",
-      "NatM",
-      "L_at_Amax",
-      "VonBert_K",
-      "SSB_Virg",
-      "Bratio_2025",
-      "SPRratio_2024"
-    ),
-    digits = NULL,
-    modelnames = "default",
-    csv = FALSE,
-    csvdir = "workingdirectory",
-    csvfile = "parameter_comparison_table.csv",
-    verbose = TRUE,
-    mcmc = FALSE) {
+  summaryoutput,
+  models = "all",
+  likenames = c(
+    "TOTAL",
+    "Survey",
+    "Length_comp",
+    "Age_comp",
+    "priors",
+    "Size_at_age"
+  ),
+  names = c(
+    "Recr_Virgin",
+    "R0",
+    "steep",
+    "NatM",
+    "L_at_Amax",
+    "VonBert_K",
+    "SSB_Virg",
+    "Bratio_2025",
+    "SPRratio_2024"
+  ),
+  digits = NULL,
+  modelnames = "default",
+  csv = FALSE,
+  csvdir = "workingdirectory",
+  csvfile = "parameter_comparison_table.csv",
+  verbose = TRUE,
+  mcmc = FALSE
+) {
   if (verbose) message("running SStableComparisons")
 
   # get stuff from summary output

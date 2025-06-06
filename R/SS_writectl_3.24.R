@@ -17,10 +17,11 @@
 # ' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 # ' \code{\link{SS_writedat}}
 SS_writectl_3.24 <- function(
-    ctllist,
-    outfile,
-    overwrite = FALSE,
-    verbose = FALSE) {
+  ctllist,
+  outfile,
+  overwrite = FALSE,
+  verbose = FALSE
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",

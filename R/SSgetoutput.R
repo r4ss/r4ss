@@ -28,17 +28,18 @@
 #' @seealso [SS_output()] [SSsummarize()]
 SSgetoutput <-
   function(
-      keyvec = NULL,
-      dirvec = NULL,
-      getcovar = TRUE,
-      getcomp = TRUE,
-      forecast = TRUE,
-      verbose = TRUE,
-      ncols = lifecycle::deprecated(),
-      listlists = TRUE,
-      underscore = FALSE,
-      save.lists = FALSE,
-      SpawnOutputLabel = "Spawning output") {
+    keyvec = NULL,
+    dirvec = NULL,
+    getcovar = TRUE,
+    getcomp = TRUE,
+    forecast = TRUE,
+    verbose = TRUE,
+    ncols = lifecycle::deprecated(),
+    listlists = TRUE,
+    underscore = FALSE,
+    save.lists = FALSE,
+    SpawnOutputLabel = "Spawning output"
+  ) {
     if (lifecycle::is_present(ncols)) {
       lifecycle::deprecate_warn(
         when = "1.46.2",

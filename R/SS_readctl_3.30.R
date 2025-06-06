@@ -37,24 +37,25 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.30 <- function(
-    file,
-    verbose = FALSE,
-    use_datlist = TRUE,
-    datlist = file.path(dirname(file), "data_echo.ss_new"),
-    ## Parameters that are not defined in control file
-    nseas = NULL,
-    N_areas = NULL,
-    Nages = NULL,
-    Nsexes = NULL,
-    Npopbins = NULL,
-    Nfleets = NULL,
-    Ntag_fleets = NULL,
-    Do_AgeKey = NULL,
-    N_tag_groups = NULL,
-    catch_mult_fleets = NULL,
-    predM_fleets = NULL,
-    N_rows_equil_catch = NULL,
-    N_dirichlet_parms = NULL) {
+  file,
+  verbose = FALSE,
+  use_datlist = TRUE,
+  datlist = file.path(dirname(file), "data_echo.ss_new"),
+  ## Parameters that are not defined in control file
+  nseas = NULL,
+  N_areas = NULL,
+  Nages = NULL,
+  Nsexes = NULL,
+  Npopbins = NULL,
+  Nfleets = NULL,
+  Ntag_fleets = NULL,
+  Do_AgeKey = NULL,
+  N_tag_groups = NULL,
+  catch_mult_fleets = NULL,
+  predM_fleets = NULL,
+  N_rows_equil_catch = NULL,
+  N_dirichlet_parms = NULL
+) {
   # deprecated variable warnings -----
 
   # function to read Stock Synthesis data files
@@ -134,12 +135,13 @@ SS_readctl_3.30 <- function(
 
   # Function to add data as data.frame to ctllist
   add_df <- function(
-      ctllist,
-      nrows = NULL,
-      ncol,
-      col.names,
-      name,
-      comments = NULL) {
+    ctllist,
+    nrows = NULL,
+    ncol,
+    col.names,
+    name,
+    comments = NULL
+  ) {
     i <- ctllist$".i"
     dat <- ctllist$".dat"
     if (is.null(nrows)) {
@@ -604,7 +606,8 @@ SS_readctl_3.30 <- function(
   }
   # Recruitment Distribution
   # get the labels for RecrDist, number and names depend on method
-  RecrDistLabel <- switch(ctllist[["recr_dist_method"]],
+  RecrDistLabel <- switch(
+    ctllist[["recr_dist_method"]],
     "1" = {
       # included for back compatibility only.
       lab <- c(
@@ -1366,12 +1369,13 @@ SS_readctl_3.30 <- function(
   # of the labels generated matches will be done and a warning will be generated
   # if the length of the labels is not equal to n_labs.
   make_sel_lab <- function(
-      sel_type = "s",
-      par_type,
-      par_num = NULL,
-      fltname,
-      fltnum,
-      n_labs = NULL) {
+    sel_type = "s",
+    par_type,
+    par_num = NULL,
+    fltname,
+    fltnum,
+    n_labs = NULL
+  ) {
     if (!sel_type %in% c("s", "a")) {
       stop(
         "sel_type cannot be ",
@@ -2004,7 +2008,8 @@ SS_readctl_3.30 <- function(
       fl <- fleetnames[ctllist[["lambdas"]][i, 2]]
       phz <- ctllist[["lambdas"]][i, 3]
       sizefreq_method <- ctllist[["lambdas"]][i, 5]
-      tmp_rownames[i] <- switch(as.character(like_comp),
+      tmp_rownames[i] <- switch(
+        as.character(like_comp),
         "1" = paste0("Surv_", fl, "_Phz", phz),
         "2" = paste0("discard_", fl, "_Phz", phz),
         "3" = paste0("mean-weight_", fl, "_Phz", phz),
@@ -2282,9 +2287,10 @@ get_tv_parlabs <- function(full_parms, block_design) {
 #' @template fleetnames
 #' @return A dataframe of 3.24 variance adjustments.
 translate_3.30_to_3.24_var_adjust <- function(
-    Variance_adjustment_list = NULL,
-    Nfleets,
-    fleetnames = seq_len(Nfleets)) {
+  Variance_adjustment_list = NULL,
+  Nfleets,
+  fleetnames = seq_len(Nfleets)
+) {
   # create version 3.24 variance adjustments
   Variance_adjustments <- as.data.frame(matrix(
     data = 0,
@@ -2325,9 +2331,10 @@ translate_3.30_to_3.24_var_adjust <- function(
 #' @template fleetnames
 #' @return A dataframe containing the 3.24 Q setup.
 translate_3.30_to_3.24_Q_setup <- function(
-    Q_options,
-    Nfleets,
-    fleetnames = seq_len(Nfleets)) {
+  Q_options,
+  Nfleets,
+  fleetnames = seq_len(Nfleets)
+) {
   # create 3.24 compatible Q_setup ----
   comments_fl <- paste0(1:(Nfleets), " ", fleetnames)
   Q_setup <- data.frame(

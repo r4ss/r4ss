@@ -50,14 +50,15 @@
 #' @export
 
 SS_ForeCatch <- function(
-    replist,
-    yrs = 2025:2036,
-    average = FALSE,
-    avg.yrs = 2020:2024,
-    total = NULL,
-    digits = 2,
-    dead = TRUE,
-    zeros = FALSE) {
+  replist,
+  yrs = 2025:2036,
+  average = FALSE,
+  avg.yrs = 2020:2024,
+  total = NULL,
+  digits = 2,
+  dead = TRUE,
+  zeros = FALSE
+) {
   # check catch units
   catch_units <- replist[["catch_units"]][replist[["fleet_type"]] == 1]
   mixed_units <- FALSE

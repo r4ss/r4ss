@@ -143,90 +143,91 @@
 #' @seealso [SS_plots()], [make_multifig()]
 SSplotComps <-
   function(
-      replist,
-      subplots = c(1:10, 21, 24),
-      kind = "LEN",
-      sizemethod = 1,
-      aalyear = -1,
-      aalbin = -1,
-      plot = TRUE,
-      print = FALSE,
-      fleets = "all",
-      fleetnames = "default",
-      sexes = "all",
-      yupper = 0.4,
-      datonly = FALSE,
-      samplesizeplots = TRUE,
-      compresidplots = TRUE,
-      bub = FALSE,
-      showyears = TRUE,
-      showsampsize = TRUE,
-      showeffN = TRUE,
-      aggregates_by_mkt = FALSE,
-      sampsizeline = FALSE,
-      effNline = FALSE,
-      minnbubble = 3,
-      pntscalar = NULL,
-      scalebubbles = FALSE,
-      cexZ1 = 1.5,
-      bublegend = TRUE,
-      colvec = c(rgb(1, 0, 0, .7), rgb(0, 0, 1, .7), rgb(.1, .1, .1, .7)),
-      linescol = c(rgb(0, .5, 0, .7), rgb(.8, 0, 0, .7), rgb(0, 0, .8, .7)),
-      xlas = 0,
-      ylas = NULL,
-      axis1 = NULL,
-      axis2 = NULL,
-      axis1labs = NULL,
-      sizebinlabs = NULL,
-      blue = rgb(0, 0, 1, 0.7),
-      red = rgb(1, 0, 0, 0.7),
-      pwidth = 6.5,
-      pheight = 6.5,
-      punits = "in",
-      ptsize = 10,
-      res = 300,
-      plotdir = "default",
-      cex.main = 1,
-      linepos = 1,
-      fitbar = FALSE,
-      do.sqrt = TRUE,
-      smooth = TRUE,
-      cohortlines = c(),
-      labels = c(
-        "Length (cm)", # 1
-        "Age (yr)", # 2
-        "Year", # 3
-        "Observed sample size", # 4
-        "Effective sample size", # 5
-        "Proportion", # 6
-        "cm", # 7
-        "Frequency", # 8
-        "Weight", # 9
-        "Length", # 10
-        "(t)", # 11
-        "(numbers x1000)", # 12
-        "Stdev (Age)", # 13
-        "Conditional AAL plot, ", # 14
-        "Size bin"
-      ), # 15
-      printmkt = TRUE,
-      printsex = TRUE,
-      maxrows = 6,
-      maxcols = 4,
-      maxrows2 = 4,
-      maxcols2 = 4,
-      rows = 1,
-      cols = 1,
-      andre_oma = c(3, 0, 3, 0),
-      andrerows = 4,
-      fixdims = TRUE,
-      fixdims2 = FALSE,
-      maxneff = 5000,
-      verbose = TRUE,
-      scalebins = FALSE,
-      addMeans = TRUE,
-      mainTitle = FALSE,
-      ...) {
+    replist,
+    subplots = c(1:10, 21, 24),
+    kind = "LEN",
+    sizemethod = 1,
+    aalyear = -1,
+    aalbin = -1,
+    plot = TRUE,
+    print = FALSE,
+    fleets = "all",
+    fleetnames = "default",
+    sexes = "all",
+    yupper = 0.4,
+    datonly = FALSE,
+    samplesizeplots = TRUE,
+    compresidplots = TRUE,
+    bub = FALSE,
+    showyears = TRUE,
+    showsampsize = TRUE,
+    showeffN = TRUE,
+    aggregates_by_mkt = FALSE,
+    sampsizeline = FALSE,
+    effNline = FALSE,
+    minnbubble = 3,
+    pntscalar = NULL,
+    scalebubbles = FALSE,
+    cexZ1 = 1.5,
+    bublegend = TRUE,
+    colvec = c(rgb(1, 0, 0, .7), rgb(0, 0, 1, .7), rgb(.1, .1, .1, .7)),
+    linescol = c(rgb(0, .5, 0, .7), rgb(.8, 0, 0, .7), rgb(0, 0, .8, .7)),
+    xlas = 0,
+    ylas = NULL,
+    axis1 = NULL,
+    axis2 = NULL,
+    axis1labs = NULL,
+    sizebinlabs = NULL,
+    blue = rgb(0, 0, 1, 0.7),
+    red = rgb(1, 0, 0, 0.7),
+    pwidth = 6.5,
+    pheight = 6.5,
+    punits = "in",
+    ptsize = 10,
+    res = 300,
+    plotdir = "default",
+    cex.main = 1,
+    linepos = 1,
+    fitbar = FALSE,
+    do.sqrt = TRUE,
+    smooth = TRUE,
+    cohortlines = c(),
+    labels = c(
+      "Length (cm)", # 1
+      "Age (yr)", # 2
+      "Year", # 3
+      "Observed sample size", # 4
+      "Effective sample size", # 5
+      "Proportion", # 6
+      "cm", # 7
+      "Frequency", # 8
+      "Weight", # 9
+      "Length", # 10
+      "(t)", # 11
+      "(numbers x1000)", # 12
+      "Stdev (Age)", # 13
+      "Conditional AAL plot, ", # 14
+      "Size bin"
+    ), # 15
+    printmkt = TRUE,
+    printsex = TRUE,
+    maxrows = 6,
+    maxcols = 4,
+    maxrows2 = 4,
+    maxcols2 = 4,
+    rows = 1,
+    cols = 1,
+    andre_oma = c(3, 0, 3, 0),
+    andrerows = 4,
+    fixdims = TRUE,
+    fixdims2 = FALSE,
+    maxneff = 5000,
+    verbose = TRUE,
+    scalebins = FALSE,
+    addMeans = TRUE,
+    mainTitle = FALSE,
+    ...
+  ) {
     ################################################################################
     # SSplotComps
     ################################################################################

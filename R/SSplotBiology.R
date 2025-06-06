@@ -76,49 +76,50 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotBiology <-
   function(
-      replist,
-      plot = TRUE,
-      print = FALSE,
-      add = FALSE,
-      subplots = 1:32,
-      seas = 1,
-      morphs = NULL,
-      forecast = FALSE,
-      minyr = -Inf,
-      maxyr = Inf,
-      colvec = c("red", "blue", "grey20"),
-      areacols = NULL,
-      ltyvec = c(1, 2),
-      shadealpha = 0.1,
-      imageplot_text = FALSE,
-      imageplot_text_round = 0,
-      legendloc = "topleft",
-      plotdir = "default",
-      labels = c(
-        "Length (cm)", # 1
-        "Age (yr)", # 2
-        "Maturity", # 3
-        "Mean weight (kg) in last year", # 4
-        replist[["SpawnOutputLabel"]], # 5
-        "Length (cm, beginning of the year)", # 6
-        "Natural mortality", # 7
-        "Female weight (kg)", # 8
-        "Female length (cm)", # 9
-        "Fecundity", # 10
-        "Default fecundity label", # 11
-        "Year", # 12
-        "Hermaphroditism transition rate", # 13
-        "Fraction females by age in ending year"
-      ), # 14
-      pwidth = 6.5,
-      pheight = 5.0,
-      pheight_tall = 6.5,
-      punits = "in",
-      res = 300,
-      ptsize = 10,
-      cex.main = 1,
-      mainTitle = TRUE,
-      verbose = TRUE) {
+    replist,
+    plot = TRUE,
+    print = FALSE,
+    add = FALSE,
+    subplots = 1:32,
+    seas = 1,
+    morphs = NULL,
+    forecast = FALSE,
+    minyr = -Inf,
+    maxyr = Inf,
+    colvec = c("red", "blue", "grey20"),
+    areacols = NULL,
+    ltyvec = c(1, 2),
+    shadealpha = 0.1,
+    imageplot_text = FALSE,
+    imageplot_text_round = 0,
+    legendloc = "topleft",
+    plotdir = "default",
+    labels = c(
+      "Length (cm)", # 1
+      "Age (yr)", # 2
+      "Maturity", # 3
+      "Mean weight (kg) in last year", # 4
+      replist[["SpawnOutputLabel"]], # 5
+      "Length (cm, beginning of the year)", # 6
+      "Natural mortality", # 7
+      "Female weight (kg)", # 8
+      "Female length (cm)", # 9
+      "Fecundity", # 10
+      "Default fecundity label", # 11
+      "Year", # 12
+      "Hermaphroditism transition rate", # 13
+      "Fraction females by age in ending year"
+    ), # 14
+    pwidth = 6.5,
+    pheight = 5.0,
+    pheight_tall = 6.5,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    mainTitle = TRUE,
+    verbose = TRUE
+  ) {
     #### current (Aug 18, 2017) order of plots:
     # subplot 1: growth_curve_fn - growth curve only
     # subplot 2: growth_curve_plus_fn - growth curve with CV and SD

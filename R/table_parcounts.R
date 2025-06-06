@@ -20,11 +20,12 @@
 #' @author Ian G. Taylor
 
 table_parcounts <- function(
-    replist,
-    inputs = NULL,
-    dir = NULL,
-    caption = "Estimated parameters in the model.",
-    verbose = TRUE) {
+  replist,
+  inputs = NULL,
+  dir = NULL,
+  caption = "Estimated parameters in the model.",
+  verbose = TRUE
+) {
   # check inputs
   check_replist(replist)
 

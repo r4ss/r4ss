@@ -27,20 +27,21 @@
 #' model for stock assessment of southern bluefin tuna with temporal changes in
 #' selectivity. South African Journal of Marine Science 25:331-362.
 mountains <- function(
-    zmat,
-    xvec = NULL,
-    yvec = NULL,
-    zscale = 3,
-    rev = TRUE,
-    nshades = 100,
-    axes = TRUE,
-    xaxs = "i",
-    yaxs = "i",
-    xlab = "",
-    ylab = "",
-    las = 1,
-    addbox = FALSE,
-    ...) {
+  zmat,
+  xvec = NULL,
+  yvec = NULL,
+  zscale = 3,
+  rev = TRUE,
+  nshades = 100,
+  axes = TRUE,
+  xaxs = "i",
+  yaxs = "i",
+  xlab = "",
+  ylab = "",
+  las = 1,
+  addbox = FALSE,
+  ...
+) {
   ## DESCRIPTION:
   # a function by Ian Taylor designed to look like the cool-looking Figure 7 in
   # Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical model for

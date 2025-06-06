@@ -62,26 +62,27 @@
 #'
 SS_fitbiasramp <-
   function(
-      replist,
-      verbose = FALSE,
-      startvalues = NULL,
-      method = "BFGS",
-      twoplots = TRUE,
-      transform = FALSE,
-      plot = TRUE,
-      print = FALSE,
-      plotdir = "default",
-      shownew = TRUE,
-      oldctl = NULL,
-      newctl = NULL,
-      altmethod = "nlminb",
-      exclude_forecast = FALSE,
-      pwidth = 6.5,
-      pheight = 5.0,
-      punits = "in",
-      ptsize = 10,
-      res = 300,
-      cex.main = 1) {
+    replist,
+    verbose = FALSE,
+    startvalues = NULL,
+    method = "BFGS",
+    twoplots = TRUE,
+    transform = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    plotdir = "default",
+    shownew = TRUE,
+    oldctl = NULL,
+    newctl = NULL,
+    altmethod = "nlminb",
+    exclude_forecast = FALSE,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    ptsize = 10,
+    res = 300,
+    cex.main = 1
+  ) {
     # note, method is choices that go into optim:
     #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
@@ -157,13 +158,15 @@ SS_fitbiasramp <-
       )
     }
 
-    biasadjfit <- function(pars,
-                           yr,
-                           std,
-                           sigmaR,
-                           transform,
-                           is.forecast,
-                           eps = .1) {
+    biasadjfit <- function(
+      pars,
+      yr,
+      std,
+      sigmaR,
+      transform,
+      is.forecast,
+      eps = .1
+    ) {
       # calculate the goodness of the fit of the estimated ramp and values to the model output
       biasadj <- biasadjfun(yr = yr, vec = pars, transform = transform)[[
         "biasadj"

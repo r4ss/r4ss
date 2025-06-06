@@ -14,9 +14,10 @@
 #' @note Explanation of the methods (in PDF form):
 #' <https://github.com/admb-project/admb-examples/blob/master/admb-tricks/covariance-calculations/ADMB_Covariance_Calculations.pdf>
 getADMBHessian <- function(
-    hesfile = "admodel.hes",
-    File = lifecycle::deprecated(),
-    FileName = lifecycle::deprecated()) {
+  hesfile = "admodel.hes",
+  File = lifecycle::deprecated(),
+  FileName = lifecycle::deprecated()
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(File)) {

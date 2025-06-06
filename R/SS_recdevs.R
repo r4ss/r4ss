@@ -31,19 +31,20 @@
 #' @export
 SS_recdevs <-
   function(
-      fyr,
-      lyr,
-      ctl = NULL,
-      recdevs = NULL,
-      rescale = TRUE,
-      scaleyrs = NULL,
-      dir = getwd(),
-      ctlfile = "control.ss_new",
-      newctlfile = "control_modified.ss",
-      verbose = TRUE,
-      writectl = TRUE,
-      returnctl = FALSE,
-      newmaxbias = NULL) {
+    fyr,
+    lyr,
+    ctl = NULL,
+    recdevs = NULL,
+    rescale = TRUE,
+    scaleyrs = NULL,
+    dir = getwd(),
+    ctlfile = "control.ss_new",
+    newctlfile = "control_modified.ss",
+    verbose = TRUE,
+    writectl = TRUE,
+    returnctl = FALSE,
+    newmaxbias = NULL
+  ) {
     # Determine working directory on start and return upon exit
     current_wd <- getwd()
     on.exit(setwd(current_wd))

@@ -18,12 +18,13 @@
 #' @author Ian Taylor
 #' @export
 SSplotMCMC_ExtraSelex <- function(
-    post,
-    add = FALSE,
-    nsexes = 1,
-    shift = 0,
-    fleetname = "default",
-    col = "blue") {
+  post,
+  add = FALSE,
+  nsexes = 1,
+  shift = 0,
+  fleetname = "default",
+  col = "blue"
+) {
   # post is a data.frame containing either derived_posteriors.sso or a good subset of it
   #      it can be an element of the list created by the the SSgetMCMC function
   # add will add to existing plot

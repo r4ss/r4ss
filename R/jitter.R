@@ -105,17 +105,18 @@ SS_RunJitter <-
 #' }
 #'
 jitter <- function(
-    dir = NULL,
-    mydir = lifecycle::deprecated(),
-    Intern = lifecycle::deprecated(),
-    Njitter,
-    printlikes = TRUE,
-    jitter_fraction = NULL,
-    init_values_src = NULL,
-    exe = "ss3",
-    verbose = FALSE,
-    extras = NULL,
-    ...) {
+  dir = NULL,
+  mydir = lifecycle::deprecated(),
+  Intern = lifecycle::deprecated(),
+  Njitter,
+  printlikes = TRUE,
+  jitter_fraction = NULL,
+  init_values_src = NULL,
+  exe = "ss3",
+  verbose = FALSE,
+  extras = NULL,
+  ...
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
@@ -279,14 +280,15 @@ jitter <- function(
 #' @return Negative log-likelihood of one jittered model
 #'
 iterate_jitter <- function(
-    i,
-    printlikes = TRUE,
-    exe = "ss3",
-    verbose = FALSE,
-    init_values_src = 0,
-    dir = NULL,
-    extras = NULL,
-    ...) {
+  i,
+  printlikes = TRUE,
+  exe = "ss3",
+  verbose = FALSE,
+  init_values_src = 0,
+  dir = NULL,
+  extras = NULL,
+  ...
+) {
   jitter_dir <- file.path(dir, paste0("jitter", i))
   copy_SS_inputs(
     dir.old = dir,

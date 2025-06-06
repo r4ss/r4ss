@@ -42,30 +42,31 @@
 #' @export
 #' @seealso [SSplotTimeseries()]
 SSplotDynamicB0 <- function(
-    replist,
-    ylab = "Spawning biomass (t)",
-    equilibrium = TRUE,
-    forecast = FALSE,
-    yrs = "all",
-    plot = TRUE,
-    print = FALSE,
-    plotdir = "default",
-    verbose = TRUE,
-    uncertainty = TRUE,
-    legend = TRUE,
-    legendlabels = c("equilibrium", "without fishing", "with fishing"),
-    legendloc = "bottom",
-    col = c("blue", "red"),
-    lty = 1,
-    lwd = 2,
-    add = FALSE,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    mainTitle = FALSE,
-    mar = NULL) {
+  replist,
+  ylab = "Spawning biomass (t)",
+  equilibrium = TRUE,
+  forecast = FALSE,
+  yrs = "all",
+  plot = TRUE,
+  print = FALSE,
+  plotdir = "default",
+  verbose = TRUE,
+  uncertainty = TRUE,
+  legend = TRUE,
+  legendlabels = c("equilibrium", "without fishing", "with fishing"),
+  legendloc = "bottom",
+  col = c("blue", "red"),
+  lty = 1,
+  lwd = 2,
+  add = FALSE,
+  pwidth = 6.5,
+  pheight = 5.0,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  mainTitle = FALSE,
+  mar = NULL
+) {
   Dynamic_Bzero <- replist[["Dynamic_Bzero"]]
   if (is.null(Dynamic_Bzero)) {
     warning('No element "Dynamic_Bzero" in replist input')
@@ -217,7 +218,8 @@ SSplotDynamicB0 <- function(
     if (!add) {
       plot(
         0,
-        type = "n", ,
+        type = "n",
+        ,
         xlab = "Year",
         ylab = ylab,
         xlim = range(yrs),

@@ -17,12 +17,13 @@
 #' @family read/write functions
 
 SS_writeforecast <- function(
-    mylist,
-    dir = NULL,
-    file = "forecast.ss",
-    writeAll = FALSE,
-    overwrite = FALSE,
-    verbose = TRUE) {
+  mylist,
+  dir = NULL,
+  file = "forecast.ss",
+  writeAll = FALSE,
+  overwrite = FALSE,
+  verbose = TRUE
+) {
   # function to write Stock Synthesis forecast files
   if (verbose) message("running SS_writeforecast")
 

@@ -15,12 +15,13 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()], [SS_html()]
 SS_makeHTMLdiagnostictable <- function(
-    replist,
-    plotdir = NULL,
-    gradmax = 0.001,
-    ncor = 50,
-    cormax = 0.95,
-    cormin = 0.01) {
+  replist,
+  plotdir = NULL,
+  gradmax = 0.001,
+  ncor = 50,
+  cormax = 0.95,
+  cormin = 0.01
+) {
   # function to add scope association to table headers
   # to meet accessibility requirements
   add_scope_to_table_headers <- function(htmltable) {

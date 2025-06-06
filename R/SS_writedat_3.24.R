@@ -22,11 +22,12 @@
 #' [SS_readforecast()], [SS_writeforecast()]
 #'
 SS_writedat_3.24 <- function(
-    datlist,
-    outfile,
-    overwrite = FALSE,
-    faster = lifecycle::deprecated(),
-    verbose = TRUE) {
+  datlist,
+  outfile,
+  overwrite = FALSE,
+  faster = lifecycle::deprecated(),
+  verbose = TRUE
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",

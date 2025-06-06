@@ -16,11 +16,12 @@
 #' @export
 #'
 table_biology <- function(
-    replist,
-    dir = NULL,
-    fleetnames = NULL,
-    selexyr = NULL,
-    verbose = TRUE) {
+  replist,
+  dir = NULL,
+  fleetnames = NULL,
+  selexyr = NULL,
+  verbose = TRUE
+) {
   # check the input
   check_replist(replist)
 

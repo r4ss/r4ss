@@ -19,16 +19,17 @@
 
 SSunavailableSpawningOutput <-
   function(
-      replist,
-      plot = TRUE,
-      print = FALSE,
-      plotdir = "default",
-      pwidth = 6.5,
-      pheight = 5.0,
-      punits = "in",
-      res = 300,
-      ptsize = 10,
-      cex.main = 1) {
+    replist,
+    plot = TRUE,
+    print = FALSE,
+    plotdir = "default",
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1
+  ) {
     # table to store information on each plot
     plotinfo <- NULL
     ageselex <- replist[["ageselex"]]
@@ -92,8 +93,7 @@ SSunavailableSpawningOutput <-
       years <- num.at.age.female[["Yr"]]
       seas <- num.at.age.female[["Seas"]]
       first.col <- which(names(num.at.age.female) == "0")
-      num.at.age.female <- num.at.age.female[
-        ,
+      num.at.age.female <- num.at.age.female[,
         first.col:ncol(num.at.age.female)
       ]
       if (max(seas) > 1) {

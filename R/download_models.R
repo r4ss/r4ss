@@ -20,9 +20,10 @@
 #' @references [nmfs-ost/ss3-test-models repository](https://github.com/nmfs-ost/ss3-test-models#test-models)
 #' @export
 download_models <- function(
-    dir = file.path("inst", "extdata"),
-    branch = "main",
-    overwrite = FALSE) {
+  dir = file.path("inst", "extdata"),
+  branch = "main",
+  overwrite = FALSE
+) {
   # checks
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)

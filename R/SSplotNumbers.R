@@ -55,51 +55,52 @@
 #' @seealso [SS_output()], [SS_plots()]
 SSplotNumbers <-
   function(
-      replist,
-      subplots = c(1:10),
-      plot = TRUE,
-      print = FALSE,
-      numbers.unit = 1000,
-      areas = "all",
-      areanames = "default",
-      areacols = NULL,
-      pntscalar = 2.6,
-      bub.bg = gray(0.5, alpha = 0.5),
-      bublegend = TRUE,
-      period = c("B", "M"),
-      meanlines = TRUE,
-      add = FALSE,
-      labels = c(
-        "Year", # 1
-        "Age", # 2
-        "True age (yr)", # 3
-        "SD of observed age (yr)", # 4
-        "Mean observed age (yr)", # 5
-        "Mean age (yr)", # 6
-        "mean age in the population", # 7
-        "Ageing imprecision", # 8
-        "Numbers at age at equilibrium", # 9
-        "Equilibrium age distribution", # 10
-        "Fraction female in numbers at age", # 11
-        "Length", # 12
-        "Mean length (cm)", # 13
-        "mean length (cm) in the population", # 14
-        "expected numbers at age", # 15
-        "Beginning of year", # 16
-        "Middle of year", # 17
-        "expected numbers at length", # 18
-        # 19 below is out of order, runumbering others would be tedious
-        "Fraction female in numbers at length"
-      ), # 19
-      pwidth = 6.5,
-      pheight = 6.5,
-      punits = "in",
-      res = 300,
-      ptsize = 10,
-      cex.main = 1,
-      plotdir = "default",
-      mainTitle = FALSE,
-      verbose = TRUE) {
+    replist,
+    subplots = c(1:10),
+    plot = TRUE,
+    print = FALSE,
+    numbers.unit = 1000,
+    areas = "all",
+    areanames = "default",
+    areacols = NULL,
+    pntscalar = 2.6,
+    bub.bg = gray(0.5, alpha = 0.5),
+    bublegend = TRUE,
+    period = c("B", "M"),
+    meanlines = TRUE,
+    add = FALSE,
+    labels = c(
+      "Year", # 1
+      "Age", # 2
+      "True age (yr)", # 3
+      "SD of observed age (yr)", # 4
+      "Mean observed age (yr)", # 5
+      "Mean age (yr)", # 6
+      "mean age in the population", # 7
+      "Ageing imprecision", # 8
+      "Numbers at age at equilibrium", # 9
+      "Equilibrium age distribution", # 10
+      "Fraction female in numbers at age", # 11
+      "Length", # 12
+      "Mean length (cm)", # 13
+      "mean length (cm) in the population", # 14
+      "expected numbers at age", # 15
+      "Beginning of year", # 16
+      "Middle of year", # 17
+      "expected numbers at length", # 18
+      # 19 below is out of order, runumbering others would be tedious
+      "Fraction female in numbers at length"
+    ), # 19
+    pwidth = 6.5,
+    pheight = 6.5,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    plotdir = "default",
+    mainTitle = FALSE,
+    verbose = TRUE
+  ) {
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -690,7 +691,7 @@ SSplotNumbers <-
                     ] *
                       natlentemp2[["sum"]][natlentemp0[["Yr"]] == natlenyrs[i]]
                   ) /
-                    sum(natlentemp2[["sum"]][natlentemp0[["Yr"]] == natlenyrs[i]])
+                  sum(natlentemp2[["sum"]][natlentemp0[["Yr"]] == natlenyrs[i]])
               }
 
               if (m == 1 & nsexes == 2) {

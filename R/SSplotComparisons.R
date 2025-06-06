@@ -195,88 +195,89 @@
 #'
 SSplotComparisons <-
   function(
-      summaryoutput,
-      subplots = 1:20,
-      plot = TRUE,
-      print = FALSE,
-      png = print,
-      pdf = FALSE,
-      models = "all",
-      endyrvec = NULL,
-      indexfleets = NULL,
-      indexUncertainty = TRUE,
-      indexQlabel = TRUE,
-      indexQdigits = 4,
-      indexSEvec = NULL,
-      # TRUE in following command plots the observed index for each model
-      # with colors, or FALSE just plots observed once in black dots
-      indexPlotEach = FALSE,
-      labels = c(
-        "Year", # 1
-        "Spawning biomass (t)", # 2
-        "Fraction of unfished", # 3
-        "Age-0 recruits (1,000s)", # 4
-        "Recruitment deviations", # 5
-        "Index", # 6
-        "Log index", # 7
-        "SPR-related quantity", # 8 automatically updated when consistent
-        "Density", # 9
-        "Management target", # 10
-        "Minimum stock size threshold", # 11
-        "Spawning output", # 12 automatically updated when consistent
-        "Harvest rate", # 13
-        "Summary biomass (t)", # 14
-        "Age X+ biomass (t)" # 15
-      ),
-      col = NULL,
-      shadecol = NULL,
-      pch = NULL,
-      lty = 1,
-      lwd = 2,
-      spacepoints = 10,
-      staggerpoints = 1,
-      initpoint = 0,
-      tickEndYr = TRUE,
-      shadeForecast = TRUE,
-      xlim = NULL,
-      ylimAdj = 1.05,
-      xaxs = "i",
-      yaxs = "i",
-      type = "o",
-      uncertainty = TRUE,
-      shadealpha = 0.1,
-      legend = TRUE,
-      legendlabels = NULL,
-      legendloc = "topright",
-      legendorder = NULL,
-      legendncol = 1,
-      sprtarg = NULL,
-      btarg = NULL,
-      minbthresh = NULL,
-      pwidth = 6.5,
-      pheight = 5.0,
-      punits = "in",
-      res = 300,
-      ptsize = 10,
-      plotdir = NULL,
-      filenameprefix = "",
-      densitynames = c("SSB_Virgin", "R0"),
-      densityxlabs = NULL,
-      rescale = TRUE,
-      densityscalex = 1,
-      densityscaley = 1,
-      densityadjust = 1,
-      densitysymbols = TRUE,
-      densitytails = TRUE,
-      densitymiddle = FALSE,
-      densitylwd = 1,
-      fix0 = TRUE,
-      new = TRUE,
-      add = FALSE,
-      par = list(mar = c(5, 4, 1, 1) + .1),
-      verbose = TRUE,
-      mcmcVec = FALSE,
-      show_equilibrium = TRUE) {
+    summaryoutput,
+    subplots = 1:20,
+    plot = TRUE,
+    print = FALSE,
+    png = print,
+    pdf = FALSE,
+    models = "all",
+    endyrvec = NULL,
+    indexfleets = NULL,
+    indexUncertainty = TRUE,
+    indexQlabel = TRUE,
+    indexQdigits = 4,
+    indexSEvec = NULL,
+    # TRUE in following command plots the observed index for each model
+    # with colors, or FALSE just plots observed once in black dots
+    indexPlotEach = FALSE,
+    labels = c(
+      "Year", # 1
+      "Spawning biomass (t)", # 2
+      "Fraction of unfished", # 3
+      "Age-0 recruits (1,000s)", # 4
+      "Recruitment deviations", # 5
+      "Index", # 6
+      "Log index", # 7
+      "SPR-related quantity", # 8 automatically updated when consistent
+      "Density", # 9
+      "Management target", # 10
+      "Minimum stock size threshold", # 11
+      "Spawning output", # 12 automatically updated when consistent
+      "Harvest rate", # 13
+      "Summary biomass (t)", # 14
+      "Age X+ biomass (t)" # 15
+    ),
+    col = NULL,
+    shadecol = NULL,
+    pch = NULL,
+    lty = 1,
+    lwd = 2,
+    spacepoints = 10,
+    staggerpoints = 1,
+    initpoint = 0,
+    tickEndYr = TRUE,
+    shadeForecast = TRUE,
+    xlim = NULL,
+    ylimAdj = 1.05,
+    xaxs = "i",
+    yaxs = "i",
+    type = "o",
+    uncertainty = TRUE,
+    shadealpha = 0.1,
+    legend = TRUE,
+    legendlabels = NULL,
+    legendloc = "topright",
+    legendorder = NULL,
+    legendncol = 1,
+    sprtarg = NULL,
+    btarg = NULL,
+    minbthresh = NULL,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    plotdir = NULL,
+    filenameprefix = "",
+    densitynames = c("SSB_Virgin", "R0"),
+    densityxlabs = NULL,
+    rescale = TRUE,
+    densityscalex = 1,
+    densityscaley = 1,
+    densityadjust = 1,
+    densitysymbols = TRUE,
+    densitytails = TRUE,
+    densitymiddle = FALSE,
+    densitylwd = 1,
+    fix0 = TRUE,
+    new = TRUE,
+    add = FALSE,
+    par = list(mar = c(5, 4, 1, 1) + .1),
+    verbose = TRUE,
+    mcmcVec = FALSE,
+    show_equilibrium = TRUE
+  ) {
     # switch to avoid repetition of warning about mean recruitment
     meanRecWarning <- TRUE
     ymax_vec <- rep(NA, 17) # vector of ymax values for each plot
@@ -2351,11 +2352,13 @@ SSplotComparisons <-
       return(ylim[2])
     } # end plotIndices function
 
-    plotDensities <- function(parname,
-                              xlab,
-                              denslwd,
-                              limit0 = TRUE,
-                              cumulative = FALSE) {
+    plotDensities <- function(
+      parname,
+      xlab,
+      denslwd,
+      limit0 = TRUE,
+      cumulative = FALSE
+    ) {
       if (any(!mcmcVec)) {
         vals <- rbind(
           pars[pars[["Label"]] == parname, names(pars) != "recdev"],

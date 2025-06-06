@@ -65,10 +65,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   # exe name with extension added back on Windows
   exename <- paste0(
     exe_no_extension,
-    switch(.Platform[["OS.type"]],
-      windows = ".exe",
-      unix = ""
-    )
+    switch(.Platform[["OS.type"]], windows = ".exe", unix = "")
   )
 
   # path.expand will resolve any use of "~" in input exe

@@ -21,11 +21,12 @@
 #' [SS_readforecast()], [SS_writeforecast()]
 #'
 SS_writedat_3.30 <- function(
-    datlist,
-    outfile,
-    overwrite = FALSE,
-    faster = lifecycle::deprecated(),
-    verbose = TRUE) {
+  datlist,
+  outfile,
+  overwrite = FALSE,
+  faster = lifecycle::deprecated(),
+  verbose = TRUE
+) {
   # function to write Stock Synthesis data files
   if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(
@@ -123,10 +124,11 @@ SS_writedat_3.30 <- function(
 
   # function to print data frame with hash mark before first column name
   print.df <- function(
-      dataframe,
-      header = TRUE,
-      headerLine = NA,
-      terminate = TRUE) {
+    dataframe,
+    header = TRUE,
+    headerLine = NA,
+    terminate = TRUE
+  ) {
     if (is.character(dataframe)) {
       tmp <- d[names(d) == dataframe]
       if (length(tmp) > 0) {
@@ -200,8 +202,7 @@ SS_writedat_3.30 <- function(
   if (!is.null(d[["bycatch_fleet_info"]])) {
     writeComment("#Bycatch_fleet_input", con = zz)
     print.df(
-      d[["bycatch_fleet_info"]][
-        ,
+      d[["bycatch_fleet_info"]][,
         names(d[["bycatch_fleet_info"]]) != "fleetname"
       ],
       terminate = FALSE

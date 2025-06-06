@@ -9,11 +9,12 @@
 #' @author Ian G. Taylor
 #'
 table_all <- function(
-    replist,
-    dir = NULL,
-    fleetnames = NULL,
-    selexyr = NULL,
-    verbose = TRUE) {
+  replist,
+  dir = NULL,
+  fleetnames = NULL,
+  selexyr = NULL,
+  verbose = TRUE
+) {
   tables <- list()
   # run all table functions
   tables[["table_compweight"]] <- table_compweight(

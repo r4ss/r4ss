@@ -42,13 +42,14 @@
 #' }
 #'
 run <- function(
-    dir = getwd(),
-    exe = "ss3",
-    extras = "",
-    skipfinished = TRUE,
-    show_in_console = FALSE,
-    console_output_file = "console.output.txt",
-    verbose = TRUE) {
+  dir = getwd(),
+  exe = "ss3",
+  extras = "",
+  skipfinished = TRUE,
+  show_in_console = FALSE,
+  console_output_file = "console.output.txt",
+  verbose = TRUE
+) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir)) {
     stop("Input 'dir' should be a character string")

@@ -18,12 +18,13 @@
 #' @family read/write functions
 
 SS_writedat <- function(
-    datlist,
-    outfile,
-    version = "3.30",
-    overwrite = FALSE,
-    faster = lifecycle::deprecated(),
-    verbose = TRUE) {
+  datlist,
+  outfile,
+  version = "3.30",
+  overwrite = FALSE,
+  faster = lifecycle::deprecated(),
+  verbose = TRUE
+) {
   # function to write Stock Synthesis data files
   if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(

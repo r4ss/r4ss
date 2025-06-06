@@ -31,16 +31,17 @@
 #' @export
 SS_splitdat <-
   function(
-      inpath = "working_directory",
-      outpath = "working_directory",
-      inname = "data.ss_new",
-      outpattern = "BootData",
-      number = FALSE,
-      verbose = TRUE,
-      fillblank = TRUE,
-      MLE = TRUE,
-      inputs = FALSE,
-      notes = "") {
+    inpath = "working_directory",
+    outpath = "working_directory",
+    inname = "data.ss_new",
+    outpattern = "BootData",
+    number = FALSE,
+    verbose = TRUE,
+    fillblank = TRUE,
+    MLE = TRUE,
+    inputs = FALSE,
+    notes = ""
+  ) {
     lifecycle::deprecate_warn(
       "1.45.0",
       "SS_splitdat()",

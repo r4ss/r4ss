@@ -16,13 +16,14 @@
 #' @family read/write functions
 
 SS_readforecast <- function(
-    file = "forecast.ss",
-    Nfleets = NULL,
-    Nareas = NULL,
-    nseas = NULL,
-    version = "3.30",
-    readAll = FALSE,
-    verbose = TRUE) {
+  file = "forecast.ss",
+  Nfleets = NULL,
+  Nareas = NULL,
+  nseas = NULL,
+  version = "3.30",
+  readAll = FALSE,
+  verbose = TRUE
+) {
   # function to read Stock Synthesis forecast files
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     # turns out 3.30 != "3.30" in R
@@ -114,12 +115,13 @@ SS_readforecast <- function(
 
   # Function to add data as data.frame to forelist
   add_df <- function(
-      forelist,
-      nrows = NULL,
-      ncol,
-      col.names,
-      name,
-      comments = NULL) {
+    forelist,
+    nrows = NULL,
+    ncol,
+    col.names,
+    name,
+    comments = NULL
+  ) {
     i <- forelist$".i"
     dat <- forelist$".dat"
     if (is.null(nrows)) {

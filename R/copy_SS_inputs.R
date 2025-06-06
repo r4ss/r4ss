@@ -42,16 +42,17 @@
 #' }
 #'
 copy_SS_inputs <- function(
-    dir.old = NULL,
-    dir.new = NULL,
-    create.dir = TRUE,
-    overwrite = FALSE,
-    recursive = FALSE,
-    use_ss_new = FALSE,
-    copy_exe = FALSE,
-    copy_par = FALSE,
-    dir.exe = NULL,
-    verbose = TRUE) {
+  dir.old = NULL,
+  dir.new = NULL,
+  create.dir = TRUE,
+  overwrite = FALSE,
+  recursive = FALSE,
+  use_ss_new = FALSE,
+  copy_exe = FALSE,
+  copy_par = FALSE,
+  dir.exe = NULL,
+  verbose = TRUE
+) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir.old) | length(dir.old) != 1) {
     stop("Input 'dir.old' should be a character string for a directory")

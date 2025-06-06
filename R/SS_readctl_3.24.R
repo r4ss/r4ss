@@ -30,24 +30,25 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.24 <- function(
-    file,
-    verbose = FALSE,
-    use_datlist = TRUE,
-    datlist = "data.ss_new",
-    # Parameters that are not defined in control file:
-    nseas = NULL,
-    N_areas = NULL,
-    Nages = NULL,
-    Nsexes = NULL,
-    Npopbins = NA,
-    Nfleet = NULL,
-    Nsurveys = NULL,
-    Do_AgeKey = NULL,
-    N_tag_groups = NULL,
-    # This information is needed if Q_type of 3 or 4 is used
-    N_CPUE_obs = NULL,
-    ##################################
-    ptype = lifecycle::deprecated()) {
+  file,
+  verbose = FALSE,
+  use_datlist = TRUE,
+  datlist = "data.ss_new",
+  # Parameters that are not defined in control file:
+  nseas = NULL,
+  N_areas = NULL,
+  Nages = NULL,
+  Nsexes = NULL,
+  Npopbins = NA,
+  Nfleet = NULL,
+  Nsurveys = NULL,
+  Do_AgeKey = NULL,
+  N_tag_groups = NULL,
+  # This information is needed if Q_type of 3 or 4 is used
+  N_CPUE_obs = NULL,
+  ##################################
+  ptype = lifecycle::deprecated()
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",

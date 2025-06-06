@@ -32,34 +32,35 @@
 #' @seealso [SS_plots()], [SS_fitbiasramp()]
 SSplotRecdevs <-
   function(
-      replist,
-      subplots = 1:3,
-      plot = TRUE,
-      print = FALSE,
-      add = FALSE,
-      uncertainty = TRUE,
-      minyr = -Inf,
-      maxyr = Inf,
-      forecastplot = FALSE,
-      col1 = "black",
-      col2 = "blue",
-      col3 = "green3",
-      col4 = "red",
-      legendloc = "topleft",
-      labels = c(
-        "Year", # 1
-        "Asymptotic standard error estimate", # 2
-        "Log recruitment deviation", # 3
-        "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"
-      ), # 4
-      pwidth = 6.5,
-      pheight = 5.0,
-      punits = "in",
-      res = 300,
-      ptsize = 10,
-      cex.main = 1,
-      plotdir = "default",
-      verbose = TRUE) {
+    replist,
+    subplots = 1:3,
+    plot = TRUE,
+    print = FALSE,
+    add = FALSE,
+    uncertainty = TRUE,
+    minyr = -Inf,
+    maxyr = Inf,
+    forecastplot = FALSE,
+    col1 = "black",
+    col2 = "blue",
+    col3 = "green3",
+    col4 = "red",
+    legendloc = "topleft",
+    labels = c(
+      "Year", # 1
+      "Asymptotic standard error estimate", # 2
+      "Log recruitment deviation", # 3
+      "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"
+    ), # 4
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    plotdir = "default",
+    verbose = TRUE
+  ) {
     # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment
 
     # table to store information on each plot

@@ -46,36 +46,37 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotSPR <-
   function(
-      replist,
-      add = FALSE,
-      plot = TRUE,
-      print = FALSE,
-      uncertainty = TRUE,
-      subplots = 1:4,
-      forecastplot = FALSE,
-      col1 = "black",
-      col2 = "blue",
-      col3 = "green3",
-      col4 = "red",
-      sprtarg = "default",
-      btarg = "default",
-      minbthresh = "default",
-      labels = c(
-        "Year", # 1
-        "SPR", # 2
-        "1-SPR", # 3
-        "Relative fishing intensity", # 4
-        "Relative spawning output" # 5
-      ),
-      pwidth = 6.5,
-      pheight = 5.0,
-      pheight_tall = 5.0,
-      punits = "in",
-      res = 300,
-      ptsize = 10,
-      cex.main = 1,
-      plotdir = "default",
-      verbose = TRUE) {
+    replist,
+    add = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    uncertainty = TRUE,
+    subplots = 1:4,
+    forecastplot = FALSE,
+    col1 = "black",
+    col2 = "blue",
+    col3 = "green3",
+    col4 = "red",
+    sprtarg = "default",
+    btarg = "default",
+    minbthresh = "default",
+    labels = c(
+      "Year", # 1
+      "SPR", # 2
+      "1-SPR", # 3
+      "Relative fishing intensity", # 4
+      "Relative spawning output" # 5
+    ),
+    pwidth = 6.5,
+    pheight = 5.0,
+    pheight_tall = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    plotdir = "default",
+    verbose = TRUE
+  ) {
     # table to store information on each plot
     plotinfo <- NULL
 

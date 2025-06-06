@@ -237,26 +237,27 @@ SS_profile <- function(...) {
 #' }
 #'
 profile <- function(
-    dir,
-    oldctlfile = "control.ss_new",
-    masterctlfile = lifecycle::deprecated(),
-    newctlfile = "control_modified.ss",
-    linenum = NULL,
-    string = NULL,
-    profilevec = NULL,
-    usepar = FALSE,
-    globalpar = FALSE,
-    parlinenum = NULL,
-    parstring = NULL,
-    saveoutput = TRUE,
-    overwrite = TRUE,
-    whichruns = NULL,
-    prior_check = TRUE,
-    read_like = lifecycle::deprecated(),
-    exe = "ss3",
-    verbose = TRUE,
-    conv_criteria = 0.01,
-    ...) {
+  dir,
+  oldctlfile = "control.ss_new",
+  masterctlfile = lifecycle::deprecated(),
+  newctlfile = "control_modified.ss",
+  linenum = NULL,
+  string = NULL,
+  profilevec = NULL,
+  usepar = FALSE,
+  globalpar = FALSE,
+  parlinenum = NULL,
+  parstring = NULL,
+  saveoutput = TRUE,
+  overwrite = TRUE,
+  whichruns = NULL,
+  prior_check = TRUE,
+  read_like = lifecycle::deprecated(),
+  exe = "ss3",
+  verbose = TRUE,
+  conv_criteria = 0.01,
+  ...
+) {
   # deprecated variable warnings
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterctlfile)) {

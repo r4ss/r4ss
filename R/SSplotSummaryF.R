@@ -23,22 +23,23 @@
 #' @export
 #' @seealso [SSplotTimeseries()]
 SSplotSummaryF <- function(
-    replist,
-    yrs = "all",
-    Ftgt = NA,
-    ylab = "Summary Fishing Mortality",
-    plot = TRUE,
-    print = FALSE,
-    plotdir = "default",
-    verbose = TRUE,
-    uncertainty = TRUE,
-    add = FALSE,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    mar = NULL) {
+  replist,
+  yrs = "all",
+  Ftgt = NA,
+  ylab = "Summary Fishing Mortality",
+  plot = TRUE,
+  print = FALSE,
+  plotdir = "default",
+  verbose = TRUE,
+  uncertainty = TRUE,
+  add = FALSE,
+  pwidth = 6.5,
+  pheight = 5.0,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  mar = NULL
+) {
   # plots the summary F (or harvest rate) as set up in the starter file
   # needs a lot of work to be generalized
 
@@ -80,7 +81,8 @@ SSplotSummaryF <- function(
     if (!add) {
       plot(
         0,
-        type = "n", ,
+        type = "n",
+        ,
         xlab = "Year",
         ylab = ylab,
         xlim = range(yrs),
