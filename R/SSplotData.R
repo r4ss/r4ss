@@ -50,31 +50,30 @@
 #' @seealso [SS_plots()], [SS_output()],
 #' [SS_readdat()]
 SSplotData <- function(
-  replist,
-  plot = TRUE,
-  print = FALSE,
-  plotdir = "default",
-  subplots = 1:2,
-  fleetcol = "default",
-  datatypes = "all",
-  fleets = "all",
-  fleetnames = "default",
-  ghost = FALSE,
-  pwidth = 6.5,
-  pheight = 5.0,
-  punits = "in",
-  res = 300,
-  ptsize = 10,
-  cex.main = 1,
-  margins = c(5.1, 2.1, 2.1, 8.1),
-  cex = 2,
-  lwd = 12,
-  maxsize = 1.0,
-  alphasize = 1,
-  mainTitle = FALSE,
-  verbose = TRUE,
-  subplot = lifecycle::deprecated()
-) {
+    replist,
+    plot = TRUE,
+    print = FALSE,
+    plotdir = "default",
+    subplots = 1:2,
+    fleetcol = "default",
+    datatypes = "all",
+    fleets = "all",
+    fleetnames = "default",
+    ghost = FALSE,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    margins = c(5.1, 2.1, 2.1, 8.1),
+    cex = 2,
+    lwd = 12,
+    maxsize = 1.0,
+    alphasize = 1,
+    mainTitle = FALSE,
+    verbose = TRUE,
+    subplot = lifecycle::deprecated()) {
   # Warning about deprecated arguments. Should be removed after 1 release.
   # warn about soft deprecated arguments
   if (lifecycle::is_present(subplot)) {
@@ -504,8 +503,9 @@ SSplotData <- function(
           if (n == 1) solo <- 1
           if (n == 2 & yrs[2] != yrs[1] + 1) solo <- rep(TRUE, 2)
           if (n >= 3) {
-            for (i in 2:(n - 1))
+            for (i in 2:(n - 1)) {
               if (is.na(y[i - 1]) & is.na(y[i + 1])) solo[i] <- TRUE
+            }
             if (is.na(y[2])) solo[1] <- TRUE
             if (is.na(y[n - 1])) solo[n] <- TRUE
           }

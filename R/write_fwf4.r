@@ -46,24 +46,23 @@
 #' @export
 #'
 write_fwf4 <- function(
-  x,
-  file = "",
-  append = FALSE,
-  quote = FALSE,
-  sep = " ",
-  na = "NA",
-  rownames = FALSE,
-  colnames = TRUE,
-  rowCol = NULL,
-  justify = "left",
-  width = NULL,
-  eol = "\n",
-  qmethod = c("escape", "double"),
-  digits = 8,
-  checkNA = TRUE,
-  checkInfty = TRUE,
-  checkError = TRUE
-) {
+    x,
+    file = "",
+    append = FALSE,
+    quote = FALSE,
+    sep = " ",
+    na = "NA",
+    rownames = FALSE,
+    colnames = TRUE,
+    rowCol = NULL,
+    justify = "left",
+    width = NULL,
+    eol = "\n",
+    qmethod = c("escape", "double"),
+    digits = 8,
+    checkNA = TRUE,
+    checkInfty = TRUE,
+    checkError = TRUE) {
   # If input is a matrix, convert it to a data.frame
   if (is.matrix(x)) x <- as.data.frame(x)
   # if checkError is TRUE, make checkNA and checkInfty TRUE,

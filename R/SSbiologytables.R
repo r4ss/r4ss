@@ -22,12 +22,11 @@
 #' @export
 #'
 SSbiologytables <- function(
-  replist = NULL,
-  printfolder = "tables",
-  dir = "default",
-  fleetnames = "default",
-  selexyr = "default"
-) {
+    replist = NULL,
+    printfolder = "tables",
+    dir = "default",
+    fleetnames = "default",
+    selexyr = "default") {
   lifecycle::deprecate_warn(
     when = "1.52.0",
     what = "SSbiologytables()",

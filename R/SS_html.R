@@ -27,16 +27,15 @@
 #' @seealso [SS_plots()], [SS_output()]
 #'
 SS_html <- function(
-  replist = NULL,
-  plotdir = NULL,
-  plotInfoTable = NULL,
-  title = "SS Output",
-  width = 500,
-  openfile = TRUE,
-  multimodel = FALSE,
-  filenotes = NULL,
-  verbose = TRUE
-) {
+    replist = NULL,
+    plotdir = NULL,
+    plotInfoTable = NULL,
+    title = "SS Output",
+    width = 500,
+    openfile = TRUE,
+    multimodel = FALSE,
+    filenotes = NULL,
+    verbose = TRUE) {
   if (verbose) {
     message(
       "Running 'SS_html':\n",
@@ -55,8 +54,9 @@ SS_html <- function(
       # look for all files beginning with the name 'plotInfoTable'
       filenames <- filenames[grep("plotInfoTable", filenames)]
       filenames <- filenames[grep(".csv", filenames)]
-      if (length(filenames) == 0)
+      if (length(filenames) == 0) {
         stop("No CSV files with name 'plotInfoTable...'")
+      }
       plotInfoTable <- NULL
       # loop over matching CSV files and combine them
       for (ifile in seq_along(filenames)) {
@@ -74,8 +74,9 @@ SS_html <- function(
             "    Hopefully you know what you're doing, or change to 'multimodel=FALSE.\n",
             "    Runs:\n"
           )
-          for (irun in seq_along(runs))
+          for (irun in seq_along(runs)) {
             msg <- c(msg, paste("    ", runs[irun], "\n"))
+          }
           warning(msg)
         } else {
           msg <- c(
@@ -83,8 +84,9 @@ SS_html <- function(
             "    Delete old files or (if you really know what you're doing) override with 'multimodel=TRUE.\n",
             "    Runs:\n"
           )
-          for (irun in seq_along(runs))
+          for (irun in seq_along(runs)) {
             msg <- c(msg, paste("    ", runs[irun], "\n"))
+          }
           stop(msg)
         }
       }
@@ -93,10 +95,11 @@ SS_html <- function(
       duplicates <- names(filetable[filetable > 1])
       # loop over duplicates and remove rows for older instance
       if (length(duplicates) > 0) {
-        if (verbose)
+        if (verbose) {
           message(
             "Removing duplicate rows in combined plotInfoTable based on multiple CSV files"
           )
+        }
         for (idup in seq_along(duplicates)) {
           duprows <- grep(
             duplicates[idup],

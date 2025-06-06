@@ -18,11 +18,10 @@
 #' whether or not the file was successfully renamed.
 #' @seealso [jitter()]
 file_increment <- function(
-  path,
-  i,
-  verbose = FALSE,
-  pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
-) {
+    path,
+    i,
+    verbose = FALSE,
+    pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$") {
   if (verbose) {
     message("Renaming output files to have names like Report", i, ".sso")
   }

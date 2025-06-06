@@ -17,18 +17,17 @@
 #' }
 #'
 table_compweight <- function(
-  replist,
-  dir = NULL,
-  caption = paste(
-    "Data weightings applied to compositions",
-    "according to the `Francis` method. `Obs.` refers to the number of unique",
-    "composition vectors included in the likelihood. `N input` and `N adj.`",
-    "refer to the sample sizes of those vectors before and after being adjusted",
-    "by the the weights."
-  ),
-  caption_CAAL = "`CAAL` is conditional age-at-length data.",
-  verbose = TRUE
-) {
+    replist,
+    dir = NULL,
+    caption = paste(
+      "Data weightings applied to compositions",
+      "according to the `Francis` method. `Obs.` refers to the number of unique",
+      "composition vectors included in the likelihood. `N input` and `N adj.`",
+      "refer to the sample sizes of those vectors before and after being adjusted",
+      "by the the weights."
+    ),
+    caption_CAAL = "`CAAL` is conditional age-at-length data.",
+    verbose = TRUE) {
   # check the input
   check_replist(replist)
   # create the rda_dir

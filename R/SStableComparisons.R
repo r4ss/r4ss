@@ -28,35 +28,34 @@
 #' @seealso [SSsummarize()], [SSplotComparisons()],
 #' [SS_output()]
 SStableComparisons <- function(
-  summaryoutput,
-  models = "all",
-  likenames = c(
-    "TOTAL",
-    "Survey",
-    "Length_comp",
-    "Age_comp",
-    "priors",
-    "Size_at_age"
-  ),
-  names = c(
-    "Recr_Virgin",
-    "R0",
-    "steep",
-    "NatM",
-    "L_at_Amax",
-    "VonBert_K",
-    "SSB_Virg",
-    "Bratio_2025",
-    "SPRratio_2024"
-  ),
-  digits = NULL,
-  modelnames = "default",
-  csv = FALSE,
-  csvdir = "workingdirectory",
-  csvfile = "parameter_comparison_table.csv",
-  verbose = TRUE,
-  mcmc = FALSE
-) {
+    summaryoutput,
+    models = "all",
+    likenames = c(
+      "TOTAL",
+      "Survey",
+      "Length_comp",
+      "Age_comp",
+      "priors",
+      "Size_at_age"
+    ),
+    names = c(
+      "Recr_Virgin",
+      "R0",
+      "steep",
+      "NatM",
+      "L_at_Amax",
+      "VonBert_K",
+      "SSB_Virg",
+      "Bratio_2025",
+      "SPRratio_2024"
+    ),
+    digits = NULL,
+    modelnames = "default",
+    csv = FALSE,
+    csvdir = "workingdirectory",
+    csvfile = "parameter_comparison_table.csv",
+    verbose = TRUE,
+    mcmc = FALSE) {
   if (verbose) message("running SStableComparisons")
 
   # get stuff from summary output
@@ -72,8 +71,9 @@ SStableComparisons <- function(
   ncols <- length(models)
   nsexes <- nsexes[models]
 
-  if (modelnames[1] == "default")
+  if (modelnames[1] == "default") {
     modelnames <- paste("model", 1:ncols, sep = "")
+  }
   tab <- as.data.frame(matrix(NA, nrow = 0, ncol = ncols + 1))
 
   # get MLE values for table
@@ -144,13 +144,14 @@ SStableComparisons <- function(
             vals[ifleet, -1] <- Calc_Q[["Calc_Q"]][Calc_Q[["Fleet"]] == f]
           }
         }
-        if (verbose)
+        if (verbose) {
           message(
             "added ",
             nrow(vals),
             " row",
             ifelse(nrow(vals) != 1, "s", "")
           )
+        }
         if (!is.null(digits)) {
           if (verbose) message("rounded to", digit, "digits")
           vals[, -1] <- round(vals[, -1], digit)

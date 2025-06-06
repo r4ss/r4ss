@@ -97,8 +97,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
       )
     }
     dev_temp <- ctllist[["MG_parms"]][
-      ctllist[["MG_parms"]][, 9] > 0,
-      ,
+      ctllist[["MG_parms"]][, 9] > 0, ,
       drop = FALSE
     ]
     if (length(dev_temp[, 9]) > 0) {
@@ -354,8 +353,7 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         ctllist[["Q_parms_tv"]][, 3:4]
       )
       dev_temp <- ctllist[["Q_parms_tv"]][
-        ctllist[["Q_parms_tv"]][, 9] > 0,
-        ,
+        ctllist[["Q_parms_tv"]][, 9] > 0, ,
         drop = FALSE
       ]
       if (length(dev_temp[, 9]) > 0) {

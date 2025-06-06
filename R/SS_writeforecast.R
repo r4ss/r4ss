@@ -17,13 +17,12 @@
 #' @family read/write functions
 
 SS_writeforecast <- function(
-  mylist,
-  dir = NULL,
-  file = "forecast.ss",
-  writeAll = FALSE,
-  overwrite = FALSE,
-  verbose = TRUE
-) {
+    mylist,
+    dir = NULL,
+    file = "forecast.ss",
+    writeAll = FALSE,
+    overwrite = FALSE,
+    verbose = TRUE) {
   # function to write Stock Synthesis forecast files
   if (verbose) message("running SS_writeforecast")
 
@@ -71,8 +70,9 @@ SS_writeforecast <- function(
   }
   printdf <- function(dataframe) {
     # function to print data frame with hash mark before first column name
-    if (is.character(dataframe))
+    if (is.character(dataframe)) {
       dataframe <- mylist[names(mylist) == dataframe][[1]]
+    }
     names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
     print.data.frame(dataframe, row.names = FALSE, strip.white = TRUE)
   }

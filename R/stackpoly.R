@@ -27,23 +27,22 @@
 #' @export
 #' @references <https://cran.r-project.org/package=plotrix>
 stackpoly <- function(
-  x,
-  y,
-  main = "",
-  xlab = "",
-  ylab = "",
-  xat = NA,
-  xaxlab = NA,
-  xlim = NA,
-  ylim = NA,
-  lty = 1,
-  border = NA,
-  col = NA,
-  axis4 = F,
-  x.hash = NULL,
-  density = 20,
-  ...
-) {
+    x,
+    y,
+    main = "",
+    xlab = "",
+    ylab = "",
+    xat = NA,
+    xaxlab = NA,
+    xlim = NA,
+    ylim = NA,
+    lty = 1,
+    border = NA,
+    col = NA,
+    axis4 = F,
+    x.hash = NULL,
+    density = 20,
+    ...) {
   ## modified version of function "stackpoly" by Jim Lemon from "plotrix"
   ## see https://cran.r-project.org/package=plotrix
   ydim <- dim(y)

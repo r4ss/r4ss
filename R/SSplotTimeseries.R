@@ -59,34 +59,33 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotTimeseries <-
   function(
-    replist,
-    subplot,
-    add = FALSE,
-    areas = "all",
-    areacols = NULL,
-    areanames = "default",
-    forecastplot = TRUE,
-    uncertainty = TRUE,
-    bioscale = 1,
-    minyr = -Inf,
-    maxyr = Inf,
-    plot = TRUE,
-    print = FALSE,
-    plotdir = "default",
-    verbose = TRUE,
-    btarg = "default",
-    minbthresh = "default",
-    xlab = "Year",
-    labels = NULL,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    mainTitle = FALSE,
-    mar = NULL
-  ) {
+      replist,
+      subplot,
+      add = FALSE,
+      areas = "all",
+      areacols = NULL,
+      areanames = "default",
+      forecastplot = TRUE,
+      uncertainty = TRUE,
+      bioscale = 1,
+      minyr = -Inf,
+      maxyr = Inf,
+      plot = TRUE,
+      print = FALSE,
+      plotdir = "default",
+      verbose = TRUE,
+      btarg = "default",
+      minbthresh = "default",
+      xlab = "Year",
+      labels = NULL,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      mainTitle = FALSE,
+      mar = NULL) {
     if (missing(subplot)) {
       stop("'subplot' input required")
     }
@@ -630,8 +629,11 @@ SSplotTimeseries <-
       } else {
         # always loop over areas, but for plots with only one line,
         # change vector of areas to equal 1.
-        if (subplot %in% c(1, 4, 7, 9, 11, 14, 15)) myareas <- 1 else
+        if (subplot %in% c(1, 4, 7, 9, 11, 14, 15)) {
+          myareas <- 1
+        } else {
           myareas <- areas
+        }
         for (iarea in myareas) {
           # loop over chosen areas
           ###
@@ -827,8 +829,9 @@ SSplotTimeseries <-
     if (nareas == 1 & subplot %in% c(2, 5, 8, 10, 12:13)) skip <- TRUE
     # plots 3 and 6 are redundant for 1-season models
     if (nseasons == 1 & subplot %in% c(3, 6)) skip <- TRUE
-    if (subplot %in% c(14:15) & (is.null(birthseas) || nbirthseas == 1))
+    if (subplot %in% c(14:15) & (is.null(birthseas) || nbirthseas == 1)) {
       skip <- TRUE
+    }
 
     if (!skip) {
       plotinfo <- biofunc(subplot = subplot)

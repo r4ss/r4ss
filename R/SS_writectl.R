@@ -16,12 +16,11 @@
 #' @family read/write functions
 
 SS_writectl <- function(
-  ctllist,
-  outfile,
-  version = "3.30",
-  overwrite = FALSE,
-  verbose = FALSE
-) {
+    ctllist,
+    outfile,
+    version = "3.30",
+    overwrite = FALSE,
+    verbose = FALSE) {
   # function to write Stock Synthesis data files
   if (verbose) {
     message("Running SS_writectl")

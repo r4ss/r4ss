@@ -49,28 +49,27 @@
 #' }
 #'
 get_SIS_info <- function(
-  model,
-  dir = model[["inputs"]][["dir"]],
-  writecsv = TRUE,
-  stock = "StockName",
-  assessment_type = "Operational",
-  final_year = model[["endyr"]] + 1,
-  data_year = model[["endyr"]],
-  month,
-  sciencecenter = "NWFSC",
-  Mgt_Council = "PFMC",
-  # SpawnOutputLabel is only available in an r4ss branch
-  # https://github.com/r4ss/r4ss/compare/main...spawn_output_label_838
-  # so will be NULL for most models, which is dealt with later
-  SpawnOutputLabel = model[["SpawnOutputLabel"]],
-  contact = "first.last@noaa.gov",
-  review_result = "XXXX",
-  catch_input_data = "XXXX",
-  abundance_input_data = "XXXX",
-  bio_input_data = "XXXX",
-  comp_input_data = "XXXX",
-  ecosystem_linkage = "XXXX"
-) {
+    model,
+    dir = model[["inputs"]][["dir"]],
+    writecsv = TRUE,
+    stock = "StockName",
+    assessment_type = "Operational",
+    final_year = model[["endyr"]] + 1,
+    data_year = model[["endyr"]],
+    month,
+    sciencecenter = "NWFSC",
+    Mgt_Council = "PFMC",
+    # SpawnOutputLabel is only available in an r4ss branch
+    # https://github.com/r4ss/r4ss/compare/main...spawn_output_label_838
+    # so will be NULL for most models, which is dealt with later
+    SpawnOutputLabel = model[["SpawnOutputLabel"]],
+    contact = "first.last@noaa.gov",
+    review_result = "XXXX",
+    catch_input_data = "XXXX",
+    abundance_input_data = "XXXX",
+    bio_input_data = "XXXX",
+    comp_input_data = "XXXX",
+    ecosystem_linkage = "XXXX") {
   # construct filename
   filename_values <- paste(
     gsub(" ", "_", stock),

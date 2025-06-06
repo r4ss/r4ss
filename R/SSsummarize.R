@@ -32,18 +32,17 @@
 #' @export
 #' @seealso [SSgetoutput()]
 SSsummarize <- function(
-  biglist,
-  sizeselfactor = "Lsel",
-  ageselfactor = "Asel",
-  selfleet = NULL,
-  selyr = "startyr",
-  selgender = lifecycle::deprecated(),
-  selsex = 1,
-  SpawnOutputUnits = NULL,
-  lowerCI = 0.025,
-  upperCI = 0.975,
-  verbose = TRUE
-) {
+    biglist,
+    sizeselfactor = "Lsel",
+    ageselfactor = "Asel",
+    selfleet = NULL,
+    selyr = "startyr",
+    selgender = lifecycle::deprecated(),
+    selsex = 1,
+    SpawnOutputUnits = NULL,
+    lowerCI = 0.025,
+    upperCI = 0.975,
+    verbose = TRUE) {
   if (lifecycle::is_present(selgender)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",

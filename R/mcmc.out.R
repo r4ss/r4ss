@@ -57,28 +57,27 @@
 #' mtext("M (natural mortality)", side = 2, outer = T, line = 1.5, cex = 1.1)
 #' }
 mcmc.out <- function(
-  directory = "c:/mydirectory/",
-  run = "mymodel/",
-  file = "keyposteriors.csv",
-  namefile = "postplotnames.sso",
-  names = FALSE,
-  headernames = TRUE,
-  numparams = 1,
-  closeall = TRUE,
-  burn = 0,
-  thin = 1,
-  scatter = FALSE,
-  surface = FALSE,
-  surf1 = 1,
-  surf2 = 2,
-  stats = FALSE,
-  plots = TRUE,
-  header = TRUE,
-  sep = ",",
-  print = FALSE,
-  new = T,
-  colNames = NULL
-) {
+    directory = "c:/mydirectory/",
+    run = "mymodel/",
+    file = "keyposteriors.csv",
+    namefile = "postplotnames.sso",
+    names = FALSE,
+    headernames = TRUE,
+    numparams = 1,
+    closeall = TRUE,
+    burn = 0,
+    thin = 1,
+    scatter = FALSE,
+    surface = FALSE,
+    surf1 = 1,
+    surf2 = 2,
+    stats = FALSE,
+    plots = TRUE,
+    header = TRUE,
+    sep = ",",
+    print = FALSE,
+    new = T,
+    colNames = NULL) {
   ##############################################################################################################
   # add section to set up for printing or display to screen (default)
   if (print == TRUE) {

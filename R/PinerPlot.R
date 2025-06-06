@@ -78,47 +78,46 @@
 
 PinerPlot <-
   function(
-    summaryoutput,
-    plot = TRUE,
-    print = FALSE,
-    component = "Length_like",
-    main = "Changes in length-composition likelihoods by fleet",
-    models = "all",
-    fleets = "all",
-    fleetnames = "default",
-    profile.string = "R0",
-    profile.label = expression(log(italic(R)[0])),
-    exact = FALSE,
-    ylab = "Change in -log-likelihood",
-    col = "default",
-    pch = "default",
-    lty = 1,
-    lty.total = 1,
-    lwd = 2,
-    lwd.total = 3,
-    cex = 1,
-    cex.total = 1.5,
-    xlim = "default",
-    ymax = "default",
-    xaxs = "r",
-    yaxs = "r",
-    type = "o",
-    legend = TRUE,
-    legendloc = "topright",
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    plotdir = NULL,
-    add_cutoff = FALSE,
-    cutoff_prob = 0.95,
-    verbose = TRUE,
-    fleetgroups = NULL,
-    likelihood_type = "raw_times_lambda",
-    minfraction = 0.01
-  ) {
+      summaryoutput,
+      plot = TRUE,
+      print = FALSE,
+      component = "Length_like",
+      main = "Changes in length-composition likelihoods by fleet",
+      models = "all",
+      fleets = "all",
+      fleetnames = "default",
+      profile.string = "R0",
+      profile.label = expression(log(italic(R)[0])),
+      exact = FALSE,
+      ylab = "Change in -log-likelihood",
+      col = "default",
+      pch = "default",
+      lty = 1,
+      lty.total = 1,
+      lwd = 2,
+      lwd.total = 3,
+      cex = 1,
+      cex.total = 1.5,
+      xlim = "default",
+      ymax = "default",
+      xaxs = "r",
+      yaxs = "r",
+      type = "o",
+      legend = TRUE,
+      legendloc = "topright",
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      plotdir = NULL,
+      add_cutoff = FALSE,
+      cutoff_prob = 0.95,
+      verbose = TRUE,
+      fleetgroups = NULL,
+      likelihood_type = "raw_times_lambda",
+      minfraction = 0.01) {
     # this function is very similar to SSplotProfile, but shows fleet-specific likelihoods
     # for a single components rather than multiple components aggregated across fleets
 
@@ -227,10 +226,11 @@ PinerPlot <-
     if (xlim[1] == "default") xlim <- range(parvec)
 
     # rearange likelihoods to be in columns by type
-    if (likelihood_type == "raw")
+    if (likelihood_type == "raw") {
       prof.table <- lbf[
         which(lbf[["model"]] %in% models & lbf[["Label"]] == component),
       ]
+    }
     if (likelihood_type == "raw_times_lambda") {
       prof.table <- lbf[
         which(lbf[["model"]] %in% models & lbf[["Label"]] == component),
@@ -243,10 +243,11 @@ PinerPlot <-
 
     # Aggregate by input fleetgroups (a character vector, where two fleets with the same value are aggregated)
     if (!is.null(fleetgroups)) {
-      if (length(fleetgroups) != nfleets)
+      if (length(fleetgroups) != nfleets) {
         stop(
           "fleetgroups, if specified, must have length equal to the number of declared fleets"
         )
+      }
       FleetNames <- unique(fleetgroups)
       prof.table_new <- data.frame(matrix(
         nrow = nrow(prof.table),
@@ -324,8 +325,9 @@ PinerPlot <-
     }
 
     # set default y-limits
-    if (ymax == "default")
+    if (ymax == "default") {
       ymax <- 1.1 * max(prof.table[subset, -(1:2)], na.rm = TRUE)
+    }
     ylim <- c(0, ymax)
 
     parvec <- parvec[order(parvec)]

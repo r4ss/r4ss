@@ -20,11 +20,10 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_3.24 <- function(
-  file,
-  verbose = TRUE,
-  echoall = lifecycle::deprecated(),
-  section = NULL
-) {
+    file,
+    verbose = TRUE,
+    echoall = lifecycle::deprecated(),
+    section = NULL) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
@@ -50,10 +49,11 @@ SS_readdat_3.24 <- function(
       dat[grep("Number_of_datafiles", dat)],
       24
     ))
-    if (!section %in% 1:Nsections)
+    if (!section %in% 1:Nsections) {
       stop(
         "The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n"
       )
+    }
     if (section == 1) {
       end <- grep("#_expected values with no error added", dat)
       if (length(end) == 0) end <- length(dat)
@@ -726,11 +726,12 @@ SS_readdat_3.24 <- function(
     dim = datlist[["Nfleet"]] + datlist[["Nsurveys"]]
   )
   for (j in seq_len(NROW(datlist[["CPUE"]]))) {
-    if (datlist[["CPUE"]][j, ][["index"]] > 0)
+    if (datlist[["CPUE"]][j, ][["index"]] > 0) {
       datlist[["NCPUEObs"]][datlist[["CPUE"]][j, ][["index"]]] <- datlist[[
         "NCPUEObs"
       ]][datlist[["CPUE"]][j, ][["index"]]] +
         1
+    }
   }
   # fix some things
   if (!is.null(datlist[["lbin_method"]])) {

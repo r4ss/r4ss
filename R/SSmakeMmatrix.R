@@ -12,12 +12,11 @@
 #' @author Ian Taylor
 #' @export
 SSmakeMmatrix <- function(
-  mat,
-  startyr,
-  outfile = NULL,
-  overwrite = FALSE,
-  yrs.in.columns = TRUE
-) {
+    mat,
+    startyr,
+    outfile = NULL,
+    overwrite = FALSE,
+    yrs.in.columns = TRUE) {
   # A function for converting a matrix of natural mortality values
   # into inputs for Stock Synthesis
   #
@@ -171,8 +170,9 @@ SSmakeMmatrix <- function(
       Value = Mscaled,
       comment = paste("# Env. index for time-varying M at age", a)
     )
-    if (a == maxage)
+    if (a == maxage) {
       temp[["comment"]] <- paste(temp[["comment"]], "+", sep = "")
+    }
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 

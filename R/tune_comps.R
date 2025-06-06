@@ -212,21 +212,20 @@ SS_tune_comps <-
 #' unlink(mod_path, recursive = TRUE)
 #' }
 tune_comps <- function(
-  replist = NULL,
-  fleets = "all",
-  option = c("Francis", "MI", "none", "DM"),
-  digits = 6,
-  write = TRUE,
-  niters_tuning = 0,
-  init_run = FALSE,
-  dir = getwd(),
-  exe = "ss3",
-  model = lifecycle::deprecated(),
-  extras = "",
-  allow_up_tuning = FALSE,
-  verbose = TRUE,
-  ...
-) {
+    replist = NULL,
+    fleets = "all",
+    option = c("Francis", "MI", "none", "DM"),
+    digits = 6,
+    write = TRUE,
+    niters_tuning = 0,
+    init_run = FALSE,
+    dir = getwd(),
+    exe = "ss3",
+    model = lifecycle::deprecated(),
+    extras = "",
+    allow_up_tuning = FALSE,
+    verbose = TRUE,
+    ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(model)) {
@@ -608,13 +607,12 @@ tune_comps <- function(
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
 #' @template verbose
 get_tuning_table <- function(
-  replist,
-  fleets,
-  option,
-  digits = 6,
-  write = TRUE,
-  verbose = TRUE
-) {
+    replist,
+    fleets,
+    option,
+    digits = 6,
+    write = TRUE,
+    verbose = TRUE) {
   # check inputs
   # place to store info on data weighting
   tuning_table <- data.frame(
@@ -742,7 +740,7 @@ get_tuning_table <- function(
           # starting with version 3.30.16?
           MI_mult <-
             tunetable[["HarMean"]][tunetable[["Fleet"]] == fleet] /
-            tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
+              tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
           stop(

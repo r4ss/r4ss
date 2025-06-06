@@ -79,53 +79,52 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotCatch <-
   function(
-    replist,
-    subplots = 1:16,
-    add = FALSE,
-    areas = 1,
-    plot = TRUE,
-    print = FALSE,
-    type = "l",
-    fleetlty = 1,
-    fleetpch = 1,
-    fleetcols = "default",
-    fleetnames = "default",
-    lwd = 3,
-    areacols = NULL,
-    areanames = "default",
-    minyr = -Inf,
-    maxyr = Inf,
-    annualcatch = TRUE,
-    forecastplot = FALSE,
-    plotdir = "default",
-    showlegend = TRUE,
-    legendloc = "topleft",
-    order = "default",
-    xlab = "Year",
-    labels = c(
-      "Harvest rate/Year", # 1
-      "Continuous F", # 2
-      "Landings", # 3
-      "Total catch", # 4
-      "Predicted discards", # 5 # should add units
-      "Discard fraction", # 6  # need to add by weight or by length
-      "(t)", # 7
-      "(numbers x1000)", # 8
-      "Observed and expected", # 9
-      "aggregated across seasons" # 10
-    ),
-    catchasnumbers = NULL,
-    catchbars = TRUE,
-    addmax = TRUE,
-    ymax = NULL,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1, # note: no plot titles yet implemented
-    verbose = TRUE
-  ) {
+      replist,
+      subplots = 1:16,
+      add = FALSE,
+      areas = 1,
+      plot = TRUE,
+      print = FALSE,
+      type = "l",
+      fleetlty = 1,
+      fleetpch = 1,
+      fleetcols = "default",
+      fleetnames = "default",
+      lwd = 3,
+      areacols = NULL,
+      areanames = "default",
+      minyr = -Inf,
+      maxyr = Inf,
+      annualcatch = TRUE,
+      forecastplot = FALSE,
+      plotdir = "default",
+      showlegend = TRUE,
+      legendloc = "topleft",
+      order = "default",
+      xlab = "Year",
+      labels = c(
+        "Harvest rate/Year", # 1
+        "Continuous F", # 2
+        "Landings", # 3
+        "Total catch", # 4
+        "Predicted discards", # 5 # should add units
+        "Discard fraction", # 6  # need to add by weight or by length
+        "(t)", # 7
+        "(numbers x1000)", # 8
+        "Observed and expected", # 9
+        "aggregated across seasons" # 10
+      ),
+      catchasnumbers = NULL,
+      catchbars = TRUE,
+      addmax = TRUE,
+      ymax = NULL,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1, # note: no plot titles yet implemented
+      verbose = TRUE) {
     # IGT 16Apr2021: labels were not getting passed into the function.
     # I don't why by this work-around should bring them back until we can
     # figure out what's going on
@@ -413,8 +412,9 @@ SSplotCatch <-
 
     if (fleetcols[1] == "default") {
       fleetcols <- rich.colors.short(nfleets_with_catch)
-      if (nfleets_with_catch > 2)
+      if (nfleets_with_catch > 2) {
         fleetcols <- rich.colors.short(nfleets_with_catch + 1)[-1]
+      }
     }
 
     # set default area-specific colors if not specified
@@ -438,13 +438,11 @@ SSplotCatch <-
       }
     }
     # generic function to plot catch, landings, discards or harvest rates
-    linefunc <- function(
-      ymat,
-      ylab,
-      ymax = NULL,
-      addtotal = TRUE,
-      x = catchyrs
-    ) {
+    linefunc <- function(ymat,
+                         ylab,
+                         ymax = NULL,
+                         addtotal = TRUE,
+                         x = catchyrs) {
       ymat <- as.matrix(ymat)
       if (addtotal & nfleets_with_catch > 1) {
         ytotal <- rowSums(ymat)
@@ -595,13 +593,14 @@ SSplotCatch <-
       )
 
       # add legend
-      if (showlegend)
+      if (showlegend) {
         legend(
           legendloc,
           fill = fleetcols[!ghost],
           legend = fleetnames[!ghost],
           bty = "n"
         )
+      }
       return(TRUE)
     }
 

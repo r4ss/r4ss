@@ -93,24 +93,23 @@
 #'
 SSMethod.TA1.8 <-
   function(
-    fit,
-    type,
-    fleet,
-    part = 0:2,
-    sexes = 0:3,
-    seas = NULL,
-    method = NULL,
-    plotit = TRUE,
-    printit = FALSE,
-    datonly = FALSE,
-    plotadj = !datonly,
-    maxpanel = 1000,
-    fleetnames = NULL,
-    label.part = TRUE,
-    label.sex = TRUE,
-    set.pars = TRUE,
-    add = FALSE
-  ) {
+      fit,
+      type,
+      fleet,
+      part = 0:2,
+      sexes = 0:3,
+      seas = NULL,
+      method = NULL,
+      plotit = TRUE,
+      printit = FALSE,
+      datonly = FALSE,
+      plotadj = !datonly,
+      maxpanel = 1000,
+      fleetnames = NULL,
+      label.part = TRUE,
+      label.sex = TRUE,
+      set.pars = TRUE,
+      add = FALSE) {
     # Check the type is correct and the sexes is correct
     is.in <- function(x, y) !is.na(match(x, y))
     if (!is.in(type, c("age", "len", "size", "con"))) {

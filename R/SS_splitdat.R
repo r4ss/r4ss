@@ -31,17 +31,16 @@
 #' @export
 SS_splitdat <-
   function(
-    inpath = "working_directory",
-    outpath = "working_directory",
-    inname = "data.ss_new",
-    outpattern = "BootData",
-    number = FALSE,
-    verbose = TRUE,
-    fillblank = TRUE,
-    MLE = TRUE,
-    inputs = FALSE,
-    notes = ""
-  ) {
+      inpath = "working_directory",
+      outpath = "working_directory",
+      inname = "data.ss_new",
+      outpattern = "BootData",
+      number = FALSE,
+      verbose = TRUE,
+      fillblank = TRUE,
+      MLE = TRUE,
+      inputs = FALSE,
+      notes = "") {
     lifecycle::deprecate_warn(
       "1.45.0",
       "SS_splitdat()",
@@ -66,30 +65,36 @@ SS_splitdat <-
     MLEstart <- grep(MLEstring, filelines)
     MLEend <- starts[1] - 1
 
-    if (MLE & length(MLEstart) == 0)
+    if (MLE & length(MLEstart) == 0) {
       stop(
         "no MLE values in ",
         inname,
         "\n  change 'N bootstrap datafiles' in starter.ss to 2 or greater"
       )
+    }
     inputstring <- "#_observed data"
     inputstart <- grep(inputstring, filelines)
-    if (length(MLEstart) == 0) inputend <- length(filelines) else
+    if (length(MLEstart) == 0) {
+      inputend <- length(filelines)
+    } else {
       inputend <- MLEstart - 1
-    if (length(inputstart) == 0)
+    }
+    if (length(inputstart) == 0) {
       stop(
         "no values in ",
         inname,
         "\n  change 'N bootstrap datafiles' in starter.ss to 1 or greater"
       )
+    }
 
     if (!MLE & !inputs) {
-      if (length(starts) == 0)
+      if (length(starts) == 0) {
         stop(
           "no bootstrap values in ",
           inname,
           "\n  change 'N bootstrap datafiles' in starter.ss to 3 or greater"
         )
+      }
       for (i in seq_along(starts)) {
         outfile <- paste(
           outpath,
@@ -111,8 +116,9 @@ SS_splitdat <-
           notes,
           paste("#C MLE data file created from", infile, "to", outfile)
         )
-        if (verbose)
+        if (verbose) {
           message("MLE data file created from", infile, "to", outfile)
+        }
         writeLines(c(notes, filelines[MLEstart:MLEend]), outfile)
       }
       if (inputs) {
@@ -122,13 +128,14 @@ SS_splitdat <-
           notes,
           paste("#C data file created from", infile, "to", outfile)
         )
-        if (verbose)
+        if (verbose) {
           message(
             "file with copies of input data created from ",
             infile,
             " to ",
             outfile
           )
+        }
         writeLines(c(notes, filelines[inputstart:inputend]), outfile)
       }
     }

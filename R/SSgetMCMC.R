@@ -30,31 +30,31 @@
 #' [SSplotPars()]
 SSgetMCMC <-
   function(
-    dir = NULL,
-    verbose = TRUE,
-    writecsv = FALSE,
-    postname = "posteriors.sso",
-    derpostname = "derived_posteriors.sso",
-    csv1 = "keyposteriors.csv",
-    csv2 = "nuisanceposteriors.csv",
-    keystrings = c(
-      # values that get written to csv1
-      "NatM",
-      "R0",
-      "steep",
-      "RecrDev_2008",
-      "Q_extraSD"
-    ),
-    nuisancestrings = c(
-      # values that get written to csv2
-      "Objective_function",
-      "SSB_",
-      "InitAge",
-      "RecrDev"
-    ),
-    burnin = 0, # the number of values to discard for burnin
-    thin = 1 # the thinning interval
-  ) {
+      dir = NULL,
+      verbose = TRUE,
+      writecsv = FALSE,
+      postname = "posteriors.sso",
+      derpostname = "derived_posteriors.sso",
+      csv1 = "keyposteriors.csv",
+      csv2 = "nuisanceposteriors.csv",
+      keystrings = c(
+        # values that get written to csv1
+        "NatM",
+        "R0",
+        "steep",
+        "RecrDev_2008",
+        "Q_extraSD"
+      ),
+      nuisancestrings = c(
+        # values that get written to csv2
+        "Objective_function",
+        "SSB_",
+        "InitAge",
+        "RecrDev"
+      ),
+      burnin = 0, # the number of values to discard for burnin
+      thin = 1 # the thinning interval
+      ) {
     # get MCMC output
     if (verbose) {
       message("reading MCMC output in\n", dir)

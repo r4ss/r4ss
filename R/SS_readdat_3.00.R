@@ -23,11 +23,10 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_3.00 <- function(
-  file,
-  verbose = TRUE,
-  echoall = lifecycle::deprecated(),
-  section = NULL
-) {
+    file,
+    verbose = TRUE,
+    echoall = lifecycle::deprecated(),
+    section = NULL) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
@@ -52,10 +51,11 @@ SS_readdat_3.00 <- function(
       dat[grep("Number_of_datafiles", dat)],
       24
     ))
-    if (!section %in% 1:Nsections)
+    if (!section %in% 1:Nsections) {
       stop(
         "The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n"
       )
+    }
     if (section == 1) {
       end <- grep("#_expected values with no error added", dat)
       if (length(end) == 0) end <- length(dat)
@@ -702,8 +702,9 @@ SS_readdat_3.00 <- function(
   if (verbose) message("do_morphcomps =", do_morphcomps)
 
   if (allnums[i] == 999) {
-    if (verbose)
+    if (verbose) {
       message("read of data file 3.00 complete (final value = 999)\n")
+    }
     datlist[["eof"]] <- TRUE
   } else {
     message("Error: final value is", allnums[i], " but should be 999\n")

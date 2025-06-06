@@ -52,44 +52,43 @@
 #' 16(2): 101-133. http://www.jstor.org/stable/2676784.
 SSplotSexRatio <-
   function(
-    replist,
-    kind = "AGE",
-    sexratio.option = 2,
-    CI = 0.75,
-    plot = TRUE,
-    print = FALSE,
-    fleets = "all",
-    fleetnames = "default",
-    yupper = 4,
-    datonly = FALSE,
-    linescol = rgb(0.6, 0, 0.9, .7), # a purple color
-    lwd = 2,
-    showsampsize = TRUE,
-    showeffN = TRUE,
-    axis1 = NULL,
-    axis2 = NULL,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    ptsize = 10,
-    res = 300,
-    plotdir = "default",
-    cex.main = 1,
-    labels = c(
-      "Length (cm)",
-      "Age (yr)",
-      "Sex ratio (females:males)",
-      "Fraction female"
-    ),
-    maxrows = 6,
-    maxcols = 6,
-    rows = 1,
-    cols = 1,
-    fixdims = TRUE,
-    verbose = TRUE,
-    mainTitle = FALSE,
-    ...
-  ) {
+      replist,
+      kind = "AGE",
+      sexratio.option = 2,
+      CI = 0.75,
+      plot = TRUE,
+      print = FALSE,
+      fleets = "all",
+      fleetnames = "default",
+      yupper = 4,
+      datonly = FALSE,
+      linescol = rgb(0.6, 0, 0.9, .7), # a purple color
+      lwd = 2,
+      showsampsize = TRUE,
+      showeffN = TRUE,
+      axis1 = NULL,
+      axis2 = NULL,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      ptsize = 10,
+      res = 300,
+      plotdir = "default",
+      cex.main = 1,
+      labels = c(
+        "Length (cm)",
+        "Age (yr)",
+        "Sex ratio (females:males)",
+        "Fraction female"
+      ),
+      maxrows = 6,
+      maxcols = 6,
+      rows = 1,
+      cols = 1,
+      fixdims = TRUE,
+      verbose = TRUE,
+      mainTitle = FALSE,
+      ...) {
     # table to store information on each plot
     plotinfo <- NULL
 

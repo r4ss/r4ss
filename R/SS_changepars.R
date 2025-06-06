@@ -96,22 +96,21 @@
 #' }
 SS_changepars <-
   function(
-    dir = NULL,
-    ctlfile = "control.ss_new",
-    newctlfile = "control_modified.ss",
-    linenums = NULL,
-    strings = NULL,
-    newvals = NULL,
-    repeat.vals = FALSE,
-    newlos = NULL,
-    newhis = NULL,
-    newprior = NULL,
-    newprsd = NULL,
-    newprtype = NULL,
-    estimate = NULL,
-    verbose = TRUE,
-    newphs = NULL
-  ) {
+      dir = NULL,
+      ctlfile = "control.ss_new",
+      newctlfile = "control_modified.ss",
+      linenums = NULL,
+      strings = NULL,
+      newvals = NULL,
+      repeat.vals = FALSE,
+      newlos = NULL,
+      newhis = NULL,
+      newprior = NULL,
+      newprsd = NULL,
+      newprtype = NULL,
+      estimate = NULL,
+      verbose = TRUE,
+      newphs = NULL) {
     # set directory to working directory if not provided
     if (is.null(dir)) {
       dir <- getwd()

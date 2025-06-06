@@ -213,93 +213,92 @@
 #' Sci. 65: 2536-2551.
 SS_plots <-
   function(
-    replist = NULL,
-    plot = 1:26,
-    pdf = FALSE,
-    png = TRUE,
-    html = png,
-    printfolder = "plots",
-    dir = "default",
-    fleets = "all",
-    areas = "all",
-    fleetnames = "default",
-    fleetcols = "default",
-    fleetlty = 1,
-    fleetpch = 1,
-    lwd = 1,
-    areacols = NULL,
-    areanames = "default",
-    verbose = TRUE,
-    uncertainty = TRUE,
-    forecastplot = FALSE,
-    datplot = TRUE,
-    Natageplot = TRUE,
-    samplesizeplots = TRUE,
-    compresidplots = TRUE,
-    comp.yupper = 0.4,
-    sprtarg = "default",
-    btarg = "default",
-    minbthresh = "default",
-    pntscalar = NULL,
-    bub.scale.pearson = 1.5,
-    bub.scale.dat = 3,
-    pntscalar.nums = 2.6,
-    pntscalar.tags = 2.6,
-    minnbubble = 8,
-    aalyear = -1,
-    aalbin = -1,
-    aalresids = TRUE,
-    maxneff = 5000,
-    cohortlines = c(),
-    smooth = TRUE,
-    showsampsize = TRUE,
-    showeffN = TRUE,
-    sampsizeline = FALSE,
-    effNline = FALSE,
-    showlegend = TRUE,
-    pwidth = 6.5,
-    pheight = 4.0,
-    pheight_tall = 6.5,
-    punits = "in",
-    ptsize = 10,
-    res = 300,
-    mainTitle = FALSE,
-    cex.main = 1,
-    selexlines = 1:6,
-    rows = 1,
-    cols = 1,
-    maxrows = 6,
-    maxcols = 4,
-    maxrows2 = 4,
-    maxcols2 = 4,
-    andrerows = 4,
-    tagrows = 3,
-    tagcols = 3,
-    parrows = 4,
-    parcols = 2,
-    fixdims = TRUE,
-    new = TRUE,
-    SSplotDatMargin = 8,
-    filenotes = NULL,
-    catchasnumbers = NULL,
-    catchbars = TRUE,
-    legendloc = "topleft",
-    minyr = -Inf,
-    maxyr = Inf,
-    sexes = "all",
-    scalebins = FALSE,
-    scalebubbles = FALSE,
-    tslabels = NULL,
-    catlabels = NULL,
-    maxsize = 1.0,
-    showmle = TRUE,
-    showpost = TRUE,
-    showprior = TRUE,
-    showinit = TRUE,
-    showdev = FALSE,
-    fitrange = FALSE,
-    ...
-  ) {
+      replist = NULL,
+      plot = 1:26,
+      pdf = FALSE,
+      png = TRUE,
+      html = png,
+      printfolder = "plots",
+      dir = "default",
+      fleets = "all",
+      areas = "all",
+      fleetnames = "default",
+      fleetcols = "default",
+      fleetlty = 1,
+      fleetpch = 1,
+      lwd = 1,
+      areacols = NULL,
+      areanames = "default",
+      verbose = TRUE,
+      uncertainty = TRUE,
+      forecastplot = FALSE,
+      datplot = TRUE,
+      Natageplot = TRUE,
+      samplesizeplots = TRUE,
+      compresidplots = TRUE,
+      comp.yupper = 0.4,
+      sprtarg = "default",
+      btarg = "default",
+      minbthresh = "default",
+      pntscalar = NULL,
+      bub.scale.pearson = 1.5,
+      bub.scale.dat = 3,
+      pntscalar.nums = 2.6,
+      pntscalar.tags = 2.6,
+      minnbubble = 8,
+      aalyear = -1,
+      aalbin = -1,
+      aalresids = TRUE,
+      maxneff = 5000,
+      cohortlines = c(),
+      smooth = TRUE,
+      showsampsize = TRUE,
+      showeffN = TRUE,
+      sampsizeline = FALSE,
+      effNline = FALSE,
+      showlegend = TRUE,
+      pwidth = 6.5,
+      pheight = 4.0,
+      pheight_tall = 6.5,
+      punits = "in",
+      ptsize = 10,
+      res = 300,
+      mainTitle = FALSE,
+      cex.main = 1,
+      selexlines = 1:6,
+      rows = 1,
+      cols = 1,
+      maxrows = 6,
+      maxcols = 4,
+      maxrows2 = 4,
+      maxcols2 = 4,
+      andrerows = 4,
+      tagrows = 3,
+      tagcols = 3,
+      parrows = 4,
+      parcols = 2,
+      fixdims = TRUE,
+      new = TRUE,
+      SSplotDatMargin = 8,
+      filenotes = NULL,
+      catchasnumbers = NULL,
+      catchbars = TRUE,
+      legendloc = "topleft",
+      minyr = -Inf,
+      maxyr = Inf,
+      sexes = "all",
+      scalebins = FALSE,
+      scalebubbles = FALSE,
+      tslabels = NULL,
+      catlabels = NULL,
+      maxsize = 1.0,
+      showmle = TRUE,
+      showpost = TRUE,
+      showprior = TRUE,
+      showinit = TRUE,
+      showdev = FALSE,
+      fitrange = FALSE,
+      ...) {
     flush.console()
 
     # label table is a step toward internationalization of the code
@@ -690,8 +689,9 @@ SS_plots <-
                   labels = tslabels,
                   plotdir = plotdir
                 )
-              if (!is.null(plotinfo))
+              if (!is.null(plotinfo)) {
                 plotInfoTable <- rbind(plotInfoTable, plotinfo)
+              }
             } # end loop over uncertainty or not
           } else {
             # these plots don't have the option for uncertainty
@@ -721,8 +721,9 @@ SS_plots <-
                 labels = tslabels,
                 plotdir = plotdir
               )
-            if (!is.null(plotinfo))
+            if (!is.null(plotinfo)) {
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
         }
       } # end loop over timeseries subplots
@@ -851,8 +852,9 @@ SS_plots <-
                 plotdir = plotdir
               )
             plotinfo <- temp[["plotinfo"]]
-            if (!is.null(plotinfo))
+            if (!is.null(plotinfo)) {
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           } else {
             message(
               "Skipping bias adjustment fit because root mean squared error of recruit devs is 0."
@@ -1202,8 +1204,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
 
           # length comp sex ratios (data only, for 2-sex models only)
           if (replist[["nsexes"]] == 2) {
@@ -1247,8 +1250,9 @@ SS_plots <-
                 res = res,
                 ...
               )
-            if (!is.null(plotinfo))
+            if (!is.null(plotinfo)) {
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
 
           # size comp polygon and bubble plots (data only)
@@ -1291,8 +1295,9 @@ SS_plots <-
                 res = res,
                 ...
               )
-            if (!is.null(plotinfo))
+            if (!is.null(plotinfo)) {
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
         }
         if (ageCompDatGroup %in% plot) {
@@ -1341,8 +1346,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
           # ghost age comp polygon and bubble plots (data only)
           plotinfo <-
             SSplotComps(
@@ -1381,8 +1387,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
           flush.console()
 
           # age comp sex ratios (data only)
@@ -1424,8 +1431,9 @@ SS_plots <-
                 res = res,
                 ...
               )
-            if (!is.null(plotinfo))
+            if (!is.null(plotinfo)) {
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
         }
         if (condCompDatGroup %in% plot) {
@@ -1479,8 +1487,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         } # end conditional data plots
 
         if (!is.null(plotInfoTable)) {
@@ -1623,8 +1632,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # assign plots to LenComp tab in HTML view
         if (!is.null(plotInfoTable)) {
@@ -1676,8 +1686,9 @@ SS_plots <-
                 res = res,
                 ...
               )
-            if (!is.null(plotinfo))
+            if (!is.null(plotinfo)) {
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
         }
         # assign plots to SizeComp tab in HTML view
@@ -1814,8 +1825,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         if (!is.null(plotInfoTable)) {
           plotInfoTable[["category"]][
@@ -1880,8 +1892,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # conditional age at length for a given year
         if (length(intersect(aalyear, unique(timeseries[["Yr"]]))) > 0) {
@@ -1930,8 +1943,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # conditional age at length for a given length bin
         if (length(intersect(aalbin, unique(lbins))) > 0) {
@@ -1977,8 +1991,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         if (!is.null(plotInfoTable)) {
           plotInfoTable[["category"]][
@@ -2050,8 +2065,9 @@ SS_plots <-
                 res = res,
                 ...
               )
-            if (!is.null(plotinfo))
+            if (!is.null(plotinfo)) {
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
             if (!is.null(plotInfoTable)) {
               plotInfoTable[["category"]][
                 plotInfoTable[["category"]] == "Comp"
@@ -2118,8 +2134,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
           # data-only plot of mean weight at age
           plotinfo <-
             SSplotComps(
@@ -2156,8 +2173,9 @@ SS_plots <-
               res = res,
               ...
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # mean length at age with model fit
         plotinfo <-
@@ -2292,8 +2310,9 @@ SS_plots <-
               plotdir = plotdir,
               verbose = verbose
             )
-          if (!is.null(plotinfo))
+          if (!is.null(plotinfo)) {
             plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         } # end if data present
       } # end if igroup in plot or print
     } # end if comp data

@@ -70,30 +70,29 @@
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
 SS_readctl <- function(
-  file,
-  version = "3.30",
-  verbose = FALSE,
-  use_datlist = TRUE,
-  datlist = file.path(dirname(file), "data_echo.ss_new"),
-  ## Parameters that are not defined in control file
-  nseas = NULL,
-  N_areas = NULL,
-  Nages = NULL,
-  Nsexes = NULL,
-  Npopbins = NA,
-  Nfleets = NULL,
-  Nfleet = NULL,
-  Do_AgeKey = NULL,
-  Nsurveys = NULL,
-  N_tag_groups = NULL,
-  N_CPUE_obs = NULL,
-  catch_mult_fleets = NULL,
-  predM_fleets = NULL,
-  Ntag_fleets = NULL,
-  N_rows_equil_catch = NULL,
-  N_dirichlet_parms = NULL,
-  ptype = lifecycle::deprecated()
-) {
+    file,
+    version = "3.30",
+    verbose = FALSE,
+    use_datlist = TRUE,
+    datlist = file.path(dirname(file), "data_echo.ss_new"),
+    ## Parameters that are not defined in control file
+    nseas = NULL,
+    N_areas = NULL,
+    Nages = NULL,
+    Nsexes = NULL,
+    Npopbins = NA,
+    Nfleets = NULL,
+    Nfleet = NULL,
+    Do_AgeKey = NULL,
+    Nsurveys = NULL,
+    N_tag_groups = NULL,
+    N_CPUE_obs = NULL,
+    catch_mult_fleets = NULL,
+    predM_fleets = NULL,
+    Ntag_fleets = NULL,
+    N_rows_equil_catch = NULL,
+    N_dirichlet_parms = NULL,
+    ptype = lifecycle::deprecated()) {
   # warn about soft deprecated arguments ----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(ptype)) {

@@ -17,11 +17,10 @@
 # ' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 # ' \code{\link{SS_writedat}}
 SS_writectl_3.24 <- function(
-  ctllist,
-  outfile,
-  overwrite = FALSE,
-  verbose = FALSE
-) {
+    ctllist,
+    outfile,
+    overwrite = FALSE,
+    verbose = FALSE) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
@@ -59,8 +58,9 @@ SS_writectl_3.24 <- function(
   on.exit(close(zz))
   #  sink(zz)
   writeComment <- function(text, ...) {
-    if (length(grep(x = text, pattern = "^#")) != length(text))
+    if (length(grep(x = text, pattern = "^#")) != length(text)) {
       text <- paste("#_", text, sep = "")
+    }
     writeLines(text = text, con = zz, ...)
   }
   wl <- function(name, comment = NULL, con = stdout) {
@@ -262,8 +262,9 @@ SS_writectl_3.24 <- function(
     "fecundity_option",
     comment = "fecundity option:(1)eggs=Wt*(a+b*Wt);(2)eggs=a*L^b;(3)eggs=a*Wt^b; (4)eggs=a+b*L; (5)eggs=a+b*W"
   )
-  if (is.null(ctllist[["hermaphroditism_option"]]))
+  if (is.null(ctllist[["hermaphroditism_option"]])) {
     ctllist[["hermaphroditism_option"]] <- 1
+  }
   wl(
     "hermaphroditism_option",
     comment = "hermaphroditism option:  0=none; 1=age-specific fxn"
@@ -334,8 +335,9 @@ SS_writectl_3.24 <- function(
   }
   DoParmDev <- sum(ctllist[["MG_parms"]][, 9])
   if (DoParmDev > 0) {
-    if (is.null(ctllist[["MGparm_Dev_Phase"]]))
+    if (is.null(ctllist[["MGparm_Dev_Phase"]])) {
       ctllist[["MGparm_Dev_Phase"]] <- -4
+    }
     wl("MGparm_Dev_Phase")
     writeComment("#")
   }
@@ -609,8 +611,9 @@ SS_writectl_3.24 <- function(
     ## Summary outputs of lambdas as comments is planed to follow in the future version
   }
 
-  if (is.null(ctllist[["more_stddev_reporting"]]))
+  if (is.null(ctllist[["more_stddev_reporting"]])) {
     ctllist[["more_stddev_reporting"]] <- 0
+  }
   wl("more_stddev_reporting")
   if (ctllist[["more_stddev_reporting"]] != 0) {
     wl.vector(

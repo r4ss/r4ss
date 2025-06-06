@@ -30,20 +30,20 @@
 #' @export
 #' @seealso [mcmc.out()], [SSgetMCMC()]
 mcmc.nuisance <- function(
-  directory = "c:/mydirectory/", # directory to use
-  run = "mymodel/", # folder with ADMB run files
-  file = "posteriors.sso", # the file name of the posteriors
-  file2 = "derived_posteriors.sso", # the file name of the posteriors
-  bothfiles = FALSE, # read and combine both file and file2
-  printstats = FALSE, # return all the statistics for a closer look
-  burn = 0, # can specify a burn in to remove
-  header = TRUE, # header on data file?
-  thin = 1, # can specify further thinning, default is none
-  trace = 0, # plot trace for param # (to help sort out problem parameters)
-  labelstrings = "all", # vector of strings that partially match the columns you want to consider
-  columnnumbers = "all", # vector of column numbers indicating the columns you want to consider
-  sep = "" # sep for data file
-) {
+    directory = "c:/mydirectory/", # directory to use
+    run = "mymodel/", # folder with ADMB run files
+    file = "posteriors.sso", # the file name of the posteriors
+    file2 = "derived_posteriors.sso", # the file name of the posteriors
+    bothfiles = FALSE, # read and combine both file and file2
+    printstats = FALSE, # return all the statistics for a closer look
+    burn = 0, # can specify a burn in to remove
+    header = TRUE, # header on data file?
+    thin = 1, # can specify further thinning, default is none
+    trace = 0, # plot trace for param # (to help sort out problem parameters)
+    labelstrings = "all", # vector of strings that partially match the columns you want to consider
+    columnnumbers = "all", # vector of column numbers indicating the columns you want to consider
+    sep = "" # sep for data file
+    ) {
   # sample call:  mcmc.nuisance(run="flatfish_tagging\\",burn=0,thin=1,printstats=F,trace=0)
   ##############################################################################################################
   # Purpose: To summarize nuisance MCMC output (used in combination with mcmc.out() for key parameters)
@@ -95,7 +95,8 @@ mcmc.nuisance <- function(
     mcmcdata <- mcmcdata[, names(mcmcdata) %in% labels]
   } else {
     # when "all" are requested, exclude Iter and Objective_function columns
-    mcmcdata <- mcmcdata[,
+    mcmcdata <- mcmcdata[
+      ,
       !names(mcmcdata) %in%
         c("Iter", "Objective_function")
     ]

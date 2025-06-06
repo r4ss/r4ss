@@ -31,20 +31,19 @@
 #' @export
 SS_recdevs <-
   function(
-    fyr,
-    lyr,
-    ctl = NULL,
-    recdevs = NULL,
-    rescale = TRUE,
-    scaleyrs = NULL,
-    dir = getwd(),
-    ctlfile = "control.ss_new",
-    newctlfile = "control_modified.ss",
-    verbose = TRUE,
-    writectl = TRUE,
-    returnctl = FALSE,
-    newmaxbias = NULL
-  ) {
+      fyr,
+      lyr,
+      ctl = NULL,
+      recdevs = NULL,
+      rescale = TRUE,
+      scaleyrs = NULL,
+      dir = getwd(),
+      ctlfile = "control.ss_new",
+      newctlfile = "control_modified.ss",
+      verbose = TRUE,
+      writectl = TRUE,
+      returnctl = FALSE,
+      newmaxbias = NULL) {
     # Determine working directory on start and return upon exit
     current_wd <- getwd()
     on.exit(setwd(current_wd))
@@ -53,10 +52,12 @@ SS_recdevs <-
     # define a general function for reading values from control file
     readfun <- function(string, maxlen = Inf) {
       line1 <- grep(string, ctl)
-      if (length(line1) < 1)
+      if (length(line1) < 1) {
         stop("no line contains the phrase, '", string, "'", sep = "")
-      if (length(line1) > 1)
+      }
+      if (length(line1) > 1) {
         stop("more than one line contains the phrase, '", string, "'", sep = "")
+      }
 
       # split parameter line at hash mark
       splitline <- strsplit(ctl[line1], "#")[[1]]
@@ -181,8 +182,9 @@ SS_recdevs <-
     # ctl[(key1+1):(key2-1)] <- newsection
 
     # if maxbias is input, then replace
-    if (!is.null(newmaxbias))
+    if (!is.null(newmaxbias)) {
       ctl[grep("max_bias", ctl)] <- paste(newmaxbias, "#_max_bias_adj_in_MPD")
+    }
 
     # write and/or return the modified control file
     if (writectl) {

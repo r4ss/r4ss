@@ -32,25 +32,24 @@
 #' @seealso [SS_plots()], [SSplotRecdevs()]
 SSplotRecdist <-
   function(
-    replist,
-    plot = TRUE,
-    print = FALSE,
-    areanames = NULL,
-    seasnames = NULL,
-    xlab = "",
-    ylab = "",
-    main = "distribution of recruitment by area and season",
-    period = c("Initial", "Benchmark", "End year"),
-    sexes = 1:2,
-    plotdir = "default",
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    verbose = TRUE
-  ) {
+      replist,
+      plot = TRUE,
+      print = FALSE,
+      areanames = NULL,
+      seasnames = NULL,
+      xlab = "",
+      ylab = "",
+      main = "distribution of recruitment by area and season",
+      period = c("Initial", "Benchmark", "End year"),
+      sexes = 1:2,
+      plotdir = "default",
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      verbose = TRUE) {
     # plot of recruitment distribution between seasons and areas
 
     # confirm that period is just one of the available options
@@ -119,20 +118,20 @@ SSplotRecdist <-
     # only required for 2-sex models before male selectivity was reported
     # for which the female-only distributions will not sum to 1.0
     if (nsexes == 1 & sum(recmat) < 1) {
-      recmat[,, 1] <- recmat[,, 1] / sum(recmat[,, 1])
+      recmat[, , 1] <- recmat[, , 1] / sum(recmat[, , 1])
     }
 
     # some models had issues with formatting in github action tests
     # that Ian could not replicate locally, so adding this warning to
     # avoid crash
     for (sex in sexes) {
-      if (!is.matrix(recmat[,, sex])) {
+      if (!is.matrix(recmat[, , sex])) {
         warning("Problem with format of recruitment distribution info")
         return()
       }
     }
     recdistfun <- function(sex) {
-      recmat_sex <- unlist(recmat[,, sex])
+      recmat_sex <- unlist(recmat[, , sex])
       mode(recmat_sex) <- "numeric"
 
       image(
@@ -178,7 +177,7 @@ SSplotRecdist <-
       }
       message(
         message1,
-        paste0(utils::capture.output(recmat[,, sex]), collapse = "\n")
+        paste0(utils::capture.output(recmat[, , sex]), collapse = "\n")
       )
       if (plot) recdistfun(sex)
       if (print) {

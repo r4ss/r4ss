@@ -36,25 +36,24 @@
 #'
 SSplotMovementRates <-
   function(
-    replist,
-    plot = TRUE,
-    print = FALSE,
-    subplots = 1:2,
-    plotdir = "default",
-    colvec = "default",
-    ylim = "default",
-    legend = TRUE,
-    legendloc = "topleft",
-    moveseas = "all",
-    min.move.age = 0.5,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    verbose = TRUE
-  ) {
+      replist,
+      plot = TRUE,
+      print = FALSE,
+      subplots = 1:2,
+      plotdir = "default",
+      colvec = "default",
+      ylim = "default",
+      legend = TRUE,
+      legendloc = "topleft",
+      moveseas = "all",
+      min.move.age = 0.5,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      verbose = TRUE) {
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -87,11 +86,12 @@ SSplotMovementRates <-
         ]
 
         if (nrow(move2) == 0) {
-          if (verbose)
+          if (verbose) {
             message(
               "Skipping movement rate plot: no movement in season",
               moveseas[iseas]
             )
+          }
         } else {
           move3 <- move2[, -(1:6)]
 
@@ -172,8 +172,9 @@ SSplotMovementRates <-
         if (time) {
           warning("plot of time-varying movement rates not currently working")
           if (FALSE) {
-            if (verbose)
+            if (verbose) {
               message("Running subplot 2: time-varying movement rates")
+            }
             moveinfo <- move[, 1:6]
             moveinfo[["LabelBase2"]] <- paste(
               "seas_",
@@ -200,17 +201,15 @@ SSplotMovementRates <-
               yrvec <- replist[["startyr"]]:replist[["endyr"]]
               nyrs <- length(yrvec)
 
-              movecalc <- function(
-                min.move.age,
-                accuage,
-                minage,
-                maxage,
-                valueA,
-                valueB,
-                from,
-                to,
-                seasdur
-              ) {
+              movecalc <- function(min.move.age,
+                                   accuage,
+                                   minage,
+                                   maxage,
+                                   valueA,
+                                   valueB,
+                                   from,
+                                   to,
+                                   seasdur) {
                 # subfunction to calculate movement rates
                 # similar to one in the "movepars" function.
                 # in the future, these could be generalized and stand-alone in the r4ss package
@@ -324,7 +323,7 @@ SSplotMovementRates <-
               for (imove in 1:nmoves) {
                 Source_area <- moveinfo[["Source_area"]][imove]
                 Dest_area <- moveinfo[["Dest_area"]][imove]
-                movetable <- moveByYr[,, imove]
+                movetable <- moveByYr[, , imove]
                 ### not sure why following line was present, removing on 10 May 2018
                 # movetable <- moveByYr[1, ,imove,]
                 main <- paste(

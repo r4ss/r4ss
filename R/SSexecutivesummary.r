@@ -67,25 +67,24 @@
 #' @export
 #'
 SSexecutivesummary <- function(
-  replist,
-  plotfolder = "default",
-  ci_value = 0.95,
-  es_only = FALSE,
-  fleetnames = NULL,
-  add_text = "model area",
-  so_units = "millions of eggs",
-  tables = lifecycle::deprecated(),
-  divide_by_2 = FALSE,
-  endyr = NULL,
-  adopted_ofl = NULL,
-  adopted_abc = NULL,
-  adopted_acl = NULL,
-  forecast_ofl = NULL,
-  forecast_abc = NULL,
-  format = lifecycle::deprecated(),
-  match_digits = lifecycle::deprecated(),
-  verbose = TRUE
-) {
+    replist,
+    plotfolder = "default",
+    ci_value = 0.95,
+    es_only = FALSE,
+    fleetnames = NULL,
+    add_text = "model area",
+    so_units = "millions of eggs",
+    tables = lifecycle::deprecated(),
+    divide_by_2 = FALSE,
+    endyr = NULL,
+    adopted_ofl = NULL,
+    adopted_abc = NULL,
+    adopted_acl = NULL,
+    forecast_ofl = NULL,
+    forecast_abc = NULL,
+    format = lifecycle::deprecated(),
+    match_digits = lifecycle::deprecated(),
+    verbose = TRUE) {
   lifecycle::deprecate_warn(
     when = "1.52.0",
     what = "SSexecutivesummary()",

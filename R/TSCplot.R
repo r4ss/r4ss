@@ -64,26 +64,25 @@
 #' }
 #'
 TSCplot <- function(
-  SSout,
-  yrs = "default",
-  ylimBar = "default",
-  ylimDepl = c(0, 1.025),
-  colBar = "yellow",
-  cexBarLabels = 1.1,
-  cex.axis = 1.1,
-  space = 0.0,
-  pchDepl = 19,
-  colDepl = "red",
-  lwdDepl = 3,
-  shiftDepl = 0.25,
-  pchSpace = 5,
-  ht = 4,
-  wd = 7,
-  labelLines = 2.8,
-  makePDF = NULL,
-  makePNG = NULL,
-  MCMC = FALSE
-) {
+    SSout,
+    yrs = "default",
+    ylimBar = "default",
+    ylimDepl = c(0, 1.025),
+    colBar = "yellow",
+    cexBarLabels = 1.1,
+    cex.axis = 1.1,
+    space = 0.0,
+    pchDepl = 19,
+    colDepl = "red",
+    lwdDepl = 3,
+    shiftDepl = 0.25,
+    pchSpace = 5,
+    ht = 4,
+    wd = 7,
+    labelLines = 2.8,
+    makePDF = NULL,
+    makePNG = NULL,
+    MCMC = FALSE) {
   ### Plots the barchart of catches and depletion trajctory for the TSC report
 
   if (!is.null(makePDF) & !is.null(makePNG)) {
@@ -93,8 +92,9 @@ TSCplot <- function(
   indVirgin <- which(SSout[["timeseries"]][["Era"]] == "VIRG")
   ind <- which(SSout[["timeseries"]][["Era"]] == "TIME")
   ind <- c(ind, max(ind) + 1)
-  if (yrs[1] == "default")
+  if (yrs[1] == "default") {
     yrs <- unique(sort(SSout[["timeseries"]][["Yr"]][ind]))
+  }
 
   # get catches + discards summed over areas
   deadCatch <- SSplotCatch(SSout, plot = FALSE, verbose = FALSE)[[
@@ -141,7 +141,8 @@ TSCplot <- function(
       2,
       median
     )
-    depl <- SSout[["mcmc"]][,
+    depl <- SSout[["mcmc"]][
+      ,
       substring(names(SSout[["mcmc"]]), 1, 7) == "Bratio_"
     ]
     tmp1 <- match(as.character(yrs), substring(names(depl), 8)) # can have an NA in it and will cause an error

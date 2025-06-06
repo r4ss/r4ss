@@ -15,13 +15,12 @@
 #' @family read/write functions
 
 SS_writestarter <- function(
-  mylist,
-  dir = NULL,
-  file = "starter.ss",
-  overwrite = FALSE,
-  verbose = TRUE,
-  warn = lifecycle::deprecated()
-) {
+    mylist,
+    dir = NULL,
+    file = "starter.ss",
+    overwrite = FALSE,
+    verbose = TRUE,
+    warn = lifecycle::deprecated()) {
   if (lifecycle::is_present(warn)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",

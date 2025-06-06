@@ -100,49 +100,48 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotSelex <-
   function(
-    replist,
-    infotable = NULL,
-    fleets = "all",
-    fleetnames = "default",
-    sizefactors = c("Lsel"),
-    agefactors = c("Asel", "Asel2"),
-    years = "endyr",
-    minyr = -Inf,
-    maxyr = Inf,
-    season = 1,
-    sexes = "all",
-    selexlines = 1:6,
-    subplots = 1:25,
-    skipAgeSelex10 = TRUE,
-    plot = TRUE,
-    print = FALSE,
-    add = FALSE,
-    labels = c(
-      "Length (cm)", # 1
-      "Age (yr)", # 2
-      "Year", # 3
-      "Selectivity", # 4
-      "Retention", # 5
-      "Discard mortality"
-    ), # 6
-    col1 = "red",
-    col2 = "blue",
-    lwd = 2,
-    spacepoints = 5,
-    staggerpoints = 1,
-    legendloc = "bottomright",
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    mainTitle = TRUE,
-    mar = NULL,
-    plotdir = "default",
-    verbose = TRUE,
-    subplot = lifecycle::deprecated()
-  ) {
+      replist,
+      infotable = NULL,
+      fleets = "all",
+      fleetnames = "default",
+      sizefactors = c("Lsel"),
+      agefactors = c("Asel", "Asel2"),
+      years = "endyr",
+      minyr = -Inf,
+      maxyr = Inf,
+      season = 1,
+      sexes = "all",
+      selexlines = 1:6,
+      subplots = 1:25,
+      skipAgeSelex10 = TRUE,
+      plot = TRUE,
+      print = FALSE,
+      add = FALSE,
+      labels = c(
+        "Length (cm)", # 1
+        "Age (yr)", # 2
+        "Year", # 3
+        "Selectivity", # 4
+        "Retention", # 5
+        "Discard mortality"
+      ), # 6
+      col1 = "red",
+      col2 = "blue",
+      lwd = 2,
+      spacepoints = 5,
+      staggerpoints = 1,
+      legendloc = "bottomright",
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      mainTitle = TRUE,
+      mar = NULL,
+      plotdir = "default",
+      verbose = TRUE,
+      subplot = lifecycle::deprecated()) {
     # Warning about deprecated arguments. Should be removed after 1 release.
     if (lifecycle::is_present(subplot)) {
       lifecycle::deprecate_warn(
@@ -309,8 +308,9 @@ SSplotSelex <-
             )
             if (newyear2 <= newyear) {
               newyear_range <- paste(newyear2, "-", newyear, sep = "")
-              if (newyear == newyear2 & newyear > startyr - 3)
+              if (newyear == newyear2 & newyear > startyr - 3) {
                 newyear_range <- newyear
+              }
               if (!newyear_range %in% year_ranges) {
                 years <- c(years, newyear)
                 years2 <- c(years2, newyear2)
@@ -432,8 +432,9 @@ SSplotSelex <-
       main <- factor
       if (factor == "Lsel") main <- paste("Length-based selectivity")
       if (factor == "Asel") main <- paste("Age-based selectivity")
-      if (factor == "Asel2")
+      if (factor == "Asel2") {
         main <- paste("Derived age-based from length-based selectivity")
+      }
       if (factor == "Ret") main <- paste("Retention")
       if (length(fleets) > 1) main <- paste(main, "by fleet")
       if (length(fleets) == 1) main <- paste(main, "for", fleetnames[fleets])
@@ -1068,8 +1069,9 @@ SSplotSelex <-
             }
             abline(h = 0, col = "grey")
             abline(h = 1, col = "grey")
-            if (1 %in% selexlines)
+            if (1 %in% selexlines) {
               lines(bins, vals, type = "o", col = col2, cex = 1.1)
+            }
             if (retcheckuse > 0) {
               # if retention, then add additional lines & legend
               useret <- intret[intret[["Fleet"]] == i, ]

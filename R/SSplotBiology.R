@@ -76,50 +76,49 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotBiology <-
   function(
-    replist,
-    plot = TRUE,
-    print = FALSE,
-    add = FALSE,
-    subplots = 1:32,
-    seas = 1,
-    morphs = NULL,
-    forecast = FALSE,
-    minyr = -Inf,
-    maxyr = Inf,
-    colvec = c("red", "blue", "grey20"),
-    areacols = NULL,
-    ltyvec = c(1, 2),
-    shadealpha = 0.1,
-    imageplot_text = FALSE,
-    imageplot_text_round = 0,
-    legendloc = "topleft",
-    plotdir = "default",
-    labels = c(
-      "Length (cm)", # 1
-      "Age (yr)", # 2
-      "Maturity", # 3
-      "Mean weight (kg) in last year", # 4
-      replist[["SpawnOutputLabel"]], # 5
-      "Length (cm, beginning of the year)", # 6
-      "Natural mortality", # 7
-      "Female weight (kg)", # 8
-      "Female length (cm)", # 9
-      "Fecundity", # 10
-      "Default fecundity label", # 11
-      "Year", # 12
-      "Hermaphroditism transition rate", # 13
-      "Fraction females by age in ending year"
-    ), # 14
-    pwidth = 6.5,
-    pheight = 5.0,
-    pheight_tall = 6.5,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    mainTitle = TRUE,
-    verbose = TRUE
-  ) {
+      replist,
+      plot = TRUE,
+      print = FALSE,
+      add = FALSE,
+      subplots = 1:32,
+      seas = 1,
+      morphs = NULL,
+      forecast = FALSE,
+      minyr = -Inf,
+      maxyr = Inf,
+      colvec = c("red", "blue", "grey20"),
+      areacols = NULL,
+      ltyvec = c(1, 2),
+      shadealpha = 0.1,
+      imageplot_text = FALSE,
+      imageplot_text_round = 0,
+      legendloc = "topleft",
+      plotdir = "default",
+      labels = c(
+        "Length (cm)", # 1
+        "Age (yr)", # 2
+        "Maturity", # 3
+        "Mean weight (kg) in last year", # 4
+        replist[["SpawnOutputLabel"]], # 5
+        "Length (cm, beginning of the year)", # 6
+        "Natural mortality", # 7
+        "Female weight (kg)", # 8
+        "Female length (cm)", # 9
+        "Fecundity", # 10
+        "Default fecundity label", # 11
+        "Year", # 12
+        "Hermaphroditism transition rate", # 13
+        "Fraction females by age in ending year"
+      ), # 14
+      pwidth = 6.5,
+      pheight = 5.0,
+      pheight_tall = 6.5,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      mainTitle = TRUE,
+      verbose = TRUE) {
     #### current (Aug 18, 2017) order of plots:
     # subplot 1: growth_curve_fn - growth curve only
     # subplot 2: growth_curve_plus_fn - growth curve with CV and SD
@@ -623,8 +622,9 @@ SSplotBiology <-
       zlim[2] <- zlim[2] + c(zlim[2] - zlim[1]) * (1E-3) # adds a bit to the range in both directions
       zlim[1] <- zlim[1] - c(zlim[2] - zlim[1]) * (1E-3)
       poly <- vector(mode = "list", length(col))
-      for (i in seq(poly))
+      for (i in seq(poly)) {
         poly[[i]] <- c(breaks[i], breaks[i + 1], breaks[i + 1], breaks[i])
+      }
       ylim <- range(breaks)
       xlim <- c(0, 1)
       par(mar = c(4.3, .5, 1, 3))
@@ -1388,8 +1388,9 @@ SSplotBiology <-
     }
 
     # plots of diagrams for illustrating parameterization
-    if (plot & 101 %in% subplots & !wtatage_switch)
+    if (plot & 101 %in% subplots & !wtatage_switch) {
       growth_curve_labeled_fn(option = 1)
+    }
     if (print & 101 %in% subplots & !wtatage_switch) {
       file <- "bio101_growth_illustration.png"
       caption <- "Illustration of growth parameters"
@@ -1407,8 +1408,9 @@ SSplotBiology <-
       growth_curve_labeled_fn(option = 1)
       dev.off()
     }
-    if (plot & 102 %in% subplots & !wtatage_switch)
+    if (plot & 102 %in% subplots & !wtatage_switch) {
       growth_curve_labeled_fn(option = 2)
+    }
     if (print & 102 %in% subplots & !wtatage_switch) {
       file <- "bio102_growth_illustration2.png"
       caption <- "Illustration of growth parameters with male offsets"
@@ -1633,8 +1635,9 @@ SSplotBiology <-
     }
 
     # extra plots illustrating parameterization of CV in growth
-    if (plot & 103 %in% subplots & !wtatage_switch)
+    if (plot & 103 %in% subplots & !wtatage_switch) {
       CV_values_labeled_fn(option = 1)
+    }
     if (print & 103 %in% subplots & !wtatage_switch) {
       file <- "bio103_CV_illustration.png"
       caption <- "Illustration of growth variability parameters"
@@ -1652,8 +1655,9 @@ SSplotBiology <-
       CV_values_labeled_fn(option = 1)
       dev.off()
     }
-    if (plot & 104 %in% subplots & !wtatage_switch)
+    if (plot & 104 %in% subplots & !wtatage_switch) {
       CV_values_labeled_fn(option = 2)
+    }
     if (print & 104 %in% subplots & !wtatage_switch) {
       file <- "bio104_CV_illustration2.png"
       caption <- "Illustration of growth variability parameters with male offsets"
@@ -1671,8 +1675,9 @@ SSplotBiology <-
       CV_values_labeled_fn(option = 2)
       dev.off()
     }
-    if (plot & 105 %in% subplots & !wtatage_switch)
+    if (plot & 105 %in% subplots & !wtatage_switch) {
       CV_values_labeled_fn(option = 3)
+    }
     if (print & 105 %in% subplots & !wtatage_switch) {
       file <- "bio105_CV_illustration.png"
       caption <- "Illustration of growth variability parameters for offset type 3"
@@ -1690,8 +1695,9 @@ SSplotBiology <-
       CV_values_labeled_fn(option = 3)
       dev.off()
     }
-    if (plot & 106 %in% subplots & !wtatage_switch)
+    if (plot & 106 %in% subplots & !wtatage_switch) {
       CV_values_labeled_fn(option = 4)
+    }
     if (print & 106 %in% subplots & !wtatage_switch) {
       file <- "bio106_CV_illustration2.png"
       caption <- "Illustration of growth variability parameters with male offsets"

@@ -39,35 +39,34 @@
 #' @seealso [SSplotNumbers()]
 
 SSplotAgeMatrix <- function(
-  replist,
-  option = 1,
-  slices = NULL,
-  scale = NULL,
-  add = FALSE,
-  col.grid = "grey90",
-  col.bars = grey(0, alpha = .5),
-  shift_hi = 0,
-  shift_lo = 0,
-  plot = TRUE,
-  print = FALSE,
-  labels = c(
-    "Age", # 1
-    "Length", # 2
-    "True age", # 3
-    "Observed age", # 4
-    "for ageing error type", # 5
-    "Distribution of", # 6
-    "at"
-  ), # 7
-  pwidth = 6.5,
-  pheight = 5.0,
-  punits = "in",
-  res = 300,
-  ptsize = 10,
-  cex.main = 1,
-  mainTitle = TRUE,
-  plotdir = "default"
-) {
+    replist,
+    option = 1,
+    slices = NULL,
+    scale = NULL,
+    add = FALSE,
+    col.grid = "grey90",
+    col.bars = grey(0, alpha = .5),
+    shift_hi = 0,
+    shift_lo = 0,
+    plot = TRUE,
+    print = FALSE,
+    labels = c(
+      "Age", # 1
+      "Length", # 2
+      "True age", # 3
+      "Observed age", # 4
+      "for ageing error type", # 5
+      "Distribution of", # 6
+      "at"
+    ), # 7
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    mainTitle = TRUE,
+    plotdir = "default") {
   # in-development function to plot matrix of length at age
 
   # table to store information on each plot
@@ -177,7 +176,7 @@ SSplotAgeMatrix <- function(
       max.y <- max(array[, middle.ages + 1, ], na.rm = TRUE)
     }
     if (option == 2) {
-      max.y <- max(array[,, middle.ages + 1], na.rm = TRUE)
+      max.y <- max(array[, , middle.ages + 1], na.rm = TRUE)
     }
     if (max.y < 0.5 | max.y > 2.0) {
       scale <- 0.9 / max.y
@@ -194,7 +193,7 @@ SSplotAgeMatrix <- function(
   AgeMatrix.fn <- function(slice = 1) {
     if (option == 1) {
       # choose which morph/sex/etc of the array
-      mat <- array[,, slice]
+      mat <- array[, , slice]
       # need to figure out which slice corresponds to which
       # morph/sex/etc. for labeling purposes
       title <- titleStart

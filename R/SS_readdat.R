@@ -23,12 +23,11 @@
 #' @family read/write functions
 
 SS_readdat <- function(
-  file,
-  version = "3.30",
-  verbose = TRUE,
-  echoall = lifecycle::deprecated(),
-  section = NULL
-) {
+    file,
+    version = "3.30",
+    verbose = TRUE,
+    echoall = lifecycle::deprecated(),
+    section = NULL) {
   if (is.null(version)) {
     lifecycle::deprecate_warn(
       when = "1.44.1",
