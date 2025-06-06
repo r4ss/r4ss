@@ -13,8 +13,10 @@ dir.create(temp_path, showWarnings = FALSE)
 on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
 # get model output (already tested in test-basics.R)
-simple_small <- SS_output(file.path(example_path, "simple_small"),
-  verbose = FALSE, printstats = FALSE
+simple_small <- SS_output(
+  file.path(example_path, "simple_small"),
+  verbose = FALSE,
+  printstats = FALSE
 )
 
 # run function

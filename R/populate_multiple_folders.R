@@ -34,15 +34,17 @@
 #' )
 #' }
 #'
-populate_multiple_folders <- function(outerdir.old,
-                                      outerdir.new,
-                                      create.dir = TRUE,
-                                      overwrite = FALSE,
-                                      use_ss_new = FALSE,
-                                      copy_par = FALSE,
-                                      exe.dir = NULL,
-                                      exe.file = "ss3",
-                                      verbose = TRUE) {
+populate_multiple_folders <- function(
+  outerdir.old,
+  outerdir.new,
+  create.dir = TRUE,
+  overwrite = FALSE,
+  use_ss_new = FALSE,
+  copy_par = FALSE,
+  exe.dir = NULL,
+  exe.file = "ss3",
+  verbose = TRUE
+) {
   # check to make sure the first input is in the correct format
   if (!is.character(outerdir.old) | length(outerdir.old) != 1) {
     stop("Input 'outerdir.old' should be a character string")
@@ -126,11 +128,14 @@ populate_multiple_folders <- function(outerdir.old,
             warning("executable failed to copy")
           }
         }
-        dir.info <- rbind(dir.info, data.frame(
-          dir = dir,
-          results.files = results.files,
-          results.exe = results.exe
-        ))
+        dir.info <- rbind(
+          dir.info,
+          data.frame(
+            dir = dir,
+            results.files = results.files,
+            results.exe = results.exe
+          )
+        )
       }
     }
   }

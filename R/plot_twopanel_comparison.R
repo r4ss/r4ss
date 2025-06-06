@@ -53,18 +53,20 @@
 #'   subplot2 = 12 # recdevs
 #' )
 #' }
-plot_twopanel_comparison <- function(mods,
-                                     legendlabels = NULL,
-                                     filename = NULL,
-                                     dir = NULL,
-                                     subplot1 = NULL,
-                                     subplot2 = NULL,
-                                     hessian = TRUE,
-                                     endyrvec = 2023,
-                                     ylimAdj1 = 1.05,
-                                     ylimAdj2 = 1.05,
-                                     verbose = TRUE,
-                                     ...) {
+plot_twopanel_comparison <- function(
+  mods,
+  legendlabels = NULL,
+  filename = NULL,
+  dir = NULL,
+  subplot1 = NULL,
+  subplot2 = NULL,
+  hessian = TRUE,
+  endyrvec = 2023,
+  ylimAdj1 = 1.05,
+  ylimAdj2 = 1.05,
+  verbose = TRUE,
+  ...
+) {
   summary <- SSsummarize(mods, verbose = FALSE)
 
   # default file name
@@ -76,8 +78,13 @@ plot_twopanel_comparison <- function(mods,
     if (verbose) {
       cli::cli_alert_info("printing figure to {file.path(dir, filename)}")
     }
-    png(file.path(dir, filename),
-      width = 6.5, height = 7.0, units = "in", pointsize = 10, res = 300
+    png(
+      file.path(dir, filename),
+      width = 6.5,
+      height = 7.0,
+      units = "in",
+      pointsize = 10,
+      res = 300
     )
   }
   if (is.null(subplot1)) {
@@ -87,7 +94,8 @@ plot_twopanel_comparison <- function(mods,
     subplot2 <- ifelse(hessian, 4, 3)
   }
   par(mfrow = c(2, 1), mar = c(1, 5, 1, 1), oma = c(3, 1, 0, 0))
-  SSplotComparisons(summary,
+  SSplotComparisons(
+    summary,
     endyrvec = endyrvec,
     subplots = subplot1,
     legendlabels = legendlabels,
@@ -96,7 +104,8 @@ plot_twopanel_comparison <- function(mods,
     verbose = FALSE,
     ...
   )
-  SSplotComparisons(summary,
+  SSplotComparisons(
+    summary,
     endyrvec = endyrvec,
     subplots = subplot2,
     legend = FALSE,

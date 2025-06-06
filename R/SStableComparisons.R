@@ -27,34 +27,36 @@
 #' @export
 #' @seealso [SSsummarize()], [SSplotComparisons()],
 #' [SS_output()]
-SStableComparisons <- function(summaryoutput,
-                               models = "all",
-                               likenames = c(
-                                 "TOTAL",
-                                 "Survey",
-                                 "Length_comp",
-                                 "Age_comp",
-                                 "priors",
-                                 "Size_at_age"
-                               ),
-                               names = c(
-                                 "Recr_Virgin",
-                                 "R0",
-                                 "steep",
-                                 "NatM",
-                                 "L_at_Amax",
-                                 "VonBert_K",
-                                 "SSB_Virg",
-                                 "Bratio_2025",
-                                 "SPRratio_2024"
-                               ),
-                               digits = NULL,
-                               modelnames = "default",
-                               csv = FALSE,
-                               csvdir = "workingdirectory",
-                               csvfile = "parameter_comparison_table.csv",
-                               verbose = TRUE,
-                               mcmc = FALSE) {
+SStableComparisons <- function(
+  summaryoutput,
+  models = "all",
+  likenames = c(
+    "TOTAL",
+    "Survey",
+    "Length_comp",
+    "Age_comp",
+    "priors",
+    "Size_at_age"
+  ),
+  names = c(
+    "Recr_Virgin",
+    "R0",
+    "steep",
+    "NatM",
+    "L_at_Amax",
+    "VonBert_K",
+    "SSB_Virg",
+    "Bratio_2025",
+    "SPRratio_2024"
+  ),
+  digits = NULL,
+  modelnames = "default",
+  csv = FALSE,
+  csvdir = "workingdirectory",
+  csvfile = "parameter_comparison_table.csv",
+  verbose = TRUE,
+  mcmc = FALSE
+) {
   if (verbose) message("running SStableComparisons")
 
   # get stuff from summary output
@@ -70,7 +72,8 @@ SStableComparisons <- function(summaryoutput,
   ncols <- length(models)
   nsexes <- nsexes[models]
 
-  if (modelnames[1] == "default") modelnames <- paste("model", 1:ncols, sep = "")
+  if (modelnames[1] == "default")
+    modelnames <- paste("model", 1:ncols, sep = "")
   tab <- as.data.frame(matrix(NA, nrow = 0, ncol = ncols + 1))
 
   # get MLE values for table
@@ -116,9 +119,12 @@ SStableComparisons <- function(summaryoutput,
           vals[1, -1] <- round(vals[1, -1] / 1e3, 3)
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")
         }
-        if (substring(name, 1, 3) %in% c("SPB", "SSB") &
-          all(!is.na(summaryoutput[["SpawnOutputUnits"]])) &&
-          all(summaryoutput[["SpawnOutputUnits"]] == "biomass")) {
+        if (
+          substring(name, 1, 3) %in%
+            c("SPB", "SSB") &
+            all(!is.na(summaryoutput[["SpawnOutputUnits"]])) &&
+            all(summaryoutput[["SpawnOutputUnits"]] == "biomass")
+        ) {
           vals[1, -1] <- round(vals[1, -1] / 1e3, 3)
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")
         }
@@ -126,7 +132,11 @@ SStableComparisons <- function(summaryoutput,
         if (name %in% c("Q", "Q_calc")) {
           Calc_Q <- aggregate(Calc_Q ~ name + Fleet, data = indices, FUN = mean)
           fleetvec <- sort(as.numeric(unique(Calc_Q[["Fleet"]])))
-          vals <- data.frame(matrix(NA, nrow = length(fleetvec), ncol = ncol(bigtable)))
+          vals <- data.frame(matrix(
+            NA,
+            nrow = length(fleetvec),
+            ncol = ncol(bigtable)
+          ))
           names(vals) <- names(bigtable)
           for (ifleet in seq_along(fleetvec)) {
             f <- fleetvec[ifleet]
@@ -134,7 +144,13 @@ SStableComparisons <- function(summaryoutput,
             vals[ifleet, -1] <- Calc_Q[["Calc_Q"]][Calc_Q[["Fleet"]] == f]
           }
         }
-        if (verbose) message("added ", nrow(vals), " row", ifelse(nrow(vals) != 1, "s", ""))
+        if (verbose)
+          message(
+            "added ",
+            nrow(vals),
+            " row",
+            ifelse(nrow(vals) != 1, "s", "")
+          )
         if (!is.null(digits)) {
           if (verbose) message("rounded to", digit, "digits")
           vals[, -1] <- round(vals[, -1], digit)
@@ -159,14 +175,17 @@ SStableComparisons <- function(summaryoutput,
       } else {
         vals <- as.data.frame(matrix(NA, ncol = ncols + 1, nrow = 1))
         vals[1] <- name
-        for (imodel in models) { ### loop over models and create a vector of medians to put into tab
+        for (imodel in models) {
+          ### loop over models and create a vector of medians to put into tab
           mcmcTable <- summaryoutput[["mcmc"]][[imodel]]
           # get values
           # for future functionality grabbing more than one column
           tmp <- mcmcTable[, grep(name, names(mcmcTable), fixed = TRUE)]
           if (!is.null(dim(tmp))) {
             if (ncol(tmp) > 0) {
-              stop("This only works with a single column from the mcmc. Use a specific name")
+              stop(
+                "This only works with a single column from the mcmc. Use a specific name"
+              )
             }
           }
           if (!is.null(dim(tmp)) && ncol(tmp) == 0) {
@@ -192,9 +211,12 @@ SStableComparisons <- function(summaryoutput,
           vals[1, -1] <- round(vals[1, -1] / 1e3, 3)
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")
         }
-        if (substring(name, 1, 3) %in% c("SPB", "SSB") &
-          all(!is.na(summaryoutput[["SpawnOutputUnits"]])) &&
-          all(summaryoutput[["SpawnOutputUnits"]] == "biomass")) {
+        if (
+          substring(name, 1, 3) %in%
+            c("SPB", "SSB") &
+            all(!is.na(summaryoutput[["SpawnOutputUnits"]])) &&
+            all(summaryoutput[["SpawnOutputUnits"]] == "biomass")
+        ) {
           vals[1, -1] <- round(vals[1, -1] / 1e3, 3)
           vals[1, 1] <- paste0(vals[1, 1], "_thousand_mt")
         }
@@ -215,7 +237,9 @@ SStableComparisons <- function(summaryoutput,
   if (nrow(tab) > 0) {
     rownames(tab) <- 1:nrow(tab)
   } else {
-    warning("'names' and 'likenames' didn't match any variables so output is empty\n")
+    warning(
+      "'names' and 'likenames' didn't match any variables so output is empty\n"
+    )
   }
 
   # write CSV if requested

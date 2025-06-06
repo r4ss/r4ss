@@ -20,8 +20,20 @@
 #' @param log Logarithmic scale for the y-axis? Should be "" or "y".
 #' @author Bill Venables, Ian Stewart, Ian Taylor, John Wallace
 plotCI <-
-  function(x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL,
-           ..., sfrac = 0.01, ymax = NULL, add = FALSE, col = "black", log = "") {
+  function(
+    x,
+    y = NULL,
+    uiw,
+    liw = uiw,
+    ylo = NULL,
+    yhi = NULL,
+    ...,
+    sfrac = 0.01,
+    ymax = NULL,
+    add = FALSE,
+    col = "black",
+    log = ""
+  ) {
     # Written by Venables; modified for access to ylim, contents, and color
     if (is.list(x)) {
       y <- x[["y"]]

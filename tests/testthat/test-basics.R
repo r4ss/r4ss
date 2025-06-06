@@ -20,8 +20,10 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 # testing SS_output
 ###############################################################################
 
-simple_small <- SS_output(file.path(example_path, "simple_small"),
-  verbose = FALSE, printstats = FALSE
+simple_small <- SS_output(
+  file.path(example_path, "simple_small"),
+  verbose = FALSE,
+  printstats = FALSE
 )
 test_that("SS_output() runs on simple_small model", {
   expect_equal(tail(names(simple_small), 1), "inputs")
@@ -32,13 +34,19 @@ test_that("SS_output() runs on simple_small model", {
 test_that("SS_output() generates warning when MCMC folder is missing", {
   expect_warning(SS_output(
     dir = file.path(example_path, "simple_small"),
-    dir.mcmc = "mcmc", warn = FALSE, printstats = FALSE, hidewarn = TRUE, verbose = FALSE
+    dir.mcmc = "mcmc",
+    warn = FALSE,
+    printstats = FALSE,
+    hidewarn = TRUE,
+    verbose = FALSE
   ))
 })
 
 # missing a bunch of files
-simple_small <- SS_output(file.path(example_path, "simple_small"),
-  verbose = FALSE, printstats = FALSE,
+simple_small <- SS_output(
+  file.path(example_path, "simple_small"),
+  verbose = FALSE,
+  printstats = FALSE,
   compfile = "wrong file",
   covarfile = "wrong file",
   forefile = "wrong file",
@@ -53,8 +61,10 @@ test_that("SS_output() runs when lots of inputs are unavailable", {
 # Test get_ncol() used by SS_output()
 ###############################################################################
 test_that("get_ncol() finds the correct number of columns for SS_output()", {
-  reportfiles <- dir(example_path,
-    pattern = "^Report", recursive = TRUE,
+  reportfiles <- dir(
+    example_path,
+    pattern = "^Report",
+    recursive = TRUE,
     full.names = TRUE
   )
   results <- mapply(r4ss:::get_ncol, reportfiles)
@@ -78,9 +88,11 @@ test_that("SS_output() list: Kobe looks right", {
 # testing SS_plots with models loaded above
 ###############################################################################
 test_that("SS_plots runs on simple_small model", {
-  plots_simple_small <- SS_plots(simple_small,
+  plots_simple_small <- SS_plots(
+    simple_small,
     dir = temp_path,
-    printfolder = "plots_simple_small", verbose = FALSE
+    printfolder = "plots_simple_small",
+    verbose = FALSE
   )
   expect_equal(tail(plots_simple_small$file, 1), "parameterchecks.html")
 })
@@ -97,9 +109,11 @@ test_that("SSsummarize and SSplotComparisons both work", {
   ))
 
   # plot comparisons of results
-  comparison_plots <- SSplotComparisons(simple_summary,
+  comparison_plots <- SSplotComparisons(
+    simple_summary,
     png = TRUE,
-    plotdir = temp_path, verbose = FALSE,
+    plotdir = temp_path,
+    verbose = FALSE,
     indexUncertainty = TRUE
   )
   # confirm that function finished
@@ -139,8 +153,12 @@ test_that("SS_readdat() and SS_writedat() both work for simple_small", {
 # Note: for blank lines, SS_readdat() just warns, while SS_writedat() removes.
 test_that("SS_readdat()/SS_writedat() removes lines of 0 age comps from data file", {
   datfile <- readLines(file.path(example_path, "simple_small/data.ss"))
-  comp_lines_age <- grep("^-9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)[1]
-  datfile <- append(datfile,
+  comp_lines_age <- grep(
+    "^-9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    datfile
+  )[1]
+  datfile <- append(
+    datfile,
     values = "2022  7 2  3 0 2 1 -1 25  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
     after = comp_lines_age - 1
   )
@@ -149,32 +167,39 @@ test_that("SS_readdat()/SS_writedat() removes lines of 0 age comps from data fil
     SS_readdat(file.path(temp_path, "zero_comps.dat"), verbose = FALSE),
     "Lines of all zero age comp found"
   )
-  expect_warning(SS_writedat(dat, file.path(temp_path, "comps_rm_age.dat"), verbose = FALSE))
+  expect_warning(SS_writedat(
+    dat,
+    file.path(temp_path, "comps_rm_age.dat"),
+    verbose = FALSE
+  ))
   dat2 <- SS_readdat(file.path(temp_path, "comps_rm_age.dat"))
   expect_true(nrow(dat[["agecomp"]]) == (nrow(dat2[["agecomp"]]) + 1))
 })
 
 test_that("SS_readdat()/SS_writedat() removes lines of 0 length comps from data file", {
   datfile <- readLines(file.path(example_path, "simple_small/data.ss"))
-  comp_lines_len <- grep("-9999 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)
-  datfile <- append(datfile,
+  comp_lines_len <- grep(
+    "-9999 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    datfile
+  )
+  datfile <- append(
+    datfile,
     values = " 2022 7 2 3 0 50  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
     after = comp_lines_len - 1
   )
   writeLines(datfile, file.path(temp_path, "zero_comps_len.dat"))
   dat <- expect_warning(
-    SS_readdat(file.path(temp_path, "zero_comps_len.dat"),
-      verbose = FALSE
-    ),
+    SS_readdat(file.path(temp_path, "zero_comps_len.dat"), verbose = FALSE),
     "Lines of all zero length comp found"
   )
-  expect_warning(SS_writedat(dat, file.path(temp_path, "comps_rm_len.dat"),
+  expect_warning(SS_writedat(
+    dat,
+    file.path(temp_path, "comps_rm_len.dat"),
     verbose = FALSE
   ))
   dat2 <- SS_readdat(file.path(temp_path, "comps_rm_len.dat"), verbose = FALSE)
   expect_true(nrow(dat[["lencomp"]]) == (nrow(dat2[["lencomp"]]) + 1))
 })
-
 
 
 ###############################################################################
@@ -194,7 +219,8 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
     mylist = simple_small_forecast,
     dir = temp_path,
     file = "testforecast.ss",
-    overwrite = TRUE, verbose = FALSE
+    overwrite = TRUE,
+    verbose = FALSE
   ))
   expect_true(file.exists(file.path(temp_path, "testforecast.ss")))
   # mock a file with forecast option 0
@@ -203,12 +229,18 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
 
   # write short and long versions (and check that write okay)
   SS_writeforecast(
-    mylist = fore_0, dir = temp_path, file = "fore_0_long.ss",
-    verbose = FALSE, writeAll = TRUE
+    mylist = fore_0,
+    dir = temp_path,
+    file = "fore_0_long.ss",
+    verbose = FALSE,
+    writeAll = TRUE
   )
   SS_writeforecast(
-    mylist = fore_0, dir = temp_path, file = "fore_0_short.ss",
-    verbose = FALSE, writeAll = FALSE
+    mylist = fore_0,
+    dir = temp_path,
+    file = "fore_0_short.ss",
+    verbose = FALSE,
+    writeAll = FALSE
   )
   expect_true(file.exists(file.path(temp_path, "fore_0_long.ss")))
   expect_true(file.exists(file.path(temp_path, "fore_0_short.ss")))
@@ -217,7 +249,8 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
   fore_0_read_short <-
     SS_readforecast(
       file = file.path(temp_path, "fore_0_short.ss"),
-      verbose = FALSE, readAll = FALSE
+      verbose = FALSE,
+      readAll = FALSE
     )
   expect_length(fore_0_read_short, 11)
 
@@ -225,7 +258,8 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
     fore_0_read_all_long <-
       SS_readforecast(
         file = file.path(temp_path, "fore_0_long.ss"),
-        verbose = FALSE, readAll = TRUE
+        verbose = FALSE,
+        readAll = TRUE
       ),
     "Forecast = 0 should always be used with 1 forecast year"
   )
@@ -234,7 +268,8 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
   fore_0_read_some_long <-
     SS_readforecast(
       file = file.path(temp_path, "fore_0_long.ss"),
-      verbose = FALSE, readAll = FALSE
+      verbose = FALSE,
+      readAll = FALSE
     )
   expect_length(fore_0_read_some_long, 11)
 
@@ -243,7 +278,8 @@ test_that("SS_readforecast() and SS_writeforecast() both work", {
     fore_0_read_all_short <-
       SS_readforecast(
         file = file.path(temp_path, "fore_0_short.ss"),
-        verbose = FALSE, readAll = TRUE
+        verbose = FALSE,
+        readAll = TRUE
       ),
     "readAll selected as TRUE, but lines beyond Forecast are not present"
   )
@@ -275,7 +311,8 @@ test_that("SS_readstarter() and SS_writestarter() both work", {
     verbose = FALSE
   )
   # write data file
-  SS_writestarter(start,
+  SS_writestarter(
+    start,
     dir = temp_path,
     file = "teststarter.ss",
     verbose = FALSE

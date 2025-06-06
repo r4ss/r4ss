@@ -18,8 +18,10 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
 test_that("SS_Sensi_plot runs", {
   # read model output
-  simple_small <- SS_output(file.path(example_path, "simple_small"),
-    verbose = FALSE, printstats = FALSE
+  simple_small <- SS_output(
+    file.path(example_path, "simple_small"),
+    verbose = FALSE,
+    printstats = FALSE
   )
 
   # create a fake summary of 19 models (all the same in this case)
@@ -72,7 +74,13 @@ test_that("SS_Sensi_plot runs", {
     sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks that can separate out types of sensitivities
     anno.x = c(3.75, 8, 11.5, 15, 18), # Vertical positioning of the sensitivity types labels
     anno.y = c(1, 1, 1, 1, 1), # Horizontal positioning of the sensitivity types labels
-    anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", "Other") # Sensitivity types labels
+    anno.lab = c(
+      "Natural mortality",
+      "VBGF/Mat.",
+      "Recruitment",
+      "Data Wts.",
+      "Other"
+    ) # Sensitivity types labels
   )
   expect_true(file.exists(file.path(temp_path, "Sensi_logREplot_FMSY.png")))
 })

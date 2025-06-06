@@ -31,17 +31,19 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso [SSgetoutput()]
-SSsummarize <- function(biglist,
-                        sizeselfactor = "Lsel",
-                        ageselfactor = "Asel",
-                        selfleet = NULL,
-                        selyr = "startyr",
-                        selgender = lifecycle::deprecated(),
-                        selsex = 1,
-                        SpawnOutputUnits = NULL,
-                        lowerCI = 0.025,
-                        upperCI = 0.975,
-                        verbose = TRUE) {
+SSsummarize <- function(
+  biglist,
+  sizeselfactor = "Lsel",
+  ageselfactor = "Asel",
+  selfleet = NULL,
+  selyr = "startyr",
+  selgender = lifecycle::deprecated(),
+  selsex = 1,
+  SpawnOutputUnits = NULL,
+  lowerCI = 0.025,
+  upperCI = 0.975,
+  verbose = TRUE
+) {
   if (lifecycle::is_present(selgender)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
@@ -52,9 +54,12 @@ SSsummarize <- function(biglist,
   }
   # confirm that biglist is a list of lists, each created by SS_output()
   # this could be improved with the use of S3 classes in the future
-  if (!is.list(biglist) | # if whole thing is not a list
-    !is.list(biglist[[1]]) | # or if the first element isn't also a list
-    !"parameters" %in% names(biglist[[1]])) { # or if 1st list seems wrong
+  if (
+    !is.list(biglist) | # if whole thing is not a list
+      !is.list(biglist[[1]]) | # or if the first element isn't also a list
+      !"parameters" %in% names(biglist[[1]])
+  ) {
+    # or if 1st list seems wrong
     stop(
       "Input 'biglist' needs to be a list of the lists returned by ",
       "SS_output(), either by grouping those lists within 'list()', or ",
@@ -96,10 +101,18 @@ SSsummarize <- function(biglist,
   # objects to store quantities
   pars <- parsSD <- parphases <- par_prior_likes <-
     as.data.frame(matrix(NA, nrow = length(parnames), ncol = n))
-  quants <- quantsSD <- as.data.frame(matrix(NA, nrow = length(dernames), ncol = n))
+  quants <- quantsSD <- as.data.frame(matrix(
+    NA,
+    nrow = length(dernames),
+    ncol = n
+  ))
   maxgrad <- NULL
   nsexes <- NULL
-  likelihoods <- likelambdas <- as.data.frame(matrix(NA, nrow = length(likenames), ncol = n))
+  likelihoods <- likelambdas <- as.data.frame(matrix(
+    NA,
+    nrow = length(likenames),
+    ncol = n
+  ))
   likelihoods_by_fleet <- NULL
   likelihoods_by_tag_group <- NULL
   indices <- NULL
@@ -176,13 +189,18 @@ SSsummarize <- function(biglist,
       }
       # loop over factor(s) input by user or taken from table
       for (iselfactor in seq_along(sizeselfactor)) {
-        seltemp_i <- sizeseltemp[sizeseltemp[["Factor"]] == sizeselfactor[iselfactor], ]
+        seltemp_i <- sizeseltemp[
+          sizeseltemp[["Factor"]] == sizeselfactor[iselfactor],
+        ]
         seltemp_i[["imodel"]] <- imodel
         seltemp_i[["name"]] <- modelnames[imodel]
         # if sizesel is not NULL, then check for whether columns of new addition
         # match existing file
-        if (is.null(sizesel) || (ncol(seltemp_i) == ncol(sizesel) &&
-          all(names(seltemp_i) == names(sizesel)))) {
+        if (
+          is.null(sizesel) ||
+            (ncol(seltemp_i) == ncol(sizesel) &&
+              all(names(seltemp_i) == names(sizesel)))
+        ) {
           sizesel <- rbind(sizesel, seltemp_i)
         } else {
           warning(
@@ -208,13 +226,18 @@ SSsummarize <- function(biglist,
       }
       # loop over factor(s) input by user or taken from table
       for (iselfactor in seq_along(ageselfactor)) {
-        seltemp_i <- ageseltemp[ageseltemp[["Factor"]] == ageselfactor[iselfactor], ]
+        seltemp_i <- ageseltemp[
+          ageseltemp[["Factor"]] == ageselfactor[iselfactor],
+        ]
         seltemp_i[["imodel"]] <- imodel
         seltemp_i[["name"]] <- modelnames[imodel]
         # if agesel is not NULL, then check for whether columns of new addition
         # match existing file
-        if (is.null(agesel) || (ncol(seltemp_i) == ncol(agesel) &&
-          all(names(seltemp_i) == names(agesel)))) {
+        if (
+          is.null(agesel) ||
+            (ncol(seltemp_i) == ncol(agesel) &&
+              all(names(seltemp_i) == names(agesel)))
+        ) {
           agesel <- rbind(agesel, seltemp_i)
         } else {
           warning(
@@ -251,16 +274,22 @@ SSsummarize <- function(biglist,
     ## likelihoods (total by component)
     liketemp <- stats[["likelihoods_used"]]
     for (irow in 1:nrow(liketemp)) {
-      likelihoods[likenames == rownames(liketemp)[irow], imodel] <- liketemp[["values"]][irow]
-      likelambdas[likenames == rownames(liketemp)[irow], imodel] <- liketemp[["lambdas"]][irow]
+      likelihoods[likenames == rownames(liketemp)[irow], imodel] <- liketemp[[
+        "values"
+      ]][irow]
+      likelambdas[likenames == rownames(liketemp)[irow], imodel] <- liketemp[[
+        "lambdas"
+      ]][irow]
     }
     ## likelihoods by fleet
     # add initial column with model number to table from each model
     liketemp2 <- data.frame(model = imodel, stats[["likelihoods_by_fleet"]])
     # test for presence of existing table to append to with matching number of columns
-    if (is.null(likelihoods_by_fleet) ||
-      (ncol(likelihoods_by_fleet) == ncol(liketemp2) &&
-        all(names(likelihoods_by_fleet) == names(liketemp2)))) {
+    if (
+      is.null(likelihoods_by_fleet) ||
+        (ncol(likelihoods_by_fleet) == ncol(liketemp2) &&
+          all(names(likelihoods_by_fleet) == names(liketemp2)))
+    ) {
       likelihoods_by_fleet <- rbind(likelihoods_by_fleet, liketemp2)
     } else {
       likelihoods_by_fleet <- merge(likelihoods_by_fleet, liketemp2, all = TRUE)
@@ -269,24 +298,40 @@ SSsummarize <- function(biglist,
     ## likelihoods by tag group
     # add initial column with model number to table from each model
     if (!is.null(stats[["likelihoods_by_tag_group"]])) {
-      liketemp3 <- data.frame(model = imodel, stats[["likelihoods_by_tag_group"]])
+      liketemp3 <- data.frame(
+        model = imodel,
+        stats[["likelihoods_by_tag_group"]]
+      )
       # test for presence of existing table to append to with matching number of columns
-      if (is.null(likelihoods_by_tag_group) ||
-        (ncol(likelihoods_by_tag_group) == ncol(liketemp3) &&
-          all(names(likelihoods_by_tag_group) == names(liketemp3)))) {
+      if (
+        is.null(likelihoods_by_tag_group) ||
+          (ncol(likelihoods_by_tag_group) == ncol(liketemp3) &&
+            all(names(likelihoods_by_tag_group) == names(liketemp3)))
+      ) {
         likelihoods_by_tag_group <- rbind(likelihoods_by_tag_group, liketemp3)
       } else {
-        warning("problem summarizing likelihoods by fleet due to mismatched columns")
+        warning(
+          "problem summarizing likelihoods by fleet due to mismatched columns"
+        )
       }
     }
 
     ## compile parameters
     parstemp <- stats[["parameters"]]
     for (ipar in 1:nrow(parstemp)) {
-      pars[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Value"]][ipar]
-      parsSD[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Parm_StDev"]][ipar]
-      parphases[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Phase"]][ipar]
-      par_prior_likes[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Pr_Like"]][ipar]
+      pars[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[[
+        "Value"
+      ]][ipar]
+      parsSD[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[[
+        "Parm_StDev"
+      ]][ipar]
+      parphases[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[[
+        "Phase"
+      ]][ipar]
+      par_prior_likes[
+        parnames == parstemp[["Label"]][ipar],
+        imodel
+      ] <- parstemp[["Pr_Like"]][ipar]
     }
     if (verbose) {
       message("  N active pars = ", sum(!is.na(parstemp[["Active_Cnt"]])))
@@ -295,8 +340,13 @@ SSsummarize <- function(biglist,
     ## compile derived quantities
     quantstemp <- stats[["derived_quants"]]
     for (iquant in 1:nrow(quantstemp)) {
-      quants[dernames == quantstemp[["Label"]][iquant], imodel] <- quantstemp[["Value"]][iquant]
-      quantsSD[dernames == quantstemp[["Label"]][iquant], imodel] <- quantstemp[["StdDev"]][iquant]
+      quants[dernames == quantstemp[["Label"]][iquant], imodel] <- quantstemp[[
+        "Value"
+      ]][iquant]
+      quantsSD[
+        dernames == quantstemp[["Label"]][iquant],
+        imodel
+      ] <- quantstemp[["StdDev"]][iquant]
     }
     SPRratioLabels <- c(SPRratioLabels, stats[["SPRratioLabel"]])
     FvalueLabels <- c(FvalueLabels, stats[["F_std_basis"]])
@@ -314,7 +364,9 @@ SSsummarize <- function(biglist,
       }
     } else {
       # temporarily remove columns added in SS version 3.30.13 (March 2019)
-      indextemp <- indextemp[!names(indextemp) %in% c("Area", "Subseas", "Month")]
+      indextemp <- indextemp[
+        !names(indextemp) %in% c("Area", "Subseas", "Month")
+      ]
       indextemp[["name"]] <- modelnames[imodel]
       indextemp[["imodel"]] <- imodel
       if (is.null(indices)) {
@@ -324,8 +376,10 @@ SSsummarize <- function(biglist,
         # after indices contains output from at least one model
         # check that there are equal number of columns with matching names
         # Working here
-        if (ncol(indextemp) == ncol(indices) &&
-          all(names(indextemp) == names(indices))) {
+        if (
+          ncol(indextemp) == ncol(indices) &&
+            all(names(indextemp) == names(indices))
+        ) {
           indices <- rbind(indices, indextemp)
         } else {
           indices <- merge(indices, indextemp, all = TRUE)
@@ -351,7 +405,9 @@ SSsummarize <- function(biglist,
       SpawnOutputUnits <- rep(NA, n)
     }
     # if NA value in vector for current model, replace with value from model
-    if (is.na(SpawnOutputUnits[imodel]) & !is.null(stats[["SpawnOutputUnits"]])) {
+    if (
+      is.na(SpawnOutputUnits[imodel]) & !is.null(stats[["SpawnOutputUnits"]])
+    ) {
       SpawnOutputUnits[imodel] <- stats[["SpawnOutputUnits"]]
     }
     # get mcmc values if present
@@ -359,7 +415,6 @@ SSsummarize <- function(biglist,
       mcmc[[imodel]] <- stats[["mcmc"]]
     }
   } # end loop over models
-
 
   ### format and process info from the models
   names(pars) <- names(parsSD) <- names(parphases) <- names(par_prior_likes) <-
@@ -413,11 +468,13 @@ SSsummarize <- function(biglist,
 
   SpawnBioLower <- SpawnBioUpper <- SpawnBioSD
   SpawnBioLower[, 1:n] <- qnorm(
-    p = lowerCI, mean = as.matrix(SpawnBio[, 1:n]),
+    p = lowerCI,
+    mean = as.matrix(SpawnBio[, 1:n]),
     sd = as.matrix(SpawnBioSD[, 1:n])
   )
   SpawnBioUpper[, 1:n] <- qnorm(
-    p = upperCI, mean = as.matrix(SpawnBio[, 1:n]),
+    p = upperCI,
+    mean = as.matrix(SpawnBio[, 1:n]),
     sd = as.matrix(SpawnBioSD[, 1:n])
   )
 
@@ -427,11 +484,13 @@ SSsummarize <- function(biglist,
 
   BratioLower <- BratioUpper <- BratioSD
   BratioLower[, 1:n] <- qnorm(
-    p = lowerCI, mean = as.matrix(Bratio[, 1:n]),
+    p = lowerCI,
+    mean = as.matrix(Bratio[, 1:n]),
     sd = as.matrix(BratioSD[, 1:n])
   )
   BratioUpper[, 1:n] <- qnorm(
-    p = upperCI, mean = as.matrix(Bratio[, 1:n]),
+    p = upperCI,
+    mean = as.matrix(Bratio[, 1:n]),
     sd = as.matrix(BratioSD[, 1:n])
   )
 
@@ -441,11 +500,13 @@ SSsummarize <- function(biglist,
 
   SPRratioLower <- SPRratioUpper <- SPRratioSD
   SPRratioLower[, 1:n] <- qnorm(
-    p = lowerCI, mean = as.matrix(SPRratio[, 1:n]),
+    p = lowerCI,
+    mean = as.matrix(SPRratio[, 1:n]),
     sd = as.matrix(SPRratioSD[, 1:n])
   )
   SPRratioUpper[, 1:n] <- qnorm(
-    p = upperCI, mean = as.matrix(SPRratio[, 1:n]),
+    p = upperCI,
+    mean = as.matrix(SPRratio[, 1:n]),
     sd = as.matrix(SPRratioSD[, 1:n])
   )
 
@@ -455,21 +516,28 @@ SSsummarize <- function(biglist,
 
   FvalueLower <- FvalueUpper <- FvalueSD
   FvalueLower[, 1:n] <- qnorm(
-    p = lowerCI, mean = as.matrix(Fvalue[, 1:n]),
+    p = lowerCI,
+    mean = as.matrix(Fvalue[, 1:n]),
     sd = as.matrix(FvalueSD[, 1:n])
   )
   FvalueUpper[, 1:n] <- qnorm(
-    p = upperCI, mean = as.matrix(Fvalue[, 1:n]),
+    p = upperCI,
+    mean = as.matrix(Fvalue[, 1:n]),
     sd = as.matrix(FvalueSD[, 1:n])
   )
-
 
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_", quants[["Label"]]), ]
   recruitsSD <- quantsSD[grep("^Recr_", quantsSD[["Label"]]), ]
-  if (length(grep("Recr_Unfished", recruits[["Label"]], ignore.case = TRUE)) > 0) {
-    recruits <- recruits[-grep("Recr_Unfished", recruits[["Label"]], ignore.case = TRUE), ]
-    recruitsSD <- recruitsSD[-grep("Recr_Unfished", recruitsSD[["Label"]], ignore.case = TRUE), ]
+  if (
+    length(grep("Recr_Unfished", recruits[["Label"]], ignore.case = TRUE)) > 0
+  ) {
+    recruits <- recruits[
+      -grep("Recr_Unfished", recruits[["Label"]], ignore.case = TRUE),
+    ]
+    recruitsSD <- recruitsSD[
+      -grep("Recr_Unfished", recruitsSD[["Label"]], ignore.case = TRUE),
+    ]
   }
   minyr <- min(recruits[["Yr"]], na.rm = TRUE)
 
@@ -484,8 +552,11 @@ SSsummarize <- function(biglist,
   # assume recruitments have log-normal distribution
   # from first principals (multiplicative survival probabilities)
   # and from their basis as exponential of normal recdevs
-  sdlog <- sqrt(log(1 + (as.matrix(recruitsSD[, 1:n]) /
-    as.matrix(recruits[, 1:n]))^2))
+  sdlog <- sqrt(log(
+    1 +
+      (as.matrix(recruitsSD[, 1:n]) /
+        as.matrix(recruits[, 1:n]))^2
+  ))
   recruitsLower[, 1:n] <- qlnorm(
     p = lowerCI,
     meanlog = log(as.matrix(recruits[, 1:n])),
@@ -533,8 +604,13 @@ SSsummarize <- function(biglist,
       }
     }
     # check for differences in assignment of initial ages
-    if (any(apply(InitAgeYrs, 1, max, na.rm = TRUE) -
-      apply(InitAgeYrs, 1, min, na.rm = TRUE) != 0)) {
+    if (
+      any(
+        apply(InitAgeYrs, 1, max, na.rm = TRUE) -
+          apply(InitAgeYrs, 1, min, na.rm = TRUE) !=
+          0
+      )
+    ) {
       warning(
         "years for InitAge parameters differ between models,",
         "use InitAgeYrs matrix"
@@ -555,11 +631,13 @@ SSsummarize <- function(biglist,
     recdevsSD[["Yr"]] <- recdevs[["Yr"]]
     recdevsLower <- recdevsUpper <- recdevsSD
     recdevsLower[, 1:n] <- qnorm(
-      p = lowerCI, mean = as.matrix(recdevs[, 1:n]),
+      p = lowerCI,
+      mean = as.matrix(recdevs[, 1:n]),
       sd = as.matrix(recdevsSD[, 1:n])
     )
     recdevsUpper[, 1:n] <- qnorm(
-      p = upperCI, mean = as.matrix(recdevs[, 1:n]),
+      p = upperCI,
+      mean = as.matrix(recdevs[, 1:n]),
       sd = as.matrix(recdevsSD[, 1:n])
     )
   } else {
@@ -574,8 +652,14 @@ SSsummarize <- function(biglist,
   SmryBiorows <- grep("SmryBio_", quants[["Label"]])
   # exclude "unfished" value which is reported separately from the timeseries--
   # though may be useful in the future
-  SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_unfished", quants[["Label"]]))
-  SmryBiorows <- setdiff(SmryBiorows, grep("SmryBio_Unfished", quants[["Label"]]))
+  SmryBiorows <- setdiff(
+    SmryBiorows,
+    grep("SmryBio_unfished", quants[["Label"]])
+  )
+  SmryBiorows <- setdiff(
+    SmryBiorows,
+    grep("SmryBio_Unfished", quants[["Label"]])
+  )
 
   # identify summary biomass values in derived quantities
   SmryBio <- quants[SmryBiorows, ]
@@ -630,11 +714,13 @@ SSsummarize <- function(biglist,
 
   SmryBioLower <- SmryBioUpper <- SmryBioSD
   SmryBioLower[, 1:n] <- qnorm(
-    p = lowerCI, mean = as.matrix(SmryBio[, 1:n]),
+    p = lowerCI,
+    mean = as.matrix(SmryBio[, 1:n]),
     sd = as.matrix(SmryBioSD[, 1:n])
   )
   SmryBioUpper[, 1:n] <- qnorm(
-    p = upperCI, mean = as.matrix(SmryBio[, 1:n]),
+    p = upperCI,
+    mean = as.matrix(SmryBio[, 1:n]),
     sd = as.matrix(SmryBioSD[, 1:n])
   )
 
@@ -657,8 +743,10 @@ SSsummarize <- function(biglist,
           } else {
             # more than 1 row associated with this year
             # create empty row with matching names
-            newrow <- data.frame(t(rep(NA, n)),
-              Label = paste0("Multiple_labels_", Yr), Yr = Yr
+            newrow <- data.frame(
+              t(rep(NA, n)),
+              Label = paste0("Multiple_labels_", Yr),
+              Yr = Yr
             )
             names(newrow) <- names(x)
             # loop over models to pick the (hopefully) unique value among rows
@@ -678,11 +766,13 @@ SSsummarize <- function(biglist,
             x2 <- rbind(x2, newrow)
           } # end test for duplicates for particular year
         } # end loop over years
-      } else { # end test for duplicates in general
+      } else {
+        # end test for duplicates in general
         # if no duplicates, just return data.frame
         x2 <- x
       }
-    } else { # test for is.null(x)
+    } else {
+      # test for is.null(x)
       return(x)
     }
     return(x2)
@@ -698,18 +788,25 @@ SSsummarize <- function(biglist,
     newrows <- grep(newgrep, data[, "Label"])
     fix <- which(apply(
       X = data[newrows, grep("model", colnames(data))],
-      MARGIN = 2, function(vector) all(is.na(vector))
+      MARGIN = 2,
+      function(vector) all(is.na(vector))
     ))
     if (length(oldrows) != length(newrows) | length(fix) == 0) {
       return(data)
     }
-    if (get("verbose", envir = parent.frame()) &
-      deparse(substitute(data)) == "pars") {
+    if (
+      get("verbose", envir = parent.frame()) &
+        deparse(substitute(data)) == "pars"
+    ) {
       message(
-        "For model(s) ", paste(fix, collapse = ", "),
+        "For model(s) ",
+        paste(fix, collapse = ", "),
         ", values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for\n",
-        paste(data[oldrows, "Label"], data[newrows, "Label"],
-          sep = " -> ", collapse = ", "
+        paste(
+          data[oldrows, "Label"],
+          data[newrows, "Label"],
+          sep = " -> ",
+          collapse = ", "
         ),
         "\nwere copied from x -> y."
       )
@@ -799,7 +896,6 @@ SSsummarize <- function(biglist,
       "To avoid printing details above, use 'verbose = FALSE'."
     )
   }
-
 
   return(invisible(mylist))
 } # end function

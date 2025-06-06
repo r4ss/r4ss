@@ -33,10 +33,22 @@
 #' @export
 #' @seealso [SS_output()], [SSplotMovementRates()]
 SSplotMovementMap <-
-  function(replist = NULL, xlim, ylim,
-           polygonlist, colvec, land = "grey", xytable = NULL,
-           moveage = 5, moveseas = 1, lwdscale = 5, legend = TRUE, title = NULL,
-           areanames = NULL, cex = 1) {
+  function(
+    replist = NULL,
+    xlim,
+    ylim,
+    polygonlist,
+    colvec,
+    land = "grey",
+    xytable = NULL,
+    moveage = 5,
+    moveseas = 1,
+    lwdscale = 5,
+    legend = TRUE,
+    title = NULL,
+    areanames = NULL,
+    cex = 1
+  ) {
     # plot movement rates on map to help visualize patterns
 
     par(mar = c(3, 3, 3, 3))
@@ -45,8 +57,13 @@ SSplotMovementMap <-
       polygon(polygonlist[[i]], col = colvec[i], lwd = 2)
     }
     maps::map(
-      xlim = xlim, ylim = ylim, xaxs = "i", yaxs = "i",
-      add = T, fill = T, col = "grey"
+      xlim = xlim,
+      ylim = ylim,
+      xaxs = "i",
+      yaxs = "i",
+      add = T,
+      fill = T,
+      col = "grey"
     )
     #  map.axes()
 
@@ -56,8 +73,10 @@ SSplotMovementMap <-
     # add arrows
     if (!is.null(xytable) & !is.null(replist)) {
       move <- replist[["movement"]]
-      move <- move[move[["Source_area"]] != move[["Dest_area"]] &
-        move[["Seas"]] == moveseas, ]
+      move <- move[
+        move[["Source_area"]] != move[["Dest_area"]] &
+          move[["Seas"]] == moveseas,
+      ]
 
       lwdvec <- NULL
       ratevec <- NULL
@@ -94,21 +113,17 @@ SSplotMovementMap <-
         lwd <- lwdscale * move[i, 7 + moveage] / max(move[, 7 + moveage])
         lwdvec <- c(lwdvec, lwd)
         ratevec <- c(ratevec, move[i, 7 + moveage])
-        arrows(x1, y1, x2, y2,
-          length = .15,
-          lwd = lwd,
-          lend = 1
-        )
+        arrows(x1, y1, x2, y2, length = .15, lwd = lwd, lend = 1)
       }
       if (legend) {
-        legend("topright",
-          lwd = max(lwdvec), bg = "white",
-          legend = paste("rate = ",
-            round(100 * max(ratevec), 3), "%",
-            sep = ""
-          )
+        legend(
+          "topright",
+          lwd = max(lwdvec),
+          bg = "white",
+          legend = paste("rate = ", round(100 * max(ratevec), 3), "%", sep = "")
         )
       }
     }
-    if (!is.null(areanames) & !is.null(areanames)) text(xytable, areanames, cex = cex)
+    if (!is.null(areanames) & !is.null(areanames))
+      text(xytable, areanames, cex = cex)
   }

@@ -17,7 +17,12 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
+SS_writepar_3.24 <- function(
+  parlist,
+  outfile,
+  overwrite = TRUE,
+  verbose = FALSE
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
@@ -56,7 +61,10 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
   if (!is.null(parlist[["MG_parm_devs"]])) {
     writeLines(paste0("# MGparm_dev:"), con = zz)
     for (i in seq_along(parlist[["MG_parm_devs"]])) {
-      writeLines(paste0(parlist[["MG_parm_devs"]][[i]][, 2], collapse = " "), con = zz)
+      writeLines(
+        paste0(parlist[["MG_parm_devs"]][[i]][, 2], collapse = " "),
+        con = zz
+      )
     }
   }
 
@@ -91,12 +99,18 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
 
   if (!is.null(parlist[["recdev_forecast"]])) {
     writeLines(paste0("# Fcast_recruitments:"), con = zz)
-    writeLines(paste0(parlist[["recdev_forecast"]][, 2], collapse = " "), con = zz)
+    writeLines(
+      paste0(parlist[["recdev_forecast"]][, 2], collapse = " "),
+      con = zz
+    )
   }
 
   if (!is.null(parlist[["Fcast_impl_error"]])) {
     writeLines(paste0("# Fcast_impl_error:"), con = zz)
-    writeLines(paste0(parlist[["Fcast_impl_error"]][, 2], collapse = " "), con = zz)
+    writeLines(
+      paste0(parlist[["Fcast_impl_error"]][, 2], collapse = " "),
+      con = zz
+    )
   }
 
   if (!is.null(parlist[["init_F"]])) {
@@ -130,7 +144,10 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
   if (!is.null(parlist[["sel_parm_devs"]])) {
     writeLines(paste0("# selparm_dev:"), con = zz)
     for (i in seq_along(parlist[["sel_parm_devs"]])) {
-      writeLines(paste0(parlist[["sel_parm_devs"]][[i]][, 2], collapse = " "), con = zz)
+      writeLines(
+        paste0(parlist[["sel_parm_devs"]][[i]][, 2], collapse = " "),
+        con = zz
+      )
     }
   }
 
@@ -140,8 +157,6 @@ SS_writepar_3.24 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
       writeLines(paste0(parlist[["TG_parms"]][i, 2]), con = zz)
     }
   }
-
-
 
   return(parlist)
 }

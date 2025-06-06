@@ -16,11 +16,12 @@
 #' @export
 #'
 table_biology <- function(
-    replist,
-    dir = NULL,
-    fleetnames = NULL,
-    selexyr = NULL,
-    verbose = TRUE) {
+  replist,
+  dir = NULL,
+  fleetnames = NULL,
+  selexyr = NULL,
+  verbose = TRUE
+) {
   # check the input
   check_replist(replist)
 
@@ -65,11 +66,15 @@ table_biology <- function(
 
   bio_table <- TRUE
   if (replist[["wtatage_switch"]]) {
-    cli::cli_alert_warning("Skipping biology table because the model uses empirical weight-at-age")
+    cli::cli_alert_warning(
+      "Skipping biology table because the model uses empirical weight-at-age"
+    )
     bio_table <- FALSE
   }
   if (is.null(replist[["endgrowth"]])) {
-    cli::cli_alert_warning("Skipping biology table because the model doesn't include the 'endgrowth' output")
+    cli::cli_alert_warning(
+      "Skipping biology table because the model doesn't include the 'endgrowth' output"
+    )
     bio_table <- FALSE
   }
   if (bio_table) {
@@ -88,15 +93,27 @@ table_biology <- function(
     if (nsexes == 2) {
       bio <- data.frame(
         Age = biology[biology[["Sex"]] == 1, "Age_Beg"],
-        Ave_Length_f = round(biology[biology[["Sex"]] == 1, "Len_Beg"], digits = 1),
-        Ave_Wght_f = round(biology[biology[["Sex"]] == 1, "Wt_Beg"], digits = 2),
+        Ave_Length_f = round(
+          biology[biology[["Sex"]] == 1, "Len_Beg"],
+          digits = 1
+        ),
+        Ave_Wght_f = round(
+          biology[biology[["Sex"]] == 1, "Wt_Beg"],
+          digits = 2
+        ),
         Mature_f = round(biology[biology[["Sex"]] == 1, "Len_Mat"], digits = 2),
-        Fecund_f = round(biology[biology[["Sex"]] == 1, "Mat*Fecund"], digits = 2),
+        Fecund_f = round(
+          biology[biology[["Sex"]] == 1, "Mat*Fecund"],
+          digits = 2
+        ),
         Ave_Length_m = round(
           biology[biology[["Sex"]] == 2, "Len_Beg"],
           digits = 1
         ),
-        Ave_Wght_m = round(biology[biology[["Sex"]] == 2, "Wt_Beg"], digits = 2),
+        Ave_Wght_m = round(
+          biology[biology[["Sex"]] == 2, "Wt_Beg"],
+          digits = 2
+        ),
         Mature_m = round(biology[biology[["Sex"]] == 2, "Len_Mat"], digits = 2)
       )
     }
@@ -106,7 +123,10 @@ table_biology <- function(
       table = bio
     )
     tables[["table_biology_at_age"]] <- table_biology_at_age
-    save(table_biology_at_age, file = file.path(rda_dir, "table_biology_at_age.rda"))
+    save(
+      table_biology_at_age,
+      file = file.path(rda_dir, "table_biology_at_age.rda")
+    )
   }
   # Selectivity by age
   retnames <- NULL
@@ -167,14 +187,20 @@ table_biology <- function(
     table = selex.age
   )
   tables[["table_selectivity_at_age"]] <- table_selectivity_at_age
-  save(table_selectivity_at_age, file = file.path(rda_dir, "table_selectivity_at_age.rda"))
+  save(
+    table_selectivity_at_age,
+    file = file.path(rda_dir, "table_selectivity_at_age.rda")
+  )
 
   table_retention_at_age <- list(
     cap = "Retention at age for each fleet.",
     table = selex.age.ret
   )
   tables[["table_retention_at_age"]] <- table_retention_at_age
-  save(table_retention_at_age, file = file.path(rda_dir, "table_retention_at_age.rda"))
+  save(
+    table_retention_at_age,
+    file = file.path(rda_dir, "table_retention_at_age.rda")
+  )
 
   # selecitivity and retention by length
   if (!is.null(sizeselex)) {
@@ -234,14 +260,20 @@ table_biology <- function(
       table = selex.size
     )
     tables[["table_selectivity_at_length"]] <- table_selectivity_at_length
-    save(table_selectivity_at_length, file = file.path(rda_dir, "table_selectivity_at_length.rda"))
+    save(
+      table_selectivity_at_length,
+      file = file.path(rda_dir, "table_selectivity_at_length.rda")
+    )
 
     table_retention_at_length <- list(
       cap = "Retention at length for each fleet.",
       table = selex.size.ret
     )
     tables[["table_retention_at_length"]] <- table_retention_at_length
-    save(table_retention_at_length, file = file.path(rda_dir, "table_retention_at_length.rda"))
+    save(
+      table_retention_at_length,
+      file = file.path(rda_dir, "table_retention_at_length.rda")
+    )
   }
   return(invisible(tables))
 }

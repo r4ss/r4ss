@@ -21,7 +21,13 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "default", fleetnames = "default", selexyr = "default") {
+SSbiologytables <- function(
+  replist = NULL,
+  printfolder = "tables",
+  dir = "default",
+  fleetnames = "default",
+  selexyr = "default"
+) {
   lifecycle::deprecate_warn(
     when = "1.52.0",
     what = "SSbiologytables()",
@@ -80,10 +86,14 @@ SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "defau
   )
 
   if (nsexes == 2) {
-    bio <- data.frame(bio,
-      Ave_Length_m = print(biology[biology[["Sex"]] == 2, "Len_Beg"], digits = 1),
-      Ave_Wght_m   = print(biology[biology[["Sex"]] == 2, "Wt_Beg"], digits = 2),
-      Mature_m     = print(biology[biology[["Sex"]] == 2, "Len_Mat"], digits = 2)
+    bio <- data.frame(
+      bio,
+      Ave_Length_m = print(
+        biology[biology[["Sex"]] == 2, "Len_Beg"],
+        digits = 1
+      ),
+      Ave_Wght_m = print(biology[biology[["Sex"]] == 2, "Wt_Beg"], digits = 2),
+      Mature_m = print(biology[biology[["Sex"]] == 2, "Len_Mat"], digits = 2)
     )
   }
 
@@ -94,32 +104,81 @@ SSbiologytables <- function(replist = NULL, printfolder = "tables", dir = "defau
   for (j in 1:nsexes) {
     for (i in 1:nfleets) {
       ind <- ageselex[!is.na(ageselex[["Fleet"]]), "Fleet"] == i
-      find <- which(ageselex[ind, "Sex"] == j & ageselex[ind, "Yr"] == selexyr & ageselex[ind, "Factor"] == "Asel")
-      selex.age <- data.frame(selex.age, print(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2))
+      find <- which(
+        ageselex[ind, "Sex"] == j &
+          ageselex[ind, "Yr"] == selexyr &
+          ageselex[ind, "Factor"] == "Asel"
+      )
+      selex.age <- data.frame(
+        selex.age,
+        print(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2)
+      )
     }
   }
-  colnames(selex.age) <- c("Age", paste0(FleetNames, "_f"), paste0(FleetNames, "_m"))
-  write.csv(selex.age, paste0(plotdir, "/selectivity_by_age.csv"), row.names = F)
+  colnames(selex.age) <- c(
+    "Age",
+    paste0(FleetNames, "_f"),
+    paste0(FleetNames, "_m")
+  )
+  write.csv(
+    selex.age,
+    paste0(plotdir, "/selectivity_by_age.csv"),
+    row.names = F
+  )
 
   # Selectivity by length and age
   retnames <- NULL
-  selex.size <- selex.size.ret <- data.frame(Length = as.numeric(names(sizeselex[6:dim(sizeselex)[2]])))
+  selex.size <- selex.size.ret <- data.frame(
+    Length = as.numeric(names(sizeselex[6:dim(sizeselex)[2]]))
+  )
   for (j in 1:nsexes) {
     for (i in 1:nfleets) {
-      find <- which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Lsel")
-      selex.size <- data.frame(selex.size, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2))
+      find <- which(
+        sizeselex[["Fleet"]] == i &
+          sizeselex[["Sex"]] == j &
+          sizeselex[["Yr"]] == selexyr &
+          sizeselex[["Factor"]] == "Lsel"
+      )
+      selex.size <- data.frame(
+        selex.size,
+        print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2)
+      )
 
-      find <- which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Keep")
+      find <- which(
+        sizeselex[["Fleet"]] == i &
+          sizeselex[["Sex"]] == j &
+          sizeselex[["Yr"]] == selexyr &
+          sizeselex[["Factor"]] == "Keep"
+      )
       if (length(find) != 0) {
         if (j == 1) {
           retnames <- c(retnames, FleetNames[i])
         }
-        selex.size.ret <- data.frame(selex.size.ret, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2))
+        selex.size.ret <- data.frame(
+          selex.size.ret,
+          print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2)
+        )
       }
     }
   }
-  colnames(selex.size) <- c("Length", paste0(FleetNames, "_f"), paste0(FleetNames, "_m"))
-  colnames(selex.size.ret) <- c("Length", paste0(retnames, "_f"), paste0(retnames, "_m"))
-  write.csv(selex.size, paste0(plotdir, "/selectivity_by_size.csv"), row.names = F)
-  write.csv(selex.size.ret, paste0(plotdir, "/retention_by_size.csv"), row.names = F)
+  colnames(selex.size) <- c(
+    "Length",
+    paste0(FleetNames, "_f"),
+    paste0(FleetNames, "_m")
+  )
+  colnames(selex.size.ret) <- c(
+    "Length",
+    paste0(retnames, "_f"),
+    paste0(retnames, "_m")
+  )
+  write.csv(
+    selex.size,
+    paste0(plotdir, "/selectivity_by_size.csv"),
+    row.names = F
+  )
+  write.csv(
+    selex.size.ret,
+    paste0(plotdir, "/retention_by_size.csv"),
+    row.names = F
+  )
 }

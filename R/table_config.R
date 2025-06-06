@@ -89,7 +89,9 @@ table_config <- function(replist, dir = NULL, verbose = TRUE) {
   )
   # write to rda file
   if (verbose) {
-    cli::cli_alert_info("writing table to {file.path(rda_dir, 'table_config.rda')}")
+    cli::cli_alert_info(
+      "writing table to {file.path(rda_dir, 'table_config.rda')}"
+    )
   }
   save(table_config, file = file.path(rda_dir, "table_config.rda"))
 

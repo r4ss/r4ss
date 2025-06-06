@@ -19,7 +19,12 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecated(), section = NULL) {
+SS_readdat_3.24 <- function(
+  file,
+  verbose = TRUE,
+  echoall = lifecycle::deprecated(),
+  section = NULL
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
@@ -41,8 +46,14 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
 
   # split apart any bootstrap or expected value sections in data.ss_new
   if (!is.null(section)) {
-    Nsections <- as.numeric(substring(dat[grep("Number_of_datafiles", dat)], 24))
-    if (!section %in% 1:Nsections) stop("The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n")
+    Nsections <- as.numeric(substring(
+      dat[grep("Number_of_datafiles", dat)],
+      24
+    ))
+    if (!section %in% 1:Nsections)
+      stop(
+        "The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n"
+      )
     if (section == 1) {
       end <- grep("#_expected values with no error added", dat)
       if (length(end) == 0) end <- length(dat)
@@ -125,7 +136,10 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
       fleetnames <- dat[iline]
       fleetnames <- strsplit(fleetnames, "%")[[1]]
       # strip any white space off the end of the fleetnames
-      fleetnames[length(fleetnames)] <- strsplit(fleetnames[length(fleetnames)], "[[:blank:]]+")[[1]][1]
+      fleetnames[length(fleetnames)] <- strsplit(
+        fleetnames[length(fleetnames)],
+        "[[:blank:]]+"
+      )[[1]][1]
       if (length(fleetnames) == Ntypes) fleetnames.good <- fleetnames
     }
     fleetnames <- fleetnames.good
@@ -142,15 +156,21 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   i <- i + Ntypes
   if (verbose) {
     message("areas:", areas)
-    message("fleet info:\n", paste0(utils::capture.output(
-      data.frame(
-        fleet = 1:Ntypes,
-        name = fleetnames,
-        area = areas,
-        timing = surveytiming,
-        type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+    message(
+      "fleet info:\n",
+      paste0(
+        utils::capture.output(
+          data.frame(
+            fleet = 1:Ntypes,
+            name = fleetnames,
+            area = areas,
+            timing = surveytiming,
+            type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+          )
+        ),
+        collapse = "\n"
       )
-    ), collapse = "\n"))
+    )
   }
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming, areas))
@@ -167,7 +187,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   fleetinfo2[["input"]] <- c("#_units_of_catch", "#_se_log_catch")
   datlist[["fleetinfo2"]] <- fleetinfo2
 
-
   # more dimensions
   datlist[["Nsexes"]] <- allnums[i]
   i <- i + 1
@@ -181,8 +200,11 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   i <- i + 1
   if (verbose) message("N_catch =", N_catch)
   Nvals <- N_catch * (Nfleet + 2)
-  catch <- data.frame(matrix(allnums[i:(i + Nvals - 1)],
-    nrow = N_catch, ncol = (Nfleet + 2), byrow = TRUE
+  catch <- data.frame(matrix(
+    allnums[i:(i + Nvals - 1)],
+    nrow = N_catch,
+    ncol = (Nfleet + 2),
+    byrow = TRUE
   ))
   names(catch) <- c(fleetnames[1:Nfleet], "year", "seas")
   datlist[["catch"]] <- catch
@@ -192,15 +214,20 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
   i <- i + 1
   if (verbose) message("N_cpue =", N_cpue)
-  CPUEinfo <- data.frame(matrix(allnums[i:(i + Ntypes * 3 - 1)],
-    nrow = Ntypes, ncol = 3, byrow = TRUE
+  CPUEinfo <- data.frame(matrix(
+    allnums[i:(i + Ntypes * 3 - 1)],
+    nrow = Ntypes,
+    ncol = 3,
+    byrow = TRUE
   ))
   i <- i + Ntypes * 3
   names(CPUEinfo) <- c("Fleet", "Units", "Errtype")
   if (N_cpue > 0) {
     CPUE <- data.frame(matrix(
       allnums[i:(i + N_cpue * 5 - 1)],
-      nrow = N_cpue, ncol = 5, byrow = TRUE
+      nrow = N_cpue,
+      ncol = 5,
+      byrow = TRUE
     ))
     i <- i + N_cpue * 5
     names(CPUE) <- c("year", "seas", "index", "obs", "se_log")
@@ -221,7 +248,9 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     Ncols <- 3
     discard_fleet_info <- data.frame(matrix(
       allnums[i:(i + N_discard_fleets * Ncols - 1)],
-      nrow = N_discard_fleets, ncol = Ncols, byrow = TRUE
+      nrow = N_discard_fleets,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_discard_fleets * Ncols
     names(discard_fleet_info) <- c("Fleet", "units", "errtype")
@@ -236,7 +265,9 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     Ncols <- 5
     discard_data <- data.frame(matrix(
       allnums[i:(i + N_discard * Ncols - 1)],
-      nrow = N_discard, ncol = Ncols, byrow = TRUE
+      nrow = N_discard,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_discard * Ncols
     names(discard_data) <- c("Yr", "Seas", "Flt", "Discard", "Std_in")
@@ -257,7 +288,9 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     Ncols <- 6
     meanbodywt <- data.frame(matrix(
       allnums[i:(i + N_meanbodywt * Ncols - 1)],
-      nrow = N_meanbodywt, ncol = Ncols, byrow = TRUE
+      nrow = N_meanbodywt,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_meanbodywt * Ncols
     names(meanbodywt) <- c("Year", "Seas", "Type", "Partition", "Value", "CV")
@@ -312,11 +345,18 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     Ncols <- N_lbins * datlist[["Nsexes"]] + 6
     lencomp <- data.frame(matrix(
       allnums[i:(i + N_lencomp * Ncols - 1)],
-      nrow = N_lencomp, ncol = Ncols, byrow = TRUE
+      nrow = N_lencomp,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_lencomp * Ncols
     names(lencomp) <- c(
-      "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
+      "Yr",
+      "Seas",
+      "FltSvy",
+      "Sex",
+      "Part",
+      "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("l", lbin_vector, sep = "")
       } else {
@@ -351,7 +391,9 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     Ncols <- Nages + 1
     ageerror <- data.frame(matrix(
       allnums[i:(i + 2 * N_ageerror_definitions * Ncols - 1)],
-      nrow = 2 * N_ageerror_definitions, ncol = Ncols, byrow = TRUE
+      nrow = 2 * N_ageerror_definitions,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + 2 * N_ageerror_definitions * Ncols
     names(ageerror) <- paste("age", 0:Nages, sep = "")
@@ -375,19 +417,33 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   if (N_agecomp > 0) {
     if (N_agebins == 0) stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
     Ncols <- N_agebins * datlist[["Nsexes"]] + 9
-    agecomp <- data.frame(matrix(allnums[i:(i + N_agecomp * Ncols - 1)],
-      nrow = N_agecomp, ncol = Ncols, byrow = TRUE
+    agecomp <- data.frame(matrix(
+      allnums[i:(i + N_agecomp * Ncols - 1)],
+      nrow = N_agecomp,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_agecomp * Ncols
     names(agecomp) <- c(
-      "Yr", "Seas", "FltSvy", "Sex", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
+      "Yr",
+      "Seas",
+      "FltSvy",
+      "Sex",
+      "Part",
+      "Ageerr",
+      "Lbin_lo",
+      "Lbin_hi",
+      "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
       if (datlist[["Nsexes"]] > 1) {
-        c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
+        c(
+          paste("f", agebin_vector, sep = ""),
+          paste("m", agebin_vector, sep = "")
+        )
       } else {
         NULL
       }
@@ -405,18 +461,29 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
     MeanSize_at_Age_obs <- data.frame(matrix(
       allnums[i:(i + N_MeanSize_at_Age_obs * Ncols - 1)],
-      nrow = N_MeanSize_at_Age_obs, ncol = Ncols, byrow = TRUE
+      nrow = N_MeanSize_at_Age_obs,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_MeanSize_at_Age_obs * Ncols
     names(MeanSize_at_Age_obs) <- c(
-      "Yr", "Seas", "FltSvy", "Sex", "Part", "AgeErr", "Ignore",
+      "Yr",
+      "Seas",
+      "FltSvy",
+      "Sex",
+      "Part",
+      "AgeErr",
+      "Ignore",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
       if (datlist[["Nsexes"]] > 1) {
-        c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
+        c(
+          paste("f", agebin_vector, sep = ""),
+          paste("m", agebin_vector, sep = "")
+        )
       } else {
         NULL
       },
@@ -426,7 +493,10 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
         NULL
       },
       if (datlist[["Nsexes"]] > 1) {
-        c(paste("N_f", agebin_vector, sep = ""), paste("N_m", agebin_vector, sep = ""))
+        c(
+          paste("N_f", agebin_vector, sep = ""),
+          paste("N_m", agebin_vector, sep = "")
+        )
       } else {
         NULL
       }
@@ -445,7 +515,9 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     Ncols <- 3
     envdat <- data.frame(matrix(
       allnums[i:(i + Ncols * N_environ_obs - 1)],
-      nrow = N_environ_obs, ncol = Ncols, byrow = TRUE
+      nrow = N_environ_obs,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_environ_obs * Ncols
     names(envdat) <- c("Yr", "Variable", "Value")
@@ -459,15 +531,25 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   if (verbose) message("N_sizefreq_methods =", N_sizefreq_methods)
   if (N_sizefreq_methods > 0) {
     # get details of generalized size frequency methods
-    datlist[["nbins_per_method"]] <- nbins_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
+    datlist[["nbins_per_method"]] <- nbins_per_method <- allnums[
+      i:(i + N_sizefreq_methods - 1)
+    ]
     i <- i + N_sizefreq_methods
-    datlist[["units_per_method"]] <- units_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
+    datlist[["units_per_method"]] <- units_per_method <- allnums[
+      i:(i + N_sizefreq_methods - 1)
+    ]
     i <- i + N_sizefreq_methods
-    datlist[["scale_per_method"]] <- scale_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
+    datlist[["scale_per_method"]] <- scale_per_method <- allnums[
+      i:(i + N_sizefreq_methods - 1)
+    ]
     i <- i + N_sizefreq_methods
-    datlist[["mincomp_per_method"]] <- mincomp_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
+    datlist[["mincomp_per_method"]] <- mincomp_per_method <- allnums[
+      i:(i + N_sizefreq_methods - 1)
+    ]
     i <- i + N_sizefreq_methods
-    datlist[["Nobs_per_method"]] <- Nobs_per_method <- allnums[i:(i + N_sizefreq_methods - 1)]
+    datlist[["Nobs_per_method"]] <- Nobs_per_method <- allnums[
+      i:(i + N_sizefreq_methods - 1)
+    ]
     i <- i + N_sizefreq_methods
     if (verbose) {
       message("details of generalized size frequency methods:\n")
@@ -483,7 +565,9 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     # get list of bin vectors
     sizefreq_bins_list <- list()
     for (imethod in 1:N_sizefreq_methods) {
-      sizefreq_bins_list[[imethod]] <- allnums[i:(i + nbins_per_method[imethod] - 1)]
+      sizefreq_bins_list[[imethod]] <- allnums[
+        i:(i + nbins_per_method[imethod] - 1)
+      ]
       i <- i + nbins_per_method[imethod]
     }
     datlist[["sizefreq_bins_list"]] <- sizefreq_bins_list
@@ -492,12 +576,21 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     for (imethod in 1:N_sizefreq_methods) {
       Ncols <- 7 + datlist[["Nsexes"]] * nbins_per_method[imethod]
       Nrows <- Nobs_per_method[imethod]
-      sizefreq_data_tmp <- data.frame(matrix(allnums[i:(i + Nrows * Ncols - 1)],
-        nrow = Nrows, ncol = Ncols, byrow = TRUE
+      sizefreq_data_tmp <- data.frame(matrix(
+        allnums[i:(i + Nrows * Ncols - 1)],
+        nrow = Nrows,
+        ncol = Ncols,
+        byrow = TRUE
       ))
       names(sizefreq_data_tmp) <-
         c(
-          "Method", "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
+          "Method",
+          "Yr",
+          "Seas",
+          "FltSvy",
+          "Sex",
+          "Part",
+          "Nsamp",
           if (datlist[["Nsexes"]] == 1) {
             paste("a", sizefreq_bins_list[[imethod]], sep = "")
           } else {
@@ -519,8 +612,11 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
       if (any(sizefreq_data_tmp[["Method"]] != imethod)) {
         stop(
           "Problem with method in size frequency data:\n",
-          "Expecting method: ", imethod, "\n",
-          "Read method(s): ", paste(unique(sizefreq_data_tmp[["Method"]]), collapse = ", ")
+          "Expecting method: ",
+          imethod,
+          "\n",
+          "Read method(s): ",
+          paste(unique(sizefreq_data_tmp[["Method"]]), collapse = ", ")
         )
       }
       sizefreq_data_list[[imethod]] <- sizefreq_data_tmp
@@ -554,9 +650,23 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     # read tag release data
     if (N_tag_groups > 0) {
       Ncols <- 8
-      tag_releases <- data.frame(matrix(allnums[i:(i + N_tag_groups * Ncols - 1)], nrow = N_tag_groups, ncol = Ncols, byrow = TRUE))
+      tag_releases <- data.frame(matrix(
+        allnums[i:(i + N_tag_groups * Ncols - 1)],
+        nrow = N_tag_groups,
+        ncol = Ncols,
+        byrow = TRUE
+      ))
       i <- i + N_tag_groups * Ncols
-      names(tag_releases) <- c("TG", "Area", "Yr", "Season", "tfill", "Sex", "Age", "Nrelease")
+      names(tag_releases) <- c(
+        "TG",
+        "Area",
+        "Yr",
+        "Season",
+        "tfill",
+        "Sex",
+        "Age",
+        "Nrelease"
+      )
       if (verbose) {
         message("Head of tag release data:\n")
         print(head(tag_releases))
@@ -569,7 +679,12 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
     # read tag recapture data
     if (N_recap_events > 0) {
       Ncols <- 5
-      tag_recaps <- data.frame(matrix(allnums[i:(i + N_recap_events * Ncols - 1)], nrow = N_recap_events, ncol = Ncols, byrow = TRUE))
+      tag_recaps <- data.frame(matrix(
+        allnums[i:(i + N_recap_events * Ncols - 1)],
+        nrow = N_recap_events,
+        ncol = Ncols,
+        byrow = TRUE
+      ))
       i <- i + N_recap_events * Ncols
       names(tag_recaps) <- c("TG", "Yr", "Season", "Fleet", "Nrecap")
       if (verbose) {
@@ -593,42 +708,63 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = lifecycle::deprecate
   }
 
   # get fleet info
-  finfo <- rbind(datlist[["fleetinfo1"]], c(rep(1, datlist[["Nfleet"]]), rep(3, datlist[["Nsurveys"]])))
-  finfo <- rbind(finfo, c(datlist[["units_of_catch"]], rep(0, datlist[["Nsurveys"]])))
+  finfo <- rbind(
+    datlist[["fleetinfo1"]],
+    c(rep(1, datlist[["Nfleet"]]), rep(3, datlist[["Nsurveys"]]))
+  )
+  finfo <- rbind(
+    finfo,
+    c(datlist[["units_of_catch"]], rep(0, datlist[["Nsurveys"]]))
+  )
   rownames(finfo)[3] <- "type"
   rownames(finfo)[4] <- "units"
   finfo <- finfo[, 1:(length(finfo) - 1)]
   finfo <- as.data.frame(t(finfo))
   datlist[["fleetinfo"]] <- finfo
-  datlist[["NCPUEObs"]] <- array(data = 0, dim = datlist[["Nfleet"]] + datlist[["Nsurveys"]])
-  for (j in seq_len(NROW(datlist[["CPUE"]])))
-  {
-    if (datlist[["CPUE"]][j, ][["index"]] > 0) datlist[["NCPUEObs"]][datlist[["CPUE"]][j, ][["index"]]] <- datlist[["NCPUEObs"]][datlist[["CPUE"]][j, ][["index"]]] + 1
+  datlist[["NCPUEObs"]] <- array(
+    data = 0,
+    dim = datlist[["Nfleet"]] + datlist[["Nsurveys"]]
+  )
+  for (j in seq_len(NROW(datlist[["CPUE"]]))) {
+    if (datlist[["CPUE"]][j, ][["index"]] > 0)
+      datlist[["NCPUEObs"]][datlist[["CPUE"]][j, ][["index"]]] <- datlist[[
+        "NCPUEObs"
+      ]][datlist[["CPUE"]][j, ][["index"]]] +
+        1
   }
   # fix some things
   if (!is.null(datlist[["lbin_method"]])) {
-    if (datlist[["lbin_method"]] == 1) # same as data bins
-      {
-        datlist[["N_lbinspop"]] <- datlist[["N_lbins"]]
-        datlist[["lbin_vector_pop"]] <- datlist[["lbin_vector"]]
-      }
-    if (datlist[["lbin_method"]] == 2) # defined wid, min, max
-      {
-        if (!is.null(datlist[["binwidth"]]) && !is.null(datlist[["minimum_size"]]) && !is.null(datlist[["maximum_size"]])) {
-          datlist[["N_lbinspop"]] <- (datlist[["maximum_size"]] - datlist[["minimum_size"]]) / datlist[["binwidth"]] + 1
-          datlist[["lbin_vector_pop"]] <- vector()
-          for (j in 0:datlist[["N_lbinspop"]])
-          {
-            datlist[["lbin_vector_pop"]] <- c(datlist[["lbin_vector_pop"]], datlist[["minimum_size"]] + (j * datlist[["binwidth"]]))
-          }
+    if (datlist[["lbin_method"]] == 1) {
+      # same as data bins
+      datlist[["N_lbinspop"]] <- datlist[["N_lbins"]]
+      datlist[["lbin_vector_pop"]] <- datlist[["lbin_vector"]]
+    }
+    if (datlist[["lbin_method"]] == 2) {
+      # defined wid, min, max
+      if (
+        !is.null(datlist[["binwidth"]]) &&
+          !is.null(datlist[["minimum_size"]]) &&
+          !is.null(datlist[["maximum_size"]])
+      ) {
+        datlist[["N_lbinspop"]] <- (datlist[["maximum_size"]] -
+          datlist[["minimum_size"]]) /
+          datlist[["binwidth"]] +
+          1
+        datlist[["lbin_vector_pop"]] <- vector()
+        for (j in 0:datlist[["N_lbinspop"]]) {
+          datlist[["lbin_vector_pop"]] <- c(
+            datlist[["lbin_vector_pop"]],
+            datlist[["minimum_size"]] + (j * datlist[["binwidth"]])
+          )
         }
       }
-    if (datlist[["lbin_method"]] == 3) # vector
-      {
-        if (!is.null(datlist[["lbin_vector_pop"]])) {
-          datlist[["N_lbinspop"]] <- length(datlist[["lbin_vector_pop"]])
-        }
+    }
+    if (datlist[["lbin_method"]] == 3) {
+      # vector
+      if (!is.null(datlist[["lbin_vector_pop"]])) {
+        datlist[["N_lbinspop"]] <- length(datlist[["lbin_vector_pop"]])
       }
+    }
   }
 
   # return the result

@@ -65,10 +65,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   # exe name with extension added back on Windows
   exename <- paste0(
     exe_no_extension,
-    switch(.Platform[["OS.type"]],
-      windows = ".exe",
-      unix = ""
-    )
+    switch(.Platform[["OS.type"]], windows = ".exe", unix = "")
   )
 
   # path.expand will resolve any use of "~" in input exe
@@ -126,8 +123,10 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
     if (path_to_exe == "") {
       # if not in path or specified directory, create error
       stop(
-        exename, " not found in ",
-        ifelse(test = length(dir) == 1,
+        exename,
+        " not found in ",
+        ifelse(
+          test = length(dir) == 1,
           yes = dir, # spell out directory in error if `dir` isn't a vector
           no = "any of the input 'dir' values"
         ), # generic if it's a vector

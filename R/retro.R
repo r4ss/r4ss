@@ -85,10 +85,19 @@ SS_doRetro <-
 #' future::plan(future::sequential)
 #' }
 #'
-retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
-                  oldsubdir = "", newsubdir = "retrospectives",
-                  subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                  RemoveBlocks = FALSE, verbose = FALSE, exe = "ss3", ...) {
+retro <- function(
+  dir = getwd(),
+  masterdir = lifecycle::deprecated(),
+  oldsubdir = "",
+  newsubdir = "retrospectives",
+  subdirstart = "retro",
+  years = 0:-5,
+  overwrite = TRUE,
+  RemoveBlocks = FALSE,
+  verbose = FALSE,
+  exe = "ss3",
+  ...
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterdir)) {
@@ -136,7 +145,8 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
     # change starter file to do retrospectives
     starter[["retro_yr"]] <- years[iyr]
     starter[["init_values_src"]] <- 0
-    SS_writestarter(starter,
+    SS_writestarter(
+      starter,
       dir = newdir_iyr,
       verbose = FALSE,
       overwrite = TRUE

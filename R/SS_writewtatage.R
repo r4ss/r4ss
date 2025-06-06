@@ -15,9 +15,14 @@
 #' @export
 #' @seealso [SS_readwtatage()]
 #'
-SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
-                            overwrite = FALSE, verbose = TRUE,
-                            warn = lifecycle::deprecated()) {
+SS_writewtatage <- function(
+  mylist,
+  dir = NULL,
+  file = "wtatage.ss",
+  overwrite = FALSE,
+  verbose = TRUE,
+  warn = lifecycle::deprecated()
+) {
   if (verbose) message("running SS_writewtatage\n")
 
   if (lifecycle::is_present(warn)) {
@@ -58,26 +63,39 @@ SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
   sink(zz, split = verbose)
 
   writeLines(paste(NCOL(mylist) - 7, "# maxage"))
-  writeLines("# if Yr is negative, then fill remaining years for that Seas, growpattern, Bio_Pattern, Fleet")
-  writeLines("# if season is negative, then fill remaining fleets for that Seas, Bio_Pattern, Sex, Fleet")
+  writeLines(
+    "# if Yr is negative, then fill remaining years for that Seas, growpattern, Bio_Pattern, Fleet"
+  )
+  writeLines(
+    "# if season is negative, then fill remaining fleets for that Seas, Bio_Pattern, Sex, Fleet"
+  )
   writeLines("# will fill through forecast years, so be careful")
   writeLines("# fleet 0 contains begin season pop WT")
   writeLines("# fleet -1 contains mid season pop WT")
   writeLines("# fleet -2 contains maturity*fecundity")
 
   # Check for terminal line in data frame
-  mylist <- mylist[order(mylist[["year"]], mylist[["fleet"]], mylist[["seas"]]), ]
+  mylist <- mylist[
+    order(mylist[["year"]], mylist[["fleet"]], mylist[["seas"]]),
+  ]
   if (any(mylist[["year"]] < -9998)) {
-    mylist <- mylist[c(
-      which(mylist[["year"]] >= -9998),
-      which(mylist[["year"]] < -9998)
-    ), ]
+    mylist <- mylist[
+      c(
+        which(mylist[["year"]] >= -9998),
+        which(mylist[["year"]] < -9998)
+      ),
+    ]
   } else {
     mylist <- rbind(mylist, mylist[1, ])
     mylist[NROW(mylist), "year"] <- -9999
   }
   colnames(mylist)[1] <- paste0("#", colnames(mylist)[1])
-  print.data.frame(mylist, row.names = FALSE, strip.white = TRUE, max = dim(mylist)[1] * dim(mylist)[2])
+  print.data.frame(
+    mylist,
+    row.names = FALSE,
+    strip.white = TRUE,
+    max = dim(mylist)[1] * dim(mylist)[2]
+  )
 
   # restore printing width to whatever the user had before
   options(width = oldwidth)

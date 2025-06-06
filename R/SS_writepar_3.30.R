@@ -18,7 +18,12 @@
 #' [SS_writedat()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()]
-SS_writepar_3.30 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE) {
+SS_writepar_3.30 <- function(
+  parlist,
+  outfile,
+  overwrite = TRUE,
+  verbose = FALSE
+) {
   # function to write Stock Synthesis parameter files
   if (verbose) message("running SS_writepar_3.30")
 
@@ -79,12 +84,18 @@ SS_writepar_3.30 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
 
   if (!is.null(parlist[["recdev_forecast"]])) {
     writeLines(paste0("# Fcast_recruitments:"), con = zz)
-    writeLines(paste0(parlist[["recdev_forecast"]][, 2], collapse = " "), con = zz)
+    writeLines(
+      paste0(parlist[["recdev_forecast"]][, 2], collapse = " "),
+      con = zz
+    )
   }
 
   if (!is.null(parlist[["Fcast_impl_error"]])) {
     writeLines(paste0("# Fcast_impl_error:"), con = zz)
-    writeLines(paste0(parlist[["Fcast_impl_error"]][, 2], collapse = " "), con = zz)
+    writeLines(
+      paste0(parlist[["Fcast_impl_error"]][, 2], collapse = " "),
+      con = zz
+    )
   }
 
   if (!is.null(parlist[["init_F"]])) {
@@ -125,7 +136,10 @@ SS_writepar_3.30 <- function(parlist, outfile, overwrite = TRUE, verbose = FALSE
   if (!is.null(parlist[["parm_devs"]])) {
     for (i in seq_along(parlist[["parm_devs"]])) {
       writeLines(paste0("# parm_dev[", i, "]:"), con = zz)
-      writeLines(paste0(parlist[["parm_devs"]][[i]][, 2], collapse = " "), con = zz)
+      writeLines(
+        paste0(parlist[["parm_devs"]][[i]][, 2], collapse = " "),
+        con = zz
+      )
     }
   }
 

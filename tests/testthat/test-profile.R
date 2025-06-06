@@ -24,33 +24,48 @@ test_that(
 test_that(
   "Error when repeat isn't true and string matches > 1 par",
   expect_error(SS_changepars(
-    dir = dirname(ctlfile), ctlfile = basename(ctlfile),
+    dir = dirname(ctlfile),
+    ctlfile = basename(ctlfile),
     newctlfile = "control_change.ss",
-    strings = "NatM", newvals = 2, verbose = FALSE
+    strings = "NatM",
+    newvals = 2,
+    verbose = FALSE
   ))
 )
 test_that(
   "Error when repeat is true and strings aren't unique",
   expect_error(SS_changepars(
-    dir = dirname(ctlfile), ctlfile = basename(ctlfile),
-    newctlfile = "control_change.ss", repeat.vals = TRUE,
-    strings = c("CV", "Mal"), newvals = c(2, 3), verbose = FALSE
+    dir = dirname(ctlfile),
+    ctlfile = basename(ctlfile),
+    newctlfile = "control_change.ss",
+    repeat.vals = TRUE,
+    strings = c("CV", "Mal"),
+    newvals = c(2, 3),
+    verbose = FALSE
   ))
 )
 test_that(
   "Error when repeat is false and string matches > 1 par",
   expect_error(SS_changepars(
-    dir = dirname(ctlfile), ctlfile = basename(ctlfile),
-    newctlfile = "control_change.ss", repeat.vals = FALSE,
-    strings = c("CV", "Mal"), newvals = c(2, 3), verbose = FALSE
+    dir = dirname(ctlfile),
+    ctlfile = basename(ctlfile),
+    newctlfile = "control_change.ss",
+    repeat.vals = FALSE,
+    strings = c("CV", "Mal"),
+    newvals = c(2, 3),
+    verbose = FALSE
   ))
 )
 test_that("Should change the lower bound and INIT of 10 pars", {
   outs <- SS_changepars(
-    dir = dirname(ctlfile), ctlfile = basename(ctlfile),
-    newctlfile = "control_change.ss", repeat.vals = FALSE,
-    strings = c("CV", "Mal"), newvals = rep(0.025, 10),
-    newlos = rep(0, 10), verbose = FALSE
+    dir = dirname(ctlfile),
+    ctlfile = basename(ctlfile),
+    newctlfile = "control_change.ss",
+    repeat.vals = FALSE,
+    strings = c("CV", "Mal"),
+    newvals = rep(0.025, 10),
+    newlos = rep(0, 10),
+    verbose = FALSE
   )
   expect_equal(NROW(outs), 10)
   expect_equal(outs[, "newvals"], rep(0.025, 10))
@@ -59,9 +74,13 @@ test_that("Should change the lower bound and INIT of 10 pars", {
 test_that(
   "Error when repeat is true and vals have length > 1",
   expect_error(SS_changepars(
-    dir = dirname(ctlfile), ctlfile = basename(ctlfile),
-    newctlfile = "control_change.ss", repeat.vals = TRUE,
-    strings = c("NatM", "CV"), newvals = 2:3, verbose = FALSE
+    dir = dirname(ctlfile),
+    ctlfile = basename(ctlfile),
+    newctlfile = "control_change.ss",
+    repeat.vals = TRUE,
+    strings = c("NatM", "CV"),
+    newvals = 2:3,
+    verbose = FALSE
   ))
 )
 unlink(file.path(dirname(ctlfile), "control_change.ss"))

@@ -16,21 +16,31 @@
 #'
 get_values <- function(replist, label, yrs, ci_value, single = FALSE) {
   dat <- replist[["derived_quants"]]
-  if (label == "Main_RecrDev" || label == "Late_RecrDev" || label == "ForeRecr") {
+  if (
+    label == "Main_RecrDev" || label == "Late_RecrDev" || label == "ForeRecr"
+  ) {
     dat <- replist[["parameters"]]
   }
 
   if (!single) {
     value <- dat[grep(label, dat[["Label"]]), ]
-    yrs_in_table <- suppressWarnings(as.numeric(gsub(".*_", "", value[["Label"]])))
+    yrs_in_table <- suppressWarnings(as.numeric(gsub(
+      ".*_",
+      "",
+      value[["Label"]]
+    )))
     yrs_in_table <- yrs_in_table[yrs_in_table %in% yrs]
     if (!all(yrs %in% yrs_in_table)) {
       yrs <- yrs_in_table
-      cli::cli_alert_warning("Years in the Report file do not match the years requested. Setting yrs to have range {range(yrs)}")
+      cli::cli_alert_warning(
+        "Years in the Report file do not match the years requested. Setting yrs to have range {range(yrs)}"
+      )
     }
 
-    value <- value[value[["Label"]] >= paste0(label, "_", yrs[1]) &
-      value[["Label"]] <= paste0(label, "_", max(yrs)), ]
+    value <- value[
+      value[["Label"]] >= paste0(label, "_", yrs[1]) &
+        value[["Label"]] <= paste0(label, "_", max(yrs)),
+    ]
     dq <- value[["Value"]]
     ind <- names(value) %in% c("StdDev", "Parm_StDev")
     sd <- value[, ind]
@@ -43,8 +53,14 @@ get_values <- function(replist, label, yrs, ci_value, single = FALSE) {
   }
 
   if (label == "Recr" || label == "Recr_virgin") {
-    low <- exp(log(dq) - qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
-    high <- exp(log(dq) + qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
+    low <- exp(
+      log(dq) -
+        qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq)))
+    )
+    high <- exp(
+      log(dq) +
+        qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq)))
+    )
   }
   if (label != "Recr" && label != "Recr_virgin") {
     low <- dq - qnorm(1 - (1 - ci_value) / 2) * sd

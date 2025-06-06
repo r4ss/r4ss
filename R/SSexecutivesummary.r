@@ -66,24 +66,26 @@
 #' @author Chantel R. Wetzel, Kelli F. Johnson, Ian G. Taylor
 #' @export
 #'
-SSexecutivesummary <- function(replist,
-                               plotfolder = "default",
-                               ci_value = 0.95,
-                               es_only = FALSE,
-                               fleetnames = NULL,
-                               add_text = "model area",
-                               so_units = "millions of eggs",
-                               tables = lifecycle::deprecated(),
-                               divide_by_2 = FALSE,
-                               endyr = NULL,
-                               adopted_ofl = NULL,
-                               adopted_abc = NULL,
-                               adopted_acl = NULL,
-                               forecast_ofl = NULL,
-                               forecast_abc = NULL,
-                               format = lifecycle::deprecated(),
-                               match_digits = lifecycle::deprecated(),
-                               verbose = TRUE) {
+SSexecutivesummary <- function(
+  replist,
+  plotfolder = "default",
+  ci_value = 0.95,
+  es_only = FALSE,
+  fleetnames = NULL,
+  add_text = "model area",
+  so_units = "millions of eggs",
+  tables = lifecycle::deprecated(),
+  divide_by_2 = FALSE,
+  endyr = NULL,
+  adopted_ofl = NULL,
+  adopted_abc = NULL,
+  adopted_acl = NULL,
+  forecast_ofl = NULL,
+  forecast_abc = NULL,
+  format = lifecycle::deprecated(),
+  match_digits = lifecycle::deprecated(),
+  verbose = TRUE
+) {
   lifecycle::deprecate_warn(
     when = "1.52.0",
     what = "SSexecutivesummary()",
@@ -129,14 +131,18 @@ SSexecutivesummary <- function(replist,
   # confidence intervals
   Get.Values <- function(replist, label, yrs, ci_value, single = FALSE) {
     dat <- replist[["derived_quants"]]
-    if (label == "Main_RecrDev" || label == "Late_RecrDev" || label == "ForeRecr") {
+    if (
+      label == "Main_RecrDev" || label == "Late_RecrDev" || label == "ForeRecr"
+    ) {
       dat <- replist[["parameters"]]
     }
 
     if (!single) {
       value <- dat[grep(label, dat[["Label"]]), ]
-      value <- value[value[["Label"]] >= paste0(label, "_", yrs[1]) &
-        value[["Label"]] <= paste0(label, "_", max(yrs)), ]
+      value <- value[
+        value[["Label"]] >= paste0(label, "_", yrs[1]) &
+          value[["Label"]] <= paste0(label, "_", max(yrs)),
+      ]
       dq <- value[["Value"]]
       ind <- names(value) %in% c("StdDev", "Parm_StDev")
       sd <- value[, ind]
@@ -150,8 +156,14 @@ SSexecutivesummary <- function(replist,
 
     if (label == "Recr" || label == "Recr_virgin") {
       # Orig code version - this is the same as SSsummarize below
-      low <- exp(log(dq) - qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
-      high <- exp(log(dq) + qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
+      low <- exp(
+        log(dq) -
+          qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq)))
+      )
+      high <- exp(
+        log(dq) +
+          qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq)))
+      )
       # maia's suggestions
       # issue #537 in github
       # low  <- dq / exp(qnorm(1 - (1 - ci_value) / 2) * dev_sd ) #where dev_sd is the recdev upper interval
@@ -179,7 +191,6 @@ SSexecutivesummary <- function(replist,
       return(data.frame(dq, low, high))
     }
   }
-
 
   # ============================================================================
   # Determine the model version and dimensions of the model
@@ -265,11 +276,17 @@ SSexecutivesummary <- function(replist,
   csv_name <- "a_Catches_ES.csv"
   for (i in 1:nfleets) {
     name <- paste0("retain(B):_", i)
-    input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
+    input.catch <- replist[["timeseries"]][
+      replist[["timeseries"]][["Yr"]] %in% years_minus_final,
+      name
+    ]
     catch <- cbind(catch, input.catch)
 
     name <- paste0("dead(B):_", i)
-    dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
+    dead <- replist[["timeseries"]][
+      replist[["timeseries"]][["Yr"]] %in% years_minus_final,
+      name
+    ]
     if (!is.null(dead)) {
       total.dead <- total.dead + dead
       fleet.names <- c(fleet.names, fleetnames[i])
@@ -277,15 +294,23 @@ SSexecutivesummary <- function(replist,
   }
   total.catch <- apply(catch, 1, sum)
 
-
   if (sum(total.catch) != sum(total.dead)) {
     es.a <- data.frame(years_minus_final, catch, total.catch, total.dead)
-    colnames(es.a) <- c("Year", paste(fleet.names, "(mt)"), "Total Landings (mt)", "Total Dead (mt)")
+    colnames(es.a) <- c(
+      "Year",
+      paste(fleet.names, "(mt)"),
+      "Total Landings (mt)",
+      "Total Dead (mt)"
+    )
 
     write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
     caption <- c(
       caption,
-      paste0("Recent landings by fleet, total landings summed across fleets, and the total dead catch including discards for the ", add_text, ".")
+      paste0(
+        "Recent landings by fleet, total landings summed across fleets, and the total dead catch including discards for the ",
+        add_text,
+        "."
+      )
     )
   } else {
     es.a <- data.frame(years_minus_final, catch, total.catch)
@@ -293,7 +318,11 @@ SSexecutivesummary <- function(replist,
     write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
     caption <- c(
       caption,
-      paste0("Recent catches (mt) by fleet and total catch (mt) summed across fleets for the  ", add_text, ".")
+      paste0(
+        "Recent catches (mt) by fleet and total catch (mt) summed across fleets for the  ",
+        add_text,
+        "."
+      )
     )
   }
 
@@ -324,8 +353,13 @@ SSexecutivesummary <- function(replist,
   )
   es.b <- dplyr::full_join(ssb, fraction_unfished, by = "yrs")
   colnames(es.b) <- c(
-    "Year", sb.label, "Lower Interval", "Upper Interval",
-    "Fraction Unfished", "Lower Interval", "Upper Interval"
+    "Year",
+    sb.label,
+    "Lower Interval",
+    "Upper Interval",
+    "Fraction Unfished",
+    "Lower Interval",
+    "Upper Interval"
   )
 
   csv_name <- "b_SSB_ES.csv"
@@ -334,8 +368,13 @@ SSexecutivesummary <- function(replist,
   caption <- c(
     caption,
     paste0(
-      "Estimated recent trend in ", sb.text.name, " and the fraction unfished and the ", round(100 * ci_value, 0),
-      " percent intervals for the ", add_text, "."
+      "Estimated recent trend in ",
+      sb.text.name,
+      " and the fraction unfished and the ",
+      round(100 * ci_value, 0),
+      " percent intervals for the ",
+      add_text,
+      "."
     )
   )
   tex.label <- c(tex.label, "ssbES")
@@ -349,15 +388,24 @@ SSexecutivesummary <- function(replist,
   }
   # figure out which years for Main, Late, and Forecast recruitmets overlap
   # the years we want
-  recdevMain <- replist[["parameters"]][substring(replist[["parameters"]][["Label"]], 1, 12) == "Main_RecrDev", 1:3]
+  recdevMain <- replist[["parameters"]][
+    substring(replist[["parameters"]][["Label"]], 1, 12) == "Main_RecrDev",
+    1:3
+  ]
   temp <- toupper(substr(recdevMain[["Label"]], 14, 17))
   main.yrs <- as.numeric(temp[temp %in% years])
 
-  recdevLate <- replist[["parameters"]][substring(replist[["parameters"]][["Label"]], 1, 12) == "Late_RecrDev", 1:3]
+  recdevLate <- replist[["parameters"]][
+    substring(replist[["parameters"]][["Label"]], 1, 12) == "Late_RecrDev",
+    1:3
+  ]
   temp <- toupper(substr(recdevLate[["Label"]], 14, 17))
   late.yrs <- as.numeric(temp[temp %in% years])
 
-  recdevFore <- replist[["parameters"]][substring(replist[["parameters"]][["Label"]], 1, 8) == "ForeRecr", 1:3]
+  recdevFore <- replist[["parameters"]][
+    substring(replist[["parameters"]][["Label"]], 1, 8) == "ForeRecr",
+    1:3
+  ]
   temp <- toupper(substr(recdevFore[["Label"]], 10, 13))
   fore.yrs <- as.numeric(temp[temp %in% years])
 
@@ -367,7 +415,12 @@ SSexecutivesummary <- function(replist,
     # placeholder for devs
     devs <- NULL
     if (length(main.yrs) > 0) {
-      recdevs <- Get.Values(replist = replist, label = "Main_RecrDev", yrs = main.yrs, ci_value)
+      recdevs <- Get.Values(
+        replist = replist,
+        label = "Main_RecrDev",
+        yrs = main.yrs,
+        ci_value
+      )
       devs <- recdevs[, c("dq", "low", "high")]
     } else {
       n <- length(years) - length(late.yrs) - length(fore.yrs)
@@ -379,12 +432,22 @@ SSexecutivesummary <- function(replist,
     }
 
     if (length(late.yrs) > 0) {
-      late.recdevs <- Get.Values(replist = replist, label = "Late_RecrDev", yrs = late.yrs, ci_value)
+      late.recdevs <- Get.Values(
+        replist = replist,
+        label = "Late_RecrDev",
+        yrs = late.yrs,
+        ci_value
+      )
       devs <- rbind(devs, late.recdevs[, c("dq", "low", "high")])
     }
 
     if (length(fore.yrs) > 0) {
-      fore.recdevs <- Get.Values(replist = replist, label = "ForeRecr", yrs = fore.yrs, ci_value)
+      fore.recdevs <- Get.Values(
+        replist = replist,
+        label = "ForeRecr",
+        yrs = fore.yrs,
+        ci_value
+      )
       if (length(fore.yrs) > 0) {
         devs <- rbind(devs, fore.recdevs[, c("dq", "low", "high")])
       }
@@ -395,15 +458,29 @@ SSexecutivesummary <- function(replist,
 
     devs.out <- devs
   } else {
-    devs.out <- data.frame(rep(0, length(years)), rep(0, length(years)), rep(0, length(years)))
+    devs.out <- data.frame(
+      rep(0, length(years)),
+      rep(0, length(years)),
+      rep(0, length(years))
+    )
   }
   es.c <- data.frame(
-    years, recruits[["dq"]], recruits[["low"]], recruits[["high"]],
-    devs.out[, 1], devs.out[, 2], devs.out[, 3]
+    years,
+    recruits[["dq"]],
+    recruits[["low"]],
+    recruits[["high"]],
+    devs.out[, 1],
+    devs.out[, 2],
+    devs.out[, 3]
   )
   colnames(es.c) <- c(
-    "Year", "Recruitment (1,000s)", "Lower Interval", "Upper Interval",
-    "Recruitment Deviations", "Lower Interval", "Upper Interval"
+    "Year",
+    "Recruitment (1,000s)",
+    "Lower Interval",
+    "Upper Interval",
+    "Recruitment Deviations",
+    "Lower Interval",
+    "Upper Interval"
   )
   csv_name <- "c_Recr_ES.csv"
   write.csv(es.c, file.path(csv.dir, csv_name), row.names = FALSE)
@@ -411,8 +488,11 @@ SSexecutivesummary <- function(replist,
   caption <- c(
     caption,
     paste0(
-      "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ", round(100 * ci_value, 0),
-      " percent intervals for the ", add_text, "."
+      "Estimated recent trend in recruitment (1,000s) and recruitment deviations and the ",
+      round(100 * ci_value, 0),
+      " percent intervals for the ",
+      add_text,
+      "."
     )
   )
   tex.label <- c(tex.label, "recrES")
@@ -426,13 +506,16 @@ SSexecutivesummary <- function(replist,
   }
 
   spr_type <- replist[["SPRratioLabel"]]
-  f_type <- ifelse(replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
+  f_type <- ifelse(
+    replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)",
+    "Exploitation Rate",
     "Fill in F method"
   )
 
   if (stringr::str_detect(replist[["SPRratioLabel"]], "%")) {
     spr_label <- paste0(
-      substring(replist[["SPRratioLabel"]], 1, 14), " ",
+      substring(replist[["SPRratioLabel"]], 1, 14),
+      " ",
       substring(replist[["SPRratioLabel"]], 16, 17),
       "\\%)"
     )
@@ -440,16 +523,35 @@ SSexecutivesummary <- function(replist,
     spr_label <- replist[["SPRratioLabel"]]
   }
 
-  adj.spr <- Get.Values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
-  f.value <- Get.Values(replist = replist, label = "F", years_minus_final, ci_value)
+  adj.spr <- Get.Values(
+    replist = replist,
+    label = "SPRratio",
+    years_minus_final,
+    ci_value
+  )
+  f.value <- Get.Values(
+    replist = replist,
+    label = "F",
+    years_minus_final,
+    ci_value
+  )
   es.d <- data.frame(
     years_minus_final,
-    adj.spr[["dq"]], adj.spr[["low"]], adj.spr[["high"]],
-    f.value[["dq"]], f.value[["low"]], f.value[["high"]]
+    adj.spr[["dq"]],
+    adj.spr[["low"]],
+    adj.spr[["high"]],
+    f.value[["dq"]],
+    f.value[["low"]],
+    f.value[["high"]]
   )
   colnames(es.d) <- c(
-    "Year", spr_label, "Lower Interval", "Upper Interval",
-    f_type, "Lower Interval", "Upper Interval"
+    "Year",
+    spr_label,
+    "Lower Interval",
+    "Upper Interval",
+    f_type,
+    "Lower Interval",
+    "Upper Interval"
   )
   csv_name <- "d_SPR_ES.csv"
   write.csv(es.d, file.path(csv.dir, csv_name), row.names = FALSE)
@@ -457,8 +559,13 @@ SSexecutivesummary <- function(replist,
   caption <- c(
     caption,
     paste0(
-      "Estimated recent trend in the ", spr_label, " where SPR is the spawning potential ratio, the exploitation rate, and the ", round(100 * ci_value, 0),
-      " percent intervals for the ", add_text, "."
+      "Estimated recent trend in the ",
+      spr_label,
+      " where SPR is the spawning potential ratio, the exploitation rate, and the ",
+      round(100 * ci_value, 0),
+      " percent intervals for the ",
+      add_text,
+      "."
     )
   )
   tex.label <- c(tex.label, "exploitES")
@@ -501,20 +608,104 @@ SSexecutivesummary <- function(replist,
   }
 
   final.fraction_unfished <- fraction_unfished[dim(fraction_unfished)[1], 2:4]
-  ssb.virgin <- Get.Values(replist = replist, label = sb.unfished, years, ci_value, single = TRUE)
-  smry.virgin <- Get.Values(replist = replist, label = smry.unfished, years, ci_value, single = TRUE)
-  rec.virgin <- Get.Values(replist = replist, label = recr.unfished, years, ci_value, single = TRUE)
-  b.target <- Get.Values(replist = replist, label = "SSB_Btgt", years, ci_value, single = TRUE)
-  spr.btarg <- Get.Values(replist = replist, label = "SPR_Btgt", years, ci_value, single = TRUE)
-  f.btarg <- Get.Values(replist = replist, label = f.btgt.name, years, ci_value, single = TRUE)
-  yield.btarg <- Get.Values(replist = replist, label = totyield.btgt, years, ci_value, single = TRUE)
-  b.spr <- Get.Values(replist = replist, label = "SSB_SPR", years, ci_value, single = TRUE)
-  f.spr <- Get.Values(replist = replist, label = f.spr.name, years, ci_value, single = TRUE)
-  yield.spr <- Get.Values(replist = replist, label = totyield.spr, years, ci_value, single = TRUE)
-  b.msy <- Get.Values(replist = replist, label = "SSB_MSY", years, ci_value, single = TRUE)
-  spr.msy <- Get.Values(replist = replist, label = "SPR_MSY", years, ci_value, single = TRUE)
-  f.msy <- Get.Values(replist = replist, label = f.msy.name, years, ci_value, single = TRUE)
-  msy <- Get.Values(replist = replist, label = totyield.msy, years, ci_value, single = TRUE)
+  ssb.virgin <- Get.Values(
+    replist = replist,
+    label = sb.unfished,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  smry.virgin <- Get.Values(
+    replist = replist,
+    label = smry.unfished,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  rec.virgin <- Get.Values(
+    replist = replist,
+    label = recr.unfished,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  b.target <- Get.Values(
+    replist = replist,
+    label = "SSB_Btgt",
+    years,
+    ci_value,
+    single = TRUE
+  )
+  spr.btarg <- Get.Values(
+    replist = replist,
+    label = "SPR_Btgt",
+    years,
+    ci_value,
+    single = TRUE
+  )
+  f.btarg <- Get.Values(
+    replist = replist,
+    label = f.btgt.name,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  yield.btarg <- Get.Values(
+    replist = replist,
+    label = totyield.btgt,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  b.spr <- Get.Values(
+    replist = replist,
+    label = "SSB_SPR",
+    years,
+    ci_value,
+    single = TRUE
+  )
+  f.spr <- Get.Values(
+    replist = replist,
+    label = f.spr.name,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  yield.spr <- Get.Values(
+    replist = replist,
+    label = totyield.spr,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  b.msy <- Get.Values(
+    replist = replist,
+    label = "SSB_MSY",
+    years,
+    ci_value,
+    single = TRUE
+  )
+  spr.msy <- Get.Values(
+    replist = replist,
+    label = "SPR_MSY",
+    years,
+    ci_value,
+    single = TRUE
+  )
+  f.msy <- Get.Values(
+    replist = replist,
+    label = f.msy.name,
+    years,
+    ci_value,
+    single = TRUE
+  )
+  msy <- Get.Values(
+    replist = replist,
+    label = totyield.msy,
+    years,
+    ci_value,
+    single = TRUE
+  )
 
   # Convert spawning ci_valueities for single-sex models
   if (nsexes == 1) {
@@ -524,28 +715,72 @@ SSexecutivesummary <- function(replist,
     b.msy <- b.msy / sexfactor
   }
 
-  es.e <- matrix(c(
-    ssb.virgin[["dq"]], ssb.virgin[["low"]], ssb.virgin[["high"]],
-    smry.virgin[["dq"]], smry.virgin[["low"]], smry.virgin[["high"]],
-    rec.virgin[["dq"]], rec.virgin[["low"]], rec.virgin[["high"]],
-    ssb[["dq"]][dim(ssb)[1]], ssb[["low"]][dim(ssb)[1]], ssb[["high"]][dim(ssb)[1]],
-    final.fraction_unfished[["dq"]], final.fraction_unfished[["low"]], final.fraction_unfished[["high"]],
-    "", "", "",
-    b.target[["dq"]], b.target[["low"]], b.target[["high"]],
-    spr.btarg[["dq"]], spr.btarg[["low"]], spr.btarg[["high"]],
-    f.btarg[["dq"]], f.btarg[["low"]], f.btarg[["high"]],
-    yield.btarg[["dq"]], yield.btarg[["low"]], yield.btarg[["high"]],
-    "", "", "",
-    b.spr[["dq"]], b.spr[["low"]], b.spr[["high"]],
-    spr / 100, "", "",
-    f.spr[["dq"]], f.spr[["low"]], f.spr[["high"]],
-    yield.spr[["dq"]], yield.spr[["low"]], yield.spr[["high"]],
-    "", "", "",
-    b.msy[["dq"]], b.msy[["low"]], b.msy[["high"]],
-    spr.msy[["dq"]], spr.msy[["low"]], spr.msy[["high"]],
-    f.msy[["dq"]], f.msy[["low"]], f.msy[["high"]],
-    msy[["dq"]], msy[["low"]], msy[["high"]]
-  ), ncol = 3, byrow = T)
+  es.e <- matrix(
+    c(
+      ssb.virgin[["dq"]],
+      ssb.virgin[["low"]],
+      ssb.virgin[["high"]],
+      smry.virgin[["dq"]],
+      smry.virgin[["low"]],
+      smry.virgin[["high"]],
+      rec.virgin[["dq"]],
+      rec.virgin[["low"]],
+      rec.virgin[["high"]],
+      ssb[["dq"]][dim(ssb)[1]],
+      ssb[["low"]][dim(ssb)[1]],
+      ssb[["high"]][dim(ssb)[1]],
+      final.fraction_unfished[["dq"]],
+      final.fraction_unfished[["low"]],
+      final.fraction_unfished[["high"]],
+      "",
+      "",
+      "",
+      b.target[["dq"]],
+      b.target[["low"]],
+      b.target[["high"]],
+      spr.btarg[["dq"]],
+      spr.btarg[["low"]],
+      spr.btarg[["high"]],
+      f.btarg[["dq"]],
+      f.btarg[["low"]],
+      f.btarg[["high"]],
+      yield.btarg[["dq"]],
+      yield.btarg[["low"]],
+      yield.btarg[["high"]],
+      "",
+      "",
+      "",
+      b.spr[["dq"]],
+      b.spr[["low"]],
+      b.spr[["high"]],
+      spr / 100,
+      "",
+      "",
+      f.spr[["dq"]],
+      f.spr[["low"]],
+      f.spr[["high"]],
+      yield.spr[["dq"]],
+      yield.spr[["low"]],
+      yield.spr[["high"]],
+      "",
+      "",
+      "",
+      b.msy[["dq"]],
+      b.msy[["low"]],
+      b.msy[["high"]],
+      spr.msy[["dq"]],
+      spr.msy[["low"]],
+      spr.msy[["high"]],
+      f.msy[["dq"]],
+      f.msy[["low"]],
+      f.msy[["high"]],
+      msy[["dq"]],
+      msy[["low"]],
+      msy[["high"]]
+    ),
+    ncol = 3,
+    byrow = T
+  )
 
   es.e <- cbind(
     c(
@@ -573,15 +808,23 @@ SSexecutivesummary <- function(replist,
     es.e
   )
   es.e <- noquote(es.e)
-  colnames(es.e) <- c("Reference Points", "Estimate", "Lower Interval", "Upper Interval")
+  colnames(es.e) <- c(
+    "Reference Points",
+    "Estimate",
+    "Lower Interval",
+    "Upper Interval"
+  )
   csv_name <- "e_ReferencePoints_ES.csv"
   write.csv(es.e, file.path(csv.dir, csv_name), row.names = FALSE)
 
   caption <- c(
     caption,
     paste0(
-      "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
-      " percent intervals for the ", add_text, "."
+      "Summary of reference points and management quantities, including estimates of the ",
+      round(100 * ci_value, 0),
+      " percent intervals for the ",
+      add_text,
+      "."
     )
   )
 
@@ -626,11 +869,17 @@ SSexecutivesummary <- function(replist,
   catch <- dead <- total.dead <- 0
   for (i in 1:nfleets) {
     name <- paste0("retain(B):_", i)
-    input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
+    input.catch <- replist[["timeseries"]][
+      replist[["timeseries"]][["Yr"]] %in% years_minus_final,
+      name
+    ]
     catch <- cbind(catch, input.catch)
 
     name <- paste0("dead(B):_", i)
-    dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
+    dead <- replist[["timeseries"]][
+      replist[["timeseries"]][["Yr"]] %in% years_minus_final,
+      name
+    ]
     if (!is.null(dead)) {
       total.dead <- total.dead + dead
     }
@@ -638,15 +887,35 @@ SSexecutivesummary <- function(replist,
   total.catch <- apply(catch, 1, sum)
 
   if (sum(total.catch) != sum(total.dead)) {
-    es.f <- data.frame(years_minus_final, ofl, abc, acl, total.catch, total.dead)
-    colnames(es.f) <- c("Year", "OFL (mt)", "ABC (mt)", "ACL (mt)", "Landings (mt)", "Total Mortality (mt)")
+    es.f <- data.frame(
+      years_minus_final,
+      ofl,
+      abc,
+      acl,
+      total.catch,
+      total.dead
+    )
+    colnames(es.f) <- c(
+      "Year",
+      "OFL (mt)",
+      "ABC (mt)",
+      "ACL (mt)",
+      "Landings (mt)",
+      "Total Mortality (mt)"
+    )
     caption <- c(
       caption,
       "Recent trend in the overfishing limits (OFLs), the acceptable biological catches (ABCs), the annual catch limits (ACLs), the total landings, and total mortality all in metric tons (mt)."
     )
   } else {
     es.f <- data.frame(years_minus_final, ofl, abc, acl, total.catch)
-    colnames(es.f) <- c("Year", "OFL (mt)", "ABC (mt)", "ACL (mt)", "Catch (mt)")
+    colnames(es.f) <- c(
+      "Year",
+      "OFL (mt)",
+      "ABC (mt)",
+      "ACL (mt)",
+      "Catch (mt)"
+    )
     caption <- c(
       caption,
       "Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs), the annual catch limits (ACLs), and the total catch all in metric tons (mt)."
@@ -668,10 +937,30 @@ SSexecutivesummary <- function(replist,
     )
   }
 
-  ofl.fore <- Get.Values(replist = replist, label = "OFLCatch", yrs = fore, ci_value)[["dq"]]
-  abc.fore <- Get.Values(replist = replist, label = "ForeCatch", yrs = fore, ci_value)[["dq"]]
-  ssb.fore <- Get.Values(replist = replist, label = sb.name, yrs = fore, ci_value)[["dq"]]
-  fraction_unfished.fore <- Get.Values(replist = replist, label = "Bratio", yrs = fore, ci_value)[["dq"]]
+  ofl.fore <- Get.Values(
+    replist = replist,
+    label = "OFLCatch",
+    yrs = fore,
+    ci_value
+  )[["dq"]]
+  abc.fore <- Get.Values(
+    replist = replist,
+    label = "ForeCatch",
+    yrs = fore,
+    ci_value
+  )[["dq"]]
+  ssb.fore <- Get.Values(
+    replist = replist,
+    label = sb.name,
+    yrs = fore,
+    ci_value
+  )[["dq"]]
+  fraction_unfished.fore <- Get.Values(
+    replist = replist,
+    label = "Bratio",
+    yrs = fore,
+    ci_value
+  )[["dq"]]
 
   if (!is.null(forecast_ofl)) {
     n <- length(forecast_ofl)
@@ -689,20 +978,39 @@ SSexecutivesummary <- function(replist,
 
   smry.fore <- 0
   for (a in 1:nareas) {
-    ind <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% fore
+    ind <- replist[["timeseries"]][["Area"]] == a &
+      replist[["timeseries"]][["Yr"]] %in% fore
     temp <- replist[["timeseries"]][["Bio_smry"]][ind]
     smry.fore <- smry.fore + temp
   }
 
-  es.g <- data.frame(fore, ofl.fore, abc.fore, smry.fore, ssb.fore, fraction_unfished.fore)
+  es.g <- data.frame(
+    fore,
+    ofl.fore,
+    abc.fore,
+    smry.fore,
+    ssb.fore,
+    fraction_unfished.fore
+  )
 
-  colnames(es.g) <- c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Fraction Unfished")
+  colnames(es.g) <- c(
+    "Year",
+    "Predicted OFL (mt)",
+    "ABC Catch (mt)",
+    paste0("Age ", smry.age, "+ Biomass (mt)"),
+    sb.label,
+    "Fraction Unfished"
+  )
   csv_name <- "g_Projections_ES.csv"
   write.csv(es.g, file.path(csv.dir, csv_name), row.names = FALSE)
 
   caption <- c(
     caption,
-    paste0("Projections of potential OFLs (mt), ABCs (mt), estimated ", sb.text.name, ", and fraction unfished.")
+    paste0(
+      "Projections of potential OFLs (mt), ABCs (mt), estimated ",
+      sb.text.name,
+      ", and fraction unfished."
+    )
   )
 
   tex.label <- c(tex.label, "projectionES")
@@ -716,7 +1024,6 @@ SSexecutivesummary <- function(replist,
     message("Skipping the decision table (not yet implemented)")
   }
 
-
   # ======================================================================
   # ES Table i the summary table
   # ======================================================================
@@ -729,35 +1036,58 @@ SSexecutivesummary <- function(replist,
   catch <- dead <- total.dead <- 0
   for (i in 1:nfleets) {
     name <- paste0("retain(B):_", i)
-    input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
+    input.catch <- replist[["timeseries"]][
+      replist[["timeseries"]][["Yr"]] %in% years_minus_final,
+      name
+    ]
     catch <- cbind(catch, input.catch)
 
     name <- paste0("dead(B):_", i)
-    dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% years_minus_final, name]
+    dead <- replist[["timeseries"]][
+      replist[["timeseries"]][["Yr"]] %in% years_minus_final,
+      name
+    ]
     if (!is.null(dead)) {
       total.dead <- total.dead + dead
     }
   }
   total.catch <- apply(catch, 1, sum)
-  total.bind <- c(c("Total Catch", total.catch, "NA"), c("Total Dead", total.dead, "NA"))
+  total.bind <- c(
+    c("Total Catch", total.catch, "NA"),
+    c("Total Dead", total.dead, "NA")
+  )
   if (sum(total.catch) == sum(total.dead)) {
     total.bind <- c("Total Catch", total.catch, "NA")
   }
 
   spr_type <- replist[["SPRratioLabel"]] # strsplit(base[grep(spr.name,base)]," ")[[1]][3]
-  f_type <- ifelse(replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
+  f_type <- ifelse(
+    replist[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)",
+    "Exploitation Rate",
     "Fill in F method"
   )
-  adj.spr <- Get.Values(replist = replist, label = "SPRratio", years_minus_final, ci_value)
-  f.value <- Get.Values(replist = replist, label = "F", years_minus_final, ci_value)
+  adj.spr <- Get.Values(
+    replist = replist,
+    label = "SPRratio",
+    years_minus_final,
+    ci_value
+  )
+  f.value <- Get.Values(
+    replist = replist,
+    label = "F",
+    years_minus_final,
+    ci_value
+  )
 
   smry <- smry.fore <- 0
   for (a in 1:nareas) {
-    find <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% years_minus_final
+    find <- replist[["timeseries"]][["Area"]] == a &
+      replist[["timeseries"]][["Yr"]] %in% years_minus_final
     temp <- replist[["timeseries"]][["Bio_smry"]][find]
     smry <- smry + temp
 
-    find <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% fore[1]
+    find <- replist[["timeseries"]][["Area"]] == a &
+      replist[["timeseries"]][["Yr"]] %in% fore[1]
     temp <- replist[["timeseries"]][["Bio_smry"]][ind]
     smry.fore <- smry.fore + temp
   }
@@ -769,7 +1099,12 @@ SSexecutivesummary <- function(replist,
     ssb[["low"]] <- ssb[["low"]] / sexfactor
     ssb[["high"]] <- ssb[["high"]] / sexfactor
   }
-  fraction_unfished <- Get.Values(replist = replist, label = "Bratio", years, ci_value)
+  fraction_unfished <- Get.Values(
+    replist = replist,
+    label = "Bratio",
+    years,
+    ci_value
+  )
   recruits <- Get.Values(replist = replist, label = "Recr", years, ci_value)
 
   if (is.null(adopted_ofl)) {
@@ -816,7 +1151,8 @@ SSexecutivesummary <- function(replist,
       c("Lower Interval", fraction_unfished[["low"]]),
       c("Upper Interval", fraction_unfished[["high"]])
     ),
-    ncol = (length(years) + 1), byrow = T
+    ncol = (length(years) + 1),
+    byrow = T
   )
   es.i <- noquote(es.i)
   colnames(es.i) <- c("Quantity", years)
@@ -825,7 +1161,11 @@ SSexecutivesummary <- function(replist,
 
   caption <- c(
     caption,
-    paste0("Summary of recent estimates and management quantities for the ", add_text, ".")
+    paste0(
+      "Summary of recent estimates and management quantities for the ",
+      add_text,
+      "."
+    )
   )
 
   tex.label <- c(tex.label, "summaryES")
@@ -858,11 +1198,17 @@ SSexecutivesummary <- function(replist,
 
     for (i in 1:nfleets) {
       name <- paste0("retain(B):_", i)
-      input.catch <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% ind, name]
+      input.catch <- replist[["timeseries"]][
+        replist[["timeseries"]][["Yr"]] %in% ind,
+        name
+      ]
       catch <- cbind(catch, input.catch)
 
       name <- paste0("dead(B):_", i)
-      dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% ind, name]
+      dead <- replist[["timeseries"]][
+        replist[["timeseries"]][["Yr"]] %in% ind,
+        name
+      ]
       if (!is.null(dead)) {
         total.dead <- total.dead + dead
         fleet.names <- c(fleet.names, fleetnames[i])
@@ -872,16 +1218,36 @@ SSexecutivesummary <- function(replist,
 
     if (sum(total.catch) != sum(total.dead)) {
       mortality <- data.frame(ind, catch, total.catch, total.dead)
-      colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Landings (mt)", "Total Dead (mt)")
-      write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
-      caption <- c(caption, paste0("Landings (mt) by fleet for all years, total landings (mt), and total dead catch (mt) summed by year for the ", add_text, "."))
-    } else {
-      mortality <- data.frame(ind, catch, total.catch)
-      colnames(mortality) <- c("Year", paste(fleet.names, "(mt)"), "Total Catch (mt)")
+      colnames(mortality) <- c(
+        "Year",
+        paste(fleet.names, "(mt)"),
+        "Total Landings (mt)",
+        "Total Dead (mt)"
+      )
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(
         caption,
-        paste0("Catches (mt) by fleet for all years and total catches (mt) summed by year for the ", add_text, ".")
+        paste0(
+          "Landings (mt) by fleet for all years, total landings (mt), and total dead catch (mt) summed by year for the ",
+          add_text,
+          "."
+        )
+      )
+    } else {
+      mortality <- data.frame(ind, catch, total.catch)
+      colnames(mortality) <- c(
+        "Year",
+        paste(fleet.names, "(mt)"),
+        "Total Catch (mt)"
+      )
+      write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
+      caption <- c(
+        caption,
+        paste0(
+          "Catches (mt) by fleet for all years and total catches (mt) summed by year for the ",
+          add_text,
+          "."
+        )
       )
     }
 
@@ -897,11 +1263,15 @@ SSexecutivesummary <- function(replist,
       message("Creating time-series table")
     }
 
-    ssb.virgin <- sum(replist[["timeseries"]][replist[["timeseries"]][["Era"]] == "VIRG", "SpawnBio"])
+    ssb.virgin <- sum(replist[["timeseries"]][
+      replist[["timeseries"]][["Era"]] == "VIRG",
+      "SpawnBio"
+    ])
 
     smry.all <- tot.bio.all <- recruits.all <- ssb.all <- total.dead.all <- 0
     for (a in 1:nareas) {
-      find <- replist[["timeseries"]][["Area"]] == a & replist[["timeseries"]][["Yr"]] %in% all
+      find <- replist[["timeseries"]][["Area"]] == a &
+        replist[["timeseries"]][["Yr"]] %in% all
 
       smry <- replist[["timeseries"]][["Bio_smry"]][find]
       tot.bio <- replist[["timeseries"]][["Bio_all"]][find]
@@ -923,7 +1293,10 @@ SSexecutivesummary <- function(replist,
     total.dead.all <- 0
     for (i in 1:nfleets) {
       name <- paste0("dead(B):_", i)
-      dead <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% all, name]
+      dead <- replist[["timeseries"]][
+        replist[["timeseries"]][["Yr"]] %in% all,
+        name
+      ]
       if (!is.null(dead)) {
         total.dead.all <- total.dead.all + dead
       }
@@ -952,9 +1325,16 @@ SSexecutivesummary <- function(replist,
     }
 
     # Get labels that start with SPRratio_
-    adj.spr.labels <- grep("SPRratio_", replist[["derived_quants"]][["Label"]], value = TRUE)
+    adj.spr.labels <- grep(
+      "SPRratio_",
+      replist[["derived_quants"]][["Label"]],
+      value = TRUE
+    )
     # get year values associated with those labels
-    adj.spr.yrs <- as.numeric(substring(adj.spr.labels, first = nchar("SPRratio_") + 1))
+    adj.spr.yrs <- as.numeric(substring(
+      adj.spr.labels,
+      first = nchar("SPRratio_") + 1
+    ))
     # vector of placeholder NA values for all years
     adj.spr.all <- rep(NA, length(all))
     # replace NA with 0 values for early years which may have had no catch
@@ -962,7 +1342,10 @@ SSexecutivesummary <- function(replist,
       adj.spr.all[1:ind] <- 0
     }
     # replace placeholders for years with reported SPRratio values
-    adj.spr.all[all %in% adj.spr.yrs] <- replist[["derived_quants"]][adj.spr.labels, "Value"]
+    adj.spr.all[all %in% adj.spr.yrs] <- replist[["derived_quants"]][
+      adj.spr.labels,
+      "Value"
+    ]
 
     ts.table <- data.frame(
       all,
@@ -977,9 +1360,14 @@ SSexecutivesummary <- function(replist,
     )
 
     colnames(ts.table) <- c(
-      "Year", "Total Biomass (mt)", sb.label,
-      paste0("Total Biomass ", smry.age, "+ (mt)"), "Fraction Unfished",
-      "Age-0 Recruits (1,000s)", "Total Mortality (mt)", spr_type,
+      "Year",
+      "Total Biomass (mt)",
+      sb.label,
+      paste0("Total Biomass ", smry.age, "+ (mt)"),
+      "Fraction Unfished",
+      "Age-0 Recruits (1,000s)",
+      "Total Mortality (mt)",
+      spr_type,
       "Exploitation Rate"
     )
     csv_name <- "TimeSeries.csv"
@@ -987,13 +1375,16 @@ SSexecutivesummary <- function(replist,
 
     caption <- c(
       caption,
-      paste0("Time series of population estimates from the base model for the ", add_text, ".")
+      paste0(
+        "Time series of population estimates from the base model for the ",
+        add_text,
+        "."
+      )
     )
 
     tex.label <- c(tex.label, "timeseries")
     filename <- c(filename, csv_name)
   } # end check for es_only == FALSE
-
 
   # ======================================================================
   # Numbers at age
@@ -1021,7 +1412,11 @@ SSexecutivesummary <- function(replist,
         natage <- 0
         for (a in 1:nareas) {
           for (b in 1:nmorphs) {
-            ind <- replist[["natage"]][, "Yr"] >= startyr & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b & replist[["natage"]][, "Sex"] == 1 & replist[["natage"]][, "Beg/Mid"] == "B"
+            ind <- replist[["natage"]][, "Yr"] >= startyr &
+              replist[["natage"]][, "Area"] == a &
+              replist[["natage"]][, "Bio_Pattern"] == b &
+              replist[["natage"]][, "Sex"] == 1 &
+              replist[["natage"]][, "Beg/Mid"] == "B"
             temp <- replist[["natage"]][ind, get.ages]
             natage <- natage + temp
           }
@@ -1036,12 +1431,19 @@ SSexecutivesummary <- function(replist,
         natage.f <- natage.m <- 0
         for (a in 1:nareas) {
           for (b in 1:nmorphs) {
-            ind <- replist[["natage"]][, "Yr"] >= startyr & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b & replist[["natage"]][, "Sex"] == 1 & replist[["natage"]][, "Beg/Mid"] == "B"
+            ind <- replist[["natage"]][, "Yr"] >= startyr &
+              replist[["natage"]][, "Area"] == a &
+              replist[["natage"]][, "Bio_Pattern"] == b &
+              replist[["natage"]][, "Sex"] == 1 &
+              replist[["natage"]][, "Beg/Mid"] == "B"
             temp <- replist[["natage"]][ind, get.ages]
             natage.f <- natage.f + temp
 
-            ind <- replist[["natage"]][, "Yr"] >= startyr & replist[["natage"]][, "Area"] == a & replist[["natage"]][, "Bio_Pattern"] == b &
-              replist[["natage"]][, "Sex"] == 2 & replist[["natage"]][, "Beg/Mid"] == "B"
+            ind <- replist[["natage"]][, "Yr"] >= startyr &
+              replist[["natage"]][, "Area"] == a &
+              replist[["natage"]][, "Bio_Pattern"] == b &
+              replist[["natage"]][, "Sex"] == 2 &
+              replist[["natage"]][, "Beg/Mid"] == "B"
             temp <- replist[["natage"]][ind, get.ages]
             natage.m <- natage.m + temp
           }
@@ -1049,11 +1451,19 @@ SSexecutivesummary <- function(replist,
 
         colnames(natage.m) <- paste0("Age", 0:(length(get.ages) - 1))
         natage.m <- data.frame(Year = startyr:max(fore), natage.m)
-        write.csv(natage.m, file.path(csv.dir, "natage_m.csv"), row.names = FALSE)
+        write.csv(
+          natage.m,
+          file.path(csv.dir, "natage_m.csv"),
+          row.names = FALSE
+        )
 
         colnames(natage.f) <- paste0("Age", 0:(length(get.ages) - 1))
         natage.f <- data.frame(Year = startyr:max(fore), natage.f)
-        write.csv(natage.f, file.path(csv.dir, "natage_f.csv"), row.names = FALSE)
+        write.csv(
+          natage.f,
+          file.path(csv.dir, "natage_f.csv"),
+          row.names = FALSE
+        )
       }
     } # end check for detailed output
   } # end check for es_only = TRUE
@@ -1084,7 +1494,11 @@ SSexecutivesummary <- function(replist,
         batage <- 0
         for (a in 1:nareas) {
           for (b in 1:nmorphs) {
-            ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
+            ind <- replist[["batage"]][, "Yr"] >= startyr &
+              replist[["batage"]][, "Area"] == a &
+              replist[["batage"]][, "Bio_Pattern"] == b &
+              replist[["batage"]][, "Sex"] == 1 &
+              replist[["batage"]][, "Beg/Mid"] == "B"
             temp <- replist[["batage"]][ind, get.ages]
             batage <- batage + temp
           }
@@ -1099,12 +1513,19 @@ SSexecutivesummary <- function(replist,
         batage.f <- batage.m <- 0
         for (a in 1:nareas) {
           for (b in 1:nmorphs) {
-            ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
+            ind <- replist[["batage"]][, "Yr"] >= startyr &
+              replist[["batage"]][, "Area"] == a &
+              replist[["batage"]][, "Bio_Pattern"] == b &
+              replist[["batage"]][, "Sex"] == 1 &
+              replist[["batage"]][, "Beg/Mid"] == "B"
             temp <- replist[["batage"]][ind, get.ages]
             batage.f <- batage.f + temp
 
-            ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b &
-              replist[["batage"]][, "Sex"] == 2 & replist[["batage"]][, "Beg/Mid"] == "B"
+            ind <- replist[["batage"]][, "Yr"] >= startyr &
+              replist[["batage"]][, "Area"] == a &
+              replist[["batage"]][, "Bio_Pattern"] == b &
+              replist[["batage"]][, "Sex"] == 2 &
+              replist[["batage"]][, "Beg/Mid"] == "B"
             temp <- replist[["batage"]][ind, get.ages]
             batage.m <- batage.m + temp
           }
@@ -1112,11 +1533,19 @@ SSexecutivesummary <- function(replist,
 
         colnames(batage.m) <- paste0("Age", 0:(length(get.ages) - 1))
         batage.m <- data.frame(Year = startyr:max(fore), batage.m)
-        write.csv(batage.m, file.path(csv.dir, "batage_m.csv"), row.names = FALSE)
+        write.csv(
+          batage.m,
+          file.path(csv.dir, "batage_m.csv"),
+          row.names = FALSE
+        )
 
         colnames(batage.f) <- paste0("Age", 0:(length(get.ages) - 1))
         batage.f <- data.frame(Year = startyr:max(fore), batage.f)
-        write.csv(batage.f, file.path(csv.dir, "batage_f.csv"), row.names = FALSE)
+        write.csv(
+          batage.f,
+          file.path(csv.dir, "batage_f.csv"),
+          row.names = FALSE
+        )
       }
     } # end check for detailed output
   } # end check for es_only == FALSE

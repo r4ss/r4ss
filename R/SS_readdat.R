@@ -22,11 +22,13 @@
 #' @export
 #' @family read/write functions
 
-SS_readdat <- function(file,
-                       version = "3.30",
-                       verbose = TRUE,
-                       echoall = lifecycle::deprecated(),
-                       section = NULL) {
+SS_readdat <- function(
+  file,
+  version = "3.30",
+  verbose = TRUE,
+  echoall = lifecycle::deprecated(),
+  section = NULL
+) {
   if (is.null(version)) {
     lifecycle::deprecate_warn(
       when = "1.44.1",
@@ -46,7 +48,8 @@ SS_readdat <- function(file,
   # call function for SS version 2.00 ----
   if (nver < 3) {
     datlist <- SS_readdat_2.00(
-      file = file, verbose = verbose,
+      file = file,
+      verbose = verbose,
       section = section
     )
   }
@@ -54,7 +57,8 @@ SS_readdat <- function(file,
   # call function for SS version 3.00 ----
   if ((nver >= 3) && (nver < 3.2)) {
     datlist <- SS_readdat_3.00(
-      file = file, verbose = verbose,
+      file = file,
+      verbose = verbose,
       section = section
     )
   }
@@ -62,14 +66,16 @@ SS_readdat <- function(file,
   # call function for SS version 3.24 ----
   if ((nver >= 3.2) && (nver < 3.3)) {
     datlist <- SS_readdat_3.24(
-      file = file, verbose = verbose,
+      file = file,
+      verbose = verbose,
       section = section
     )
   }
   # call function for SS version 3.30 ----
   if (nver >= 3.3) {
     datlist <- SS_readdat_3.30(
-      file = file, verbose = verbose,
+      file = file,
+      verbose = verbose,
       section = section
     )
   }

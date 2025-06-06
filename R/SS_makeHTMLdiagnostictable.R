@@ -14,12 +14,14 @@
 #' @author Christine Stawitz
 #' @export
 #' @seealso [SS_plots()], [SS_output()], [SS_html()]
-SS_makeHTMLdiagnostictable <- function(replist,
-                                       plotdir = NULL,
-                                       gradmax = 0.001,
-                                       ncor = 50,
-                                       cormax = 0.95,
-                                       cormin = 0.01) {
+SS_makeHTMLdiagnostictable <- function(
+  replist,
+  plotdir = NULL,
+  gradmax = 0.001,
+  ncor = 50,
+  cormax = 0.95,
+  cormin = 0.01
+) {
   # function to add scope association to table headers
   # to meet accessibility requirements
   add_scope_to_table_headers <- function(htmltable) {
@@ -58,37 +60,47 @@ SS_makeHTMLdiagnostictable <- function(replist,
   }
 
   # Highlight high gradients
-  if (!is.null(parchecks[["Gradient"]]) &&
-    all(!is.nan(parchecks[["Gradient"]]))) {
+  if (
+    !is.null(parchecks[["Gradient"]]) &&
+      all(!is.nan(parchecks[["Gradient"]]))
+  ) {
     parchecks <- parchecks[!is.na(parchecks[["Gradient"]]), ]
     parchecks[["Gradient"]] <-
-      kableExtra::cell_spec(parchecks[["Gradient"]],
+      kableExtra::cell_spec(
+        parchecks[["Gradient"]],
         "html",
-        color = ifelse(abs(parchecks[["Gradient"]]) >
-          gradmax, "darkred", "black")
+        color = ifelse(
+          abs(parchecks[["Gradient"]]) > gradmax,
+          "darkred",
+          "black"
+        )
       )
   }
   # Format table with parameter checks so high gradients or parameters
   # on bounds are shown in red
   parchecks[["Afterbound"]] <-
-    kableExtra::cell_spec(parchecks[["Afterbound"]],
+    kableExtra::cell_spec(
+      parchecks[["Afterbound"]],
       "html",
       color = ifelse(parchecks[["Afterbound"]] == "OK", "black", "darkred")
     )
   parchecks[["Status"]] <-
-    kableExtra::cell_spec(parchecks[["Status"]],
+    kableExtra::cell_spec(
+      parchecks[["Status"]],
       "html",
       color = ifelse(parchecks[["Status"]] == "OK", "black", "darkred")
     )
 
   # print 800px tall with scroll bar if more than 40 rows
-  table_height <- ifelse(nrow(parchecks) > 40,
+  table_height <- ifelse(
+    nrow(parchecks) > 40,
     "500px",
     paste0(200 + nrow(parchecks) * 20, "px")
   )
 
   # Write out table
-  parchecks <- kableExtra::kable(parchecks,
+  parchecks <- kableExtra::kable(
+    parchecks,
     format = "html",
     escape = FALSE,
     row.names = FALSE
@@ -99,15 +111,16 @@ SS_makeHTMLdiagnostictable <- function(replist,
 
   filename <- c(filename, "parameterchecks.html")
 
-  write(parchecks,
-    file = file.path(plotdir, filename[1])
+  write(parchecks, file = file.path(plotdir, filename[1]))
+  caption <- c(
+    caption,
+    paste(
+      "<b>Estimated parameters (excluding deviation parameters)</b><br>",
+      "Any parameter with a gradient value with an absolute value above",
+      gradmax,
+      "or a parameter on bounds is colored in red."
+    )
   )
-  caption <- c(caption, paste(
-    "<b>Estimated parameters (excluding deviation parameters)</b><br>",
-    "Any parameter with a gradient value with an absolute value above",
-    gradmax,
-    "or a parameter on bounds is colored in red."
-  ))
 
   ######################################################################
   # Second Table: high correlations
@@ -139,12 +152,17 @@ SS_makeHTMLdiagnostictable <- function(replist,
       head(ncor)
 
     high_cor_table[["corr"]] <-
-      kableExtra::cell_spec(high_cor_table[["corr"]],
+      kableExtra::cell_spec(
+        high_cor_table[["corr"]],
         "html",
-        color = ifelse(abs(high_cor_table[["corr"]]) >
-          cormax, "darkred", "black")
+        color = ifelse(
+          abs(high_cor_table[["corr"]]) > cormax,
+          "darkred",
+          "black"
+        )
       )
-    high_cor_table <- kableExtra::kable(high_cor_table,
+    high_cor_table <- kableExtra::kable(
+      high_cor_table,
       format = "html",
       escape = FALSE,
       row.names = FALSE
@@ -155,17 +173,22 @@ SS_makeHTMLdiagnostictable <- function(replist,
 
     # save table to file
     filename <- c(filename, "correlationcheck.html")
-    write(high_cor_table,
-      file = file.path(plotdir, "correlationcheck.html")
-    )
+    write(high_cor_table, file = file.path(plotdir, "correlationcheck.html"))
     # create caption
-    caption <- c(caption, paste(
-      "<b>Highly correlated parameter pairs</b><br>",
-      "Pairs of parameters with the ", ncor, " highest correlations,",
-      "sorted by absolute value of the correlation. Correlations",
-      "above", cormax, "(in absolute value) are colored in red.",
-      "These parameters may be confounded or may cause convergence issues."
-    ))
+    caption <- c(
+      caption,
+      paste(
+        "<b>Highly correlated parameter pairs</b><br>",
+        "Pairs of parameters with the ",
+        ncor,
+        " highest correlations,",
+        "sorted by absolute value of the correlation. Correlations",
+        "above",
+        cormax,
+        "(in absolute value) are colored in red.",
+        "These parameters may be confounded or may cause convergence issues."
+      )
+    )
   }
 
   ######################################################################
@@ -181,7 +204,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
           abs(cor_table[["corr"]][cor_table[["label.j"]] == par])
         )
       if (length(correlations) > 0) {
-        low_cor_table[["max_correlation"]][which(low_cor_table[["Parameter"]] == par)] <-
+        low_cor_table[["max_correlation"]][which(
+          low_cor_table[["Parameter"]] == par
+        )] <-
           max(correlations)
       }
     }
@@ -190,12 +215,17 @@ SS_makeHTMLdiagnostictable <- function(replist,
       head(ncor)
 
     low_cor_table[["max_correlation"]] <-
-      kableExtra::cell_spec(low_cor_table[["max_correlation"]],
+      kableExtra::cell_spec(
+        low_cor_table[["max_correlation"]],
         "html",
-        color = ifelse(abs(low_cor_table[["max_correlation"]]) <
-          cormin, "darkred", "black")
+        color = ifelse(
+          abs(low_cor_table[["max_correlation"]]) < cormin,
+          "darkred",
+          "black"
+        )
       )
-    low_cor_table <- kableExtra::kable(low_cor_table,
+    low_cor_table <- kableExtra::kable(
+      low_cor_table,
       format = "html",
       escape = FALSE,
       row.names = FALSE
@@ -206,18 +236,21 @@ SS_makeHTMLdiagnostictable <- function(replist,
 
     # save table to file
     filename <- c(filename, "lowcorrelationcheck.html")
-    write(low_cor_table,
-      file = file.path(plotdir, "lowcorrelationcheck.html")
-    )
+    write(low_cor_table, file = file.path(plotdir, "lowcorrelationcheck.html"))
     # create caption
-    caption <- c(caption, paste(
-      "<b>Parameters with low correlations</b><br>",
-      "Estimated parameters that are the least correlated with all other",
-      "parameters. The correlation value represents the maximum correlation",
-      "between the parameter in question and all other estimated parameters.",
-      "Uncorrelated parameters may not be playing a significant role in",
-      "the model. Maximum correlations below", cormin, "are colored in red."
-    ))
+    caption <- c(
+      caption,
+      paste(
+        "<b>Parameters with low correlations</b><br>",
+        "Estimated parameters that are the least correlated with all other",
+        "parameters. The correlation value represents the maximum correlation",
+        "between the parameter in question and all other estimated parameters.",
+        "Uncorrelated parameters may not be playing a significant role in",
+        "the model. Maximum correlations below",
+        cormin,
+        "are colored in red."
+      )
+    )
   }
   # Create data frame of filenames and captions to add to PlotInfoTable
   # to be used by SS_html()

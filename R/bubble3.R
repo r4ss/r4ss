@@ -39,13 +39,32 @@
 #' @param las Style of axis labels (see ?par for more info).
 #' @param allopen Should all bubbles be open (instead of just negative values)?
 #' @author Ian Stewart and Ian Taylor
-bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
-                    bg.open = gray(0.95, 0.3),
-                    legend = TRUE, legendloc = "top",
-                    legend.z = "default", legend.yadj = 1.1,
-                    main = "", cex.main = 1, xlab = "", ylab = "", minnbubble = 3,
-                    xlim = NULL, ylim = NULL, axis1 = TRUE, xlimextra = 1,
-                    add = FALSE, las = 1, allopen = TRUE) {
+bubble3 <- function(
+  x,
+  y,
+  z,
+  col = 1,
+  cexZ1 = 5,
+  maxsize = NULL,
+  do.sqrt = TRUE,
+  bg.open = gray(0.95, 0.3),
+  legend = TRUE,
+  legendloc = "top",
+  legend.z = "default",
+  legend.yadj = 1.1,
+  main = "",
+  cex.main = 1,
+  xlab = "",
+  ylab = "",
+  minnbubble = 3,
+  xlim = NULL,
+  ylim = NULL,
+  axis1 = TRUE,
+  xlimextra = 1,
+  add = FALSE,
+  las = 1,
+  allopen = TRUE
+) {
   # This function is vaguely based on bubble() from gstat.
   # Not sure anymore what happened to bubble2.
   if (diff(range(length(x), length(y), length(z))) > 0) {
@@ -148,9 +167,17 @@ bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
   if (!add) {
     if (is.null(ylim)) ylim <- range(y)
     ylim[2] <- legend.yadj * ylim[2]
-    plot(x, y,
-      type = "n", xlim = xlim, ylim = ylim, main = main, cex.main = cex.main,
-      xlab = xlab, ylab = ylab, axes = FALSE
+    plot(
+      x,
+      y,
+      type = "n",
+      xlim = xlim,
+      ylim = ylim,
+      main = main,
+      cex.main = cex.main,
+      xlab = xlab,
+      ylab = ylab,
+      axes = FALSE
     )
     xvec <- unique(x)
     if (axis1) axis(1, at = floor(unique(x))) # only printing integer values for years
@@ -167,8 +194,14 @@ bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
     legend.lab <- format(legend.z, scientific = FALSE, drop0trailing = TRUE)
     # add legend
     legend(
-      x = legendloc, legend = legend.lab, pch = legend.pch, col = col, pt.bg = legend.bg,
-      pt.cex = legend.cex, ncol = legend.n, bty = "n"
+      x = legendloc,
+      legend = legend.lab,
+      pch = legend.pch,
+      col = col,
+      pt.bg = legend.bg,
+      pt.cex = legend.cex,
+      ncol = legend.n,
+      bty = "n"
     )
     ## next line for debugging legends
     # print(data.frame(legendloc,legend.z,legend.pch,col,legend.cex,legend.n))

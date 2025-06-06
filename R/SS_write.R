@@ -42,10 +42,7 @@
 #'   dir = file.path(inputlist[["dir"]], "modified_inputs")
 #' )
 #' }
-SS_write <- function(inputlist,
-                     dir = "",
-                     overwrite = FALSE,
-                     verbose = FALSE) {
+SS_write <- function(inputlist, dir = "", overwrite = FALSE, verbose = FALSE) {
   # check for contents of inputlist
   check_inputlist(inputlist)
 
@@ -105,8 +102,7 @@ SS_write <- function(inputlist,
   }
 
   # write wtatage file (if needed)
-  if ("wtatage" %in% names(inputlist) &
-    inputlist[["ctl"]][["EmpiricalWAA"]]) {
+  if ("wtatage" %in% names(inputlist) & inputlist[["ctl"]][["EmpiricalWAA"]]) {
     r4ss::SS_writewtatage(
       mylist = inputlist[["wtatage"]],
       dir = dir,
@@ -124,12 +120,14 @@ SS_write <- function(inputlist,
     try(
       {
         if (inputlist[["ctl"]][["ReadVersion"]] == "3.24") {
-          par <- r4ss::SS_writepar_3.24(inputlist[["par"]],
+          par <- r4ss::SS_writepar_3.24(
+            inputlist[["par"]],
             outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
             verbose = verbose
           )
         } else {
-          par <- r4ss::SS_writepar_3.30(inputlist[["par"]],
+          par <- r4ss::SS_writepar_3.30(
+            inputlist[["par"]],
             outfile = file.path(dir, inputlist[["par"]][["parfile"]]),
             verbose = verbose
           )

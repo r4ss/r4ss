@@ -104,17 +104,19 @@ SS_RunJitter <-
 #' profilesummary[["pars"]]
 #' }
 #'
-jitter <- function(dir = NULL,
-                   mydir = lifecycle::deprecated(),
-                   Intern = lifecycle::deprecated(),
-                   Njitter,
-                   printlikes = TRUE,
-                   jitter_fraction = NULL,
-                   init_values_src = NULL,
-                   exe = "ss3",
-                   verbose = FALSE,
-                   extras = NULL,
-                   ...) {
+jitter <- function(
+  dir = NULL,
+  mydir = lifecycle::deprecated(),
+  Intern = lifecycle::deprecated(),
+  Njitter,
+  printlikes = TRUE,
+  jitter_fraction = NULL,
+  init_values_src = NULL,
+  exe = "ss3",
+  verbose = FALSE,
+  extras = NULL,
+  ...
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
@@ -151,16 +153,25 @@ jitter <- function(dir = NULL,
     if (!file.exists("Report.sso")) {
       message(
         "Copy output files from a converged run into\n",
-        dir, "\nprior to running jitter to enable easier comparisons."
+        dir,
+        "\nprior to running jitter to enable easier comparisons."
       )
     }
     message("Checking starter file")
   }
   # read starter file to test for non-zero jitter value
-  starter <- SS_readstarter(file = file.path(dir, "starter.ss"), verbose = verbose)
-  starter[["parmtrace"]] <- ifelse(starter[["parmtrace"]] == 0, 1, starter[["parmtrace"]])
+  starter <- SS_readstarter(
+    file = file.path(dir, "starter.ss"),
+    verbose = verbose
+  )
+  starter[["parmtrace"]] <- ifelse(
+    starter[["parmtrace"]] == 0,
+    1,
+    starter[["parmtrace"]]
+  )
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
-    stop("Change the jitter value in the starter file to be > 0\n",
+    stop(
+      "Change the jitter value in the starter file to be > 0\n",
       "or change the 'jitter_fraction' argument to be > 0.",
       call. = FALSE
     )
@@ -194,20 +205,26 @@ jitter <- function(dir = NULL,
   )
 
   # rename output files and move them to base model directory
-  to_copy <- purrr::map(Njitter, ~ list.files(
-    path = file.path(dir, paste0("jitter", .x)),
-    pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
-  ))
-
-  new_name <- purrr::imap(to_copy, ~ gsub(
-    pattern = "par",
-    replacement = "par_",
-    x = gsub(
-      pattern = "\\.sso|(\\.par)",
-      replacement = paste0("\\1", .y, ".sso"),
-      x = .x
+  to_copy <- purrr::map(
+    Njitter,
+    ~ list.files(
+      path = file.path(dir, paste0("jitter", .x)),
+      pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
     )
-  ))
+  )
+
+  new_name <- purrr::imap(
+    to_copy,
+    ~ gsub(
+      pattern = "par",
+      replacement = "par_",
+      x = gsub(
+        pattern = "\\.sso|(\\.par)",
+        replacement = paste0("\\1", .y, ".sso"),
+        x = .x
+      )
+    )
+  )
 
   purrr::pwalk(
     list(Njitter, to_copy, new_name),
@@ -224,7 +241,10 @@ jitter <- function(dir = NULL,
   }
 
   # delete jitter model directory
-  purrr::walk(Njitter, ~ unlink(file.path(dir, paste0("jitter", .x)), recursive = TRUE))
+  purrr::walk(
+    Njitter,
+    ~ unlink(file.path(dir, paste0("jitter", .x)), recursive = TRUE)
+  )
 
   # only necessary if the file_increment line is maintained.
   pattern0 <- list.files(path = dir, pattern = "[a-z_]0\\.sso")
@@ -259,18 +279,23 @@ jitter <- function(dir = NULL,
 #'
 #' @return Negative log-likelihood of one jittered model
 #'
-iterate_jitter <- function(i,
-                           printlikes = TRUE,
-                           exe = "ss3",
-                           verbose = FALSE,
-                           init_values_src = 0,
-                           dir = NULL,
-                           extras = NULL,
-                           ...) {
+iterate_jitter <- function(
+  i,
+  printlikes = TRUE,
+  exe = "ss3",
+  verbose = FALSE,
+  init_values_src = 0,
+  dir = NULL,
+  extras = NULL,
+  ...
+) {
   jitter_dir <- file.path(dir, paste0("jitter", i))
   copy_SS_inputs(
-    dir.old = dir, dir.new = jitter_dir, overwrite = TRUE,
-    verbose = verbose, copy_exe = TRUE,
+    dir.old = dir,
+    dir.new = jitter_dir,
+    overwrite = TRUE,
+    verbose = verbose,
+    copy_exe = TRUE,
     copy_par = as.logical(init_values_src)
   )
 
@@ -284,19 +309,36 @@ iterate_jitter <- function(i,
   }
 
   # run model
-  r4ss::run(dir = jitter_dir, exe = exe, verbose = verbose, extras = extras, ...)
+  r4ss::run(
+    dir = jitter_dir,
+    exe = exe,
+    verbose = verbose,
+    extras = extras,
+    ...
+  )
   # Only save stuff if it converged
   if ("Report.sso" %in% list.files(path = jitter_dir)) {
     rep <- SS_read_summary(file.path(jitter_dir, "ss_summary.sso"))
     if (is.null(rep)) {
       report <- SS_output(
-        dir = jitter_dir, forecast = FALSE,
-        covar = FALSE, NoCompOK = TRUE,
-        verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose
+        dir = jitter_dir,
+        forecast = FALSE,
+        covar = FALSE,
+        NoCompOK = TRUE,
+        verbose = verbose,
+        warn = verbose,
+        hidewarn = !verbose,
+        printstats = verbose
       )
-      like <- report[["likelihoods_used"]][row.names(report[["likelihoods_used"]]) == "TOTAL", "values"]
+      like <- report[["likelihoods_used"]][
+        row.names(report[["likelihoods_used"]]) == "TOTAL",
+        "values"
+      ]
     } else {
-      like <- rep[["likelihoods"]][grep("TOTAL", row.names(rep[["likelihoods"]])), 1]
+      like <- rep[["likelihoods"]][
+        grep("TOTAL", row.names(rep[["likelihoods"]])),
+        1
+      ]
     }
     if (printlikes) {
       message("Likelihood for jitter ", i, " = ", like)

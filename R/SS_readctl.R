@@ -69,29 +69,31 @@
 #'   verbose = FALSE,
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
-SS_readctl <- function(file,
-                       version = "3.30",
-                       verbose = FALSE,
-                       use_datlist = TRUE,
-                       datlist = file.path(dirname(file), "data_echo.ss_new"),
-                       ## Parameters that are not defined in control file
-                       nseas = NULL,
-                       N_areas = NULL,
-                       Nages = NULL,
-                       Nsexes = NULL,
-                       Npopbins = NA,
-                       Nfleets = NULL,
-                       Nfleet = NULL,
-                       Do_AgeKey = NULL,
-                       Nsurveys = NULL,
-                       N_tag_groups = NULL,
-                       N_CPUE_obs = NULL,
-                       catch_mult_fleets = NULL,
-                       predM_fleets = NULL,
-                       Ntag_fleets = NULL,
-                       N_rows_equil_catch = NULL,
-                       N_dirichlet_parms = NULL,
-                       ptype = lifecycle::deprecated()) {
+SS_readctl <- function(
+  file,
+  version = "3.30",
+  verbose = FALSE,
+  use_datlist = TRUE,
+  datlist = file.path(dirname(file), "data_echo.ss_new"),
+  ## Parameters that are not defined in control file
+  nseas = NULL,
+  N_areas = NULL,
+  Nages = NULL,
+  Nsexes = NULL,
+  Npopbins = NA,
+  Nfleets = NULL,
+  Nfleet = NULL,
+  Do_AgeKey = NULL,
+  Nsurveys = NULL,
+  N_tag_groups = NULL,
+  N_CPUE_obs = NULL,
+  catch_mult_fleets = NULL,
+  predM_fleets = NULL,
+  Ntag_fleets = NULL,
+  N_rows_equil_catch = NULL,
+  N_dirichlet_parms = NULL,
+  ptype = lifecycle::deprecated()
+) {
   # warn about soft deprecated arguments ----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(ptype)) {
@@ -116,7 +118,9 @@ SS_readctl <- function(file,
   # call function for SS version 3.24
   if ((nver >= 3.2) && (nver < 3.3)) {
     if (isTRUE(!is.null(Nfleets))) {
-      stop("SS v3.24 uses Nfleet and Nsurveys but a value has been input for Nfleets instead")
+      stop(
+        "SS v3.24 uses Nfleet and Nsurveys but a value has been input for Nfleets instead"
+      )
     }
     ctllist <- SS_readctl_3.24(
       file = file,
@@ -139,7 +143,9 @@ SS_readctl <- function(file,
   # call function for SS version 3.30
   if (nver >= 3.3) {
     if (isTRUE(!is.null(Nfleet) | !is.null(Nsurveys))) {
-      stop("SS v3.30 uses Nfleets but values have been input for Nfleet and/or Nsurveys")
+      stop(
+        "SS v3.30 uses Nfleets but values have been input for Nfleet and/or Nsurveys"
+      )
     }
     ctllist <- SS_readctl_3.30(
       file = file,

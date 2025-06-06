@@ -10,8 +10,11 @@ dir.create(temp_path, showWarnings = FALSE)
 # the line below if you want to keep artifacts for troubleshooting purposes)
 on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
-out <- SS_output(file.path(example_path, "simple_small"),
-  verbose = FALSE, printstats = FALSE, hidewarn = TRUE
+out <- SS_output(
+  file.path(example_path, "simple_small"),
+  verbose = FALSE,
+  printstats = FALSE,
+  hidewarn = TRUE
 )
 
 test_that("TSCplot function runs", {

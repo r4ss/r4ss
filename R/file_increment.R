@@ -17,18 +17,27 @@
 #' @returns Invisibly returns a vector of logical values specifying
 #' whether or not the file was successfully renamed.
 #' @seealso [jitter()]
-file_increment <- function(path, i, verbose = FALSE,
-                           pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$") {
+file_increment <- function(
+  path,
+  i,
+  verbose = FALSE,
+  pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
+) {
   if (verbose) {
     message("Renaming output files to have names like Report", i, ".sso")
   }
 
   ignore <- file.copy(
     from = dir(path = path, pattern = pattern, full.names = TRUE),
-    to = gsub("par", "par_", gsub(
-      "\\.sso|(\\.par)",
-      paste0("\\1", i, ".sso"), dir(path = path, pattern = pattern, full.names = TRUE)
-    ))
+    to = gsub(
+      "par",
+      "par_",
+      gsub(
+        "\\.sso|(\\.par)",
+        paste0("\\1", i, ".sso"),
+        dir(path = path, pattern = pattern, full.names = TRUE)
+      )
+    )
   )
   return(invisible(ignore))
 }

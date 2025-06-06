@@ -20,11 +20,12 @@
 #' @author Ian G. Taylor
 
 table_parcounts <- function(
-    replist,
-    inputs = NULL,
-    dir = NULL,
-    caption = "Estimated parameters in the model.",
-    verbose = TRUE) {
+  replist,
+  inputs = NULL,
+  dir = NULL,
+  caption = "Estimated parameters in the model.",
+  verbose = TRUE
+) {
   # check inputs
   check_replist(replist)
 
@@ -147,9 +148,12 @@ table_parcounts <- function(
 
   if (count1 != count2) {
     warnings(
-      "Parameter count is off by ", count2 - count1,
-      "\nCount in table: ", count1,
-      "\nCount in model: ", count2
+      "Parameter count is off by ",
+      count2 - count1,
+      "\nCount in table: ",
+      count1,
+      "\nCount in model: ",
+      count2
     )
   }
 
@@ -168,7 +172,9 @@ table_parcounts <- function(
   )
   # write the table to an rda file
   if (verbose) {
-    cli::cli_alert_info("writing table to {file.path(rda_dir, 'table_parcounts.rda')}")
+    cli::cli_alert_info(
+      "writing table to {file.path(rda_dir, 'table_parcounts.rda')}"
+    )
   }
   save(table_parcounts, file = file.path(rda_dir, "table_parcounts.rda"))
 
