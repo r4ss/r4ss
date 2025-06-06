@@ -19,10 +19,9 @@
 #' @export
 
 SS_decision_table_stuff <- function(
-  replist,
-  yrs = 2025:2036,
-  digits = c(0, 0, 3)
-) {
+    replist,
+    yrs = 2025:2036,
+    digits = c(0, 0, 3)) {
   unfished <- replist[["derived_quants"]]["SSB_Virgin", "Value"]
   replist[["timeseries"]] |>
     dplyr::filter(Yr %in% yrs) |>

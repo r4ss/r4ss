@@ -27,16 +27,15 @@
 #' @seealso [SS_plots()], [SS_output()]
 #'
 SS_html <- function(
-  replist = NULL,
-  plotdir = NULL,
-  plotInfoTable = NULL,
-  title = "SS Output",
-  width = 500,
-  openfile = TRUE,
-  multimodel = FALSE,
-  filenotes = NULL,
-  verbose = TRUE
-) {
+    replist = NULL,
+    plotdir = NULL,
+    plotInfoTable = NULL,
+    title = "SS Output",
+    width = 500,
+    openfile = TRUE,
+    multimodel = FALSE,
+    filenotes = NULL,
+    verbose = TRUE) {
   if (verbose) {
     message(
       "Running 'SS_html':\n",

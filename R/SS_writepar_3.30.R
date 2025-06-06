@@ -19,11 +19,10 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()]
 SS_writepar_3.30 <- function(
-  parlist,
-  outfile,
-  overwrite = TRUE,
-  verbose = FALSE
-) {
+    parlist,
+    outfile,
+    overwrite = TRUE,
+    verbose = FALSE) {
   # function to write Stock Synthesis parameter files
   if (verbose) message("running SS_writepar_3.30")
 

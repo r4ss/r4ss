@@ -54,19 +54,18 @@
 #' )
 #' }
 plot_twopanel_comparison <- function(
-  mods,
-  legendlabels = NULL,
-  filename = NULL,
-  dir = NULL,
-  subplot1 = NULL,
-  subplot2 = NULL,
-  hessian = TRUE,
-  endyrvec = 2023,
-  ylimAdj1 = 1.05,
-  ylimAdj2 = 1.05,
-  verbose = TRUE,
-  ...
-) {
+    mods,
+    legendlabels = NULL,
+    filename = NULL,
+    dir = NULL,
+    subplot1 = NULL,
+    subplot2 = NULL,
+    hessian = TRUE,
+    endyrvec = 2023,
+    ylimAdj1 = 1.05,
+    ylimAdj2 = 1.05,
+    verbose = TRUE,
+    ...) {
   summary <- SSsummarize(mods, verbose = FALSE)
 
   # default file name

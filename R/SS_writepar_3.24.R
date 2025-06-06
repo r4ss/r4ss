@@ -18,11 +18,10 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_writepar_3.24 <- function(
-  parlist,
-  outfile,
-  overwrite = TRUE,
-  verbose = FALSE
-) {
+    parlist,
+    outfile,
+    overwrite = TRUE,
+    verbose = FALSE) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",

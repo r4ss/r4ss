@@ -34,21 +34,20 @@
 #' @seealso [SS_output()], [SSplotMovementRates()]
 SSplotMovementMap <-
   function(
-    replist = NULL,
-    xlim,
-    ylim,
-    polygonlist,
-    colvec,
-    land = "grey",
-    xytable = NULL,
-    moveage = 5,
-    moveseas = 1,
-    lwdscale = 5,
-    legend = TRUE,
-    title = NULL,
-    areanames = NULL,
-    cex = 1
-  ) {
+      replist = NULL,
+      xlim,
+      ylim,
+      polygonlist,
+      colvec,
+      land = "grey",
+      xytable = NULL,
+      moveage = 5,
+      moveseas = 1,
+      lwdscale = 5,
+      legend = TRUE,
+      title = NULL,
+      areanames = NULL,
+      cex = 1) {
     # plot movement rates on map to help visualize patterns
 
     par(mar = c(3, 3, 3, 3))

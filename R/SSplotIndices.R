@@ -82,58 +82,57 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotIndices <-
   function(
-    replist,
-    subplots = c(1:10, 12), # IGT 2021/4/15: not sure why 11 is skipped
-    plot = TRUE,
-    print = FALSE,
-    fleets = "all",
-    fleetnames = "default",
-    smooth = TRUE,
-    add = FALSE,
-    datplot = TRUE,
-    labels = c(
-      "Year", # 1
-      "Index", # 2
-      "Observed index", # 3
-      "Expected index", # 4
-      "Log index", # 5
-      "Log observed index", # 6
-      "Log expected index", # 7
-      "Standardized index", # 8
-      "Catchability (Q)", # 9
-      "Time-varying catchability", # 10
-      "Vulnerable biomass", # 11
-      "Catchability vs. vulnerable biomass", # 12
-      "Residual", # 13
-      "Deviation"
-    ), # 14
-    fleetcols = NULL,
-    col1 = "default",
-    col2 = "default",
-    col3 = "blue",
-    col4 = "red",
-    pch1 = 21,
-    pch2 = 16,
-    cex = 1,
-    bg = "white",
-    legend = TRUE,
-    legendloc = "topright",
-    seasnames = NULL,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    mainTitle = FALSE,
-    plotdir = "default",
-    minyr = NULL,
-    maxyr = NULL,
-    maximum_ymax_ratio = Inf,
-    show_input_uncertainty = TRUE,
-    verbose = TRUE,
-    ...
-  ) {
+      replist,
+      subplots = c(1:10, 12), # IGT 2021/4/15: not sure why 11 is skipped
+      plot = TRUE,
+      print = FALSE,
+      fleets = "all",
+      fleetnames = "default",
+      smooth = TRUE,
+      add = FALSE,
+      datplot = TRUE,
+      labels = c(
+        "Year", # 1
+        "Index", # 2
+        "Observed index", # 3
+        "Expected index", # 4
+        "Log index", # 5
+        "Log observed index", # 6
+        "Log expected index", # 7
+        "Standardized index", # 8
+        "Catchability (Q)", # 9
+        "Time-varying catchability", # 10
+        "Vulnerable biomass", # 11
+        "Catchability vs. vulnerable biomass", # 12
+        "Residual", # 13
+        "Deviation"
+      ), # 14
+      fleetcols = NULL,
+      col1 = "default",
+      col2 = "default",
+      col3 = "blue",
+      col4 = "red",
+      pch1 = 21,
+      pch2 = 16,
+      cex = 1,
+      bg = "white",
+      legend = TRUE,
+      legendloc = "topright",
+      seasnames = NULL,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      mainTitle = FALSE,
+      plotdir = "default",
+      minyr = NULL,
+      maxyr = NULL,
+      maximum_ymax_ratio = Inf,
+      show_input_uncertainty = TRUE,
+      verbose = TRUE,
+      ...) {
     # get some quantities from replist
     cpue <- replist[["cpue"]]
     SS_versionNumeric <- replist[["SS_versionNumeric"]]

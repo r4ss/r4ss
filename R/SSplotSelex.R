@@ -100,49 +100,48 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotSelex <-
   function(
-    replist,
-    infotable = NULL,
-    fleets = "all",
-    fleetnames = "default",
-    sizefactors = c("Lsel"),
-    agefactors = c("Asel", "Asel2"),
-    years = "endyr",
-    minyr = -Inf,
-    maxyr = Inf,
-    season = 1,
-    sexes = "all",
-    selexlines = 1:6,
-    subplots = 1:25,
-    skipAgeSelex10 = TRUE,
-    plot = TRUE,
-    print = FALSE,
-    add = FALSE,
-    labels = c(
-      "Length (cm)", # 1
-      "Age (yr)", # 2
-      "Year", # 3
-      "Selectivity", # 4
-      "Retention", # 5
-      "Discard mortality"
-    ), # 6
-    col1 = "red",
-    col2 = "blue",
-    lwd = 2,
-    spacepoints = 5,
-    staggerpoints = 1,
-    legendloc = "bottomright",
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    mainTitle = TRUE,
-    mar = NULL,
-    plotdir = "default",
-    verbose = TRUE,
-    subplot = lifecycle::deprecated()
-  ) {
+      replist,
+      infotable = NULL,
+      fleets = "all",
+      fleetnames = "default",
+      sizefactors = c("Lsel"),
+      agefactors = c("Asel", "Asel2"),
+      years = "endyr",
+      minyr = -Inf,
+      maxyr = Inf,
+      season = 1,
+      sexes = "all",
+      selexlines = 1:6,
+      subplots = 1:25,
+      skipAgeSelex10 = TRUE,
+      plot = TRUE,
+      print = FALSE,
+      add = FALSE,
+      labels = c(
+        "Length (cm)", # 1
+        "Age (yr)", # 2
+        "Year", # 3
+        "Selectivity", # 4
+        "Retention", # 5
+        "Discard mortality"
+      ), # 6
+      col1 = "red",
+      col2 = "blue",
+      lwd = 2,
+      spacepoints = 5,
+      staggerpoints = 1,
+      legendloc = "bottomright",
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      mainTitle = TRUE,
+      mar = NULL,
+      plotdir = "default",
+      verbose = TRUE,
+      subplot = lifecycle::deprecated()) {
     # Warning about deprecated arguments. Should be removed after 1 release.
     if (lifecycle::is_present(subplot)) {
       lifecycle::deprecate_warn(

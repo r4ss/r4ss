@@ -54,26 +54,25 @@
 #'
 SS_output <-
   function(
-    dir = "C:/myfiles/mymodels/myrun/",
-    dir.mcmc = NULL,
-    repfile = "Report.sso",
-    compfile = "CompReport.sso",
-    covarfile = "covar.sso",
-    forefile = "Forecast-report.sso",
-    wtfile = "wtatage.ss_new",
-    warnfile = "warning.sso",
-    ncols = lifecycle::deprecated(),
-    forecast = TRUE,
-    warn = TRUE,
-    covar = TRUE,
-    readwt = TRUE,
-    verbose = TRUE,
-    printstats = TRUE,
-    hidewarn = FALSE,
-    NoCompOK = TRUE,
-    aalmaxbinrange = 4,
-    SpawnOutputLabel = "Spawning output"
-  ) {
+      dir = "C:/myfiles/mymodels/myrun/",
+      dir.mcmc = NULL,
+      repfile = "Report.sso",
+      compfile = "CompReport.sso",
+      covarfile = "covar.sso",
+      forefile = "Forecast-report.sso",
+      wtfile = "wtatage.ss_new",
+      warnfile = "warning.sso",
+      ncols = lifecycle::deprecated(),
+      forecast = TRUE,
+      warn = TRUE,
+      covar = TRUE,
+      readwt = TRUE,
+      verbose = TRUE,
+      printstats = TRUE,
+      hidewarn = FALSE,
+      NoCompOK = TRUE,
+      aalmaxbinrange = 4,
+      SpawnOutputLabel = "Spawning output") {
     flush.console()
 
     ###########################################################################
@@ -99,22 +98,20 @@ SS_output <-
       )
     }
 
-    match_report_table <- function(
-      string1,
-      adjust1,
-      string2 = NULL,
-      adjust2 = -1,
-      which_blank = 1,
-      cols = "nonblank",
-      matchcol1 = 1,
-      matchcol2 = 1,
-      obj = rawrep,
-      blank_lines = rep_blank_or_hash_lines,
-      substr1 = TRUE,
-      substr2 = TRUE,
-      header = FALSE,
-      type.convert = FALSE
-    ) {
+    match_report_table <- function(string1,
+                                   adjust1,
+                                   string2 = NULL,
+                                   adjust2 = -1,
+                                   which_blank = 1,
+                                   cols = "nonblank",
+                                   matchcol1 = 1,
+                                   matchcol2 = 1,
+                                   obj = rawrep,
+                                   blank_lines = rep_blank_or_hash_lines,
+                                   substr1 = TRUE,
+                                   substr2 = TRUE,
+                                   header = FALSE,
+                                   type.convert = FALSE) {
       # extract a table from Report.sso by matching a keyword
       #
       # return a subset of values from the report file (or other file)
@@ -1704,7 +1701,8 @@ SS_output <-
     }
     stats[["table_of_phases"]] <- table(parameters[["Phase"]])
     # subset columns for printed table of estimated parameters
-    estimated_non_dev_parameters <- pars[,
+    estimated_non_dev_parameters <- pars[
+      ,
       names(pars) %in%
         c(
           "Value",
@@ -2893,8 +2891,8 @@ SS_output <-
           if (CompError == 2) {
             Nsamp_DM <-
               dbase[["Nsamp_adj"]][sub] *
-              (1 + beta) /
-              (dbase[["Nsamp_adj"]][sub] + beta)
+                (1 + beta) /
+                (dbase[["Nsamp_adj"]][sub] + beta)
           }
           Nsamp_DM
         } # end get_DM_sample_size()
@@ -3648,7 +3646,8 @@ SS_output <-
 
     # total landings
     ls <- nrow(ts) - 1
-    totretainedmat <- as.matrix(ts[,
+    totretainedmat <- as.matrix(ts[
+      ,
       substr(
         names(ts),
         1,
@@ -3660,7 +3659,8 @@ SS_output <-
     ts[["totretained"]][3:ls] <- rowSums(totretainedmat)[3:ls]
 
     # total catch
-    totcatchmat <- as.matrix(ts[,
+    totcatchmat <- as.matrix(ts[
+      ,
       substr(
         names(ts),
         1,
@@ -3677,7 +3677,8 @@ SS_output <-
     } else {
       stringmatch <- "F:_"
     }
-    Hrates <- as.matrix(ts[,
+    Hrates <- as.matrix(ts[
+      ,
       substr(
         names(ts),
         1,
@@ -4391,7 +4392,7 @@ SS_output <-
           # loop over ages to convert values to numeric
           ALKtemp <- type.convert(ALKtemp, as.is = TRUE)
           # fill in appropriate slice of array
-          ALK[,, i] <- as.matrix(ALKtemp)
+          ALK[, , i] <- as.matrix(ALKtemp)
           # get info on each matrix (such as "Seas: 1 Sub_Seas: 1 Morph: 1")
           Matrix.Info <- rawALK[starts[i] - 2, ]
           # filter out empty elements

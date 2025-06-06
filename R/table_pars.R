@@ -10,12 +10,11 @@
 #' @export
 
 table_pars <- function(
-  replist,
-  dir = NULL,
-  rows = NULL,
-  caption = "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
-  verbose = TRUE
-) {
+    replist,
+    dir = NULL,
+    rows = NULL,
+    caption = "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
+    verbose = TRUE) {
   # check the inputs
   check_replist(replist)
   # create the rda_dir

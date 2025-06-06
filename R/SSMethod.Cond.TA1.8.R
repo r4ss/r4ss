@@ -72,20 +72,19 @@
 #'
 SSMethod.Cond.TA1.8 <-
   function(
-    fit,
-    fleet,
-    part = 0:2,
-    seas = NULL,
-    plotit = TRUE,
-    printit = FALSE,
-    datonly = FALSE,
-    plotadj = !datonly,
-    maxpanel = 1000,
-    FullDiagOut = FALSE,
-    ShowVersionB = FALSE,
-    fleetnames = NULL,
-    add = FALSE
-  ) {
+      fit,
+      fleet,
+      part = 0:2,
+      seas = NULL,
+      plotit = TRUE,
+      printit = FALSE,
+      datonly = FALSE,
+      plotadj = !datonly,
+      maxpanel = 1000,
+      FullDiagOut = FALSE,
+      ShowVersionB = FALSE,
+      fleetnames = NULL,
+      add = FALSE) {
     # Check the type is correct and the pick.sex is correct
     is.in <- function(x, y) !is.na(match(x, y))
 

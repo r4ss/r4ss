@@ -40,43 +40,42 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotTags <-
   function(
-    replist = replist,
-    subplots = 1:10,
-    latency = NULL,
-    taggroups = NULL,
-    rows = 1,
-    cols = 1,
-    tagrows = 3,
-    tagcols = 3,
-    plot = TRUE,
-    print = FALSE,
-    pntscalar = 2.6,
-    minnbubble = 8,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    ptsize = 10,
-    res = 300,
-    cex.main = 1,
-    col1 = rgb(0, 0, 1, .7),
-    col2 = "red",
-    col3 = "grey95",
-    col4 = "grey70",
-    labels = c(
-      "Year", # 1
-      "Frequency", # 2
-      "Tag Group", # 3
-      "Fit to tag recaptures by tag group", # 4
-      "Post-latency tag recaptures aggregated across tag groups", # 5
-      "Observed tag recaptures by year and tag group", # 6
-      "Residuals for post-latency tag recaptures: (obs-exp)/sqrt(exp)", # 7
-      "Observed and expected post-latency tag recaptures by year and tag group", # 8
-      "Summarized observed and expected numbers of recaptures by fleet", # 9
-      "Pearson residuals by tag group"
-    ), # 10
-    plotdir = "default",
-    verbose = TRUE
-  ) {
+      replist = replist,
+      subplots = 1:10,
+      latency = NULL,
+      taggroups = NULL,
+      rows = 1,
+      cols = 1,
+      tagrows = 3,
+      tagcols = 3,
+      plot = TRUE,
+      print = FALSE,
+      pntscalar = 2.6,
+      minnbubble = 8,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      ptsize = 10,
+      res = 300,
+      cex.main = 1,
+      col1 = rgb(0, 0, 1, .7),
+      col2 = "red",
+      col3 = "grey95",
+      col4 = "grey70",
+      labels = c(
+        "Year", # 1
+        "Frequency", # 2
+        "Tag Group", # 3
+        "Fit to tag recaptures by tag group", # 4
+        "Post-latency tag recaptures aggregated across tag groups", # 5
+        "Observed tag recaptures by year and tag group", # 6
+        "Residuals for post-latency tag recaptures: (obs-exp)/sqrt(exp)", # 7
+        "Observed and expected post-latency tag recaptures by year and tag group", # 8
+        "Summarized observed and expected numbers of recaptures by fleet", # 9
+        "Pearson residuals by tag group"
+      ), # 10
+      plotdir = "default",
+      verbose = TRUE) {
     # table to store information on each plot
     plotinfo <- NULL
 

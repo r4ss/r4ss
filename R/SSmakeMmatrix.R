@@ -12,12 +12,11 @@
 #' @author Ian Taylor
 #' @export
 SSmakeMmatrix <- function(
-  mat,
-  startyr,
-  outfile = NULL,
-  overwrite = FALSE,
-  yrs.in.columns = TRUE
-) {
+    mat,
+    startyr,
+    outfile = NULL,
+    overwrite = FALSE,
+    yrs.in.columns = TRUE) {
   # A function for converting a matrix of natural mortality values
   # into inputs for Stock Synthesis
   #

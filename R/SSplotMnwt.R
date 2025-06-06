@@ -31,34 +31,33 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotMnwt <-
   function(
-    replist,
-    subplots = 1:2,
-    ymax = NULL,
-    plot = TRUE,
-    print = FALSE,
-    fleets = "all",
-    fleetnames = "default",
-    datplot = FALSE,
-    labels = c(
-      "Year", # 1
-      "discard", # 2
-      "retained catch", # 3
-      "whole catch", # 4
-      "Mean individual body weight (kg)", # 5
-      "Mean weight in", # 6
-      "for"
-    ), # 7
-    col1 = "blue",
-    col2 = "black",
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    plotdir = "default",
-    verbose = TRUE
-  ) {
+      replist,
+      subplots = 1:2,
+      ymax = NULL,
+      plot = TRUE,
+      print = FALSE,
+      fleets = "all",
+      fleetnames = "default",
+      datplot = FALSE,
+      labels = c(
+        "Year", # 1
+        "discard", # 2
+        "retained catch", # 3
+        "whole catch", # 4
+        "Mean individual body weight (kg)", # 5
+        "Mean weight in", # 6
+        "for"
+      ), # 7
+      col1 = "blue",
+      col2 = "black",
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      plotdir = "default",
+      verbose = TRUE) {
     # table to store information on each plot
     plotinfo <- NULL
 

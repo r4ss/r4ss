@@ -71,22 +71,21 @@
 #' }
 #'
 NegLogInt_Fn <- function(
-  dir = getwd(),
-  File = lifecycle::deprecated(),
-  Input_SD_Group_Vec,
-  CTL_linenum_List,
-  ESTPAR_num_List,
-  PAR_num_Vec,
-  Int_Group_List = list(1),
-  StartFromPar = TRUE,
-  Intern = lifecycle::deprecated(),
-  ReDoBiasRamp = FALSE,
-  BiasRamp_linenum_Vec = NULL,
-  CTL_linenum_Type = NULL,
-  exe = "ss3",
-  verbose = FALSE,
-  ...
-) {
+    dir = getwd(),
+    File = lifecycle::deprecated(),
+    Input_SD_Group_Vec,
+    CTL_linenum_List,
+    ESTPAR_num_List,
+    PAR_num_Vec,
+    Int_Group_List = list(1),
+    StartFromPar = TRUE,
+    Intern = lifecycle::deprecated(),
+    ReDoBiasRamp = FALSE,
+    BiasRamp_linenum_Vec = NULL,
+    CTL_linenum_Type = NULL,
+    exe = "ss3",
+    verbose = FALSE,
+    ...) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {

@@ -93,12 +93,11 @@ get_par_name <- function(dir, verbose = TRUE) {
 #' @export
 #'
 sspar <- function(
-  mfrow = c(1, 1),
-  plot.cex = 1,
-  mai = c(0.55, 0.6, 0.1, .1),
-  omi = c(0., 0., 0., 0) + 0.1,
-  labs = TRUE
-) {
+    mfrow = c(1, 1),
+    plot.cex = 1,
+    mai = c(0.55, 0.6, 0.1, .1),
+    omi = c(0., 0., 0., 0) + 0.1,
+    labs = TRUE) {
   if (labs == F) {
     mai <- c(0.25, 0.25, 0.15, .15)
     omi <- c(0.3, 0.35, 0.2, 0.2)
@@ -219,19 +218,18 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #'
 #'
 add_legend <- function(
-  legendlabels,
-  legendloc = "topleft",
-  legendorder = NULL,
-  legendncol = 1,
-  legendcex = 1,
-  legendsp = 0.9,
-  col = NULL,
-  pch = NULL,
-  pt.cex = 0.7,
-  lty = 1,
-  lwd = 2,
-  type = "l"
-) {
+    legendlabels,
+    legendloc = "topleft",
+    legendorder = NULL,
+    legendncol = 1,
+    legendcex = 1,
+    legendsp = 0.9,
+    col = NULL,
+    pch = NULL,
+    pt.cex = 0.7,
+    lty = 1,
+    lwd = 2,
+    type = "l") {
   if (is.null(legendorder)) {
     legendorder <- seq_along(legendlabels)
   }
@@ -317,18 +315,17 @@ rich.colors.short <- function(n, alpha = 1) {
 #' @export
 
 save_png <- function(
-  plotinfo,
-  file,
-  plotdir,
-  pwidth,
-  pheight,
-  punits,
-  res,
-  ptsize,
-  caption = NA,
-  alt_text = NA,
-  filenameprefix = NA
-) {
+    plotinfo,
+    file,
+    plotdir,
+    pwidth,
+    pheight,
+    punits,
+    res,
+    ptsize,
+    caption = NA,
+    alt_text = NA,
+    filenameprefix = NA) {
   # replace any slashes (as in 'Eggs/kg_inter_Fem')
   file <- gsub(pattern = "/", replacement = "_per_", x = file, fixed = TRUE)
   if (!is.na(filenameprefix)) {
@@ -448,13 +445,15 @@ calc_var_adjust <- function(data, type = c("CV", "sd")) {
   calc[, "sd_out"] <- sqrt(calc[, "sd_out"])
   calc[, "CV_out"] <- calc[, "sd_out"] / calc[, "mean_out"]
   # calculated the CV or sd that needs to be added to get a match
-  calc[["added"]] <- switch(
-    type,
+  calc[["added"]] <- switch(type,
     CV = calc[, "CV_out"] - calc[, "CV_in"],
     sd = calc[, "sd_out"] - calc[, "sd_in"]
   )
   # report the "type" used in the control file table of variance adjustments
-  calc[["type"]] <- switch(type, CV = 3, sd = 2)
+  calc[["type"]] <- switch(type,
+    CV = 3,
+    sd = 2
+  )
   # return the table
   return(calc)
 }

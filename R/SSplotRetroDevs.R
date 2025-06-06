@@ -1,30 +1,28 @@
 # this function replaced by SSplotRetroRecruits
 
 SSplotRetroDevs <- function(
-  retroSummary,
-  endyrvec,
-  cohorts,
-  ylim = c(-3, 3),
-  uncertainty = FALSE,
-  labels = c(
-    "Recruitment deviation relative to recent estimate",
-    "Recruitment deviation",
-    "Age"
-  ),
-  main = "Retrospective analysis of recruitment deviations",
-  mcmcVec = FALSE,
-  relative = FALSE,
-  labelyears = TRUE,
-  legend = FALSE,
-  leg.ncols = 4
-) {
+    retroSummary,
+    endyrvec,
+    cohorts,
+    ylim = c(-3, 3),
+    uncertainty = FALSE,
+    labels = c(
+      "Recruitment deviation relative to recent estimate",
+      "Recruitment deviation",
+      "Age"
+    ),
+    main = "Retrospective analysis of recruitment deviations",
+    mcmcVec = FALSE,
+    relative = FALSE,
+    labelyears = TRUE,
+    legend = FALSE,
+    leg.ncols = 4) {
   addpoly <- function(
-    yrvec,
-    lower,
-    upper,
-    shadecol = rgb(0, 0, 0, .1),
-    col = 1
-  ) {
+      yrvec,
+      lower,
+      upper,
+      shadecol = rgb(0, 0, 0, .1),
+      col = 1) {
     # add shaded uncertainty intervals behind line
     # modified from SSplotComparisons in r4ss package
     polygon(

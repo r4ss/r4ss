@@ -44,33 +44,32 @@
 #' Aquat. Sci.* 80: 1071-1083. <https://doi.org/10.1139/cjfas-2022-0168>.
 SSplotYield <-
   function(
-    replist,
-    subplots = 1:5,
-    refpoints = c("MSY", "Btgt", "SPR", "Current"),
-    add = FALSE,
-    plot = TRUE,
-    print = FALSE,
-    labels = c(
-      "Fraction unfished", # 1
-      "Equilibrium yield (t)", # 2
-      "Total biomass (t)", # 3
-      "Surplus production (t)", # 4
-      "Yield per recruit (kg)", # 5
-      "Spawning output" # 6
-    ),
-    col = "blue",
-    col2 = "black",
-    lty = 1,
-    lwd = 2,
-    cex.main = 1,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    plotdir = "default",
-    verbose = TRUE
-  ) {
+      replist,
+      subplots = 1:5,
+      refpoints = c("MSY", "Btgt", "SPR", "Current"),
+      add = FALSE,
+      plot = TRUE,
+      print = FALSE,
+      labels = c(
+        "Fraction unfished", # 1
+        "Equilibrium yield (t)", # 2
+        "Total biomass (t)", # 3
+        "Surplus production (t)", # 4
+        "Yield per recruit (kg)", # 5
+        "Spawning output" # 6
+      ),
+      col = "blue",
+      col2 = "black",
+      lty = 1,
+      lwd = 2,
+      cex.main = 1,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      plotdir = "default",
+      verbose = TRUE) {
     # table to store information on each plot
     plotinfo <- NULL
 

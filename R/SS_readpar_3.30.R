@@ -91,8 +91,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         parlist[["MG_parms"]] <- rbind(parlist[["MG_parms"]], tmp_tv)
       }
       dev_temp <- ctllist[["MG_parms"]][
-        ctllist[["MG_parms"]][, 9] > 0,
-        ,
+        ctllist[["MG_parms"]][, 9] > 0, ,
         drop = FALSE
       ]
       if (length(dev_temp[, 9]) > 0) {
@@ -149,8 +148,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         parlist[["SR_parms"]] <- rbind(parlist[["SR_parms"]], tmp_tv)
       }
       dev_temp <- ctllist[["SR_parms"]][
-        ctllist[["SR_parms"]][, 9] > 0,
-        ,
+        ctllist[["SR_parms"]][, 9] > 0, ,
         drop = FALSE
       ]
       if (length(dev_temp[, 9]) > 0) {
@@ -305,8 +303,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
           ctllist[["F_4_Fleet_Parms"]][["fleet"]][
             ctllist[["F_4_Fleet_Parms"]][["first_parm_phase"]] != 99
           ]
-        ),
-        ,
+        ), ,
         drop = FALSE
       ]
     }
@@ -367,8 +364,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         parlist[["Q_parms"]] <- rbind(parlist[["Q_parms"]], tmp_tv)
       }
       dev_temp <- ctllist[["Q_parms"]][
-        ctllist[["Q_parms"]][, 9] > 0,
-        ,
+        ctllist[["Q_parms"]][, 9] > 0, ,
         drop = FALSE
       ]
       if (length(dev_temp[, 9]) > 0) {
@@ -451,8 +447,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         parlist[["S_parms"]] <- rbind(parlist[["S_parms"]], tmp_tv)
       }
       dev_temp <- ctllist[["size_selex_parms"]][
-        ctllist[["size_selex_parms"]][, 9] > 0,
-        ,
+        ctllist[["size_selex_parms"]][, 9] > 0, ,
         drop = FALSE
       ]
       if (length(dev_temp[, 9]) > 0) {
@@ -494,8 +489,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
         parlist[["S_parms"]] <- rbind(parlist[["S_parms"]], tmp_tv)
       }
       dev_temp <- ctllist[["age_selex_parms"]][
-        ctllist[["age_selex_parms"]][, 9] > 0,
-        ,
+        ctllist[["age_selex_parms"]][, 9] > 0, ,
         drop = FALSE
       ]
       if (length(dev_temp[, 9]) > 0) {

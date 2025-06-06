@@ -13,11 +13,10 @@
 #' table_ts(model)
 #' }
 table_ts <- function(
-  replist,
-  dir = NULL,
-  caption = "Time series of population estimates for the base model.",
-  verbose = TRUE
-) {
+    replist,
+    dir = NULL,
+    caption = "Time series of population estimates for the base model.",
+    verbose = TRUE) {
   # check the input
   check_replist(replist)
   if (is.null(replist[["annual_time_series"]])) {

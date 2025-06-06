@@ -106,26 +106,25 @@
 #' }
 #'
 SS_Sensi_plot <- function(
-  model.summaries,
-  dir = "",
-  current.year,
-  mod.names,
-  # likelihood.out = c(1, 1, 1), # note which likelihoods are in the model
-  Sensi.RE.out = "Sensi_RE_out.DMP",
-  CI = 0.95,
-  TRP.in = 0.4,
-  LRP.in = 0.25,
-  sensi_xlab = "Sensitivity scenarios",
-  ylims.in = c(-1, 2, -1, 2, -1, 2, -1, 2, -1, 2, -1, 2),
-  plot.figs = c(1, 1, 1, 1, 1, 1),
-  sensi.type.breaks = NA,
-  anno.x = NA,
-  anno.y = NA,
-  anno.lab = NA,
-  spawn.lab = NA,
-  yield.lab = NA,
-  F.lab = NA
-) {
+    model.summaries,
+    dir = "",
+    current.year,
+    mod.names,
+    # likelihood.out = c(1, 1, 1), # note which likelihoods are in the model
+    Sensi.RE.out = "Sensi_RE_out.DMP",
+    CI = 0.95,
+    TRP.in = 0.4,
+    LRP.in = 0.25,
+    sensi_xlab = "Sensitivity scenarios",
+    ylims.in = c(-1, 2, -1, 2, -1, 2, -1, 2, -1, 2, -1, 2),
+    plot.figs = c(1, 1, 1, 1, 1, 1),
+    sensi.type.breaks = NA,
+    anno.x = NA,
+    anno.y = NA,
+    anno.lab = NA,
+    spawn.lab = NA,
+    yield.lab = NA,
+    F.lab = NA) {
   # internal function
   gg_color_hue <- function(n) {
     hues <- seq(15, 375, length = n + 1)
@@ -157,7 +156,8 @@ SS_Sensi_plot <- function(
     survey.lb <- model.summaries[["likelihoods_by_fleet"]][
       model.summaries[["likelihoods_by_fleet"]][["Label"]] == "Surv_lambda",
     ]
-    survey.lambda[, survey.lb[["model"]] + 1] <- t(survey.lb[,
+    survey.lambda[, survey.lb[["model"]] + 1] <- t(survey.lb[
+      ,
       3:ncol(survey.lb)
     ])
     survey.lambda[["Label"]] <- "Surv_lambda"

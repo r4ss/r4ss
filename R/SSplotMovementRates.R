@@ -36,25 +36,24 @@
 #'
 SSplotMovementRates <-
   function(
-    replist,
-    plot = TRUE,
-    print = FALSE,
-    subplots = 1:2,
-    plotdir = "default",
-    colvec = "default",
-    ylim = "default",
-    legend = TRUE,
-    legendloc = "topleft",
-    moveseas = "all",
-    min.move.age = 0.5,
-    pwidth = 6.5,
-    pheight = 5.0,
-    punits = "in",
-    res = 300,
-    ptsize = 10,
-    cex.main = 1,
-    verbose = TRUE
-  ) {
+      replist,
+      plot = TRUE,
+      print = FALSE,
+      subplots = 1:2,
+      plotdir = "default",
+      colvec = "default",
+      ylim = "default",
+      legend = TRUE,
+      legendloc = "topleft",
+      moveseas = "all",
+      min.move.age = 0.5,
+      pwidth = 6.5,
+      pheight = 5.0,
+      punits = "in",
+      res = 300,
+      ptsize = 10,
+      cex.main = 1,
+      verbose = TRUE) {
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -202,17 +201,15 @@ SSplotMovementRates <-
               yrvec <- replist[["startyr"]]:replist[["endyr"]]
               nyrs <- length(yrvec)
 
-              movecalc <- function(
-                min.move.age,
-                accuage,
-                minage,
-                maxage,
-                valueA,
-                valueB,
-                from,
-                to,
-                seasdur
-              ) {
+              movecalc <- function(min.move.age,
+                                   accuage,
+                                   minage,
+                                   maxage,
+                                   valueA,
+                                   valueB,
+                                   from,
+                                   to,
+                                   seasdur) {
                 # subfunction to calculate movement rates
                 # similar to one in the "movepars" function.
                 # in the future, these could be generalized and stand-alone in the r4ss package
@@ -326,7 +323,7 @@ SSplotMovementRates <-
               for (imove in 1:nmoves) {
                 Source_area <- moveinfo[["Source_area"]][imove]
                 Dest_area <- moveinfo[["Dest_area"]][imove]
-                movetable <- moveByYr[,, imove]
+                movetable <- moveByYr[, , imove]
                 ### not sure why following line was present, removing on 10 May 2018
                 # movetable <- moveByYr[1, ,imove,]
                 main <- paste(

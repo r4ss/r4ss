@@ -17,11 +17,10 @@
 #' [SS_writedat()]
 #'
 SS_writectl_3.30 <- function(
-  ctllist,
-  outfile,
-  overwrite = FALSE,
-  verbose = FALSE
-) {
+    ctllist,
+    outfile,
+    overwrite = FALSE,
+    verbose = FALSE) {
   if (verbose) message("Running SS_writectl_3.30\n")
   # input checks
   if (ctllist[["ReadVersion"]] != "3.30") {
@@ -105,12 +104,11 @@ SS_writectl_3.30 <- function(
   ## @param cols_to_rm Defaults to NULL. If need to remove any cols, add the
   #    index or indices of the cols here.
   printdf <- function(
-    dataframe,
-    header = TRUE,
-    headerLine = NA,
-    cols_to_rm = NULL,
-    terminate = FALSE
-  ) {
+      dataframe,
+      header = TRUE,
+      headerLine = NA,
+      cols_to_rm = NULL,
+      terminate = FALSE) {
     # function to print data frame with hash mark before first column name
     if (is.character(dataframe)) {
       tmp <- ctllist[names(ctllist) == dataframe]
