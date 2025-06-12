@@ -2292,9 +2292,12 @@ SS_output <-
     sigma_R_in <- parameters["SR_sigmaR", "Value"]
 
     # read new expanded SPAWN_RECRUIT table header (3.30.23)
-    if (!is.na(match_report_line("#New_Expanded_Spawn_Recr_report"))) {
-      srhead <- match_report_table("#New_Expanded_Spawn_Recr_report", 2,
-        "S/Rcurve", -2)
+    if (!is.na(match_report_line("#Expanded_Spawn_Recr_report"))) {
+      srhead <- match_report_table("#Expanded_Spawn_Recr_report", 
+        adjust1 = 2, 
+        which_blank = 1,
+        blank_lines = rep_blank_lines
+      )
 
       # Bias adjustment ramp
       biascol <- grep("breakpoints_for_bias", srhead) # which column contains the string
@@ -2309,7 +2312,12 @@ SS_output <-
         "max_bias_adj"
       )
       rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
-           
+
+      # get some quantities from expanded SPAWN_RECRUIT     
+      timevary_bio_4SRR <- srhead[grep("timevary_bio_4SRR", srhead[,3]), 1] |> as.numeric()
+      # unformatted table of values under "Quantities for MSY and other benchmark calculations"
+      SR_quants <- srhead[grep("Quantities", srhead[,1]):grep("Initial_equilibrium", srhead[,3]),]
+
       # get table of info on root mean squared error of recdevs (rmse)
       rmse_table <- as.data.frame(srhead[grep("RMSE", srhead[,3]) + 0:3, ])
       
@@ -2329,9 +2337,11 @@ SS_output <-
       sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 1]), 2])
   
       # info on recdev method
-      RecDev_method <- srhead[grep("RecDev_method:", srhead[,1]), 2] %>% 
+      RecDev_method <- srhead[grep("RecDev_method:", srhead[,1]), 2] |>  
         as.numeric()
       RecDev_method <- NULL
+
+      recruit <- match_report_table("SSBpR(yr)", 0, matchcol1 = 13, header = TRUE)
     } else {
       # read old SPAWN_RECRUIT table header
 
