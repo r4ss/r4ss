@@ -1,4 +1,6 @@
-# document and style  using reusable workflow
+# document and style R code using a reusable workflow
+name: call-doc-and-style-r
+# on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
 on:
   workflow_dispatch:
   push:
@@ -12,10 +14,10 @@ on:
       - 'R/**'
       - 'tests/**'
       - 'vignettes/**'
-name: call-doc-and-style-r
 jobs:
   call-workflow:
     uses: nmfs-ost/ghactions4r/.github/workflows/doc-and-style-r.yml@main
-    with: 
+    with:
+      use-air: true
       run-rm_dollar_sign: true
       commit-directly: true
