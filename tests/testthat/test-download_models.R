@@ -25,17 +25,25 @@ test_that("download_models with different dir works", {
   download_models(dir = save_models_dir)
   expect_true(file.exists(file.path(save_models_dir, "models")))
   expect_true(file.exists(file.path(save_models_dir, "models", "Simple")))
-  expect_true(!is.na(get_par_name(file.path(save_models_dir, "models", "Simple"))))
+  expect_true(
+    !is.na(get_par_name(file.path(save_models_dir, "models", "Simple")))
+  )
 })
 
 test_that("download_models() works when the dir doesn't exist", {
-  temp_dir_missing_dir <- file.path(save_models_dir, "missing_dir", "missing_subdir")
+  temp_dir_missing_dir <- file.path(
+    save_models_dir,
+    "missing_dir",
+    "missing_subdir"
+  )
   # create it
   worked <- download_models(dir = temp_dir_missing_dir)
   expect_true(worked)
   expect_true(file.exists(file.path(temp_dir_missing_dir, "models")))
   expect_true(file.exists(file.path(temp_dir_missing_dir, "models", "Simple")))
-  expect_true(!is.na(get_par_name(file.path(temp_dir_missing_dir, "models", "Simple"))))
+  expect_true(
+    !is.na(get_par_name(file.path(temp_dir_missing_dir, "models", "Simple")))
+  )
 })
 
 # (note that this generates 2 warnings, and I'm not sure how to suppress them!)

@@ -31,17 +31,26 @@
 #' @export
 #' @seealso [SS_plots()], [SSplotRecdevs()]
 SSplotRecdist <-
-  function(replist, plot = TRUE, print = FALSE,
-           areanames = NULL,
-           seasnames = NULL,
-           xlab = "",
-           ylab = "",
-           main = "distribution of recruitment by area and season",
-           period = c("Initial", "Benchmark", "End year"),
-           sexes = 1:2,
-           plotdir = "default",
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           verbose = TRUE) {
+  function(
+    replist,
+    plot = TRUE,
+    print = FALSE,
+    areanames = NULL,
+    seasnames = NULL,
+    xlab = "",
+    ylab = "",
+    main = "distribution of recruitment by area and season",
+    period = c("Initial", "Benchmark", "End year"),
+    sexes = 1:2,
+    plotdir = "default",
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    verbose = TRUE
+  ) {
     # plot of recruitment distribution between seasons and areas
 
     # confirm that period is just one of the available options
@@ -50,7 +59,9 @@ SSplotRecdist <-
     # table to store information on each plot
     plotinfo <- NULL
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    if (plotdir == "default") {
+      plotdir <- replist[["inputs"]][["dir"]]
+    }
 
     nareas <- replist[["nareas"]]
     nseasons <- replist[["nseasons"]]
@@ -76,23 +87,36 @@ SSplotRecdist <-
       sexes <- 1
     }
 
-
     areavec <- 1:nareas
     seasvec <- 1:nseasons
-    if (is.null(areanames)) areanames <- paste("Area", 1:nareas, sep = "")
-    if (is.null(seasnames)) seasnames <- paste("Season", 1:nseasons, sep = "")
+    if (is.null(areanames)) {
+      areanames <- paste("Area", 1:nareas, sep = "")
+    }
+    if (is.null(seasnames)) {
+      seasnames <- paste("Season", 1:nseasons, sep = "")
+    }
 
     # use table of recruit distribution to make 3D array
     recmat <- array(0, c(nareas, nseasons, nsexes))
     for (iarea in areavec) {
       for (iseas in seasvec) {
-        if (replist[["SS_versionNumeric"]] == 3.3) { # At least 3.30.16 has this format, not sure when added to 3.30 versions
-          recmat[iarea, iseas, 1] <- sum(recdist[["recr_dist_F"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas])
-          if (nsexes == 2) { # new column for males added in 3.30.23
-            recmat[iarea, iseas, 2] <- sum(recdist[["recr_dist_M"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas])
+        if (replist[["SS_versionNumeric"]] == 3.3) {
+          # At least 3.30.16 has this format, not sure when added to 3.30 versions
+          recmat[iarea, iseas, 1] <- sum(recdist[["recr_dist_F"]][
+            recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas
+          ])
+          if (nsexes == 2) {
+            # new column for males added in 3.30.23
+            recmat[iarea, iseas, 2] <- sum(recdist[["recr_dist_M"]][
+              recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas
+            ])
           }
         } else {
-          recmat[iarea, iseas, 1] <- sum(recdist[["recr_dist_F"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas & recdist[["Used"]] == 1])
+          recmat[iarea, iseas, 1] <- sum(recdist[["recr_dist_F"]][
+            recdist[["Area"]] == iarea &
+              recdist[["Seas"]] == iseas &
+              recdist[["Used"]] == 1
+          ])
         }
       }
     }
@@ -101,25 +125,31 @@ SSplotRecdist <-
     # only required for 2-sex models before male selectivity was reported
     # for which the female-only distributions will not sum to 1.0
     if (nsexes == 1 & sum(recmat) < 1) {
-      recmat[, , 1] <- recmat[, , 1] / sum(recmat[, , 1])
+      recmat[,, 1] <- recmat[,, 1] / sum(recmat[,, 1])
     }
 
     # some models had issues with formatting in github action tests
     # that Ian could not replicate locally, so adding this warning to
     # avoid crash
     for (sex in sexes) {
-      if (!is.matrix(recmat[, , sex])) {
+      if (!is.matrix(recmat[,, sex])) {
         warning("Problem with format of recruitment distribution info")
         return()
       }
     }
     recdistfun <- function(sex) {
-      recmat_sex <- unlist(recmat[, , sex])
+      recmat_sex <- unlist(recmat[,, sex])
       mode(recmat_sex) <- "numeric"
 
-      image(areavec, seasvec, recmat_sex,
-        axes = F, xlab = xlab, ylab = ylab,
-        main = paste(period, main), cex.main = cex.main
+      image(
+        areavec,
+        seasvec,
+        recmat_sex,
+        axes = F,
+        xlab = xlab,
+        ylab = ylab,
+        main = paste(period, main),
+        cex.main = cex.main
       )
       axis(1, at = areavec, labels = areanames)
       axis(2, at = seasvec, labels = seasnames)
@@ -127,7 +157,11 @@ SSplotRecdist <-
 
       for (iarea in areavec) {
         for (iseas in seasvec) {
-          text(iarea, iseas, paste(round(100 * recmat[iarea, iseas, sex], 1), "%", sep = ""))
+          text(
+            iarea,
+            iseas,
+            paste(round(100 * recmat[iarea, iseas, sex], 1), "%", sep = "")
+          )
         }
       }
     }
@@ -135,33 +169,50 @@ SSplotRecdist <-
     rownames(recmat) <- areanames
     colnames(recmat) <- seasnames
     # make plots
-    for (sex in sexes)
-    {
+    for (sex in sexes) {
       sexlabel <- "recruits"
       if (nsexes == 2 & "recr_dist_M" %in% names(recdist)) {
         sexlabel <- c("females", "males")[sex]
       }
-      message1 <- paste("recruitment distribution of", sexlabel, "by area and season:\n")
+      message1 <- paste(
+        "recruitment distribution of",
+        sexlabel,
+        "by area and season:\n"
+      )
       if (nsexes == 1) {
         message1 <- "recruitment distribution by area and season:\n"
       }
       message(
         message1,
-        paste0(utils::capture.output(recmat[, , sex]), collapse = "\n")
+        paste0(utils::capture.output(recmat[,, sex]), collapse = "\n")
       )
-      if (plot) recdistfun(sex)
+      if (plot) {
+        recdistfun(sex)
+      }
       if (print) {
         file <- paste0("recruitment_distribution_sex ", sex, ".png")
-        caption <- paste0("Recruitment distribution of ", sexlabel, " by area and season")
+        caption <- paste0(
+          "Recruitment distribution of ",
+          sexlabel,
+          " by area and season"
+        )
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         recdistfun(sex)
         dev.off()
       }
     }
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "S-R"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "S-R"
+    }
     return(invisible(plotinfo))
   }

@@ -38,8 +38,13 @@
 #' # 47  0.05  0.25  0.10000  0.10       0  0.8    -3  CV_young_Fem_GP_1       47
 #' }
 #'
-SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
-                        version = "3.30", verbose = TRUE, active = FALSE) {
+SS_parlines <- function(
+  ctlfile = "control.ss_new",
+  dir = NULL,
+  version = "3.30",
+  verbose = TRUE,
+  active = FALSE
+) {
   # function to read parameter lines in Stock Synthesis control files
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     # turns out 3.30 != "3.30" in R
@@ -47,13 +52,20 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   }
 
   # read control file
-  if (!is.null(dir)) ctlfile <- file.path(dir, "control.ss_new")
+  if (!is.null(dir)) {
+    ctlfile <- file.path(dir, "control.ss_new")
+  }
   raw <- readLines(ctlfile)
   ctl <- matrix(NA, nrow = 50000, ncol = 100)
   while (nrow(ctl) > length(raw)) {
     ctl <- read.table(
-      file = ctlfile, col.names = 1:(ncol(ctl) + 50), fill = TRUE,
-      quote = "", colClasses = "character", comment.char = "", blank.lines.skip = FALSE
+      file = ctlfile,
+      col.names = 1:(ncol(ctl) + 50),
+      fill = TRUE,
+      quote = "",
+      colClasses = "character",
+      comment.char = "",
+      blank.lines.skip = FALSE
     )
   }
   rm(raw)
@@ -75,25 +87,65 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   # get column names
   if (version == "3.24") {
     namesvec7 <- c(
-      "LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-      "Label", "Label2"
+      "LO",
+      "HI",
+      "INIT",
+      "PRIOR",
+      "PR_type",
+      "SD",
+      "PHASE",
+      "Label",
+      "Label2"
     )
     namesvec14 <- c(
-      "LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-      "env-var", "use_dev", "dev_minyr", "dev_maxyr", "dev_stddev", "Block", "Block_Fxn",
-      "Label", "Label2"
+      "LO",
+      "HI",
+      "INIT",
+      "PRIOR",
+      "PR_type",
+      "SD",
+      "PHASE",
+      "env-var",
+      "use_dev",
+      "dev_minyr",
+      "dev_maxyr",
+      "dev_stddev",
+      "Block",
+      "Block_Fxn",
+      "Label",
+      "Label2"
     )
     names(parlines7) <- namesvec7
   }
   if (version == "3.30" | version >= 3.3) {
     namesvec7 <- c(
-      "LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
-      "Label", "Label2"
+      "LO",
+      "HI",
+      "INIT",
+      "PRIOR",
+      "PR_SD",
+      "PR_type",
+      "PHASE",
+      "Label",
+      "Label2"
     )
     namesvec14 <- c(
-      "LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
-      "env_var&link", "dev_link", "dev_minyr", "dev_maxyr",
-      "dev_PH", "Block", "Block_Fxn", "Label", "Label2"
+      "LO",
+      "HI",
+      "INIT",
+      "PRIOR",
+      "PR_SD",
+      "PR_type",
+      "PHASE",
+      "env_var&link",
+      "dev_link",
+      "dev_minyr",
+      "dev_maxyr",
+      "dev_PH",
+      "Block",
+      "Block_Fxn",
+      "Label",
+      "Label2"
     )
   }
   names(parlines14) <- namesvec14
@@ -103,13 +155,19 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   # check for presence of short parameter lines
   if (nrow(parlines7) > 0) {
     # add filler columns to short parameter lines
-    parlines7 <- cbind(parlines7[, 1:7], matrix(NA, nrow = 1, ncol = 7), parlines7[, 8:9])
+    parlines7 <- cbind(
+      parlines7[, 1:7],
+      matrix(NA, nrow = 1, ncol = 7),
+      parlines7[, 8:9]
+    )
     names(parlines7) <- namesvec14
     parlines <- rbind(parlines7, parlines14)
   }
 
   # sort out labels
-  parlines[["Label"]][parlines[["Label"]] == "#"] <- parlines[["Label2"]][parlines[["Label"]] == "#"]
+  parlines[["Label"]][parlines[["Label"]] == "#"] <- parlines[["Label2"]][
+    parlines[["Label"]] == "#"
+  ]
   parlines <- parlines[, names(parlines) != "Label2"] # dropping the Label2 column
   # get rid of #_ if in front of the names
   parlines[["Label"]] <- gsub("^#_", "", parlines[["Label"]])

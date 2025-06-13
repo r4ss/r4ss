@@ -53,9 +53,7 @@
 #'   "simple_long_wtatage"
 #' ))
 #' }
-SS_read <- function(dir = getwd(),
-                    ss_new = FALSE,
-                    verbose = FALSE) {
+SS_read <- function(dir = getwd(), ss_new = FALSE, verbose = FALSE) {
   # Read in starter first to find the names of the input files
   start <- SS_readstarter(
     file = file.path(dir, ifelse(ss_new, "starter.ss_new", "starter.ss")),
@@ -115,13 +113,15 @@ SS_read <- function(dir = getwd(),
       try(
         {
           if (ctl[["ReadVersion"]] == "3.24") {
-            par <- r4ss::SS_readpar_3.24(file.path(dir, parfile),
+            par <- r4ss::SS_readpar_3.24(
+              file.path(dir, parfile),
               datsource = dat,
               ctlsource = ctl,
               verbose = verbose
             )
           } else {
-            par <- r4ss::SS_readpar_3.30(file.path(dir, parfile),
+            par <- r4ss::SS_readpar_3.30(
+              file.path(dir, parfile),
               datsource = dat,
               ctlsource = ctl,
               verbose = verbose

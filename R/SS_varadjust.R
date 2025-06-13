@@ -37,20 +37,28 @@
 #' )
 #' }
 #'
-SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
-                         ctlfile = "control.ss_new",
-                         newctlfile = "control_modified.ss",
-                         keyword = "variance adjustments",
-                         newtable = NULL, newrow = NULL, rownumber = NULL,
-                         maxcols = 100, maxrows = 100, overwrite = FALSE,
-                         version = "3.30", verbose = TRUE) {
+SS_varadjust <- function(
+  dir = "C:/myfiles/mymodels/myrun/",
+  ctlfile = "control.ss_new",
+  newctlfile = "control_modified.ss",
+  keyword = "variance adjustments",
+  newtable = NULL,
+  newrow = NULL,
+  rownumber = NULL,
+  maxcols = 100,
+  maxrows = 100,
+  overwrite = FALSE,
+  version = "3.30",
+  verbose = TRUE
+) {
   # check for consistency of inputs
   if (!is.null(newtable)) {
     if (!is.null(newrow)) {
       stop("You can't input both 'newtable' and 'newrow'")
     }
     # call function for SS version 3.24
-    if (version == "3.24") { # should work whether "version" is character or numeric
+    if (version == "3.24") {
+      # should work whether "version" is character or numeric
       if (!is.data.frame(newtable) || nrow(newtable) != 6) {
         stop("Input 'newtable' must be a data.frame with 6 rows")
       }
@@ -62,7 +70,9 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
     }
   }
   if (!is.null(newrow) & is.null(rownumber)) {
-    stop("Input 'newrow' requires the input 'rownumber' (which row within the table)")
+    stop(
+      "Input 'newrow' requires the input 'rownumber' (which row within the table)"
+    )
   }
   if (!is.null(rownumber) && !rownumber %in% 1:6) {
     stop(
@@ -82,15 +92,24 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   keyword_line <- grep(keyword, ctl_lines)
   if (length(keyword_line) != 1) {
     stop(
-      "keyword input '", keyword, "' found ", length(keyword_line), " times.\n",
+      "keyword input '",
+      keyword,
+      "' found ",
+      length(keyword_line),
+      " times.\n",
       "It should be a unique string immediately before variance adjustments."
     )
   }
   # read control file as a table of values
   ctl <- read.table(
-    file = ctlfile, col.names = 1:maxcols, skip = keyword_line,
-    nrows = maxrows, fill = TRUE,
-    quote = "", colClasses = "character", comment.char = "",
+    file = ctlfile,
+    col.names = 1:maxcols,
+    skip = keyword_line,
+    nrows = maxrows,
+    fill = TRUE,
+    quote = "",
+    colClasses = "character",
+    comment.char = "",
     blank.lines.skip = FALSE
   )
 
@@ -98,7 +117,8 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   old_warn <- options()[["warn"]]
   options(warn = -1)
 
-  if (version == "3.24") { # should work whether "version" is character or numeric
+  if (version == "3.24") {
+    # should work whether "version" is character or numeric
     # subset first 6 numeric rows in 3.24
     numeric_rows <- which(!is.na(as.numeric(ctl[, 1])))
     good_rows <- numeric_rows[1:6]
@@ -114,21 +134,24 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
       }
     }
 
-
     # subset numeric columns only
     ctl <- ctl[, 1:nfleets]
     # add header
     colnames(ctl) <- paste("Fleet", 1:nfleets, sep = "")
     # add labels to each rows (based on labels in control.ss_new)
-    ctl <- data.frame(ctl, label = c(
-      "#_add_to_survey_CV",
-      "#_add_to_discard_stddev",
-      "#_add_to_bodywt_CV",
-      "#_mult_by_lencomp_N",
-      "#_mult_by_agecomp_N",
-      "#_mult_by_size-at-age_N"
-    ))
-  } else { # version 3.30
+    ctl <- data.frame(
+      ctl,
+      label = c(
+        "#_add_to_survey_CV",
+        "#_add_to_discard_stddev",
+        "#_add_to_bodywt_CV",
+        "#_mult_by_lencomp_N",
+        "#_mult_by_agecomp_N",
+        "#_mult_by_size-at-age_N"
+      )
+    )
+  } else {
+    # version 3.30
     # look for -9999 as terminator in 3.30
     terminator_row <- min(grep("-9999", ctl[, 1]))
     good_rows <- which(!is.na(as.numeric(ctl[1:terminator_row, 1])))
@@ -164,7 +187,6 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
     }
   }
 
-
   if (!is.null(newtable)) {
     if (version == "3.24" & ncol(newtable) != ncol(ctl)) {
       stop("newtable has the wrong number of columns")
@@ -199,7 +221,9 @@ SS_varadjust <- function(dir = "C:/myfiles/mymodels/myrun/",
   }
 
   # open connection to file
-  if (verbose) message("opening connection to ", newctlfile)
+  if (verbose) {
+    message("opening connection to ", newctlfile)
+  }
   zz <- file(newctlfile, open = "at")
   sink(zz)
   # change maximum number of columns

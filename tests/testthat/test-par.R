@@ -18,7 +18,9 @@ test_that("SS_readpars functions work ", {
     ctlsource = file.path(sim_small, "control.ss"),
     verbose = FALSE
   )
-  SS_writepar_3.30(par_3.30, file.path(sim_small, "ss_test.par"),
+  SS_writepar_3.30(
+    par_3.30,
+    file.path(sim_small, "ss_test.par"),
     verbose = FALSE
   )
   expect_true(file.exists(file.path(sim_small, "ss_test.par")))

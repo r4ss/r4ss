@@ -16,13 +16,23 @@
 #' @export
 #' @family read/write functions
 
-SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
-                             writeAll = FALSE, overwrite = FALSE, verbose = TRUE) {
+SS_writeforecast <- function(
+  mylist,
+  dir = NULL,
+  file = "forecast.ss",
+  writeAll = FALSE,
+  overwrite = FALSE,
+  verbose = TRUE
+) {
   # function to write Stock Synthesis forecast files
-  if (verbose) message("running SS_writeforecast")
+  if (verbose) {
+    message("running SS_writeforecast")
+  }
 
   if (!is.list(mylist) || mylist[["type"]] != "Stock_Synthesis_forecast_file") {
-    stop("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'")
+    stop(
+      "input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'"
+    )
   }
 
   # this command will hopefully prevent earlier issues of getting stuck with all R
@@ -32,13 +42,21 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
     if (sink.number() > 0) sink()
   })
 
-  if (is.null(dir)) dir <- getwd() # set to working directory if no input provided
+  if (is.null(dir)) {
+    dir <- getwd()
+  } # set to working directory if no input provided
   outfile <- paste(dir, file, sep = "/")
   if (file.exists(outfile)) {
     if (!overwrite) {
-      stop(paste("file exists:", outfile, "\n  set overwrite=TRUE to replace\n"))
+      stop(paste(
+        "file exists:",
+        outfile,
+        "\n  set overwrite=TRUE to replace\n"
+      ))
     } else {
-      if (verbose) message("overwriting file:", outfile)
+      if (verbose) {
+        message("overwriting file:", outfile)
+      }
       file.remove(outfile)
     }
   } else {
@@ -49,7 +67,9 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
   oldwidth <- options()[["width"]]
   options(width = 1000)
 
-  if (verbose) message("opening connection to ", outfile)
+  if (verbose) {
+    message("opening connection to ", outfile)
+  }
   zz <- file(outfile, open = "at")
   sink(zz)
   wl <- function(name) {
@@ -59,7 +79,9 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
   }
   printdf <- function(dataframe) {
     # function to print data frame with hash mark before first column name
-    if (is.character(dataframe)) dataframe <- mylist[names(mylist) == dataframe][[1]]
+    if (is.character(dataframe)) {
+      dataframe <- mylist[names(mylist) == dataframe][[1]]
+    }
     names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
     print.data.frame(dataframe, row.names = FALSE, strip.white = TRUE)
   }
@@ -79,14 +101,17 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
   wl("SPRtarget")
   wl("Btarget")
   if (SSversion == 3.24) {
-    writeLines("#_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_alloc, end_alloc")
+    writeLines(
+      "#_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_alloc, end_alloc"
+    )
   } else {
-    writeLines("#_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)")
+    writeLines(
+      "#_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)"
+    )
   }
   writeLines(paste(paste(mylist[["Bmark_years"]], collapse = " ")))
   wl("Bmark_relF_Basis")
   wl("Forecast")
-
 
   if (mylist[["Forecast"]] > 0 | writeAll) {
     if (mylist[["Forecast"]] <= 0 & is.null(mylist[["eof"]])) {
@@ -107,20 +132,34 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       } else {
         if (is.vector(mylist[["Fcast_years"]])) {
           # old format as a single vector
-          writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)")
+          writeLines(
+            "#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)"
+          )
           writeLines(paste(paste(mylist[["Fcast_years"]], collapse = " ")))
           wl("Fcast_selex")
         }
         if (is.data.frame(mylist[["Fcast_years"]])) {
           # new (3.30.22) format as a matrix
-          writeLines("-12345  # code to invoke new format for expanded fcast year controls")
-          writeLines("# biology and selectivity vectors are updated annually in the forecast according to timevary parameters, so check end year of blocks and dev vectors")
-          writeLines("# input in this section directs creation of averages over historical years to override any time_vary changes")
-          writeLines("#_Types implemented so far: 1=M, 4=recr_dist, 5=migration, 10=selectivity, 11=rel. F, recruitment")
+          writeLines(
+            "-12345  # code to invoke new format for expanded fcast year controls"
+          )
+          writeLines(
+            "# biology and selectivity vectors are updated annually in the forecast according to timevary parameters, so check end year of blocks and dev vectors"
+          )
+          writeLines(
+            "# input in this section directs creation of averages over historical years to override any time_vary changes"
+          )
+          writeLines(
+            "#_Types implemented so far: 1=M, 4=recr_dist, 5=migration, 10=selectivity, 11=rel. F, recruitment"
+          )
           writeLines("#_list: type, method (1, 2), start year, end year")
           writeLines("#_Terminate with -9999 for type")
-          writeLines("#_ year input can be actual year, or values <=0 to be rel. styr or endyr")
-          writeLines("#_Method = 0 (or omitted) means continue using time_vary parms; 1 means to use average of derived factor")
+          writeLines(
+            "#_ year input can be actual year, or values <=0 to be rel. styr or endyr"
+          )
+          writeLines(
+            "#_Method = 0 (or omitted) means continue using time_vary parms; 1 means to use average of derived factor"
+          )
 
           printdf(mylist[["Fcast_years"]])
           writeLines("-9999 0 0 0")
@@ -167,7 +206,9 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       wl("Ydecl")
       wl("Yinit")
       wl("fleet_relative_F")
-      writeLines("# Note that fleet allocation is used directly as average F if Do_Forecast=4 ")
+      writeLines(
+        "# Note that fleet allocation is used directly as average F if Do_Forecast=4 "
+      )
       wl("basis_for_fcast_catch_tuning")
 
       # fleet and area-specific inputs for version 3.24
@@ -182,10 +223,19 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
         writeLines(paste(mylist[["max_totalcatch_by_fleet"]], collapse = " "))
         writeLines("# max totalcatch by area (-1 to have no max)")
         writeLines(paste(mylist[["max_totalcatch_by_area"]], collapse = " "))
-        writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
-        writeLines(paste(mylist[["fleet_assignment_to_allocation_group"]], collapse = " "))
+        writeLines(
+          "# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)"
+        )
+        writeLines(paste(
+          mylist[["fleet_assignment_to_allocation_group"]],
+          collapse = " "
+        ))
         if (any(mylist[["fleet_assignment_to_allocation_group"]] != 0)) {
-          writeLines(paste("# allocation fraction for each of:", mylist[["N_allocation_groups"]], " allocation groups"))
+          writeLines(paste(
+            "# allocation fraction for each of:",
+            mylist[["N_allocation_groups"]],
+            " allocation groups"
+          ))
           writeLines(paste(mylist[["allocation_among_groups"]], collapse = " "))
         }
         wl("Ncatch")
@@ -203,29 +253,38 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
           writeLines("-9999 0 0")
         }
 
-        writeLines("# enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999")
+        writeLines(
+          "# enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999"
+        )
         if (!is.null(mylist[["max_totalcatch_by_fleet"]])) {
           printdf(mylist[["max_totalcatch_by_fleet"]])
         }
         writeLines("-9999 -1")
-        writeLines("# enter list of area ID and max annual catch; terminate with area=-9999")
+        writeLines(
+          "# enter list of area ID and max annual catch; terminate with area=-9999"
+        )
         if (!is.null(mylist[["max_totalcatch_by_area"]])) {
           printdf(mylist[["max_totalcatch_by_area"]])
         }
         writeLines("-9999 -1")
-        writeLines("# enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999")
+        writeLines(
+          "# enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999"
+        )
         if (!is.null(mylist[["fleet_assignment_to_allocation_group"]])) {
           printdf(mylist[["fleet_assignment_to_allocation_group"]])
         }
         writeLines("-9999 -1")
         if (mylist[["N_allocation_groups"]] > 0) {
           printdf(mylist[["allocation_among_groups"]])
-          writeLines(paste0(c("-9999", rep(-1, mylist[["N_allocation_groups"]])),
+          writeLines(paste0(
+            c("-9999", rep(-1, mylist[["N_allocation_groups"]])),
             collapse = " "
           ))
         }
         wl("InputBasis")
-        if (!is.null(mylist[["ForeCatch"]]) && nrow(mylist[["ForeCatch"]] > 0)) {
+        if (
+          !is.null(mylist[["ForeCatch"]]) && nrow(mylist[["ForeCatch"]] > 0)
+        ) {
           printdf(mylist[["ForeCatch"]])
         }
         if (mylist[["InputBasis"]] == -1) {

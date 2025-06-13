@@ -29,28 +29,28 @@
 #' @author Ian Stewart
 #' @export
 #' @seealso [mcmc.out()], [SSgetMCMC()]
-mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
-                          run = "mymodel/", # folder with ADMB run files
-                          file = "posteriors.sso", # the file name of the posteriors
-                          file2 = "derived_posteriors.sso", # the file name of the posteriors
-                          bothfiles = FALSE, # read and combine both file and file2
-                          printstats = FALSE, # return all the statistics for a closer look
-                          burn = 0, # can specify a burn in to remove
-                          header = TRUE, # header on data file?
-                          thin = 1, # can specify further thinning, default is none
-                          trace = 0, # plot trace for param # (to help sort out problem parameters)
-                          labelstrings = "all", # vector of strings that partially match the columns you want to consider
-                          columnnumbers = "all", # vector of column numbers indicating the columns you want to consider
-                          sep = "" # sep for data file
-                          )
-                          # sample call:  mcmc.nuisance(run="flatfish_tagging\\",burn=0,thin=1,printstats=F,trace=0)
-                          ##############################################################################################################
-                          # Purpose: To summarize nuisance MCMC output (used in combination with mcmc.out() for key parameters)
-                          # Written: Ian Stewart, August 2003
-                          # Arguments: See above
-                          # Returns: Graphical devices containing summaries and plots
-##############################################################################################################
-{
+mcmc.nuisance <- function(
+  directory = "c:/mydirectory/", # directory to use
+  run = "mymodel/", # folder with ADMB run files
+  file = "posteriors.sso", # the file name of the posteriors
+  file2 = "derived_posteriors.sso", # the file name of the posteriors
+  bothfiles = FALSE, # read and combine both file and file2
+  printstats = FALSE, # return all the statistics for a closer look
+  burn = 0, # can specify a burn in to remove
+  header = TRUE, # header on data file?
+  thin = 1, # can specify further thinning, default is none
+  trace = 0, # plot trace for param # (to help sort out problem parameters)
+  labelstrings = "all", # vector of strings that partially match the columns you want to consider
+  columnnumbers = "all", # vector of column numbers indicating the columns you want to consider
+  sep = "" # sep for data file
+) {
+  # sample call:  mcmc.nuisance(run="flatfish_tagging\\",burn=0,thin=1,printstats=F,trace=0)
+  ##############################################################################################################
+  # Purpose: To summarize nuisance MCMC output (used in combination with mcmc.out() for key parameters)
+  # Written: Ian Stewart, August 2003
+  # Arguments: See above
+  # Returns: Graphical devices containing summaries and plots
+  ##############################################################################################################
   #### the following commands no longer needed since packages are required by r4ss
   ## require(coda) || stop("package coda is required")
   ## geterrmessage()
@@ -63,13 +63,15 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
     stop("file doesn't exist:\n", filename)
   }
 
-  mcmcdata <- read.table(filename, # make data table of whole file
+  mcmcdata <- read.table(
+    filename, # make data table of whole file
     header = header, # no headers
     sep = sep, # space delimited
     fill = TRUE
   ) # fill empty cells to make a symmetrical array
   if (bothfiles) {
-    mcmcdata2 <- read.table(filename2, # make data table of whole file
+    mcmcdata2 <- read.table(
+      filename2, # make data table of whole file
       header = header, # no headers
       sep = sep, # space delimited
       fill = TRUE
@@ -81,7 +83,10 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
   if (header & labelstrings[1] != "all") {
     labels <- NULL
     for (istring in seq_along(labelstrings)) {
-      labels <- c(labels, names(mcmcdata)[grep(labelstrings[istring], names(mcmcdata))])
+      labels <- c(
+        labels,
+        names(mcmcdata)[grep(labelstrings[istring], names(mcmcdata))]
+      )
     }
     message(
       "All labels matching the input 'labelstrings': ",
@@ -90,8 +95,10 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
     mcmcdata <- mcmcdata[, names(mcmcdata) %in% labels]
   } else {
     # when "all" are requested, exclude Iter and Objective_function columns
-    mcmcdata <- mcmcdata[, !names(mcmcdata) %in%
-      c("Iter", "Objective_function")]
+    mcmcdata <- mcmcdata[,
+      !names(mcmcdata) %in%
+        c("Iter", "Objective_function")
+    ]
   }
 
   ##### change to mcmc object for coda #####
@@ -104,8 +111,7 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
   parameters <- nvar(mcmcobject)
   # add robustification for fixed parameters
   vec <- seq(1, parameters, by = 1)
-  for (i in 1:parameters)
-  {
+  for (i in 1:parameters) {
     if (min(mcmcobject[, i]) == max(mcmcobject[, i])) {
       vec <- vec[vec != i]
     }
@@ -127,8 +133,7 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
 
   hwsums <- as.vector(c(0, 0, 0)) # for use in plotting later on
 
-  for (i in 1:parameters)
-  {
+  for (i in 1:parameters) {
     ##### Autocorrelation #####
     acftemp <- acf(mcmcobject[, i], lag.max = 1, type = "correlation", plot = F) # calculate the AC at lag 1
     acoruse <- round(acftemp[["acf"]][2], 3) # extract the value and round it
@@ -180,13 +185,16 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
     mfrow = c(2, 2)
   ) # set up "cells" to graph into
 
-  hist(stats[["autocor"]],
-    main = "", col = "GREY",
+  hist(
+    stats[["autocor"]],
+    main = "",
+    col = "GREY",
     breaks = c(seq(-1, 1, by = 0.1)),
     xlim = c(-1, 1),
     xlab = "Autocorrelation"
   )
-  mtext("Summary of nuisance parameters", # label for whole plotting page
+  mtext(
+    "Summary of nuisance parameters", # label for whole plotting page
     side = 3, # place it on left of the graph
     adj = 0, # left adjust the text
     line = 2, # set the distance above the graph
@@ -194,21 +202,27 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
     cex = 1.5
   ) # scale the text size
 
-  hist(stats[["effn"]],
-    main = "", ylab = "", xlab = "Effective sample size",
+  hist(
+    stats[["effn"]],
+    main = "",
+    ylab = "",
+    xlab = "Effective sample size",
     breaks = c(seq(0, draws, by = (draws / 10))),
     xlim = c(0, draws),
     col = "GREY",
   )
-  hist(stats[["geweke"]],
-    main = "", xlab = "Geweke statistic",
+  hist(
+    stats[["geweke"]],
+    main = "",
+    xlab = "Geweke statistic",
     breaks = c(seq(-5, 5, by = 0.25)),
     xlim = c(-3, 3),
     right = TRUE,
     col = "GREY",
   )
 
-  barplot(hwsums,
+  barplot(
+    hwsums,
     space = 0,
     ylab = "",
     col = "GREY",
@@ -220,17 +234,20 @@ mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
   if (trace > 0) {
     dev.new()
     par(new = FALSE)
-    traceplot(mcmcobject[, trace], # trace plot of parameters
+    traceplot(
+      mcmcobject[, trace], # trace plot of parameters
       smooth = TRUE
     ) # add a smoothing line
-    mtext("Value", # label for y-axis
+    mtext(
+      "Value", # label for y-axis
       side = 2, # place it on left of the graph
       line = 3, # set the distance above the graph
       font = 1, # make the font regular
       cex = 0.8
     ) # scale the text size
 
-    mtext(paste("param", trace, labels[trace]), # label for whole plotting page
+    mtext(
+      paste("param", trace, labels[trace]), # label for whole plotting page
       side = 3, # place it on left of the graph
       adj = 0, # left adjust the text
       line = 2, # set the distance above the graph

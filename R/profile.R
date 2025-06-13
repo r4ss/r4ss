@@ -236,26 +236,28 @@ SS_profile <- function(...) {
 #' # 0.15 154.897 44.768   5.366
 #' }
 #'
-profile <- function(dir,
-                    oldctlfile = "control.ss_new",
-                    masterctlfile = lifecycle::deprecated(),
-                    newctlfile = "control_modified.ss",
-                    linenum = NULL,
-                    string = NULL,
-                    profilevec = NULL,
-                    usepar = FALSE,
-                    globalpar = FALSE,
-                    parlinenum = NULL,
-                    parstring = NULL,
-                    saveoutput = TRUE,
-                    overwrite = TRUE,
-                    whichruns = NULL,
-                    prior_check = TRUE,
-                    read_like = lifecycle::deprecated(),
-                    exe = "ss3",
-                    verbose = TRUE,
-                    conv_criteria = 0.01,
-                    ...) {
+profile <- function(
+  dir,
+  oldctlfile = "control.ss_new",
+  masterctlfile = lifecycle::deprecated(),
+  newctlfile = "control_modified.ss",
+  linenum = NULL,
+  string = NULL,
+  profilevec = NULL,
+  usepar = FALSE,
+  globalpar = FALSE,
+  parlinenum = NULL,
+  parstring = NULL,
+  saveoutput = TRUE,
+  overwrite = TRUE,
+  whichruns = NULL,
+  prior_check = TRUE,
+  read_like = lifecycle::deprecated(),
+  exe = "ss3",
+  verbose = TRUE,
+  conv_criteria = 0.01,
+  ...
+) {
   # deprecated variable warnings
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterctlfile)) {
@@ -288,7 +290,8 @@ profile <- function(dir,
   if (!is.null(linenum) & !is.null(string)) {
     stop("You should input either 'linenum' or 'string' (but not both)")
   }
-  if (usepar) { # if using par file
+  if (usepar) {
+    # if using par file
     if (is.null(parlinenum) & is.null(parstring)) {
       stop(
         "Using par file. You should input either 'parlinenum' or ",
@@ -320,7 +323,10 @@ profile <- function(dir,
   }
   # not sure what would cause a bad value, but checking for it anyway
   if (is.na(npars) || npars < 1) {
-    stop("Problem with the number of parameters to profile over. npars = ", npars)
+    stop(
+      "Problem with the number of parameters to profile over. npars = ",
+      npars
+    )
   }
 
   # figure out length of profile vec and sort out which runs to do
@@ -330,11 +336,14 @@ profile <- function(dir,
   if (npars == 1) {
     n <- length(profilevec)
   } else {
-    if ((!is.data.frame(profilevec) & !is.matrix(profilevec)) ||
-      ncol(profilevec) != npars) {
+    if (
+      (!is.data.frame(profilevec) & !is.matrix(profilevec)) ||
+        ncol(profilevec) != npars
+    ) {
       stop(
         "'profilevec' should be a data.frame or a matrix with ",
-        npars, " columns"
+        npars,
+        " columns"
       )
     }
     n <- length(profilevec[[1]])
@@ -347,7 +356,9 @@ profile <- function(dir,
         profilevec_df <- data.frame(profilevec)
         names(profilevec_df) <- string
         message(
-          "Profiling over ", npars, " parameters\n",
+          "Profiling over ",
+          npars,
+          " parameters\n",
           paste0(profilevec_df, collapse = "\n")
         )
       }
@@ -359,13 +370,20 @@ profile <- function(dir,
     whichruns <- 1:n
   } else {
     if (!all(whichruns %in% 1:n)) {
-      stop("input whichruns should be NULL or a subset of 1:", n, "\n", sep = "")
+      stop(
+        "input whichruns should be NULL or a subset of 1:",
+        n,
+        "\n",
+        sep = ""
+      )
     }
   }
   if (verbose) {
     message(
-      "Doing runs: ", paste(whichruns, collapse = ", "),
-      ",\n  out of n = ", n
+      "Doing runs: ",
+      paste(whichruns, collapse = ", "),
+      ",\n  out of n = ",
+      n
     )
   }
 
@@ -383,7 +401,11 @@ profile <- function(dir,
   if (starter[["ctlfile"]] != newctlfile) {
     stop(
       "starter file should be changed to change\n",
-      "'", starter[["ctlfile"]], "' to '", newctlfile, "'"
+      "'",
+      starter[["ctlfile"]],
+      "' to '",
+      newctlfile,
+      "'"
     )
   }
   # check for prior in likelihood
@@ -448,8 +470,13 @@ profile <- function(dir,
       # Cannot think of scenario where both temp directory and ReportN.sso exist
       # Even if they do, this still works, it just prints out a little weird.
       message(
-        "skipping profile i=", i, "/", n, " because overwrite=FALSE\n",
-        "  and file exists: ", newrepfiles[file.exists(newrepfiles)]
+        "skipping profile i=",
+        i,
+        "/",
+        n,
+        " because overwrite=FALSE\n",
+        "  and file exists: ",
+        newrepfiles[file.exists(newrepfiles)]
       )
     } else {
       message("running profile i=", i, "/", n)
@@ -470,15 +497,19 @@ profile <- function(dir,
         dir.new = profile_dir,
         overwrite = TRUE,
         copy_exe = exe_path[["path"]] == dir,
-        copy_par = usepar, verbose = verbose
+        copy_par = usepar,
+        verbose = verbose
       )
       SS_changepars(
         dir = profile_dir,
         ctlfile = newctlfile,
         newctlfile = newctlfile,
-        linenums = linenum, strings = string,
-        newvals = newvals, estimate = FALSE,
-        verbose = TRUE, repeat.vals = TRUE
+        linenums = linenum,
+        strings = string,
+        newvals = newvals,
+        estimate = FALSE,
+        verbose = TRUE,
+        repeat.vals = TRUE
       )
 
       # read parameter lines of control file
@@ -489,14 +520,17 @@ profile <- function(dir,
         par_to_change <- sort(phase2pars)[1]
         message(
           "No estimated parameter in phase 1.\n",
-          "Switching ", par_to_change, " from phase 2 to phase 1."
+          "Switching ",
+          par_to_change,
+          " from phase 2 to phase 1."
         )
         SS_changepars(
           dir = profile_dir,
           ctlfile = newctlfile,
           newctlfile = newctlfile,
           strings = par_to_change,
-          newphs = 1, verbose = FALSE
+          newphs = 1,
+          verbose = FALSE
         )
       }
 
@@ -522,18 +556,23 @@ profile <- function(dir,
           if (is.na(parval)) {
             stop(
               "Problem with parlinenum or parstring for par file.\n",
-              "line as read: ", parline
+              "line as read: ",
+              parline
             )
           }
           # replace value
-          par[parlinenum[ipar]] <- ifelse(npars > 1,
+          par[parlinenum[ipar]] <- ifelse(
+            npars > 1,
             profilevec[i, ipar],
             profilevec[i]
           )
         }
         # add new header
         note <- c(
-          paste("# New par file created by profile() with the value on line number", linenum),
+          paste(
+            "# New par file created by profile() with the value on line number",
+            linenum
+          ),
           paste("# changed from", parval, "to", profilevec[i])
         )
         par <- c(par, "#", note)
@@ -574,9 +613,12 @@ profile <- function(dir,
         skip <- grep("LIKELIHOOD", Rep)[2]
         nrows <- grep("Crash_Pen", Rep) - skip - 1
         # read Report again to just get LIKELIHOOD table
-        like <- read.table(repfile_loc,
+        like <- read.table(
+          repfile_loc,
           skip = skip,
-          nrows = nrows, header = TRUE, fill = TRUE
+          nrows = nrows,
+          header = TRUE,
+          fill = TRUE
         )
         likevec <- as.numeric(like[["logL.Lambda"]])
         names(likevec) <- like[["Component"]]
@@ -600,29 +642,37 @@ profile <- function(dir,
   if (saveoutput) {
     purrr::walk(whichruns, function(i) {
       profile_dir <- file.path(dir, paste0("profile", i))
-      if (file.exists(file.path(profile_dir, "Report.sso")) &
-        file.info(file.path(profile_dir, "Report.sso"))[["size"]] > 0) {
-        file.copy(file.path(profile_dir, "Report.sso"),
+      if (
+        file.exists(file.path(profile_dir, "Report.sso")) &
+          file.info(file.path(profile_dir, "Report.sso"))[["size"]] > 0
+      ) {
+        file.copy(
+          file.path(profile_dir, "Report.sso"),
           file.path(dir, paste0("Report", i, ".sso")),
           overwrite = overwrite
         )
-        file.copy(file.path(profile_dir, "CompReport.sso"),
+        file.copy(
+          file.path(profile_dir, "CompReport.sso"),
           file.path(dir, paste0("CompReport", i, ".sso")),
           overwrite = overwrite
         )
-        file.copy(file.path(profile_dir, "covar.sso"),
+        file.copy(
+          file.path(profile_dir, "covar.sso"),
           file.path(dir, paste0("covar", i, ".sso")),
           overwrite = overwrite
         )
-        file.copy(file.path(profile_dir, "warning.sso"),
+        file.copy(
+          file.path(profile_dir, "warning.sso"),
           file.path(dir, paste0("warning", i, ".sso")),
           overwrite = overwrite
         )
-        file.copy(file.path(profile_dir, "admodel.hes"),
+        file.copy(
+          file.path(profile_dir, "admodel.hes"),
           file.path(dir, paste0("admodel", i, ".hes")),
           overwrite = overwrite
         )
-        file.copy(file.path(profile_dir, parfile),
+        file.copy(
+          file.path(profile_dir, parfile),
           file.path(dir, paste0(parfile, "_", i, ".sso")),
           overwrite = overwrite
         )
@@ -630,14 +680,19 @@ profile <- function(dir,
     })
   }
   # delete profile subdirectories
-  purrr::walk(whichruns, ~ unlink(file.path(dir, paste0("profile", .x)), recursive = TRUE))
+  purrr::walk(
+    whichruns,
+    ~ unlink(file.path(dir, paste0("profile", .x)), recursive = TRUE)
+  )
 
   # res is NULL for any values that didn't run due to existing report file.
   res_keep <- which(!sapply(res, is.null))
   res_clean <- res[res_keep]
 
   goodrep <- sapply(res_clean, function(x) x[["goodrep"]])
-  if (!any(goodrep)) stop("Error: no good Report.sso files created in profile")
+  if (!any(goodrep)) {
+    stop("Error: no good Report.sso files created in profile")
+  }
 
   # organize output data frame
   liketable <- as.data.frame(t(sapply(res_clean, function(x) x[["likevec"]])))

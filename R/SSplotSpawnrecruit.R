@@ -53,29 +53,48 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotSpawnrecruit <-
-  function(replist, subplots = 1:3, add = FALSE, plot = TRUE, print = FALSE,
-           xlim = NULL, ylim = NULL,
-           labels = c(
-             "Spawning biomass (t)",
-             "Recruitment (1,000s)",
-             replist[["SpawnOutputLabel"]],
-             expression(paste("Spawning output (relative to ", italic(B)[0], ")")),
-             expression(paste("Recruitment (relative to  ", italic(R)[0], ")")),
-             "Log recruitment deviation"
-           ),
-           bioscale = 1,
-           plotdir = "default",
-           pwidth = 6.5, pheight = 6.5, punits = "in", res = 300, ptsize = 10,
-           verbose = TRUE,
-           colvec = c("blue", "black", "black", gray(0, 0.7)),
-           ltyvec = c(1, 2, 1, NA),
-           ptcol = "default",
-           legend = TRUE, legendloc = NULL,
-           # line1="blue",line2="green3",line3="black",ptcol="red",
-           minyr = "default", textmindev = 0.5, relative = FALSE,
-           expected = TRUE, estimated = TRUE, bias_adjusted = TRUE,
-           show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE,
-           subplot = lifecycle::deprecated()) {
+  function(
+    replist,
+    subplots = 1:3,
+    add = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    xlim = NULL,
+    ylim = NULL,
+    labels = c(
+      "Spawning biomass (t)",
+      "Recruitment (1,000s)",
+      replist[["SpawnOutputLabel"]],
+      expression(paste("Spawning output (relative to ", italic(B)[0], ")")),
+      expression(paste("Recruitment (relative to  ", italic(R)[0], ")")),
+      "Log recruitment deviation"
+    ),
+    bioscale = 1,
+    plotdir = "default",
+    pwidth = 6.5,
+    pheight = 6.5,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    verbose = TRUE,
+    colvec = c("blue", "black", "black", gray(0, 0.7)),
+    ltyvec = c(1, 2, 1, NA),
+    ptcol = "default",
+    legend = TRUE,
+    legendloc = NULL,
+    # line1="blue",line2="green3",line3="black",ptcol="red",
+    minyr = "default",
+    textmindev = 0.5,
+    relative = FALSE,
+    expected = TRUE,
+    estimated = TRUE,
+    bias_adjusted = TRUE,
+    show_env = TRUE,
+    virg = TRUE,
+    init = TRUE,
+    forecast = FALSE,
+    subplot = lifecycle::deprecated()
+  ) {
     # warn about soft deprecated arguments
     if (lifecycle::is_present(subplot)) {
       lifecycle::deprecate_warn(
@@ -93,7 +112,9 @@ SSplotSpawnrecruit <-
 
     recruit <- replist[["recruit"]]
     if (is.null(recruit)) {
-      message("Skipping stock-recruit plots: no recruitment information available")
+      message(
+        "Skipping stock-recruit plots: no recruitment information available"
+      )
       return()
     } else {
       if (3 %in% subplots && max(abs(recruit[["dev"]]), na.rm = TRUE) < 1e-6) {
@@ -106,9 +127,12 @@ SSplotSpawnrecruit <-
     xlab <- labels[1]
     ylab <- labels[2]
     # check if spawning output rather than spawning biomass is plotted
-    if (is.null(replist[["SpawnOutputUnits"]]) ||
-      is.na(replist[["SpawnOutputUnits"]]) ||
-      replist[["SpawnOutputUnits"]] == "numbers") { # quantity from test in SS_output
+    if (
+      is.null(replist[["SpawnOutputUnits"]]) ||
+        is.na(replist[["SpawnOutputUnits"]]) ||
+        replist[["SpawnOutputUnits"]] == "numbers"
+    ) {
+      # quantity from test in SS_output
       xlab <- labels[3]
     }
 
@@ -117,14 +141,24 @@ SSplotSpawnrecruit <-
       ylab <- labels[5]
     }
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
-    if (minyr == "default") minyr <- min(recruit[["Yr"]])
+    if (plotdir == "default") {
+      plotdir <- replist[["inputs"]][["dir"]]
+    }
+    if (minyr == "default") {
+      minyr <- min(recruit[["Yr"]])
+    }
 
-    recruit <- recruit[recruit[["era"]] %in% c(
-      "Early", "Main", "Fixed", "Late",
-      ifelse(forecast, "Forecast", NA)
-    ) &
-      recruit[["Yr"]] >= minyr, ]
+    recruit <- recruit[
+      recruit[["era"]] %in%
+        c(
+          "Early",
+          "Main",
+          "Fixed",
+          "Late",
+          ifelse(forecast, "Forecast", NA)
+        ) &
+        recruit[["Yr"]] >= minyr,
+    ]
 
     timeseries <- replist[["timeseries"]]
     recruit[["spawn_bio"]] <- bioscale * recruit[["SpawnBio"]]
@@ -132,7 +166,15 @@ SSplotSpawnrecruit <-
 
     # x and y limits
     if (is.null(ylim)) {
-      ylim <- c(0, 1.1 * max(recruit[["pred_recr"]], recruit[["exp_recr"]], recruit[["bias_adjusted"]]))
+      ylim <- c(
+        0,
+        1.1 *
+          max(
+            recruit[["pred_recr"]],
+            recruit[["exp_recr"]],
+            recruit[["bias_adjusted"]]
+          )
+      )
     }
     x <- recruit[["spawn_bio"]]
     if (is.null(xlim)) {
@@ -144,10 +186,22 @@ SSplotSpawnrecruit <-
     show_env <- show_env & any(recruit[["with_env"]] != recruit[["exp_recr"]])
 
     # store virgin and initial values
-    B0 <- sum(timeseries[["SpawnBio"]][timeseries[["Era"]] == "VIRG"], na.rm = TRUE)
-    B1 <- sum(timeseries[["SpawnBio"]][timeseries[["Era"]] == "INIT"], na.rm = TRUE)
-    R0 <- sum(timeseries[["Recruit_0"]][timeseries[["Era"]] == "VIRG"], na.rm = TRUE)
-    R1 <- sum(timeseries[["Recruit_0"]][timeseries[["Era"]] == "INIT"], na.rm = TRUE)
+    B0 <- sum(
+      timeseries[["SpawnBio"]][timeseries[["Era"]] == "VIRG"],
+      na.rm = TRUE
+    )
+    B1 <- sum(
+      timeseries[["SpawnBio"]][timeseries[["Era"]] == "INIT"],
+      na.rm = TRUE
+    )
+    R0 <- sum(
+      timeseries[["Recruit_0"]][timeseries[["Era"]] == "VIRG"],
+      na.rm = TRUE
+    )
+    R1 <- sum(
+      timeseries[["Recruit_0"]][timeseries[["Era"]] == "INIT"],
+      na.rm = TRUE
+    )
 
     # work around for issue with Shepherd function producing 0 values in equilibrium
     # use first non-zero value for each
@@ -211,39 +265,67 @@ SSplotSpawnrecruit <-
       if (!add) {
         par(mar = c(4.5, 4.5, 1, 1))
         # make empty plot (if not adding to existing plot)
-        plot(0,
-          type = "n", xlim = xlim * x.mult, ylim = ylim * y.mult,
-          xaxs = "i", yaxs = "i", xlab = xlab, ylab = ylab
+        plot(
+          0,
+          type = "n",
+          xlim = xlim * x.mult,
+          ylim = ylim * y.mult,
+          xaxs = "i",
+          yaxs = "i",
+          xlab = xlab,
+          ylab = ylab
         )
       }
       if (show_env) {
         # add line for expected recruitment with environmental variability
-        lines(x[order(x)] * x.mult, recruit[["with_env"]][order(x)] * y.mult,
-          lwd = 1, lty = ltyvec[1], col = colvec[1]
+        lines(
+          x[order(x)] * x.mult,
+          recruit[["with_env"]][order(x)] * y.mult,
+          lwd = 1,
+          lty = ltyvec[1],
+          col = colvec[1]
         )
       }
       if (expected) {
         # add line for expected recruitment
-        lines(x[order(x)] * x.mult, recruit[["exp_recr"]][order(x)] * y.mult,
-          lwd = 2, lty = ltyvec[3], col = colvec[3]
+        lines(
+          x[order(x)] * x.mult,
+          recruit[["exp_recr"]][order(x)] * y.mult,
+          lwd = 2,
+          lty = ltyvec[3],
+          col = colvec[3]
         )
       }
       if (bias_adjusted) {
         # add line for adjusted recruitment
-        lines(x * x.mult, recruit[["bias_adjusted"]] * y.mult,
-          lwd = 1, lty = ltyvec[2], col = colvec[2]
+        lines(
+          x * x.mult,
+          recruit[["bias_adjusted"]] * y.mult,
+          lwd = 1,
+          lty = ltyvec[2],
+          col = colvec[2]
         )
       }
       if (estimated) {
         # add points for individual estimates
-        points(x * x.mult, recruit[["pred_recr"]] * y.mult, pch = 21, col = colvec[4], bg = ptcol)
+        points(
+          x * x.mult,
+          recruit[["pred_recr"]] * y.mult,
+          pch = 21,
+          col = colvec[4],
+          bg = ptcol
+        )
       }
       if (text) {
         # add text, but only label values with larger devs (in abs value)
         show <- abs(recruit[["dev"]]) > textmindev
         show[1] <- show[length(show)] <- TRUE # also include first & last years
-        text(x[show] * x.mult, recruit[["pred_recr"]][show] * y.mult,
-          labels = recruit[["Yr"]][show], pos = 2, cex = .7
+        text(
+          x[show] * x.mult,
+          recruit[["pred_recr"]][show] * y.mult,
+          labels = recruit[["Yr"]][show],
+          pos = 2,
+          cex = .7
         )
       }
       # add point for virgin biomass/recruitment (if requested)
@@ -265,12 +347,15 @@ SSplotSpawnrecruit <-
           legend.out <- legend(..., plot = FALSE)
           # get coordinates of legend boundaries
           leg.left <- legend.out[["rect"]][["left"]]
-          leg.right <- legend.out[["rect"]][["left"]] + legend.out[["rect"]][["w"]]
+          leg.right <- legend.out[["rect"]][["left"]] +
+            legend.out[["rect"]][["w"]]
           leg.top <- legend.out[["rect"]][["top"]]
-          leg.bottom <- legend.out[["rect"]][["top"]] - legend.out[["rect"]][["h"]]
+          leg.bottom <- legend.out[["rect"]][["top"]] -
+            legend.out[["rect"]][["h"]]
           # test for overlap
-          if (any(x >= leg.left & x <= leg.right &
-            y >= leg.bottom & y <= leg.top)) {
+          if (
+            any(x >= leg.left & x <= leg.right & y >= leg.bottom & y <= leg.top)
+          ) {
             return(TRUE)
           } else {
             return(FALSE)
@@ -284,15 +369,25 @@ SSplotSpawnrecruit <-
             has_overlap <- legend.overlap(
               x = x * x.mult,
               y = recruit[["pred_recr"]] * y.mult,
-              legendloc, legend = legend_lab,
-              col = legend_col, pt.bg = legend_bg, lwd = legend_lwd,
-              lty = legend_lty, pch = legend_pch, bg = rgb(1, 1, 1, .6)
+              legendloc,
+              legend = legend_lab,
+              col = legend_col,
+              pt.bg = legend_bg,
+              lwd = legend_lwd,
+              lty = legend_lty,
+              pch = legend_pch,
+              bg = rgb(1, 1, 1, .6)
             )
             if (!has_overlap & !legend_added) {
-              legend(legendloc,
+              legend(
+                legendloc,
                 legend = legend_lab,
-                col = legend_col, pt.bg = legend_bg, lwd = legend_lwd,
-                lty = legend_lty, pch = legend_pch, bg = rgb(1, 1, 1, .6)
+                col = legend_col,
+                pt.bg = legend_bg,
+                lwd = legend_lwd,
+                lty = legend_lty,
+                pch = legend_pch,
+                bg = rgb(1, 1, 1, .6)
               )
               legend_added <- TRUE
             }
@@ -308,10 +403,15 @@ SSplotSpawnrecruit <-
         }
         # add legend at user-requested location or topleft with warning
         if (!legend_added) {
-          legend(legendloc,
+          legend(
+            legendloc,
             legend = legend_lab,
-            col = legend_col, pt.bg = legend_bg, lwd = legend_lwd,
-            lty = legend_lty, pch = legend_pch, bg = rgb(1, 1, 1, .5)
+            col = legend_col,
+            pt.bg = legend_bg,
+            lwd = legend_lwd,
+            lty = legend_lty,
+            pch = legend_pch,
+            bg = rgb(1, 1, 1, .5)
           )
         }
       } # end commands to add legend
@@ -324,20 +424,37 @@ SSplotSpawnrecruit <-
         # maximum spawning output relative to unfished equilibrium (usually 1)
         xmax <- 1.05 * max(x / B0)
         # make empty plot (if not adding to existing plot)
-        plot(0,
-          type = "n", xlim = c(0, xmax),
+        plot(
+          0,
+          type = "n",
+          xlim = c(0, xmax),
           ylim = c(-1.1, 1.1) * max(abs(recruit[["dev"]]), na.rm = TRUE),
-          las = 1, xaxs = "i", yaxs = "i", xlab = labels[4], ylab = labels[6]
+          las = 1,
+          xaxs = "i",
+          yaxs = "i",
+          xlab = labels[4],
+          ylab = labels[6]
         )
       }
       abline(h = 0, col = "grey")
-      points(x / B0, recruit[["dev"]], pch = 21, bg = ptcol, col = colvec[4], cex = 1.5)
+      points(
+        x / B0,
+        recruit[["dev"]],
+        pch = 21,
+        bg = ptcol,
+        col = colvec[4],
+        cex = 1.5
+      )
       if (text) {
         # add text, but only label values with larger devs (in abs value)
         show <- abs(recruit[["dev"]]) > textmindev
         show[1] <- show[length(show)] <- TRUE # also include first & last years
-        text(x[show] / B0, recruit[["dev"]][show],
-          labels = recruit[["Yr"]][show], pos = 2, cex = .7
+        text(
+          x[show] / B0,
+          recruit[["dev"]][show],
+          labels = recruit[["Yr"]][show],
+          pos = 2,
+          cex = .7
         )
       }
       # add point for virgin biomass/recruitment (if requested)
@@ -370,8 +487,14 @@ SSplotSpawnrecruit <-
         file <- "SR_curve.png"
         caption <- paste("Stock-recruit curve.", color.caption)
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         StockRecruitCurve.fn()
@@ -381,12 +504,20 @@ SSplotSpawnrecruit <-
         file <- "SR_curve2.png"
         caption <- paste0(
           "Stock-recruit curve with labels on first, last, and ",
-          "years with (log) deviations > ", textmindev, ".",
+          "years with (log) deviations > ",
+          textmindev,
+          ".",
           color.caption
         )
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         StockRecruitCurve.fn(text = TRUE)
@@ -397,18 +528,28 @@ SSplotSpawnrecruit <-
         caption <- paste0(
           "Deviations around the stock-recruit curve. ",
           "Labels are on first, last, and ",
-          "years with (log) deviations > ", textmindev, ".",
+          "years with (log) deviations > ",
+          textmindev,
+          ".",
           color.caption
         )
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         stock_vs_devs.fn(text = TRUE)
         dev.off()
       }
     }
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "S-R"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "S-R"
+    }
     return(invisible(plotinfo))
   }

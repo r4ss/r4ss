@@ -85,10 +85,19 @@ SS_doRetro <-
 #' future::plan(future::sequential)
 #' }
 #'
-retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
-                  oldsubdir = "", newsubdir = "retrospectives",
-                  subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                  RemoveBlocks = FALSE, verbose = FALSE, exe = "ss3", ...) {
+retro <- function(
+  dir = getwd(),
+  masterdir = lifecycle::deprecated(),
+  oldsubdir = "",
+  newsubdir = "retrospectives",
+  subdirstart = "retro",
+  years = 0:-5,
+  overwrite = TRUE,
+  RemoveBlocks = FALSE,
+  verbose = FALSE,
+  exe = "ss3",
+  ...
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterdir)) {
@@ -120,7 +129,9 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
   # loop over retrospective years
   furrr::future_walk(seq_along(years), function(iyr) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
-    if (verbose) message("Running retrospective in ", newdir_iyr)
+    if (verbose) {
+      message("Running retrospective in ", newdir_iyr)
+    }
 
     # copy original input files to retro folder
     copy_SS_inputs(
@@ -136,7 +147,8 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
     # change starter file to do retrospectives
     starter[["retro_yr"]] <- years[iyr]
     starter[["init_values_src"]] <- 0
-    SS_writestarter(starter,
+    SS_writestarter(
+      starter,
       dir = newdir_iyr,
       verbose = FALSE,
       overwrite = TRUE

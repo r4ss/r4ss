@@ -78,20 +78,40 @@
 #' }
 #'
 SSplotPars <-
-  function(replist, plotdir = NULL,
-           xlab = "Parameter value", ylab = "Density",
-           showmle = TRUE, showpost = TRUE, showprior = TRUE, showinit = TRUE,
-           showdev = FALSE,
-           # priorinit = TRUE, priorfinal = TRUE,
-           showlegend = TRUE, fitrange = FALSE, xaxs = "i",
-           xlim = NULL, ylim = NULL, verbose = TRUE, debug = FALSE,
-           nrows = 4, ncols = 2,
-           ltyvec = c(1, 1, 3, 4),
-           colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
-           add = FALSE, plot = TRUE, print = FALSE,
-           pwidth = 6.5, pheight = 6.5, punits = "in", ptsize = 10, res = 300,
-           strings = NULL, exact = FALSE,
-           newheaders = NULL) {
+  function(
+    replist,
+    plotdir = NULL,
+    xlab = "Parameter value",
+    ylab = "Density",
+    showmle = TRUE,
+    showpost = TRUE,
+    showprior = TRUE,
+    showinit = TRUE,
+    showdev = FALSE,
+    # priorinit = TRUE, priorfinal = TRUE,
+    showlegend = TRUE,
+    fitrange = FALSE,
+    xaxs = "i",
+    xlim = NULL,
+    ylim = NULL,
+    verbose = TRUE,
+    debug = FALSE,
+    nrows = 4,
+    ncols = 2,
+    ltyvec = c(1, 1, 3, 4),
+    colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
+    add = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    pwidth = 6.5,
+    pheight = 6.5,
+    punits = "in",
+    ptsize = 10,
+    res = 300,
+    strings = NULL,
+    exact = FALSE,
+    newheaders = NULL
+  ) {
     # define subfunction
     GetPrior <- function(Ptype, Pmin, Pmax, Pr, Psd, Pval) {
       # function to calculate prior values is direct translation of code in SS
@@ -115,7 +135,8 @@ SSplotPars <-
       # symmetric beta    value of Psd must be >0.0
       if (Ptype == "Sym_Beta") {
         mu <- -(Psd * (log((Pmax + Pmin) * 0.5 - Pmin))) - (Psd * (log(0.5)))
-        Prior_Like <- -(mu + (Psd * (log(Pval - Pmin + Pconst))) +
+        Prior_Like <- -(mu +
+          (Psd * (log(Pval - Pmin + Pconst))) +
           (Psd * (log(1. - ((Pval - Pmin - Pconst) / (Pmax - Pmin))))))
       }
 
@@ -128,7 +149,8 @@ SSplotPars <-
         if (Bprior <= 1.0 | Aprior <= 1.0) {
           warning("bad Beta prior")
         }
-        Prior_Like <- (1.0 - Bprior) * log(Pconst + Pval - Pmin) +
+        Prior_Like <- (1.0 - Bprior) *
+          log(Pconst + Pval - Pmin) +
           (1.0 - Aprior) * log(Pconst + Pmax - Pval) -
           (1.0 - Bprior) * log(Pconst + Pr - Pmin) -
           (1.0 - Aprior) * log(Pconst + Pmax - Pr)
@@ -152,8 +174,12 @@ SSplotPars <-
       if (Ptype == "Gamma") {
         scale <- (Psd^2) / Pr #  gamma parameters by method of moments
         shape <- Pr / scale
-        Prior_Like <- -1 * (-shape * log(scale) - lgamma(shape) +
-          (shape - 1.0) * log(Pval) - Pval / scale)
+        Prior_Like <- -1 *
+          (-shape *
+            log(scale) -
+            lgamma(shape) +
+            (shape - 1.0) * log(Pval) -
+            Pval / scale)
       }
 
       # F parameters get listed as different type but have no prior
@@ -164,7 +190,8 @@ SSplotPars <-
         warning(
           "Problem calculating prior. The prior type doesn't match ",
           "any of the options in the SSplotPars function.\n",
-          "Ptype: ", Ptype
+          "Ptype: ",
+          Ptype
         )
       }
       return(Prior_Like)
@@ -175,7 +202,9 @@ SSplotPars <-
 
     # check input
     if (!"parameters" %in% names(replist)) {
-      stop("'replist' input needs to be a list created by the SS_output function")
+      stop(
+        "'replist' input needs to be a list created by the SS_output function"
+      )
     }
     if (is.null(plotdir)) {
       plotdir <- replist[["inputs"]][["dir"]]
@@ -229,36 +258,50 @@ SSplotPars <-
     skip <- grep("Impl_err_", goodnames)
     if (length(skip) > 0) {
       goodnames <- goodnames[-skip]
-      message("Skipping 'Impl_err_' parameters which don't have bounds reported")
+      message(
+        "Skipping 'Impl_err_' parameters which don't have bounds reported"
+      )
     }
     # skip F_fleet parameters
     skip <- grep("F_fleet_", goodnames)
     if (length(skip) > 0) {
       goodnames <- goodnames[-skip]
-      message("Skipping 'F_fleet_' parameters which aren't yet supported by this function")
+      message(
+        "Skipping 'F_fleet_' parameters which aren't yet supported by this function"
+      )
     }
 
     if (!showdev) {
       # remove deviations from the list of parameter labels to plot
       # exclude parameters that represent recdevs or other deviations
       devnames <- c(
-        "RecrDev", "InitAge", "ForeRecr",
-        "DEVadd", "DEVmult", "DEVrwalk", "DEV_MR_rwalk", "ARDEV"
+        "RecrDev",
+        "InitAge",
+        "ForeRecr",
+        "DEVadd",
+        "DEVmult",
+        "DEVrwalk",
+        "DEV_MR_rwalk",
+        "ARDEV"
       )
       # look for rows in table of parameters that have label indicating deviation
       devrows <- NULL
       for (iname in seq_along(devnames)) {
-        devrows <- unique(c(devrows, grep(
-          devnames[iname],
-          goodnames
-        )))
+        devrows <- unique(c(
+          devrows,
+          grep(
+            devnames[iname],
+            goodnames
+          )
+        ))
       }
       # if there are devs in the list, remove them
       if (length(devrows) > 0) {
         goodnames <- goodnames[-devrows]
         if (verbose) {
           message(
-            "Excluding ", length(devrows),
+            "Excluding ",
+            length(devrows),
             " deviation parameters because input 'showdev' = FALSE"
           )
         }
@@ -269,10 +312,12 @@ SSplotPars <-
       }
     } else {
       # warn if any of these are present
-      if (length(grep("rwalk", x = goodnames)) > 0 |
-        length(grep("DEVadd", x = goodnames)) > 0 |
-        length(grep("DEVmult", x = goodnames)) > 0 |
-        length(grep("ARDEV", x = goodnames)) > 0) {
+      if (
+        length(grep("rwalk", x = goodnames)) > 0 |
+          length(grep("DEVadd", x = goodnames)) > 0 |
+          length(grep("DEVmult", x = goodnames)) > 0 |
+          length(grep("ARDEV", x = goodnames)) > 0
+      ) {
         warning(
           "Parameter deviates are not fully implemented in this function.\n",
           "Prior and bounds unavailable so these are skipped and\n",
@@ -295,14 +340,16 @@ SSplotPars <-
     npars <- length(goodnames)
     if (is.null(strings) & verbose) {
       messagetext <- paste0(
-        "Plotting distributions for ", npars,
+        "Plotting distributions for ",
+        npars,
         " estimated parameters."
       )
       if (!showdev) {
         messagetext <- gsub(
           pattern = ".",
           replacement = " (deviations not included).",
-          x = messagetext, fixed = TRUE
+          x = messagetext,
+          fixed = TRUE
         )
       }
       message(messagetext)
@@ -315,9 +362,18 @@ SSplotPars <-
     plotPars.fn <- function() {
       # function to make the actual plot
       if (!add) {
-        plot(0,
-          type = "n", xlim = xlim2, ylim = ylim2, xaxs = xaxs, yaxs = "i",
-          xlab = "", ylab = "", main = header, cex.main = 1, axes = FALSE
+        plot(
+          0,
+          type = "n",
+          xlim = xlim2,
+          ylim = ylim2,
+          xaxs = xaxs,
+          yaxs = "i",
+          xlab = "",
+          ylab = "",
+          main = header,
+          cex.main = 1,
+          axes = FALSE
         )
         axis(1)
       }
@@ -339,8 +395,11 @@ SSplotPars <-
         # full normal distribution if uncertainty is present
         if (!is.na(parsd) && parsd > 0) {
           lines(x, mle, col = colvec[1], lwd = 1, lty = ltyvec[1])
-          lines(rep(finalval, 2), c(0, dnorm(finalval, finalval, parsd) * mlescale),
-            col = colvec[1], lty = ltyvec[1]
+          lines(
+            rep(finalval, 2),
+            c(0, dnorm(finalval, finalval, parsd) * mlescale),
+            col = colvec[1],
+            lty = ltyvec[1]
           )
         } else {
           # just point estimate otherwise
@@ -358,19 +417,29 @@ SSplotPars <-
       box()
 
       # add margin text and legend
-      if (max(par("mfg")[1:2]) == 1) { # first panel on page
+      if (max(par("mfg")[1:2]) == 1) {
+        # first panel on page
         mtext(xlab, side = 1, line = 0.5, outer = TRUE)
         mtext(ylab, side = 2, line = 0.5, outer = TRUE)
         if (showlegend) {
           showvec <- c(showprior, showmle, showpost, showpost, showinit)
-          legend("topleft",
-            cex = 1.2, bty = "n", pch = c(NA, NA, 15, NA, 17)[showvec],
-            lty = c(ltyvec[2], ltyvec[1], NA, ltyvec[3], NA)[showvec], lwd = c(2, 1, NA, 2, NA)[showvec],
-            col = c(colvec[3], colvec[1], colvec[4], colvec[5], colvec[2])[showvec],
+          legend(
+            "topleft",
+            cex = 1.2,
+            bty = "n",
+            pch = c(NA, NA, 15, NA, 17)[showvec],
+            lty = c(ltyvec[2], ltyvec[1], NA, ltyvec[3], NA)[showvec],
+            lwd = c(2, 1, NA, 2, NA)[showvec],
+            col = c(colvec[3], colvec[1], colvec[4], colvec[5], colvec[2])[
+              showvec
+            ],
             pt.cex = c(1, 1, 2, 1, 1)[showvec],
             legend = c(
-              "prior", "max. likelihood", "posterior",
-              "posterior median", "initial value"
+              "prior",
+              "max. likelihood",
+              "posterior",
+              "posterior median",
+              "initial value"
             )[showvec]
           )
         } # end legend
@@ -414,11 +483,13 @@ SSplotPars <-
       }
 
       # add bounds and sigma for recdevs
-      if (any(sapply(
-        X = c("RecrDev", "InitAge", "ForeRecr"),
-        FUN = grepl,
-        parname
-      ))) {
+      if (
+        any(sapply(
+          X = c("RecrDev", "InitAge", "ForeRecr"),
+          FUN = grepl,
+          parname
+        ))
+      ) {
         Psd <- parameters[["Value"]][parameters[["Label"]] == "SR_sigmaR"]
       }
 
@@ -430,10 +501,12 @@ SSplotPars <-
       ## so just needs to be matched up with the deviations
       ## also note that the "dev" column in parameters can be used here instead
       isdev <- FALSE
-      if (length(grep("DEVrwalk", x = parname)) > 0 |
-        length(grep("DEVadd", x = parname)) > 0 |
-        length(grep("DEVmult", x = parname)) > 0 |
-        length(grep("ARDEV", x = parname)) > 0) {
+      if (
+        length(grep("DEVrwalk", x = parname)) > 0 |
+          length(grep("DEVadd", x = parname)) > 0 |
+          length(grep("DEVmult", x = parname)) > 0 |
+          length(grep("ARDEV", x = parname)) > 0
+      ) {
         initval <- 0
         isdev <- TRUE
       }
@@ -446,7 +519,14 @@ SSplotPars <-
       ## get prior if not a dev (which don't yet have prior/penalty configured)
       if (!isdev) {
         x <- seq(Pmin, Pmax, length = 5000) # x vector for subsequent calcs
-        negL_prior <- GetPrior(Ptype = Ptype, Pmin = Pmin, Pmax = Pmax, Pr = Pr, Psd = Psd, Pval = x)
+        negL_prior <- GetPrior(
+          Ptype = Ptype,
+          Pmin = Pmin,
+          Pmax = Pmax,
+          Pr = Pr,
+          Psd = Psd,
+          Pval = x
+        )
         prior <- exp(-1 * negL_prior)
         # make robust to cases where the prior is undefined for any reason
         if (length(prior) == 0) {
@@ -486,11 +566,15 @@ SSplotPars <-
       # get mcmc results from replist created by SS_output
       mcmc <- replist[["mcmc"]]
       if (showpost && is.null(mcmc)) {
-        message("$mcmc not found in input 'replist', changing input to 'showpost=FALSE'")
+        message(
+          "$mcmc not found in input 'replist', changing input to 'showpost=FALSE'"
+        )
         showpost <- FALSE
       }
       if (showpost && length(mcmc) < 20) {
-        message("mcmc output has fewer than 20 rows, changing input to 'showpost=FALSE'")
+        message(
+          "mcmc output has fewer than 20 rows, changing input to 'showpost=FALSE'"
+        )
         showpost <- FALSE
       }
 
@@ -530,7 +614,9 @@ SSplotPars <-
         } else {
           ## or use parameter limits, unless case of rdevwalk which as none
           ## then revert back to those calculated above
-          if (!isdev) xmin <- Pmin
+          if (!isdev) {
+            xmin <- Pmin
+          }
           if (!isdev) xmax <- Pmax
         }
         xlim2 <- c(xmin, xmax)
@@ -543,8 +629,12 @@ SSplotPars <-
         jpar <- (1:ncol(mcmc))[names(mcmc) == postparname]
         post <- mcmc[, jpar]
         breakvec <- seq(xmin, xmax, length = 50)
-        if (min(breakvec) > min(post)) breakvec <- c(min(post), breakvec)
-        if (max(breakvec) < max(post)) breakvec <- c(breakvec, max(post))
+        if (min(breakvec) > min(post)) {
+          breakvec <- c(min(post), breakvec)
+        }
+        if (max(breakvec) < max(post)) {
+          breakvec <- c(breakvec, max(post))
+        }
         posthist <- hist(post, plot = FALSE, breaks = breakvec)
         postmedian <- median(post)
         ymax <- max(ymax, max(posthist[["density"]]), na.rm = FALSE) # update ymax
@@ -570,7 +660,15 @@ SSplotPars <-
         pagetext <- ""
         if (npages > 1) {
           pagetext <- paste("_page", ipage, sep = "")
-          caption <- paste(caption, " (plot ", ipage, " of ", npages, ").", sep = "")
+          caption <- paste(
+            caption,
+            " (plot ",
+            ipage,
+            " of ",
+            npages,
+            ").",
+            sep = ""
+          )
         }
         # add more to caption if it's the first plot in the set
         if (ipar == 1) {
@@ -605,8 +703,14 @@ SSplotPars <-
         cli::cli_alert_info("saving file to {plotdir}/{file}")
         # start png file and add to plotinfo
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
 

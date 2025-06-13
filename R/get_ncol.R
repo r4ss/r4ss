@@ -24,9 +24,12 @@ get_ncol <- function(file, skip = 0, nrows = lifecycle::deprecated()) {
       details = "Input 'nrows' no longer available."
     )
   }
-  nummax <- max(utils::count.fields(file,
-    skip = skip, quote = "",
+  nummax <- max(utils::count.fields(
+    file,
+    skip = skip,
+    quote = "",
     comment.char = ""
-  )) + 1
+  )) +
+    1
   return(nummax)
 }

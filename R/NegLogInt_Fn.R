@@ -70,18 +70,23 @@
 #' )
 #' }
 #'
-NegLogInt_Fn <- function(dir = getwd(),
-                         File = lifecycle::deprecated(),
-                         Input_SD_Group_Vec,
-                         CTL_linenum_List, ESTPAR_num_List,
-                         PAR_num_Vec, Int_Group_List = list(1),
-                         StartFromPar = TRUE,
-                         Intern = lifecycle::deprecated(),
-                         ReDoBiasRamp = FALSE, BiasRamp_linenum_Vec = NULL,
-                         CTL_linenum_Type = NULL,
-                         exe = "ss3",
-                         verbose = FALSE,
-                         ...) {
+NegLogInt_Fn <- function(
+  dir = getwd(),
+  File = lifecycle::deprecated(),
+  Input_SD_Group_Vec,
+  CTL_linenum_List,
+  ESTPAR_num_List,
+  PAR_num_Vec,
+  Int_Group_List = list(1),
+  StartFromPar = TRUE,
+  Intern = lifecycle::deprecated(),
+  ReDoBiasRamp = FALSE,
+  BiasRamp_linenum_Vec = NULL,
+  CTL_linenum_Type = NULL,
+  exe = "ss3",
+  verbose = FALSE,
+  ...
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(Intern)) {
@@ -146,40 +151,47 @@ NegLogInt_Fn <- function(dir = getwd(),
 
   # Write record to file (part 1)
   if (!("Optimization_record.txt" %in% list.files(dir))) {
-    write("Start optimization",
-      file = OptRecord,
-      append = FALSE
-    )
+    write("Start optimization", file = OptRecord, append = FALSE)
   }
   write("", file = OptRecord, append = TRUE)
   write(date(), file = OptRecord, append = TRUE)
-  write(paste("Iteration", Iteration),
+  write(paste("Iteration", Iteration), file = OptRecord, append = TRUE)
+  write(
+    paste("SD_Group_Vec", paste(SD_Group_Vec, collapse = " ")),
     file = OptRecord,
     append = TRUE
-  )
-  write(paste("SD_Group_Vec", paste(SD_Group_Vec, collapse = " ")),
-    file = OptRecord, append = TRUE
   )
 
   # If .par is availabile from the last iteration then use it as starting point
   STARTER <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-  if (StartFromPar == TRUE &&
-    paste0("ss_", Iteration - 1, ".par") %in% list.files(dir)) {
+  if (
+    StartFromPar == TRUE &&
+      paste0("ss_", Iteration - 1, ".par") %in% list.files(dir)
+  ) {
     STARTER[["init_values_src"]] <- 1
-    PAR_0 <- scan(file.path(dir, paste0("ss_", Iteration - 1, ".par")),
-      comment.char = "#", quiet = TRUE
+    PAR_0 <- scan(
+      file.path(dir, paste0("ss_", Iteration - 1, ".par")),
+      comment.char = "#",
+      quiet = TRUE
     )
   } else {
     STARTER[["init_values_src"]] <- 0
   }
-  SS_writestarter(STARTER, dir = dir, file = "starter.ss", overwrite = TRUE, verbose = FALSE)
+  SS_writestarter(
+    STARTER,
+    dir = dir,
+    file = "starter.ss",
+    overwrite = TRUE,
+    verbose = FALSE
+  )
 
   # Read CTL
   CTL <- readLines(file.path(dir, STARTER[["ctlfile"]]))
   # Modify CTL
   for (ParI in seq_along(SD_Group_Vec)) {
     for (CtlLineI in seq_along(CTL_linenum_List[[ParI]])) {
-      Temp <- as.vector(unlist(sapply(CTL[CTL_linenum_List[[ParI]][CtlLineI]],
+      Temp <- as.vector(unlist(sapply(
+        CTL[CTL_linenum_List[[ParI]][CtlLineI]],
         FUN = function(Char) {
           strsplit(Char, " ")[[1]]
         }
@@ -244,14 +256,18 @@ NegLogInt_Fn <- function(dir = getwd(),
       to = file.path(dir, paste0("ss_", Iteration, "-first.par"))
     )
     # Read and check
-    PAR <- scan(file.path(dir, paste0("ss_", Iteration, "-first.par")),
-      what = "character", quiet = TRUE
+    PAR <- scan(
+      file.path(dir, paste0("ss_", Iteration, "-first.par")),
+      what = "character",
+      quiet = TRUE
     )
     if (ifelse(is.na(as.numeric(PAR[11])), FALSE, as.numeric(PAR[16]) < 1)) {
       Converged <- TRUE
     } else {
-      write(paste0("*** Optimization ", 1, " didn't converge ***"),
-        file = OptRecord, append = TRUE
+      write(
+        paste0("*** Optimization ", 1, " didn't converge ***"),
+        file = OptRecord,
+        append = TRUE
       )
     }
   }
@@ -261,23 +277,40 @@ NegLogInt_Fn <- function(dir = getwd(),
     # Change starter to take PAR file
     STARTER <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
     STARTER[["init_values_src"]] <- 1
-    SS_writestarter(STARTER, dir = dir, file = "starter.ss", overwrite = TRUE, verbose = FALSE)
+    SS_writestarter(
+      STARTER,
+      dir = dir,
+      file = "starter.ss",
+      overwrite = TRUE,
+      verbose = FALSE
+    )
     # Loop through all previous start values
     PreviousIteration <- 0
     while (Converged == FALSE & PreviousIteration <= Iteration) {
       # Read in original estimate
       if (PreviousIteration == 0) {
-        PAR_0 <- scan(file.path(dir, paste0("ss_", PreviousIteration, ".par")),
-          comment.char = "#", quiet = TRUE
+        PAR_0 <- scan(
+          file.path(dir, paste0("ss_", PreviousIteration, ".par")),
+          comment.char = "#",
+          quiet = TRUE
         )
       }
       if (PreviousIteration >= 1 & PreviousIteration < Iteration) {
-        PAR_0 <- scan(file.path(dir, paste0("ss_", PreviousIteration, "-first.par")),
-          comment.char = "#", quiet = TRUE
+        PAR_0 <- scan(
+          file.path(dir, paste0("ss_", PreviousIteration, "-first.par")),
+          comment.char = "#",
+          quiet = TRUE
         )
       }
-      if (PreviousIteration == Iteration & paste0("ss_init.par") %in% list.files(dir)) {
-        PAR_0 <- scan(file.path(dir, paste0("ss_init.par")), comment.char = "#", quiet = TRUE)
+      if (
+        PreviousIteration == Iteration &
+          paste0("ss_init.par") %in% list.files(dir)
+      ) {
+        PAR_0 <- scan(
+          file.path(dir, paste0("ss_init.par")),
+          comment.char = "#",
+          quiet = TRUE
+        )
       }
       # Modify values of PAR file for short-line values
       for (ParI in seq_along(SD_Group_Vec)) {
@@ -303,25 +336,37 @@ NegLogInt_Fn <- function(dir = getwd(),
         )
         file.remove(Pardir)
         # Read and check
-        PAR <- scan(file.path(dir, paste0("ss_", Iteration, "-first.par")),
-          what = "character", quiet = TRUE
+        PAR <- scan(
+          file.path(dir, paste0("ss_", Iteration, "-first.par")),
+          what = "character",
+          quiet = TRUE
         )
-        if (ifelse(is.na(as.numeric(PAR[11])), FALSE, as.numeric(PAR[16]) < 1)) {
+        if (
+          ifelse(is.na(as.numeric(PAR[11])), FALSE, as.numeric(PAR[16]) < 1)
+        ) {
           Converged <- TRUE
           write(
             paste0(
-              "*** Optimization ", 2, "-", PreviousIteration,
+              "*** Optimization ",
+              2,
+              "-",
+              PreviousIteration,
               " did converge ***"
             ),
-            file = OptRecord, append = TRUE
+            file = OptRecord,
+            append = TRUE
           )
         } else {
           write(
             paste0(
-              "*** Optimization ", 2, "-", PreviousIteration,
+              "*** Optimization ",
+              2,
+              "-",
+              PreviousIteration,
               " didn't converge ***"
             ),
-            file = OptRecord, append = TRUE
+            file = OptRecord,
+            append = TRUE
           )
         }
       }
@@ -335,13 +380,17 @@ NegLogInt_Fn <- function(dir = getwd(),
     # Re-run to get Hessian
     STARTER <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
     STARTER[["init_values_src"]] <- 1
-    SS_writestarter(STARTER,
-      dir = dir, file = "starter.ss", overwrite = TRUE,
+    SS_writestarter(
+      STARTER,
+      dir = dir,
+      file = "starter.ss",
+      overwrite = TRUE,
       verbose = FALSE
     )
     file.copy(
       from = file.path(dir, paste0("ss_", Iteration, "-first.par")),
-      to = Pardir, overwrite = TRUE
+      to = Pardir,
+      overwrite = TRUE
     )
     if (file.exists(file.path(dir, stdfile))) {
       file.remove(file.path(dir, stdfile))
@@ -350,17 +399,38 @@ NegLogInt_Fn <- function(dir = getwd(),
     Sys.sleep(1)
 
     # Estimate new bias ramp
-    if (ReDoBiasRamp == TRUE &
-      stdfile %in% list.files(dir) &
-      file.info(file.path(dir, stdfile))[["size"]] > 0) {
+    if (
+      ReDoBiasRamp == TRUE &
+        stdfile %in% list.files(dir) &
+        file.info(file.path(dir, stdfile))[["size"]] > 0
+    ) {
       # try reading output
-      SsOutput <- try(SS_output(dir, covar = TRUE, forecast = FALSE, verbose = F, printstats = F), silent = TRUE)
+      SsOutput <- try(
+        SS_output(
+          dir,
+          covar = TRUE,
+          forecast = FALSE,
+          verbose = F,
+          printstats = F
+        ),
+        silent = TRUE
+      )
       if (inherits(SsOutput, "try-error")) {
-        BiasRamp <- SS_fitbiasramp(SsOutput, altmethod = "psoptim", print = FALSE, plot = FALSE)
+        BiasRamp <- SS_fitbiasramp(
+          SsOutput,
+          altmethod = "psoptim",
+          print = FALSE,
+          plot = FALSE
+        )
         file.remove(file.path(dir, stdfile))
         # Put into CTL
         CTL <- readLines(file.path(dir, STARTER[["ctlfile"]]))
-        CTL[BiasRamp_linenum_Vec] <- apply(BiasRamp[["df"]], MARGIN = 1, FUN = paste, collapse = " ")
+        CTL[BiasRamp_linenum_Vec] <- apply(
+          BiasRamp[["df"]],
+          MARGIN = 1,
+          FUN = paste,
+          collapse = " "
+        )
         writeLines(CTL, file.path(dir, STARTER[["ctlfile"]]))
         # Re-run to get Hessian
         run(dir = dir, verbose = verbose, ...)
@@ -371,7 +441,11 @@ NegLogInt_Fn <- function(dir = getwd(),
 
   # Check for STD
   Converged <- FALSE
-  if (stdfile %in% list.files(dir) & file.info(file.path(dir, stdfile))[["size"]] > 0) {
+  if (
+    stdfile %in%
+      list.files(dir) &
+      file.info(file.path(dir, stdfile))[["size"]] > 0
+  ) {
     Converged <- TRUE
   }
 
@@ -408,17 +482,25 @@ NegLogInt_Fn <- function(dir = getwd(),
     )
 
     # Read in some stuff
-    STD <- scan(file.path(dir, paste0("ss_", Iteration, ".std")),
-      what = "character", quiet = TRUE
+    STD <- scan(
+      file.path(dir, paste0("ss_", Iteration, ".std")),
+      what = "character",
+      quiet = TRUE
     )
-    STD <- data.frame(matrix(STD[-c(1:(which(STD == "1")[1] - 1))], ncol = 4, byrow = TRUE),
+    STD <- data.frame(
+      matrix(STD[-c(1:(which(STD == "1")[1] - 1))], ncol = 4, byrow = TRUE),
       stringsAsFactors = FALSE
     )
-    PAR <- scan(file.path(dir, paste0("ss_", Iteration, ".par")),
-      comment.char = "#", quiet = TRUE
+    PAR <- scan(
+      file.path(dir, paste0("ss_", Iteration, ".par")),
+      comment.char = "#",
+      quiet = TRUE
     )
     DIAG <- read.admbFit(file.path(dir, paste0("ss_", Iteration)))
-    HESS <- getADMBHessian(file.path(dir, paste0("admodel_", Iteration, ".hes")))
+    HESS <- getADMBHessian(file.path(
+      dir,
+      paste0("admodel_", Iteration, ".hes")
+    ))
     # Calculate Hessian
     cov <- corpcor::pseudoinverse(HESS[["hes"]])
     scale <- HESS[["scale"]]
@@ -429,18 +511,20 @@ NegLogInt_Fn <- function(dir = getwd(),
 
     # Confirm that correct parameters are being included in Hessian
     if (Iteration == 1) {
-      write("RECORD FOR PARAMETERS IN INTEGRAL",
-        file = OptRecord, append = TRUE
+      write(
+        "RECORD FOR PARAMETERS IN INTEGRAL",
+        file = OptRecord,
+        append = TRUE
       )
       for (IntI in seq_along(Int_Group_List)) {
         Temp <- unlist(ESTPAR_num_List[Int_Group_List[[IntI]]])
-        write(paste("Group", IntI),
+        write(paste("Group", IntI), file = OptRecord, append = TRUE)
+        write.table(
+          STD[Temp, ],
           file = OptRecord,
-          append = TRUE
-        )
-        write.table(STD[Temp, ],
-          file = OptRecord,
-          append = TRUE, col.names = FALSE, row.names = FALSE
+          append = TRUE,
+          col.names = FALSE,
+          row.names = FALSE
         )
       }
     }
@@ -450,42 +534,66 @@ NegLogInt_Fn <- function(dir = getwd(),
     for (ParI in seq_along(SD_Group_Vec)) {
       # Add in constant of integration for "Long_Penalty" parameters
       if (CTL_linenum_Type[ParI] == "Long_Penalty") {
-        NLL <- NLL + -1 * (-log(2 * pi) / 2 - log(SD_Group_Vec[ParI])) * length(ESTPAR_num_List[[ParI]])
+        NLL <- NLL +
+          -1 *
+            (-log(2 * pi) / 2 - log(SD_Group_Vec[ParI])) *
+            length(ESTPAR_num_List[[ParI]])
       }
     }
     # Add in constant of proportionality for recruitment (i.e. to account for
     # Rick's bias-correction ramp)
     BiasAdj <- readLines(file.path(dir, paste0("Report_", Iteration, ".sso")))
     # starting with 3.24U, a new output was added 3 lines after SPAWN_RECRUIT
-    if (grep("Bmsy/Bzero", BiasAdj[pmatch("SPAWN_RECRUIT", BiasAdj) + 3]) == 1) {
+    if (
+      grep("Bmsy/Bzero", BiasAdj[pmatch("SPAWN_RECRUIT", BiasAdj) + 3]) == 1
+    ) {
       shift <- 8
     } else {
       shift <- 7
     }
     BiasAdjStart <- pmatch("SPAWN_RECRUIT", BiasAdj) + shift
-    BiasAdjTable <- read.table(file.path(dir, paste0("Report_", Iteration, ".sso")),
-      header = TRUE, nrows = 2, skip = BiasAdjStart, comment.char = "#"
+    BiasAdjTable <- read.table(
+      file.path(dir, paste0("Report_", Iteration, ".sso")),
+      header = TRUE,
+      nrows = 2,
+      skip = BiasAdjStart,
+      comment.char = "#"
     )
     SigmaR <- as.numeric(strsplit(BiasAdj[BiasAdjStart - 4], " ")[[1]][1])
     # Deal with eras
-    RecDevPen <- matrix(NA, nrow = 3, ncol = 2, dimnames = list(
-      c("Early", "Main", "Forecast"),
-      c("negative-Rick", "full")
-    ))
+    RecDevPen <- matrix(
+      NA,
+      nrow = 3,
+      ncol = 2,
+      dimnames = list(
+        c("Early", "Main", "Forecast"),
+        c("negative-Rick", "full")
+      )
+    )
     # Deal with early era
     RecDevPen["Early", "full"] <- -1 * (-log(SigmaR) * BiasAdjTable[2, 2])
-    RecDevPen["Early", "negative-Rick"] <- -log(SigmaR) * BiasAdjTable[2, 2] * BiasAdjTable[2, 5]
+    RecDevPen["Early", "negative-Rick"] <- -log(SigmaR) *
+      BiasAdjTable[2, 2] *
+      BiasAdjTable[2, 5]
     # Deal with main era
     RecDevPen["Main", "full"] <- -1 * (-log(SigmaR) * BiasAdjTable[1, 2])
-    RecDevPen["Main", "negative-Rick"] <- -log(SigmaR) * BiasAdjTable[1, 2] * BiasAdjTable[1, 5]
+    RecDevPen["Main", "negative-Rick"] <- -log(SigmaR) *
+      BiasAdjTable[1, 2] *
+      BiasAdjTable[1, 5]
     # Deal with forecast era
-    RecDevPen["Forecast", "full"] <- -1 * (-log(SigmaR) * length(which(STD[, 2] == "Fcast_recruitments")))
+    RecDevPen["Forecast", "full"] <- -1 *
+      (-log(SigmaR) * length(which(STD[, 2] == "Fcast_recruitments")))
     RecDevPen["Forecast", "negative-Rick"] <- 0
     # Add into NLL and record
     NLL <- NLL + sum(RecDevPen)
-    write.table(RecDevPen, file = file.path(dir, paste0("ss_", Iteration, ".pen")))
-    write(c("", "sum(RecDevPen) = ", sum(RecDevPen)),
-      file = file.path(dir, paste0("ss_", Iteration, ".pen")), append = TRUE
+    write.table(
+      RecDevPen,
+      file = file.path(dir, paste0("ss_", Iteration, ".pen"))
+    )
+    write(
+      c("", "sum(RecDevPen) = ", sum(RecDevPen)),
+      file = file.path(dir, paste0("ss_", Iteration, ".pen")),
+      append = TRUE
     )
 
     # Approximate integral using Laplace Approximation
@@ -525,21 +633,20 @@ NegLogInt_Fn <- function(dir = getwd(),
     # Integral <- 2*pi * sqrt(1/exp(LnDet)) * exp(-NLL)
 
     # Write record to file (part 2)
-    write(paste("LnLike", -NLL),
+    write(paste("LnLike", -NLL), file = OptRecord, append = TRUE)
+    write(
+      paste("NegLnDet", paste(-LnDet, collapse = " ")),
       file = OptRecord,
       append = TRUE
     )
-    write(paste("NegLnDet", paste(-LnDet, collapse = " ")),
-      file = OptRecord, append = TRUE
-    )
   } else {
     # Indicate that this model didn't converge
-    if ("ss3.par" %in% list.files(dir)) file.remove(Pardir)
+    if ("ss3.par" %in% list.files(dir)) {
+      file.remove(Pardir)
+    }
     Ln_Integral <- -1e10 * sum(SD_Group_Vec)
   }
-  write(paste("Ln_Integral", Ln_Integral),
-    file = OptRecord, append = TRUE
-  )
+  write(paste("Ln_Integral", Ln_Integral), file = OptRecord, append = TRUE)
 
   return(-1 * Ln_Integral)
 }

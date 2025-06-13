@@ -11,8 +11,13 @@
 #' @return Prints inputs with option to write to chosen file
 #' @author Ian Taylor
 #' @export
-SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
-                          overwrite = FALSE, yrs.in.columns = TRUE) {
+SSmakeMmatrix <- function(
+  mat,
+  startyr,
+  outfile = NULL,
+  overwrite = FALSE,
+  yrs.in.columns = TRUE
+) {
   # A function for converting a matrix of natural mortality values
   # into inputs for Stock Synthesis
   #
@@ -60,7 +65,9 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
     sink(zz)
   }
 
-  if (!yrs.in.columns) mat <- t(mat) # transpose as needed
+  if (!yrs.in.columns) {
+    mat <- t(mat)
+  } # transpose as needed
   nyrs <- ncol(mat) # number of years
   yrs <- startyr + 1:nyrs - 1 # vector of years
   maxage <- nrow(mat) - 1 # maximum age (assuming first age=0)
@@ -68,14 +75,23 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
 
   message(
     "Calculating inputs to Stock Synthesis for a matrix of natural mortality values",
-    "\n over the range of ages:", min(ages), "to", maxage
+    "\n over the range of ages:",
+    min(ages),
+    "to",
+    maxage
   )
 
   Msetup <- c(
     "# three lines to paste near top of control file:\n",
     "1 #_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate\n",
-    paste(maxage + 1, "# N_natMparms for segmented approach (required when using natM_type=1)\n"),
-    paste(paste(ages, collapse = " "), "# NatM_breakages (required when using natM_type=1)\n")
+    paste(
+      maxage + 1,
+      "# N_natMparms for segmented approach (required when using natM_type=1)\n"
+    ),
+    paste(
+      paste(ages, collapse = " "),
+      "# NatM_breakages (required when using natM_type=1)\n"
+    )
   )
 
   message(Msetup)
@@ -105,7 +121,11 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
 
   # add some comments
   Mparams[["comment"]] <- paste("# M parameter for age", ages)
-  Mparams[["comment"]][maxage + 1] <- paste(Mparams[["comment"]][maxage + 1], "+", sep = "")
+  Mparams[["comment"]][maxage + 1] <- paste(
+    Mparams[["comment"]][maxage + 1],
+    "+",
+    sep = ""
+  )
 
   message(
     "Mortality params to paste into the first block of parameter lines:\n",
@@ -129,7 +149,11 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
   )
 
   # modify final comment to make clear as a plus group
-  Mlinks[["comment"]][maxage + 1] <- paste(Mlinks[["comment"]][maxage + 1], "+", sep = "")
+  Mlinks[["comment"]][maxage + 1] <- paste(
+    Mlinks[["comment"]][maxage + 1],
+    "+",
+    sep = ""
+  )
 
   message(
     "\n# stuff to paste below the line labeled 'CohortGrowDev'\n",
@@ -149,14 +173,18 @@ SSmakeMmatrix <- function(mat, startyr, outfile = NULL,
       Value = Mscaled,
       comment = paste("# Env. index for time-varying M at age", a)
     )
-    if (a == maxage) temp[["comment"]] <- paste(temp[["comment"]], "+", sep = "")
+    if (a == maxage) {
+      temp[["comment"]] <- paste(temp[["comment"]], "+", sep = "")
+    }
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 
   message(
     "Environmental variables to paste into the bottom of the data file:\n",
-    maxage + 1, " # N environmental variables\n",
-    nrow(Menv), " # N environmental observations\n",
+    maxage + 1,
+    " # N environmental variables\n",
+    nrow(Menv),
+    " # N environmental observations\n",
     paste0(utils::capture.output(Menv), collapse = "\n")
   )
 

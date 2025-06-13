@@ -29,24 +29,26 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readctl_3.24 <- function(file,
-                            verbose = FALSE,
-                            use_datlist = TRUE,
-                            datlist = "data.ss_new",
-                            # Parameters that are not defined in control file:
-                            nseas = NULL,
-                            N_areas = NULL,
-                            Nages = NULL,
-                            Nsexes = NULL,
-                            Npopbins = NA,
-                            Nfleet = NULL,
-                            Nsurveys = NULL,
-                            Do_AgeKey = NULL,
-                            N_tag_groups = NULL,
-                            # This information is needed if Q_type of 3 or 4 is used
-                            N_CPUE_obs = NULL,
-                            ##################################
-                            ptype = lifecycle::deprecated()) {
+SS_readctl_3.24 <- function(
+  file,
+  verbose = FALSE,
+  use_datlist = TRUE,
+  datlist = "data.ss_new",
+  # Parameters that are not defined in control file:
+  nseas = NULL,
+  N_areas = NULL,
+  Nages = NULL,
+  Nsexes = NULL,
+  Npopbins = NA,
+  Nfleet = NULL,
+  Nsurveys = NULL,
+  Do_AgeKey = NULL,
+  N_tag_groups = NULL,
+  # This information is needed if Q_type of 3 or 4 is used
+  N_CPUE_obs = NULL,
+  ##################################
+  ptype = lifecycle::deprecated()
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
@@ -65,13 +67,17 @@ SS_readctl_3.24 <- function(file,
   # internally used fun definitions ----
   # function to read Stock Synthesis data files
 
-  if (verbose) message("running SS_readctl_3.24\n")
+  if (verbose) {
+    message("running SS_readctl_3.24\n")
+  }
   dat <- readLines(file, warn = FALSE)
 
   nver <- 3.24
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
-  if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
+  if (!is.na(temp) && temp == "Start_time:") {
+    dat <- dat[-(1:2)]
+  }
   allnums <- NULL
   for (i in seq_along(dat)) {
     # split along blank spaces
@@ -80,7 +86,9 @@ SS_readctl_3.24 <- function(file,
     # if final value is a number is followed immediately by a pound ("1#"),
     # this needs to be split
     nvals <- length(mysplit)
-    if (nvals > 0) mysplit[nvals] <- strsplit(mysplit[nvals], "#")[[1]][1]
+    if (nvals > 0) {
+      mysplit[nvals] <- strsplit(mysplit[nvals], "#")[[1]][1]
+    }
     # convert to numeric
     nums <- suppressWarnings(as.numeric(mysplit))
     if (sum(is.na(nums)) > 0) {
@@ -108,11 +116,17 @@ SS_readctl_3.24 <- function(file,
     } else {
       names(ctllist[["temp"]]) <- comments
     }
-    if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
+    if (!is.na(name)) {
+      names(ctllist)[names(ctllist) == "temp"] <- name
+    }
     if (verbose) {
-      message(name, ", i = ", ctllist$".i", "\n", paste0(ctllist[name],
-        collapse = "\n"
-      ))
+      message(
+        name,
+        ", i = ",
+        ctllist$".i",
+        "\n",
+        paste0(ctllist[name], collapse = "\n")
+      )
     }
     return(ctllist)
   }
@@ -121,8 +135,10 @@ SS_readctl_3.24 <- function(file,
     k <- nrow * ncol
     i <- ctllist$".i"
     dat <- ctllist$".dat"
-    df0 <- as.data.frame(matrix(dat[i + 1:k - 1],
-      nrow = nrow, ncol = ncol,
+    df0 <- as.data.frame(matrix(
+      dat[i + 1:k - 1],
+      nrow = nrow,
+      ncol = ncol,
       byrow = TRUE
     ))
     colnames(df0) <- col.names
@@ -134,10 +150,15 @@ SS_readctl_3.24 <- function(file,
     i <- i + k
     ctllist[["temp"]] <- df0
     ctllist$".i" <- i
-    if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
+    if (!is.na(name)) {
+      names(ctllist)[names(ctllist) == "temp"] <- name
+    }
     if (verbose) {
       message(
-        name, ", i = ", ctllist$".i", "\n",
+        name,
+        ", i = ",
+        ctllist$".i",
+        "\n",
         paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n")
       )
     }
@@ -149,10 +170,15 @@ SS_readctl_3.24 <- function(file,
     dat <- ctllist$".dat"
     ctllist[["temp"]] <- dat[i]
     ctllist$".i" <- i + 1
-    if (!is.na(name)) names(ctllist)[names(ctllist) == "temp"] <- name
+    if (!is.na(name)) {
+      names(ctllist)[names(ctllist) == "temp"] <- name
+    }
     if (verbose) {
       message(
-        name, ", i = ", ctllist$".i", " ;",
+        name,
+        ", i = ",
+        ctllist$".i",
+        " ;",
         ctllist[[which(names(ctllist) == name)]]
       )
     }
@@ -169,8 +195,12 @@ SS_readctl_3.24 <- function(file,
       i <- i + length_each[j]
     }
     ctllist$".i" <- i
-    if (!is.null(name)) names(ctllist)[names(ctllist) == "temp"] <- name
-    if (verbose) message(name, ", i = ", ctllist$".i")
+    if (!is.null(name)) {
+      names(ctllist)[names(ctllist) == "temp"] <- name
+    }
+    if (verbose) {
+      message(name, ", i = ", ctllist$".i")
+    }
     return(ctllist)
   }
   # setup ----
@@ -193,7 +223,9 @@ SS_readctl_3.24 <- function(file,
     ctllist[["N_tag_groups"]] <- N_tag_groups
     ctllist[["N_CPUE_obs"]] <- N_CPUE_obs
     fleetnames <- paste0("FL", 1:Nfleet)
-    if (Nsurveys > 0) fleetnames <- c(fleetnames, paste0("S", 1:Nsurveys))
+    if (Nsurveys > 0) {
+      fleetnames <- c(fleetnames, paste0("S", 1:Nsurveys))
+    }
     ctllist[["fleetnames"]] <- fleetnames
   } else {
     if (is.character(datlist)) {
@@ -214,7 +246,11 @@ SS_readctl_3.24 <- function(file,
     ctllist[["Nsurveys"]] <- Nsurveys <- datlist[["Nsurveys"]]
     if (datlist[["N_ageerror_definitions"]] > 0) {
       ctllist[["Do_AgeKey"]] <- Do_AgeKey <-
-        ifelse(any(datlist[["ageerror"]][1:(nrow(datlist[["ageerror"]]) / 2) * 2, 1] < 0),
+        ifelse(
+          any(
+            datlist[["ageerror"]][1:(nrow(datlist[["ageerror"]]) / 2) * 2, 1] <
+              0
+          ),
           1,
           0
         )
@@ -238,12 +274,25 @@ SS_readctl_3.24 <- function(file,
   ctllist[["eof"]] <- FALSE
   # internally used commmon values ----
   lng_par_colnames <- c(
-    "LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-    "env_var", "use_dev", "dev_minyr", "dev_maxyr",
-    "dev_stddev", "Block", "Block_Fxn"
+    "LO",
+    "HI",
+    "INIT",
+    "PRIOR",
+    "PR_type",
+    "SD",
+    "PHASE",
+    "env_var",
+    "use_dev",
+    "dev_minyr",
+    "dev_maxyr",
+    "dev_stddev",
+    "Block",
+    "Block_Fxn"
   )
   srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE")
-  if (verbose) message("SS_readctl_3.24 - read version = ", ctllist[["ReadVersion"]])
+  if (verbose) {
+    message("SS_readctl_3.24 - read version = ", ctllist[["ReadVersion"]])
+  }
 
   # beginning of ctl ----
   # model dimensions
@@ -266,16 +315,20 @@ SS_readctl_3.24 <- function(file,
       ctllist[["submorphdist"]] <- c(0.031, 0.237, 0.464, 0.237, 0.031)
     }
   }
-  ctllist[["submorphdist"]] <- ctllist[["submorphdist"]] / sum(ctllist[["submorphdist"]])
+  ctllist[["submorphdist"]] <- ctllist[["submorphdist"]] /
+    sum(ctllist[["submorphdist"]])
   if (ctllist[["N_GP"]] * ctllist[["nseas"]] * ctllist[["N_areas"]] > 1) {
     ctllist <- add_elem(ctllist, "recr_dist_read")
     recr_dist_read <- ctllist[["recr_dist_read"]]
     #  number of recruitment assignments (overrides GP*area*seas parameter values)
     ctllist <- add_elem(ctllist, "recr_dist_inx")
     # recruitment interaction requested
-    ctllist <- add_df(ctllist, "recr_dist_pattern",
+    ctllist <- add_df(
+      ctllist,
+      "recr_dist_pattern",
       nrow = recr_dist_read,
-      ncol = 3, col.names = c("GP", "seas", "area")
+      ncol = 3,
+      col.names = c("GP", "seas", "area")
     )
   } else {
     ctllist[["recr_dist_inx"]] <- FALSE
@@ -287,8 +340,11 @@ SS_readctl_3.24 <- function(file,
     ctllist <- add_elem(ctllist, "N_moveDef") # _N_movement_definitions goes here if N_areas > 1
     if (ctllist[["N_moveDef"]] > 0) {
       ctllist <- add_elem(ctllist, "firstAgeMove") # _first age that moves (real age at begin of season, not integer) also cond on do_migration>0
-      ctllist <- add_df(ctllist, "moveDef",
-        nrow = ctllist[["N_moveDef"]], ncol = 6,
+      ctllist <- add_df(
+        ctllist,
+        "moveDef",
+        nrow = ctllist[["N_moveDef"]],
+        ncol = 6,
         col.names = c("seas", "morph", "source", "dest", "age", "age2")
       )
     }
@@ -296,13 +352,15 @@ SS_readctl_3.24 <- function(file,
   # block setup ----
   ctllist <- add_elem(ctllist, "N_Block_Designs") # _Nblock_Patterns
   if (ctllist[["N_Block_Designs"]] > 0) {
-    ctllist <- add_vec(ctllist,
+    ctllist <- add_vec(
+      ctllist,
       name = "blocks_per_pattern",
       length = ctllist[["N_Block_Designs"]]
     )
     # _blocks_per_pattern
     # begin and end years of blocks
-    ctllist <- add_list(ctllist,
+    ctllist <- add_list(
+      ctllist,
       name = "Block_Design",
       length = ctllist[["N_Block_Designs"]],
       length_each = ctllist[["blocks_per_pattern"]] * 2
@@ -321,7 +379,8 @@ SS_readctl_3.24 <- function(file,
     N_natMparms <- 1
   } else if (ctllist[["natM_type"]] == 1) {
     ctllist <- add_elem(ctllist, name = "N_natM") # _Number of M_segments
-    ctllist <- add_vec(ctllist,
+    ctllist <- add_vec(
+      ctllist,
       name = "M_ageBreakPoints",
       length = ctllist[["N_natM"]]
     ) # age(real) at M breakpoints
@@ -331,16 +390,23 @@ SS_readctl_3.24 <- function(file,
     ctllist <- add_elem(ctllist, "Lorenzen_refage") # _natM_type
   } else if (ctllist[["natM_type"]] %in% c(3, 4)) {
     N_natMparms <- 0
-    ctllist <- add_df(ctllist,
+    ctllist <- add_df(
+      ctllist,
       name = "natM",
       nrow = ctllist[["N_GP"]] * ctllist[["Nsexes"]],
       ncol = Nages + 1,
       col.names = paste0("Age_", 0:Nages)
     )
   } else {
-    stop("natM_type = ", ctllist[["natM_type"]], " is not yet implemented in this script")
+    stop(
+      "natM_type = ",
+      ctllist[["natM_type"]],
+      " is not yet implemented in this script"
+    )
   }
-  if (verbose) message("N_natMparms = ", N_natMparms)
+  if (verbose) {
+    message("N_natMparms = ", N_natMparms)
+  }
   # growth setup ----
   ctllist <- add_elem(ctllist, name = "GrowthModel")
   # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K; 4=not implemented
@@ -350,21 +416,31 @@ SS_readctl_3.24 <- function(file,
   if (ctllist[["GrowthModel"]] == 3) {
     ctllist <- add_elem(ctllist, name = "N_ageK")
   }
-  if (ctllist[["GrowthModel"]] == 1) { # 1=vonBert with L1&L2
+  if (ctllist[["GrowthModel"]] == 1) {
+    # 1=vonBert with L1&L2
     N_growparms <- 5
-  } else if (ctllist[["GrowthModel"]] == 2) { # 2=Richards with L1&L2
+  } else if (ctllist[["GrowthModel"]] == 2) {
+    # 2=Richards with L1&L2
     N_growparms <- 6
-  } else if (ctllist[["GrowthModel"]] == 3) { # 3=age_specific_K
+  } else if (ctllist[["GrowthModel"]] == 3) {
+    # 3=age_specific_K
     N_growparms <- 5 + ctllist[["N_ageK"]]
-    ctllist <- add_vec(ctllist, name = "Age_K_points", length = ctllist[["N_ageK"]])
+    ctllist <- add_vec(
+      ctllist,
+      name = "Age_K_points",
+      length = ctllist[["N_ageK"]]
+    )
     #  points at which age-specific multipliers to K will be applied
   } else if (ctllist[["GrowthModel"]] == 4) {
     stop("GrowthModel == 4 is not implemented")
     N_growparms <- 2 # for the two CV parameters
     k1 <- ctllist[["N_GP"]] * ctllist[["Nsexes"]] # for reading age_natmort
-    ctllist <- add_df(ctllist,
-      name = "Len_At_Age_rd", nrow = k1,
-      ncol = Nages + 1, col.names = paste0("Age_", 0:Nages)
+    ctllist <- add_df(
+      ctllist,
+      name = "Len_At_Age_rd",
+      nrow = k1,
+      ncol = Nages + 1,
+      col.names = paste0("Age_", 0:Nages)
     )
   } else {
     stop("GrowthModel ", ctllist[["GrowthModel"]], " is not supported yet.")
@@ -386,14 +462,20 @@ SS_readctl_3.24 <- function(file,
     ctllist[["EmpiricalWAA"]] <- 0
   }
   if (ctllist[["maturity_option"]] %in% c(3, 4)) {
-    ctllist <- add_df(ctllist,
-      name = "Age_Maturity", nrow = ctllist[["N_GP"]],
-      ncol = Nages + 1, col.names = paste0("Age_", 0:Nages)
+    ctllist <- add_df(
+      ctllist,
+      name = "Age_Maturity",
+      nrow = ctllist[["N_GP"]],
+      ncol = Nages + 1,
+      col.names = paste0("Age_", 0:Nages)
     )
   } else if (ctllist[["maturity_option"]] == 6) {
-    ctllist <- add_df(ctllist,
-      name = "Length_Maturity", nrow = ctllist[["N_GP"]],
-      ncol = Npopbins, col.names = paste0("Len_", 1:Npopbins)
+    ctllist <- add_df(
+      ctllist,
+      name = "Length_Maturity",
+      nrow = ctllist[["N_GP"]],
+      ncol = Npopbins,
+      col.names = paste0("Len_", 1:Npopbins)
     )
   }
 
@@ -419,24 +501,37 @@ SS_readctl_3.24 <- function(file,
           paste0("NatM_p_", 1:N_natMparms, "_", SexLabel[i], "_GP_", j)
         cnt <- cnt + N_natMparms
       }
-      if (ctllist[["GrowthModel"]] == 1) { # VB
+      if (ctllist[["GrowthModel"]] == 1) {
+        # VB
         tmp <- c(
-          "L_at_Amin_", "L_at_Amax_", "VonBert_K_", "CV_young_",
+          "L_at_Amin_",
+          "L_at_Amax_",
+          "VonBert_K_",
+          "CV_young_",
           "CV_old_"
         )
         MGparmLabel[1:5 + cnt - 1] <- paste0(tmp, "_", SexLabel[i], "_GP_", j)
         cnt <- cnt + 5
-      } else if (ctllist[["GrowthModel"]] == 2) { # Richards
+      } else if (ctllist[["GrowthModel"]] == 2) {
+        # Richards
         tmp <- c(
-          "L_at_Amin_", "L_at_Amax_", "VonBert_K_", "Richards_", "CV_young_",
+          "L_at_Amin_",
+          "L_at_Amax_",
+          "VonBert_K_",
+          "Richards_",
+          "CV_young_",
           "CV_old_"
         )
         MGparmLabel[1:6 + cnt - 1] <- paste0(tmp, "_", SexLabel[i], "_GP_", j)
         cnt <- cnt + 6
       } else if (ctllist[["GrowthModel"]] == 3) {
         tmp <- c(
-          "L_at_Amin_", "L_at_Amax_", "VonBert_K_",
-          paste0("Age_K_", 1:ctllist[["N_ageK"]]), "CV_young_", "CV_old_"
+          "L_at_Amin_",
+          "L_at_Amax_",
+          "VonBert_K_",
+          paste0("Age_K_", 1:ctllist[["N_ageK"]]),
+          "CV_young_",
+          "CV_old_"
         )
         MGparmLabel[1:(5 + ctllist[["N_ageK"]]) + cnt - 1] <-
           paste0(tmp, "_", SexLabel[i], "_GP_", j)
@@ -479,13 +574,18 @@ SS_readctl_3.24 <- function(file,
     cnt <- cnt + 1
     MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", SexLabel[1])
     cnt <- cnt + 1
-  } else if (ctllist[["fecundity_option"]] == 6) { # check what to do with option 6
+  } else if (ctllist[["fecundity_option"]] == 6) {
+    # check what to do with option 6
     MGparmLabel[cnt] <- paste0("Eggs_intercept_", SexLabel[1])
     cnt <- cnt + 1
     MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", SexLabel[1])
     cnt <- cnt + 1
   } else {
-    stop("Fecundity option ", ctllist[["fecundity_option"]], " is not supported")
+    stop(
+      "Fecundity option ",
+      ctllist[["fecundity_option"]],
+      " is not supported"
+    )
   }
   if (ctllist[["Nsexes"]] == 2) {
     MGparmLabel[cnt] <- paste0("Wtlen_1_", SexLabel[2])
@@ -503,7 +603,10 @@ SS_readctl_3.24 <- function(file,
     N_MGparm <- N_MGparm + 3
   }
   N_MGparm <- N_MGparm + ctllist[["N_GP"]] + N_areas + nseas # add for the assignment to areas
-  MGparmLabel[cnt + 1:ctllist[["N_GP"]] - 1] <- paste0("RecrDist_GP_", 1:ctllist[["N_GP"]])
+  MGparmLabel[cnt + 1:ctllist[["N_GP"]] - 1] <- paste0(
+    "RecrDist_GP_",
+    1:ctllist[["N_GP"]]
+  )
   cnt <- cnt + ctllist[["N_GP"]]
   MGparmLabel[cnt + 1:N_areas - 1] <- paste0("RecrDist_Area_", 1:N_areas)
   cnt <- cnt + N_areas
@@ -511,7 +614,9 @@ SS_readctl_3.24 <- function(file,
   cnt <- cnt + nseas
 
   ## number of recruiment distribution parameters
-  N_RecrDist_parms <- ctllist[["N_GP"]] + ctllist[["N_areas"]] + ctllist[["nseas"]]
+  N_RecrDist_parms <- ctllist[["N_GP"]] +
+    ctllist[["N_areas"]] +
+    ctllist[["nseas"]]
   if (ctllist[["recr_dist_inx"]]) {
     ## Interactions
     N_MGparm <- N_MGparm + ctllist[["N_GP"]] * N_areas * nseas
@@ -539,8 +644,16 @@ SS_readctl_3.24 <- function(file,
       from <- ctllist[["moveDef"]][i, 3]
       to <- ctllist[["moveDef"]][i, 4]
       MGparmLabel[cnt + 0:1] <- paste0(
-        "MoveParm_", c("A", "B"), "_seas_", seas,
-        "_GP_", GP, "_from_", from, "_to_", to
+        "MoveParm_",
+        c("A", "B"),
+        "_seas_",
+        seas,
+        "_GP_",
+        GP,
+        "_from_",
+        from,
+        "_to_",
+        to
       )
       cnt <- cnt + 2
     }
@@ -552,19 +665,27 @@ SS_readctl_3.24 <- function(file,
     N_MGparm <- N_MGparm + 7
   }
 
-  ctllist <- add_df(ctllist,
-    name = "MG_parms", nrow = N_MGparm, ncol = 14,
-    col.names = lng_par_colnames, comments = MGparmLabel
+  ctllist <- add_df(
+    ctllist,
+    name = "MG_parms",
+    nrow = N_MGparm,
+    ncol = 14,
+    col.names = lng_par_colnames,
+    comments = MGparmLabel
   )
   # MG timevarying parlines ------
   # environmental linkage lines
   if (any(ctllist[["MG_parms"]][["env_var"]] != 0)) {
     ctllist <- add_elem(ctllist, "read_MG_custom_env_var")
     if (ctllist[["read_MG_custom_env_var"]] == 1) {
-      tmp_nrow <- length(ctllist[["MG_parms"]][["env_var"]][ctllist[["MG_parms"]][["env_var"]] != 0])
+      tmp_nrow <- length(ctllist[["MG_parms"]][["env_var"]][
+        ctllist[["MG_parms"]][["env_var"]] != 0
+      ])
       tmp_lab <- paste0("MG_env_var_", seq_len(tmp_nrow))
-      ctllist <- add_df(ctllist,
-        name = "MG_custom_env_var", nrow = tmp_nrow,
+      ctllist <- add_df(
+        ctllist,
+        name = "MG_custom_env_var",
+        nrow = tmp_nrow,
         ncol = length(srt_par_colnames),
         col.names = srt_par_colnames,
         comments = tmp_lab
@@ -577,7 +698,9 @@ SS_readctl_3.24 <- function(file,
   MGblockLabel <- list()
   for (i in 1:N_MGparm) {
     if (ctllist[["MG_parms"]][i, ][["Block"]] > 0) {
-      nv <- as.numeric(ctllist[["blocks_per_pattern"]][ctllist[["MG_parms"]][i, ][["Block"]]])
+      nv <- as.numeric(ctllist[["blocks_per_pattern"]][ctllist[["MG_parms"]][
+        i,
+      ][["Block"]]])
       MGblockLabel[(nbp + 1):(nbp + nv)] <-
         paste0(rownames(ctllist[["MG_parms"]][i, ]), "#", (nbp + 1):(nbp + nv))
       nbp <- nbp + nv
@@ -587,19 +710,28 @@ SS_readctl_3.24 <- function(file,
 
   if (nbp > 0) {
     ctllist <- add_elem(ctllist, "custom_MG_block")
-    ctllist <- add_df(ctllist,
-      name = "MG_parms_blocks", nrow = nbp, ncol = 7,
-      col.names = srt_par_colnames, comments = MGblockLabel
+    ctllist <- add_df(
+      ctllist,
+      name = "MG_parms_blocks",
+      nrow = nbp,
+      ncol = 7,
+      col.names = srt_par_colnames,
+      comments = MGblockLabel
     )
   }
   # Read seasonal effects ----
   ctllist <- add_vec(ctllist, name = "MGparm_seas_effects", length = 10)
 
   N_seas_effects <-
-    length(ctllist[["MGparm_seas_effects"]][ctllist[["MGparm_seas_effects"]] > 0])
+    length(ctllist[["MGparm_seas_effects"]][
+      ctllist[["MGparm_seas_effects"]] > 0
+    ])
   if (N_seas_effects > 0) {
-    ctllist <- add_df(ctllist, "MG_parms_seas",
-      nrow = N_seas_effects * ctllist[["nseas"]], ncol = 7,
+    ctllist <- add_df(
+      ctllist,
+      "MG_parms_seas",
+      nrow = N_seas_effects * ctllist[["nseas"]],
+      ncol = 7,
       col.names = srt_par_colnames
     )
   }
@@ -621,52 +753,87 @@ SS_readctl_3.24 <- function(file,
   SRparmsLabels <- if (ctllist[["SR_function"]] == 3) {
     # B-H SRR
     c(
-      "SR_LN(R0)", "SR_BH_steep", "SR_sigmaR", "SR_envlink", "SR_R1_offset",
+      "SR_LN(R0)",
+      "SR_BH_steep",
+      "SR_sigmaR",
+      "SR_envlink",
+      "SR_R1_offset",
       "SR_autocorr"
     )
   } else if (ctllist[["SR_function"]] == 2) {
     # Ricker SRR
     c(
-      "SR_LN(R0)", "SR_Ricker", "SR_sigmaR", "SR_envlink", "SR_R1_offset",
+      "SR_LN(R0)",
+      "SR_Ricker",
+      "SR_sigmaR",
+      "SR_envlink",
+      "SR_R1_offset",
       "SR_autocorr"
     ) ## Need to rivise with example inputs
   } else if (ctllist[["SR_function"]] == 4) {
     # SCAA
     c(
-      "SR_LN(R0)", "SR_SCAA_null", "SR_sigmaR", "SR_envlink", "SR_R1_offset",
+      "SR_LN(R0)",
+      "SR_SCAA_null",
+      "SR_sigmaR",
+      "SR_envlink",
+      "SR_R1_offset",
       "SR_autocorr"
     )
   } else if (ctllist[["SR_function"]] == 5) {
     # Hockey stick
     c(
-      "SR_LN(R0)", "SR_hockey_infl", "SR_hockey_min_R", "SR_sigmaR",
-      "SR_envlink", "SR_R1_offset", "SR_autocorr"
+      "SR_LN(R0)",
+      "SR_hockey_infl",
+      "SR_hockey_min_R",
+      "SR_sigmaR",
+      "SR_envlink",
+      "SR_R1_offset",
+      "SR_autocorr"
     )
   } else if (ctllist[["SR_function"]] == 6) {
     # B-H-flat SRR
     c(
-      "SR_LN(R0)", "SR_BH_flat_steep", "SR_sigmaR", "SR_envlink",
-      "SR_R1_offset", "SR_autocorr"
+      "SR_LN(R0)",
+      "SR_BH_flat_steep",
+      "SR_sigmaR",
+      "SR_envlink",
+      "SR_R1_offset",
+      "SR_autocorr"
     )
   } else if (ctllist[["SR_function"]] == 7) {
     # survival_3Parm
     c(
-      "SR_LN(R0)", "SR_surv_Sfrac", "SR_surv_Beta", "SR_sigmaR", "SR_envlink",
-      "SR_R1_offset", "SR_autocorr"
+      "SR_LN(R0)",
+      "SR_surv_Sfrac",
+      "SR_surv_Beta",
+      "SR_sigmaR",
+      "SR_envlink",
+      "SR_R1_offset",
+      "SR_autocorr"
     )
   } else if (ctllist[["SR_function"]] == 8) {
     # Shepard_3Parm
     c(
-      "SR_LN(R0)", "SR_steepness", "SR_Shepard_c", "SR_sigmaR", "SR_envlink",
-      "SR_R1_offset", "SR_autocorr"
+      "SR_LN(R0)",
+      "SR_steepness",
+      "SR_Shepard_c",
+      "SR_sigmaR",
+      "SR_envlink",
+      "SR_R1_offset",
+      "SR_autocorr"
     )
   } else {
     stop("SR_function ", ctllist[["SR_function"]], " is not supported yet.")
   }
 
-  ctllist <- add_df(ctllist,
-    name = "SR_parms", nrow = N_SRparm2, ncol = 7,
-    col.names = srt_par_colnames, comments = SRparmsLabels
+  ctllist <- add_df(
+    ctllist,
+    name = "SR_parms",
+    nrow = N_SRparm2,
+    ncol = 7,
+    col.names = srt_par_colnames,
+    comments = SRparmsLabels
   )
   # SR timevarying parlines ----
   ctllist <- add_elem(ctllist, "SR_env_link") # _SR_env_link
@@ -697,7 +864,9 @@ SS_readctl_3.24 <- function(file,
       stop("Reading full parameters for recr cycles is not yet coded")
     }
     if (ctllist[["N_Read_recdevs"]] > 0) {
-      ctllist <- add_df(ctllist, "recdev_input",
+      ctllist <- add_df(
+        ctllist,
+        "recdev_input",
         ncol = 2,
         nrow = ctllist[["N_Read_recdevs"]],
         col.names = c("Year", "recdev")
@@ -716,11 +885,17 @@ SS_readctl_3.24 <- function(file,
     #   stop("stop currently F_method:2 is not implemented")
     ctllist <- add_vec(ctllist, "F_setup", length = 3) # overall start F value; overall phase; N detailed inputs to read
     if (ctllist[["F_setup"]][3] > 0) {
-      ctllist <- add_df(ctllist,
-        name = "F_setup2", nrow = ctllist[["F_setup"]][3],
+      ctllist <- add_df(
+        ctllist,
+        name = "F_setup2",
+        nrow = ctllist[["F_setup"]][3],
         ncol = 6,
         col.names = c(
-          "fleet", "yr", "seas", "Fvalue", "se",
+          "fleet",
+          "yr",
+          "seas",
+          "Fvalue",
+          "se",
           "phase"
         )
       )
@@ -732,15 +907,21 @@ SS_readctl_3.24 <- function(file,
   # _initial_F_parms
   comments_initF <- paste0("InitF_", 1:Nfleet, "_", fleetnames[1:Nfleet])
 
-  ctllist <- add_df(ctllist,
-    name = "init_F", nrow = Nfleet, ncol = 7,
-    col.names = srt_par_colnames, comments = comments_initF
+  ctllist <- add_df(
+    ctllist,
+    name = "init_F",
+    nrow = Nfleet,
+    ncol = 7,
+    col.names = srt_par_colnames,
+    comments = comments_initF
   )
 
   # Q_setup ----
   comments_fl <- paste0(1:(Nfleet + Nsurveys), " ", fleetnames)
-  ctllist <- add_df(ctllist,
-    name = "Q_setup", nrow = Nfleet + Nsurveys,
+  ctllist <- add_df(
+    ctllist,
+    name = "Q_setup",
+    nrow = Nfleet + Nsurveys,
     ncol = 4,
     col.names = c("Den_dep", "env_var", "extra_se", "Q_type"),
     comments = comments_fl
@@ -767,7 +948,11 @@ SS_readctl_3.24 <- function(file,
   # Q-env
   for (i in 1:(Nfleet + Nsurveys)) {
     if (ctllist[["Q_setup"]][i, ][["env_var"]] > 0) {
-      comments_Q_type[(nqp + 1)] <- paste0("Q_env_", i, "_", fleetnames[i],
+      comments_Q_type[(nqp + 1)] <- paste0(
+        "Q_env_",
+        i,
+        "_",
+        fleetnames[i],
         collapse = ""
       )
       nqp <- nqp + 1
@@ -777,7 +962,11 @@ SS_readctl_3.24 <- function(file,
   # Q_extraSD
   for (i in 1:(Nfleet + Nsurveys)) {
     if (ctllist[["Q_setup"]][i, ][["extra_se"]] > 0) {
-      comments_Q_type[(nqp + 1)] <- paste0("Q_extraSD_", i, "_", fleetnames[i],
+      comments_Q_type[(nqp + 1)] <- paste0(
+        "Q_extraSD_",
+        i,
+        "_",
+        fleetnames[i],
         collapse = ""
       )
       nqp <- nqp + 1
@@ -798,40 +987,69 @@ SS_readctl_3.24 <- function(file,
   for (fl in 1:(Nfleet + Nsurveys)) {
     flname <- fleetnames[fl]
     .Q_type <- ctllist[["Q_setup"]][fl, 4]
-    if (.Q_type == 2) { # One Q parameter
+    if (.Q_type == 2) {
+      # One Q parameter
       N_Q_parms <- N_Q_parms + 1
       comments_Q_type[[i]] <-
         paste0("LnQ_base_", fl, "_", flname, collapse = "")
       i <- i + 1
-    } else if (.Q_type == 3) { # Random Q deviations
+    } else if (.Q_type == 3) {
+      # Random Q deviations
       N_Q_parms <- N_Q_parms + 1
-      comments_Q_type[[i]] <- paste0("LnQ_base_", fl, "_", flname,
+      comments_Q_type[[i]] <- paste0(
+        "LnQ_base_",
+        fl,
+        "_",
+        flname,
         collapse = ""
       )
       i <- i + 1
       if (Do_Q_detail) {
         for (j in 1:(N_CPUE_obs[fl])) {
-          comments_Q_type[[i + j - 1]] <- paste0("Q_dev_", j, "_", fl, "_", flname)
+          comments_Q_type[[i + j - 1]] <- paste0(
+            "Q_dev_",
+            j,
+            "_",
+            fl,
+            "_",
+            flname
+          )
         }
         N_Q_parms <- N_Q_parms + N_CPUE_obs[fl]
         i <- i + j
       }
-    } else if (.Q_type == 4) { # Random walk W
+    } else if (.Q_type == 4) {
+      # Random walk W
       N_Q_parms <- N_Q_parms + 1
-      comments_Q_type[[i]] <- paste0("LnQ_base_", fl, "_", flname,
+      comments_Q_type[[i]] <- paste0(
+        "LnQ_base_",
+        fl,
+        "_",
+        flname,
         collapse = ""
       )
       i <- i + 1
       if (Do_Q_detail) {
         for (j in 1:(N_CPUE_obs[fl] - 1)) {
-          comments_Q_type[[i + j - 1]] <- paste0("Q_walk_", j, "_", fl, "_", flname)
+          comments_Q_type[[i + j - 1]] <- paste0(
+            "Q_walk_",
+            j,
+            "_",
+            fl,
+            "_",
+            flname
+          )
         }
         N_Q_parms <- N_Q_parms + N_CPUE_obs[fl] - 1
         i <- i + j
       }
     } else if (.Q_type == 5) {
       N_Q_parms <- N_Q_parms + 1
-      comments_Q_type[[i]] <- paste0("LnQ_base_", fl, "_", flname,
+      comments_Q_type[[i]] <- paste0(
+        "LnQ_base_",
+        fl,
+        "_",
+        flname,
         collapse = ""
       )
       i <- i + 1
@@ -839,8 +1057,11 @@ SS_readctl_3.24 <- function(file,
   }
 
   if (N_Q_parms > 0) {
-    ctllist <- add_df(ctllist,
-      name = "Q_parms", nrow = N_Q_parms, ncol = 7,
+    ctllist <- add_df(
+      ctllist,
+      name = "Q_parms",
+      nrow = N_Q_parms,
+      ncol = 7,
       col.names = srt_par_colnames,
       comments = unlist(comments_Q_type)
     )
@@ -848,32 +1069,66 @@ SS_readctl_3.24 <- function(file,
   # selecitivty -----
   # size_selex_types
   comments_selex_types <- fleetnames
-  ctllist <- add_df(ctllist,
+  ctllist <- add_df(
+    ctllist,
     name = "size_selex_types",
-    nrow = Nfleet + Nsurveys, ncol = 4,
+    nrow = Nfleet + Nsurveys,
+    ncol = 4,
     col.names = c("Pattern", "Discard", "Male", "Special"),
     comments = comments_selex_types
   )
   size_selex_pattern_vec <- as.vector(ctllist[["size_selex_types"]][, 1])
 
-  ctllist <- add_df(ctllist,
-    name = "age_selex_types", nrow = Nfleet + Nsurveys,
+  ctllist <- add_df(
+    ctllist,
+    name = "age_selex_types",
+    nrow = Nfleet + Nsurveys,
     ncol = 4,
     col.names = c("Pattern", "Discard", "Male", "Special"),
     comments = comments_selex_types
   )
   age_selex_pattern_vec <- as.vector(ctllist[["age_selex_types"]][, 1])
 
-
   #                 0 1 2 3 4 5 6 7 8 9 10
   selex_patterns <- c(
-    0, 2, 8, 6, 0, 2, 2, 8, 8, 6, 0,
+    0,
+    2,
+    8,
+    6,
+    0,
+    2,
+    2,
+    8,
+    8,
+    6,
+    0,
     #                11 12 13 14      15 16 17      18 19 20
-    2, 2, 8, Nages + 1, 0, 2, Nages + 1, 8, 6, 6,
+    2,
+    2,
+    8,
+    Nages + 1,
+    0,
+    2,
+    Nages + 1,
+    8,
+    6,
+    6,
     #                21 22 23 24 25 26 27 28 29 30
-    NA, 4, 6, 6, 3, 3, 3, NA, NA, 0,
+    NA,
+    4,
+    6,
+    6,
+    3,
+    3,
+    3,
+    NA,
+    NA,
+    0,
     #                31 32 33 34
-    0, 0, 0, 0
+    0,
+    0,
+    0,
+    0
   )
   #########################################################
   size_selex_Nparms <- vector(mode = "numeric", length = Nfleet + Nsurveys)
@@ -883,7 +1138,8 @@ SS_readctl_3.24 <- function(file,
     size_selex_Nparms[j] <- selex_patterns[size_selex_pattern_vec[j] + 1]
     ## some patterns need special treatment
     special_selex <- FALSE # change flag to TRUE if need special treatment
-    if (size_selex_pattern_vec[j] == 27) { # spline
+    if (size_selex_pattern_vec[j] == 27) {
+      # spline
       special_selex <- TRUE
       size_selex_Nparms[j] <- size_selex_Nparms[j] +
         ctllist[["size_selex_types"]][j, 4] * 2
@@ -891,8 +1147,22 @@ SS_readctl_3.24 <- function(file,
         paste0("SizeSpline_Code_", fleetnames[j], "_", j),
         paste0("SizeSpline_GradLo_", fleetnames[j], "_", j),
         paste0("SizeSpline_GradHi_", fleetnames[j], "_", j),
-        paste0("SizeSpline_Knot_", 1:ctllist[["size_selex_types"]][j, 4], "_", fleetnames[j], "_", j),
-        paste0("SizeSpline_Val_", 1:ctllist[["size_selex_types"]][j, 4], "_", fleetnames[j], "_", j)
+        paste0(
+          "SizeSpline_Knot_",
+          1:ctllist[["size_selex_types"]][j, 4],
+          "_",
+          fleetnames[j],
+          "_",
+          j
+        ),
+        paste0(
+          "SizeSpline_Val_",
+          1:ctllist[["size_selex_types"]][j, 4],
+          "_",
+          fleetnames[j],
+          "_",
+          j
+        )
       )
     }
     if (!special_selex) {
@@ -904,72 +1174,135 @@ SS_readctl_3.24 <- function(file,
     }
 
     # do extra retention parameters
-    if ((ctllist[["size_selex_types"]][j, 2] > 0) && (ctllist[["size_selex_types"]][j, 2] <= 2)) # has discard type 1 or 2
-      {
-        if (size_selex_Nparms[j] > 0) {
-          size_selex_label[[j]] <- c(size_selex_label[[j]], paste0("SizeSel_", j, "PRet_", 1:4, "_", fleetnames[j]))
-        } else {
-          size_selex_label[[j]] <- paste0("SizeSel_", j, "PRet_", 1:4, "_", fleetnames[j])
-        }
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+    if (
+      (ctllist[["size_selex_types"]][j, 2] > 0) &&
+        (ctllist[["size_selex_types"]][j, 2] <= 2)
+    ) {
+      # has discard type 1 or 2
+      if (size_selex_Nparms[j] > 0) {
+        size_selex_label[[j]] <- c(
+          size_selex_label[[j]],
+          paste0("SizeSel_", j, "PRet_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        size_selex_label[[j]] <- paste0(
+          "SizeSel_",
+          j,
+          "PRet_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
-    if (ctllist[["size_selex_types"]][j, 2] == 2) # has discard type 2
-      {
-        if (size_selex_Nparms[j] > 0) {
-          size_selex_label[[j]] <- c(size_selex_label[[j]], paste0("SizeSel_", j, "PDis_", 1:4, "_", fleetnames[j]))
-        } else {
-          size_selex_label[[j]] <- paste0("SizeSel_", j, "PDis_", 1:4, "_", fleetnames[j])
-        }
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+    }
+    if (ctllist[["size_selex_types"]][j, 2] == 2) {
+      # has discard type 2
+      if (size_selex_Nparms[j] > 0) {
+        size_selex_label[[j]] <- c(
+          size_selex_label[[j]],
+          paste0("SizeSel_", j, "PDis_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        size_selex_label[[j]] <- paste0(
+          "SizeSel_",
+          j,
+          "PDis_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+    }
     # no extra retention parameters for discard type 3
     # do extra offset parameters
-    if (ctllist[["size_selex_types"]][j, 3] == 1) # has value 1
-      {
-        if (size_selex_Nparms[j] > 0) {
-          size_selex_label[[j]] <- c(size_selex_label[[j]], paste0("SizeSel_", j, "PMale_", 1:4, "_", fleetnames[j]))
-        } else {
-          size_selex_label[[j]] <- paste0("SizeSel_", j, "PMale_", 1:4, "_", fleetnames[j])
-        }
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+    if (ctllist[["size_selex_types"]][j, 3] == 1) {
+      # has value 1
+      if (size_selex_Nparms[j] > 0) {
+        size_selex_label[[j]] <- c(
+          size_selex_label[[j]],
+          paste0("SizeSel_", j, "PMale_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        size_selex_label[[j]] <- paste0(
+          "SizeSel_",
+          j,
+          "PMale_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
-    if (ctllist[["size_selex_types"]][j, 3] == 2) # has value 2
-      {
-        if (size_selex_Nparms[j] > 0) {
-          size_selex_label[[j]] <- c(size_selex_label[[j]], paste0("SizeSel_", j, "PFemOff_", 1:4, "_", fleetnames[j]))
-        } else {
-          size_selex_label[[j]] <- paste0("SizeSel_", j, "PFemOff_", 1:4, "_", fleetnames[j])
-        }
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+    }
+    if (ctllist[["size_selex_types"]][j, 3] == 2) {
+      # has value 2
+      if (size_selex_Nparms[j] > 0) {
+        size_selex_label[[j]] <- c(
+          size_selex_label[[j]],
+          paste0("SizeSel_", j, "PFemOff_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        size_selex_label[[j]] <- paste0(
+          "SizeSel_",
+          j,
+          "PFemOff_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
-    if (ctllist[["size_selex_types"]][j, 3] == 3) # has value 3 - differs by version
-      {
-        if (nver < 3.24) {
-          nparms <- 3
-        } else {
-          nparms <- 5
-        }
-        if (size_selex_Nparms[j] > 0) {
-          size_selex_label[[j]] <- c(size_selex_label[[j]], paste0("SizeSel_", j, "PMalOff_", 1:nparms, "_", fleetnames[j]))
-        } else {
-          size_selex_label[[j]] <- paste0("SizeSel_", j, "PMalOff_", 1:nparms, "_", fleetnames[j])
-        }
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + nparms
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
+    }
+    if (ctllist[["size_selex_types"]][j, 3] == 3) {
+      # has value 3 - differs by version
+      if (nver < 3.24) {
+        nparms <- 3
+      } else {
+        nparms <- 5
       }
-    if (ctllist[["size_selex_types"]][j, 3] == 4) # has value 4 - differs by version
-      {
-        if (nver < 3.24) {
-          nparms <- 3
-        } else {
-          nparms <- 5
-        }
-        if (size_selex_Nparms[j] > 0) {
-          size_selex_label[[j]] <- c(size_selex_label[[j]], paste0("SizeSel_", j, "PFemOff_", 1:nparms, "_", fleetnames[j]))
-        } else {
-          size_selex_label[[j]] <- paste0("SizeSel_", j, "PFemOff_", 1:nparms, "_", fleetnames[j])
-        }
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + nparms
+      if (size_selex_Nparms[j] > 0) {
+        size_selex_label[[j]] <- c(
+          size_selex_label[[j]],
+          paste0("SizeSel_", j, "PMalOff_", 1:nparms, "_", fleetnames[j])
+        )
+      } else {
+        size_selex_label[[j]] <- paste0(
+          "SizeSel_",
+          j,
+          "PMalOff_",
+          1:nparms,
+          "_",
+          fleetnames[j]
+        )
       }
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + nparms
+    }
+    if (ctllist[["size_selex_types"]][j, 3] == 4) {
+      # has value 4 - differs by version
+      if (nver < 3.24) {
+        nparms <- 3
+      } else {
+        nparms <- 5
+      }
+      if (size_selex_Nparms[j] > 0) {
+        size_selex_label[[j]] <- c(
+          size_selex_label[[j]],
+          paste0("SizeSel_", j, "PFemOff_", 1:nparms, "_", fleetnames[j])
+        )
+      } else {
+        size_selex_label[[j]] <- paste0(
+          "SizeSel_",
+          j,
+          "PFemOff_",
+          1:nparms,
+          "_",
+          fleetnames[j]
+        )
+      }
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + nparms
+    }
   }
   age_selex_Nparms <- vector(mode = "numeric", length = Nfleet + Nsurveys)
   age_selex_label <- list()
@@ -977,23 +1310,46 @@ SS_readctl_3.24 <- function(file,
     age_selex_Nparms[j] <- selex_patterns[age_selex_pattern_vec[j] + 1]
     ## some need special treatment
     special_selex <- FALSE
-    if (age_selex_pattern_vec[j] == 17) { # random walk - check for maximum age in special
+    if (age_selex_pattern_vec[j] == 17) {
+      # random walk - check for maximum age in special
       if (ctllist[["age_selex_types"]][["Special"]][j] > 0) {
         special_selex <- TRUE
         age_selex_Nparms[j] <- ctllist[["age_selex_types"]][["Special"]][j] + 1
-        age_selex_label[[j]] <- paste0("AgeSel_", j, "P_", 1:age_selex_Nparms[j], "_", fleetnames[j])
+        age_selex_label[[j]] <- paste0(
+          "AgeSel_",
+          j,
+          "P_",
+          1:age_selex_Nparms[j],
+          "_",
+          fleetnames[j]
+        )
       }
     }
     if (age_selex_pattern_vec[j] == 27) {
       special_selex <- TRUE
-      age_selex_Nparms[j] <- age_selex_Nparms[j] + ctllist[["age_selex_types"]][j, 4] * 2
+      age_selex_Nparms[j] <- age_selex_Nparms[j] +
+        ctllist[["age_selex_types"]][j, 4] * 2
       #  age_selec_label[j]<-paste0("AgeSel_",j,"P_",1:agee_selex_Nparms[j],"_",fleetnames[j])
       age_selex_label[[j]] <- c(
         paste0("AgeeSpline_Code_", fleetnames[j], "_", j),
         paste0("AgeSpline_GradLo_", fleetnames[j], "_", j),
         paste0("AgeeSpline_GradHi_", fleetnames[j], "_", j),
-        paste0("AgeeSpline_Knot_", 1:ctllist[["age_selex_types"]][j, 4], "_", fleetnames[j], "_", j),
-        paste0("AgeeSpline_Val_", 1:ctllist[["age_selex_types"]][j, 4], "_", fleetnames[j], "_", j)
+        paste0(
+          "AgeeSpline_Knot_",
+          1:ctllist[["age_selex_types"]][j, 4],
+          "_",
+          fleetnames[j],
+          "_",
+          j
+        ),
+        paste0(
+          "AgeeSpline_Val_",
+          1:ctllist[["age_selex_types"]][j, 4],
+          "_",
+          fleetnames[j],
+          "_",
+          j
+        )
       )
     }
     if (!special_selex) {
@@ -1005,57 +1361,107 @@ SS_readctl_3.24 <- function(file,
     }
 
     # do extra retention parameters
-    if (ctllist[["age_selex_types"]][j, 2] > 0) # has discard type 1 or 2
-      {
-        if (age_selex_Nparms[j] > 0) {
-          age_selex_label[[j]] <- c(age_selex_label[[j]], paste0("AgeSel_", j, "PRet_", 1:4, "_", fleetnames[j]))
-        } else {
-          age_selex_label[[j]] <- paste0("AgeSel_", j, "PRet_", 1:4, "_", fleetnames[j])
-        }
-        age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+    if (ctllist[["age_selex_types"]][j, 2] > 0) {
+      # has discard type 1 or 2
+      if (age_selex_Nparms[j] > 0) {
+        age_selex_label[[j]] <- c(
+          age_selex_label[[j]],
+          paste0("AgeSel_", j, "PRet_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        age_selex_label[[j]] <- paste0(
+          "AgeSel_",
+          j,
+          "PRet_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
-    if (ctllist[["age_selex_types"]][j, 2] == 2) # has discard type 2
-      {
-        if (age_selex_Nparms[j] > 0) {
-          age_selex_label[[j]] <- c(age_selex_label[[j]], paste0("AgeSel_", j, "PDis_", 1:4, "_", fleetnames[j]))
-        } else {
-          age_selex_label[[j]] <- paste0("AgeSel_", j, "PDis_", 1:4, "_", fleetnames[j])
-        }
-        age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+    }
+    if (ctllist[["age_selex_types"]][j, 2] == 2) {
+      # has discard type 2
+      if (age_selex_Nparms[j] > 0) {
+        age_selex_label[[j]] <- c(
+          age_selex_label[[j]],
+          paste0("AgeSel_", j, "PDis_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        age_selex_label[[j]] <- paste0(
+          "AgeSel_",
+          j,
+          "PDis_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
+      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+    }
     # do extra offset parameters
-    if (ctllist[["age_selex_types"]][j, 3] == 1) # has value 1
-      {
-        if (age_selex_Nparms[j] > 0) {
-          age_selex_label[[j]] <- c(age_selex_label[[j]], paste0("AgeSel_", j, "PMale_", 1:4, "_", fleetnames[j]))
-        } else {
-          age_selex_label[[j]] <- paste0("AgeSel_", j, "PMale_", 1:4, "_", fleetnames[j])
-        }
-        age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+    if (ctllist[["age_selex_types"]][j, 3] == 1) {
+      # has value 1
+      if (age_selex_Nparms[j] > 0) {
+        age_selex_label[[j]] <- c(
+          age_selex_label[[j]],
+          paste0("AgeSel_", j, "PMale_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        age_selex_label[[j]] <- paste0(
+          "AgeSel_",
+          j,
+          "PMale_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
-    if (ctllist[["age_selex_types"]][j, 3] == 2) # has value 2
-      {
-        if (age_selex_Nparms[j] > 0) {
-          age_selex_label[[j]] <- c(age_selex_label[[j]], paste0("AgeSel_", j, "PFemOff_", 1:4, "_", fleetnames[j]))
-        } else {
-          age_selex_label[[j]] <- paste0("AgeSel_", j, "PFemOff_", 1:4, "_", fleetnames[j])
-        }
-        age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+    }
+    if (ctllist[["age_selex_types"]][j, 3] == 2) {
+      # has value 2
+      if (age_selex_Nparms[j] > 0) {
+        age_selex_label[[j]] <- c(
+          age_selex_label[[j]],
+          paste0("AgeSel_", j, "PFemOff_", 1:4, "_", fleetnames[j])
+        )
+      } else {
+        age_selex_label[[j]] <- paste0(
+          "AgeSel_",
+          j,
+          "PFemOff_",
+          1:4,
+          "_",
+          fleetnames[j]
+        )
       }
-    if (ctllist[["age_selex_types"]][j, 3] == 3) # has value 3 - differs by version
-      {
-        if (nver < 3.24) {
-          nparms <- 3
-        } else {
-          nparms <- 5
-        }
-        if (age_selex_Nparms[j] > 0) {
-          age_selex_label[[j]] <- c(age_selex_label[[j]], paste0("AgeSel_", j, "PMalOff_", 1:nparms, "_", fleetnames[j]))
-        } else {
-          age_selex_label[[j]] <- paste0("AgeSel_", j, "PMalOff_", 1:nparms, "_", fleetnames[j])
-        }
-        age_selex_Nparms[j] <- age_selex_Nparms[j] + nparms
+      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
+    }
+    if (ctllist[["age_selex_types"]][j, 3] == 3) {
+      # has value 3 - differs by version
+      if (nver < 3.24) {
+        nparms <- 3
+      } else {
+        nparms <- 5
       }
+      if (age_selex_Nparms[j] > 0) {
+        age_selex_label[[j]] <- c(
+          age_selex_label[[j]],
+          paste0("AgeSel_", j, "PMalOff_", 1:nparms, "_", fleetnames[j])
+        )
+      } else {
+        age_selex_label[[j]] <- paste0(
+          "AgeSel_",
+          j,
+          "PMalOff_",
+          1:nparms,
+          "_",
+          fleetnames[j]
+        )
+      }
+      age_selex_Nparms[j] <- age_selex_Nparms[j] + nparms
+    }
   }
   if (verbose) {
     message("Read size and age selectivity setup")
@@ -1064,17 +1470,23 @@ SS_readctl_3.24 <- function(file,
   # _LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn
   # Size selex
   if (sum(size_selex_Nparms) > 0) {
-    ctllist <- add_df(ctllist,
-      name = "size_selex_parms", nrow = sum(size_selex_Nparms),
-      ncol = 14, col.names = lng_par_colnames,
+    ctllist <- add_df(
+      ctllist,
+      name = "size_selex_parms",
+      nrow = sum(size_selex_Nparms),
+      ncol = 14,
+      col.names = lng_par_colnames,
       comments = unlist(size_selex_label)
     )
   }
   # Age selex
   if (sum(age_selex_Nparms) > 0) {
-    ctllist <- add_df(ctllist,
-      name = "age_selex_parms", nrow = sum(age_selex_Nparms),
-      ncol = 14, col.names = lng_par_colnames,
+    ctllist <- add_df(
+      ctllist,
+      name = "age_selex_parms",
+      nrow = sum(age_selex_Nparms),
+      ncol = 14,
+      col.names = lng_par_colnames,
       comments = unlist(age_selex_label)
     )
   }
@@ -1084,7 +1496,11 @@ SS_readctl_3.24 <- function(file,
   # _Cond 0 #_custom_sel-env_setup (0/1)
   # _Cond -2 2 0 0 -1 99 -2 #_placeholder when no enviro fxns
   DoAdjust <- FALSE
-  if (sum(ctllist[["age_selex_parms"]][, 13]) + sum(ctllist[["size_selex_parms"]][, 13]) > 0) {
+  if (
+    sum(ctllist[["age_selex_parms"]][, 13]) +
+      sum(ctllist[["size_selex_parms"]][, 13]) >
+      0
+  ) {
     DoAdjust <- TRUE
     ctllist <- add_elem(ctllist, "DoCustom_sel_blk_setup") # _custom_sel-blk_setup (0/1)
     if (ctllist[["DoCustom_sel_blk_setup"]]) {
@@ -1092,8 +1508,12 @@ SS_readctl_3.24 <- function(file,
       blks <- ctllist[["blocks_per_pattern"]]
 
       # SUBSET params for Block > 0
-      pbksa <- ctllist[["age_selex_parms"]][ctllist[["age_selex_parms"]][["Block"]] > 0, ]
-      pbkss <- ctllist[["size_selex_parms"]][ctllist[["size_selex_parms"]][["Block"]] > 0, ]
+      pbksa <- ctllist[["age_selex_parms"]][
+        ctllist[["age_selex_parms"]][["Block"]] > 0,
+      ]
+      pbkss <- ctllist[["size_selex_parms"]][
+        ctllist[["size_selex_parms"]][["Block"]] > 0,
+      ]
       pbks <- rbind(pbksa, pbkss)
 
       # FIND no. params per block
@@ -1102,8 +1522,11 @@ SS_readctl_3.24 <- function(file,
       # MULTIPLY number of blocks by number of params per block
       k0 <- sum(blks[counts[["values"]]] * counts[["lengths"]])
       if (k0 > 0) {
-        ctllist <- add_df(ctllist,
-          name = "custom_sel_blk_setup", nrow = k0, ncol = 7,
+        ctllist <- add_df(
+          ctllist,
+          name = "custom_sel_blk_setup",
+          nrow = k0,
+          ncol = 7,
           col.names = srt_par_colnames
         )
       }
@@ -1111,7 +1534,11 @@ SS_readctl_3.24 <- function(file,
   }
 
   # _Cond No selex parm trends
-  if (sum(ctllist[["age_selex_parms"]][, 9]) + sum(ctllist[["size_selex_parms"]][, 9]) > 0) {
+  if (
+    sum(ctllist[["age_selex_parms"]][, 9]) +
+      sum(ctllist[["size_selex_parms"]][, 9]) >
+      0
+  ) {
     DoAdjust <- TRUE
     ctllist <- add_elem(ctllist, name = "selparm_Dev_Phase") #  selparm_Dev_Phase
   } else {
@@ -1141,48 +1568,93 @@ SS_readctl_3.24 <- function(file,
     ##  In total N_tag_groups*3+ Nfleet*2 parameters are needed to read
     ##
     # Initial tag loss
-    ctllist <- add_df(ctllist,
-      name = "TG_Loss_init", nrow = N_tag_groups, ncol = 14,
+    ctllist <- add_df(
+      ctllist,
+      name = "TG_Loss_init",
+      nrow = N_tag_groups,
+      ncol = 14,
       col.names = c(
         srt_par_colnames,
-        "Dum", "Dum", "Dum", "Dum", "Dum", "Dum", "Dum"
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum"
       )
     )
     # continuous tag loss
-    ctllist <- add_df(ctllist,
-      name = "TG_Loss_chronic", nrow = N_tag_groups, ncol = 14,
+    ctllist <- add_df(
+      ctllist,
+      name = "TG_Loss_chronic",
+      nrow = N_tag_groups,
+      ncol = 14,
       col.names = c(
         srt_par_colnames,
-        "Dum", "Dum", "Dum", "Dum", "Dum", "Dum", "Dum"
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum"
       ),
       comments = paste0("#_TG_Loss_chronic_", 1:N_tag_groups)
     )
 
     # NB over-dispersion
-    ctllist <- add_df(ctllist,
-      name = "TG_overdispersion", nrow = N_tag_groups, ncol = 14,
+    ctllist <- add_df(
+      ctllist,
+      name = "TG_overdispersion",
+      nrow = N_tag_groups,
+      ncol = 14,
       col.names = c(
         srt_par_colnames,
-        "Dum", "Dum", "Dum", "Dum", "Dum", "Dum", "Dum"
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum"
       ),
       comments = paste0("#_TG_overdispersion_", 1:N_tag_groups)
     )
 
     # TG_Report_fleet
-    ctllist <- add_df(ctllist,
-      name = "TG_Report_fleet", nrow = Nfleet, 14,
+    ctllist <- add_df(
+      ctllist,
+      name = "TG_Report_fleet",
+      nrow = Nfleet,
+      14,
       col.names = c(
         srt_par_colnames,
-        "Dum", "Dum", "Dum", "Dum", "Dum", "Dum", "Dum"
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum"
       )
     )
 
     # TG_Report_fleet_decay
-    ctllist <- add_df(ctllist,
-      name = "TG_Report_fleet_decay", nrow = Nfleet, 14,
+    ctllist <- add_df(
+      ctllist,
+      name = "TG_Report_fleet_decay",
+      nrow = Nfleet,
+      14,
       col.names = c(
         srt_par_colnames,
-        "Dum", "Dum", "Dum", "Dum", "Dum", "Dum", "Dum"
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum",
+        "Dum"
       )
     )
   } else {
@@ -1192,18 +1664,24 @@ SS_readctl_3.24 <- function(file,
   # Var adj ----
   ctllist <- add_elem(ctllist, "DoVar_adjust") # _Variance_adjustments_to_input_values
   if (ctllist[["DoVar_adjust"]] > 0) {
-    ctllist <- add_df(ctllist,
-      name = "Variance_adjustments", nrow = 6, ncol = Nfleet + Nsurveys,
+    ctllist <- add_df(
+      ctllist,
+      name = "Variance_adjustments",
+      nrow = 6,
+      ncol = Nfleet + Nsurveys,
       col.names = paste0("Fleet", 1:(Nfleet + Nsurveys))
     )
-    rownames(ctllist[["Variance_adjustments"]]) <- paste0("#_", paste(c(
-      "add_to_survey_CV",
-      "add_to_discard_stddev",
-      "add_to_bodywt_CV",
-      "mult_by_lencomp_N",
-      "mult_by_agecomp_N",
-      "mult_by_size-at-age_N"
-    )))
+    rownames(ctllist[["Variance_adjustments"]]) <- paste0(
+      "#_",
+      paste(c(
+        "add_to_survey_CV",
+        "add_to_discard_stddev",
+        "add_to_bodywt_CV",
+        "mult_by_lencomp_N",
+        "mult_by_agecomp_N",
+        "mult_by_size-at-age_N"
+      ))
+    )
   }
   # Lambdas ----
   ctllist <- add_elem(ctllist, "maxlambdaphase") # _maxlambdaphase
@@ -1211,18 +1689,31 @@ SS_readctl_3.24 <- function(file,
 
   ctllist <- add_elem(ctllist, "N_lambdas") # number of changes to make to default Lambdas (default value is 1.0)
   if (ctllist[["N_lambdas"]] > 0) {
-    ctllist <- add_df(ctllist,
-      name = "lambdas", nrow = ctllist[["N_lambdas"]], ncol = 5,
-      col.names = c("like_comp", "fleet/survey", "phase", "value", "sizefreq_method")
+    ctllist <- add_df(
+      ctllist,
+      name = "lambdas",
+      nrow = ctllist[["N_lambdas"]],
+      ncol = 5,
+      col.names = c(
+        "like_comp",
+        "fleet/survey",
+        "phase",
+        "value",
+        "sizefreq_method"
+      )
     )
     # find and delete duplicates
     chk1 <- duplicated(ctllist[["lambdas"]])
-    if (any(chk1)) # there are duplicates
-      {
-        ctllist[["lambdas"]] <- ctllist[["lambdas"]][!chk1, ]
-        ctllist[["N_lambdas"]] <- nrow(ctllist[["lambdas"]])
-        ctllist[["warnings"]] <- paste(ctllist[["warnings"]], "Duplicate_lambdas", sep = ",")
-      }
+    if (any(chk1)) {
+      # there are duplicates
+      ctllist[["lambdas"]] <- ctllist[["lambdas"]][!chk1, ]
+      ctllist[["N_lambdas"]] <- nrow(ctllist[["lambdas"]])
+      ctllist[["warnings"]] <- paste(
+        ctllist[["warnings"]],
+        "Duplicate_lambdas",
+        sep = ","
+      )
+    }
 
     for (i in 1:ctllist[["N_lambdas"]]) {
       like_comp <- ctllist[["lambdas"]][i, 1]
@@ -1231,32 +1722,86 @@ SS_readctl_3.24 <- function(file,
       value <- ctllist[["lambdas"]][i, 4]
       sizefreq_method <- ctllist[["lambdas"]][i, 5]
       if (like_comp == 1) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Surv_", fleetnames[fl], "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "Surv_",
+          fleetnames[fl],
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 4) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("length_", fleetnames[fl], "_sizefreq_method_", sizefreq_method, "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "length_",
+          fleetnames[fl],
+          "_sizefreq_method_",
+          sizefreq_method,
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 5) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("age_", fleetnames[fl], "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "age_",
+          fleetnames[fl],
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 5) {
         sizefreq_method <- ctllist[["lambdas"]][i, 5]
-        rownames(ctllist[["lambdas"]])[i] <- paste0("SizeFreq_", fleetnames[fl], "_sizefreq_method_", sizefreq_method, "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "SizeFreq_",
+          fleetnames[fl],
+          "_sizefreq_method_",
+          sizefreq_method,
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 8) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("catch_", fleetnames[fl], "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "catch_",
+          fleetnames[fl],
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 9) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("init_equ_catch_", fleetnames[fl], "_lambda_for_init_equ_catch_can_only_enable/disable for_all_fleets_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "init_equ_catch_",
+          fleetnames[fl],
+          "_lambda_for_init_equ_catch_can_only_enable/disable for_all_fleets_Phz",
+          phz
+        )
       } else if (like_comp == 10) {
         rownames(ctllist[["lambdas"]])[i] <- paste0("recrdev_Phz", phz)
       } else if (like_comp == 11) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("parm_prior_", fleetnames[fl], "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "parm_prior_",
+          fleetnames[fl],
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 12) {
         rownames(ctllist[["lambdas"]])[i] <- paste0("parm_dev_Phz", phz)
       } else if (like_comp == 13) {
         rownames(ctllist[["lambdas"]])[i] <- paste0("CrashPen_Phz", phz)
       } else if (like_comp == 15) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Tag-comp-likelihood-", fl, "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "Tag-comp-likelihood-",
+          fl,
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 16) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Tag-negbin-likelihood-", fl, "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "Tag-negbin-likelihood-",
+          fl,
+          "_Phz",
+          phz
+        )
       } else if (like_comp == 17) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("F-ballpark-", fl, "_Phz", phz)
+        rownames(ctllist[["lambdas"]])[i] <- paste0(
+          "F-ballpark-",
+          fl,
+          "_Phz",
+          phz
+        )
       }
     }
   }
@@ -1270,25 +1815,40 @@ SS_readctl_3.24 <- function(file,
     ## Selex bin
     if (ctllist[["stddev_reporting_specs"]][4] > 0) {
       ctllist <-
-        add_vec(ctllist, name = "stddev_reporting_selex", length = ctllist[["stddev_reporting_specs"]][4])
+        add_vec(
+          ctllist,
+          name = "stddev_reporting_selex",
+          length = ctllist[["stddev_reporting_specs"]][4]
+        )
     }
     ## Growth bin
     if (ctllist[["stddev_reporting_specs"]][6] > 0) {
       ctllist <-
-        add_vec(ctllist, name = "stddev_reporting_growth", length = ctllist[["stddev_reporting_specs"]][6])
+        add_vec(
+          ctllist,
+          name = "stddev_reporting_growth",
+          length = ctllist[["stddev_reporting_specs"]][6]
+        )
     }
     ## N at age
     if (ctllist[["stddev_reporting_specs"]][9] > 0) {
       ctllist <-
-        add_vec(ctllist, name = "stddev_reporting_N_at_A", length = ctllist[["stddev_reporting_specs"]][9])
+        add_vec(
+          ctllist,
+          name = "stddev_reporting_N_at_A",
+          length = ctllist[["stddev_reporting_specs"]][9]
+        )
     }
   }
   if (ctllist$".dat"[ctllist$".i"] == 999) {
-    if (verbose) message("read of control file complete (final value = 999)")
+    if (verbose) {
+      message("read of control file complete (final value = 999)")
+    }
     ctllist[["eof"]] <- TRUE
   } else {
     message(
-      "Error: final value is", ctllist$".dat"[ctllist$".i"],
+      "Error: final value is",
+      ctllist$".dat"[ctllist$".i"],
       ", but should be 999\n"
     )
     ctllist[["eof"]] <- FALSE

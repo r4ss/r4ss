@@ -38,24 +38,33 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotCohortCatch <-
-  function(replist, subplots = 1:2, add = FALSE,
-           plot = TRUE, print = FALSE,
-           cohortcols = "default",
-           cohortfrac = 1,
-           cohortvec = NULL,
-           cohortlabfrac = 0.1,
-           cohortlabvec = NULL,
-           lwd = 3,
-           plotdir = "default",
-           xlab = "Year",
-           labels = c(
-             "Age",
-             "Cumulative catch by cohort (in numbers x1000)",
-             "Cumulative catch by cohort (x1000 mt)"
-           ),
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
-           cex.main = 1, # note: no plot titles yet implemented
-           verbose = TRUE) {
+  function(
+    replist,
+    subplots = 1:2,
+    add = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    cohortcols = "default",
+    cohortfrac = 1,
+    cohortvec = NULL,
+    cohortlabfrac = 0.1,
+    cohortlabvec = NULL,
+    lwd = 3,
+    plotdir = "default",
+    xlab = "Year",
+    labels = c(
+      "Age",
+      "Cumulative catch by cohort (in numbers x1000)",
+      "Cumulative catch by cohort (x1000 mt)"
+    ),
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1, # note: no plot titles yet implemented
+    verbose = TRUE
+  ) {
     # plot catch-at-age contributions by cohort in units of numbers and biomass
     subplot_names <- c("1: catch by cohort")
 
@@ -88,7 +97,9 @@ SSplotCohortCatch <-
       }
     }
 
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    if (plotdir == "default") {
+      plotdir <- replist[["inputs"]][["dir"]]
+    }
 
     # vector of cohort birth years
     yrs <- startyr:endyr
@@ -106,31 +117,39 @@ SSplotCohortCatch <-
     # same dimension array to store biomass values
     wtatage_fltsex <- catcohort_fltsex
 
-
-    for (icohort in 1:ncohorts) { # loop over cohorts (designated birth year)
+    for (icohort in 1:ncohorts) {
+      # loop over cohorts (designated birth year)
       cohort <- cohorts[icohort]
-      for (iage in ages + 1) { # loop over ages
+      for (iage in ages + 1) {
+        # loop over ages
         a <- iage - 1 # age starts at 0 but index starts at 1
         y <- cohort + a
-        if (y %in% yrs) { # check if y is in range of years
-          for (ifleet in 1:nfishfleets) { # loop over fleets
+        if (y %in% yrs) {
+          # check if y is in range of years
+          for (ifleet in 1:nfishfleets) {
+            # loop over fleets
             f <- ifleet # index = fleet number in current SS but making general
-            for (isex in 1:nsexes) { # loop over sexes
+            for (isex in 1:nsexes) {
+              # loop over sexes
 
               # copy values from catage to catcohort_fltsex
               # summation could include multiple seasons or morphs within a year
               catcohort_fltsex[icohort, iage, ifleet, isex] <-
                 sum(catage[
-                  catage[["Fleet"]] == f & catage[["Yr"]] == y & catage[["Sex"]] == isex,
+                  catage[["Fleet"]] == f &
+                    catage[["Yr"]] == y &
+                    catage[["Sex"]] == isex,
                   names(catage) == y - cohort
                 ])
               # get assocated weight value
               if (is.null(wtatage)) {
                 w <- 0 # dummy value to keep code from breaking when wtatage not available
               } else {
-                w <- wtatage[[paste(a)]][abs(wtatage[["Yr"]]) == y &
-                  wtatage[["Fleet"]] == f &
-                  wtatage[["Sex"]] == isex]
+                w <- wtatage[[paste(a)]][
+                  abs(wtatage[["Yr"]]) == y &
+                    wtatage[["Fleet"]] == f &
+                    wtatage[["Sex"]] == isex
+                ]
               }
               wtatage_fltsex[icohort, iage, ifleet, isex] <- w
             } # end loop over sexes
@@ -144,7 +163,6 @@ SSplotCohortCatch <-
     catcohortB <- apply(catcohort_fltsex * wtatage_fltsex, 1:2, sum)
     rownames(catcohortN) <- cohorts
     colnames(catcohortN) <- ages
-
 
     ### calculate cumulative cohort contributions
     # make temporary matrices with NAs replaced by zeros to do calculations
@@ -173,7 +191,9 @@ SSplotCohortCatch <-
       cohortvecN <- cohortvec[cohortvec %in% cohorts]
     }
     if (is.null(cohortlabvec)) {
-      bigcohortsN <- cohorts[cohortmaxN >= quantile(cohortmaxN, 1 - cohortlabfrac)]
+      bigcohortsN <- cohorts[
+        cohortmaxN >= quantile(cohortmaxN, 1 - cohortlabfrac)
+      ]
     } else {
       bigcohortsN <- cohorts[cohorts %in% cohortlabvec]
     }
@@ -189,7 +209,9 @@ SSplotCohortCatch <-
       cohortvecB <- cohortvec[cohortvec %in% cohorts]
     }
     if (is.null(cohortlabvec)) {
-      bigcohortsB <- cohorts[cohortmaxB >= quantile(cohortmaxB, 1 - cohortlabfrac)]
+      bigcohortsB <- cohorts[
+        cohortmaxB >= quantile(cohortmaxB, 1 - cohortlabfrac)
+      ]
     } else {
       bigcohortsB <- cohorts[cohorts %in% cohortlabvec]
     }
@@ -209,9 +231,15 @@ SSplotCohortCatch <-
       if (isubplot == 1) {
         # make plot of cumulative numbers by cohort
         matplot(
-          x = 0:accuage, t(cumcatcohortN[cohorts %in% cohortvecN, ]),
-          xlab = "Age", ylab = labels[2], type = "l",
-          xlim = c(0, 1.1 * accuage), col = cohortcolsN, lty = 1, lwd = lwd
+          x = 0:accuage,
+          t(cumcatcohortN[cohorts %in% cohortvecN, ]),
+          xlab = "Age",
+          ylab = labels[2],
+          type = "l",
+          xlim = c(0, 1.1 * accuage),
+          col = cohortcolsN,
+          lty = 1,
+          lwd = lwd
         )
         ## print(cbind(bigcohorts,maxages,maxvec))
         points(x = maxagesN, y = maxvecN, pch = 16, cex = .5)
@@ -220,9 +248,15 @@ SSplotCohortCatch <-
       if (isubplot == 2) {
         # make plot of cumulative biomass by cohort
         matplot(
-          x = 0:accuage, t(cumcatcohortB[cohorts %in% cohortvecB, ]) / 1000,
-          xlab = "Age", ylab = labels[3], type = "l",
-          xlim = c(0, 1.1 * accuage), col = cohortcolsN, lty = 1, lwd = lwd
+          x = 0:accuage,
+          t(cumcatcohortB[cohorts %in% cohortvecB, ]) / 1000,
+          xlab = "Age",
+          ylab = labels[3],
+          type = "l",
+          xlim = c(0, 1.1 * accuage),
+          col = cohortcolsN,
+          lty = 1,
+          lwd = lwd
         )
         ## print(cbind(bigcohorts,maxages,maxvec))
         points(x = maxagesB, y = maxvecB / 1000, pch = 16, cex = .5)
@@ -230,7 +264,11 @@ SSplotCohortCatch <-
       }
     }
 
-    if (plot) for (isubplot in subplots) plotfun(isubplot)
+    if (plot) {
+      for (isubplot in subplots) {
+        plotfun(isubplot)
+      }
+    }
 
     if (print) {
       for (isubplot in subplots) {
@@ -243,8 +281,14 @@ SSplotCohortCatch <-
           caption <- labels[3]
         }
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         plotfun(isubplot)

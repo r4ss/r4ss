@@ -26,15 +26,17 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 #'
-SS_html <- function(replist = NULL,
-                    plotdir = NULL,
-                    plotInfoTable = NULL,
-                    title = "SS Output",
-                    width = 500,
-                    openfile = TRUE,
-                    multimodel = FALSE,
-                    filenotes = NULL,
-                    verbose = TRUE) {
+SS_html <- function(
+  replist = NULL,
+  plotdir = NULL,
+  plotInfoTable = NULL,
+  title = "SS Output",
+  width = 500,
+  openfile = TRUE,
+  multimodel = FALSE,
+  filenotes = NULL,
+  verbose = TRUE
+) {
   if (verbose) {
     message(
       "Running 'SS_html':\n",
@@ -53,7 +55,9 @@ SS_html <- function(replist = NULL,
       # look for all files beginning with the name 'plotInfoTable'
       filenames <- filenames[grep("plotInfoTable", filenames)]
       filenames <- filenames[grep(".csv", filenames)]
-      if (length(filenames) == 0) stop("No CSV files with name 'plotInfoTable...'")
+      if (length(filenames) == 0) {
+        stop("No CSV files with name 'plotInfoTable...'")
+      }
       plotInfoTable <- NULL
       # loop over matching CSV files and combine them
       for (ifile in seq_along(filenames)) {
@@ -71,7 +75,9 @@ SS_html <- function(replist = NULL,
             "    Hopefully you know what you're doing, or change to 'multimodel=FALSE.\n",
             "    Runs:\n"
           )
-          for (irun in seq_along(runs)) msg <- c(msg, paste("    ", runs[irun], "\n"))
+          for (irun in seq_along(runs)) {
+            msg <- c(msg, paste("    ", runs[irun], "\n"))
+          }
           warning(msg)
         } else {
           msg <- c(
@@ -79,7 +85,9 @@ SS_html <- function(replist = NULL,
             "    Delete old files or (if you really know what you're doing) override with 'multimodel=TRUE.\n",
             "    Runs:\n"
           )
-          for (irun in seq_along(runs)) msg <- c(msg, paste("    ", runs[irun], "\n"))
+          for (irun in seq_along(runs)) {
+            msg <- c(msg, paste("    ", runs[irun], "\n"))
+          }
           stop(msg)
         }
       }
@@ -88,9 +96,17 @@ SS_html <- function(replist = NULL,
       duplicates <- names(filetable[filetable > 1])
       # loop over duplicates and remove rows for older instance
       if (length(duplicates) > 0) {
-        if (verbose) message("Removing duplicate rows in combined plotInfoTable based on multiple CSV files")
+        if (verbose) {
+          message(
+            "Removing duplicate rows in combined plotInfoTable based on multiple CSV files"
+          )
+        }
         for (idup in seq_along(duplicates)) {
-          duprows <- grep(duplicates[idup], plotInfoTable[["file"]], fixed = TRUE)
+          duprows <- grep(
+            duplicates[idup],
+            plotInfoTable[["file"]],
+            fixed = TRUE
+          )
           duptimes <- plotInfoTable[["png_time"]][duprows]
           # keep duplicates with the most recent time
           dupbad <- duprows[duptimes != max(duptimes)]
@@ -108,8 +124,13 @@ SS_html <- function(replist = NULL,
 
   plotInfoTable[["basename"]] <- basename(as.character(plotInfoTable[["file"]]))
   plotInfoTable[["dirname"]] <- dirname(as.character(plotInfoTable[["file"]]))
-  plotInfoTable[["dirname2"]] <- basename(dirname(as.character(plotInfoTable[["file"]])))
-  plotInfoTable[["path"]] <- file.path(plotInfoTable[["dirname2"]], plotInfoTable[["basename"]])
+  plotInfoTable[["dirname2"]] <- basename(dirname(as.character(plotInfoTable[[
+    "file"
+  ]])))
+  plotInfoTable[["path"]] <- file.path(
+    plotInfoTable[["dirname2"]],
+    plotInfoTable[["basename"]]
+  )
   dir <- dirname(plotInfoTable[["dirname"]])[1]
 
   # write unique HTML file for each category of plots (or whatever)
@@ -124,11 +145,17 @@ SS_html <- function(replist = NULL,
       }
     } else {
       category <- categories[icat]
-      htmlfile <- file.path(plotdir, paste("_SS_output_", category, ".html", sep = ""))
+      htmlfile <- file.path(
+        plotdir,
+        paste("_SS_output_", category, ".html", sep = "")
+      )
     }
     # write HTML head including some CSS stuff about fonts and whatnot
     # source for text below is http://unraveled.com/publications/css_tabs/
-    cat("<html><head><title>", title, "</title>\n",
+    cat(
+      "<html><head><title>",
+      title,
+      "</title>\n",
       "    <!-- source for text below is http://unraveled.com/publications/css_tabs/ -->\n",
       "    <!-- CSS Tabs is licensed under Creative Commons Attribution 3.0 - http://creativecommons.org/licenses/by/3.0/ -->\n",
       "    \n",
@@ -208,7 +235,9 @@ SS_html <- function(replist = NULL,
       "    }\n",
       "    </style>",
       "</head>\n",
-      sep = "", file = htmlfile, append = FALSE
+      sep = "",
+      file = htmlfile,
+      append = FALSE
     )
 
     ## # old navigation menu
@@ -225,23 +254,34 @@ SS_html <- function(replist = NULL,
     ## <div class="main">
     ##   <div class="container">
 
-
-    cat("<!-- Site navigation menu -->\n",
+    cat(
+      "<!-- Site navigation menu -->\n",
       '  <ul id="tabnav">\n',
-      file = htmlfile, append = TRUE
+      file = htmlfile,
+      append = TRUE
     )
     for (itab in 0:length(categories)) {
       if (itab == 0) {
         tab <- "Home"
-        cat('    <li class="tab1"><a href="_SS_output.html">Home</a></li>\n',
+        cat(
+          '    <li class="tab1"><a href="_SS_output.html">Home</a></li>\n',
           sep = "",
-          file = htmlfile, append = TRUE
+          file = htmlfile,
+          append = TRUE
         )
       } else {
         tab <- categories[itab]
-        cat('    <li class="tab', itab + 1, '"><a href="_SS_output_', tab, '.html">', tab, "</a></li>\n",
+        cat(
+          '    <li class="tab',
+          itab + 1,
+          '"><a href="_SS_output_',
+          tab,
+          '.html">',
+          tab,
+          "</a></li>\n",
           sep = "",
-          file = htmlfile, append = TRUE
+          file = htmlfile,
+          append = TRUE
         )
       }
     }
@@ -252,13 +292,22 @@ SS_html <- function(replist = NULL,
 
     # add text on "Home" page
     if (category == "Home") {
-      cat('\n\n<h2><a name="', category, '">', category, "</h2>\n",
+      cat(
+        '\n\n<h2><a name="',
+        category,
+        '">',
+        category,
+        "</h2>\n",
         sep = "",
-        file = htmlfile, append = TRUE
+        file = htmlfile,
+        append = TRUE
       )
       if (is.null(replist)) {
-        cat('<p>Model info not available (need to supply "replist" input to SS_HTML function)</p>\n',
-          sep = "", file = htmlfile, append = TRUE
+        cat(
+          '<p>Model info not available (need to supply "replist" input to SS_HTML function)</p>\n',
+          sep = "",
+          file = htmlfile,
+          append = TRUE
         )
       } else {
         r4ss_info <- packageDescription("r4ss")
@@ -266,7 +315,9 @@ SS_html <- function(replist = NULL,
           r4ss_info_text <- NULL
         } else {
           goodnames <- c(
-            "Version", "Date", "Built",
+            "Version",
+            "Date",
+            "Built",
             grep("Remote", names(r4ss_info), value = TRUE)
           )
           r4ss_info_text <- "<p><b>r4ss info:<br></b>\n"
@@ -277,77 +328,117 @@ SS_html <- function(replist = NULL,
             )
           }
         }
-        cat("<p><b>SS version:</b>\n",
-          replist[["SS_version"]], "</p>\n\n",
+        cat(
+          "<p><b>SS version:</b>\n",
+          replist[["SS_version"]],
+          "</p>\n\n",
           r4ss_info_text,
           "<p><b>Starting time of model:</b>\n",
-          substring(replist[["StartTime"]], 12), "</p>\n\n",
-          sep = "", file = htmlfile, append = TRUE
+          substring(replist[["StartTime"]], 12),
+          "</p>\n\n",
+          sep = "",
+          file = htmlfile,
+          append = TRUE
         )
         if (!is.null(filenotes)) {
           for (i in seq_along(filenotes)) {
-            cat("<p><b>Notes:</b>\n",
+            cat(
+              "<p><b>Notes:</b>\n",
               paste(filenotes, collapse = "</b>\n"),
               "</p>\n\n",
-              sep = "", file = htmlfile, append = TRUE
+              sep = "",
+              file = htmlfile,
+              append = TRUE
             )
           }
         }
         nwarn <- replist[["Nwarnings"]]
         if (is.na(nwarn)) {
-          cat("<p><b>Warnings (from file warnings.sso):</b> NA</p>\n\n",
-            sep = "", file = htmlfile, append = TRUE
+          cat(
+            "<p><b>Warnings (from file warnings.sso):</b> NA</p>\n\n",
+            sep = "",
+            file = htmlfile,
+            append = TRUE
           )
         } else {
           if (nwarn == 0) {
-            cat("<p><b>Warnings (from file warnings.sso):</b> None</p>\n\n",
-              sep = "", file = htmlfile, append = TRUE
+            cat(
+              "<p><b>Warnings (from file warnings.sso):</b> None</p>\n\n",
+              sep = "",
+              file = htmlfile,
+              append = TRUE
             )
           }
           if (nwarn > 0) {
             if (nwarn <= 20) {
-              cat("<p><b>Warnings (from file warnings.sso):</b></p>\n\n",
+              cat(
+                "<p><b>Warnings (from file warnings.sso):</b></p>\n\n",
                 "<pre>\n",
-                sep = "", file = htmlfile, append = TRUE
+                sep = "",
+                file = htmlfile,
+                append = TRUE
               )
             } else {
-              cat("<p><b>Warnings (first 20 from file warnings.sso):</b></p>\n\n",
+              cat(
+                "<p><b>Warnings (first 20 from file warnings.sso):</b></p>\n\n",
                 "<pre>\n",
-                sep = "", file = htmlfile, append = TRUE
+                sep = "",
+                file = htmlfile,
+                append = TRUE
               )
             }
-            cat(replist[["warnings"]],
-              sep = "\n", file = htmlfile, append = TRUE
+            cat(
+              replist[["warnings"]],
+              sep = "\n",
+              file = htmlfile,
+              append = TRUE
             )
-            cat("</pre>\n",
-              sep = "", file = htmlfile, append = TRUE
-            )
+            cat("</pre>\n", sep = "", file = htmlfile, append = TRUE)
           }
         }
       }
     } else if (category == "DiagnosticTables") {
       plotinfo <- plotInfoTable[plotInfoTable[["category"]] == category, ]
-      cat('\n\n<h2><a name="', category, '">', category, "</h2>\n",
+      cat(
+        '\n\n<h2><a name="',
+        category,
+        '">',
+        category,
+        "</h2>\n",
         sep = "",
-        file = htmlfile, append = TRUE
+        file = htmlfile,
+        append = TRUE
       )
       for (i in 1:nrow(plotinfo)) {
         txtfilename <- plotinfo[["basename"]][i]
         table_text <- readLines(file.path(plotdir, txtfilename))
-        cat("<p align=left>",
-          plotinfo[["caption"]][i], "<br><i><small>file: <a href='",
-          txtfilename, "'>", plotinfo[["basename"]][i], "</a></small></i>\n",
+        cat(
+          "<p align=left>",
+          plotinfo[["caption"]][i],
+          "<br><i><small>file: <a href='",
+          txtfilename,
+          "'>",
+          plotinfo[["basename"]][i],
+          "</a></small></i>\n",
           "<br>",
           table_text,
-          sep = "", file = htmlfile, append = TRUE
+          sep = "",
+          file = htmlfile,
+          append = TRUE
         )
       }
     } else {
       plotinfo <- plotInfoTable[plotInfoTable[["category"]] == category, ]
 
-      cat('\n\n<h2><a name="', category, '">', category, "</h2>\n",
+      cat(
+        '\n\n<h2><a name="',
+        category,
+        '">',
+        category,
+        "</h2>\n",
         sep = "",
-        file = htmlfile, append = TRUE
+        file = htmlfile,
+        append = TRUE
       )
       for (i in 1:nrow(plotinfo)) {
         # default alternative text is ""
@@ -356,14 +447,25 @@ SS_html <- function(replist = NULL,
         #   referenced "sections" within Report.sso or any other file that
         #   held the raw data that is on the figure.
         alt <- ""
-        cat("<p align=left><a href='", plotinfo[["basename"]][i],
-          "'><img src='", plotinfo[["basename"]][i],
-          "' border=0 width=", width,
-          " alt='", alt, "'></a><br>",
+        cat(
+          "<p align=left><a href='",
+          plotinfo[["basename"]][i],
+          "'><img src='",
+          plotinfo[["basename"]][i],
+          "' border=0 width=",
+          width,
+          " alt='",
+          alt,
+          "'></a><br>",
           plotinfo[["caption"]][i],
-          "<br><i><small>file: <a href='", plotinfo[["basename"]][i],
-          "'>", plotinfo[["basename"]][i], "</a></small></i>\n",
-          sep = "", file = htmlfile, append = TRUE
+          "<br><i><small>file: <a href='",
+          plotinfo[["basename"]][i],
+          "'>",
+          plotinfo[["basename"]][i],
+          "</a></small></i>\n",
+          sep = "",
+          file = htmlfile,
+          append = TRUE
         )
       }
     }
@@ -377,7 +479,9 @@ SS_html <- function(replist = NULL,
   # open HTML file automatically:
   # thanks John Wallace for finding the browseURL command
   if (openfile) {
-    if (verbose) message("Opening HTML file in your default web-browser.")
+    if (verbose) {
+      message("Opening HTML file in your default web-browser.")
+    }
     # check for presence of file
     # alternative location for file in the path is relative to the working directory
     htmlhome2 <- file.path(getwd(), htmlhome)

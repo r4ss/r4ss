@@ -59,8 +59,11 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["datfile"]] <- strings[1]
   mylist[["ctlfile"]] <- strings[2]
   if (verbose) {
-    message("  data, control files: ", mylist[["datfile"]],
-      ", ", mylist[["ctlfile"]],
+    message(
+      "  data, control files: ",
+      mylist[["datfile"]],
+      ", ",
+      mylist[["ctlfile"]],
       sep = ""
     )
   }
@@ -193,9 +196,12 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   i <- i + 1
   if (!is.na(final) && final %in% c(3.30, 999)) {
     if (verbose) message("Read of starter file complete. Final value: ", final)
-  } else { # read seed and check final value
+  } else {
+    # read seed and check final value
     mylist[["seed"]] <- mylist[["final"]]
-    if (verbose) message("Reading a random seed value:", mylist[["seed"]])
+    if (verbose) {
+      message("Reading a random seed value:", mylist[["seed"]])
+    }
     mylist[["final"]] <- final <- allnums[i]
     if (!is.na(final) && final %in% c(3.30, 999)) {
       if (verbose) {

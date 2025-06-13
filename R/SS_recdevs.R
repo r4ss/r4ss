@@ -30,13 +30,21 @@
 #' @author Ian Taylor
 #' @export
 SS_recdevs <-
-  function(fyr, lyr, ctl = NULL, recdevs = NULL,
-           rescale = TRUE, scaleyrs = NULL,
-           dir = getwd(),
-           ctlfile = "control.ss_new",
-           newctlfile = "control_modified.ss",
-           verbose = TRUE, writectl = TRUE, returnctl = FALSE,
-           newmaxbias = NULL) {
+  function(
+    fyr,
+    lyr,
+    ctl = NULL,
+    recdevs = NULL,
+    rescale = TRUE,
+    scaleyrs = NULL,
+    dir = getwd(),
+    ctlfile = "control.ss_new",
+    newctlfile = "control_modified.ss",
+    verbose = TRUE,
+    writectl = TRUE,
+    returnctl = FALSE,
+    newmaxbias = NULL
+  ) {
     # Determine working directory on start and return upon exit
     current_wd <- getwd()
     on.exit(setwd(current_wd))
@@ -45,8 +53,12 @@ SS_recdevs <-
     # define a general function for reading values from control file
     readfun <- function(string, maxlen = Inf) {
       line1 <- grep(string, ctl)
-      if (length(line1) < 1) stop("no line contains the phrase, '", string, "'", sep = "")
-      if (length(line1) > 1) stop("more than one line contains the phrase, '", string, "'", sep = "")
+      if (length(line1) < 1) {
+        stop("no line contains the phrase, '", string, "'", sep = "")
+      }
+      if (length(line1) > 1) {
+        stop("more than one line contains the phrase, '", string, "'", sep = "")
+      }
 
       # split parameter line at hash mark
       splitline <- strsplit(ctl[line1], "#")[[1]]
@@ -56,13 +68,23 @@ SS_recdevs <-
       vec <- as.numeric(vecstrings[vecstrings != ""])
       # check for length
       if (length(vec) > maxlen) {
-        stop(paste("this line has more than ", maxlen, " value", c("s", "")[1 + (maxlen == 1)], ": ", ctl[line1], sep = ""))
+        stop(paste(
+          "this line has more than ",
+          maxlen,
+          " value",
+          c("s", "")[1 + (maxlen == 1)],
+          ": ",
+          ctl[line1],
+          sep = ""
+        ))
       }
       return(vec)
     } # end readfun
 
     # read control file if ctl is not supplied
-    if (is.null(ctl)) ctl <- readLines(ctlfile)
+    if (is.null(ctl)) {
+      ctl <- readLines(ctlfile)
+    }
 
     # get sigma R
     sigmaR <- readfun("SR_sigmaR")[3]
@@ -105,7 +127,13 @@ SS_recdevs <-
     # generate new recdevs
     if (!is.null(recdevs)) {
       if (length(recdevs) != Nrecdevs) {
-        stop(paste("input 'recdevs' has length=", length(recdevs), " but Nrecdevs=lyr-fyr+1=", Nrecdevs, sep = ""))
+        stop(paste(
+          "input 'recdevs' has length=",
+          length(recdevs),
+          " but Nrecdevs=lyr-fyr+1=",
+          Nrecdevs,
+          sep = ""
+        ))
       } else {
         newdevs <- recdevs
       }
@@ -120,11 +148,17 @@ SS_recdevs <-
       }
       if (verbose) {
         message(
-          "Rescaling recdevs vector so yrs ", min(yrs[scaleyrs]), ":",
-          max(yrs[scaleyrs]), " have mean 0 and std. dev. = sigmaR = ", sigmaR
+          "Rescaling recdevs vector so yrs ",
+          min(yrs[scaleyrs]),
+          ":",
+          max(yrs[scaleyrs]),
+          " have mean 0 and std. dev. = sigmaR = ",
+          sigmaR
         )
       }
-      newdevs <- sigmaR * (newdevs - mean(newdevs[scaleyrs])) / sd(newdevs[scaleyrs])
+      newdevs <- sigmaR *
+        (newdevs - mean(newdevs[scaleyrs])) /
+        sd(newdevs[scaleyrs])
     }
     # build new recdev section
     newsection <- c(
@@ -137,14 +171,23 @@ SS_recdevs <-
 
     for (i in 1:Nrecdevs) {
       newsection[4 + i] <-
-        paste((fyr:lyr)[i], c("  ", " ")[1 + (newdevs[i] < 0)], newdevs[i], " #_stochastic_recdev_with_sigmaR=", sigmaR, sep = "")
+        paste(
+          (fyr:lyr)[i],
+          c("  ", " ")[1 + (newdevs[i] < 0)],
+          newdevs[i],
+          " #_stochastic_recdev_with_sigmaR=",
+          sigmaR,
+          sep = ""
+        )
     }
 
     ctl <- c(ctl[1:key1], newsection, ctl[key2:length(ctl)])
     # ctl[(key1+1):(key2-1)] <- newsection
 
     # if maxbias is input, then replace
-    if (!is.null(newmaxbias)) ctl[grep("max_bias", ctl)] <- paste(newmaxbias, "#_max_bias_adj_in_MPD")
+    if (!is.null(newmaxbias)) {
+      ctl[grep("max_bias", ctl)] <- paste(newmaxbias, "#_max_bias_adj_in_MPD")
+    }
 
     # write and/or return the modified control file
     if (writectl) {

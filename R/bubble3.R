@@ -39,13 +39,32 @@
 #' @param las Style of axis labels (see ?par for more info).
 #' @param allopen Should all bubbles be open (instead of just negative values)?
 #' @author Ian Stewart and Ian Taylor
-bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
-                    bg.open = gray(0.95, 0.3),
-                    legend = TRUE, legendloc = "top",
-                    legend.z = "default", legend.yadj = 1.1,
-                    main = "", cex.main = 1, xlab = "", ylab = "", minnbubble = 3,
-                    xlim = NULL, ylim = NULL, axis1 = TRUE, xlimextra = 1,
-                    add = FALSE, las = 1, allopen = TRUE) {
+bubble3 <- function(
+  x,
+  y,
+  z,
+  col = 1,
+  cexZ1 = 5,
+  maxsize = NULL,
+  do.sqrt = TRUE,
+  bg.open = gray(0.95, 0.3),
+  legend = TRUE,
+  legendloc = "top",
+  legend.z = "default",
+  legend.yadj = 1.1,
+  main = "",
+  cex.main = 1,
+  xlab = "",
+  ylab = "",
+  minnbubble = 3,
+  xlim = NULL,
+  ylim = NULL,
+  axis1 = TRUE,
+  xlimextra = 1,
+  add = FALSE,
+  las = 1,
+  allopen = TRUE
+) {
   # This function is vaguely based on bubble() from gstat.
   # Not sure anymore what happened to bubble2.
   if (diff(range(length(x), length(y), length(z))) > 0) {
@@ -70,14 +89,24 @@ bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
   if (legend.z[1] == "default") {
     # set sequence of points to use in legend
     maxaz <- max(az, na.rm = TRUE)
-    if (maxaz > 1) legend.z <- c(.1, 1:3) # something like Pearsons
-    if (maxaz > 5) legend.z <- c(.1, pretty(c(1, maxaz), n = 2)) # big Pearsons
-    if (maxaz > 10) legend.z <- pretty(c(0, maxaz)) # something like numbers
-    if (maxaz <= 1) legend.z <- c(0.01, .1 * pretty(c(1, 10 * maxaz), n = 2)) # something like proportions
+    if (maxaz > 1) {
+      legend.z <- c(.1, 1:3)
+    } # something like Pearsons
+    if (maxaz > 5) {
+      legend.z <- c(.1, pretty(c(1, maxaz), n = 2))
+    } # big Pearsons
+    if (maxaz > 10) {
+      legend.z <- pretty(c(0, maxaz))
+    } # something like numbers
+    if (maxaz <= 1) {
+      legend.z <- c(0.01, .1 * pretty(c(1, 10 * maxaz), n = 2))
+    } # something like proportions
     # exclude zero
     legend.z <- setdiff(legend.z, 0)
     # if legend is too long, cut in half
-    if (length(legend.z) > 3) legend.z <- legend.z[seq(1, length(legend.z), 2)]
+    if (length(legend.z) > 3) {
+      legend.z <- legend.z[seq(1, length(legend.z), 2)]
+    }
     # add negatives
     if (any(z < 0)) {
       legend.z <- c(-rev(legend.z[-1]), legend.z)
@@ -93,7 +122,9 @@ bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
   }
 
   # set scale
-  if (!is.null(maxsize)) cexZ1 <- maxsize / max(az)
+  if (!is.null(maxsize)) {
+    cexZ1 <- maxsize / max(az)
+  }
 
   cex <- cexZ1 * az
   legend.cex <- cexZ1 * legend.z2
@@ -146,16 +177,30 @@ bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
 
   # make empty plot (if needed)
   if (!add) {
-    if (is.null(ylim)) ylim <- range(y)
+    if (is.null(ylim)) {
+      ylim <- range(y)
+    }
     ylim[2] <- legend.yadj * ylim[2]
-    plot(x, y,
-      type = "n", xlim = xlim, ylim = ylim, main = main, cex.main = cex.main,
-      xlab = xlab, ylab = ylab, axes = FALSE
+    plot(
+      x,
+      y,
+      type = "n",
+      xlim = xlim,
+      ylim = ylim,
+      main = main,
+      cex.main = cex.main,
+      xlab = xlab,
+      ylab = ylab,
+      axes = FALSE
     )
     xvec <- unique(x)
-    if (axis1) axis(1, at = floor(unique(x))) # only printing integer values for years
+    if (axis1) {
+      axis(1, at = floor(unique(x)))
+    } # only printing integer values for years
     axis2vals <- sort(unique(y))
-    if (length(axis2vals) > 20) axis2vals <- pretty(axis2vals)
+    if (length(axis2vals) > 20) {
+      axis2vals <- pretty(axis2vals)
+    }
     axis(2, at = axis2vals, las = las)
     box()
   }
@@ -167,8 +212,14 @@ bubble3 <- function(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL, do.sqrt = TRUE,
     legend.lab <- format(legend.z, scientific = FALSE, drop0trailing = TRUE)
     # add legend
     legend(
-      x = legendloc, legend = legend.lab, pch = legend.pch, col = col, pt.bg = legend.bg,
-      pt.cex = legend.cex, ncol = legend.n, bty = "n"
+      x = legendloc,
+      legend = legend.lab,
+      pch = legend.pch,
+      col = col,
+      pt.bg = legend.bg,
+      pt.cex = legend.cex,
+      ncol = legend.n,
+      bty = "n"
     )
     ## next line for debugging legends
     # print(data.frame(legendloc,legend.z,legend.pch,col,legend.cex,legend.n))

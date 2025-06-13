@@ -41,37 +41,51 @@
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [SSplotTimeseries()]
-SSplotDynamicB0 <- function(replist,
-                            ylab = "Spawning biomass (t)",
-                            equilibrium = TRUE,
-                            forecast = FALSE,
-                            yrs = "all",
-                            plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
-                            uncertainty = TRUE,
-                            legend = TRUE,
-                            legendlabels = c("equilibrium", "without fishing", "with fishing"),
-                            legendloc = "bottom",
-                            col = c("blue", "red"),
-                            lty = 1,
-                            lwd = 2,
-                            add = FALSE,
-                            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
-                            mainTitle = FALSE,
-                            mar = NULL) {
+SSplotDynamicB0 <- function(
+  replist,
+  ylab = "Spawning biomass (t)",
+  equilibrium = TRUE,
+  forecast = FALSE,
+  yrs = "all",
+  plot = TRUE,
+  print = FALSE,
+  plotdir = "default",
+  verbose = TRUE,
+  uncertainty = TRUE,
+  legend = TRUE,
+  legendlabels = c("equilibrium", "without fishing", "with fishing"),
+  legendloc = "bottom",
+  col = c("blue", "red"),
+  lty = 1,
+  lwd = 2,
+  add = FALSE,
+  pwidth = 6.5,
+  pheight = 5.0,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  mainTitle = FALSE,
+  mar = NULL
+) {
   Dynamic_Bzero <- replist[["Dynamic_Bzero"]]
   if (is.null(Dynamic_Bzero)) {
     warning('No element "Dynamic_Bzero" in replist input')
     return()
   }
   if (!"SSB_nofishing" %in% names(replist[["Dynamic_Bzero"]])) {
-    warning("Skipping Dynamic B0 plot (not yet working for this model configuration)")
+    warning(
+      "Skipping Dynamic B0 plot (not yet working for this model configuration)"
+    )
     return()
   }
 
   # check if spawning output rather than spawning biomass is plotted
-  if (is.null(replist[["SpawnOutputUnits"]]) ||
-    is.na(replist[["SpawnOutputUnits"]]) ||
-    replist[["SpawnOutputUnits"]] == "numbers") { # quantity from test in SS_output
+  if (
+    is.null(replist[["SpawnOutputUnits"]]) ||
+      is.na(replist[["SpawnOutputUnits"]]) ||
+      replist[["SpawnOutputUnits"]] == "numbers"
+  ) {
+    # quantity from test in SS_output
     if (ylab == "Spawning biomass (t)") {
       ylab <- replist[["SpawnOutputLabel"]]
     }
@@ -119,10 +133,7 @@ SSplotDynamicB0 <- function(replist,
 
   # set ymax
   ymax <- max(
-    ifelse(equilibrium,
-      Dynamic_Bzero[["SSB"]][sub_equil],
-      NA
-    ),
+    ifelse(equilibrium, Dynamic_Bzero[["SSB"]][sub_equil], NA),
     Dynamic_Bzero[["SSB"]][Dynamic_Bzero[["Yr"]] %in% yrs],
     Dynamic_Bzero[["SSB_nofishing"]][Dynamic_Bzero[["Yr"]] %in% yrs],
     na.rm = TRUE
@@ -153,10 +164,12 @@ SSplotDynamicB0 <- function(replist,
     Dynamic_Bzero[["SSB_nofishing_hi"]] <- NA
 
     # get year for each row
-    quants_SSB[["Yr"]] <- substring(quants_SSB[["Label"]],
+    quants_SSB[["Yr"]] <- substring(
+      quants_SSB[["Label"]],
       first = nchar("SSB_") + 1
     )
-    quants_SSB_nofishing[["Yr"]] <- substring(quants_SSB_nofishing[["Label"]],
+    quants_SSB_nofishing[["Yr"]] <- substring(
+      quants_SSB_nofishing[["Label"]],
       first = nchar("Dyn_Bzero_") + 1
     )
 
@@ -180,7 +193,10 @@ SSplotDynamicB0 <- function(replist,
       }
       # fill in dynamic B0 uncertainty
       if (y %in% quants_SSB_nofishing[["Yr"]]) {
-        Dynamic_Bzero[Dynamic_Bzero[["Yr"]] == y, c("SSB_nofishing_lo", "SSB_nofishing_hi")] <-
+        Dynamic_Bzero[
+          Dynamic_Bzero[["Yr"]] == y,
+          c("SSB_nofishing_lo", "SSB_nofishing_hi")
+        ] <-
           qnorm(
             p = c(0.025, 0.975),
             mean = quants_SSB_nofishing[paste0("Dyn_Bzero_", y), "Value"],
@@ -189,11 +205,9 @@ SSplotDynamicB0 <- function(replist,
       }
     }
     # update ymax
-    ymax <- max(ymax,
-      ifelse(equilibrium,
-        Dynamic_Bzero[["SSB_hi"]][sub_equil],
-        NA
-      ),
+    ymax <- max(
+      ymax,
+      ifelse(equilibrium, Dynamic_Bzero[["SSB_hi"]][sub_equil], NA),
       Dynamic_Bzero[["SSB_hi"]][Dynamic_Bzero[["Yr"]] %in% yrs],
       Dynamic_Bzero[["SSB_nofishing_hi"]][Dynamic_Bzero[["Yr"]] %in% yrs],
       na.rm = TRUE
@@ -202,17 +216,23 @@ SSplotDynamicB0 <- function(replist,
 
   plotfun <- function() {
     if (!add) {
-      plot(0,
-        type = "n", , xlab = "Year", ylab = ylab, xlim = range(yrs),
+      plot(
+        0,
+        type = "n",
+        ,
+        xlab = "Year",
+        ylab = ylab,
+        xlim = range(yrs),
         ylim = c(0, 1.1 * ymax),
         yaxs = "i",
-        cex.lab = 1.0, cex.axis = 1.0, cex = 0.7,
+        cex.lab = 1.0,
+        cex.axis = 1.0,
+        cex = 0.7,
         mar = mar,
         main = main
       )
     }
     sub <- Dynamic_Bzero[["Yr"]] %in% yrs & Dynamic_Bzero[["Era"]] != "VIRG"
-
 
     if (uncertainty) {
       # add intervals to plot
@@ -224,7 +244,10 @@ SSplotDynamicB0 <- function(replist,
           y0 = Dynamic_Bzero[sub_equil, "SSB_lo"],
           x1 = equil_yr,
           y1 = Dynamic_Bzero[sub_equil, "SSB_hi"],
-          length = 0.01, angle = 90, code = 3, col = col[1],
+          length = 0.01,
+          angle = 90,
+          code = 3,
+          col = col[1],
           lwd = 1
         )
       }
@@ -236,7 +259,8 @@ SSplotDynamicB0 <- function(replist,
         polygon(
           x = c(yrvec[good], rev(yrvec[good])),
           y = c(lower[good], rev(upper[good])),
-          border = NA, col = col
+          border = NA,
+          col = col
         )
       }
 
@@ -258,12 +282,16 @@ SSplotDynamicB0 <- function(replist,
     lines(
       x = Dynamic_Bzero[["Yr"]][sub],
       y = Dynamic_Bzero[["SSB"]][sub],
-      lwd = lwd[2], lty = lty[2], col = col[2]
+      lwd = lwd[2],
+      lty = lty[2],
+      col = col[2]
     )
     lines(
       x = Dynamic_Bzero[["Yr"]][sub],
       y = Dynamic_Bzero[["SSB_nofishing"]][sub],
-      lwd = lwd[1], lty = lty[1], col = col[1]
+      lwd = lwd[1],
+      lty = lty[1],
+      col = col[1]
     )
     if (equilibrium) {
       points(
@@ -302,7 +330,9 @@ SSplotDynamicB0 <- function(replist,
   if (print) {
     caption <- paste0(
       "Dynamic B0 plot. The lower line shows the time series ",
-      "of estimated ", ylab, " in the presence of fishing ",
+      "of estimated ",
+      ylab,
+      " in the presence of fishing ",
       "mortality. The upper line shows the time series that ",
       "could occur under the same dynamics (including ",
       "deviations in recruitment), but without fishing."
@@ -316,8 +346,14 @@ SSplotDynamicB0 <- function(replist,
 
     file <- "ts_DynamicB0.png"
     plotinfo <- save_png(
-      plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-      pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+      plotinfo = plotinfo,
+      file = file,
+      plotdir = plotdir,
+      pwidth = pwidth,
+      pheight = pheight,
+      punits = punits,
+      res = res,
+      ptsize = ptsize,
       caption = caption
     )
     plotfun()
@@ -326,6 +362,8 @@ SSplotDynamicB0 <- function(replist,
       plotinfo[["category"]] <- "Timeseries"
     }
   }
-  if (verbose) message("Plotting Dynamic B0")
+  if (verbose) {
+    message("Plotting Dynamic B0")
+  }
   return(invisible(plotinfo))
 }

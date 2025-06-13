@@ -14,18 +14,27 @@
 #' @export
 #' @family read/write functions
 
-SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
-                            overwrite = FALSE, verbose = TRUE,
-                            warn = lifecycle::deprecated()) {
+SS_writestarter <- function(
+  mylist,
+  dir = NULL,
+  file = "starter.ss",
+  overwrite = FALSE,
+  verbose = TRUE,
+  warn = lifecycle::deprecated()
+) {
   if (lifecycle::is_present(warn)) {
     lifecycle::deprecate_warn(
       when = "1.45.0",
       what = "SS_writestarter(warn)"
     )
   }
-  if (verbose) message("running SS_writestarter")
+  if (verbose) {
+    message("running SS_writestarter")
+  }
   if (mylist[["type"]] != "Stock_Synthesis_starter_file") {
-    stop("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
+    stop(
+      "input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n"
+    )
   }
   # this command will hopefully prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
@@ -34,7 +43,9 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
     if (sink.number() > 0) sink()
   })
 
-  if (is.null(dir)) dir <- getwd() # set to working directory if no input provided
+  if (is.null(dir)) {
+    dir <- getwd()
+  } # set to working directory if no input provided
   if (grepl("/$", dir)) {
     outfile <- paste0(dir, file) # bc trailing backslash
   } else {
@@ -42,7 +53,11 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
   }
   if (file.exists(outfile)) {
     if (!overwrite) {
-      stop(paste("file exists:", outfile, "\n  set overwrite=TRUE to replace\n"))
+      stop(paste(
+        "file exists:",
+        outfile,
+        "\n  set overwrite=TRUE to replace\n"
+      ))
     } else {
       file.remove(outfile)
     }
@@ -54,7 +69,9 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
   oldwidth <- options()[["width"]]
   options(width = 1000)
 
-  if (verbose) message("opening connection to ", outfile)
+  if (verbose) {
+    message("opening connection to ", outfile)
+  }
   zz <- file(outfile, open = "at")
   sink(zz)
 
@@ -66,17 +83,15 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
   }
 
   # function to write a vector
-  wl.vector <- function(name,
-                        comment = NULL,
-                        collapse = NULL) {
+  wl.vector <- function(name, comment = NULL, collapse = NULL) {
     value <- mylist[names(mylist) == name][[1]]
     if (is.null(collapse)) {
       collapse <- " "
     }
     if (is.null(comment)) {
-      writeLines(paste(paste(value, collapse = collapse), " #_", name, sep = ""),
-        con =
-          zz
+      writeLines(
+        paste(paste(value, collapse = collapse), " #_", name, sep = ""),
+        con = zz
       )
     } else {
       writeLines(paste(paste(value, collapse = collapse), comment), con = zz)
@@ -100,7 +115,9 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
       "-101 to start with all; -number to remove, +number to add, -999 to end"
     ))
     wl("custom_start")
-    if (!is.null(mylist[["custom_add_rm"]])) wl.vector("custom_add_rm")
+    if (!is.null(mylist[["custom_add_rm"]])) {
+      wl.vector("custom_add_rm")
+    }
     writeLines("-999")
   }
   wl("checkup")
@@ -136,7 +153,8 @@ SS_writestarter <- function(mylist, dir = NULL, file = "starter.ss",
     wl("ALK_tolerance")
   }
   writeLines("#")
-  if (!is.null(mylist[["seed"]])) { # seed option added in 3.30.15
+  if (!is.null(mylist[["seed"]])) {
+    # seed option added in 3.30.15
     wl("seed")
   }
   wl("final")

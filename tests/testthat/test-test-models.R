@@ -1,7 +1,8 @@
 context("Read output and make plots for all test-models")
 
 test_that("test-models work with SS_output() and SS_plots()", {
-  skip_if(!file.exists(system.file("extdata", "models", package = "r4ss")),
+  skip_if(
+    !file.exists(system.file("extdata", "models", package = "r4ss")),
     message = "No 'models' folder in 'extdata'"
   )
   # skip if no executable in simple_small path
@@ -22,15 +23,17 @@ test_that("test-models work with SS_output() and SS_plots()", {
   # copy all test models to temporary directory
   orig_mod_path <- system.file("extdata", "models", package = "r4ss")
   file.copy(orig_mod_path, mod_path, recursive = TRUE)
-  all_mods <- list.dirs(file.path(mod_path, "models"),
+  all_mods <- list.dirs(
+    file.path(mod_path, "models"),
     full.names = TRUE,
     recursive = FALSE
   )
 
   # run models without estimation and then run r4ss functions
-  message("Will run SS_output() and SS_plots() on models:\n  ", paste(basename(all_mods),
-    collapse = ",\n  "
-  ))
+  message(
+    "Will run SS_output() and SS_plots() on models:\n  ",
+    paste(basename(all_mods), collapse = ",\n  ")
+  )
 
   #' Run test models with the purpose of being called using the furrr package to
   #' run in parallel.
@@ -45,7 +48,8 @@ test_that("test-models work with SS_output() and SS_plots()", {
   future::plan(future::multisession, workers = ncores)
 
   furrr::future_map(
-    .x = all_mods, .f = function(x, dir_exe) {
+    .x = all_mods,
+    .f = function(x, dir_exe) {
       message("Now running without estimation: ", basename(x))
       run(x, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
     },
@@ -64,9 +68,12 @@ test_that("test-models work with SS_output() and SS_plots()", {
 
   expect_true(all(unlist(purrr::map(out, is.list))))
   expect_true(length(out) == length(all_mods))
-  expect_setequal(unlist(purrr::map(out, function(x) {
-    tail(names(x), 1)
-  })), "inputs")
+  expect_setequal(
+    unlist(purrr::map(out, function(x) {
+      tail(names(x), 1)
+    })),
+    "inputs"
+  )
 
   plots <- furrr::future_map(.x = out, .f = function(x) {
     message("Running SS_plots()")
@@ -86,7 +93,6 @@ test_that("test-models work with SS_output() and SS_plots()", {
   for (i in 1:length(out)) {
     table_all(out[[i]], verbose = TRUE)
   }
-
 
   ## was failing here but probably due to user error
   # expect_true(all(unlist(purrr::map(tables, function(x) {

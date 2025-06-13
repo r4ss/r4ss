@@ -54,13 +54,14 @@
 #' tab[NA_rows, "ABC (mt)"] <- tab[["Buffer"]][NA_rows] * tab$"OFL (mt)"[NA_rows]
 #' }
 table_exec_summary <- function(
-    replist,
-    dir = NULL,
-    ci_value = 0.95,
-    fleetnames = NULL,
-    so_units = "biomass (mt)",
-    endyr = NULL,
-    verbose = TRUE) {
+  replist,
+  dir = NULL,
+  ci_value = 0.95,
+  fleetnames = NULL,
+  so_units = "biomass (mt)",
+  endyr = NULL,
+  verbose = TRUE
+) {
   check_replist(replist)
 
   rda_dir <- file.path(

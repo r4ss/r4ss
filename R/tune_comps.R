@@ -211,14 +211,22 @@ SS_tune_comps <-
 #' # cleanup ----
 #' unlink(mod_path, recursive = TRUE)
 #' }
-tune_comps <- function(replist = NULL, fleets = "all",
-                       option = c("Francis", "MI", "none", "DM"),
-                       digits = 6, write = TRUE, niters_tuning = 0,
-                       init_run = FALSE, dir = getwd(), exe = "ss3",
-                       model = lifecycle::deprecated(),
-                       extras = "",
-                       allow_up_tuning = FALSE,
-                       verbose = TRUE, ...) {
+tune_comps <- function(
+  replist = NULL,
+  fleets = "all",
+  option = c("Francis", "MI", "none", "DM"),
+  digits = 6,
+  write = TRUE,
+  niters_tuning = 0,
+  init_run = FALSE,
+  dir = getwd(),
+  exe = "ss3",
+  model = lifecycle::deprecated(),
+  extras = "",
+  allow_up_tuning = FALSE,
+  verbose = TRUE,
+  ...
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(model)) {
@@ -234,15 +242,22 @@ tune_comps <- function(replist = NULL, fleets = "all",
   option <- match.arg(option, several.ok = FALSE)
   # try to read in rep list, if it is null.
   if (is.null(replist)) {
-    replist <- try(SS_output(dir = dir, verbose = FALSE, hidewarn = TRUE, printstats = FALSE))
+    replist <- try(SS_output(
+      dir = dir,
+      verbose = FALSE,
+      hidewarn = TRUE,
+      printstats = FALSE
+    ))
     if ("try-error" %in% class(replist)) {
       replist <- NULL
     }
   }
   # this combination of setting won't work:
-  if (is.null(replist) &
-    init_run == FALSE &
-    option %in% c("Francis", "MI", "none")) {
+  if (
+    is.null(replist) &
+      init_run == FALSE &
+      option %in% c("Francis", "MI", "none")
+  ) {
     stop(
       "Please specify replist (no report file found) or set init_run == TRUE",
       " when using option Francis, MI, or none"
@@ -250,11 +265,15 @@ tune_comps <- function(replist = NULL, fleets = "all",
   }
   # read in model files
   start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-  dat <- SS_readdat(file.path(dir, start[["datfile"]]),
-    verbose = FALSE, section = 1
+  dat <- SS_readdat(
+    file.path(dir, start[["datfile"]]),
+    verbose = FALSE,
+    section = 1
   )
-  ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
-    use_datlist = TRUE, datlist = dat,
+  ctl <- SS_readctl(
+    file.path(dir, start[["ctlfile"]]),
+    use_datlist = TRUE,
+    datlist = dat,
     verbose = FALSE
   )
   if (fleets[1] == "all") {
@@ -264,7 +283,8 @@ tune_comps <- function(replist = NULL, fleets = "all",
       fleets <- fleets[fleets %in% seq_len(dat[["Nfleets"]])]
       warning(
         "Not all fleets are included in the model. Changing fleets to ",
-        "use only ones in the model: ", paste0(fleets, collapse = ", ")
+        "use only ones in the model: ",
+        paste0(fleets, collapse = ", ")
       )
       if (length(fleets) == 0) {
         stop("Please specify fleets used in the model")
@@ -277,24 +297,26 @@ tune_comps <- function(replist = NULL, fleets = "all",
   last_phase <- get_last_phase(ctl)
   if (last_phase >= start[["last_estimation_phase"]]) {
     warning(
-      "The last phase used in the control file, ", last_phase,
+      "The last phase used in the control file, ",
+      last_phase,
       ", is higher or the same as the last_estimation_phase in the ",
       "starter file currently set to ",
-      start[["last_estimation_phase"]], ".",
+      start[["last_estimation_phase"]],
+      ".",
       "Changing the last_estimation_phase in the starter file to ",
-      last_phase + 1, "."
+      last_phase + 1,
+      "."
     )
     start[["last_estimation_phase"]] <- last_phase + 1
-    SS_writestarter(start,
-      dir = dir, verbose = FALSE,
-      overwrite = TRUE
-    )
+    SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
   }
 
   # francis, MI ----
   if (option %in% c("none", "Francis", "MI")) {
     if (!is.null(ctl[["dirichlet_parms"]])) {
-      if (verbose) message("Removing DM parameters from model")
+      if (verbose) {
+        message("Removing DM parameters from model")
+      }
       # take DM specifications out of data file
       if (!is.null(dat[["len_info"]])) {
         dat[["len_info"]][, "CompError"] <- 0
@@ -305,12 +327,14 @@ tune_comps <- function(replist = NULL, fleets = "all",
         dat[["age_info"]][, "ParmSelect"] <- 0
       }
       ctl[["dirichlet_parms"]] <- NULL
-      SS_writectl(ctl,
+      SS_writectl(
+        ctl,
         file.path(dir, start[["ctlfile"]]),
         overwrite = TRUE,
         verbose = FALSE
       )
-      SS_writedat(dat,
+      SS_writedat(
+        dat,
         file.path(dir, start[["datfile"]]),
         overwrite = TRUE,
         verbose = FALSE
@@ -328,7 +352,9 @@ tune_comps <- function(replist = NULL, fleets = "all",
       )
       suppressWarnings(
         replist <- SS_output(
-          dir = dir, verbose = FALSE, printstats = FALSE,
+          dir = dir,
+          verbose = FALSE,
+          printstats = FALSE,
           covar = !grepl("nohess", extras),
           hidewarn = TRUE
         )
@@ -337,9 +363,12 @@ tune_comps <- function(replist = NULL, fleets = "all",
     if (niters_tuning == 0 | option == "none") {
       # calculate the tuning table and rerun
       tuning_table <- get_tuning_table(
-        replist = replist, fleets = fleets,
-        option = option, digits = digits,
-        write = write, verbose = verbose
+        replist = replist,
+        fleets = fleets,
+        option = option,
+        digits = digits,
+        write = write,
+        verbose = verbose
       )
       return(tuning_table)
     }
@@ -350,33 +379,44 @@ tune_comps <- function(replist = NULL, fleets = "all",
       for (it in seq_len(niters_tuning)) {
         # 2. get the tunings
         suppressWarnings(
-          out <- SS_output(dir,
-            verbose = FALSE, printstats = FALSE,
+          out <- SS_output(
+            dir,
+            verbose = FALSE,
+            printstats = FALSE,
             covar = !grepl("nohess", extras),
             hidewarn = TRUE
           )
         )
         # construct the variance adjustment
         var_adj <- get_tuning_table(
-          replist = out, fleets = fleets,
-          option = option, digits = digits,
-          write = write, verbose = verbose
+          replist = out,
+          fleets = fleets,
+          option = option,
+          digits = digits,
+          write = write,
+          verbose = verbose
         )
         var_adj_unmodified <- var_adj
         var_adj <- var_adj[, 1:3]
         colnames(var_adj) <- c("factor", "fleet", "value")
         if (allow_up_tuning == FALSE) {
-          var_adj[["value"]] <- ifelse(var_adj[["value"]] > 1, 1, var_adj[["value"]])
+          var_adj[["value"]] <- ifelse(
+            var_adj[["value"]] > 1,
+            1,
+            var_adj[["value"]]
+          )
         }
         var_adj <- var_adj[var_adj[["fleet"]] %in% fleets, ]
-        start <- SS_readstarter(file.path(dir, "starter.ss"),
-          verbose = FALSE
+        start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
+        dat <- SS_readdat(
+          file.path(dir, start[["datfile"]]),
+          verbose = FALSE,
+          section = 1
         )
-        dat <- SS_readdat(file.path(dir, start[["datfile"]]),
-          verbose = FALSE, section = 1
-        )
-        ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
-          use_datlist = TRUE, datlist = dat,
+        ctl <- SS_readctl(
+          file.path(dir, start[["ctlfile"]]),
+          use_datlist = TRUE,
+          datlist = dat,
           verbose = FALSE
         )
         if ((nrow(var_adj)) > 0) {
@@ -390,12 +430,17 @@ tune_comps <- function(replist = NULL, fleets = "all",
             for (i in seq_len(nrow(var_adj))) {
               tmp_fac <- var_adj[i, "factor"]
               tmp_flt <- var_adj[i, "fleet"]
-              tmp_row <- which(ctl[["Variance_adjustment_list"]][, "factor"] == tmp_fac &
-                ctl[["Variance_adjustment_list"]][, "fleet"] == tmp_flt)
+              tmp_row <- which(
+                ctl[["Variance_adjustment_list"]][, "factor"] == tmp_fac &
+                  ctl[["Variance_adjustment_list"]][, "fleet"] == tmp_flt
+              )
               if (length(tmp_row) == 1) {
                 ctl[["Variance_adjustment_list"]][tmp_row, ] <- var_adj[i, ]
               } else if (length(tmp_row) == 0) {
-                ctl[["Variance_adjustment_list"]] <- rbind(ctl[["Variance_adjustment_list"]], var_adj[i, ])
+                ctl[["Variance_adjustment_list"]] <- rbind(
+                  ctl[["Variance_adjustment_list"]],
+                  var_adj[i, ]
+                )
               }
               # sanity check. If user recieving this error message, function is not
               # working as developer intended.
@@ -411,7 +456,8 @@ tune_comps <- function(replist = NULL, fleets = "all",
             }
           }
         }
-        SS_writectl(ctl,
+        SS_writectl(
+          ctl,
           file.path(dir, start[["ctlfile"]]),
           overwrite = TRUE,
           verbose = FALSE
@@ -461,18 +507,18 @@ tune_comps <- function(replist = NULL, fleets = "all",
     # modify the max phase and send warning.
     if (last_phase >= start[["last_estimation_phase"]]) {
       warning(
-        "The last phase used in the control file, ", last_phase,
+        "The last phase used in the control file, ",
+        last_phase,
         ", is higher or the same as the last_estimation_phase in the ",
         "starter file currently set to ",
-        start[["last_estimation_phase"]], ".",
+        start[["last_estimation_phase"]],
+        ".",
         "Changing the last_estimation_phase in the starter file to ",
-        last_phase + 1, "."
+        last_phase + 1,
+        "."
       )
       start[["last_estimation_phase"]] <- last_phase + 1
-      SS_writestarter(start,
-        dir = dir, verbose = FALSE,
-        overwrite = TRUE
-      )
+      SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
     }
     ctl[["dirichlet_parms"]] <- data.frame(
       "LO" = rep(-5, times = npars),
@@ -497,8 +543,10 @@ tune_comps <- function(replist = NULL, fleets = "all",
       # filter out just data types 4, 5, and 7 for length, age, and size comps
       if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
         ctl[["Variance_adjustment_list"]] <-
-          ctl[["Variance_adjustment_list"]][!ctl[["Variance_adjustment_list"]][["factor"]] %in%
-            c(4, 5, 7), ]
+          ctl[["Variance_adjustment_list"]][
+            !ctl[["Variance_adjustment_list"]][["factor"]] %in%
+              c(4, 5, 7),
+          ]
       }
       # remove the list if there's nothing left
       if (nrow(ctl[["Variance_adjustment_list"]]) == 0) {
@@ -507,11 +555,15 @@ tune_comps <- function(replist = NULL, fleets = "all",
       }
     }
     # Run the model once - look for convergence
-    SS_writedat(dat, file.path(dir, start[["datfile"]]),
+    SS_writedat(
+      dat,
+      file.path(dir, start[["datfile"]]),
       verbose = FALSE,
       overwrite = TRUE
     )
-    SS_writectl(ctl, file.path(dir, start[["ctlfile"]]),
+    SS_writectl(
+      ctl,
+      file.path(dir, start[["ctlfile"]]),
       verbose = FALSE,
       overwrite = TRUE
     )
@@ -525,8 +577,10 @@ tune_comps <- function(replist = NULL, fleets = "all",
         ...
       )
       suppressWarnings(
-        out <- SS_output(dir,
-          verbose = FALSE, printstats = FALSE,
+        out <- SS_output(
+          dir,
+          verbose = FALSE,
+          printstats = FALSE,
           covar = !grepl("nohess", extras),
           hidewarn = TRUE
         )
@@ -555,9 +609,14 @@ tune_comps <- function(replist = NULL, fleets = "all",
 #' @param digits Number of digits to round numbers to
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
 #' @template verbose
-get_tuning_table <- function(replist, fleets,
-                             option,
-                             digits = 6, write = TRUE, verbose = TRUE) {
+get_tuning_table <- function(
+  replist,
+  fleets,
+  option,
+  digits = 6,
+  write = TRUE,
+  verbose = TRUE
+) {
   # check inputs
   # place to store info on data weighting
   tuning_table <- data.frame(
@@ -606,7 +665,9 @@ get_tuning_table <- function(replist, fleets,
       }
       if (has_marginal & has_conditional) {
         warning(
-          "fleet", fleet, "has both conditional ages and marginal ages",
+          "fleet",
+          fleet,
+          "has both conditional ages and marginal ages",
           "\ntuning will be based on conditional ages"
         )
       }
@@ -617,8 +678,10 @@ get_tuning_table <- function(replist, fleets,
         Francis_lo <- NULL
         Francis_hi <- NULL
         Francis_output <- SSMethod.TA1.8(
-          fit = replist, type = type,
-          fleet = fleet, plotit = FALSE,
+          fit = replist,
+          type = type,
+          fleet = fleet,
+          plotit = FALSE,
           printit = FALSE
         )
         if (has_conditional) {
@@ -626,7 +689,8 @@ get_tuning_table <- function(replist, fleets,
           # (replaces marginal multiplier if present)
           Francis_output <- SSMethod.Cond.TA1.8(
             fit = replist,
-            fleet = fleet, plotit = FALSE,
+            fleet = fleet,
+            plotit = FALSE,
             printit = FALSE
           )
         }
@@ -643,37 +707,49 @@ get_tuning_table <- function(replist, fleets,
         # current value
         Curr_Var_Adj <- NA
         if ("Curr_Var_Adj" %in% names(tunetable)) {
-          Curr_Var_Adj <- tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
+          Curr_Var_Adj <- tunetable[["Curr_Var_Adj"]][
+            tunetable[["Fleet"]] == fleet
+          ]
         }
         if ("Var_Adj" %in% names(tunetable)) {
           Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(Curr_Var_Adj)) {
-          stop("Model output missing required values, perhaps due to an older version of SS3")
+          stop(
+            "Model output missing required values, perhaps due to an older version of SS3"
+          )
         }
 
         # McAllister-Ianelli multiplier
         # that will later be multiplied by Curr_Var_Adj to get "New_MI"
         MI_mult <- NA
         if ("HarMean(effN)/mean(inputN*Adj)" %in% names(tunetable)) {
-          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable[["Fleet"]] == fleet]
+          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[
+            tunetable[["Fleet"]] == fleet
+          ]
         }
         if ("MeaneffN/MeaninputN" %in% names(tunetable)) {
-          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable[["Fleet"]] == fleet]
+          MI_mult <- tunetable$"MeaneffN/MeaninputN"[
+            tunetable[["Fleet"]] == fleet
+          ]
         }
         if ("factor" %in% names(tunetable)) {
           # starting with version 3.30.12
-          MI_mult <- tunetable[["Recommend_var_adj"]][tunetable[["Fleet"]] == fleet] /
+          MI_mult <- tunetable[["Recommend_var_adj"]][
+            tunetable[["Fleet"]] == fleet
+          ] /
             tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (all(c("HarMean", "mean_Nsamp_adj") %in% names(tunetable))) {
           # starting with version 3.30.16?
           MI_mult <-
             tunetable[["HarMean"]][tunetable[["Fleet"]] == fleet] /
-              tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
+            tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
-          stop("Model output missing required values, perhaps due to an older version of SS3")
+          stop(
+            "Model output missing required values, perhaps due to an older version of SS3"
+          )
         }
 
         # make new row for table
@@ -710,7 +786,10 @@ get_tuning_table <- function(replist, fleets,
     tuning_table[["New_Var_adj"]] <- tuning_table[["New_Francis"]]
     NAvals <- is.na(tuning_table[["New_Var_adj"]])
     tuning_table[["New_Var_adj"]][NAvals] <- tuning_table[["New_MI"]][NAvals]
-    tuning_table[["Note"]][NAvals] <- paste0(tuning_table[["Note"]][NAvals], "--using MI value")
+    tuning_table[["Note"]][NAvals] <- paste0(
+      tuning_table[["Note"]][NAvals],
+      "--using MI value"
+    )
   }
   if (option == "MI") {
     tuning_table[["New_Var_adj"]] <- tuning_table[["New_MI"]]
@@ -733,9 +812,7 @@ get_tuning_table <- function(replist, fleets,
     if (verbose) {
       message("writing to file ", file)
     }
-    write.table(tuning_table,
-      file = file, quote = FALSE, row.names = FALSE
-    )
+    write.table(tuning_table, file = file, quote = FALSE, row.names = FALSE)
   }
   # return the table
   return(tuning_table)
@@ -748,23 +825,40 @@ get_tuning_table <- function(replist, fleets,
 get_last_phase <- function(ctl) {
   # read all phases in ctl
   df_vec <- c(
-    "MG_parms", "MG_parms_tv", "MG_parms_seas", "SRparm", "SR_parms",
-    "SR_parms_tv", "recr_cycle_pars", "init_F", "Q_parms",
-    "Q_parms_tv", "size_selex_parms", "size_selex_parms_tv",
-    "age_selex_parms", "age_selex_parms_tv", "dirichlet_parms", "pars_2D_AR",
-    "TG_loss_init", "TG_loss_cronic", "TG_overdispersion",
-    "TG_Report_fleet", "TG_Report_fleet_decay"
+    "MG_parms",
+    "MG_parms_tv",
+    "MG_parms_seas",
+    "SRparm",
+    "SR_parms",
+    "SR_parms_tv",
+    "recr_cycle_pars",
+    "init_F",
+    "Q_parms",
+    "Q_parms_tv",
+    "size_selex_parms",
+    "size_selex_parms_tv",
+    "age_selex_parms",
+    "age_selex_parms_tv",
+    "dirichlet_parms",
+    "pars_2D_AR",
+    "TG_loss_init",
+    "TG_loss_cronic",
+    "TG_overdispersion",
+    "TG_Report_fleet",
+    "TG_Report_fleet_decay"
   )
   atomic_vec <- c("recdev_phase", "recdev_early_phase", "Fcast_recr_phase")
   phases <- c(
-    unlist(lapply(df_vec,
+    unlist(lapply(
+      df_vec,
       function(x, l) {
         l[[x]][, grep("PHASE|dev_PH", colnames(l[[x]])), drop = FALSE]
       },
       l = ctl
     )),
     unlist(lapply(atomic_vec, function(x, l) l[[x]], l = ctl)),
-    ctl[["F_setup2"]][2], ctl[["specs_2D_AR"]][, "devphase"]
+    ctl[["F_setup2"]][2],
+    ctl[["specs_2D_AR"]][, "devphase"]
   )
   last_phase <- ceiling(max(phases)) # round up if not integer value.
 }

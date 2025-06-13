@@ -21,8 +21,12 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readdat_2.00 <- function(file, verbose = TRUE,
-                            echoall = lifecycle::deprecated(), section = NULL) {
+SS_readdat_2.00 <- function(
+  file,
+  verbose = TRUE,
+  echoall = lifecycle::deprecated(),
+  section = NULL
+) {
   # deprecate. Remove code upon next release.
   lifecycle::deprecate_warn(
     when = "1.45.3",
@@ -38,7 +42,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     )
   }
 
-  if (verbose) message("running SS_readdat_2.00")
+  if (verbose) {
+    message("running SS_readdat_2.00")
+  }
   dat <- readLines(file, warn = FALSE)
 
   # split apart any bootstrap or expected value sections in data.ss_new
@@ -48,7 +54,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
 
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
-  if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
+  if (!is.na(temp) && temp == "Start_time:") {
+    dat <- dat[-(1:2)]
+  }
   allnums <- NULL
   for (i in seq_along(dat)) {
     # split along blank spaces
@@ -57,7 +65,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     # if final value is a number is followed immediately by a pound ("1#"),
     # this needs to be split
     nvals <- length(mysplit)
-    if (nvals > 0) mysplit[nvals] <- strsplit(mysplit[nvals], "#")[[1]][1]
+    if (nvals > 0) {
+      mysplit[nvals] <- strsplit(mysplit[nvals], "#")[[1]][1]
+    }
     # convert to numeric
     nums <- suppressWarnings(as.numeric(mysplit))
     if (sum(is.na(nums)) > 0) {
@@ -117,25 +127,28 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
       fleetnames <- dat[iline]
       # message(fleetnames,Ntypes)
 
-      if (length(grepRaw("%", fleetnames, all = TRUE)) >= Ntypes - 1) # this line has a lot of percent symbols
-        {
-          # strip off any label at the end
-          if (length(grepRaw("#", fleetnames, all = TRUE)) > 0) {
-            fleetnames <- strsplit(as.character(fleetnames), "#")
-            fleetnames <- fleetnames[[1]]
-          }
-
-          # message(fleetnames," stage 1")
-
-          fleetnames <- strsplit(as.character(fleetnames), "%")
-          # strip any white space off the end of the fleetnames
-          fleetnames[[1]][Ntypes] <- strsplit(as.character(fleetnames[[1]][Ntypes]), "[[:blank:]]+")[[1]][1]
+      if (length(grepRaw("%", fleetnames, all = TRUE)) >= Ntypes - 1) {
+        # this line has a lot of percent symbols
+        # strip off any label at the end
+        if (length(grepRaw("#", fleetnames, all = TRUE)) > 0) {
+          fleetnames <- strsplit(as.character(fleetnames), "#")
           fleetnames <- fleetnames[[1]]
-
-          # message(fleetnames," stage 2")
-
-          if (length(fleetnames) == Ntypes) fleetnames.good <- fleetnames
         }
+
+        # message(fleetnames," stage 1")
+
+        fleetnames <- strsplit(as.character(fleetnames), "%")
+        # strip any white space off the end of the fleetnames
+        fleetnames[[1]][Ntypes] <- strsplit(
+          as.character(fleetnames[[1]][Ntypes]),
+          "[[:blank:]]+"
+        )[[1]][1]
+        fleetnames <- fleetnames[[1]]
+
+        # message(fleetnames," stage 2")
+
+        if (length(fleetnames) == Ntypes) fleetnames.good <- fleetnames
+      }
     }
     fleetnames <- fleetnames.good
     if (is.null(fleetnames)) {
@@ -154,15 +167,21 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   areas <- datlist[["areas"]]
   if (verbose) {
     message("areas:", areas)
-    message("fleet info:\n", paste0(utils::capture.output(
-      data.frame(
-        fleet = 1:Ntypes,
-        name = fleetnames,
-        area = areas,
-        timing = surveytiming,
-        type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+    message(
+      "fleet info:\n",
+      paste0(
+        utils::capture.output(
+          data.frame(
+            fleet = 1:Ntypes,
+            name = fleetnames,
+            area = areas,
+            timing = surveytiming,
+            type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+          )
+        ),
+        collapse = "\n"
       )
-    ), collapse = "\n"))
+    )
   }
 
   # fleet info
@@ -177,17 +196,21 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   datlist[["Nages"]] <- Nages <- allnums[i]
   i <- i + 1
 
-
   datlist[["init_equil"]] <- allnums[i:(i + Nfleet - 1)]
   i <- i + Nfleet
 
   N_catch <- datlist[["endyr"]] - datlist[["styr"]] + 1
 
   # catch
-  if (verbose) message("N_catch =", N_catch)
+  if (verbose) {
+    message("N_catch =", N_catch)
+  }
   Nvals <- N_catch * (Nfleet)
-  catch <- data.frame(matrix(allnums[i:(i + Nvals - 1)],
-    nrow = N_catch, ncol = (Nfleet), byrow = TRUE
+  catch <- data.frame(matrix(
+    allnums[i:(i + Nvals - 1)],
+    nrow = N_catch,
+    ncol = (Nfleet),
+    byrow = TRUE
   ))
   yr <- datlist[["styr"]]:datlist[["endyr"]]
   se <- rep(1, N_catch)
@@ -198,19 +221,25 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   datlist[["catch"]] <- catch
   i <- i + Nvals
 
-
   # CPUE
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
   i <- i + 1
-  if (verbose) message("N_cpue =", N_cpue)
+  if (verbose) {
+    message("N_cpue =", N_cpue)
+  }
   if (N_cpue > 0) {
-    CPUEinfo <- data.frame(matrix(c(1:Ntypes, rep(1, Ntypes), rep(0, Ntypes)),
-      nrow = Ntypes, ncol = 3, byrow = FALSE
+    CPUEinfo <- data.frame(matrix(
+      c(1:Ntypes, rep(1, Ntypes), rep(0, Ntypes)),
+      nrow = Ntypes,
+      ncol = 3,
+      byrow = FALSE
     )) # fill CPUEinfo with defaults
     names(CPUEinfo) <- c("Fleet", "Units", "Errtype")
     CPUE <- data.frame(matrix(
       allnums[i:(i + N_cpue * 5 - 1)],
-      nrow = N_cpue, ncol = 5, byrow = TRUE
+      nrow = N_cpue,
+      ncol = 5,
+      byrow = TRUE
     ))
     i <- i + N_cpue * 5
     names(CPUE) <- c("year", "seas", "index", "obs", "se_log")
@@ -229,27 +258,35 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   datlist[["N_discard"]] <- N_discard <- allnums[i]
   i <- i + 1
 
-  if (verbose) message("N_discard =", N_discard)
+  if (verbose) {
+    message("N_discard =", N_discard)
+  }
   if (N_discard > 0) {
     # discard data
     Ncols <- 5
     discard_data <- data.frame(matrix(
       allnums[i:(i + N_discard * Ncols - 1)],
-      nrow = N_discard, ncol = Ncols, byrow = TRUE
+      nrow = N_discard,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_discard * Ncols
     names(discard_data) <- c("Yr", "Seas", "Flt", "Discard", "Std_in")
     datlist[["discard_data"]] <- discard_data
 
-    datlist[["N_discard_fleets"]] <- N_discard_fleets <- length(unique(discard_data[["Flt"]]))
-
+    datlist[[
+      "N_discard_fleets"
+    ]] <- N_discard_fleets <- length(unique(discard_data[["Flt"]]))
 
     datlist[["discard_fleet_info"]] <- data.frame(matrix(
       c(
         unique(discard_data[["Flt"]]),
-        rep(Dis_type, N_discard_fleets), rep(0, N_discard_fleets)
+        rep(Dis_type, N_discard_fleets),
+        rep(0, N_discard_fleets)
       ),
-      nrow = N_discard_fleets, ncol = 3, byrow = FALSE
+      nrow = N_discard_fleets,
+      ncol = 3,
+      byrow = FALSE
     )) # fill discard fleet info with defaults
     names(datlist[["discard_fleet_info"]]) <- c("Fleet", "units", "errtype")
   } else {
@@ -258,18 +295,20 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     datlist[["discard_fleet_info"]] <- NULL
   }
 
-
   # meanbodywt
   datlist[["N_meanbodywt"]] <- N_meanbodywt <- allnums[i]
   i <- i + 1
-  if (verbose) message("N_meanbodywt =", N_meanbodywt)
-
+  if (verbose) {
+    message("N_meanbodywt =", N_meanbodywt)
+  }
 
   if (N_meanbodywt > 0) {
     Ncols <- 6
     meanbodywt <- data.frame(matrix(
       allnums[i:(i + N_meanbodywt * Ncols - 1)],
-      nrow = N_meanbodywt, ncol = Ncols, byrow = TRUE
+      nrow = N_meanbodywt,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_meanbodywt * Ncols
     names(meanbodywt) <- c("Year", "Seas", "Type", "Partition", "Value", "CV")
@@ -303,17 +342,26 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   datlist[["N_lencomp"]] <- N_lencomp <- allnums[i]
   i <- i + 1
 
-  if (verbose) message("N_lencomp =", N_lencomp)
+  if (verbose) {
+    message("N_lencomp =", N_lencomp)
+  }
 
   if (N_lencomp > 0) {
     Ncols <- N_lbins * datlist[["Nsexes"]] + 6
     lencomp <- data.frame(matrix(
       allnums[i:(i + N_lencomp * Ncols - 1)],
-      nrow = N_lencomp, ncol = Ncols, byrow = TRUE
+      nrow = N_lencomp,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_lencomp * Ncols
     names(lencomp) <- c(
-      "Yr", "Seas", "FltSvy", "Sex", "Part", "Nsamp",
+      "Yr",
+      "Seas",
+      "FltSvy",
+      "Sex",
+      "Part",
+      "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("l", lbin_vector, sep = "")
       } else {
@@ -333,7 +381,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   # age data
   datlist[["N_agebins"]] <- N_agebins <- allnums[i]
   i <- i + 1
-  if (verbose) message("N_agebins =", N_agebins)
+  if (verbose) {
+    message("N_agebins =", N_agebins)
+  }
   if (N_agebins > 0) {
     agebin_vector <- allnums[i:(i + N_agebins - 1)]
     i <- i + N_agebins
@@ -348,7 +398,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     Ncols <- Nages + 1
     ageerror <- data.frame(matrix(
       allnums[i:(i + 2 * N_ageerror_definitions * Ncols - 1)],
-      nrow = 2 * N_ageerror_definitions, ncol = Ncols, byrow = TRUE
+      nrow = 2 * N_ageerror_definitions,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + 2 * N_ageerror_definitions * Ncols
     names(ageerror) <- paste("age", 0:Nages, sep = "")
@@ -359,27 +411,45 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
 
   datlist[["N_agecomp"]] <- N_agecomp <- allnums[i]
   i <- i + 1
-  if (verbose) message("N_agecomp =", N_agecomp)
+  if (verbose) {
+    message("N_agecomp =", N_agecomp)
+  }
 
   datlist[["Lbin_method"]] <- NULL
   datlist[["max_combined_lbin"]] <- NULL
 
   if (N_agecomp > 0) {
-    if (N_agebins == 0) stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
+    if (N_agebins == 0) {
+      stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
+    }
     Ncols <- N_agebins * datlist[["Nsexes"]] + 9
-    agecomp <- data.frame(matrix(allnums[i:(i + N_agecomp * Ncols - 1)],
-      nrow = N_agecomp, ncol = Ncols, byrow = TRUE
+    agecomp <- data.frame(matrix(
+      allnums[i:(i + N_agecomp * Ncols - 1)],
+      nrow = N_agecomp,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_agecomp * Ncols
     names(agecomp) <- c(
-      "Yr", "Seas", "FltSvy", "Sex", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
+      "Yr",
+      "Seas",
+      "FltSvy",
+      "Sex",
+      "Part",
+      "Ageerr",
+      "Lbin_lo",
+      "Lbin_hi",
+      "Nsamp",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
       if (datlist[["Nsexes"]] > 1) {
-        c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
+        c(
+          paste("f", agebin_vector, sep = ""),
+          paste("m", agebin_vector, sep = "")
+        )
       } else {
         NULL
       }
@@ -389,27 +459,39 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   }
   datlist[["agecomp"]] <- agecomp
 
-
   # MeanSize_at_Age
   datlist[["N_MeanSize_at_Age_obs"]] <- N_MeanSize_at_Age_obs <- allnums[i]
   i <- i + 1
-  if (verbose) message("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs)
+  if (verbose) {
+    message("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs)
+  }
   if (N_MeanSize_at_Age_obs > 0) {
     Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
     MeanSize_at_Age_obs <- data.frame(matrix(
       allnums[i:(i + N_MeanSize_at_Age_obs * Ncols - 1)],
-      nrow = N_MeanSize_at_Age_obs, ncol = Ncols, byrow = TRUE
+      nrow = N_MeanSize_at_Age_obs,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_MeanSize_at_Age_obs * Ncols
     names(MeanSize_at_Age_obs) <- c(
-      "Yr", "Seas", "FltSvy", "Sex", "Part", "AgeErr", "Ignore",
+      "Yr",
+      "Seas",
+      "FltSvy",
+      "Sex",
+      "Part",
+      "AgeErr",
+      "Ignore",
       if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
       if (datlist[["Nsexes"]] > 1) {
-        c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
+        c(
+          paste("f", agebin_vector, sep = ""),
+          paste("m", agebin_vector, sep = "")
+        )
       } else {
         NULL
       },
@@ -419,7 +501,10 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
         NULL
       },
       if (datlist[["Nsexes"]] > 1) {
-        c(paste("N_f", agebin_vector, sep = ""), paste("N_m", agebin_vector, sep = ""))
+        c(
+          paste("N_f", agebin_vector, sep = ""),
+          paste("N_m", agebin_vector, sep = "")
+        )
       } else {
         NULL
       }
@@ -438,7 +523,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
     Ncols <- 3
     envdat <- data.frame(matrix(
       allnums[i:(i + Ncols * N_environ_obs - 1)],
-      nrow = N_environ_obs, ncol = Ncols, byrow = TRUE
+      nrow = N_environ_obs,
+      ncol = Ncols,
+      byrow = TRUE
     ))
     i <- i + N_environ_obs * Ncols
     names(envdat) <- c("Yr", "Variable", "Value")
@@ -448,7 +535,9 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
   datlist[["envdat"]] <- envdat
 
   if (allnums[i] == 999) {
-    if (verbose) message("read of data file 2.00 complete (final value = 999)")
+    if (verbose) {
+      message("read of data file 2.00 complete (final value = 999)")
+    }
     datlist[["eof"]] <- TRUE
   } else {
     stop("final value is", allnums[i], " but should be 999")
@@ -457,8 +546,14 @@ SS_readdat_2.00 <- function(file, verbose = TRUE,
 
   # fixes pulled from the read data wrapper function
   # get fleet info
-  finfo <- rbind(datlist[["fleetinfo"]], c(rep(1, datlist[["Nfleet"]]), rep(3, datlist[["Nsurveys"]])))
-  finfo <- rbind(finfo, c(datlist[["units_of_catch"]], rep(0, datlist[["Nsurveys"]])))
+  finfo <- rbind(
+    datlist[["fleetinfo"]],
+    c(rep(1, datlist[["Nfleet"]]), rep(3, datlist[["Nsurveys"]]))
+  )
+  finfo <- rbind(
+    finfo,
+    c(datlist[["units_of_catch"]], rep(0, datlist[["Nsurveys"]]))
+  )
   rownames(finfo)[3] <- "type"
   rownames(finfo)[4] <- "units"
   finfo <- finfo[, 1:(length(finfo) - 1)]

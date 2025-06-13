@@ -41,16 +41,18 @@
 #' unlink(test, recursive = TRUE)
 #' }
 #'
-copy_SS_inputs <- function(dir.old = NULL,
-                           dir.new = NULL,
-                           create.dir = TRUE,
-                           overwrite = FALSE,
-                           recursive = FALSE,
-                           use_ss_new = FALSE,
-                           copy_exe = FALSE,
-                           copy_par = FALSE,
-                           dir.exe = NULL,
-                           verbose = TRUE) {
+copy_SS_inputs <- function(
+  dir.old = NULL,
+  dir.new = NULL,
+  create.dir = TRUE,
+  overwrite = FALSE,
+  recursive = FALSE,
+  use_ss_new = FALSE,
+  copy_exe = FALSE,
+  copy_par = FALSE,
+  dir.exe = NULL,
+  verbose = TRUE
+) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir.old) | length(dir.old) != 1) {
     stop("Input 'dir.old' should be a character string for a directory")
@@ -91,7 +93,8 @@ copy_SS_inputs <- function(dir.old = NULL,
   }
 
   results <- rep(NA, 6)
-  if (!use_ss_new) { # copy original input files
+  if (!use_ss_new) {
+    # copy original input files
     results[1] <- file.copy(
       from = file.path(dir.old, starter[["ctlfile"]]),
       to = file.path(dir.new, starter[["ctlfile"]]),
@@ -119,7 +122,8 @@ copy_SS_inputs <- function(dir.old = NULL,
         overwrite = overwrite
       )
     }
-  } else { # copy ss_new files
+  } else {
+    # copy ss_new files
     results[1] <- file.copy(
       from = file.path(dir.old, "control.ss_new"),
       to = file.path(dir.new, starter[["ctlfile"]]),
@@ -167,9 +171,9 @@ copy_SS_inputs <- function(dir.old = NULL,
 
       # directories are accidentally being included using line above,
       # so trying a different way to exclude them
-      exefiles <- dir(dir.exe)[!file.info(dir(dir.exe,
-        full.names = TRUE
-      ))[["isdir"]]]
+      exefiles <- dir(dir.exe)[
+        !file.info(dir(dir.exe, full.names = TRUE))[["isdir"]]
+      ]
       exefiles <- grep(pattern = "^[^.]+$", x = exefiles, value = TRUE)
       if (verbose) {
         message("Unix binaries are: ", paste0(exefiles, collapse = ", "))

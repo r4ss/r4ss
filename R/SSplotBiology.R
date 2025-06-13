@@ -75,39 +75,51 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotBiology <-
-  function(replist, plot = TRUE, print = FALSE, add = FALSE,
-           subplots = 1:32, seas = 1,
-           morphs = NULL,
-           forecast = FALSE,
-           minyr = -Inf,
-           maxyr = Inf,
-           colvec = c("red", "blue", "grey20"),
-           areacols = NULL,
-           ltyvec = c(1, 2),
-           shadealpha = 0.1,
-           imageplot_text = FALSE,
-           imageplot_text_round = 0,
-           legendloc = "topleft",
-           plotdir = "default",
-           labels = c(
-             "Length (cm)", # 1
-             "Age (yr)", # 2
-             "Maturity", # 3
-             "Mean weight (kg) in last year", # 4
-             replist[["SpawnOutputLabel"]], # 5
-             "Length (cm, beginning of the year)", # 6
-             "Natural mortality", # 7
-             "Female weight (kg)", # 8
-             "Female length (cm)", # 9
-             "Fecundity", # 10
-             "Default fecundity label", # 11
-             "Year", # 12
-             "Hermaphroditism transition rate", # 13
-             "Fraction females by age in ending year"
-           ), # 14
-           pwidth = 6.5, pheight = 5.0, pheight_tall = 6.5,
-           punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           mainTitle = TRUE, verbose = TRUE) {
+  function(
+    replist,
+    plot = TRUE,
+    print = FALSE,
+    add = FALSE,
+    subplots = 1:32,
+    seas = 1,
+    morphs = NULL,
+    forecast = FALSE,
+    minyr = -Inf,
+    maxyr = Inf,
+    colvec = c("red", "blue", "grey20"),
+    areacols = NULL,
+    ltyvec = c(1, 2),
+    shadealpha = 0.1,
+    imageplot_text = FALSE,
+    imageplot_text_round = 0,
+    legendloc = "topleft",
+    plotdir = "default",
+    labels = c(
+      "Length (cm)", # 1
+      "Age (yr)", # 2
+      "Maturity", # 3
+      "Mean weight (kg) in last year", # 4
+      replist[["SpawnOutputLabel"]], # 5
+      "Length (cm, beginning of the year)", # 6
+      "Natural mortality", # 7
+      "Female weight (kg)", # 8
+      "Female length (cm)", # 9
+      "Fecundity", # 10
+      "Default fecundity label", # 11
+      "Year", # 12
+      "Hermaphroditism transition rate", # 13
+      "Fraction females by age in ending year"
+    ), # 14
+    pwidth = 6.5,
+    pheight = 5.0,
+    pheight_tall = 6.5,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    mainTitle = TRUE,
+    verbose = TRUE
+  ) {
     #### current (Aug 18, 2017) order of plots:
     # subplot 1: growth_curve_fn - growth curve only
     # subplot 2: growth_curve_plus_fn - growth curve with CV and SD
@@ -162,8 +174,18 @@ SSplotBiology <-
     plotinfo <- NULL
 
     ians_blues <- c(
-      "white", "grey", "lightblue", "skyblue", "steelblue1", "slateblue",
-      topo.colors(6), "blue", "blue2", "blue3", "blue4", "black"
+      "white",
+      "grey",
+      "lightblue",
+      "skyblue",
+      "steelblue1",
+      "slateblue",
+      topo.colors(6),
+      "blue",
+      "blue2",
+      "blue3",
+      "blue4",
+      "black"
     )
     ians_contour <- c("white", rep("blue", 100))
     # convert colvec to semi-transparent colors for shading polygons
@@ -171,7 +193,9 @@ SSplotBiology <-
     for (icol in seq_along(colvec)) {
       tmp <- col2rgb(colvec[icol]) / 255
       shadecolvec[icol] <- rgb(
-        red = tmp[1], green = tmp[2], blue = tmp[3],
+        red = tmp[1],
+        green = tmp[2],
+        blue = tmp[3],
         alpha = shadealpha
       )
     }
@@ -181,7 +205,9 @@ SSplotBiology <-
     # get objects from replist
     nseasons <- replist[["nseasons"]]
     nareas <- replist[["nareas"]]
-    growdat <- replist[["endgrowth"]][replist[["endgrowth"]][["Seas"]] == seas, ]
+    growdat <- replist[["endgrowth"]][
+      replist[["endgrowth"]][["Seas"]] == seas,
+    ]
     growthCVtype <- replist[["growthCVtype"]]
     biology <- replist[["biology"]]
     startyr <- replist[["startyr"]]
@@ -220,7 +246,9 @@ SSplotBiology <-
     }
 
     # get any derived quantities related to growth curve uncertainty
-    Grow_std <- replist[["derived_quants"]][grep("Grow_std_", replist[["derived_quants"]][["Label"]]), ]
+    Grow_std <- replist[["derived_quants"]][
+      grep("Grow_std_", replist[["derived_quants"]][["Label"]]),
+    ]
     if (nrow(Grow_std) == 0) {
       Grow_std <- NULL
     } else {
@@ -252,7 +280,9 @@ SSplotBiology <-
     }
 
     # get any derived quantities related to M uncertainty
-    NatM_std <- replist[["derived_quants"]][grep("NatM_std_", replist[["derived_quants"]][["Label"]]), ]
+    NatM_std <- replist[["derived_quants"]][
+      grep("NatM_std_", replist[["derived_quants"]][["Label"]]),
+    ]
     if (nrow(NatM_std) == 0) {
       NatM_std <- NULL
     } else {
@@ -279,13 +309,15 @@ SSplotBiology <-
       ## NatM_std_GP:_1_Fem_A_2      NA       1      Fem   1   2
     }
 
-
-    if (!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
+    if (!seas %in% 1:nseasons) {
+      stop("'seas' input should be within 1:nseasons")
+    }
 
     if (nseasons > 1) {
       labels[6] <- gsub(
         "beginning of the year",
-        paste("beginning of season", seas), labels[6]
+        paste("beginning of season", seas),
+        labels[6]
       )
     }
 
@@ -312,7 +344,9 @@ SSplotBiology <-
       FecX <- biology[["Wt_F"]]
       FecY <- FecPar1 + FecPar2 * FecX
     }
-    if (labels[11] != "Default fecundity label") fec_ylab <- labels[11]
+    if (labels[11] != "Default fecundity label") {
+      fec_ylab <- labels[11]
+    }
 
     # Beginning of season 1 (or specified season) mean length at age
     #   with 95% range of lengths (by sex if applicable)
@@ -321,29 +355,70 @@ SSplotBiology <-
       # calculate CVs from SD and mean length
       growdat[["CV_Beg"]] <- growdat[["SD_Beg"]] / growdat[["Len_Beg"]]
       # female growth
-      growdatF <- growdat[growdat[["Sex"]] == 1 &
-        growdat[["Morph"]] == morphs[1], ]
+      growdatF <- growdat[
+        growdat[["Sex"]] == 1 &
+          growdat[["Morph"]] == morphs[1],
+      ]
       growdatF[["Sd_Size"]] <- growdatF[["SD_Beg"]]
-      if (growthCVtype == "logSD=f(A)") { # lognormal distribution of length at age
-        growdatF[["high"]] <- qlnorm(0.975, meanlog = log(growdatF[["Len_Beg"]]), sdlog = growdatF[["Sd_Size"]])
-        growdatF[["low"]] <- qlnorm(0.025, meanlog = log(growdatF[["Len_Beg"]]), sdlog = growdatF[["Sd_Size"]])
-      } else { # normal distribution of length at age
-        growdatF[["high"]] <- qnorm(0.975, mean = growdatF[["Len_Beg"]], sd = growdatF[["Sd_Size"]])
-        growdatF[["low"]] <- qnorm(0.025, mean = growdatF[["Len_Beg"]], sd = growdatF[["Sd_Size"]])
+      if (growthCVtype == "logSD=f(A)") {
+        # lognormal distribution of length at age
+        growdatF[["high"]] <- qlnorm(
+          0.975,
+          meanlog = log(growdatF[["Len_Beg"]]),
+          sdlog = growdatF[["Sd_Size"]]
+        )
+        growdatF[["low"]] <- qlnorm(
+          0.025,
+          meanlog = log(growdatF[["Len_Beg"]]),
+          sdlog = growdatF[["Sd_Size"]]
+        )
+      } else {
+        # normal distribution of length at age
+        growdatF[["high"]] <- qnorm(
+          0.975,
+          mean = growdatF[["Len_Beg"]],
+          sd = growdatF[["Sd_Size"]]
+        )
+        growdatF[["low"]] <- qnorm(
+          0.025,
+          mean = growdatF[["Len_Beg"]],
+          sd = growdatF[["Sd_Size"]]
+        )
       }
 
-      if (nsexes > 1) { # do males if 2-sex model
-        growdatM <- growdat[growdat[["Sex"]] == 2 & growdat[["Morph"]] == morphs[2], ]
+      if (nsexes > 1) {
+        # do males if 2-sex model
+        growdatM <- growdat[
+          growdat[["Sex"]] == 2 & growdat[["Morph"]] == morphs[2],
+        ]
         # IAN T. this should probably be generalized
         xm <- growdatM[["Age_Beg"]]
 
         growdatM[["Sd_Size"]] <- growdatM[["SD_Beg"]]
-        if (growthCVtype == "logSD=f(A)") { # lognormal distribution of length at age
-          growdatM[["high"]] <- qlnorm(0.975, meanlog = log(growdatM[["Len_Beg"]]), sdlog = growdatM[["Sd_Size"]])
-          growdatM[["low"]] <- qlnorm(0.025, meanlog = log(growdatM[["Len_Beg"]]), sdlog = growdatM[["Sd_Size"]])
-        } else { # normal distribution of length at age
-          growdatM[["high"]] <- qnorm(0.975, mean = growdatM[["Len_Beg"]], sd = growdatM[["Sd_Size"]])
-          growdatM[["low"]] <- qnorm(0.025, mean = growdatM[["Len_Beg"]], sd = growdatM[["Sd_Size"]])
+        if (growthCVtype == "logSD=f(A)") {
+          # lognormal distribution of length at age
+          growdatM[["high"]] <- qlnorm(
+            0.975,
+            meanlog = log(growdatM[["Len_Beg"]]),
+            sdlog = growdatM[["Sd_Size"]]
+          )
+          growdatM[["low"]] <- qlnorm(
+            0.025,
+            meanlog = log(growdatM[["Len_Beg"]]),
+            sdlog = growdatM[["Sd_Size"]]
+          )
+        } else {
+          # normal distribution of length at age
+          growdatM[["high"]] <- qnorm(
+            0.975,
+            mean = growdatM[["Len_Beg"]],
+            sd = growdatM[["Sd_Size"]]
+          )
+          growdatM[["low"]] <- qnorm(
+            0.025,
+            mean = growdatM[["Len_Beg"]],
+            sd = growdatM[["Sd_Size"]]
+          )
         }
       }
     }
@@ -361,34 +436,51 @@ SSplotBiology <-
       return(x)
     }
 
-    weight_plot <- function(sex) { # weight
+    weight_plot <- function(sex) {
+      # weight
       ## This needs to be a function of sex since it can be called
       ## either once for a single sex model or twice to produce plots for
       ## each one.
-      if (!wtatage_switch) { # if empirical weight-at-age is not used
+      if (!wtatage_switch) {
+        # if empirical weight-at-age is not used
         x <- biology[["Len_mean"]]
         if (!add) {
           ymax <- max(biology[["Wt_F"]])
-          if (nsexes > 1) ymax <- max(ymax, biology[["Wt_M"]])
-          plot(x, x,
-            ylim = c(0, 1.1 * ymax), xlab = labels[1], ylab = labels[4], type = "n",
-            las = 1, yaxs = "i"
+          if (nsexes > 1) {
+            ymax <- max(ymax, biology[["Wt_M"]])
+          }
+          plot(
+            x,
+            x,
+            ylim = c(0, 1.1 * ymax),
+            xlab = labels[1],
+            ylab = labels[4],
+            type = "n",
+            las = 1,
+            yaxs = "i"
           )
         }
         lines(x, biology[["Wt_F"]], type = "o", col = colvec[1])
         if (nsexes > 1) {
           lines(x, biology[["Wt_M"]], type = "o", col = colvec[2])
           if (!add) {
-            legend(legendloc,
-              bty = "n", c("Females", "Males"),
-              lty = 1, col = c(colvec[1], colvec[2])
+            legend(
+              legendloc,
+              bty = "n",
+              c("Females", "Males"),
+              lty = 1,
+              col = c(colvec[1], colvec[2])
             )
           }
         }
-      } else { ## if empirical weight-at-age IS used
-        wtmat <- wtatage[wtatage[["fleet"]] == -1 &
-          wtatage[["sex"]] == sex &
-          wtatage[["seas"]] == seas, -(2:6)]
+      } else {
+        ## if empirical weight-at-age IS used
+        wtmat <- wtatage[
+          wtatage[["fleet"]] == -1 &
+            wtatage[["sex"]] == sex &
+            wtatage[["seas"]] == seas,
+          -(2:6)
+        ]
         wtmat <- clean_wtatage(wtmat)
         if (!is.null(wtmat)) {
           makeimage(wtmat, main = "")
@@ -396,29 +488,47 @@ SSplotBiology <-
       }
     }
 
-
-    maturity_plot <- function() { # maturity
-      if (!wtatage_switch) { # if empirical weight-at-age is not used
+    maturity_plot <- function() {
+      # maturity
+      if (!wtatage_switch) {
+        # if empirical weight-at-age is not used
         x <- biology[["Len_mean"]]
-        if (min(biology[["Mat"]]) < 1) { # if length based
+        if (min(biology[["Mat"]]) < 1) {
+          # if length based
           if (!add) {
-            plot(x, biology[["Mat"]],
-              xlab = labels[1], ylab = labels[3],
-              las = 1, yaxs = "i", ylim = c(0, max(biology[["Mat"]])),
-              type = "o", col = colvec[1]
+            plot(
+              x,
+              biology[["Mat"]],
+              xlab = labels[1],
+              ylab = labels[3],
+              las = 1,
+              yaxs = "i",
+              ylim = c(0, max(biology[["Mat"]])),
+              type = "o",
+              col = colvec[1]
             )
           }
           if (add) lines(x, biology[["Mat"]], type = "o", col = colvec[1])
-        } else { # else is age based
+        } else {
+          # else is age based
           if (!add) {
-            plot(growdatF[["Age_Beg"]], growdatF[["Age_Mat"]],
+            plot(
+              growdatF[["Age_Beg"]],
+              growdatF[["Age_Mat"]],
               xlab = labels[2],
-              las = 1, yaxs = "i", ylim = c(0, 1.1 * max(growdatF[["Age_Mat"]])),
-              ylab = labels[3], type = "o", col = colvec[1]
+              las = 1,
+              yaxs = "i",
+              ylim = c(0, 1.1 * max(growdatF[["Age_Mat"]])),
+              ylab = labels[3],
+              type = "o",
+              col = colvec[1]
             )
           } else {
-            lines(growdatF[["Age_Beg"]], growdatF[["Age_Mat"]],
-              type = "o", col = colvec[1]
+            lines(
+              growdatF[["Age_Beg"]],
+              growdatF[["Age_Mat"]],
+              type = "o",
+              col = colvec[1]
             )
           }
         }
@@ -468,15 +578,26 @@ SSplotBiology <-
       breaks <- seq(0, lastbin, length = 51)
       col <- rainbow(60)[1:50]
       ## Make a two panel plot, for plot and then legend
-      layout(matrix(c(1, 2), nrow = 1, ncol = 2), widths = c(4, .5), heights = c(4, 4))
+      layout(
+        matrix(c(1, 2), nrow = 1, ncol = 2),
+        widths = c(4, .5),
+        heights = c(4, 4)
+      )
 
       # save current parameter settings
       par_old <- par()
       # change parameters
       par(mar = c(4.2, 4.2, 1, .5) + .1)
       image(
-        x = 0:accuage, y = yrvec2, z = z, axes = F, xlab = "Age", ylab = "Year",
-        col = col, breaks = breaks, main = ifelse(mainTitle, main, "")
+        x = 0:accuage,
+        y = yrvec2,
+        z = z,
+        axes = F,
+        xlab = "Age",
+        ylab = "Year",
+        col = col,
+        breaks = breaks,
+        main = ifelse(mainTitle, main, "")
       )
       axis(1, cex.axis = .7)
       axis(2, las = 1, cex.axis = .7)
@@ -491,7 +612,13 @@ SSplotBiology <-
         ## and may need to be adjusted.
         ztext <- format(round(zdataframe[["z"]], imageplot_text_round))
         ztext[ztext == "   NA" | ztext == "  NA"] <- ""
-        text(x = zdataframe[["age"]], y = zdataframe[["Yr"]], label = ztext, font = zdataframe[["font"]], cex = .7)
+        text(
+          x = zdataframe[["age"]],
+          y = zdataframe[["Yr"]],
+          label = ztext,
+          font = zdataframe[["font"]],
+          cex = .7
+        )
       }
 
       ## add a legend to the image plot
@@ -502,11 +629,23 @@ SSplotBiology <-
       zlim[2] <- zlim[2] + c(zlim[2] - zlim[1]) * (1E-3) # adds a bit to the range in both directions
       zlim[1] <- zlim[1] - c(zlim[2] - zlim[1]) * (1E-3)
       poly <- vector(mode = "list", length(col))
-      for (i in seq(poly)) poly[[i]] <- c(breaks[i], breaks[i + 1], breaks[i + 1], breaks[i])
+      for (i in seq(poly)) {
+        poly[[i]] <- c(breaks[i], breaks[i + 1], breaks[i + 1], breaks[i])
+      }
       ylim <- range(breaks)
       xlim <- c(0, 1)
       par(mar = c(4.3, .5, 1, 3))
-      plot(1, 1, type = "n", ylim = ylim, xlim = xlim, axes = FALSE, ann = FALSE, xaxs = "i", yaxs = "i")
+      plot(
+        1,
+        1,
+        type = "n",
+        ylim = ylim,
+        xlim = xlim,
+        axes = FALSE,
+        ann = FALSE,
+        xaxs = "i",
+        yaxs = "i"
+      )
       for (i in seq(poly)) {
         polygon(c(0, 0, 1, 1), poly[[i]], col = col[i], border = NA)
       }
@@ -518,63 +657,118 @@ SSplotBiology <-
       par(mfcol = c(1, 1), mar = par_old[["mar"]], oma = par_old[["oma"]])
     }
 
-    fec_pars_fn <- function() { # fecundity from model parameters
+    fec_pars_fn <- function() {
+      # fecundity from model parameters
       ymax <- 1.1 * max(FecY)
       if (!add) {
-        plot(FecX, FecY,
-          xlab = fec_xlab, ylab = fec_ylab, ylim = c(0, ymax),
-          las = 1, yaxs = "i", col = colvec[2], pch = 19
+        plot(
+          FecX,
+          FecY,
+          xlab = fec_xlab,
+          ylab = fec_ylab,
+          ylim = c(0, ymax),
+          las = 1,
+          yaxs = "i",
+          col = colvec[2],
+          pch = 19
         )
         lines(FecX, rep(FecPar1, length(FecX)), col = colvec[1])
-        text(mean(range(FecX)), FecPar1 - 0.05 * ymax, "Egg output proportional to spawning biomass")
+        text(
+          mean(range(FecX)),
+          FecPar1 - 0.05 * ymax,
+          "Egg output proportional to spawning biomass"
+        )
       } else {
         points(FecX, FecY, col = colvec[2], pch = 19)
       }
     }
     fecundityOK <- all(!is.na(biology[["Fec"]]))
-    fec_weight_fn <- function() { # fecundity at weight from BIOLOGY section
+    fec_weight_fn <- function() {
+      # fecundity at weight from BIOLOGY section
       ymax <- 1.1 * max(biology[["Fec"]])
       if (!add) {
-        plot(biology[["Wt_F"]], biology[["Fec"]],
-          xlab = labels[8], ylab = labels[10],
-          las = 1, yaxs = "i", ylim = c(0, ymax), col = colvec[1], type = "o"
+        plot(
+          biology[["Wt_F"]],
+          biology[["Fec"]],
+          xlab = labels[8],
+          ylab = labels[10],
+          las = 1,
+          yaxs = "i",
+          ylim = c(0, ymax),
+          col = colvec[1],
+          type = "o"
         )
       } else {
-        points(biology[["Len_mean"]], biology[["Fec"]], col = colvec[1], type = "o")
+        points(
+          biology[["Len_mean"]],
+          biology[["Fec"]],
+          col = colvec[1],
+          type = "o"
+        )
       }
     }
-    fec_len_fn <- function() { # fecundity at length from BIOLOGY section
+    fec_len_fn <- function() {
+      # fecundity at length from BIOLOGY section
       ymax <- 1.1 * max(biology[["Fec"]])
       if (!add) {
-        plot(biology[["Len_mean"]], biology[["Fec"]],
-          xlab = labels[9], ylab = labels[10],
-          las = 1, yaxs = "i", ylim = c(0, 1.1 * ymax), col = colvec[1], type = "o", yaxs = "i"
+        plot(
+          biology[["Len_mean"]],
+          biology[["Fec"]],
+          xlab = labels[9],
+          ylab = labels[10],
+          las = 1,
+          yaxs = "i",
+          ylim = c(0, 1.1 * ymax),
+          col = colvec[1],
+          type = "o",
+          yaxs = "i"
         )
       } else {
-        points(biology[["Len_mean"]], biology[["Fec"]], col = colvec[1], type = "o")
+        points(
+          biology[["Len_mean"]],
+          biology[["Fec"]],
+          col = colvec[1],
+          type = "o"
+        )
       }
     }
-    spawn_output_len_fn <- function() { # spawning output at length
+    spawn_output_len_fn <- function() {
+      # spawning output at length
       x <- biology[["Len_mean"]]
       y <- biology[["Mat*Fec"]]
       ymax <- 1.1 * max(y)
       if (!add) {
-        plot(x, y,
-          xlab = labels[1], ylab = labels[5], type = "o", col = colvec[1],
-          las = 1, yaxs = "i", ylim = c(0, ymax)
+        plot(
+          x,
+          y,
+          xlab = labels[1],
+          ylab = labels[5],
+          type = "o",
+          col = colvec[1],
+          las = 1,
+          yaxs = "i",
+          ylim = c(0, ymax)
         )
       } else {
         lines(x, y, type = "o", col = colvec[1])
       }
     }
-    spawn_output_age_fn <- function() { # spawning output at age
+    spawn_output_age_fn <- function() {
+      # spawning output at age
       x <- growdat[["Age_Beg"]][growdat[["Sex"]] == 1]
       y <- growdat$"Mat*Fecund"[growdat[["Sex"]] == 1]
       ymax <- 1.1 * max(y)
       if (!add) {
-        plot(x, y,
-          xlab = labels[2], ylab = labels[5], type = "o", col = colvec[1],
-          las = 1, yaxs = "i", ylim = c(0, ymax)
+        plot(
+          x,
+          y,
+          xlab = labels[2],
+          ylab = labels[5],
+          type = "o",
+          col = colvec[1],
+          las = 1,
+          yaxs = "i",
+          ylim = c(0, ymax)
         )
       } else {
         lines(x, y, type = "o", col = colvec[1])
@@ -608,8 +802,16 @@ SSplotBiology <-
             # this might not work for log-normal length at age
             mean <- std_table.sex[["Value"]][irow]
             ages <- std_table.sex[["age"]][irow] + age_offset
-            high <- qnorm(0.975, mean = mean, sd = std_table.sex[["StdDev"]][irow])
-            low <- qnorm(0.025, mean = mean, sd = std_table.sex[["StdDev"]][irow])
+            high <- qnorm(
+              0.975,
+              mean = mean,
+              sd = std_table.sex[["StdDev"]][irow]
+            )
+            low <- qnorm(
+              0.025,
+              mean = mean,
+              sd = std_table.sex[["StdDev"]][irow]
+            )
             # set sex-dependent color
             if (sex == 1) {
               col <- colvec[col_index1]
@@ -618,9 +820,14 @@ SSplotBiology <-
               col <- colvec[2]
             }
             arrows(
-              x0 = ages, x1 = ages,
-              y0 = low, y1 = high,
-              length = 0.04, angle = 90, code = 3, col = col
+              x0 = ages,
+              x1 = ages,
+              y0 = low,
+              y1 = high,
+              length = 0.04,
+              angle = 90,
+              code = 3,
+              col = col
             )
           }
         } # end check for missing sex
@@ -630,19 +837,29 @@ SSplotBiology <-
       options(warn = old_warn)
     }
 
-    growth_curve_fn <- function(add_labels = TRUE, add_uncertainty = TRUE) { # growth
+    growth_curve_fn <- function(add_labels = TRUE, add_uncertainty = TRUE) {
+      # growth
       x <- growdatF[["Age_Beg"]]
       # make empty plot unless this is being added to existing figure
       if (!add) {
-        plot(x, growdatF[["Len_Beg"]],
-          ylim = c(0, 1.1 * ymax), type = "n",
-          xlab = "", ylab = "", axes = FALSE, xaxs = "i", yaxs = "i"
+        plot(
+          x,
+          growdatF[["Len_Beg"]],
+          ylim = c(0, 1.1 * ymax),
+          type = "n",
+          xlab = "",
+          ylab = "",
+          axes = FALSE,
+          xaxs = "i",
+          yaxs = "i"
         )
         abline(h = 0, col = "grey")
         if (add_labels) {
           title(
             main = ifelse(mainTitle, main, ""),
-            xlab = labels[2], ylab = labels[6], cex.main = cex.main
+            xlab = labels[2],
+            ylab = labels[6],
+            cex.main = cex.main
           )
           axis(1)
           axis(2, las = 1)
@@ -650,12 +867,27 @@ SSplotBiology <-
       }
       lty <- 1
       # make shaded polygon
-      polygon(c(x, rev(x)), c(growdatF[["low"]], rev(growdatF[["high"]])),
-        border = NA, col = shadecolvec[col_index1]
+      polygon(
+        c(x, rev(x)),
+        c(growdatF[["low"]], rev(growdatF[["high"]])),
+        border = NA,
+        col = shadecolvec[col_index1]
       )
       # add lines for mean, low and high
-      lines(x, growdatF[["Len_Beg"]], col = colvec[col_index1], lwd = 2, lty = ltyvec[1])
-      lines(x, growdatF[["high"]], col = colvec[col_index1], lwd = 1, lty = "12")
+      lines(
+        x,
+        growdatF[["Len_Beg"]],
+        col = colvec[col_index1],
+        lwd = 2,
+        lty = ltyvec[1]
+      )
+      lines(
+        x,
+        growdatF[["high"]],
+        col = colvec[col_index1],
+        lwd = 1,
+        lty = "12"
+      )
       lines(x, growdatF[["low"]], col = colvec[col_index1], lwd = 1, lty = "12")
 
       # add 95% intervals for uncertainty in growth from $derived_quants
@@ -666,11 +898,20 @@ SSplotBiology <-
       # add males if they are present in the model
       if (nsexes > 1) {
         # make shaded polygon
-        polygon(c(xm, rev(xm)), c(growdatM[["low"]], rev(growdatM[["high"]])),
-          border = NA, col = shadecolvec[2]
+        polygon(
+          c(xm, rev(xm)),
+          c(growdatM[["low"]], rev(growdatM[["high"]])),
+          border = NA,
+          col = shadecolvec[2]
         )
         # add lines for mean, low and high
-        lines(xm, growdatM[["Len_Beg"]], col = colvec[2], lwd = 2, lty = ltyvec[2])
+        lines(
+          xm,
+          growdatM[["Len_Beg"]],
+          col = colvec[2],
+          lwd = 2,
+          lty = ltyvec[2]
+        )
         lines(xm, growdatM[["high"]], col = colvec[2], lwd = 1, lty = "13")
         lines(xm, growdatM[["low"]], col = colvec[2], lwd = 1, lty = "13")
 
@@ -685,8 +926,12 @@ SSplotBiology <-
         box()
       }
       if (nsexes > 1) {
-        legend(legendloc,
-          bty = "n", c("Females", "Males"), lty = ltyvec, lwd = 2,
+        legend(
+          legendloc,
+          bty = "n",
+          c("Females", "Males"),
+          lty = ltyvec,
+          lwd = 2,
           col = c(colvec[1], colvec[2])
         )
       }
@@ -709,14 +954,19 @@ SSplotBiology <-
         )
       }
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       growth_curve_fn()
       dev.off()
     }
-
 
     growth_curve_plus_fn <- function(add_labels = TRUE, option = 1) {
       # function to add panels to growth curve with info on variability in
@@ -726,7 +976,11 @@ SSplotBiology <-
       par_old <- par()
 
       # create 4-panel layout
-      layout(mat = matrix(1:4, byrow = TRUE, ncol = 2), widths = c(2, 1), heights = c(2, 1))
+      layout(
+        mat = matrix(1:4, byrow = TRUE, ncol = 2),
+        widths = c(2, 1),
+        heights = c(2, 1)
+      )
       par(mar = c(1, 1, 1, 1), oma = c(5, 5, 5, 4))
       # plot growth curve
       growth_curve_fn(add_labels = FALSE)
@@ -760,48 +1014,76 @@ SSplotBiology <-
       lab2_to_lab1_scale <- lab1max / lab2max
       lab2_axis_vec <- pretty(c(0, lab2max))
       # make empty panel in top-right location
-      plot(0,
+      plot(
+        0,
         type = "n",
-        xaxs = "i", xlim = c(0, 1.0 * lab1max),
-        yaxs = "i", ylim = par()[["usr"]][3:4],
+        xaxs = "i",
+        xlim = c(0, 1.0 * lab1max),
+        yaxs = "i",
+        ylim = par()[["usr"]][3:4],
         axes = FALSE
       )
       if (option == 1) {
         # if plotting SD and CV, then get it from age-based data
         # add line for lab1 vs. Len
-        lines(growdatF[[lab1]], growdatF[["Len_Beg"]],
+        lines(
+          growdatF[[lab1]],
+          growdatF[["Len_Beg"]],
           col = colvec[col_index1],
-          lwd = 1, lty = "12"
+          lwd = 1,
+          lty = "12"
         )
         # add line for lab2 vs. Len
-        lines(growdatF[[lab2]] * lab2_to_lab1_scale, growdatF[["Len_Beg"]],
-          col = colvec[col_index1], lwd = 3
+        lines(
+          growdatF[[lab2]] * lab2_to_lab1_scale,
+          growdatF[["Len_Beg"]],
+          col = colvec[col_index1],
+          lwd = 3
         )
-        if (nsexes > 1) { # add lines for males
+        if (nsexes > 1) {
+          # add lines for males
           if (option == 1) {
             # add line for lab1 vs. Age
             # (unless it's maturity, which is not defined for males)
-            lines(growdatM[[lab1]], growdatM[["Len_Beg"]],
+            lines(
+              growdatM[[lab1]],
+              growdatM[["Len_Beg"]],
               col = colvec[2],
-              lwd = 1, lty = "13"
+              lwd = 1,
+              lty = "13"
             )
           }
           # add line for lab2 vs. Len
-          lines(growdatM[[lab2]] * lab2_to_lab1_scale, growdatM[["Len_Beg"]],
+          lines(
+            growdatM[[lab2]] * lab2_to_lab1_scale,
+            growdatM[["Len_Beg"]],
             col = colvec[2],
-            lwd = 3, lty = 2
+            lwd = 3,
+            lty = 2
           )
         }
       }
       if (option == 2) {
         # if plotting maturity and fecundity, then get this panel from length-based data
-        lines(biology[["Wt_F"]] * lab2_to_lab1_scale, biology[["Len_mean"]],
-          col = colvec[col_index1], lwd = 3
+        lines(
+          biology[["Wt_F"]] * lab2_to_lab1_scale,
+          biology[["Len_mean"]],
+          col = colvec[col_index1],
+          lwd = 3
         )
-        lines(biology[["Mat"]], biology[["Len_mean"]], col = colvec[col_index1], lty = "12")
+        lines(
+          biology[["Mat"]],
+          biology[["Len_mean"]],
+          col = colvec[col_index1],
+          lty = "12"
+        )
         if (nsexes > 1) {
-          lines(biology[["Wt_M"]] * lab2_to_lab1_scale, biology[["Len_mean"]],
-            col = colvec[2], lwd = 3, lty = 2
+          lines(
+            biology[["Wt_M"]] * lab2_to_lab1_scale,
+            biology[["Len_mean"]],
+            col = colvec[2],
+            lwd = 3,
+            lty = 2
           )
         }
       }
@@ -810,49 +1092,72 @@ SSplotBiology <-
       mtext(side = 1, line = 2.5, lab1long, las = 0)
       mtext(side = 3, line = 2.5, lab2long, las = 0)
       axis(1, at = lab1_axis_vec, las = 1)
-      axis(3, at = lab2_axis_vec * lab2_to_lab1_scale, labels = lab2_axis_vec, las = 1)
+      axis(
+        3,
+        at = lab2_axis_vec * lab2_to_lab1_scale,
+        labels = lab2_axis_vec,
+        las = 1
+      )
       axis(4, las = 1)
       box()
 
-
       # make empty plot in lower-left position
-      plot(0,
+      plot(
+        0,
         type = "n",
-        xaxs = "i", xlim = range(growdat[["Age_Beg"]]),
-        yaxs = "i", ylim = c(0, 1.0 * lab1max),
+        xaxs = "i",
+        xlim = range(growdat[["Age_Beg"]]),
+        yaxs = "i",
+        ylim = c(0, 1.0 * lab1max),
         axes = FALSE
       )
       # add line for lab1 vs. Age
       if (option == 1) {
-        lines(growdatF[["Age_Beg"]], growdatF[[lab1]],
+        lines(
+          growdatF[["Age_Beg"]],
+          growdatF[[lab1]],
           col = colvec[col_index1],
-          lwd = 1, lty = "12"
+          lwd = 1,
+          lty = "12"
         )
       }
       if (option == 2) {
         # maturity curve is product of age-based and length-based factors
-        lines(growdatF[["Age_Beg"]], growdatF[["Len_Mat"]] * abs(growdatF[["Age_Mat"]]),
-          col = colvec[col_index1], lwd = 1, lty = "12"
+        lines(
+          growdatF[["Age_Beg"]],
+          growdatF[["Len_Mat"]] * abs(growdatF[["Age_Mat"]]),
+          col = colvec[col_index1],
+          lwd = 1,
+          lty = "12"
         )
       }
 
       # add line for lab2 vs. Age
-      lines(growdatF[["Age_Beg"]], growdatF[[lab2]] * lab2_to_lab1_scale,
+      lines(
+        growdatF[["Age_Beg"]],
+        growdatF[[lab2]] * lab2_to_lab1_scale,
         col = colvec[col_index1],
         lwd = 3
       )
-      if (nsexes > 1) { # add lines for males
+      if (nsexes > 1) {
+        # add lines for males
         if (option == 1) {
           # add line for lab1 vs. Age (unless it's maturity, which is not defined for males)
-          lines(growdatM[["Age_Beg"]], growdatM[[lab1]],
+          lines(
+            growdatM[["Age_Beg"]],
+            growdatM[[lab1]],
             col = colvec[2],
-            lwd = 1, lty = "13"
+            lwd = 1,
+            lty = "13"
           )
         }
         # add line for lab2 vs. Age
-        lines(growdatM[["Age_Beg"]], growdatM[[lab2]] * lab2_to_lab1_scale,
+        lines(
+          growdatM[["Age_Beg"]],
+          growdatM[[lab2]] * lab2_to_lab1_scale,
           col = colvec[2],
-          lwd = 3, lty = 2
+          lwd = 3,
+          lty = 2
         )
       }
       # add axes and labels
@@ -860,14 +1165,22 @@ SSplotBiology <-
       mtext(side = 4, line = 2.5, lab1long, las = 0)
       mtext(side = 2, line = 2.5, lab2long, las = 0)
       axis(1, las = 1)
-      axis(2, at = lab2_axis_vec * lab2_to_lab1_scale, labels = lab2_axis_vec, las = 1)
+      axis(
+        2,
+        at = lab2_axis_vec * lab2_to_lab1_scale,
+        labels = lab2_axis_vec,
+        las = 1
+      )
       axis(4, at = lab1_axis_vec, las = 1)
       box()
 
       # restore default single panel settings
-      par(mfcol = par_old[["mfcol"]], mar = par_old[["mar"]], oma = par_old[["oma"]])
+      par(
+        mfcol = par_old[["mfcol"]],
+        mar = par_old[["mar"]],
+        oma = par_old[["oma"]]
+      )
     } # end growth_curve_plus_fn()
-
 
     # make plots of growth curve with CV and SD of length
     if (plot & 2 %in% subplots & !wtatage_switch) {
@@ -881,8 +1194,14 @@ SSplotBiology <-
         "length at age shown in top-right and lower-left panels"
       )
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       growth_curve_plus_fn(option = 1)
@@ -901,25 +1220,36 @@ SSplotBiology <-
         "shown in top-right and lower-left panels"
       )
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       growth_curve_plus_fn(option = 2)
       dev.off()
     }
 
-
     # plot distribution of length at age (by season, sub-season, and morph)
     if (4 %in% subplots & !wtatage_switch) {
       if (!is.null(replist[["ALK"]])) {
         plotinfo.tmp <- SSplotAgeMatrix(
-          replist = replist, option = 1,
-          plot = plot, print = print,
-          plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits,
-          res = res, ptsize = ptsize,
-          cex.main = cex.main, mainTitle = mainTitle
+          replist = replist,
+          option = 1,
+          plot = plot,
+          print = print,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
+          cex.main = cex.main,
+          mainTitle = mainTitle
         )
         # SSplotAgeMatrix adds a "category" column which isn't present
         # in plotinfo until the end of this SSplotBiology function.
@@ -934,9 +1264,12 @@ SSplotBiology <-
     }
 
     # function for illustrating parameterization of growth curves
-    growth_curve_labeled_fn <- function(option = 1) { # growth
+    growth_curve_labeled_fn <- function(option = 1) {
+      # growth
       if (is.null(Growth_Parameters)) {
-        message("Need updated SS_output function to get Growth_Parameters output\n")
+        message(
+          "Need updated SS_output function to get Growth_Parameters output\n"
+        )
         return()
       }
       # save current parameter settings
@@ -953,33 +1286,51 @@ SSplotBiology <-
       LinfF <- Growth_Parameters[["Linf"]][1]
       LinfM <- Growth_Parameters[["Linf"]][2]
       ymax <- max(biology[["Len_mean"]])
-      plot(0,
+      plot(
+        0,
         type = "n",
         xlim = c(0, 1 + max(growdatF[["Age_Beg"]])),
         ylim = c(0, 1.1 * ymax),
-        xlab = "", ylab = "", axes = FALSE, xaxs = "i", yaxs = "i"
+        xlab = "",
+        ylab = "",
+        axes = FALSE,
+        xaxs = "i",
+        yaxs = "i"
       )
       abline(h = 0, col = "grey")
       # title(main=main, xlab=labels[2], ylab=labels[6], cex.main=cex.main)
-      axis(1,
+      axis(
+        1,
         at = c(0, AminF, AmaxF, accuage),
         labels = expression(0, italic(A[1]), italic(A[2]), italic(N[ages]))
       )
-      axis(2,
+      axis(
+        2,
         at = c(0, L_at_AminF, L_at_AmaxF, LinfF),
         labels = expression(
-          0, italic(L[A[1]]), italic(L[A[2]]),
+          0,
+          italic(L[A[1]]),
+          italic(L[A[2]]),
           italic(L[infinity])
-        ), las = 1
+        ),
+        las = 1
       )
       # add growth curve itself
-      lines(growdatF[["Age_Beg"]], growdatF[["Len_Beg"]],
-        col = 1, lwd = 3, lty = 1
+      lines(
+        growdatF[["Age_Beg"]],
+        growdatF[["Len_Beg"]],
+        col = 1,
+        lwd = 3,
+        lty = 1
       )
       # add growth curve for males
       if (nsexes > 1 & option == 2) {
-        lines(growdatM[["Age_Beg"]], growdatM[["Len_Beg"]],
-          col = 1, lwd = 2, lty = 2
+        lines(
+          growdatM[["Age_Beg"]],
+          growdatM[["Len_Beg"]],
+          col = 1,
+          lwd = 2,
+          lty = 2
         )
       }
       if (option == 1) {
@@ -992,31 +1343,42 @@ SSplotBiology <-
         # lines connecting two curves
         lines(c(0, AminF), c(L_at_AminF, L_at_AminF), lty = 3)
         lines(c(0, AmaxF), c(L_at_AmaxF, L_at_AmaxF), lty = 3)
-        lines(c(accuage + 10, AmaxM), c(L_at_AmaxM, L_at_AmaxM),
-          lty = 3
-        )
-        lines(c(accuage + 10, AminM), c(L_at_AminM, L_at_AminM),
-          lty = 3
+        lines(c(accuage + 10, AmaxM), c(L_at_AmaxM, L_at_AmaxM), lty = 3)
+        lines(c(accuage + 10, AminM), c(L_at_AminM, L_at_AminM), lty = 3)
+        arrows(
+          x0 = AminF,
+          x1 = AminF,
+          y0 = L_at_AminF,
+          y1 = L_at_AminM,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
         arrows(
-          x0 = AminF, x1 = AminF,
-          y0 = L_at_AminF, y1 = L_at_AminM,
-          lwd = 3, col = 3, length = 0.1
+          x0 = AmaxF,
+          x1 = AmaxF,
+          y0 = L_at_AmaxF,
+          y1 = L_at_AmaxM,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
-        arrows(
-          x0 = AmaxF, x1 = AmaxF,
-          y0 = L_at_AmaxF, y1 = L_at_AmaxM,
-          lwd = 3, col = 3, length = 0.1
-        )
-        text(AminF, mean(c(L_at_AminF, L_at_AminM)),
+        text(
+          AminF,
+          mean(c(L_at_AminF, L_at_AminM)),
           "Male parameter 1\n(exponential offset)",
-          col = 3, adj = c(-.1, 0)
+          col = 3,
+          adj = c(-.1, 0)
         )
-        text(AmaxF, mean(c(L_at_AmaxF, L_at_AmaxM)),
+        text(
+          AmaxF,
+          mean(c(L_at_AmaxF, L_at_AmaxM)),
           "Male parameter 2\n(exponential offset)",
-          col = 3, adj = c(-.1, 0)
+          col = 3,
+          adj = c(-.1, 0)
         )
-        axis(4,
+        axis(
+          4,
           at = c(0, L_at_AminM, L_at_AmaxM),
           labels = expression(0, italic(L[A[1]]^male), italic(L[A[2]]^male)),
           las = 1
@@ -1025,40 +1387,62 @@ SSplotBiology <-
       }
       box()
       # restore old parameter settings
-      par(mfcol = par_old[["mfcol"]], mar = par_old[["mar"]], oma = par_old[["oma"]])
+      par(
+        mfcol = par_old[["mfcol"]],
+        mar = par_old[["mar"]],
+        oma = par_old[["oma"]]
+      )
     }
 
     # plots of diagrams for illustrating parameterization
-    if (plot & 101 %in% subplots & !wtatage_switch) growth_curve_labeled_fn(option = 1)
+    if (plot & 101 %in% subplots & !wtatage_switch) {
+      growth_curve_labeled_fn(option = 1)
+    }
     if (print & 101 %in% subplots & !wtatage_switch) {
       file <- "bio101_growth_illustration.png"
       caption <- "Illustration of growth parameters"
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       growth_curve_labeled_fn(option = 1)
       dev.off()
     }
-    if (plot & 102 %in% subplots & !wtatage_switch) growth_curve_labeled_fn(option = 2)
+    if (plot & 102 %in% subplots & !wtatage_switch) {
+      growth_curve_labeled_fn(option = 2)
+    }
     if (print & 102 %in% subplots & !wtatage_switch) {
       file <- "bio102_growth_illustration2.png"
       caption <- "Illustration of growth parameters with male offsets"
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       growth_curve_labeled_fn(option = 2)
       dev.off()
     }
 
-
     # function for illustrating parameterization of CVs around growth curves
-    CV_values_labeled_fn <- function(option = 1) { # growth
+    CV_values_labeled_fn <- function(option = 1) {
+      # growth
       if (is.null(Growth_Parameters)) {
-        message("Need updated SS_output function to get Growth_Parameters output")
+        message(
+          "Need updated SS_output function to get Growth_Parameters output"
+        )
         return()
       }
       # save current parameter settings
@@ -1073,30 +1457,46 @@ SSplotBiology <-
       CV_at_AminM <- Growth_Parameters[["CVmin"]][2]
       CV_at_AmaxM <- Growth_Parameters[["CVmax"]][2]
       ymax <- max(CV_at_AminF, CV_at_AmaxF, CV_at_AminM, CV_at_AmaxM)
-      plot(0,
+      plot(
+        0,
         type = "n",
         xlim = c(0, 1 + max(growdatF[["Age_Beg"]])),
         ylim = c(0, 1.1 * ymax),
-        xlab = "", ylab = "", axes = FALSE, xaxs = "i", yaxs = "i"
+        xlab = "",
+        ylab = "",
+        axes = FALSE,
+        xaxs = "i",
+        yaxs = "i"
       )
       abline(h = 0, col = "grey")
       # title(main=main, xlab=labels[2], ylab=labels[6], cex.main=cex.main)
-      axis(1,
+      axis(
+        1,
         at = c(0, AminF, AmaxF, accuage),
         labels = expression(0, italic(A[1]), italic(A[2]), italic(N[ages]))
       )
-      axis(2,
+      axis(
+        2,
         at = c(0, CV_at_AminF, CV_at_AmaxF),
-        labels = expression(0, italic(CV[A[1]]), italic(CV[A[2]])), las = 1
+        labels = expression(0, italic(CV[A[1]]), italic(CV[A[2]])),
+        las = 1
       )
       # add growth curve itself
-      lines(growdatF[["Age_Beg"]], growdatF[["CV_Beg"]],
-        col = 1, lwd = 3, lty = 1
+      lines(
+        growdatF[["Age_Beg"]],
+        growdatF[["CV_Beg"]],
+        col = 1,
+        lwd = 3,
+        lty = 1
       )
       # add growth curve for males
       if (nsexes > 1 & option %in% c(2, 4)) {
-        lines(growdatM[["Age_Beg"]], growdatM[["CV_Beg"]],
-          col = 1, lwd = 2, lty = 2
+        lines(
+          growdatM[["Age_Beg"]],
+          growdatM[["CV_Beg"]],
+          col = 1,
+          lwd = 2,
+          lty = 2
         )
       }
       if (option == 1) {
@@ -1108,31 +1508,42 @@ SSplotBiology <-
         # lines connecting two curves
         lines(c(0, AminF), c(CV_at_AminF, CV_at_AminF), lty = 3)
         lines(c(0, AmaxF), c(CV_at_AmaxF, CV_at_AmaxF), lty = 3)
-        lines(c(accuage + 10, AmaxM), c(CV_at_AmaxM, CV_at_AmaxM),
-          lty = 3
-        )
-        lines(c(accuage + 10, AminM), c(CV_at_AminM, CV_at_AminM),
-          lty = 3
+        lines(c(accuage + 10, AmaxM), c(CV_at_AmaxM, CV_at_AmaxM), lty = 3)
+        lines(c(accuage + 10, AminM), c(CV_at_AminM, CV_at_AminM), lty = 3)
+        arrows(
+          x0 = AminF,
+          x1 = AminF,
+          y0 = CV_at_AminF,
+          y1 = CV_at_AminM,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
         arrows(
-          x0 = AminF, x1 = AminF,
-          y0 = CV_at_AminF, y1 = CV_at_AminM,
-          lwd = 3, col = 3, length = 0.1
+          x0 = AmaxF,
+          x1 = AmaxF,
+          y0 = CV_at_AmaxF,
+          y1 = CV_at_AmaxM,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
-        arrows(
-          x0 = AmaxF, x1 = AmaxF,
-          y0 = CV_at_AmaxF, y1 = CV_at_AmaxM,
-          lwd = 3, col = 3, length = 0.1
-        )
-        text(AminF, mean(c(CV_at_AminM)),
+        text(
+          AminF,
+          mean(c(CV_at_AminM)),
           "Male parameter 1\n(exponential offset)",
-          col = 3, adj = c(0, 1.5)
+          col = 3,
+          adj = c(0, 1.5)
         )
-        text(AmaxF, mean(c(CV_at_AmaxM)),
+        text(
+          AmaxF,
+          mean(c(CV_at_AmaxM)),
           "Male parameter 2\n(exponential offset)",
-          col = 3, adj = c(0, 1.5)
+          col = 3,
+          adj = c(0, 1.5)
         )
-        axis(4,
+        axis(
+          4,
           at = c(0, CV_at_AminM, CV_at_AmaxM),
           labels = expression(0, italic(CV[A[1]]^male), italic(CV[A[2]]^male)),
           las = 1
@@ -1144,53 +1555,78 @@ SSplotBiology <-
         lines(c(AmaxF, AmaxF, 0), c(0, CV_at_AmaxF, CV_at_AmaxF), lty = 3)
         lines(c(0, AmaxF), c(CV_at_AminF, CV_at_AminF), lty = 3)
         arrows(
-          x0 = AmaxF, x1 = AmaxF,
-          y0 = CV_at_AminF, y1 = CV_at_AmaxF,
-          lwd = 3, col = 3, length = 0.1
+          x0 = AmaxF,
+          x1 = AmaxF,
+          y0 = CV_at_AminF,
+          y1 = CV_at_AmaxF,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
-        text(AmaxF, mean(c(CV_at_AminF, CV_at_AmaxF)),
+        text(
+          AmaxF,
+          mean(c(CV_at_AminF, CV_at_AmaxF)),
           "Female parameter 2\n(exponential offset)",
-          col = 3, adj = c(-.1, 0)
+          col = 3,
+          adj = c(-.1, 0)
         )
       }
       if (option == 4) {
         # lines connecting two curves
         arrows(
-          x0 = AmaxF, x1 = AmaxF,
-          y0 = CV_at_AminF, y1 = CV_at_AmaxF,
-          lwd = 3, col = 3, length = 0.1
+          x0 = AmaxF,
+          x1 = AmaxF,
+          y0 = CV_at_AminF,
+          y1 = CV_at_AmaxF,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
-        text(AmaxF, mean(c(CV_at_AminF, CV_at_AmaxF)),
+        text(
+          AmaxF,
+          mean(c(CV_at_AminF, CV_at_AmaxF)),
           "Female parameter 2\n(exponential offset)",
-          col = 3, adj = c(-.1, 0)
+          col = 3,
+          adj = c(-.1, 0)
         )
         lines(c(0, AmaxF), c(CV_at_AminF, CV_at_AminF), lty = 3)
         lines(c(0, AmaxF), c(CV_at_AmaxF, CV_at_AmaxF), lty = 3)
-        lines(c(accuage + 10, AmaxM), c(CV_at_AmaxM, CV_at_AmaxM),
-          lty = 3
-        )
-        lines(c(accuage + 10, AminM), c(CV_at_AminM, CV_at_AminM),
-          lty = 3
+        lines(c(accuage + 10, AmaxM), c(CV_at_AmaxM, CV_at_AmaxM), lty = 3)
+        lines(c(accuage + 10, AminM), c(CV_at_AminM, CV_at_AminM), lty = 3)
+        arrows(
+          x0 = AminF,
+          x1 = AminF,
+          y0 = CV_at_AminF,
+          y1 = CV_at_AminM,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
         arrows(
-          x0 = AminF, x1 = AminF,
-          y0 = CV_at_AminF, y1 = CV_at_AminM,
-          lwd = 3, col = 3, length = 0.1
+          x0 = AmaxF,
+          x1 = AmaxF,
+          y0 = CV_at_AminM,
+          y1 = CV_at_AmaxM,
+          lwd = 3,
+          col = 3,
+          length = 0.1
         )
-        arrows(
-          x0 = AmaxF, x1 = AmaxF,
-          y0 = CV_at_AminM, y1 = CV_at_AmaxM,
-          lwd = 3, col = 3, length = 0.1
-        )
-        text(AminF, mean(c(CV_at_AminF, CV_at_AminM)),
+        text(
+          AminF,
+          mean(c(CV_at_AminF, CV_at_AminM)),
           "Male parameter 1\n(exponential offset)",
-          col = 3, adj = c(0, 2)
+          col = 3,
+          adj = c(0, 2)
         )
-        text(AmaxF, mean(c(CV_at_AminM, CV_at_AmaxM)),
+        text(
+          AmaxF,
+          mean(c(CV_at_AminM, CV_at_AmaxM)),
           "Male parameter 2\n(exponential offset)",
-          col = 3, adj = c(0, 2)
+          col = 3,
+          adj = c(0, 2)
         )
-        axis(4,
+        axis(
+          4,
           at = c(0, CV_at_AminM, CV_at_AmaxM),
           labels = expression(0, italic(CV[A[1]]^male), italic(CV[A[2]]^male)),
           las = 1
@@ -1198,65 +1634,101 @@ SSplotBiology <-
       }
       box()
       # restore old parameter settings
-      par(mfcol = par_old[["mfcol"]], mar = par_old[["mar"]], oma = par_old[["oma"]])
+      par(
+        mfcol = par_old[["mfcol"]],
+        mar = par_old[["mar"]],
+        oma = par_old[["oma"]]
+      )
     }
 
     # extra plots illustrating parameterization of CV in growth
-    if (plot & 103 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option = 1)
+    if (plot & 103 %in% subplots & !wtatage_switch) {
+      CV_values_labeled_fn(option = 1)
+    }
     if (print & 103 %in% subplots & !wtatage_switch) {
       file <- "bio103_CV_illustration.png"
       caption <- "Illustration of growth variability parameters"
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       CV_values_labeled_fn(option = 1)
       dev.off()
     }
-    if (plot & 104 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option = 2)
+    if (plot & 104 %in% subplots & !wtatage_switch) {
+      CV_values_labeled_fn(option = 2)
+    }
     if (print & 104 %in% subplots & !wtatage_switch) {
       file <- "bio104_CV_illustration2.png"
       caption <- "Illustration of growth variability parameters with male offsets"
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       CV_values_labeled_fn(option = 2)
       dev.off()
     }
-    if (plot & 105 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option = 3)
+    if (plot & 105 %in% subplots & !wtatage_switch) {
+      CV_values_labeled_fn(option = 3)
+    }
     if (print & 105 %in% subplots & !wtatage_switch) {
       file <- "bio105_CV_illustration.png"
       caption <- "Illustration of growth variability parameters for offset type 3"
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       CV_values_labeled_fn(option = 3)
       dev.off()
     }
-    if (plot & 106 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option = 4)
+    if (plot & 106 %in% subplots & !wtatage_switch) {
+      CV_values_labeled_fn(option = 4)
+    }
     if (print & 106 %in% subplots & !wtatage_switch) {
       file <- "bio106_CV_illustration2.png"
       caption <- "Illustration of growth variability parameters with male offsets"
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       CV_values_labeled_fn(option = 4)
       dev.off()
     }
 
-
     x <- biology[["Len_mean"]]
     ## NOTE: weight plots are now a special case since they are broken down
     ## by whether the model is 1-sex or 2-sex. In the latter two separate
     ## plots need to be made.
-    if (plot) { # plot to screen or to PDF file
+    if (plot) {
+      # plot to screen or to PDF file
       if (5 %in% subplots & !is.null(biology)) {
         weight_plot(sex = 1)
         if (nsexes == 2) {
@@ -1284,7 +1756,8 @@ SSplotBiology <-
         }
       }
     }
-    if (print) { # print to PNG files
+    if (print) {
+      # print to PNG files
       if (5 %in% subplots) {
         file <- "bio5_weightatsize.png"
         caption <- "Weight-length relationship"
@@ -1295,9 +1768,14 @@ SSplotBiology <-
           }
         }
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
           pheight = ifelse(wtatage_switch, pheight_tall, pheight), # weight-at-age matrix works better when taller
-          punits = punits, res = res, ptsize = ptsize,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         weight_plot(sex = 1)
@@ -1307,8 +1785,14 @@ SSplotBiology <-
           file <- "bio5_weightatsize2.png"
           caption <- "Weight-at-age for males"
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight_tall, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           weight_plot(sex = 2)
@@ -1317,14 +1801,22 @@ SSplotBiology <-
       }
       if (6 %in% subplots) {
         file <- "bio6_maturity.png"
-        caption <- paste("Maturity at", ifelse(min(biology[["Mat"]]) < 1, "length", "age"))
+        caption <- paste(
+          "Maturity at",
+          ifelse(min(biology[["Mat"]]) < 1, "length", "age")
+        )
         if (wtatage_switch) {
           caption <- "Spawning output at age (maturity x fecundity)"
         }
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
           pheight = ifelse(wtatage_switch, pheight_tall, pheight), # spawning-output-at-age matrix works better when taller
-          punits = punits, res = res, ptsize = ptsize,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         maturity_plot()
@@ -1335,8 +1827,14 @@ SSplotBiology <-
           file <- "bio7_fecundity.png"
           caption <- "Fecundity"
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           fec_pars_fn()
@@ -1346,8 +1844,14 @@ SSplotBiology <-
           file <- "bio8_fecundity_wt.png"
           caption <- "Fecundity as a function of weight"
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           fec_weight_fn()
@@ -1357,8 +1861,14 @@ SSplotBiology <-
           file <- "bio9_fecundity_len.png"
           caption <- "Fecundity as a function of length"
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           fec_len_fn()
@@ -1373,8 +1883,14 @@ SSplotBiology <-
             "fecundity is represented."
           )
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           spawn_output_len_fn()
@@ -1390,8 +1906,14 @@ SSplotBiology <-
             "of length at age."
           )
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           spawn_output_age_fn()
@@ -1415,13 +1937,26 @@ SSplotBiology <-
       # function to plut natural mortality
       mfunc <- function(add_uncertainty = TRUE) {
         if (!add) {
-          plot(growdatF[["Age_Beg"]], MatAge,
-            col = colvec[col_index1], lwd = 2,
-            ylim = c(0, ymax), yaxs = "i", type = "n",
-            ylab = labels[7], xlab = labels[2], las = 1
+          plot(
+            growdatF[["Age_Beg"]],
+            MatAge,
+            col = colvec[col_index1],
+            lwd = 2,
+            ylim = c(0, ymax),
+            yaxs = "i",
+            type = "n",
+            ylab = labels[7],
+            xlab = labels[2],
+            las = 1
           )
         }
-        lines(growdatF[["Age_Beg"]], MatAge, col = colvec[col_index1], lwd = 2, type = "o")
+        lines(
+          growdatF[["Age_Beg"]],
+          MatAge,
+          col = colvec[col_index1],
+          lwd = 2,
+          type = "o"
+        )
 
         # add uncertainty in M-at-age (if available from derived_quants)
         if (add_uncertainty) {
@@ -1430,12 +1965,20 @@ SSplotBiology <-
 
         if (nsexes > 1) {
           growdatM <- growdat[growdat[["Morph"]] == morphs[2], ]
-          lines(growdatM[["Age_Beg"]], growdatM[["M"]],
-            lty = ltyvec[2], col = colvec[2],
-            lwd = 2, type = "o"
+          lines(
+            growdatM[["Age_Beg"]],
+            growdatM[["M"]],
+            lty = ltyvec[2],
+            col = colvec[2],
+            lwd = 2,
+            type = "o"
           )
-          legend("bottomleft",
-            bty = "n", c("Females", "Males"), lty = ltyvec, lwd = 2,
+          legend(
+            "bottomleft",
+            bty = "n",
+            c("Females", "Males"),
+            lty = ltyvec,
+            lwd = 2,
             col = c(colvec[col_index1], colvec[2])
           )
 
@@ -1455,8 +1998,14 @@ SSplotBiology <-
         file <- "bio21_natmort.png"
         caption <- "Natural mortality at age"
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         mfunc()
@@ -1472,7 +2021,8 @@ SSplotBiology <-
           "limited report detail."
         )
       }
-    } else { # temporarily disable multi-season plotting of time-varying growth
+    } else {
+      # temporarily disable multi-season plotting of time-varying growth
       if (is.null(growthseries)) {
         warning(
           "No time-varying growth info because starter file set to produce\n",
@@ -1482,15 +2032,19 @@ SSplotBiology <-
         # if growth is time varying and weight-at-age not used
         if (growthvaries & !wtatage_switch) {
           for (i in 1:nsexes) {
-            growdatuse <- growthseries[growthseries[["Yr"]] >= startyr - 2 &
-              growthseries[["Morph"]] == morphs[i], ]
+            growdatuse <- growthseries[
+              growthseries[["Yr"]] >= startyr - 2 &
+                growthseries[["Morph"]] == morphs[i],
+            ]
             # trim based on forecast=TRUE/FALSE
             if (!forecast) {
               growdatuse <- growdatuse[growdatuse[["Yr"]] <= endyr, ]
             }
             # trim based on minyr and maxyr
-            growdatuse <- growdatuse[growdatuse[["Yr"]] >= minyr &
-              growdatuse[["Yr"]] <= maxyr, ]
+            growdatuse <- growdatuse[
+              growdatuse[["Yr"]] >= minyr &
+                growdatuse[["Yr"]] <= maxyr,
+            ]
             # assemble vectors and matrix
             x <- 0:accuage
             y <- growdatuse[["Yr"]]
@@ -1512,19 +2066,34 @@ SSplotBiology <-
               }
               if (plot) {
                 if (22 %in% subplots) {
-                  persp(x, y, z,
-                    col = "white", xlab = labels[2], ylab = "",
-                    zlab = labels[1], expand = 0.5,
-                    box = TRUE, main = ifelse(mainTitle, main, ""),
-                    cex.main = cex.main, ticktype = "detailed",
-                    phi = 35, theta = -10
+                  persp(
+                    x,
+                    y,
+                    z,
+                    col = "white",
+                    xlab = labels[2],
+                    ylab = "",
+                    zlab = labels[1],
+                    expand = 0.5,
+                    box = TRUE,
+                    main = ifelse(mainTitle, main, ""),
+                    cex.main = cex.main,
+                    ticktype = "detailed",
+                    phi = 35,
+                    theta = -10
                   )
                 }
                 if (23 %in% subplots) {
-                  contour(x, y, z,
-                    nlevels = 12, xlab = labels[2],
+                  contour(
+                    x,
+                    y,
+                    z,
+                    nlevels = 12,
+                    xlab = labels[2],
                     main = ifelse(mainTitle, main, ""),
-                    cex.main = cex.main, col = ians_contour, lwd = 2
+                    cex.main = cex.main,
+                    col = ians_contour,
+                    lwd = 2
                   )
                 }
               }
@@ -1533,14 +2102,31 @@ SSplotBiology <-
                   file <- paste0("bio22_timevarygrowthsurf_sex", i, ".png")
                   caption <- "Perspective plot of time-varying growth"
                   plotinfo <- save_png(
-                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    plotinfo = plotinfo,
+                    file = file,
+                    plotdir = plotdir,
+                    pwidth = pwidth,
+                    pheight = pheight,
+                    punits = punits,
+                    res = res,
+                    ptsize = ptsize,
                     caption = caption
                   )
-                  persp(x, y, z,
-                    col = "white", xlab = labels[2], ylab = "", zlab = labels[1], expand = 0.5,
-                    box = TRUE, main = ifelse(mainTitle, main, ""), cex.main = cex.main, ticktype = "detailed",
-                    phi = 35, theta = -10
+                  persp(
+                    x,
+                    y,
+                    z,
+                    col = "white",
+                    xlab = labels[2],
+                    ylab = "",
+                    zlab = labels[1],
+                    expand = 0.5,
+                    box = TRUE,
+                    main = ifelse(mainTitle, main, ""),
+                    cex.main = cex.main,
+                    ticktype = "detailed",
+                    phi = 35,
+                    theta = -10
                   )
                   dev.off()
                 }
@@ -1548,13 +2134,26 @@ SSplotBiology <-
                   file <- paste0("bio23_timevarygrowthcontour_sex", i, ".png")
                   caption <- "Contour plot of time-varying growth"
                   plotinfo <- save_png(
-                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    plotinfo = plotinfo,
+                    file = file,
+                    plotdir = plotdir,
+                    pwidth = pwidth,
+                    pheight = pheight,
+                    punits = punits,
+                    res = res,
+                    ptsize = ptsize,
                     caption = caption
                   )
-                  contour(x, y, z,
-                    nlevels = 12, xlab = labels[2],
-                    main = ifelse(mainTitle, main, ""), cex.main = cex.main, col = ians_contour, lwd = 2
+                  contour(
+                    x,
+                    y,
+                    z,
+                    nlevels = 12,
+                    xlab = labels[2],
+                    main = ifelse(mainTitle, main, ""),
+                    cex.main = cex.main,
+                    col = ians_contour,
+                    lwd = 2
                   )
                   dev.off()
                 }
@@ -1576,11 +2175,19 @@ SSplotBiology <-
             MGparmAdj.tmp <- MGparmAdj[MGparmAdj[["Yr"]] <= endyr, ]
           }
           # trim based on minyr and maxyr
-          MGparmAdj.tmp <- MGparmAdj.tmp[MGparmAdj.tmp[["Yr"]] >= minyr &
-            MGparmAdj.tmp[["Yr"]] <= maxyr, ]
+          MGparmAdj.tmp <- MGparmAdj.tmp[
+            MGparmAdj.tmp[["Yr"]] >= minyr &
+              MGparmAdj.tmp[["Yr"]] <= maxyr,
+          ]
           # make plot
-          plot(MGparmAdj.tmp[["Yr"]], MGparmAdj.tmp[[parmlabel]],
-            xlab = labels[12], ylab = parmlabel, type = "l", lwd = 3, col = colvec[2]
+          plot(
+            MGparmAdj.tmp[["Yr"]],
+            MGparmAdj.tmp[[parmlabel]],
+            xlab = labels[12],
+            ylab = parmlabel,
+            type = "l",
+            lwd = 3,
+            col = colvec[2]
           )
         }
         # check to make sure MGparmAdj looks as expected
@@ -1595,23 +2202,35 @@ SSplotBiology <-
               # check for changes
               if (length(unique(parmvals[MGparmAdj[["Yr"]] <= endyr])) > 1) {
                 # make plot
-                if (plot) timeVaryingParmFunc(parmlabel, forecast = forecast)
+                if (plot) {
+                  timeVaryingParmFunc(parmlabel, forecast = forecast)
+                }
                 if (print) {
                   file <- paste0("bio24_time-varying_", parmlabel, ".png")
                   # replace % sign which cause problems for filename
                   file <- gsub(
-                    pattern = "%", replacement = "percent", x = file,
+                    pattern = "%",
+                    replacement = "percent",
+                    x = file,
                     fixed = TRUE
                   )
                   # replace : which which cause problems for filename
                   file <- gsub(
-                    pattern = ":", replacement = "_", x = file,
+                    pattern = ":",
+                    replacement = "_",
+                    x = file,
                     fixed = TRUE
                   )
                   caption <- "Time-varying mortality and growth parameters"
                   plotinfo <- save_png(
-                    plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                    pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                    plotinfo = plotinfo,
+                    file = file,
+                    plotdir = plotdir,
+                    pwidth = pwidth,
+                    pheight = pheight,
+                    punits = punits,
+                    res = res,
+                    ptsize = ptsize,
                     caption = caption
                   )
                   timeVaryingParmFunc(parmlabel, forecast = forecast)
@@ -1652,10 +2271,17 @@ SSplotBiology <-
         }
 
         # make plot (age vector should be the same for females and males)
-        plot(df[["Age_Beg"]], df[["Herma_Trans"]],
-          xaxs = "i", ylim = c(0, 1), las = 1,
-          xlab = labels[12], ylab = labels[13],
-          type = "l", lwd = 3, col = colvec[2]
+        plot(
+          df[["Age_Beg"]],
+          df[["Herma_Trans"]],
+          xaxs = "i",
+          ylim = c(0, 1),
+          las = 1,
+          xlab = labels[12],
+          ylab = labels[13],
+          type = "l",
+          lwd = 3,
+          col = colvec[2]
         )
         abline(h = c(0, 1), col = "grey")
       }
@@ -1663,17 +2289,29 @@ SSplotBiology <-
         # new area-specific columns in 3.30.21 have format "sex_ratio_area:1"
         # assuming that there will always be one column per area
         colnames <- grep("sex_ratio", names(growdatF), value = TRUE)
-        matplot(growdatF[["Age_Beg"]], growdatF[, colnames],
-          xaxs = "i", ylim = c(0, 1), las = 1, lty = 1:nareas,
-          xlab = labels[2], ylab = labels[14], type = "l", lwd = 3,
+        matplot(
+          growdatF[["Age_Beg"]],
+          growdatF[, colnames],
+          xaxs = "i",
+          ylim = c(0, 1),
+          las = 1,
+          lty = 1:nareas,
+          xlab = labels[2],
+          ylab = labels[14],
+          type = "l",
+          lwd = 3,
           col = areacols
         )
         # add grey line at 1.0
         abline(h = c(0, 1), col = "grey")
         # add legend if multiple lines per area
         if (length(colnames) > 1) {
-          legend(legendloc,
-            bty = "n", col = areacols, lty = 1:nareas, lwd = 3,
+          legend(
+            legendloc,
+            bty = "n",
+            col = areacols,
+            lty = 1:nareas,
+            lwd = 3,
             legend = paste("area", 1:nareas)
           )
         }
@@ -1690,8 +2328,12 @@ SSplotBiology <-
           plotinfo <- save_png(
             plotinfo = plotinfo,
             file = "bio31_hermaphrodite_transition.png",
-            plotdir = plotdir, pwidth = pwidth, pheight = pheight,
-            punits = punits, res = res, ptsize = ptsize,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = labels[13]
           )
           herma_func1()
@@ -1706,8 +2348,12 @@ SSplotBiology <-
           plotinfo <- save_png(
             plotinfo = plotinfo,
             file = "bio32_hermaphrodite_cumulative.png",
-            plotdir = plotdir, pwidth = pwidth, pheight = pheight,
-            punits = punits, res = res, ptsize = ptsize,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = labels[14]
           )
           herma_func2()
@@ -1720,7 +2366,6 @@ SSplotBiology <-
     ##   # Matrix of M-at-age if mortality varies with age and time
     ##   # strip off forecast years in M-at-age matrix
     ##   M_at_age <- M_at_age[M_at_age[["Year"]] <= endyr,]
-
 
     ##   if(any(M_at_age[["Bio_Pattern"]]!=1)){}
 
@@ -1781,6 +2426,8 @@ SSplotBiology <-
     ## }# end disable of time-varying growth for multi-season models
 
     # add category and return plotinfo
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Bio"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "Bio"
+    }
     return(invisible(plotinfo))
   }

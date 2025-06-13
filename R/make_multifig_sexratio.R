@@ -72,20 +72,46 @@
 #' overlap in functionality and arguments.
 #' @seealso [SS_plots()],[SSplotSexRatio()]
 make_multifig_sexratio <-
-  function(dbase, sexratio.option = 2, CI = 0.75,
-           sampsizeround = 1, maxrows = 6, maxcols = 6,
-           rows = 1, cols = 1, fixdims = TRUE, main = "", cex.main = 1,
-           xlab = "", ylab = "Fraction female", horiz_lab = "default", xbuffer = c(.1, .1),
-           ybuffer = "default", yupper = NULL,
-           datonly = FALSE,
-           showsampsize = TRUE, showeffN = TRUE,
-           axis1 = NULL,
-           axis2 = NULL, ptscex = 1,
-           ptscol = gray(.5), linescol = 4, lty = 1, lwd = 2, nlegends = 3,
-           legtext = list("yr", "sampsize", "effN"),
-           legx = "default", legy = "default",
-           legadjx = "default", legadjy = "default", legsize = c(1.2, 1.0),
-           legfont = c(2, 1), ipage = 0, multifig_oma = c(5, 5, 5, 2) + .1, ...) {
+  function(
+    dbase,
+    sexratio.option = 2,
+    CI = 0.75,
+    sampsizeround = 1,
+    maxrows = 6,
+    maxcols = 6,
+    rows = 1,
+    cols = 1,
+    fixdims = TRUE,
+    main = "",
+    cex.main = 1,
+    xlab = "",
+    ylab = "Fraction female",
+    horiz_lab = "default",
+    xbuffer = c(.1, .1),
+    ybuffer = "default",
+    yupper = NULL,
+    datonly = FALSE,
+    showsampsize = TRUE,
+    showeffN = TRUE,
+    axis1 = NULL,
+    axis2 = NULL,
+    ptscex = 1,
+    ptscol = gray(.5),
+    linescol = 4,
+    lty = 1,
+    lwd = 2,
+    nlegends = 3,
+    legtext = list("yr", "sampsize", "effN"),
+    legx = "default",
+    legy = "default",
+    legadjx = "default",
+    legadjy = "default",
+    legsize = c(1.2, 1.0),
+    legfont = c(2, 1),
+    ipage = 0,
+    multifig_oma = c(5, 5, 5, 2) + .1,
+    ...
+  ) {
     if (sexratio.option == 1 & ylab == "Fraction female") {
       # change the default ylab if the user hasn't replaced it
       ylab <- "Female:Male Ratio"
@@ -113,8 +139,16 @@ make_multifig_sexratio <-
 
     for (yr.temp in yrvec) {
       for (bin in unique(dbase[["Bin"]])) {
-        female <- dbase[dbase[["Sex"]] == 1 & dbase[["Bin"]] == bin & dbase[["Yr"]] == yr.temp, ]
-        male <- dbase[dbase[["Sex"]] == 2 & dbase[["Bin"]] == bin & dbase[["Yr"]] == yr.temp, ]
+        female <- dbase[
+          dbase[["Sex"]] == 1 &
+            dbase[["Bin"]] == bin &
+            dbase[["Yr"]] == yr.temp,
+        ]
+        male <- dbase[
+          dbase[["Sex"]] == 2 &
+            dbase[["Bin"]] == bin &
+            dbase[["Yr"]] == yr.temp,
+        ]
         nm <- nrow(male)
         nf <- nrow(female)
         ## Four cases depending on which data were observed. If only one sex
@@ -144,13 +178,17 @@ make_multifig_sexratio <-
           # IGT 2019-05-02: should check for case where sexes are input separately
           effN <- female[["effN"]]
           Nsamp_adj <- female[["Nsamp_adj"]]
-          if (sexratio.option == 1) { # females:males
+          if (sexratio.option == 1) {
+            # females:males
             e <- (female[["Exp"]] - minobs) / (male[["Exp"]] - minobs)
             o <- (female[["Obs"]] - minobs) / (male[["Obs"]] - minobs)
           }
-          if (sexratio.option == 2) { # female:total
-            e <- (female[["Exp"]] - minobs) / (female[["Exp"]] + male[["Exp"]] - 2 * minobs)
-            o <- (female[["Obs"]] - minobs) / (female[["Obs"]] + male[["Obs"]] - 2 * minobs)
+          if (sexratio.option == 2) {
+            # female:total
+            e <- (female[["Exp"]] - minobs) /
+              (female[["Exp"]] + male[["Exp"]] - 2 * minobs)
+            o <- (female[["Obs"]] - minobs) /
+              (female[["Obs"]] + male[["Obs"]] - 2 * minobs)
           }
           # need rounding to avoid differences like -2.122513e-17
           pf <- female[["Obs"]]
@@ -159,13 +197,21 @@ make_multifig_sexratio <-
           o <- round(o, 10)
 
           # calculate SE of the ratio
-          if (sexratio.option == 1) { # females:males
+          if (sexratio.option == 1) {
+            # females:males
             se.ratio <-
-              sqrt((pf / pm)^2 * ((1 - pf) / (pf * Nsamp_adj) + (1 - pm) / (pm * Nsamp_adj) + 2 / Nsamp_adj))
+              sqrt(
+                (pf / pm)^2 *
+                  ((1 - pf) /
+                    (pf * Nsamp_adj) +
+                    (1 - pm) / (pm * Nsamp_adj) +
+                    2 / Nsamp_adj)
+              )
             lwr <- qnorm((1 - CI) / 2, o, se.ratio)
             upr <- qnorm(1 - (1 - CI) / 2, o, se.ratio)
           }
-          if (sexratio.option == 2) { # female:total
+          if (sexratio.option == 2) {
+            # female:total
             pt <- female[["Obs"]] + male[["Obs"]] - 2 * minobs
             # assuming sample size for this bin is at least 1
             Nbin <- max(pt * Nsamp_adj, 1)
@@ -204,8 +250,14 @@ make_multifig_sexratio <-
           o <- e <- se.ratio <- lwr <- upr <- effN <- Nsamp_adj <- NA
         }
         df.list[[k]] <- data.frame(
-          Yr = yr.temp, Bin = bin, Exp = e, Obs = o,
-          lwr = lwr, upr = upr, effN = effN, Nsamp_adj = Nsamp_adj
+          Yr = yr.temp,
+          Bin = bin,
+          Exp = e,
+          Obs = o,
+          lwr = lwr,
+          upr = upr,
+          effN = effN,
+          Nsamp_adj = Nsamp_adj
         )
         k <- k + 1
       }
@@ -215,16 +267,21 @@ make_multifig_sexratio <-
 
     ## Calculate ranges of plots
     xrange <- range(df[["Bin"]], na.rm = TRUE)
-    if (sexratio.option == 1) { # females:males
+    if (sexratio.option == 1) {
+      # females:males
       if (nrow(df[!is.na(df[["se.ratio"]]), ]) == 0) {
         warning(paste("No SE of ratio found, defaulting to ymax of 4"))
         yrange <- c(0, 4)
       } else {
-        yrange <- c(0, max(c(df[["Exp"]], df[["Obs"]] + 0 * df[["se.ratio"]]), na.rm = TRUE))
+        yrange <- c(
+          0,
+          max(c(df[["Exp"]], df[["Obs"]] + 0 * df[["se.ratio"]]), na.rm = TRUE)
+        )
       }
       if (!is.null(yupper)) yrange <- c(0, yupper)
     }
-    if (sexratio.option == 2) { # females:total
+    if (sexratio.option == 2) {
+      # females:total
       yrange <- c(0, 1)
     }
     if (ybuffer[1] == "default") {
@@ -239,7 +296,8 @@ make_multifig_sexratio <-
     yrange_big <- yrange + c(-1, 1) * ybuffer * diff(yrange)
     ## I replaced <number>/0 above with Inf so replace those and any points
     ## outside the region to be "x" on the top of the plot
-    if (sexratio.option == 1) { # females:males
+    if (sexratio.option == 1) {
+      # females:males
       which.toobig <- which(df[["Obs"]] > yrange_big[2])
       which.toosmall <- which(df[["Obs"]] == 0)
       df[["Obs"]][which.toobig] <- yrange_big[2]
@@ -248,7 +306,8 @@ make_multifig_sexratio <-
       df[["pch2"]][which.toobig] <- 4
       df[["pch2"]][which.toosmall] <- 4
     }
-    if (sexratio.option == 2) { # females:total
+    if (sexratio.option == 2) {
+      # females:total
       df[["pch2"]] <- 16
     }
 
@@ -256,45 +315,83 @@ make_multifig_sexratio <-
     yaxs_lab <- pretty(yrange)
     maxchar <- max(nchar(yaxs_lab))
     ## should y-axis label be horizontal?
-    if (horiz_lab == "default") horiz_lab <- maxchar < 6
-    if (is.null(axis1)) axis1 <- pretty(xrange)
-    if (is.null(axis2)) axis2 <- pretty(yrange)
+    if (horiz_lab == "default") {
+      horiz_lab <- maxchar < 6
+    }
+    if (is.null(axis1)) {
+      axis1 <- pretty(xrange)
+    }
+    if (is.null(axis2)) {
+      axis2 <- pretty(yrange)
+    }
 
     ## create multifigure layout, set inner margins all to 0 and add outer margins
     ## old graphics parameter settings
     par_old <- par()
-    on.exit(par(mfcol = par_old[["mfcol"]], mar = par_old[["mar"]], oma = par_old[["oma"]]))
+    on.exit(par(
+      mfcol = par_old[["mfcol"]],
+      mar = par_old[["mar"]],
+      oma = par_old[["oma"]]
+    ))
     ## new settings
     par(mfcol = c(nrows, ncols), mar = rep(0, 4), oma = multifig_oma)
     panelrange <- 1:npanels
     if (npages > 1 & ipage != 0) {
-      panelrange <- intersect(panelrange, 1:(nrows * ncols) + nrows * ncols * (ipage - 1))
+      panelrange <- intersect(
+        panelrange,
+        1:(nrows * ncols) + nrows * ncols * (ipage - 1)
+      )
     }
     ## Loop through each panel (year) and make plot
     for (ipanel in panelrange) {
       yr_i <- yrvec[ipanel]
-      plot(0,
-        type = "n", axes = FALSE, xlab = "", ylab = "", xlim = xrange_big,
-        ylim = yrange_big, xaxs = "i", yaxs = "i"
+      plot(
+        0,
+        type = "n",
+        axes = FALSE,
+        xlab = "",
+        ylab = "",
+        xlim = xrange_big,
+        ylim = yrange_big,
+        xaxs = "i",
+        yaxs = "i"
       )
-      if (sexratio.option == 1) { # females:males
+      if (sexratio.option == 1) {
+        # females:males
         abline(h = 1, col = "grey") # grey line at 0
       }
-      if (sexratio.option == 2) { # females:total
+      if (sexratio.option == 2) {
+        # females:total
         abline(h = 0.5, col = "grey") # grey line at 0.5
         abline(h = c(0, 1), col = "grey", lty = 3) # grey line at 0.5
       }
       df2 <- na.omit(df[df[["Yr"]] == yr_i, ])
       df2 <- df2[order(df2[["Bin"]]), ]
       points(
-        x = df2[["Bin"]], y = df2[["Obs"]], ylim = yrange_big, xlim = xrange_big, pch = df2[["pch2"]],
-        col = ptscol, cex = ptscex
+        x = df2[["Bin"]],
+        y = df2[["Obs"]],
+        ylim = yrange_big,
+        xlim = xrange_big,
+        pch = df2[["pch2"]],
+        col = ptscol,
+        cex = ptscex
       )
-      segments(x0 = df2[["Bin"]], y0 = df2[["lwr"]], y1 = df2[["upr"]], col = ptscol)
+      segments(
+        x0 = df2[["Bin"]],
+        y0 = df2[["lwr"]],
+        y1 = df2[["upr"]],
+        col = ptscol
+      )
 
       # add model expectation (unless data-only plot is requested)
       if (!datonly) {
-        lines(df2[["Bin"]], y = df2[["Exp"]], lwd = lwd, lty = lty, col = linescol)
+        lines(
+          df2[["Bin"]],
+          y = df2[["Exp"]],
+          lwd = lwd,
+          lty = lty,
+          col = linescol
+        )
       }
 
       ## add legends
@@ -340,14 +437,20 @@ make_multifig_sexratio <-
         }
         ## add legend text
         text(
-          x = textx, y = texty, labels = text_i, adj = c(adjx, adjy),
-          cex = legsize[i], font = legfont[i]
+          x = textx,
+          y = texty,
+          labels = text_i,
+          adj = c(adjx, adjy),
+          cex = legsize[i],
+          font = legfont[i]
         )
       } # end of legend loop
       ## add axes in left and lower outer margins
       mfg <- par("mfg")
       ## axis on bottom panels and final panel
-      if (mfg[1] == mfg[3] | ipanel == npanels) axis(side = 1, at = axis1)
+      if (mfg[1] == mfg[3] | ipanel == npanels) {
+        axis(side = 1, at = axis1)
+      }
       if (mfg[2] == 1) {
         ## axis on left side panels
         axis(side = 2, at = axis2, las = horiz_lab)
@@ -357,17 +460,34 @@ make_multifig_sexratio <-
       if (npanels == 1 | ipanel %% (nrows * ncols) == 1) {
         ## add title after plotting first panel on each page of panels
         fixcex <- 1 # compensates for automatic adjustment caused by par(mfcol)
-        if (max(nrows, ncols) == 2) fixcex <- 1 / 0.83
-        if (max(nrows, ncols) > 2) fixcex <- 1 / 0.66
+        if (max(nrows, ncols) == 2) {
+          fixcex <- 1 / 0.83
+        }
+        if (max(nrows, ncols) > 2) {
+          fixcex <- 1 / 0.66
+        }
         if (npanels > 1) {
-          title(main = main, line = c(2, 0, 3, 3), outer = TRUE, cex.main = cex.main * fixcex)
+          title(
+            main = main,
+            line = c(2, 0, 3, 3),
+            outer = TRUE,
+            cex.main = cex.main * fixcex
+          )
           title(xlab = xlab, outer = TRUE, cex.lab = fixcex)
           title(
-            ylab = ylab, line = ifelse(horiz_lab, max(3, 2 + .4 * maxchar), 3.5),
-            outer = TRUE, cex.lab = fixcex
+            ylab = ylab,
+            line = ifelse(horiz_lab, max(3, 2 + .4 * maxchar), 3.5),
+            outer = TRUE,
+            cex.lab = fixcex
           )
         } else {
-          title(main = main, xlab = xlab, ylab = ylab, outer = TRUE, cex.main = cex.main)
+          title(
+            main = main,
+            xlab = xlab,
+            ylab = ylab,
+            outer = TRUE,
+            cex.main = cex.main
+          )
         }
       } # end of first panel checks
     } # end of loop through years

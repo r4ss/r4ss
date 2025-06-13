@@ -43,22 +43,34 @@
 #' herring (*Clupea pallasii*) stocks in British Columbia, Canada. *Can. J. Fish.
 #' Aquat. Sci.* 80: 1071-1083. <https://doi.org/10.1139/cjfas-2022-0168>.
 SSplotYield <-
-  function(replist,
-           subplots = 1:5,
-           refpoints = c("MSY", "Btgt", "SPR", "Current"),
-           add = FALSE, plot = TRUE, print = FALSE,
-           labels = c(
-             "Fraction unfished", # 1
-             "Equilibrium yield (t)", # 2
-             "Total biomass (t)", # 3
-             "Surplus production (t)", # 4
-             "Yield per recruit (kg)", # 5
-             "Spawning output" # 6
-           ),
-           col = "blue", col2 = "black", lty = 1, lwd = 2, cex.main = 1,
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
-           plotdir = "default",
-           verbose = TRUE) {
+  function(
+    replist,
+    subplots = 1:5,
+    refpoints = c("MSY", "Btgt", "SPR", "Current"),
+    add = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    labels = c(
+      "Fraction unfished", # 1
+      "Equilibrium yield (t)", # 2
+      "Total biomass (t)", # 3
+      "Surplus production (t)", # 4
+      "Yield per recruit (kg)", # 5
+      "Spawning output" # 6
+    ),
+    col = "blue",
+    col2 = "black",
+    lty = 1,
+    lwd = 2,
+    cex.main = 1,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    plotdir = "default",
+    verbose = TRUE
+  ) {
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -69,7 +81,9 @@ SSplotYield <-
     equil_yield <- equil_yield[equil_yield[["SPRloop"]] != 3, ]
     # sort across the various iterations by increasing Depletion value
     # previously this was done in SS_output()
-    equil_yield <- equil_yield[order(equil_yield[["Depletion"]], decreasing = FALSE), ]
+    equil_yield <- equil_yield[
+      order(equil_yield[["Depletion"]], decreasing = FALSE),
+    ]
     # column named changed from Catch to Tot_Catch in SSv3.30
     if ("Tot_Catch" %in% names(equil_yield)) {
       equil_yield[["Catch"]] <- equil_yield[["Tot_Catch"]]
@@ -83,48 +97,67 @@ SSplotYield <-
     yieldfunc <- function(refpoints = NULL) {
       if (!add) {
         # empty plot
-        plot(0,
-          type = "n", xlim = c(0, max(equil_yield[["Depletion"]], 1, na.rm = TRUE)),
+        plot(
+          0,
+          type = "n",
+          xlim = c(0, max(equil_yield[["Depletion"]], 1, na.rm = TRUE)),
           ylim = c(0, max(equil_yield[["Catch"]], na.rm = TRUE)),
-          xlab = labels[1], ylab = labels[2]
+          xlab = labels[1],
+          ylab = labels[2]
         )
         abline(h = 0, col = "grey")
         abline(v = 0, col = "grey")
       }
 
       # add lines for reference points (if requested)
-      lines(equil_yield[["Depletion"]], equil_yield[["Catch"]],
-        lwd = lwd, col = col, lty = lty
+      lines(
+        equil_yield[["Depletion"]],
+        equil_yield[["Catch"]],
+        lwd = lwd,
+        col = col,
+        lty = lty
       )
       colvec <- c(4, 2, 3, 1)
       if ("MSY" %in% refpoints) {
         lines(
           x = rep(replist[["derived_quants"]]["SSB_MSY", "Value"] / SSB0, 2),
           y = c(0, replist[["derived_quants"]]["Dead_Catch_MSY", "Value"]),
-          col = colvec[1], lwd = 2, lty = 2
+          col = colvec[1],
+          lwd = 2,
+          lty = 2
         )
       }
       if ("Btgt" %in% refpoints) {
         lines(
           x = rep(replist[["derived_quants"]]["SSB_Btgt", "Value"] / SSB0, 2),
           y = c(0, replist[["derived_quants"]]["Dead_Catch_Btgt", "Value"]),
-          col = colvec[2], lwd = 2, lty = 2
+          col = colvec[2],
+          lwd = 2,
+          lty = 2
         )
       }
       if ("SPR" %in% refpoints) {
         lines(
           x = rep(replist[["derived_quants"]]["SSB_SPR", "Value"] / SSB0, 2),
           y = c(0, replist[["derived_quants"]]["Dead_Catch_SPR", "Value"]),
-          col = colvec[3], lwd = 2, lty = 2
+          col = colvec[3],
+          lwd = 2,
+          lty = 2
         )
       }
       if ("Current" %in% refpoints) {
-        which_val <- which(abs(equil_yield[["Depletion"]] - replist[["current_depletion"]]) ==
-          min(abs(equil_yield[["Depletion"]] - replist[["current_depletion"]])))[1]
+        which_val <- which(
+          abs(equil_yield[["Depletion"]] - replist[["current_depletion"]]) ==
+            min(abs(
+              equil_yield[["Depletion"]] - replist[["current_depletion"]]
+            ))
+        )[1]
         lines(
           x = rep(replist[["current_depletion"]], 2),
           y = c(0, equil_yield[["Catch"]][which_val]),
-          col = colvec[4], lwd = 2, lty = 2
+          col = colvec[4],
+          lwd = 2,
+          lty = 2
         )
       }
       # legend
@@ -135,8 +168,11 @@ SSplotYield <-
         "Current" %in% refpoints
       )
       if (any(which_lines)) {
-        legend("topright",
-          bty = "n", lwd = 2, lty = 2,
+        legend(
+          "topright",
+          bty = "n",
+          lwd = 2,
+          lty = 2,
           col = colvec[which_lines],
           legend = refpoints # c("MSY", "B target", "SPR target", "Current")
         )
@@ -148,9 +184,11 @@ SSplotYield <-
       if (!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))) {
         # further test for bad values
         # (not sure the circumstances where this is needed)
-        if (any(!is.na(equil_yield[["Depletion"]])) &
-          any(!is.na(equil_yield[["Catch"]])) &
-          any(!is.infinite(equil_yield[["Depletion"]]))) {
+        if (
+          any(!is.na(equil_yield[["Depletion"]])) &
+            any(!is.na(equil_yield[["Catch"]])) &
+            any(!is.infinite(equil_yield[["Depletion"]]))
+        ) {
           if (1 %in% subplots) {
             # make plot
             if (plot) {
@@ -160,8 +198,14 @@ SSplotYield <-
               file <- "yield1_yield_curve.png"
               caption <- "Yield curve"
               plotinfo <- save_png(
-                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                plotinfo = plotinfo,
+                file = file,
+                plotdir = plotdir,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                res = res,
+                ptsize = ptsize,
                 caption = caption
               )
               yieldfunc()
@@ -177,8 +221,14 @@ SSplotYield <-
               file <- "yield2_yield_curve_with_refpoints.png"
               caption <- "Yield curve with reference points"
               plotinfo <- save_png(
-                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                plotinfo = plotinfo,
+                file = file,
+                plotdir = plotdir,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                res = res,
+                ptsize = ptsize,
                 caption = caption
               )
               yieldfunc(refpoints = refpoints)
@@ -186,10 +236,14 @@ SSplotYield <-
             }
           }
         } else {
-          message("Skipped equilibrium yield plots: equil_yield has all NA values")
+          message(
+            "Skipped equilibrium yield plots: equil_yield has all NA values"
+          )
         }
       } else {
-        message("Skipped equilibrium yield plots: no equil_yield results in this model")
+        message(
+          "Skipped equilibrium yield plots: no equil_yield results in this model"
+        )
       }
     } # end equilibrium yield plots
 
@@ -198,7 +252,9 @@ SSplotYield <-
       # timeseries excluding equilibrium conditions or forecasts
       dplyr::filter(!Era %in% c("VIRG", "FORE")) |>
       # add up dead fish from all fleets
-      dplyr::mutate(catch_tot = rowSums(pick(starts_with("dead(B)")), na.rm = TRUE)) |>
+      dplyr::mutate(
+        catch_tot = rowSums(pick(starts_with("dead(B)")), na.rm = TRUE)
+      ) |>
       # sum by areas
       dplyr::group_by(Yr, Seas) |>
       dplyr::summarise(
@@ -236,7 +292,14 @@ SSplotYield <-
       ylim <- c(min(0, y, na.rm = TRUE), max(y, na.rm = TRUE))
       # make empty plot
       if (!add) {
-        plot(0, ylim = ylim, xlim = xlim, xlab = xlab, ylab = labels[4], type = "n")
+        plot(
+          0,
+          ylim = ylim,
+          xlim = xlim,
+          xlab = xlab,
+          ylab = labels[4],
+          type = "n"
+        )
       }
       # add lines
       lines(x, y, col = col2)
@@ -244,8 +307,15 @@ SSplotYield <-
       old_warn <- options()[["warn"]] # previous setting
       options(warn = -1) # turn off "zero-length arrow" warning
       s <- seq(length(y) - 1)
-      arrows(x[s], y[s], x[s + 1], y[s + 1],
-        length = 0.06, angle = 20, col = col2, lwd = 1.2
+      arrows(
+        x[s],
+        y[s],
+        x[s + 1],
+        y[s + 1],
+        length = 0.06,
+        angle = 20,
+        col = col2,
+        lwd = 1.2
       )
       options(warn = old_warn) # returning to old value
 
@@ -294,8 +364,14 @@ SSplotYield <-
             "65: 2536-2551. <a href='https://doi.org/10.1139/F08-170'>https://doi.org/10.1139/F08-170</a>.</blockquote>"
           )
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         sprodfunc(bio_col = "mean_Bio_all", xlab = labels[3])
@@ -319,8 +395,14 @@ SSplotYield <-
             "<a href='https://doi.org/10.1139/cjfas-2022-0168'>https://doi.org/10.1139/cjfas-2022-0168</a>.</blockquote>"
           )
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         sprodfunc(bio_col = "mean_SpawnBio", xlab = labels[6])
@@ -333,7 +415,9 @@ SSplotYield <-
       sprseries <- replist[["sprseries"]]
       if (is.null(sprseries)) {
         if (verbose) {
-          message("Skipping yield per recruit plot because SPR_SERIES not in output")
+          message(
+            "Skipping yield per recruit plot because SPR_SERIES not in output"
+          )
         }
       } else {
         if (plot) {
@@ -343,8 +427,14 @@ SSplotYield <-
           file <- "yield5_YPR_timeseries.png"
           caption <- "Time series of yield per recruit (kg)"
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           YPR_timeseries()
@@ -353,6 +443,8 @@ SSplotYield <-
       } # end check for sprseries available
     } # end check for 4 in subplots
 
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Yield"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "Yield"
+    }
     return(invisible(plotinfo))
   } # end function

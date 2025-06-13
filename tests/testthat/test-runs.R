@@ -41,16 +41,22 @@ test_that("retro() and populate_multiple_folders() both work", {
     message = "skipping test that requires SS3 executable"
   )
   # ensure retro runs in parallel (more likely to cause errors)
-  future::plan(future::multisession, workers = parallelly::availableCores(omit = 1))
+  future::plan(
+    future::multisession,
+    workers = parallelly::availableCores(omit = 1)
+  )
   retro(
     dir = path_simple_small,
-    oldsubdir = "", newsubdir = "retrospectives", years = retro_years,
+    oldsubdir = "",
+    newsubdir = "retrospectives",
+    years = retro_years,
     show_in_console = FALSE
   )
   # shut down cluster
   future::plan(future::sequential)
   retro_subdirs <- file.path(
-    path_simple_small, "retrospectives",
+    path_simple_small,
+    "retrospectives",
     paste0("retro", retro_years)
   )
   retro_ran <- lapply(
@@ -62,7 +68,8 @@ test_that("retro() and populate_multiple_folders() both work", {
   # read model output from the retrospectives
   retroModels <- SSgetoutput(
     dirvec = file.path(
-      path_simple_small, "retrospectives",
+      path_simple_small,
+      "retrospectives",
       paste0("retro", retro_years)
     )
   )
@@ -70,7 +77,8 @@ test_that("retro() and populate_multiple_folders() both work", {
   retroSummary <- SSsummarize(retroModels)
   # set the fector of ending years
   endyrvec <- retroSummary$endyrs + retro_years
-  SSplotComparisons(retroSummary,
+  SSplotComparisons(
+    retroSummary,
     endyrvec = endyrvec,
     legendlabels = paste("Data", retro_years, "years")
   )
@@ -135,8 +143,12 @@ test_that("jitter runs on simple_small model", {
   if (skipexe) {
     # error expected when no exe found
     expect_error(jitter(
-      dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = FALSE, verbose = TRUE, exe = "ss3"
+      dir = dir.jit,
+      Njitter = 2,
+      jitter_fraction = 0.1,
+      printlikes = FALSE,
+      verbose = TRUE,
+      exe = "ss3"
     ))
     # starter file shouldn't have changed if exe check failed
     starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose = FALSE)
@@ -146,20 +158,29 @@ test_that("jitter runs on simple_small model", {
     expect_true(all(unlist(run_results_jit_init == "ran model")))
 
     likesaved <- jitter(
-      dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = TRUE, verbose = TRUE, show_in_console = FALSE, exe = "ss3"
+      dir = dir.jit,
+      Njitter = 2,
+      jitter_fraction = 0.1,
+      printlikes = TRUE,
+      verbose = TRUE,
+      show_in_console = FALSE,
+      exe = "ss3"
     )
 
     # Test running in parallel
     ncores <- parallelly::availableCores(omit = 1)
     future::plan(future::multisession, workers = ncores)
     likesaved <- jitter(
-      dir = dir.jit, Njitter = 2, jitter_fraction = 0.1,
-      printlikes = TRUE, verbose = TRUE, show_in_console = FALSE, exe = "ss3",
+      dir = dir.jit,
+      Njitter = 2,
+      jitter_fraction = 0.1,
+      printlikes = TRUE,
+      verbose = TRUE,
+      show_in_console = FALSE,
+      exe = "ss3",
       skipfinished = FALSE
     )
     future::plan(future::sequential)
-
 
     # confirm that likelihoods were returned by function
     expect_true(is.vector(likesaved) & length(likesaved) == 2)
@@ -171,7 +192,10 @@ test_that("jitter runs on simple_small model", {
     # check jitter output
     jitter_output <- SSgetoutput(dir.jit, keyvec = c(1:2))
     jitter_summary <- SSsummarize(jitter_output)
-    expect_equal(length(grep("replist", colnames(jitter_summary[["likelihoods"]][1, ]))), 2)
+    expect_equal(
+      length(grep("replist", colnames(jitter_summary[["likelihoods"]][1, ]))),
+      2
+    )
     expect_equal(length(grep("replist", colnames(jitter_summary[["pars"]]))), 2)
   }
   expect_equal(starter$init_values_src, 0)
@@ -203,12 +227,16 @@ test_that("profile functions run on simple_small model", {
   # write modified starter file
   SS_writestarter(starter, dir = dir.prof, overwrite = TRUE)
   # ensure profile runs in parallel (more likely to cause errors)
-  future::plan(future::multisession, workers = parallelly::availableCores(omit = 1))
+  future::plan(
+    future::multisession,
+    workers = parallelly::availableCores(omit = 1)
+  )
   # run profile
   prof.table <- profile(
     dir = dir.prof,
     oldctlfile = "control.ss",
-    string = "R0", profilevec = c(8.5, 9)
+    string = "R0",
+    profilevec = c(8.5, 9)
   )
   # shut down cluster
   future::plan(future::sequential)
@@ -238,7 +266,8 @@ test_that("Run an SS3 model and read the hessian", {
   )
   copy_results <- copy_SS_inputs(
     dir.old = path_simple_small,
-    dir.new = file.path(tmp_path, "test_mod_run"), copy_exe = TRUE
+    dir.new = file.path(tmp_path, "test_mod_run"),
+    copy_exe = TRUE
   )
   expect_true(copy_results)
   run_results <- run(dir = file.path(tmp_path, "test_mod_run"))
@@ -251,7 +280,6 @@ test_that("Run an SS3 model and read the hessian", {
 })
 
 ###############################################################################
-
 
 # clean up (should delete the temporary directory in which everything was run)
 unlink(tmp_path, recursive = TRUE)
