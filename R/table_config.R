@@ -40,7 +40,7 @@ table_config <- function(replist, dir = NULL, verbose = TRUE) {
 
   table <- data.frame(
     Section = c(
-      "Maximum age",
+      "Maximum model age",
       "Sexes",
       "Population bins",
       "Summary biomass (mt) age",
