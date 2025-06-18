@@ -475,15 +475,25 @@ SSplotBiology <-
         }
       } else {
         ## if empirical weight-at-age IS used
+        # calculate maximum weight across all sexes
+        wtmax <- wtatage[
+          wtatage[["fleet"]] == -1 &
+            wtatage[["seas"]] == seas,
+          -(1:6)
+        ] |>
+          max()
+        # get matrix (including initial year column)
         wtmat <- wtatage[
           wtatage[["fleet"]] == -1 &
             wtatage[["sex"]] == sex &
             wtatage[["seas"]] == seas,
           -(2:6)
         ]
+        # check matrix
         wtmat <- clean_wtatage(wtmat)
+        # plot it
         if (!is.null(wtmat)) {
-          makeimage(wtmat, main = "")
+          makeimage(wtmat, main = "", lastbin = wtmax)
         }
       }
     }
@@ -559,7 +569,7 @@ SSplotBiology <-
       }
     }
 
-    makeimage <- function(mat, main = "") {
+    makeimage <- function(mat, main = "", lastbin = NULL) {
       yrvec <- abs(mat[["year"]])
       ##### this stuff was used to add a row of mean values
       ## if(is.null(meanvec)){
@@ -573,7 +583,9 @@ SSplotBiology <-
       subset <- yrvec >= minyr & yrvec <= maxyr
       yrvec2 <- yrvec[subset]
       mat2 <- mat[subset, -1]
-      lastbin <- max(mat2)
+      if (is.null(lastbin)) {
+        lastbin <- max(mat2)
+      }
       z <- t(mat2)
       breaks <- seq(0, lastbin, length = 51)
       col <- rainbow(60)[1:50]
@@ -775,8 +787,10 @@ SSplotBiology <-
       }
     }
 
-    ymax <- max(biology[["Len_mean"]])
-    x <- growdatF[["Age_Beg"]]
+    if (!wtatage_switch) {
+      ymax <- max(biology[["Len_mean"]])
+      x <- growdatF[["Age_Beg"]]
+    }
 
     main <- "Ending year expected growth (with 95% intervals)"
     # if(nseasons > 1){main <- paste(main," season 1",sep="")}
@@ -1801,11 +1815,12 @@ SSplotBiology <-
       }
       if (6 %in% subplots) {
         file <- "bio6_maturity.png"
-        caption <- paste(
-          "Maturity at",
-          ifelse(min(biology[["Mat"]]) < 1, "length", "age")
-        )
-        if (wtatage_switch) {
+        if (!wtatage_switch) {
+          caption <- paste(
+            "Maturity at",
+            ifelse(min(biology[["Mat"]]) < 1, "length", "age")
+          )
+        } else {
           caption <- "Spawning output at age (maturity x fecundity)"
         }
         plotinfo <- save_png(
