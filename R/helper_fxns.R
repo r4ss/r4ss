@@ -561,8 +561,8 @@ tryCatch.W.E <- function(expr) {
 check_replist <- function(replist) {
   if (is.null(replist) || !is.list(replist) || !"nfleets" %in% names(replist)) {
     cli::cli_abort(
-      "The input 'replist' should refer to an R object created by",
-      " the function 'SS_output'."
+      "The input 'replist' should refer to an R object created by the function
+      'SS_output'."
     )
   }
 }
