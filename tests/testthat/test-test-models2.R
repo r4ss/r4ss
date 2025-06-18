@@ -1,4 +1,4 @@
-test_that("test-models (1 to 10) work with SS_output(), SS_plots(), and table_all()", {
+test_that("test-models (11 to 18) work with SS_output(), SS_plots(), and table_all()", {
   skip_if(
     !file.exists(system.file("extdata", "models", package = "r4ss")),
     message = "No 'models' folder in 'extdata'"
@@ -25,7 +25,7 @@ test_that("test-models (1 to 10) work with SS_output(), SS_plots(), and table_al
     file.path(mod_path, "models"),
     full.names = TRUE,
     recursive = FALSE
-  )[1:10]  # only take the first 10 models
+  )[-(1:10)]  # only take models 11 to 18 (or however many are there)
 
   # run models without estimation and then run r4ss functions
   message(
