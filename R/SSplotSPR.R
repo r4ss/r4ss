@@ -281,6 +281,11 @@ SSplotSPR <-
       mean = SPRratio[["Value"]],
       sd = SPRratio[["StdDev"]]
     )
+    # assume that SPR ratio is non-negative
+    SPRratio[["lower"]] <- pmax(
+      SPRratio[["lower"]],
+      0
+    )
 
     # get B ratio and uncertainty (used in suplots 3 and 4)
     Bratio <- derived_quants[grep("^Bratio_", derived_quants[["Label"]]), ]
