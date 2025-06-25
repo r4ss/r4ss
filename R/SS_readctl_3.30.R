@@ -876,7 +876,7 @@ SS_readctl_3.30 <- function(
 
   # SR -----
   ctllist <- add_elem(ctllist, "SR_function") # _SR_function
-  N_SRparm <- c(0, 2, 2, 2, 3, 2, 3, 3, 3, 3)
+  N_SRparm <- c(0, 2, 2, 2, 3, 2, 3, 3, 3, 4)
   N_SRparm2 <- N_SRparm[as.numeric(ctllist[["SR_function"]])] + 3
 
   if (is.na(ctllist[["SR_function"]])) {
@@ -913,7 +913,7 @@ SS_readctl_3.30 <- function(
     # survival_3Parm
     c(
       "SR_LN(R0)",
-      "SR_surv_Sfrac",
+      "SR_surv_zfrac",
       "SR_surv_Beta",
       "SR_sigmaR",
       "SR_regime",
@@ -930,21 +930,22 @@ SS_readctl_3.30 <- function(
       "SR_autocorr"
     )
   } else if (ctllist[["SR_function"]] == 9) {
-    # Shepard_reparam_beta
+    # Ricker Power parameters
     c(
       "SR_LN(R0)",
-      "SR_re_steepness",
-      "SR_Shepard_c",
+      "SR_RkrPower_steep",
+      "SR_RkrPower_gamma",
       "SR_sigmaR",
       "SR_regime",
       "SR_autocorr"
     )
   } else if (ctllist[["SR_function"]] == 10) {
-    # Ricker SRR reparam beta
+    # B-H_ab
     c(
-      "SR_LN(R0)",
-      "SR_Ricker_re_steep",
-      "SR_Ricker_re_power",
+      "SR_LN(R0)_derived",
+      "SR_BH_steep_derived",
+      "SR_BH_ln(alpha)",
+      "SR_BH_ln(beta)",
       "SR_sigmaR",
       "SR_regime",
       "SR_autocorr"

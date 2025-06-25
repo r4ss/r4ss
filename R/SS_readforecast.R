@@ -14,7 +14,7 @@
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @family read/write functions
-
+file <- "C:\\Users\\elizabeth.gugliotti\\Desktop\\timevary_growth_files\\forecast.ss_new"
 SS_readforecast <- function(
   file = "forecast.ss",
   Nfleets = NULL,
@@ -370,7 +370,17 @@ SS_readforecast <- function(
     )
     forelist <- add_elem(forelist, "fcast_rec_option")
     forelist <- add_elem(forelist, "fcast_rec_val")
-    forelist <- add_elem(forelist, "Fcast_loop_control_5") # not used
+    forelist <- add_elem(forelist, "HCR_anchor") # used as of 3.30.24
+    # If number is -1 from when not used, use 0 instead to have it use the old 
+    # hardwired approach
+    if(forelist[["HCR_anchor"]] == -1){
+      forelist[["HCR_anchor"]] <- 0
+      warning("As of SS3 version 3.30.24, this line that was unused is now",
+              " HCR_anchor: 0 or 2 uses unfished benchmark SSB (old hardwired",
+              " approach); 1 = virgin SSB; 3 = BMSY. The r4ss function changes",
+              " this automatically to 0 but please update accordingly if using",
+              " version 3.30.24.")
+    }
     forelist <- add_elem(forelist, "FirstYear_for_caps_and_allocations")
     forelist <- add_elem(forelist, "stddev_of_log_catch_ratio")
     forelist <- add_elem(forelist, "Do_West_Coast_gfish_rebuilder_output")
