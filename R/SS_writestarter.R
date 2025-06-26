@@ -162,9 +162,12 @@ SS_writestarter <- function(
     # seed option added in 3.30.15
     wl("seed")
   }
-  if (!is.null(mylist[["Compatibility"]])){
-    cat(mylist[["Compatibility"]], "#_Compatibility: flag for legacy (0) vs", 
-        " improved (1) impact of timevary biology on benchmark SRR calcs >=3.30.24\n")
+  if (!is.null(mylist[["Compatibility"]])) {
+    cat(
+      mylist[["Compatibility"]],
+      "#_Compatibility: flag for legacy (0) vs",
+      " improved (1) impact of timevary biology on benchmark SRR calcs >=3.30.24\n"
+    )
   }
   wl("final")
 

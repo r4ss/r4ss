@@ -371,15 +371,17 @@ SS_readforecast <- function(
     forelist <- add_elem(forelist, "fcast_rec_option")
     forelist <- add_elem(forelist, "fcast_rec_val")
     forelist <- add_elem(forelist, "HCR_anchor") # used as of 3.30.24
-    # If number is -1 from when not used, use 0 instead to have it use the old 
+    # If number is -1 from when not used, use 0 instead to have it use the old
     # hardwired approach
-    if(forelist[["HCR_anchor"]] == -1){
+    if (forelist[["HCR_anchor"]] == -1) {
       forelist[["HCR_anchor"]] <- 0
-      warning("As of SS3 version 3.30.24, this line that was unused is now",
-              " HCR_anchor: 0 or 2 uses unfished benchmark SSB (old hardwired",
-              " approach); 1 = virgin SSB; 3 = BMSY. The r4ss function changes",
-              " this automatically to 0 but please update accordingly if using",
-              " version 3.30.24.")
+      warning(
+        "As of SS3 version 3.30.24, this line that was unused is now",
+        " HCR_anchor: 0 or 2 uses unfished benchmark SSB (old hardwired",
+        " approach); 1 = virgin SSB; 3 = BMSY. The r4ss function changes",
+        " this automatically to 0 but please update accordingly if using",
+        " version 3.30.24."
+      )
     }
     forelist <- add_elem(forelist, "FirstYear_for_caps_and_allocations")
     forelist <- add_elem(forelist, "stddev_of_log_catch_ratio")

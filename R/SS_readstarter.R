@@ -202,7 +202,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     if (verbose) {
       message("Reading a random seed value:", mylist[["seed"]])
     }
-    
+
     mylist[["final"]] <- final <- allnums[i]
     if (!is.na(final) && final %in% c(1, 0)) {
       mylist[["Compatibility"]] <- mylist[["final"]]
