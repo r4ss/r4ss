@@ -14,7 +14,7 @@
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @family read/write functions
-file <- "C:\\Users\\elizabeth.gugliotti\\Desktop\\timevary_growth_files\\forecast.ss_new"
+
 SS_readforecast <- function(
   file = "forecast.ss",
   Nfleets = NULL,
