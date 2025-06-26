@@ -79,6 +79,11 @@ SS_writestarter <- function(
   # writes the content of an R object, followed by the object name with "#_" in front
   wl <- function(name) {
     value <- mylist[names(mylist) == name]
+    if (is.character(value) && grepl("^c\\(.*\\)$", value)) {
+      value <- eval(parse(text = value))
+    }
+    value <- unlist(value)
+    value <- paste(value, collapse = " ")
     writeLines(paste0(value, " #_", name), con = zz)
   }
 
@@ -156,6 +161,13 @@ SS_writestarter <- function(
   if (!is.null(mylist[["seed"]])) {
     # seed option added in 3.30.15
     wl("seed")
+  }
+  if (!is.null(mylist[["Compatibility"]])) {
+    cat(
+      mylist[["Compatibility"]],
+      "#_Compatibility: flag for legacy (0) vs",
+      " improved (1) impact of timevary biology on benchmark SRR calcs >=3.30.24\n"
+    )
   }
   wl("final")
 

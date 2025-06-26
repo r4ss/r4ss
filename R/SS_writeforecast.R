@@ -199,7 +199,7 @@ SS_writeforecast <- function(
         )
         mylist[["Fcast_loop_control_5"]] <- 0
       }
-      wl("Fcast_loop_control_5")
+      wl("HCR_anchor")
       wl("FirstYear_for_caps_and_allocations")
       wl("stddev_of_log_catch_ratio")
       wl("Do_West_Coast_gfish_rebuilder_output")

@@ -518,9 +518,11 @@ SS_writectl_3.30 <- function(
   wl(
     "SR_function",
     comment = paste0(
-      "Spawner-Recruitment; 2=Ricker; 3=std_B-H; 4=SCAA;",
-      "5=Hockey; 6=B-H_flattop; 7=survival_3Parm;",
-      "8=Shepard_3Parm"
+      "Spawner-Recruitment; 2=Ricker (2 parms); 3=std_B-H(2); 4=SCAA(2);",
+      "5=Hockey(3); 6=B-H_flattop(2); 7=Survival(3);",
+      "8=Shepard(3);",
+      "9=Ricker_Power(3);",
+      "10=B-H_a,b(4)"
     )
   )
   wl(
