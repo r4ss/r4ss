@@ -17,7 +17,7 @@
 #' }
 #' @param subplot Deprecated. Use subplots instead.
 #' @param fleetcol Either the string "default", or a vector of colors to use
-#' for each fleet. If tagging data or environmental data are included, 
+#' for each fleet. If tagging data or environmental data are included,
 #' an additional color needs to be
 #' added for the tag releases which are not assigned to a fleet.
 #' @param datatypes Either the string "all", or a vector including some subset
@@ -355,7 +355,10 @@ SSplotData <- function(
               # Find columns that start with "env" and get years with any non-zero value
               allyrs <- dat.f %>%
                 dplyr::select(Yr, dplyr::starts_with("env")) %>%
-                dplyr::filter(dplyr::if_any(dplyr::starts_with("env"), ~ . != 0)) %>%
+                dplyr::filter(dplyr::if_any(
+                  dplyr::starts_with("env"),
+                  ~ . != 0
+                )) %>%
                 dplyr::pull(Yr) %>%
                 unique()
               size <- rep(1, length(allyrs)) # size is not used for environmental data
@@ -387,7 +390,8 @@ SSplotData <- function(
               data.frame(
                 yr = yrs.sorted,
                 fleet = fleet_id,
-                itype = ntypes, typename = typename,
+                itype = ntypes,
+                typename = typename,
                 size = size.sorted,
                 stringsAsFactors = FALSE
               )
