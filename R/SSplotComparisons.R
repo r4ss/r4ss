@@ -466,7 +466,7 @@ SSplotComparisons <-
       all(is.na(SpawnOutputUnits)) ||
         any(SpawnOutputUnits == "numbers", na.rm = TRUE)
     ) {
-      labels[3] <- gsub(labels[3], "spawning biomass", "spawning output")
+      labels[3] <- gsub("spawning biomass", "spawning output", labels[3])
     }
     FvalueLabel <- unique(FvalueLabels)
     if (length(FvalueLabel) > 1) {
