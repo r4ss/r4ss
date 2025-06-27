@@ -2293,7 +2293,8 @@ SS_output <-
 
     # read new expanded SPAWN_RECRUIT table header (3.30.23)
     if (!is.na(match_report_line("#Expanded_Spawn_Recr_report"))) {
-      srhead <- match_report_table("#Expanded_Spawn_Recr_report",
+      srhead <- match_report_table(
+        "#Expanded_Spawn_Recr_report",
         adjust1 = 2,
         which_blank = 1,
         blank_lines = rep_blank_lines
@@ -2302,7 +2303,8 @@ SS_output <-
       # Bias adjustment ramp
       biascol <- grep("breakpoints_for_bias", srhead) # which column contains the string
       breakpoints_for_bias_adjustment_ramp <- srhead[
-        grep("breakpoints_for_bias", srhead[, biascol]), 1:5 # get first 5 values
+        grep("breakpoints_for_bias", srhead[, biascol]),
+        1:5 # get first 5 values
       ]
       colnames(breakpoints_for_bias_adjustment_ramp) <- c(
         "last_yr_early",
@@ -2314,15 +2316,23 @@ SS_output <-
       rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
 
       # get some quantities from expanded SPAWN_RECRUIT
-      timevary_bio_4SRR <- srhead[grep("timevary_bio_4SRR", srhead[, 3]), 1] |> as.numeric()
+      timevary_bio_4SRR <- srhead[grep("timevary_bio_4SRR", srhead[, 3]), 1] |>
+        as.numeric()
       # unformatted table of values under "Quantities for MSY and other benchmark calculations"
-      SR_quants <- srhead[grep("Quantities", srhead[, 1]):grep("Initial_equilibrium", srhead[, 3]), ]
+      SR_quants <- srhead[
+        grep("Quantities", srhead[, 1]):grep(
+          "Initial_equilibrium",
+          srhead[, 3]
+        ),
+      ]
 
       # get table of info on root mean squared error of recdevs (rmse)
       rmse_table <- as.data.frame(srhead[grep("RMSE", srhead[, 3]) + 0:3, ])
 
       # remove extra rows that migth be included accidentally
-      rmse_table <- rmse_table[!grepl("Initial_equilibrium:", rmse_table[, 1]), ]
+      rmse_table <- rmse_table[
+        !grepl("Initial_equilibrium:", rmse_table[, 1]),
+      ]
       rmse_table <- rmse_table[!grepl("#", rmse_table[, 1]), ]
       # remove empty columns
       rmse_table <- rmse_table[, apply(rmse_table, 2, emptytest) < 1]
@@ -2341,29 +2351,42 @@ SS_output <-
         as.numeric()
       RecDev_method <- NULL
 
-      recruit <- match_report_table("SSBpR(yr)", 0, matchcol1 = 13, header = TRUE)
+      recruit <- match_report_table(
+        "SSBpR(yr)",
+        0,
+        matchcol1 = 13,
+        header = TRUE
+      )
     } else {
       # read old SPAWN_RECRUIT table header
 
       # accounting for additional Bmsy/Bzero line introduced in 3.24U
       # should be now robust up through 3.24AZ (if that ever gets created)
-      if (SS_versionNumeric >= 3.30 |
-        substring(SS_version, 1, 9) %in% paste0("SS-V3.24", LETTERS[21:26]) |
-        substring(SS_version, 1, 10) %in% paste0("SS-V3.24A", LETTERS)) {
+      if (
+        SS_versionNumeric >= 3.30 |
+          substring(SS_version, 1, 9) %in% paste0("SS-V3.24", LETTERS[21:26]) |
+          substring(SS_version, 1, 10) %in% paste0("SS-V3.24A", LETTERS)
+      ) {
         last_row_index <- 11
       } else {
         last_row_index <- 10
       }
 
-      srhead <- match_report_table("SPAWN_RECRUIT", 0,
-        "SPAWN_RECRUIT", last_row_index,
+      srhead <- match_report_table(
+        "SPAWN_RECRUIT",
+        0,
+        "SPAWN_RECRUIT",
+        last_row_index,
         cols = 1:6
       )
       # account for extra blank line in early 3.30 versions (at least 3.30.01)
       if (all(srhead[7, ] == "")) {
         last_row_index <- 12
-        srhead <- match_report_table("SPAWN_RECRUIT", 0,
-          "SPAWN_RECRUIT", last_row_index,
+        srhead <- match_report_table(
+          "SPAWN_RECRUIT",
+          0,
+          "SPAWN_RECRUIT",
+          last_row_index,
           cols = 1:6
         )
       }
@@ -2383,7 +2406,11 @@ SS_output <-
 
         # info on recdev method
         if (any(srhead[1, ] == "RecDev_method:")) {
-          RecDev_method <- srhead[1, which(srhead[1, ] == "RecDev_method:") + 1] |> as.numeric()
+          RecDev_method <- srhead[
+            1,
+            which(srhead[1, ] == "RecDev_method:") + 1
+          ] |>
+            as.numeric()
         } else {
           RecDev_method <- NULL
         }
@@ -2391,11 +2418,15 @@ SS_output <-
         # Bias adjustment ramp
         biascol <- grep("breakpoints_for_bias", srhead)
         breakpoints_for_bias_adjustment_ramp <- srhead[
-          grep("breakpoints_for_bias", srhead[, biascol]), 1:5
+          grep("breakpoints_for_bias", srhead[, biascol]),
+          1:5
         ]
         colnames(breakpoints_for_bias_adjustment_ramp) <- c(
           "last_yr_early",
-          "first_yr_full", "last_yr_full", "first_yr_recent", "max_bias_adj"
+          "first_yr_full",
+          "last_yr_full",
+          "first_yr_recent",
+          "max_bias_adj"
         )
         rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
       }
@@ -2405,7 +2436,9 @@ SS_output <-
     # read SPAWN_RECRUIT table
     # new extended output (starting with 3.30.23)
     if (!exists("last_row_index")) {
-      raw_recruit <- match_report_table("S/Rcurve", -1,
+      raw_recruit <- match_report_table(
+        "S/Rcurve",
+        -1,
         which_blank = 1,
         blank_lines = rep_blank_lines,
         # header = TRUE
@@ -2417,13 +2450,19 @@ SS_output <-
         raw_recruit <- match_report_table("SPAWN_RECRUIT", last_row_index)
       }
       # account for extra blank line in 3.30.01 (and maybe similar versions)
-      if (!is.null(raw_recruit) &&
-        nrow(raw_recruit) < length(startyr:endyr)) {
-        raw_recruit <- match_report_table("SPAWN_RECRUIT", last_row_index + 1,
+      if (
+        !is.null(raw_recruit) &&
+          nrow(raw_recruit) < length(startyr:endyr)
+      ) {
+        raw_recruit <- match_report_table(
+          "SPAWN_RECRUIT",
+          last_row_index + 1,
           which_blank = 2
         )
         if (raw_recruit[1, 1] == "S/Rcurve") {
-          raw_recruit <- match_report_table("SPAWN_RECRUIT", last_row_index,
+          raw_recruit <- match_report_table(
+            "SPAWN_RECRUIT",
+            last_row_index,
             which_blank = 2
           )
         }
@@ -4494,8 +4533,14 @@ SS_output <-
 
     # get equilibrium yield in new format starting with 3.30.24
     if (!is.na(match_report_line("repro_output"))) {
-      returndat[["equil_yield"]] <- match_report_table("SPR/YPR_Profile", 4, "Finish", -1, 
-      header = TRUE, type.convert = TRUE)
+      returndat[["equil_yield"]] <- match_report_table(
+        "SPR/YPR_Profile",
+        4,
+        "Finish",
+        -1,
+        header = TRUE,
+        type.convert = TRUE
+      )
     } else {
       # get equilibrium yield for newer versions of SS (some 3.24 and all 3.30),
       # which have SPR/YPR profile in Report.sso
@@ -4515,7 +4560,8 @@ SS_output <-
         yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
         names(yielddat) <- names
         # remove lines that say "ready for equilcalc" or "ready for loops"
-        if ("SPRloop" %in% names) { # column not present in early SS3 versions
+        if ("SPRloop" %in% names) {
+          # column not present in early SS3 versions
           yielddat <- yielddat |> dplyr::filter(SPRloop != "ready")
         }
         yielddat <- type.convert(yielddat, as.is = TRUE)

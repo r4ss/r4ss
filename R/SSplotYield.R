@@ -79,8 +79,8 @@ SSplotYield <-
     # remove value associated with SPRloop 3 based on this comment in Report.sso:
     # "value 3 uses endyr F, which has different fleet allocation than benchmark"
     equil_yield <- equil_yield[equil_yield[["SPRloop"]] != 3, ]
-    # sort across the various iterations by increasing values of the 
-    # "SSB/Bzero" column 
+    # sort across the various iterations by increasing values of the
+    # "SSB/Bzero" column
     # previously this was done in SS_output()
     if ("SSB/Bzero" %in% names(equil_yield)) {
       equil_yield <- dplyr::arrange(equil_yield, .data[["SSB/Bzero"]])
