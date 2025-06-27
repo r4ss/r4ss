@@ -75,7 +75,7 @@ SSplotYield <-
     plotinfo <- NULL
 
     # update axis label based on spawning output units
-        # check if spawning output rather than spawning biomass is plotted
+    # check if spawning output rather than spawning biomass is plotted
     if (
       is.null(replist[["SpawnOutputUnits"]]) ||
         is.na(replist[["SpawnOutputUnits"]]) ||

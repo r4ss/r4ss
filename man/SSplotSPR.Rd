@@ -20,7 +20,7 @@ SSplotSPR(
   btarg = "default",
   minbthresh = "default",
   labels = c("Year", "SPR", "1-SPR", "Relative fishing intensity",
-    "Relative spawning output"),
+    "Fraction of unfished spawning output"),
   pwidth = 6.5,
   pheight = 5,
   pheight_tall = 5,

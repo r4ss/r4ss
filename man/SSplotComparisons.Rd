@@ -19,7 +19,7 @@ SSplotComparisons(
   indexQdigits = 4,
   indexSEvec = NULL,
   indexPlotEach = FALSE,
-  labels = c("Year", "Spawning biomass (t)", "Fraction of unfished",
+  labels = c("Year", "Spawning biomass (t)", "Fraction of unfished spawning biomass",
     "Age-0 recruits (1,000s)", "Recruitment deviations", "Index", "Log index",
     "SPR-related quantity", "Density", "Management target",
     "Minimum stock size threshold", "Spawning output", "Harvest rate",
