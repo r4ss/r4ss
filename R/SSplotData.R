@@ -122,23 +122,24 @@ SSplotData <- function(replist,
   environmental_data <- replist[["environmental_data"]]
 
   # make table of data types
+  # fmt: skip
   typetable <- matrix(c(
-    "catch", "Catches", # 1
-    "cpue", "Abundance indices", # 2
-    "lendbase", "Length compositions", # 3
-    "sizedbase", "Size compositions", # 4
-    "agedbase", "Age compositions", # 5
-    "condbase", "Conditional age-at-length compositions", # 6
-    "ghostagedbase", "Excluded age compositions", # 7
-    "ghostcondbase", "Excluded conditional age-at-length compositions", # 8
-    "ghostlendbase", "Excluded length compositions", # 9
-    "ladbase", "Mean length-at-age", # 10
-    "wadbase", "Mean weight-at-age", # 11
-    "mnwgt", "Mean body weight", # 12
-    "discard", "Discards", # 13
-    "tagrelease", "Tag releases", # 14
-    "tagdbase1", "Tag recaptures", # 15
-    "morphcompdbase", "Morph compositions", # 16
+    "catch",              "Catches", # 1
+    "cpue",               "Abundance indices", # 2
+    "lendbase",           "Length compositions", # 3
+    "sizedbase",          "Size compositions", # 4
+    "agedbase",           "Age compositions", # 5
+    "condbase",           "Conditional age-at-length compositions", # 6
+    "ghostagedbase",      "Excluded age compositions", # 7
+    "ghostcondbase",      "Excluded conditional age-at-length compositions", # 8
+    "ghostlendbase",      "Excluded length compositions", # 9
+    "ladbase",            "Mean length-at-age", # 10
+    "wadbase",            "Mean weight-at-age", # 11
+    "mnwgt",              "Mean body weight", # 12
+    "discard",            "Discards", # 13
+    "tagrelease",         "Tag releases", # 14
+    "tagdbase1",          "Tag recaptures", # 15
+    "morphcompdbase",     "Morph compositions", # 16
     "environmental_data", "Environmental data" # 17
   ), ncol = 2, byrow = TRUE)
   # note: tagdbase2 excluded since it is not fleet specific and the years
