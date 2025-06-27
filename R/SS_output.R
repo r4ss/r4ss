@@ -187,7 +187,6 @@ SS_output <-
       if (header && nrow(out) > 0) {
         # replace any empty column names with "NoName"
         names(out) <- gsub("^$", "NoName", out[1, ])
-        names(out) <- out[1, ]
         out <- out[-1, ]
       }
       if (type.convert) {
