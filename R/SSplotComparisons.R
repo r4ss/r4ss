@@ -214,7 +214,7 @@ SSplotComparisons <-
     labels = c(
       "Year", # 1
       "Spawning biomass (t)", # 2
-      "Fraction of unfished", # 3
+      "Fraction of unfished spawning biomass", # 3 automatically updated
       "Age-0 recruits (1,000s)", # 4
       "Recruitment deviations", # 5
       "Index", # 6
@@ -461,6 +461,12 @@ SSplotComparisons <-
         "because the models don't have matching SpawnOutputLabels"
       )
       SpawnOutputLabel <- labels[12]
+    }
+    if (
+      all(is.na(SpawnOutputUnits)) ||
+        any(SpawnOutputUnits == "numbers", na.rm = TRUE)
+    ) {
+      labels[3] <- gsub("spawning biomass", "spawning output", labels[3])
     }
     FvalueLabel <- unique(FvalueLabels)
     if (length(FvalueLabel) > 1) {
@@ -2498,7 +2504,7 @@ SSplotComparisons <-
         }
       }
       if (grepl("Bratio", parname)) {
-        xmin <- 0 # xmin=0 for relative spawning biomass plots
+        xmin <- 0 # xmin=0 for fraction of unfished spawning output plots
       }
       if (limit0) {
         xmin <- max(0, xmin) # by default no plot can go below 0
@@ -2560,7 +2566,7 @@ SSplotComparisons <-
           }
         }
         # add vertical lines for target and threshold
-        # relative spawning biomass values
+        # fraction of unfished spawning output values
         if (grepl("Bratio", parname)) {
           if (btarg > 0) {
             abline(v = btarg, col = "red", lty = 2)
@@ -2860,7 +2866,7 @@ SSplotComparisons <-
     }
 
     # subplot 3: biomass ratio
-    # (hopefully equal to spawning relative spawning biomass)
+    # (hopefully equal to fraction of unfished spawning output)
     if (3 %in% subplots) {
       if (verbose) {
         message(
