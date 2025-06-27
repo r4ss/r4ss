@@ -71,10 +71,21 @@
 #' Fish. Res. 192:52-65. https://doi.org/10.1016/j.fishres.2015.12.006.
 #'
 SSMethod.Cond.TA1.8 <-
-  function(fit, fleet, part = 0:2, seas = NULL,
-           plotit = TRUE, printit = FALSE, datonly = FALSE, plotadj = !datonly,
-           maxpanel = 1000, FullDiagOut = FALSE,
-           ShowVersionB = FALSE, fleetnames = NULL, add = FALSE) {
+  function(
+    fit,
+    fleet,
+    part = 0:2,
+    seas = NULL,
+    plotit = TRUE,
+    printit = FALSE,
+    datonly = FALSE,
+    plotadj = !datonly,
+    maxpanel = 1000,
+    FullDiagOut = FALSE,
+    ShowVersionB = FALSE,
+    fleetnames = NULL,
+    add = FALSE
+  ) {
     # Check the type is correct and the pick.sex is correct
     is.in <- function(x, y) !is.na(match(x, y))
 
@@ -85,7 +96,10 @@ SSMethod.Cond.TA1.8 <-
     } else {
       # if custom names input, check length
       if (length(fleetnames) != fit[["nfleets"]]) {
-        stop("fleetnames needs to be NULL or have length = nfleets = ", fit[["nfleets"]])
+        stop(
+          "fleetnames needs to be NULL or have length = nfleets = ",
+          fit[["nfleets"]]
+        )
       }
     }
 
@@ -108,7 +122,11 @@ SSMethod.Cond.TA1.8 <-
       }
     }
 
-    indx <- paste(dbase[["Fleet"]], dbase[["Yr"]], if (seas == "sep") dbase[["Seas"]] else "")
+    indx <- paste(
+      dbase[["Fleet"]],
+      dbase[["Yr"]],
+      if (seas == "sep") dbase[["Seas"]] else ""
+    )
     uindx <- unique(indx)
     if (length(uindx) == 1) {
       # presumably the method is meaningless of there's only 1 point,
@@ -117,12 +135,25 @@ SSMethod.Cond.TA1.8 <-
       return()
     }
 
-    pldat <- matrix(0, length(uindx), 12,
+    pldat <- matrix(
+      0,
+      length(uindx),
+      12,
       dimnames = list(
         uindx,
         c(
-          "Obsmn", "Obslo", "Obshi", "semn", "Expmn", "Std.res", "ObsloAdj",
-          "ObshiAdj", "Total", "Fleet", "Yr", "EffN"
+          "Obsmn",
+          "Obslo",
+          "Obshi",
+          "semn",
+          "Expmn",
+          "Std.res",
+          "ObsloAdj",
+          "ObshiAdj",
+          "Total",
+          "Fleet",
+          "Yr",
+          "EffN"
         )
       )
     )
@@ -130,11 +161,15 @@ SSMethod.Cond.TA1.8 <-
 
     # Find the wieghting factor for this combination of factors
     AllRes <- NULL
-    for (i in seq_along(uindx)) { # each row of pldat is an individual comp
+    for (i in seq_along(uindx)) {
+      # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
 
       Lbins <- unique(subdbase[["Lbin_lo"]])
-      Intermediate <- matrix(0, length(Lbins), 5,
+      Intermediate <- matrix(
+        0,
+        length(Lbins),
+        5,
         dimnames = list(Lbins, c("Obsmn", "Varn", "Expmn", "N", "Resid"))
       )
       for (j in seq_along(Lbins)) {
@@ -142,14 +177,19 @@ SSMethod.Cond.TA1.8 <-
         subsubdbase <- subdbase[subdbase[["Lbin_lo"]] == ILbin, ]
         if (length(subsubdbase[["Yr"]]) > 0) {
           xvar <- subsubdbase[["Bin"]]
-          AbarNObs <- sum(subsubdbase[["Obs"]] * xvar) / sum(subsubdbase[["Obs"]])
-          AbarNPre <- sum(subsubdbase[["Exp"]] * xvar) / sum(subsubdbase[["Exp"]])
-          AbarVarn <- (sum(subsubdbase[["Exp"]] * xvar^2) / sum(subsubdbase[["Exp"]]) - AbarNPre^2)
+          AbarNObs <- sum(subsubdbase[["Obs"]] * xvar) /
+            sum(subsubdbase[["Obs"]])
+          AbarNPre <- sum(subsubdbase[["Exp"]] * xvar) /
+            sum(subsubdbase[["Exp"]])
+          AbarVarn <- (sum(subsubdbase[["Exp"]] * xvar^2) /
+            sum(subsubdbase[["Exp"]]) -
+            AbarNPre^2)
           Intermediate[j, "Obsmn"] <- AbarNObs
           Intermediate[j, "Expmn"] <- AbarNPre
           Intermediate[j, "Varn"] <- AbarVarn
           Intermediate[j, "N"] <- mean(subsubdbase[["Nsamp_adj"]])
-          Intermediate[j, "Resid"] <- (AbarNObs - AbarNPre) / sqrt(AbarVarn / mean(subsubdbase[["Nsamp_adj"]]))
+          Intermediate[j, "Resid"] <- (AbarNObs - AbarNPre) /
+            sqrt(AbarVarn / mean(subsubdbase[["Nsamp_adj"]]))
         }
       }
       Total <- sum(Intermediate[, "N"])
@@ -161,8 +201,9 @@ SSMethod.Cond.TA1.8 <-
       for (j in seq_along(Lbins)) {
         AbarNObs <- AbarNObs + as.double(Intermediate[j, "Obsmn"] * Weights[j])
         AbarNPre <- AbarNPre + as.double(Intermediate[j, "Expmn"] * Weights[j])
-        AbarVarn <- AbarVarn + as.double(Weights[j]^2 * Intermediate[j, "Varn"]) /
-          as.double(Intermediate[j, "N"])
+        AbarVarn <- AbarVarn +
+          as.double(Weights[j]^2 * Intermediate[j, "Varn"]) /
+            as.double(Intermediate[j, "N"])
       }
       AbarVarn <- sqrt(AbarVarn)
 
@@ -171,10 +212,13 @@ SSMethod.Cond.TA1.8 <-
       pldat[i, "semn"] <- AbarVarn
       pldat[i, "Obslo"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"]
       pldat[i, "Obshi"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"]
-      pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) / pldat[i, "semn"]
+      pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) /
+        pldat[i, "semn"]
       pldat[i, "Fleet"] <- mean(subdbase[["Fleet"]])
       pldat[i, "Total"] <- Total
-      pldat[i, "Yr"] <- mean(if (seas == "comb") subdbase[["Yr"]] else subdbase[["Yr.S"]])
+      pldat[i, "Yr"] <- mean(
+        if (seas == "comb") subdbase[["Yr"]] else subdbase[["Yr.S"]]
+      )
       pldat[i, "EffN"] <- 1 / var(Intermediate[, "Resid"])
       AllRes <- c(AllRes, Intermediate[, "Resid"])
     }
@@ -182,10 +226,14 @@ SSMethod.Cond.TA1.8 <-
 
     # Find the adjusted confidence intervals
     for (i in seq_along(uindx)) {
-      pldat[i, "ObsloAdj"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"] / sqrt(Nmult)
-      pldat[i, "ObshiAdj"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"] / sqrt(Nmult)
+      pldat[i, "ObsloAdj"] <- pldat[i, "Obsmn"] -
+        2 * pldat[i, "semn"] / sqrt(Nmult)
+      pldat[i, "ObshiAdj"] <- pldat[i, "Obsmn"] +
+        2 * pldat[i, "semn"] / sqrt(Nmult)
     }
-    if (FullDiagOut == TRUE) print(pldat)
+    if (FullDiagOut == TRUE) {
+      print(pldat)
+    }
 
     Nfleet <- length(unique(pldat[, "Fleet"]))
     if (plotit) {
@@ -201,7 +249,10 @@ SSMethod.Cond.TA1.8 <-
       Nr <- ceiling(sqrt(NpanelSet))
       Nc <- ceiling(NpanelSet / Nr)
       par(
-        mfrow = c(Nr, Nc), mar = c(2, 2, 1, 1) + 0.1, mgp = c(0, 0.5, 0), oma = c(1.2, 1.2, 0, 0),
+        mfrow = c(Nr, Nc),
+        mar = c(2, 2, 1, 1) + 0.1,
+        mgp = c(0, 0.5, 0),
+        oma = c(1.2, 1.2, 0, 0),
         las = 1
       )
       par(cex = 1)
@@ -209,7 +260,10 @@ SSMethod.Cond.TA1.8 <-
       for (i in 1:Npanel) {
         subpldat <- pldat[plindx == uplindx[i], , drop = FALSE]
         x <- subpldat[, "Yr"]
-        ylim <- range(subpldat[, c("ObsloAdj", "ObshiAdj", "Expmn")], na.rm = TRUE)
+        ylim <- range(
+          subpldat[, c("ObsloAdj", "ObshiAdj", "Expmn")],
+          na.rm = TRUE
+        )
         if (any(is.infinite(ylim))) {
           # 0 sample sizes caused problems with ylim, override with wide range
           # plot may not make sense but will help users note that a problem exists
@@ -219,20 +273,36 @@ SSMethod.Cond.TA1.8 <-
         }
         # make empty plot (unless adding to existing plot)
         if (!add) {
-          plot(x, subpldat[, "Obsmn"],
+          plot(
+            x,
+            subpldat[, "Obsmn"],
             pch = "-",
             xlim = if (length(x) > 1) range(x) else c(x - 0.5, x + 0.5),
             ylim = ylim,
-            xlab = "", ylab = ""
+            xlab = "",
+            ylab = ""
           )
         }
         # add intervals for status-quo sample sizes adjustment
-        segments(x, subpldat[, "Obslo"], x, subpldat[, "Obshi"], lwd = 3, lend = 3)
+        segments(
+          x,
+          subpldat[, "Obslo"],
+          x,
+          subpldat[, "Obshi"],
+          lwd = 3,
+          lend = 3
+        )
         if (plotadj) {
           # add adjusted intervals
-          arrows(x, subpldat[, "ObsloAdj"], x, subpldat[, "ObshiAdj"],
+          arrows(
+            x,
+            subpldat[, "ObsloAdj"],
+            x,
+            subpldat[, "ObshiAdj"],
             lwd = 1,
-            length = 0.03, angle = 90, code = 3
+            length = 0.03,
+            angle = 90,
+            code = 3
           )
         }
         points(x, subpldat[, "Obsmn"], pch = 21, bg = "grey")
@@ -242,7 +312,12 @@ SSMethod.Cond.TA1.8 <-
           if (length(x) > 1) {
             lines(x[ord], subpldat[ord, "Expmn"], lwd = 3, col = 4)
           } else {
-            lines(c(x - 0.5, x + 0.5), rep(subpldat[, "Expmn"], 2), lwd = 3, col = 4)
+            lines(
+              c(x - 0.5, x + 0.5),
+              rep(subpldat[, "Expmn"], 2),
+              lwd = 3,
+              col = 4
+            )
           }
         }
         # Lines
@@ -260,8 +335,12 @@ SSMethod.Cond.TA1.8 <-
     }
     if (!datonly) {
       # calculate intervals and return adjustments only if datonly=FALSE
-      tmp <- matrix(sample(pldat[, "Std.res"], 1000 * nrow(pldat), replace = TRUE), nrow(pldat))
-      confint <- as.vector(quantile(apply(tmp, 2, function(x) 1 / var(x, na.rm = TRUE)),
+      tmp <- matrix(
+        sample(pldat[, "Std.res"], 1000 * nrow(pldat), replace = TRUE),
+        nrow(pldat)
+      )
+      confint <- as.vector(quantile(
+        apply(tmp, 2, function(x) 1 / var(x, na.rm = TRUE)),
         c(0.025, 0.975),
         na.rm = TRUE
       ))
@@ -269,8 +348,14 @@ SSMethod.Cond.TA1.8 <-
 
       Outs <- paste0(
         "Francis CAA Weights: ",
-        fleetnames[fleet], ": ", round(Nmult, 5),
-        " (", round(confint[1], 5), "-", round(confint[2], 5), ")"
+        fleetnames[fleet],
+        ": ",
+        round(Nmult, 5),
+        " (",
+        round(confint[1], 5),
+        "-",
+        round(confint[2], 5),
+        ")"
       )
       if (printit) {
         print(Outs)
@@ -278,7 +363,10 @@ SSMethod.Cond.TA1.8 <-
       if (ShowVersionB) {
         # Original Francis method (a.k.a. Francis-B)
         Nmult2 <- 1 / var(AllRes, na.rm = TRUE)
-        tmp <- matrix(sample(AllRes, 1000 * length(AllRes), replace = TRUE), length(AllRes))
+        tmp <- matrix(
+          sample(AllRes, 1000 * length(AllRes), replace = TRUE),
+          length(AllRes)
+        )
         confint2 <- as.vector(quantile(
           apply(tmp, 2, function(x) 1 / var(x, na.rm = TRUE)),
           c(0.025, 0.975)
@@ -286,8 +374,14 @@ SSMethod.Cond.TA1.8 <-
 
         Outs <- paste0(
           "Francis CAA Weights-Version B (not recommended): ",
-          fleetnames[fleet], ": ", round(Nmult2, 5),
-          " (", round(confint2[1], 5), "-", round(confint2[2], 5), ")"
+          fleetnames[fleet],
+          ": ",
+          round(Nmult2, 5),
+          " (",
+          round(confint2[1], 5),
+          "-",
+          round(confint2[2], 5),
+          ")"
         )
         if (printit) {
           print(Outs)

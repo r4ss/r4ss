@@ -61,23 +61,40 @@
 #' }
 #'
 SSplotRetroRecruits <-
-  function(retroSummary, endyrvec, cohorts, ylim = NULL, uncertainty = FALSE,
-           labels = c(
-             "Recruitment deviation",
-             "Recruitment (billions)",
-             "relative to recent estimate",
-             "Age"
-           ),
-           main = "Retrospective analysis of recruitment deviations",
-           mcmcVec = FALSE, devs = TRUE,
-           relative = FALSE, labelyears = TRUE, legend = FALSE, leg.ncols = 4) {
-    addpoly <- function(yrvec, lower, upper, shadecol = rgb(0, 0, 0, .1), col = 1) {
+  function(
+    retroSummary,
+    endyrvec,
+    cohorts,
+    ylim = NULL,
+    uncertainty = FALSE,
+    labels = c(
+      "Recruitment deviation",
+      "Recruitment (billions)",
+      "relative to recent estimate",
+      "Age"
+    ),
+    main = "Retrospective analysis of recruitment deviations",
+    mcmcVec = FALSE,
+    devs = TRUE,
+    relative = FALSE,
+    labelyears = TRUE,
+    legend = FALSE,
+    leg.ncols = 4
+  ) {
+    addpoly <- function(
+      yrvec,
+      lower,
+      upper,
+      shadecol = rgb(0, 0, 0, .1),
+      col = 1
+    ) {
       # add shaded uncertainty intervals behind line
       # modified from SSplotComparisons in r4ss package
       polygon(
         x = c(yrvec, rev(yrvec)),
         y = c(lower, rev(upper)),
-        border = NA, col = shadecol
+        border = NA,
+        col = shadecol
       )
       lines(yrvec, lower, lty = 3, col = col)
       lines(yrvec, upper, lty = 3, col = col)
@@ -124,14 +141,22 @@ SSplotRetroRecruits <-
 
     maxage <- max(endyrvec) - min(cohorts)
     xlim <- c(0, maxage)
-    if (labelyears) xlim <- xlim + c(-.8, .8) # expand x-axis to make room for labels
+    if (labelyears) {
+      xlim <- xlim + c(-.8, .8)
+    } # expand x-axis to make room for labels
 
     # determine y-limits
     if (is.null(ylim)) {
       if (uncertainty) {
-        ylim <- c(min(recvalsLower[, 1:n], na.rm = TRUE), max(recvalsUpper[, 1:n], na.rm = TRUE))
+        ylim <- c(
+          min(recvalsLower[, 1:n], na.rm = TRUE),
+          max(recvalsUpper[, 1:n], na.rm = TRUE)
+        )
       } else {
-        ylim <- c(min(recvals[, 1:n], na.rm = TRUE), max(recvals[, 1:n], na.rm = TRUE))
+        ylim <- c(
+          min(recvals[, 1:n], na.rm = TRUE),
+          max(recvals[, 1:n], na.rm = TRUE)
+        )
       }
       if (devs) {
         ylim <- c(-1, 1) * 1.1 * max(abs(ylim)) # make symmetric for devs
@@ -151,18 +176,30 @@ SSplotRetroRecruits <-
 
     # make empty plot with axes
     par(mar = c(4.1, 4.1, 0.2, 0.2))
-    plot(0,
-      type = "n", xlim = xlim, ylim = ylim, xlab = labels[4],
-      ylab = ylab, main = main, axes = FALSE
+    plot(
+      0,
+      type = "n",
+      xlim = xlim,
+      ylim = ylim,
+      xlab = labels[4],
+      ylab = ylab,
+      main = main,
+      axes = FALSE
     )
     axis(1, at = 0:maxage)
     axis(2, at = yticks, las = 1)
     abline(h = 0, col = "grey")
     box()
 
-    if (legend) ylim <- ylim + c(0, .1 * (ylim[2] - ylim[1]))
-    if (length(mcmcVec) == 1) mcmcVec <- rep(mcmcVec, n)
-    if (any(mcmcVec)) mcmc <- retroSummary[["mcmc"]]
+    if (legend) {
+      ylim <- ylim + c(0, .1 * (ylim[2] - ylim[1]))
+    }
+    if (length(mcmcVec) == 1) {
+      mcmcVec <- rep(mcmcVec, n)
+    }
+    if (any(mcmcVec)) {
+      mcmc <- retroSummary[["mcmc"]]
+    }
     for (imodel in (1:n)[mcmcVec]) {
       if (devs) {
         tmp <- unique(c(
@@ -174,15 +211,22 @@ SSplotRetroRecruits <-
         tmp <- unique(grep("Recr_", names(mcmc[[imodel]])))
       }
 
-      if (length(tmp) > 0) { # there are some mcmc values to use
+      if (length(tmp) > 0) {
+        # there are some mcmc values to use
         mcmc.tmp <- mcmc[[imodel]][, tmp] # subset of columns from MCMC for this model
         mcmclabs <- names(mcmc.tmp)
         lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI) # hard-wired probability
         med <- apply(mcmc.tmp, 2, quantile, prob = 0.5) # hard-wired probability
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI) # hard-wired probability
         recvals[, imodel] <- med[match(recvals[["Label"]], mcmclabs)]
-        recvalsLower[, imodel] <- lower[match(recvalsLower[["Label"]], mcmclabs)]
-        recvalsUpper[, imodel] <- upper[match(recvalsUpper[["Label"]], mcmclabs)]
+        recvalsLower[, imodel] <- lower[match(
+          recvalsLower[["Label"]],
+          mcmclabs
+        )]
+        recvalsUpper[, imodel] <- upper[match(
+          recvalsUpper[["Label"]],
+          mcmclabs
+        )]
       }
     }
 
@@ -200,8 +244,14 @@ SSplotRetroRecruits <-
         cohortvalsUpper2 <- rep(NA, n)
         for (icol in 1:n) {
           cohortvals2[icol] <- cohortvals[!is.na(cohortvals[, icol]), icol]
-          cohortvalsLower2[icol] <- cohortvalsLower[!is.na(cohortvalsLower[, icol]), icol]
-          cohortvalsUpper2[icol] <- cohortvalsUpper[!is.na(cohortvalsUpper[, icol]), icol]
+          cohortvalsLower2[icol] <- cohortvalsLower[
+            !is.na(cohortvalsLower[, icol]),
+            icol
+          ]
+          cohortvalsUpper2[icol] <- cohortvalsUpper[
+            !is.na(cohortvalsUpper[, icol]),
+            icol
+          ]
         }
         cohortvals <- cohortvals2
         cohortvalsLower <- cohortvalsLower2
@@ -223,7 +273,8 @@ SSplotRetroRecruits <-
             yrvec = endyrvec[goodmodels] - y,
             lower = cohortvalsLower[goodmodels] - cohortvals[final],
             upper = cohortvalsUpper[goodmodels] - cohortvals[final],
-            shadecol = shadecolvec[iy], col = colvec[iy]
+            shadecol = shadecolvec[iy],
+            col = colvec[iy]
           )
         }
         # output the points that were plotted
@@ -236,9 +287,13 @@ SSplotRetroRecruits <-
           )
         )
         # line with estimates
-        lines(endyrvec[goodmodels] - y,
+        lines(
+          endyrvec[goodmodels] - y,
           cohortvals[goodmodels] - cohortvals[final],
-          type = "o", col = colvec[iy], lwd = 3, pch = 16
+          type = "o",
+          col = colvec[iy],
+          lwd = 3,
+          pch = 16
         )
         if (labelyears) {
           text(
@@ -256,7 +311,8 @@ SSplotRetroRecruits <-
             yrvec = endyrvec[goodmodels] - y,
             lower = cohortvalsLower[goodmodels],
             upper = cohortvalsUpper[goodmodels],
-            shadecol = shadecolvec[iy], col = colvec[iy]
+            shadecol = shadecolvec[iy],
+            col = colvec[iy]
           )
         }
         # output the points that were plotted
@@ -269,9 +325,13 @@ SSplotRetroRecruits <-
           )
         )
         # line with estimates
-        lines(endyrvec[goodmodels] - y,
+        lines(
+          endyrvec[goodmodels] - y,
           cohortvals[goodmodels],
-          type = "o", col = colvec[iy], lwd = 3, pch = 16
+          type = "o",
+          col = colvec[iy],
+          lwd = 3,
+          pch = 16
         )
         if (labelyears) {
           text(
@@ -286,10 +346,17 @@ SSplotRetroRecruits <-
     }
     # add legend if requested
     if (legend) {
-      legend("topright",
-        lwd = 3, lty = 1, pch = 16, col = colvec, legend = cohorts,
-        title = "Cohort birth year", ncol = leg.ncols,
-        bg = rgb(1, 1, 1, .3), box.col = NA
+      legend(
+        "topright",
+        lwd = 3,
+        lty = 1,
+        pch = 16,
+        col = colvec,
+        legend = cohorts,
+        title = "Cohort birth year",
+        ncol = leg.ncols,
+        bg = rgb(1, 1, 1, .3),
+        box.col = NA
       )
     }
     return(invisible(outputTable))

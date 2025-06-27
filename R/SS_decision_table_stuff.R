@@ -18,13 +18,20 @@
 #' @author Ian G. Taylor
 #' @export
 
-SS_decision_table_stuff <- function(replist, yrs = 2025:2036, digits = c(0, 0, 3)) {
+SS_decision_table_stuff <- function(
+  replist,
+  yrs = 2025:2036,
+  digits = c(0, 0, 3)
+) {
   unfished <- replist[["derived_quants"]]["SSB_Virgin", "Value"]
   replist[["timeseries"]] |>
     dplyr::filter(Yr %in% yrs) |>
     dplyr::group_by(Yr) |>
     dplyr::summarise(
-      catch = sum(rowSums(dplyr::across(dplyr::starts_with("dead(B)")), na.rm = TRUE)),
+      catch = sum(rowSums(
+        dplyr::across(dplyr::starts_with("dead(B)")),
+        na.rm = TRUE
+      )),
       spawn_bio = sum(SpawnBio, na.rm = TRUE)
     ) |>
     dplyr::mutate(

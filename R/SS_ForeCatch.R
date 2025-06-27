@@ -49,16 +49,24 @@
 #'
 #' @export
 
-SS_ForeCatch <- function(replist, yrs = 2025:2036,
-                         average = FALSE, avg.yrs = 2020:2024,
-                         total = NULL, digits = 2,
-                         dead = TRUE, zeros = FALSE) {
+SS_ForeCatch <- function(
+  replist,
+  yrs = 2025:2036,
+  average = FALSE,
+  avg.yrs = 2020:2024,
+  total = NULL,
+  digits = 2,
+  dead = TRUE,
+  zeros = FALSE
+) {
   # check catch units
   catch_units <- replist[["catch_units"]][replist[["fleet_type"]] == 1]
   mixed_units <- FALSE
   if (length(unique(catch_units)) > 1) {
     mixed_units <- TRUE
-    cli::cli_alert_info("Catch units are not the same for all fleets, so units will match the settings for each fleet.")
+    cli::cli_alert_info(
+      "Catch units are not the same for all fleets, so units will match the settings for each fleet."
+    )
   }
   timeseries <- replist[["timeseries"]]
 
@@ -66,7 +74,9 @@ SS_ForeCatch <- function(replist, yrs = 2025:2036,
   forecast_catches <- NULL
 
   if (!all(yrs %in% timeseries[["Yr"]])) {
-    cli::cli_alert_warning("Not all requested years are present in timeseries output.")
+    cli::cli_alert_warning(
+      "Not all requested years are present in timeseries output."
+    )
     yrs <- yrs[yrs %in% timeseries[["Yr"]]]
   }
   # if only one value for total is input, repeat for all years
@@ -112,8 +122,10 @@ SS_ForeCatch <- function(replist, yrs = 2025:2036,
           }
           # create new row for table
           newrow <- data.frame(
-            Year = y, Seas = iseas,
-            Fleet = ifleet, Catch = catch
+            Year = y,
+            Seas = iseas,
+            Fleet = ifleet,
+            Catch = catch
           )
           # add new row to previous rows
           forecast_catches_y <- rbind(forecast_catches_y, newrow)
@@ -124,16 +136,22 @@ SS_ForeCatch <- function(replist, yrs = 2025:2036,
     # if requested, scale catches to sum to input total (such as ACL)
     if (!is.null(total)) {
       forecast_catches_y[["Catch"]] <- total[iyr] *
-        forecast_catches_y[["Catch"]] / sum(forecast_catches_y[["Catch"]])
+        forecast_catches_y[["Catch"]] /
+        sum(forecast_catches_y[["Catch"]])
     }
 
     # round values
-    forecast_catches_y[["Catch"]] <- round(forecast_catches_y[["Catch"]], digits)
+    forecast_catches_y[["Catch"]] <- round(
+      forecast_catches_y[["Catch"]],
+      digits
+    )
 
     # add comment on right-hand-side
     forecast_catches_y[["comment"]] <- ""
     forecast_catches_y[["comment"]][1] <- paste0(
-      "#sum_for_", y, ": ",
+      "#sum_for_",
+      y,
+      ": ",
       sum(forecast_catches_y[["Catch"]]),
       ifelse(mixed_units, " (mixed units)", "")
     )

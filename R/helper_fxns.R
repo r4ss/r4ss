@@ -1,7 +1,6 @@
 # contains small helper functions that can be used across multiple functions in
 # the r4ss pkg
 
-
 #' Get the name of the data .ss_new file in a directory
 #'
 #' In previous versions of Stock Synthesis,
@@ -57,14 +56,18 @@ get_par_name <- function(dir, verbose = TRUE) {
       any(parfile == "ss3.par") ~ "ss3.par", # first choice
       any(parfile == "ss.par") ~ "ss.par", # second choice
       # last choice is most recently changed file (excluding directories)
-      TRUE ~ parfile[!parinfo[["isdir"]] &
-        parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])][1]
+      TRUE ~
+        parfile[
+          !parinfo[["isdir"]] &
+            parinfo[["mtime"]] == max(parinfo[["mtime"]][!parinfo[["isdir"]]])
+        ][1]
     )
 
     if (verbose) {
       message(
         "Multiple files in directory match pattern *.par, choosing based on the",
-        " preferences described in the help for get_par_name(): ", parfile
+        " preferences described in the help for get_par_name(): ",
+        parfile
       )
     }
   }
@@ -89,16 +92,25 @@ get_par_name <- function(dir, verbose = TRUE) {
 #'
 #' @export
 #'
-sspar <- function(mfrow = c(1, 1),
-                  plot.cex = 1,
-                  mai = c(0.55, 0.6, 0.1, .1),
-                  omi = c(0., 0., 0., 0) + 0.1,
-                  labs = TRUE) {
+sspar <- function(
+  mfrow = c(1, 1),
+  plot.cex = 1,
+  mai = c(0.55, 0.6, 0.1, .1),
+  omi = c(0., 0., 0., 0) + 0.1,
+  labs = TRUE
+) {
   if (labs == F) {
     mai <- c(0.25, 0.25, 0.15, .15)
     omi <- c(0.3, 0.35, 0.2, 0.2)
   }
-  par(list(mfrow = mfrow, mai = mai, mgp = c(2., 0.5, 0), omi = omi, tck = -0.02, cex = plot.cex))
+  par(list(
+    mfrow = mfrow,
+    mai = mai,
+    mgp = c(2., 0.5, 0),
+    omi = omi,
+    tck = -0.02,
+    cex = plot.cex
+  ))
 }
 
 #' Convert Time-Steps
@@ -162,10 +174,20 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
     # Can add F and Rec if needed
   }
   if (type == "retrocomps") {
-    if (!is.null(ss3out[["len"]])) ss3out[["len"]] <- convTY(ss3out[["len"]], end.time, time.steps)
-    if (!is.null(ss3out[["age"]])) ss3out[["len"]] <- convTY(ss3out[["age"]], end.time, time.steps)
-    ss3out[["startyrs"]] <- rep(min(ss3out[["len"]][["Time"]], ss3out[["age"]][["Time"]]), ss3out[["n"]])
-    ss3out[["endyrs"]] <- rep(max(ss3out[["len"]][["Time"]], ss3out[["age"]][["Time"]]), ss3out[["n"]])
+    if (!is.null(ss3out[["len"]])) {
+      ss3out[["len"]] <- convTY(ss3out[["len"]], end.time, time.steps)
+    }
+    if (!is.null(ss3out[["age"]])) {
+      ss3out[["len"]] <- convTY(ss3out[["age"]], end.time, time.steps)
+    }
+    ss3out[["startyrs"]] <- rep(
+      min(ss3out[["len"]][["Time"]], ss3out[["age"]][["Time"]]),
+      ss3out[["n"]]
+    )
+    ss3out[["endyrs"]] <- rep(
+      max(ss3out[["len"]][["Time"]], ss3out[["age"]][["Time"]]),
+      ss3out[["n"]]
+    )
   }
   return(ss3out)
 }
@@ -196,18 +218,20 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' @export
 #'
 #'
-add_legend <- function(legendlabels,
-                       legendloc = "topleft",
-                       legendorder = NULL,
-                       legendncol = 1,
-                       legendcex = 1,
-                       legendsp = 0.9,
-                       col = NULL,
-                       pch = NULL,
-                       pt.cex = 0.7,
-                       lty = 1,
-                       lwd = 2,
-                       type = "l") {
+add_legend <- function(
+  legendlabels,
+  legendloc = "topleft",
+  legendorder = NULL,
+  legendncol = 1,
+  legendcex = 1,
+  legendsp = 0.9,
+  col = NULL,
+  pch = NULL,
+  pt.cex = 0.7,
+  lty = 1,
+  lwd = 2,
+  type = "l"
+) {
   if (is.null(legendorder)) {
     legendorder <- seq_along(legendlabels)
   }
@@ -224,7 +248,8 @@ add_legend <- function(legendlabels,
   if (type == "l") {
     legend.pch <- rep(NA, length(pch))
   }
-  legend(legendloc,
+  legend(
+    legendloc,
     legend = legendlabels[legendorder],
     col = col[legendorder],
     lty = lty[legendorder],
@@ -257,7 +282,9 @@ rich.colors.short <- function(n, alpha = 1) {
   g <- pmin(pmax(0, -0.8 + 6 * x - 5 * x^2), 1)
   b <- dnorm(x, 0.25, 0.15) / max(dnorm(x, 0.25, 0.15))
   rgb.m <- matrix(c(r, g, b), ncol = 3)
-  rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3], alpha = alpha))
+  rich.vector <- apply(rgb.m, 1, function(v) {
+    rgb(v[1], v[2], v[3], alpha = alpha)
+  })
 }
 
 #' Open png device and return info on the file being created
@@ -287,17 +314,19 @@ rich.colors.short <- function(n, alpha = 1) {
 #'
 #' @export
 
-save_png <- function(plotinfo,
-                     file,
-                     plotdir,
-                     pwidth,
-                     pheight,
-                     punits,
-                     res,
-                     ptsize,
-                     caption = NA,
-                     alt_text = NA,
-                     filenameprefix = NA) {
+save_png <- function(
+  plotinfo,
+  file,
+  plotdir,
+  pwidth,
+  pheight,
+  punits,
+  res,
+  ptsize,
+  caption = NA,
+  alt_text = NA,
+  filenameprefix = NA
+) {
   # replace any slashes (as in 'Eggs/kg_inter_Fem')
   file <- gsub(pattern = "/", replacement = "_per_", x = file, fixed = TRUE)
   if (!is.na(filenameprefix)) {
@@ -315,11 +344,14 @@ save_png <- function(plotinfo,
   )
 
   # assemble and return info
-  invisible(rbind(plotinfo, data.frame(
-    file = file,
-    caption = caption,
-    alt_text = alt_text
-  )))
+  invisible(rbind(
+    plotinfo,
+    data.frame(
+      file = file,
+      caption = caption,
+      alt_text = alt_text
+    )
+  ))
 }
 
 #' Get default vector of colors for each area
@@ -391,9 +423,13 @@ calc_var_adjust <- function(data, type = c("CV", "sd")) {
   # check arguments (will default to first value in vector)
   type <- match.arg(type)
   # calculate SD if not provided
-  if (!"Std_in" %in% colnames(data)) data[["Std_use"]] <- data[["CV"]] * data[["Exp"]]
+  if (!"Std_in" %in% colnames(data)) {
+    data[["Std_use"]] <- data[["CV"]] * data[["Exp"]]
+  }
   # calculate CV if not provided
-  if (!"CV" %in% colnames(data)) data[["CV"]] <- NA
+  if (!"CV" %in% colnames(data)) {
+    data[["CV"]] <- NA
+  }
 
   # make a table of values by fleet, where the *_in values are the
   # mean adjusted input variability values and the *_out values are based on
@@ -406,20 +442,19 @@ calc_var_adjust <- function(data, type = c("CV", "sd")) {
       "sd_in" = data[["Std_use"]],
       "sd_out" = (data[["Obs"]] - data[["Exp"]])^2
     ),
-    by = list("fleet" = data[["Fleet"]]), mean
+    by = list("fleet" = data[["Fleet"]]),
+    mean
   )
   calc[, "sd_out"] <- sqrt(calc[, "sd_out"])
   calc[, "CV_out"] <- calc[, "sd_out"] / calc[, "mean_out"]
   # calculated the CV or sd that needs to be added to get a match
-  calc[["added"]] <- switch(type,
+  calc[["added"]] <- switch(
+    type,
     CV = calc[, "CV_out"] - calc[, "CV_in"],
     sd = calc[, "sd_out"] - calc[, "sd_in"]
   )
   # report the "type" used in the control file table of variance adjustments
-  calc[["type"]] <- switch(type,
-    CV = 3,
-    sd = 2
-  )
+  calc[["type"]] <- switch(type, CV = 3, sd = 2)
   # return the table
   return(calc)
 }
@@ -430,7 +465,6 @@ calc_var_adjust <- function(data, type = c("CV", "sd")) {
 #' @param text Comment to write
 #' @param con File to write to (passed to `con` input to `writeLines()`)
 #' @param ... Additional arguments passed to `writeLines()`
-
 
 writeComment <- function(text, con, ...) {
   if (length(grep(x = text, pattern = "^#")) != length(text)) {
@@ -469,14 +503,22 @@ add_file_header <- function(filelist, con) {
         x
       })
     # remove comments added by earlier runs of this function
-    Comments <- Comments[!grepl("file created using", Comments) &
-      !grepl("file write time", Comments)]
+    Comments <- Comments[
+      !grepl("file created using", Comments) &
+        !grepl("file write time", Comments)
+    ]
   }
   # add new comments
-  Comments <- c(Comments, paste0(
-    "#C file created using an r4ss function"
-  ))
-  Comments <- c(Comments, paste("#C file write time:", format(Sys.time(), "%Y-%m-%d  %H:%M:%S")))
+  Comments <- c(
+    Comments,
+    paste0(
+      "#C file created using an r4ss function"
+    )
+  )
+  Comments <- c(
+    Comments,
+    paste("#C file write time:", format(Sys.time(), "%Y-%m-%d  %H:%M:%S"))
+  )
   # write all comments
   for (ln in Comments) {
     writeComment(text = ln, con = con)
@@ -499,12 +541,14 @@ add_file_header <- function(filelist, con) {
 #' Copyright (C) 2010-2023  The R Core Team
 tryCatch.W.E <- function(expr) {
   W <- NULL
-  w.handler <- function(w) { # warning handler
+  w.handler <- function(w) {
+    # warning handler
     W <<- w
     invokeRestart("muffleWarning")
   }
   list(
-    value = withCallingHandlers(tryCatch(expr, error = function(e) e),
+    value = withCallingHandlers(
+      tryCatch(expr, error = function(e) e),
       warning = w.handler
     ),
     warning = W
@@ -517,8 +561,8 @@ tryCatch.W.E <- function(expr) {
 check_replist <- function(replist) {
   if (is.null(replist) || !is.list(replist) || !"nfleets" %in% names(replist)) {
     cli::cli_abort(
-      "The input 'replist' should refer to an R object created by",
-      " the function 'SS_output'."
+      "The input 'replist' should refer to an R object created by the function
+      'SS_output'."
     )
   }
 }

@@ -20,11 +20,13 @@
 #' [SS_readstarter()], [SS_writestarter()],
 #' [SS_readforecast()], [SS_writeforecast()]
 #'
-SS_writedat_3.30 <- function(datlist,
-                             outfile,
-                             overwrite = FALSE,
-                             faster = lifecycle::deprecated(),
-                             verbose = TRUE) {
+SS_writedat_3.30 <- function(
+  datlist,
+  outfile,
+  overwrite = FALSE,
+  faster = lifecycle::deprecated(),
+  verbose = TRUE
+) {
   # function to write Stock Synthesis data files
   if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(
@@ -42,7 +44,9 @@ SS_writedat_3.30 <- function(datlist,
 
   # check datlist/d
   if (d[["type"]] != "Stock_Synthesis_data_file") {
-    stop("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
+    stop(
+      "input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'"
+    )
   }
 
   # check for existing file
@@ -78,7 +82,8 @@ SS_writedat_3.30 <- function(datlist,
       if (length(grep(comment, pattern = "^#")) != 0) {
         writeLines(paste(value, comment), con = zz)
       } else {
-        writeLines(paste(value, " #_", comment, sep = "", collapse = "_"),
+        writeLines(
+          paste(value, " #_", comment, sep = "", collapse = "_"),
           con = zz
         )
       }
@@ -86,17 +91,15 @@ SS_writedat_3.30 <- function(datlist,
   }
 
   # function to write a vector
-  wl.vector <- function(name,
-                        comment = NULL,
-                        collapse = NULL) {
+  wl.vector <- function(name, comment = NULL, collapse = NULL) {
     value <- d[names(d) == name][[1]]
     if (is.null(collapse)) {
       collapse <- " "
     }
     if (is.null(comment)) {
-      writeLines(paste(paste(value, collapse = collapse), " #_", name, sep = ""),
-        con =
-          zz
+      writeLines(
+        paste(paste(value, collapse = collapse), " #_", name, sep = ""),
+        con = zz
       )
     } else {
       writeLines(paste(paste(value, collapse = collapse), comment), con = zz)
@@ -104,14 +107,13 @@ SS_writedat_3.30 <- function(datlist,
   }
 
   # function to write a list
-  wl.list <- function(name,
-                      comment = NULL,
-                      header = NULL) {
+  wl.list <- function(name, comment = NULL, header = NULL) {
     if (!is.null(header)) {
       writeLines(paste0("#_", header), con = zz)
     }
     value <- d[names(d) == name][[1]]
-    value1 <- sapply(value,
+    value1 <- sapply(
+      value,
       function(x) {
         paste(paste(x), collapse = " ")
       },
@@ -121,10 +123,12 @@ SS_writedat_3.30 <- function(datlist,
   }
 
   # function to print data frame with hash mark before first column name
-  print.df <- function(dataframe,
-                       header = TRUE,
-                       headerLine = NA,
-                       terminate = TRUE) {
+  print.df <- function(
+    dataframe,
+    header = TRUE,
+    headerLine = NA,
+    terminate = TRUE
+  ) {
     if (is.character(dataframe)) {
       tmp <- d[names(d) == dataframe]
       if (length(tmp) > 0) {
@@ -150,9 +154,15 @@ SS_writedat_3.30 <- function(datlist,
       if (!is.null(rownames(dataframe))) {
         rownames(dataframe) <-
           sapply(rownames(dataframe), function(z) {
-            ifelse(length(grep(
-              x = z, pattern = "^#"
-            )) == 1, z, paste0("#_", z))
+            ifelse(
+              length(grep(
+                x = z,
+                pattern = "^#"
+              )) ==
+                1,
+              z,
+              paste0("#_", z)
+            )
           })
         dataframe[["comments"]] <- rownames(dataframe)
       }
@@ -191,7 +201,10 @@ SS_writedat_3.30 <- function(datlist,
   # write table of info on bycatch only fleets, if exists.
   if (!is.null(d[["bycatch_fleet_info"]])) {
     writeComment("#Bycatch_fleet_input", con = zz)
-    print.df(d[["bycatch_fleet_info"]][, names(d[["bycatch_fleet_info"]]) != "fleetname"],
+    print.df(
+      d[["bycatch_fleet_info"]][,
+        names(d[["bycatch_fleet_info"]]) != "fleetname"
+      ],
       terminate = FALSE
     )
   }
@@ -215,7 +228,10 @@ SS_writedat_3.30 <- function(datlist,
 
   # write index info
   writeComment("#_CPUE_and_surveyabundance_observations", con = zz)
-  writeComment("#_Units:  0=numbers; 1=biomass; 2=F; >=30 for special types", con = zz)
+  writeComment(
+    "#_Units:  0=numbers; 1=biomass; 2=F; >=30 for special types",
+    con = zz
+  )
   writeComment("#_Errtype:  -1=normal; 0=lognormal; >0=T", con = zz)
   writeComment("#_SD_Report: 0=no sdreport; 1=enable sdreport", con = zz)
   print.df(d[["CPUEinfo"]], terminate = FALSE)
@@ -229,7 +245,10 @@ SS_writedat_3.30 <- function(datlist,
 
   # write discard info
   wl("N_discard_fleets")
-  writeComment("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)", con = zz)
+  writeComment(
+    "#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)",
+    con = zz
+  )
   writeComment(
     "#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal",
     con = zz
@@ -258,11 +277,20 @@ SS_writedat_3.30 <- function(datlist,
   # write length and age comps
   # population length bins
   writeComment("#\n#_population_length_bins", con = zz)
-  wl("lbin_method", comment = "# length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector")
+  wl(
+    "lbin_method",
+    comment = "# length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector"
+  )
   if (d[["lbin_method"]] == 2) {
     wl("binwidth", comment = "# binwidth for population size comp")
-    wl("minimum_size", comment = "# minimum size in the population (lower edge of first bin and size at age 0.00)")
-    wl("maximum_size", comment = "# maximum size in the population (lower edge of last bin)")
+    wl(
+      "minimum_size",
+      comment = "# minimum size in the population (lower edge of first bin and size at age 0.00)"
+    )
+    wl(
+      "maximum_size",
+      comment = "# maximum size in the population (lower edge of last bin)"
+    )
   }
   if (d[["lbin_method"]] == 3) {
     wl("N_lbinspop")
@@ -331,10 +359,12 @@ SS_writedat_3.30 <- function(datlist,
     writeComment("#\n#_age_info", con = zz)
     print.df("age_info", terminate = FALSE)
 
-    wl("Lbin_method",
+    wl(
+      "Lbin_method",
       comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths"
     )
-    wl("max_combined_age",
+    wl(
+      "max_combined_age",
       comment = "#_combine males into females at or below this bin number"
     )
 

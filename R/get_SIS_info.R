@@ -48,40 +48,47 @@
 #' info <- get_SIS_info(model, stock = "SimpleExample", month = 1)
 #' }
 #'
-get_SIS_info <- function(model,
-                         dir = model[["inputs"]][["dir"]],
-                         writecsv = TRUE,
-                         stock = "StockName",
-                         assessment_type = "Operational",
-                         final_year = model[["endyr"]] + 1,
-                         data_year = model[["endyr"]],
-                         month,
-                         sciencecenter = "NWFSC",
-                         Mgt_Council = "PFMC",
-                         # SpawnOutputLabel is only available in an r4ss branch
-                         # https://github.com/r4ss/r4ss/compare/main...spawn_output_label_838
-                         # so will be NULL for most models, which is dealt with later
-                         SpawnOutputLabel = model[["SpawnOutputLabel"]],
-                         contact = "first.last@noaa.gov",
-                         review_result = "XXXX",
-                         catch_input_data = "XXXX",
-                         abundance_input_data = "XXXX",
-                         bio_input_data = "XXXX",
-                         comp_input_data = "XXXX",
-                         ecosystem_linkage = "XXXX") {
+get_SIS_info <- function(
+  model,
+  dir = model[["inputs"]][["dir"]],
+  writecsv = TRUE,
+  stock = "StockName",
+  assessment_type = "Operational",
+  final_year = model[["endyr"]] + 1,
+  data_year = model[["endyr"]],
+  month,
+  sciencecenter = "NWFSC",
+  Mgt_Council = "PFMC",
+  # SpawnOutputLabel is only available in an r4ss branch
+  # https://github.com/r4ss/r4ss/compare/main...spawn_output_label_838
+  # so will be NULL for most models, which is dealt with later
+  SpawnOutputLabel = model[["SpawnOutputLabel"]],
+  contact = "first.last@noaa.gov",
+  review_result = "XXXX",
+  catch_input_data = "XXXX",
+  abundance_input_data = "XXXX",
+  bio_input_data = "XXXX",
+  comp_input_data = "XXXX",
+  ecosystem_linkage = "XXXX"
+) {
   # construct filename
-  filename_values <- paste(gsub(" ", "_", stock), final_year,
+  filename_values <- paste(
+    gsub(" ", "_", stock),
+    final_year,
     "SIS_info_values.csv",
     sep = "_"
   )
-  filename_timeseries <- paste(gsub(" ", "_", stock), final_year,
+  filename_timeseries <- paste(
+    gsub(" ", "_", stock),
+    final_year,
     "SIS_info_timeseries.csv",
     sep = "_"
   )
 
   message(
     "writing SIS info to CSV files:\n",
-    file.path(dir, filename_values), "\n",
+    file.path(dir, filename_values),
+    "\n",
     file.path(dir, filename_timeseries)
   )
 
@@ -124,16 +131,24 @@ get_SIS_info <- function(model,
   ts_tab <- ts_tab[ts_tab[["Year"]] %in% years, ]
 
   # calculate total dead catch (aggregated across fleets)
-  dead_bio_columns <- grep("dead(B)", names(model[["timeseries"]]), fixed = TRUE)
+  dead_bio_columns <- grep(
+    "dead(B)",
+    names(model[["timeseries"]]),
+    fixed = TRUE
+  )
   dead_N_columns <- grep("dead(N)", names(model[["timeseries"]]), fixed = TRUE)
   if (length(dead_bio_columns) > 1) {
     catch_tab <- data.frame(
       Year = model[["timeseries"]][["Yr"]],
-      Catch_bio = apply(model[["timeseries"]][, dead_bio_columns],
-        MARGIN = 1, FUN = sum
+      Catch_bio = apply(
+        model[["timeseries"]][, dead_bio_columns],
+        MARGIN = 1,
+        FUN = sum
       ),
-      Catch_n = apply(model[["timeseries"]][, dead_N_columns],
-        MARGIN = 1, FUN = sum
+      Catch_n = apply(
+        model[["timeseries"]][, dead_N_columns],
+        MARGIN = 1,
+        FUN = sum
       )
     )
   }
@@ -151,7 +166,8 @@ get_SIS_info <- function(model,
   # not sure why this is needed, but it is
   catch_tab[["Year"]] <- as.numeric(catch_tab[["Year"]])
   if (model[["nareas"]] > 1) {
-    catch_tab <- aggregate(catch_tab[["Catch"]],
+    catch_tab <- aggregate(
+      catch_tab[["Catch"]],
       by = list(catch_tab[["Year"]]),
       FUN = sum
     )
@@ -176,7 +192,11 @@ get_SIS_info <- function(model,
     spr_tab <- model[["sprseries"]][, c("Yr", "SPR_std", "Tot_Exploit", "SPR")]
   } else {
     spr_tab <- model[["sprseries"]][, c("Yr", "SPR")]
-    from_ann_ts <- model[["annual_time_series"]][, c("year", "SPR_std", "tot_exploit")]
+    from_ann_ts <- model[["annual_time_series"]][, c(
+      "year",
+      "SPR_std",
+      "tot_exploit"
+    )]
     from_ann_ts[["Yr"]] <- from_ann_ts[["year"]]
     from_ann_ts[["Tot_Exploit"]] <- from_ann_ts[["tot_exploit"]]
     spr_tab <- merge(from_ann_ts, spr_tab, by = "Yr")
@@ -199,8 +219,12 @@ get_SIS_info <- function(model,
   if (nrow(tab) != length(years) || any(tab[["Year"]] != years)) {
     stop(
       "problem with mismatch of years:\n",
-      "range(years): ", range(years), "\n",
-      "range(tab[['Year']]): ", range(tab[["Year"]]), "\n"
+      "range(years): ",
+      range(years),
+      "\n",
+      "range(tab[['Year']]): ",
+      range(tab[["Year"]]),
+      "\n"
     )
   }
 
@@ -231,7 +255,8 @@ get_SIS_info <- function(model,
   #######################################
 
   # create new table of metadata to write as multiple header rows
-  header_info <- data.frame(matrix("", ncol = ncol(tab), nrow = 4),
+  header_info <- data.frame(
+    matrix("", ncol = ncol(tab), nrow = 4),
     stringsAsFactors = FALSE
   )
   colnames(header_info) <- names(tab)
@@ -261,7 +286,9 @@ get_SIS_info <- function(model,
   if (model[["SpawnOutputUnits"]] == "numbers") {
     header_info["Description", "SpawnBio"] <- "Spawning Output(Eggs)"
     if (is.null(SpawnOutputLabel)) {
-      warning("Need to provide a label for the spawning output (e.g. 'millions of eggs')")
+      warning(
+        "Need to provide a label for the spawning output (e.g. 'millions of eggs')"
+      )
       SpawnOutputLabel <- "XXXX eggs"
     }
     header_info["Unit", "SpawnBio"] <- SpawnOutputLabel
@@ -277,7 +304,10 @@ get_SIS_info <- function(model,
   # info on fraction unfished
   header_info["Category", "FractionUnfished"] <- "Spawners"
   header_info["Primary", "FractionUnfished"] <- "N"
-  header_info["Description", "FractionUnfished"] <- "Female Mature Relative Spawning Biomass SSB/SSB0"
+  header_info[
+    "Description",
+    "FractionUnfished"
+  ] <- "Female Mature Relative Spawning Biomass SSB/SSB0"
   header_info["Unit", "FractionUnfished"] <- "Rate"
 
   # info on recruitment
@@ -317,7 +347,11 @@ get_SIS_info <- function(model,
         TRUE ~ "XXXX" # any other Mgt_Council
       )
     # clean up F_std_basis (e.g. "_abs_F;_with_F=sum(full_Fs)" to "abs F; with F=sum(full Fs)")
-    header_info["Description", "F_values"] <- gsub("_", " ", gsub("^_", "", model[["F_std_basis"]]))
+    header_info["Description", "F_values"] <- gsub(
+      "_",
+      " ",
+      gsub("^_", "", model[["F_std_basis"]])
+    )
 
     header_info["Unit", "F_values"] <- "Rate"
   }
@@ -393,15 +427,20 @@ get_SIS_info <- function(model,
   if (Mgt_Council == "GM") {
     # Annual F_SPR names changed between versions
     if ("annF_SPR" %in% rownames(model[["derived_quants"]])) {
-      F_limit <- round(model[["derived_quants"]]["annF_SPR", "Value"], digits = 3)
+      F_limit <- round(
+        model[["derived_quants"]]["annF_SPR", "Value"],
+        digits = 3
+      )
     } else {
-      F_limit <- round(model[["derived_quants"]]["Fstd_SPRtgt", "Value"], digits = 3)
+      F_limit <- round(
+        model[["derived_quants"]]["Fstd_SPRtgt", "Value"],
+        digits = 3
+      )
     }
     F_msy <- F_limit
     F_limit_basis <- paste0("F", 100 * model[["btarg"]], "%")
     F_msy_basis <- paste0("F", 100 * model[["btarg"]], "% as Proxy")
   }
-
 
   if (model[["btarg"]] == -999) {
     Btarg_text <- "BXX%"
@@ -434,7 +473,9 @@ get_SIS_info <- function(model,
     MinBthresh_text <- paste0("(1-M)*SPR", 100 * model[["btarg"]], "%") # e.g. B25%
     B_msy_basis <- Btarg_text
     eq_year <- data_year + model[["nforecastyears"]]
-    B_msy <- model[["derived_quants"]][["Value"]][which(model[["derived_quants"]][["Label"]] == paste0("SSB_", eq_year))]
+    B_msy <- model[["derived_quants"]][["Value"]][which(
+      model[["derived_quants"]][["Label"]] == paste0("SSB_", eq_year)
+    )]
     B_limit <- (0.5 * B_msy)
   }
 
@@ -453,11 +494,23 @@ get_SIS_info <- function(model,
 
   # MSY-proxy labels were changed at some point
   if ("Dead_Catch_SPR" %in% rownames(model[["derived_quants"]])) {
-    Yield_at_SPR_target <- round(model[["derived_quants"]]["Dead_Catch_SPR", "Value"], 1)
-    Yield_at_B_target <- round(model[["derived_quants"]]["Dead_Catch_Btgt", "Value"], 1)
+    Yield_at_SPR_target <- round(
+      model[["derived_quants"]]["Dead_Catch_SPR", "Value"],
+      1
+    )
+    Yield_at_B_target <- round(
+      model[["derived_quants"]]["Dead_Catch_Btgt", "Value"],
+      1
+    )
   } else {
-    Yield_at_SPR_target <- round(model[["derived_quants"]]["TotYield_SPRtgt", "Value"], 1)
-    Yield_at_B_target <- round(model[["derived_quants"]]["TotYield_Btgt", "Value"], 1)
+    Yield_at_SPR_target <- round(
+      model[["derived_quants"]]["TotYield_SPRtgt", "Value"],
+      1
+    )
+    Yield_at_B_target <- round(
+      model[["derived_quants"]]["TotYield_Btgt", "Value"],
+      1
+    )
   }
 
   if (Mgt_Council == "PFMC") {
@@ -472,8 +525,16 @@ get_SIS_info <- function(model,
 
   # GM Settings: Best F estimate = geometric mean of last three data years
   if (Mgt_Council == "GM") {
-    Best_F_Est <- round(mean(tab[["F_values"]][tab[["Year"]] %in% c((data_year - 2):data_year)]), 2)
-    F_basis <- paste0("Total_Catch/Total_Biomass_Geometric_Mean_", (data_year - 2), "-", data_year)
+    Best_F_Est <- round(
+      mean(tab[["F_values"]][tab[["Year"]] %in% c((data_year - 2):data_year)]),
+      2
+    )
+    F_basis <- paste0(
+      "Total_Catch/Total_Biomass_Geometric_Mean_",
+      (data_year - 2),
+      "-",
+      data_year
+    )
     F_unit <- "Exploitation Rate"
   }
 
@@ -493,10 +554,12 @@ get_SIS_info <- function(model,
     stock_level_to_MSY <- "UNKNOWN"
   }
 
-
   # make big 2-column table of info about each model
   info_tab <- c(
-    paste0("SAIP:,", "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"),
+    paste0(
+      "SAIP:,",
+      "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"
+    ),
     "",
     paste0("Stock / Entity Name,", stock),
     paste0("Assessment Type,", assessment_type),
@@ -504,7 +567,10 @@ get_SIS_info <- function(model,
     # sprintf command in line below converts month 9 to "09" (for example)
     paste0("Asmt Year and Month,", final_year, ".", sprintf("%02d", month)),
     paste0("Last Data Year,", data_year),
-    paste0("Asmt Model Category,", "6 - Statistical Catch-at-Age (SS, ASAP, AMAK, BAM, MultifancL< CASAL)"),
+    paste0(
+      "Asmt Model Category,",
+      "6 - Statistical Catch-at-Age (SS, ASAP, AMAK, BAM, MultifancL< CASAL)"
+    ),
     paste0("Asmt Model Category,", "SS"),
     paste0("Model Version,", SS_version),
     paste0("Lead Lab,", sciencecenter),
@@ -559,22 +625,34 @@ get_SIS_info <- function(model,
 
   if (writecsv) {
     # write 2-column table with quantities of interest
-    write.table(info_tab,
+    write.table(
+      info_tab,
       file = file.path(dir, filename_values),
-      quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE
+      quote = FALSE,
+      sep = ",",
+      row.names = FALSE,
+      col.names = FALSE
     )
 
     # write header rows for time series table
-    write.table(header_info,
+    write.table(
+      header_info,
       file = file.path(dir, filename_timeseries),
-      quote = FALSE, sep = ",", row.names = TRUE, col.names = FALSE,
+      quote = FALSE,
+      sep = ",",
+      row.names = TRUE,
+      col.names = FALSE,
       append = FALSE
     )
     # add time series values (suppressing warning about 'appending column names to file')
     suppressWarnings(
-      write.table(tab,
+      write.table(
+        tab,
         file = file.path(dir, filename_timeseries),
-        quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE,
+        quote = FALSE,
+        sep = ",",
+        row.names = FALSE,
+        col.names = FALSE,
         append = TRUE
       )
     )

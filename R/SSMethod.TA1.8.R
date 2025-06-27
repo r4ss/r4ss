@@ -92,11 +92,25 @@
 #' }
 #'
 SSMethod.TA1.8 <-
-  function(fit, type, fleet, part = 0:2, sexes = 0:3, seas = NULL,
-           method = NULL, plotit = TRUE, printit = FALSE,
-           datonly = FALSE, plotadj = !datonly, maxpanel = 1000,
-           fleetnames = NULL, label.part = TRUE, label.sex = TRUE,
-           set.pars = TRUE, add = FALSE) {
+  function(
+    fit,
+    type,
+    fleet,
+    part = 0:2,
+    sexes = 0:3,
+    seas = NULL,
+    method = NULL,
+    plotit = TRUE,
+    printit = FALSE,
+    datonly = FALSE,
+    plotadj = !datonly,
+    maxpanel = 1000,
+    fleetnames = NULL,
+    label.part = TRUE,
+    label.sex = TRUE,
+    set.pars = TRUE,
+    add = FALSE
+  ) {
     # Check the type is correct and the sexes is correct
     is.in <- function(x, y) !is.na(match(x, y))
     if (!is.in(type, c("age", "len", "size", "con"))) {
@@ -114,7 +128,10 @@ SSMethod.TA1.8 <-
     } else {
       # if custom names input, check length
       if (length(fleetnames) != fit[["nfleets"]]) {
-        stop("fleetnames needs to be NULL or have length = nfleets = ", fit[["nfleets"]])
+        stop(
+          "fleetnames needs to be NULL or have length = nfleets = ",
+          fit[["nfleets"]]
+        )
       }
     }
     # Select the type of datbase
@@ -154,18 +171,30 @@ SSMethod.TA1.8 <-
     # create label for partitions
     partitions <- sort(unique(dbase[["Part"]])) # values are 0, 1, or 2
     partition.labels <- c("whole", "discarded", "retained")[partitions + 1]
-    partition.labels <- paste0("(", paste(partition.labels, collapse = "&"), " catch)")
+    partition.labels <- paste0(
+      "(",
+      paste(partition.labels, collapse = "&"),
+      " catch)"
+    )
     # indx is string combining fleet, year, and potentially conditional bin
-    indx <- paste(dbase[["Fleet"]], dbase[["Yr"]], if (type == "con") {
-      dbase$"Lbin_lo"
-    } else {
-      ""
-    }, if (seas == "sep") dbase[["Seas"]] else "")
+    indx <- paste(
+      dbase[["Fleet"]],
+      dbase[["Yr"]],
+      if (type == "con") {
+        dbase$"Lbin_lo"
+      } else {
+        ""
+      },
+      if (seas == "sep") dbase[["Seas"]] else ""
+    )
     # if subsetting by sex, add Sexes value to the indx strings
-    sex.flag <- type != "con" & max(tapply(
-      dbase$"Sexes",
-      dbase[["Fleet"]], function(x) length(unique(x))
-    )) > 1
+    sex.flag <- type != "con" &
+      max(tapply(
+        dbase$"Sexes",
+        dbase[["Fleet"]],
+        function(x) length(unique(x))
+      )) >
+        1
     if (sex.flag) {
       indx <- paste(indx, dbase$"Sexes")
     }
@@ -185,18 +214,33 @@ SSMethod.TA1.8 <-
     }
 
     # create empty data.frame to store information on each observation
-    pldat <- matrix(0, length(uindx), 10,
+    pldat <- matrix(
+      0,
+      length(uindx),
+      10,
       dimnames = list(
         uindx,
         c(
-          "Obsmn", "Obslo", "Obshi", "semn", "Expmn", "Std.res",
-          "ObsloAdj", "ObshiAdj", "Fleet", "Yr"
+          "Obsmn",
+          "Obslo",
+          "Obshi",
+          "semn",
+          "Expmn",
+          "Std.res",
+          "ObsloAdj",
+          "ObshiAdj",
+          "Fleet",
+          "Yr"
         )
       )
     )
     # add columns of zeros to fill with values necessary for subsetting
-    if (type == "con") pldat <- cbind(pldat, Lbin = 0)
-    if (sex.flag) pldat <- cbind(pldat, sexes = 0)
+    if (type == "con") {
+      pldat <- cbind(pldat, Lbin = 0)
+    }
+    if (sex.flag) {
+      pldat <- cbind(pldat, sexes = 0)
+    }
     if (type == "size") {
       pldat <- cbind(pldat, method = 0)
       # vector to store units (which are strings and don't fit in pldat matrix)
@@ -204,31 +248,45 @@ SSMethod.TA1.8 <-
     }
 
     # Find the weighting factor for this combination of factors
-    for (i in seq_along(uindx)) { # each row of pldat is an individual comp
+    for (i in seq_along(uindx)) {
+      # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
       xvar <- subdbase[["Bin"]]
       # observed mean
-      pldat[i, "Obsmn"] <- sum(subdbase[["Obs"]] * xvar) / sum(subdbase[["Obs"]])
+      pldat[i, "Obsmn"] <- sum(subdbase[["Obs"]] * xvar) /
+        sum(subdbase[["Obs"]])
       # expected mean
-      pldat[i, "Expmn"] <- sum(subdbase[["Exp"]] * xvar) / sum(subdbase[["Exp"]])
+      pldat[i, "Expmn"] <- sum(subdbase[["Exp"]] * xvar) /
+        sum(subdbase[["Exp"]])
 
       # use adjusted input sample size for Francis or MI weighting options
       Nsamp <- subdbase[["Nsamp_adj"]]
-      if ("Nsamp_DM" %in% names(subdbase) || any(is.na(subdbase[["Nsamp_DM"]]))) {
+      if (
+        "Nsamp_DM" %in% names(subdbase) || any(is.na(subdbase[["Nsamp_DM"]]))
+      ) {
         # dirichlet multinomial newer format
         Nsamp <- subdbase[["Nsamp_DM"]]
       }
 
       # standard error of the mean
-      pldat[i, "semn"] <- sqrt((sum(subdbase[["Exp"]] * xvar^2) / sum(subdbase[["Exp"]]) -
-        pldat[i, "Expmn"]^2) / mean(Nsamp))
+      pldat[i, "semn"] <- sqrt(
+        (sum(subdbase[["Exp"]] * xvar^2) /
+          sum(subdbase[["Exp"]]) -
+          pldat[i, "Expmn"]^2) /
+          mean(Nsamp)
+      )
       # calculate confidence intervals and other stuff
       pldat[i, "Obslo"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"]
       pldat[i, "Obshi"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"]
-      pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) / pldat[i, "semn"]
+      pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) /
+        pldat[i, "semn"]
       pldat[i, "Fleet"] <- mean(subdbase[["Fleet"]])
-      pldat[i, "Yr"] <- mean(if (seas == "comb") subdbase[["Yr"]] else subdbase[["Yr.S"]])
-      if (type == "con") pldat[i, "Lbin"] <- mean(subdbase$"Lbin_lo")
+      pldat[i, "Yr"] <- mean(
+        if (seas == "comb") subdbase[["Yr"]] else subdbase[["Yr.S"]]
+      )
+      if (type == "con") {
+        pldat[i, "Lbin"] <- mean(subdbase$"Lbin_lo")
+      }
       if (sex.flag) {
         pldat[i, "sexes"] <- mean(subdbase$"Sexes")
       }
@@ -241,8 +299,10 @@ SSMethod.TA1.8 <-
 
     # Find the adjusted confidence intervals
     for (i in seq_along(uindx)) {
-      pldat[i, "ObsloAdj"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"] / sqrt(Nmult)
-      pldat[i, "ObshiAdj"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"] / sqrt(Nmult)
+      pldat[i, "ObsloAdj"] <- pldat[i, "Obsmn"] -
+        2 * pldat[i, "semn"] / sqrt(Nmult)
+      pldat[i, "ObshiAdj"] <- pldat[i, "Obsmn"] +
+        2 * pldat[i, "semn"] / sqrt(Nmult)
     }
 
     Nfleet <- length(unique(pldat[, "Fleet"]))
@@ -253,8 +313,12 @@ SSMethod.TA1.8 <-
       } else {
         pldat[, "Fleet"]
       }
-      if (sex.flag) plindx <- paste(plindx, pldat[, "sexes"])
-      if (method.flag) plindx <- paste(plindx, pldat[, "method"])
+      if (sex.flag) {
+        plindx <- paste(plindx, pldat[, "sexes"])
+      }
+      if (method.flag) {
+        plindx <- paste(plindx, pldat[, "method"])
+      }
       uplindx <- unique(plindx)
 
       # Select number of panels
@@ -269,7 +333,10 @@ SSMethod.TA1.8 <-
         par_current <- par()
         # set new parameters
         par(
-          mfrow = c(Nr, Nc), mar = c(2, 2, 1, 1) + 0.1, mgp = c(0, 0.5, 0), oma = c(1.2, 1.2, 0, 0),
+          mfrow = c(Nr, Nc),
+          mar = c(2, 2, 1, 1) + 0.1,
+          mgp = c(0, 0.5, 0),
+          oma = c(1.2, 1.2, 0, 0),
           las = 1
         )
         par(cex = 1)
@@ -281,20 +348,38 @@ SSMethod.TA1.8 <-
         # make empty plot (unless adding to existing plot)
         if (!add) {
           # calculate ylim, including removing Inf values
-          plot(x, subpldat[, "Obsmn"],
+          plot(
+            x,
+            subpldat[, "Obsmn"],
             pch = "-",
             xlim = if (length(x) > 1) range(x) else c(x - 0.5, x + 0.5),
-            ylim = range(subpldat[, c("Obslo", "Obshi", "ObsloAdj", "ObshiAdj", "Expmn")],
-              finite = TRUE, na.rm = TRUE
+            ylim = range(
+              subpldat[, c("Obslo", "Obshi", "ObsloAdj", "ObshiAdj", "Expmn")],
+              finite = TRUE,
+              na.rm = TRUE
             ),
-            xlab = "", ylab = ""
+            xlab = "",
+            ylab = ""
           )
         }
-        segments(x, subpldat[, "Obslo"], x, subpldat[, "Obshi"], lwd = 3, lend = 3)
+        segments(
+          x,
+          subpldat[, "Obslo"],
+          x,
+          subpldat[, "Obshi"],
+          lwd = 3,
+          lend = 3
+        )
         if (plotadj) {
-          arrows(x, subpldat[, "ObsloAdj"], x, subpldat[, "ObshiAdj"],
+          arrows(
+            x,
+            subpldat[, "ObsloAdj"],
+            x,
+            subpldat[, "ObshiAdj"],
             lwd = 1,
-            length = 0.04, angle = 90, code = 3
+            length = 0.04,
+            angle = 90,
+            code = 3
           )
         }
         points(x, subpldat[, "Obsmn"], pch = 21, bg = "grey80")
@@ -303,7 +388,12 @@ SSMethod.TA1.8 <-
           if (length(x) > 1) {
             lines(x[ord], subpldat[ord, "Expmn"], lwd = 3, col = 4)
           } else {
-            lines(c(x - 0.5, x + 0.5), rep(subpldat[, "Expmn"], 2), lwd = 3, col = 4)
+            lines(
+              c(x - 0.5, x + 0.5),
+              rep(subpldat[, "Expmn"], 2),
+              lwd = 3,
+              col = 4
+            )
           }
         }
         # Lines
@@ -332,7 +422,8 @@ SSMethod.TA1.8 <-
         # probably more efficient ways to sort out these labels,
         # but lots of if-statements make logic easier to follow
         units <- unique(plunits[plindx %in% uplindx])
-        if (length(units) == 1) { # not sure if this will always be true or not
+        if (length(units) == 1) {
+          # not sure if this will always be true or not
           if (units %in% c("kg", "lb")) {
             ylab <- paste0("Mean weight (", units, ")")
           }
@@ -351,20 +442,37 @@ SSMethod.TA1.8 <-
       # restore previous graphics parameters (if changed to begin with
       if (set.pars) {
         par(
-          mfrow = par_current[["mfrow"]], mar = par_current[["mar"]], mgp = par_current[["mgp"]],
-          oma = par_current[["oma"]], las = par_current[["las"]]
+          mfrow = par_current[["mfrow"]],
+          mar = par_current[["mar"]],
+          mgp = par_current[["mgp"]],
+          oma = par_current[["oma"]],
+          las = par_current[["las"]]
         )
       }
     }
     if (!datonly) {
-      tmp <- matrix(sample(pldat[, "Std.res"], 1000 * nrow(pldat), replace = TRUE), nrow(pldat))
-      confint <- as.vector(quantile(apply(tmp, 2, function(x) 1 / var(x, na.rm = TRUE)),
+      tmp <- matrix(
+        sample(pldat[, "Std.res"], 1000 * nrow(pldat), replace = TRUE),
+        nrow(pldat)
+      )
+      confint <- as.vector(quantile(
+        apply(tmp, 2, function(x) 1 / var(x, na.rm = TRUE)),
         c(0.025, 0.975),
         na.rm = TRUE
       ))
       Output <- c(w = Nmult, lo = confint[1], hi = confint[2])
-      Outs <- paste("Francis Weights - ", type, ": ", fleetnames[fleet], ": ",
-        round(Nmult, 4), " (", round(confint[1], 4), "-", round(confint[2], 4), ")",
+      Outs <- paste(
+        "Francis Weights - ",
+        type,
+        ": ",
+        fleetnames[fleet],
+        ": ",
+        round(Nmult, 4),
+        " (",
+        round(confint[1], 4),
+        "-",
+        round(confint[2], 4),
+        ")",
         sep = ""
       )
       if (printit) {

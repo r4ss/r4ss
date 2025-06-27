@@ -95,13 +95,23 @@
 #' ## 2 0.600000     0.6       -4       -4    0.0    0.0      2      2   # SR_sigmaR
 #' }
 SS_changepars <-
-  function(dir = NULL,
-           ctlfile = "control.ss_new",
-           newctlfile = "control_modified.ss",
-           linenums = NULL, strings = NULL, newvals = NULL, repeat.vals = FALSE,
-           newlos = NULL, newhis = NULL, newprior = NULL, newprsd = NULL, newprtype = NULL,
-           estimate = NULL, verbose = TRUE,
-           newphs = NULL) {
+  function(
+    dir = NULL,
+    ctlfile = "control.ss_new",
+    newctlfile = "control_modified.ss",
+    linenums = NULL,
+    strings = NULL,
+    newvals = NULL,
+    repeat.vals = FALSE,
+    newlos = NULL,
+    newhis = NULL,
+    newprior = NULL,
+    newprsd = NULL,
+    newprtype = NULL,
+    estimate = NULL,
+    verbose = TRUE,
+    newphs = NULL
+  ) {
     # set directory to working directory if not provided
     if (is.null(dir)) {
       dir <- getwd()
@@ -112,9 +122,14 @@ SS_changepars <-
 
     # check for valid input
     inargs <- list(
-      "newvals" = newvals, "newlos" = newlos, "newhis" = newhis,
-      "newprior" = newprior, "newprsd" = newprsd, "newprtype" = newprtype,
-      "estimate" = estimate, "newphs" = newphs
+      "newvals" = newvals,
+      "newlos" = newlos,
+      "newhis" = newhis,
+      "newprior" = newprior,
+      "newprsd" = newprsd,
+      "newprtype" = newprtype,
+      "estimate" = estimate,
+      "newphs" = newphs
     )
     if (is.null(linenums) & !is.null(strings) & is.character(strings)) {
       # get table of parameter lines
@@ -132,8 +147,10 @@ SS_changepars <-
           goodnames[[i]] <- allnames[grep(strings[i], allnames, fixed = TRUE)]
         }
         # remove duplicates and print some feedback
-        if (any(duplicated(unlist(goodnames))) &
-          (repeat.vals & any(sapply(inargs, length) > 1))) {
+        if (
+          any(duplicated(unlist(goodnames))) &
+            (repeat.vals & any(sapply(inargs, length) > 1))
+        ) {
           stop(
             "Entries in 'strings' did not map to unique parameters and\n",
             "it is unclear how to order the par names to match the order\n",
@@ -147,7 +164,9 @@ SS_changepars <-
         if (verbose) {
           message(
             "Parameter names in control file matching input vector \n",
-            "'strings' (n=", length(goodnames), "): ",
+            "'strings' (n=",
+            length(goodnames),
+            "): ",
             paste0(goodnames, collapse = ", ")
           )
         }
@@ -157,7 +176,9 @@ SS_changepars <-
       }
       nvals <- length(goodnames)
       for (i in 1:nvals) {
-        linenums[i] <- ctltable[["Linenum"]][ctltable[["Label"]] == goodnames[i]]
+        linenums[i] <- ctltable[["Linenum"]][
+          ctltable[["Label"]] == goodnames[i]
+        ]
       }
     } else {
       if (is.null(linenums)) {
@@ -167,7 +188,9 @@ SS_changepars <-
     ctlsubset <- ctl[linenums]
     if (verbose) {
       message(
-        "line numbers in control file (n=", length(linenums), "): ",
+        "line numbers in control file (n=",
+        length(linenums),
+        "): ",
         paste(linenums, collapse = ", ")
       )
     }
@@ -183,8 +206,12 @@ SS_changepars <-
     # check values and make repeat if requested
     for (ii in names(inargs)) {
       tmp <- get(ii)
-      if (is.null(tmp)) next
-      if (is.data.frame(tmp) & ii != "estimate") tmp <- as.numeric(tmp)
+      if (is.null(tmp)) {
+        next
+      }
+      if (is.data.frame(tmp) & ii != "estimate") {
+        tmp <- as.numeric(tmp)
+      }
       if (length(tmp) != nvals & repeat.vals) {
         if (length(tmp) > 1) {
           stop(
@@ -196,9 +223,14 @@ SS_changepars <-
       }
       if (length(get(ii)) != nvals) {
         stop(
-          paste0("'", ii, "'"), " and either 'linenums' or 'strings'",
+          paste0("'", ii, "'"),
+          " and either 'linenums' or 'strings'",
           " should have the same number of elements,\n",
-          "instead of ", length(get(ii)), " and ", length(linenums), ".\n",
+          "instead of ",
+          length(get(ii)),
+          " and ",
+          length(linenums),
+          ".\n",
           "Note: a string can map to multiple parameters, here are your pars,\n",
           paste(goodnames, collapse = "\n")
         )
@@ -208,8 +240,7 @@ SS_changepars <-
     navar <- c(NA, "NA", "NAN", "Nan")
 
     # loop over line numbers to replace parameter values
-    for (i in 1:nvals)
-    {
+    for (i in 1:nvals) {
       # parse comment at end of line
       splitline <- strsplit(ctlsubset[i], "#")[[1]]
       #
@@ -283,10 +314,26 @@ SS_changepars <-
       }
       # check bounds relative to new values
       if (vec[3] < vec[1]) {
-        warning("value ", vec[3], " is now below lower bound ", vec[1], " for ", cmnt, "\n")
+        warning(
+          "value ",
+          vec[3],
+          " is now below lower bound ",
+          vec[1],
+          " for ",
+          cmnt,
+          "\n"
+        )
       }
       if (vec[3] > vec[2]) {
-        warning("value ", vec[3], " is now above upper bound ", vec[2], " for ", cmnt, "\n")
+        warning(
+          "value ",
+          vec[3],
+          " is now above upper bound ",
+          vec[2],
+          " for ",
+          cmnt,
+          "\n"
+        )
       }
 
       newphase[i] <- vec[7]
@@ -297,7 +344,6 @@ SS_changepars <-
     newctl <- ctl
     newctl[linenums] <- newctlsubset
     writeLines(newctl, file.path(dir, newctlfile))
-
 
     # if no changed made, repeat old values in output
     if (is.null(newvals)) {
@@ -318,10 +364,21 @@ SS_changepars <-
     if (is.null(newprtype)) {
       newprtype <- oldprtype
     }
-    results <- data.frame(oldvals, newvals, oldphase, newphase,
-      oldlos, newlos, oldhis, newhis,
-      oldprior, newprior, oldprsd, newprsd,
-      oldprtype, newprtype,
+    results <- data.frame(
+      oldvals,
+      newvals,
+      oldphase,
+      newphase,
+      oldlos,
+      newlos,
+      oldhis,
+      newhis,
+      oldprior,
+      newprior,
+      oldprsd,
+      newprsd,
+      oldprtype,
+      newprtype,
       comment = cmntvec
     )
     # output table of changes
@@ -330,7 +387,9 @@ SS_changepars <-
     }
     if (verbose) {
       message(
-        "Wrote new file to ", newctlfile, " with the following changes:\n",
+        "Wrote new file to ",
+        newctlfile,
+        " with the following changes:\n",
         paste0(utils::capture.output(results), collapse = "\n")
       )
     }

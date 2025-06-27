@@ -81,34 +81,59 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotIndices <-
-  function(replist,
-           subplots = c(1:10, 12), # IGT 2021/4/15: not sure why 11 is skipped
-           plot = TRUE, print = FALSE,
-           fleets = "all", fleetnames = "default",
-           smooth = TRUE, add = FALSE, datplot = TRUE,
-           labels = c(
-             "Year", # 1
-             "Index", # 2
-             "Observed index", # 3
-             "Expected index", # 4
-             "Log index", # 5
-             "Log observed index", # 6
-             "Log expected index", # 7
-             "Standardized index", # 8
-             "Catchability (Q)", # 9
-             "Time-varying catchability", # 10
-             "Vulnerable biomass", # 11
-             "Catchability vs. vulnerable biomass", # 12
-             "Residual", # 13
-             "Deviation"
-           ), # 14
-           fleetcols = NULL,
-           col1 = "default", col2 = "default", col3 = "blue", col4 = "red",
-           pch1 = 21, pch2 = 16, cex = 1, bg = "white",
-           legend = TRUE, legendloc = "topright", seasnames = NULL,
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           mainTitle = FALSE, plotdir = "default", minyr = NULL, maxyr = NULL,
-           maximum_ymax_ratio = Inf, show_input_uncertainty = TRUE, verbose = TRUE, ...) {
+  function(
+    replist,
+    subplots = c(1:10, 12), # IGT 2021/4/15: not sure why 11 is skipped
+    plot = TRUE,
+    print = FALSE,
+    fleets = "all",
+    fleetnames = "default",
+    smooth = TRUE,
+    add = FALSE,
+    datplot = TRUE,
+    labels = c(
+      "Year", # 1
+      "Index", # 2
+      "Observed index", # 3
+      "Expected index", # 4
+      "Log index", # 5
+      "Log observed index", # 6
+      "Log expected index", # 7
+      "Standardized index", # 8
+      "Catchability (Q)", # 9
+      "Time-varying catchability", # 10
+      "Vulnerable biomass", # 11
+      "Catchability vs. vulnerable biomass", # 12
+      "Residual", # 13
+      "Deviation"
+    ), # 14
+    fleetcols = NULL,
+    col1 = "default",
+    col2 = "default",
+    col3 = "blue",
+    col4 = "red",
+    pch1 = 21,
+    pch2 = 16,
+    cex = 1,
+    bg = "white",
+    legend = TRUE,
+    legendloc = "topright",
+    seasnames = NULL,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    mainTitle = FALSE,
+    plotdir = "default",
+    minyr = NULL,
+    maxyr = NULL,
+    maximum_ymax_ratio = Inf,
+    show_input_uncertainty = TRUE,
+    verbose = TRUE,
+    ...
+  ) {
     # get some quantities from replist
     cpue <- replist[["cpue"]]
     SS_versionNumeric <- replist[["SS_versionNumeric"]]
@@ -121,7 +146,6 @@ SSplotIndices <-
 
     # table to store information on each plot
     plotinfo <- NULL
-
 
     # define a bunch of internal functions
 
@@ -143,20 +167,24 @@ SSplotIndices <-
         }
         if (error == 0) {
           if (!log) {
-            lower <- qlnorm(.025,
+            lower <- qlnorm(
+              .025,
               meanlog = log(y[include]),
               sdlog = cpueuse[[colname]][include]
             )
-            upper <- qlnorm(.975,
+            upper <- qlnorm(
+              .975,
               meanlog = log(y[include]),
               sdlog = cpueuse[[colname]][include]
             )
           } else {
-            lower <- qnorm(.025,
+            lower <- qnorm(
+              .025,
               mean = log(y[include]),
               sd = cpueuse[[colname]][include]
             )
-            upper <- qnorm(.975,
+            upper <- qnorm(
+              .975,
               mean = log(y[include]),
               sd = cpueuse[[colname]][include]
             )
@@ -164,14 +192,24 @@ SSplotIndices <-
         }
         # normal error interval
         if (error == -1) {
-          lower <- qnorm(.025, mean = y[include], sd = cpueuse[[colname]][include])
-          upper <- qnorm(.975, mean = y[include], sd = cpueuse[[colname]][include])
+          lower <- qnorm(
+            .025,
+            mean = y[include],
+            sd = cpueuse[[colname]][include]
+          )
+          upper <- qnorm(
+            .975,
+            mean = y[include],
+            sd = cpueuse[[colname]][include]
+          )
         }
 
         # T-distribution interval
         if (error > 0) {
-          lower <- log(y[include]) + qt(.025, df = error) * cpueuse[[colname]][include]
-          upper <- log(y[include]) + qt(.975, df = error) * cpueuse[[colname]][include]
+          lower <- log(y[include]) +
+            qt(.025, df = error) * cpueuse[[colname]][include]
+          upper <- log(y[include]) +
+            qt(.975, df = error) * cpueuse[[colname]][include]
           if (!log) {
             lower <- exp(lower)
             upper <- exp(upper)
@@ -197,7 +235,8 @@ SSplotIndices <-
           "Removing upper interval on indices with infinite upper quantile values.\n",
           "Check the uncertainty inputs for the indices."
         )
-        upper_total[upper_total == Inf] <- 100 * max(cpueuse[["Obs"]][upper_total == Inf])
+        upper_total[upper_total == Inf] <- 100 *
+          max(cpueuse[["Obs"]][upper_total == Inf])
       }
 
       # plot title
@@ -227,18 +266,23 @@ SSplotIndices <-
         if (!log) {
           # ylim for standard scale (if lognormal)
           if (error != -1) {
-            ylim <- c(0, 1.05 * min(
-              max(upper_total, zrange, na.rm = TRUE),
-              max(maximum_ymax_ratio * y, na.rm = TRUE)
-            ))
-          } else {
-            ylim <- 1.05 * c(
-              min(lower_total, zrange, na.rm = TRUE),
-              min(
-                max(upper_total, zrange, na.rm = TRUE),
-                max(maximum_ymax_ratio * y, na.rm = TRUE)
-              )
+            ylim <- c(
+              0,
+              1.05 *
+                min(
+                  max(upper_total, zrange, na.rm = TRUE),
+                  max(maximum_ymax_ratio * y, na.rm = TRUE)
+                )
             )
+          } else {
+            ylim <- 1.05 *
+              c(
+                min(lower_total, zrange, na.rm = TRUE),
+                min(
+                  max(upper_total, zrange, na.rm = TRUE),
+                  max(maximum_ymax_ratio * y, na.rm = TRUE)
+                )
+              )
           }
         }
         if (log) {
@@ -247,9 +291,14 @@ SSplotIndices <-
         }
 
         plot(
-          x = x[include], y = y[include], type = "n", xlab = labels[1],
+          x = x[include],
+          y = y[include],
+          type = "n",
+          xlab = labels[1],
           ylab = ifelse(!log, labels[2], labels[5]),
-          main = main, cex.main = cex.main, xlim = xlim,
+          main = main,
+          cex.main = cex.main,
+          xlim = xlim,
           ylim = ylim,
           yaxs = ifelse(log, "r", "i"),
           ...
@@ -269,10 +318,18 @@ SSplotIndices <-
       if (addexpected) {
         # show thicker lines behind final lines for input uncertainty
         # only in plot with expected value as well
-        if (show_input_uncertainty & !all(lower_input == lower_total, na.rm = TRUE)) {
-          segments(x[include], lower_input,
-            x[include], upper_input,
-            col = colvec1[s], lwd = 3, lend = 1
+        if (
+          show_input_uncertainty &
+            !all(lower_input == lower_total, na.rm = TRUE)
+        ) {
+          segments(
+            x[include],
+            lower_input,
+            x[include],
+            upper_input,
+            col = colvec1[s],
+            lwd = 3,
+            lend = 1
           )
         }
       } else {
@@ -284,16 +341,25 @@ SSplotIndices <-
 
       # add intervals
       arrows(
-        x0 = x[include], y0 = lower,
-        x1 = x[include], y1 = upper,
-        length = 0.03, angle = 90, code = 3, col = colvec1[s]
+        x0 = x[include],
+        y0 = lower,
+        x1 = x[include],
+        y1 = upper,
+        length = 0.03,
+        angle = 90,
+        code = 3,
+        col = colvec1[s]
       )
 
       # add points and expected values on standard scale
       if (!log) {
         points(
-          x = x[include], y = y[include],
-          pch = pch1, cex = cex, bg = bg, col = colvec1[s]
+          x = x[include],
+          y = y[include],
+          pch = pch1,
+          cex = cex,
+          bg = bg,
+          col = colvec1[s]
         )
         if (addexpected) {
           lines(x, z, lwd = 2, col = col3)
@@ -304,8 +370,12 @@ SSplotIndices <-
       } else {
         # add points and expected values on log scale
         points(
-          x = x[include], y = log(y[include]),
-          pch = pch1, cex = cex, bg = bg, col = colvec1[s]
+          x = x[include],
+          y = log(y[include]),
+          pch = pch1,
+          cex = cex,
+          bg = bg,
+          col = colvec1[s]
         )
         if (addexpected) {
           lines(x, log(z), lwd = 2, col = col3)
@@ -315,7 +385,13 @@ SSplotIndices <-
         }
       }
       if (legend & length(colvec1) > 1) {
-        legend(x = legendloc, legend = seasnames, pch = pch1, col = colvec1, cex = cex)
+        legend(
+          x = legendloc,
+          legend = seasnames,
+          pch = pch1,
+          col = colvec1,
+          cex = cex
+        )
       }
     }
 
@@ -328,16 +404,20 @@ SSplotIndices <-
 
       # choose y value and y-axis label
 
-      if (option == 1) { # residuals based on total SE
+      if (option == 1) {
+        # residuals based on total SE
         ylab <- labels[13]
         y <- (log(cpueuse[["Obs"]]) - log(cpueuse[["Exp"]])) / cpueuse[["SE"]]
       }
-      if (error == 0 & option == 2) { # residuals based on input SE
+      if (error == 0 & option == 2) {
+        # residuals based on input SE
         ylab <- labels[13]
         # manually calculating residual based on SE_input
-        y <- (log(cpueuse[["Obs"]]) - log(cpueuse[["Exp"]])) / cpueuse[["SE_input"]]
+        y <- (log(cpueuse[["Obs"]]) - log(cpueuse[["Exp"]])) /
+          cpueuse[["SE_input"]]
       }
-      if (option == 3) { # deviations
+      if (option == 3) {
+        # deviations
         ylab <- labels[14]
         # Dev should be equal to log(Obs/Exp)
         y <- cpueuse[["Dev"]]
@@ -360,17 +440,25 @@ SSplotIndices <-
       ylim <- c(-1.05, 1.05) * max(abs(y[include]))
       if (!add) {
         plot(
-          x = x[include], y = y[include], type = "n",
-          xlab = labels[1], xlim = xlim,
-          ylab = ylab, ylim = ylim, yaxs = "i",
-          main = main, cex.main = cex.main,
+          x = x[include],
+          y = y[include],
+          type = "n",
+          xlab = labels[1],
+          xlim = xlim,
+          ylab = ylab,
+          ylim = ylim,
+          yaxs = "i",
+          main = main,
+          cex.main = cex.main,
           ...
         )
       }
       # add points
       points(
-        x = x[include], y = y[include],
-        pch = pch1, cex = cex,
+        x = x[include],
+        y = y[include],
+        pch = pch1,
+        cex = cex,
         bg = adjustcolor(colvec1[s], alpha.f = 0.7),
         col = adjustcolor(colvec1[s], alpha.f = 0.7)
       )
@@ -381,8 +469,12 @@ SSplotIndices <-
       # add legend if more than one color (indicating season) was used
       if (legend & length(colvec1) > 1) {
         legend(
-          x = legendloc, legend = seasnames, pch = pch1,
-          pt.bg = colvec1, col = colvec1, cex = cex
+          x = legendloc,
+          legend = seasnames,
+          pch = pch1,
+          pt.bg = colvec1,
+          col = colvec1,
+          cex = cex
         )
       }
     }
@@ -400,58 +492,95 @@ SSplotIndices <-
       if (!add) {
         if (!log) {
           # standard plot
-          plot(y[include], z[include],
+          plot(
+            y[include],
+            z[include],
             type = "n",
-            xlab = labels[3], ylab = labels[4],
-            main = main, cex.main = cex.main,
-            ylim = c(0, 1.05 * max(z)), xlim = c(0, 1.05 * max(y)),
-            xaxs = "i", yaxs = "i", ...
+            xlab = labels[3],
+            ylab = labels[4],
+            main = main,
+            cex.main = cex.main,
+            ylim = c(0, 1.05 * max(z)),
+            xlim = c(0, 1.05 * max(y)),
+            xaxs = "i",
+            yaxs = "i",
+            ...
           )
         } else {
           # log-scale plot doesn't specificy y limits
-          plot(log(y[include]), log(z[include]),
+          plot(
+            log(y[include]),
+            log(z[include]),
             type = "n",
-            xlab = labels[6], ylab = labels[7],
-            main = main, cex.main = cex.main
+            xlab = labels[6],
+            ylab = labels[7],
+            main = main,
+            cex.main = cex.main
           )
         }
       }
       if (!log) {
         points(y[include], z[include], col = colvec2[s], pch = pch2, cex = cex)
       } else {
-        points(log(y[include]), log(z[include]),
-          col = colvec2[s], pch = pch2, cex = cex
+        points(
+          log(y[include]),
+          log(z[include]),
+          col = colvec2[s],
+          pch = pch2,
+          cex = cex
         )
       }
       abline(a = 0, b = 1, lty = 3)
       if (smooth && npoints > 6 && diff(range(y)) > 0) {
         if (!log) {
           psmooth <- loess(z[include] ~ y[include], degree = 1)
-          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fitted"]][order(psmooth[["x"]])],
-            lwd = 1.2, col = col4, lty = "dashed"
+          lines(
+            psmooth[["x"]][order(psmooth[["x"]])],
+            psmooth[["fitted"]][order(psmooth[["x"]])],
+            lwd = 1.2,
+            col = col4,
+            lty = "dashed"
           )
         } else {
           psmooth <- loess(log(z[include]) ~ log(y[include]), degree = 1)
-          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fitted"]][order(psmooth[["x"]])],
-            lwd = 1.2, col = col4, lty = "dashed"
+          lines(
+            psmooth[["x"]][order(psmooth[["x"]])],
+            psmooth[["fitted"]][order(psmooth[["x"]])],
+            lwd = 1.2,
+            col = col4,
+            lty = "dashed"
           )
         }
       }
       if (legend & length(colvec2) > 1) {
-        legend(x = legendloc, legend = seasnames, pch = pch2, col = colvec2, cex = cex)
+        legend(
+          x = legendloc,
+          legend = seasnames,
+          pch = pch2,
+          col = colvec2,
+          cex = cex
+        )
       }
     }
 
     timevarying_q.fn <- function() {
       # plot of time-varying catchability (if present)
       main <- paste(labels[10], Fleet, sep = " ")
-      if (!mainTitle) main <- ""
+      if (!mainTitle) {
+        main <- ""
+      }
       q <- cpueuse[["Calc_Q"]]
       if (!add) {
-        plot(x, q,
-          type = "o", xlab = labels[1], main = main,
-          cex.main = cex.main, ylab = labels[9],
-          col = colvec2[1], pch = pch2
+        plot(
+          x,
+          q,
+          type = "o",
+          xlab = labels[1],
+          main = main,
+          cex.main = cex.main,
+          ylab = labels[9],
+          col = colvec2[1],
+          pch = pch2
         )
       }
     }
@@ -459,16 +588,28 @@ SSplotIndices <-
     q_vs_vuln_bio.fn <- function() {
       # plot of time-varying catchability (if present)
       main <- paste(labels[12], Fleet, sep = " ")
-      if (!mainTitle) main <- ""
+      if (!mainTitle) {
+        main <- ""
+      }
       v <- cpueuse[["Vuln_bio"]]
       q1 <- cpueuse[["Calc_Q"]]
       q2 <- cpueuse[["Eff_Q"]]
-      if (all(q1 == q2)) ylab <- labels[9] else ylab <- "Effective catchability"
+      if (all(q1 == q2)) {
+        ylab <- labels[9]
+      } else {
+        ylab <- "Effective catchability"
+      }
       if (!add) {
-        plot(v, q2,
-          type = "o", xlab = labels[11], main = main,
-          cex.main = cex.main, ylab = ylab,
-          col = colvec2[1], pch = pch2
+        plot(
+          v,
+          q2,
+          type = "o",
+          xlab = labels[11],
+          main = main,
+          cex.main = cex.main,
+          ylab = ylab,
+          col = colvec2[1],
+          pch = pch2
         )
       }
     }
@@ -497,10 +638,16 @@ SSplotIndices <-
       for (ipar in 1:nSDpars) {
         if (SS_versionNumeric >= 3.3) {
           # parsing label with ending like "(2)" assuming only one set of parentheses
-          num <- strsplit(Q_extraSD_info[["Label"]][ipar], split = "[()]", fixed = FALSE)[[1]][2]
+          num <- strsplit(
+            Q_extraSD_info[["Label"]][ipar],
+            split = "[()]",
+            fixed = FALSE
+          )[[1]][2]
         } else {
-          num <- strsplit(substring(Q_extraSD_info[["Label"]][ipar], nchar("Q_extraSD_") + 1),
-            split = "_", fixed = TRUE
+          num <- strsplit(
+            substring(Q_extraSD_info[["Label"]][ipar], nchar("Q_extraSD_") + 1),
+            split = "_",
+            fixed = TRUE
           )[[1]][1]
         }
         Q_extraSD_info[["Fleet"]][ipar] <- as.numeric(num)
@@ -514,7 +661,9 @@ SSplotIndices <-
       # if no seasons, put at integer year value
       cpue[["YrSeas"]] <- cpue[["Yr"]]
     }
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
+    if (plotdir == "default") {
+      plotdir <- replist[["inputs"]][["dir"]]
+    }
 
     if (fleetnames[1] == "default") {
       fleetnames <- FleetNames
@@ -523,21 +672,19 @@ SSplotIndices <-
       fleets <- 1:nfleets
     } else {
       if (length(intersect(fleets, 1:nfleets)) != length(fleets)) {
-        return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
+        return(
+          "Input 'fleets' should be 'all' or a vector of values between 1 and nfleets."
+        )
       }
     }
 
     # subset fleets as requested
     fleetvec <- intersect(fleets, unique(as.numeric(cpue[["Fleet"]])))
 
-
     # empty data.frame to store data for comparison among indices
     allcpue <- data.frame()
     # keep track of whether any indices with negative observations is excluded
     any_negative <- FALSE
-
-
-
 
     # loop over fleets
     for (ifleet in fleetvec) {
@@ -584,7 +731,9 @@ SSplotIndices <-
           colvec1 <- rep(col1, nseasons)
         }
       }
-      if (is.null(seasnames)) seasnames <- paste("Season", 1:nseasons, sep = "")
+      if (is.null(seasnames)) {
+        seasnames <- paste("Season", 1:nseasons, sep = "")
+      }
 
       Fleet <- fleetnames[ifleet]
       error <- replist[["survey_error"]][ifleet]
@@ -596,13 +745,15 @@ SSplotIndices <-
       }
       if (error == 1) {
         error_caption <- paste0(
-          "T-distributed error with ", error,
+          "T-distributed error with ",
+          error,
           " degree of freedom"
         )
       }
       if (error > 1) {
         error_caption <- paste0(
-          "T-distributed error with ", error,
+          "T-distributed error with ",
+          error,
           " degrees of freedom"
         )
       }
@@ -624,7 +775,8 @@ SSplotIndices <-
       if (!"SE_input" %in% names(cpue)) {
         if (exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info[["Fleet"]]) {
           # input uncertainty is final value minus extra SD parameter (if present)
-          cpueuse[["SE_input"]] <- cpueuse[["SE"]] - Q_extraSD_info[["Value"]][Q_extraSD_info[["Fleet"]] == ifleet]
+          cpueuse[["SE_input"]] <- cpueuse[["SE"]] -
+            Q_extraSD_info[["Value"]][Q_extraSD_info[["Fleet"]] == ifleet]
         } else {
           cpueuse[["SE_input"]] <- cpueuse[["SE"]]
         }
@@ -646,13 +798,19 @@ SSplotIndices <-
           if (min(cpueuse[["Obs"]] >= 0)) {
             cpueuse[["Index"]] <- rep(ifleet, length(cpueuse[["YrSeas"]]))
             cpueuse[["stdvalue"]] <- cpueuse[["Obs"]] / mean(cpueuse[["Obs"]])
-            tempcpue <- cbind(cpueuse[["Index"]], cpueuse[["YrSeas"]], cpueuse[["Obs"]], cpueuse[["stdvalue"]])
+            tempcpue <- cbind(
+              cpueuse[["Index"]],
+              cpueuse[["YrSeas"]],
+              cpueuse[["Obs"]],
+              cpueuse[["stdvalue"]]
+            )
             colnames(tempcpue) <- c("Index", "year", "value", "stdvalue")
             allcpue <- rbind(allcpue, tempcpue)
           } else {
             if (verbose & 9 %in% subplots & datplot) {
               message(
-                "Excluding fleet ", ifleet,
+                "Excluding fleet ",
+                ifleet,
                 " from index comparison figure because it has negative values"
               )
             }
@@ -679,15 +837,25 @@ SSplotIndices <-
           if (1 %in% subplots & datplot) {
             file <- paste0("index1_cpuedata_", gsub(" ", "", Fleet), ".png")
             caption <- paste0(
-              "Index data for ", Fleet, ". ",
+              "Index data for ",
+              Fleet,
+              ". ",
               "Lines indicate 95% uncertainty interval around index values ",
-              "based on the model assumption of ", error_caption, ". ",
+              "based on the model assumption of ",
+              error_caption,
+              ". ",
               "Thicker lines (if present) indicate input uncertainty before addition of ",
               "estimated additional uncertainty parameter."
             )
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             index.fn(addexpected = FALSE)
@@ -696,15 +864,25 @@ SSplotIndices <-
           if (2 %in% subplots) {
             file <- paste0("index2_cpuefit_", gsub(" ", "", Fleet), ".png")
             caption <- paste0(
-              "Fit to index data for ", Fleet, ". ",
+              "Fit to index data for ",
+              Fleet,
+              ". ",
               "Lines indicate 95% uncertainty interval around index values ",
-              "based on the model assumption of ", error_caption, ". ",
+              "based on the model assumption of ",
+              error_caption,
+              ". ",
               "Thicker lines (if present) indicate input uncertainty before addition of ",
               "estimated additional uncertainty parameter."
             )
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             index.fn()
@@ -712,10 +890,19 @@ SSplotIndices <-
           }
           if (3 %in% subplots) {
             file <- paste0("index3_obs_vs_exp_", gsub(" ", "", Fleet), ".png")
-            caption <- paste("Observed vs. expected index values with smoother for", Fleet)
+            caption <- paste(
+              "Observed vs. expected index values with smoother for",
+              Fleet
+            )
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             obs_vs_exp.fn()
@@ -742,17 +929,31 @@ SSplotIndices <-
           # print subplots 4-6 to PNG files
           if (print) {
             if (4 %in% subplots & datplot) {
-              file <- paste0("index4_logcpuedata_", gsub(" ", "", Fleet), ".png")
+              file <- paste0(
+                "index4_logcpuedata_",
+                gsub(" ", "", Fleet),
+                ".png"
+              )
               caption <- paste0(
-                "Log index data for ", Fleet, ". ",
+                "Log index data for ",
+                Fleet,
+                ". ",
                 "Lines indicate 95% uncertainty interval around index values ",
-                "based on the model assumption of ", error_caption, ". ",
+                "based on the model assumption of ",
+                error_caption,
+                ". ",
                 "Thicker lines (if present) indicate input uncertainty before addition of ",
                 "estimated additional uncertainty parameter."
               )
               plotinfo <- save_png(
-                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                plotinfo = plotinfo,
+                file = file,
+                plotdir = plotdir,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                res = res,
+                ptsize = ptsize,
                 caption = caption
               )
               index.fn(log = TRUE, addexpected = FALSE)
@@ -761,26 +962,49 @@ SSplotIndices <-
             if (5 %in% subplots) {
               file <- paste0("index5_logcpuefit_", gsub(" ", "", Fleet), ".png")
               caption <- paste0(
-                "Fit to log index data on log scale for ", Fleet, ". ",
+                "Fit to log index data on log scale for ",
+                Fleet,
+                ". ",
                 "Lines indicate 95% uncertainty interval around index values ",
-                "based on the model assumption of ", error_caption, ". ",
+                "based on the model assumption of ",
+                error_caption,
+                ". ",
                 "Thicker lines (if present) indicate input uncertainty before addition of ",
                 "estimated additional uncertainty parameter."
               )
               plotinfo <- save_png(
-                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                plotinfo = plotinfo,
+                file = file,
+                plotdir = plotdir,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                res = res,
+                ptsize = ptsize,
                 caption = caption
               )
               index.fn(log = TRUE)
               dev.off()
             }
             if (6 %in% subplots) {
-              file <- paste0("index6_log_obs_vs_exp_", gsub(" ", "", Fleet), ".png")
-              caption <- paste("log(observed) vs. log(expected) index values with smoother for", Fleet)
+              file <- paste0(
+                "index6_log_obs_vs_exp_",
+                gsub(" ", "", Fleet),
+                ".png"
+              )
+              caption <- paste(
+                "log(observed) vs. log(expected) index values with smoother for",
+                Fleet
+              )
               plotinfo <- save_png(
-                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                plotinfo = plotinfo,
+                file = file,
+                plotdir = plotdir,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                res = res,
+                ptsize = ptsize,
                 caption = caption
               )
               obs_vs_exp.fn(log = TRUE)
@@ -801,27 +1025,49 @@ SSplotIndices <-
 
         if (print) {
           if (7 %in% subplots & time) {
-            file <- paste0("index7_timevarying_q_", gsub(" ", "", Fleet), ".png")
+            file <- paste0(
+              "index7_timevarying_q_",
+              gsub(" ", "", Fleet),
+              ".png"
+            )
             caption <- paste("Timeseries of catchability for", Fleet)
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             timevarying_q.fn()
             dev.off()
           }
           if (8 %in% subplots & time2) {
-            file <- paste0("index8_q_vs_vuln_bio_", gsub(" ", "", Fleet), ".png")
+            file <- paste0(
+              "index8_q_vs_vuln_bio_",
+              gsub(" ", "", Fleet),
+              ".png"
+            )
             caption <-
               paste0(
-                "Catchability vs. vulnerable biomass for fleet ", Fleet, "<br> \n",
+                "Catchability vs. vulnerable biomass for fleet ",
+                Fleet,
+                "<br> \n",
                 "This plot should illustrate curvature of nonlinear catchability relationship<br> \n",
                 "or reveal patterns associated with random-walk catchability."
               )
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             q_vs_vuln_bio.fn()
@@ -844,7 +1090,11 @@ SSplotIndices <-
         if (print) {
           #### residuals based on total uncertainty
           if (10 %in% subplots & all(cpueuse[["Obs"]] >= 0)) {
-            file <- paste0("index10_resids_SE_total_", gsub(" ", "", Fleet), ".png")
+            file <- paste0(
+              "index10_resids_SE_total_",
+              gsub(" ", "", Fleet),
+              ".png"
+            )
             caption <- paste0("Residuals of fit to index for ", Fleet, ".")
             if (error == 0) {
               caption <- paste0(
@@ -861,19 +1111,32 @@ SSplotIndices <-
               )
             }
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             index_resids.fn(option = 1)
             dev.off()
           }
           #### residuals based on input uncertainty
-          if (11 %in% subplots &
-            show_input_uncertainty &&
-            any(!is.null(cpueuse[["SE_input"]][include])) &&
-            any(cpueuse[["SE_input"]] > cpueuse[["SE"]])) {
-            file <- paste0("index11_resids_SE_input_", gsub(" ", "", Fleet), ".png")
+          if (
+            11 %in%
+              subplots &
+              show_input_uncertainty &&
+              any(!is.null(cpueuse[["SE_input"]][include])) &&
+              any(cpueuse[["SE_input"]] > cpueuse[["SE"]])
+          ) {
+            file <- paste0(
+              "index11_resids_SE_input_",
+              gsub(" ", "", Fleet),
+              ".png"
+            )
             caption <- paste0("Residuals for fit to index for ", Fleet, ".")
             if (error == 0) {
               caption <- paste0(
@@ -890,8 +1153,14 @@ SSplotIndices <-
               )
             }
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             index_resids.fn(option = 2)
@@ -899,7 +1168,11 @@ SSplotIndices <-
           }
           #### simple deviation plot
           if (12 %in% subplots) {
-            file <- paste0("index12_resids_SE_total_", gsub(" ", "", Fleet), ".png")
+            file <- paste0(
+              "index12_resids_SE_total_",
+              gsub(" ", "", Fleet),
+              ".png"
+            )
             caption <- paste0("Deviations for fit to index for ", Fleet, ".")
             if (error != -1) {
               # lognormal or T-distributed error
@@ -918,8 +1191,14 @@ SSplotIndices <-
               )
             }
             plotinfo <- save_png(
-              plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-              pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
               caption = caption
             )
             index_resids.fn(option = 3)
@@ -951,18 +1230,29 @@ SSplotIndices <-
         if (!is.null(fleetcols) & length(fleetcols) >= nfleets) {
           usecols <- fleetcols
         } else {
-          usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
+          usecols <- rich.colors.short(
+            max(allcpue[["Index"]], na.rm = TRUE),
+            alpha = 0.7
+          )
           if (max(allcpue[["Index"]], na.rm = TRUE) >= 2) {
-            usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE) + 1,
+            usecols <- rich.colors.short(
+              max(allcpue[["Index"]], na.rm = TRUE) + 1,
               alpha = 0.7
             )[-1]
           }
         }
         # make empty plot
         if (!add) {
-          plot(0,
-            type = "n", xlab = labels[1], main = main, cex.main = cex.main,
-            col = usecols[1], ylab = labels[8], xlim = xlim, ylim = ylim,
+          plot(
+            0,
+            type = "n",
+            xlab = labels[1],
+            main = main,
+            cex.main = cex.main,
+            col = usecols[1],
+            ylab = labels[8],
+            xlim = xlim,
+            ylim = ylim,
             yaxs = "i"
           )
         }
@@ -983,7 +1273,8 @@ SSplotIndices <-
             cex = cex
           )
         }
-        legend(legendloc,
+        legend(
+          legendloc,
           legend = fleetnames[fleetvec],
           ncol = 2,
           bty = "n",
@@ -1008,8 +1299,14 @@ SSplotIndices <-
           )
         }
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         all_index.fn()
@@ -1017,6 +1314,8 @@ SSplotIndices <-
       }
     } # end datplot
 
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Index"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "Index"
+    }
     return(invisible(plotinfo))
   } # end function

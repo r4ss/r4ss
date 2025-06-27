@@ -61,10 +61,28 @@
 #' @template methot2011cjfas
 #'
 SS_fitbiasramp <-
-  function(replist, verbose = FALSE, startvalues = NULL, method = "BFGS", twoplots = TRUE,
-           transform = FALSE, plot = TRUE, print = FALSE, plotdir = "default", shownew = TRUE,
-           oldctl = NULL, newctl = NULL, altmethod = "nlminb", exclude_forecast = FALSE,
-           pwidth = 6.5, pheight = 5.0, punits = "in", ptsize = 10, res = 300, cex.main = 1) {
+  function(
+    replist,
+    verbose = FALSE,
+    startvalues = NULL,
+    method = "BFGS",
+    twoplots = TRUE,
+    transform = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    plotdir = "default",
+    shownew = TRUE,
+    oldctl = NULL,
+    newctl = NULL,
+    altmethod = "nlminb",
+    exclude_forecast = FALSE,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    ptsize = 10,
+    res = 300,
+    cex.main = 1
+  ) {
     # note, method is choices that go into optim:
     #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
@@ -72,7 +90,9 @@ SS_fitbiasramp <-
     plotinfo <- NULL
 
     if (!is.list(replist) | replist[["SS_versionNumeric"]] < 3.11) {
-      stop("this function needs an input object created by SS_output from SS version 3.11 or greater")
+      stop(
+        "this function needs an input object created by SS_output from SS version 3.11 or greater"
+      )
     }
     if (replist[["inputs"]][["covar"]] == FALSE) {
       stop("you need to have covar=TRUE in the input to the SS_output function")
@@ -82,14 +102,20 @@ SS_fitbiasramp <-
     recruit <- replist[["recruit"]]
     sigma_R_in <- replist[["sigma_R_in"]]
     rmse_table <- replist[["rmse_table"]]
-    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
-    if (print && !dir.exists(plotdir)) dir.create(plotdir, recursive = TRUE)
+    if (plotdir == "default") {
+      plotdir <- replist[["inputs"]][["dir"]]
+    }
+    if (print && !dir.exists(plotdir)) {
+      dir.create(plotdir, recursive = TRUE)
+    }
 
     if (!is.numeric(rmse_table[["RMSE"]])) {
       stop("Input list element 'rmse_table' has non-numeric 'RMSE' column.")
     }
     if (max(rmse_table[["RMSE"]]) == 0) {
-      stop("No bias adjustment needed. Root mean squared error of recruit devs is 0.")
+      stop(
+        "No bias adjustment needed. Root mean squared error of recruit devs is 0."
+      )
     }
 
     if (is.null(startvalues)) {
@@ -103,7 +129,9 @@ SS_fitbiasramp <-
         .7
       )
     }
-    if (verbose) message("startvalues =", paste(startvalues, collapse = ", "))
+    if (verbose) {
+      message("startvalues =", paste(startvalues, collapse = ", "))
+    }
 
     makeoffsets <- function(values) {
       # a function to transform parameters into offsets from adjacent values
@@ -136,10 +164,19 @@ SS_fitbiasramp <-
       )
     }
 
-    biasadjfit <- function(pars, yr, std, sigmaR, transform,
-                           is.forecast, eps = .1) {
+    biasadjfit <- function(
+      pars,
+      yr,
+      std,
+      sigmaR,
+      transform,
+      is.forecast,
+      eps = .1
+    ) {
       # calculate the goodness of the fit of the estimated ramp and values to the model output
-      biasadj <- biasadjfun(yr = yr, vec = pars, transform = transform)[["biasadj"]]
+      biasadj <- biasadjfun(yr = yr, vec = pars, transform = transform)[[
+        "biasadj"
+      ]]
       compare <- 1 - (std / sigmaR)^2
       if (exclude_forecast) {
         biasadj <- biasadj[!is.forecast]
@@ -148,7 +185,9 @@ SS_fitbiasramp <-
       # penalty similar to that employed by posfun in ADMB
       penfun <- function(xsmall, xbig, eps = .1) {
         pen <- 0
-        if (xbig < xsmall + eps) pen <- pen + (xbig - (xsmall + eps))^2
+        if (xbig < xsmall + eps) {
+          pen <- pen + (xbig - (xsmall + eps))^2
+        }
         return(pen)
       }
       penalty <- 0
@@ -173,37 +212,62 @@ SS_fitbiasramp <-
       # run the optimizationt to find best fit values
       if (altmethod == "nlminb") {
         biasopt <- nlminb(
-          start = startvalues, objective = biasadjfit, gradient = NULL,
-          hessian = NULL, scale = 1, control = list(maxit = 1000),
-          lower = c(-Inf, -Inf, -Inf, -Inf, 0), upper = Inf,
-          yr = yr, std = std, sigmaR = sigma_R_in, transform = transform,
+          start = startvalues,
+          objective = biasadjfit,
+          gradient = NULL,
+          hessian = NULL,
+          scale = 1,
+          control = list(maxit = 1000),
+          lower = c(-Inf, -Inf, -Inf, -Inf, 0),
+          upper = Inf,
+          yr = yr,
+          std = std,
+          sigmaR = sigma_R_in,
+          transform = transform,
           is.forecast = is.forecast
         )
       }
       if (altmethod == "psoptim") {
         # pso package no longer included by default since this option is rarely used
         if (!requireNamespace("pso", quietly = TRUE)) {
-          stop("Package \"pso\" needed for this function to work. Please install it.",
+          stop(
+            "Package \"pso\" needed for this function to work. Please install it.",
             call. = FALSE
           )
         }
 
         biasadjfit(
-          pars = startvalues, yr = yr, std = std, sigmaR = sigma_R_in,
-          is.forecast = is.forecast, transform = transform
+          pars = startvalues,
+          yr = yr,
+          std = std,
+          sigmaR = sigma_R_in,
+          is.forecast = is.forecast,
+          transform = transform
         )
         biasopt <- pso::psoptim(
-          par = startvalues, fn = biasadjfit, yr = yr, std = std,
-          sigmaR = sigma_R_in, transform = transform,
-          control = list(maxit = 1000, trace = TRUE), lower = rep(-1e6, 5),
-          upper = rep(1e6, 5), is.forecast = is.forecast
+          par = startvalues,
+          fn = biasadjfit,
+          yr = yr,
+          std = std,
+          sigmaR = sigma_R_in,
+          transform = transform,
+          control = list(maxit = 1000, trace = TRUE),
+          lower = rep(-1e6, 5),
+          upper = rep(1e6, 5),
+          is.forecast = is.forecast
         )
       }
       if (!(altmethod %in% c("nlminb", "psoptim"))) {
         biasopt <- optim(
-          par = startvalues, fn = biasadjfit, yr = yr, std = std,
-          sigmaR = sigma_R_in, transform = transform,
-          method = method, control = list(maxit = 1000), is.forecast = is.forecast
+          par = startvalues,
+          fn = biasadjfit,
+          yr = yr,
+          std = std,
+          sigmaR = sigma_R_in,
+          transform = transform,
+          method = method,
+          control = list(maxit = 1000),
+          is.forecast = is.forecast
         )
       }
       return(biasopt)
@@ -211,7 +275,11 @@ SS_fitbiasramp <-
 
     biasadjfun <- function(yr, vec, transform = transform) {
       # calculate the bias adjustment for every year as a function of the parameters
-      if (transform) vec2 <- removeoffsets(vec) else vec2 <- vec
+      if (transform) {
+        vec2 <- removeoffsets(vec)
+      } else {
+        vec2 <- vec
+      }
       last_no <- vec2[1]
       first_full <- vec2[2]
       last_full <- vec2[3]
@@ -232,7 +300,8 @@ SS_fitbiasramp <-
               biasadj[i] <- max_biasadj
             } else {
               if (y <= first_no) {
-                biasadj[i] <- max_biasadj * (1 - (y - last_full) / (first_no - last_full))
+                biasadj[i] <- max_biasadj *
+                  (1 - (y - last_full) / (first_no - last_full))
               } else {
                 biasadj[i] <- 0
               }
@@ -243,7 +312,9 @@ SS_fitbiasramp <-
       return(data.frame(yr = yr, biasadj = biasadj))
     }
 
-    recdevs <- replist[["recruitpars"]][!is.na(replist[["recruitpars"]][["Parm_StDev"]]), ]
+    recdevs <- replist[["recruitpars"]][
+      !is.na(replist[["recruitpars"]][["Parm_StDev"]]),
+    ]
     val <- recdevs[["Value"]]
     std <- recdevs[["Parm_StDev"]]
     yr <- recdevs[["Yr"]]
@@ -254,7 +325,9 @@ SS_fitbiasramp <-
 
     # test for presence of estimated recruitment deviations
     if (max(val) == 0 | length(val) == 0) {
-      if (verbose) message("No rec devs estimated in this model")
+      if (verbose) {
+        message("No rec devs estimated in this model")
+      }
       return()
     }
 
@@ -262,42 +335,91 @@ SS_fitbiasramp <-
     recdev_lo <- val - 1.96 * std
 
     ylim <- range(recdev_hi, recdev_lo)
-    if (verbose) message("Now estimating alternative recruitment bias adjustment fraction...")
+    if (verbose) {
+      message(
+        "Now estimating alternative recruitment bias adjustment fraction..."
+      )
+    }
     newbias <- optimfun(
-      yr = yr, std = std,
-      startvalues = startvalues, is.forecast = is.forecast
+      yr = yr,
+      std = std,
+      startvalues = startvalues,
+      is.forecast = is.forecast
     )
 
     plotbiasadj <- function() {
       if (twoplots) {
         par(mfrow = c(2, 1), mar = c(2, 5, 1, 1), oma = c(3, 0, 0, 0))
-        plot(yr, yr,
-          type = "n", xlab = "Year",
-          ylab = "Recruitment deviation", ylim = ylim
+        plot(
+          yr,
+          yr,
+          type = "n",
+          xlab = "Year",
+          ylab = "Recruitment deviation",
+          ylim = ylim
         )
         abline(h = 0, col = "grey")
-        arrows(yr, recdev_lo, yr, recdev_hi, length = 0.03, code = 3, angle = 90, lwd = 1.2)
+        arrows(
+          yr,
+          recdev_lo,
+          yr,
+          recdev_hi,
+          length = 0.03,
+          code = 3,
+          angle = 90,
+          lwd = 1.2
+        )
         points(yr, val, pch = 21, col = 1, bg = col.vec)
       }
 
       yvals <- 1 - (std / sigma_R_in)^2
-      plot(yr, yvals,
-        xlab = "Year", ylab = "",
+      plot(
+        yr,
+        yvals,
+        xlab = "Year",
+        ylab = "",
         ylim = range(min(yvals, 0), 1, 1.3),
-        type = "b", yaxs = "i", col = col.vec
+        type = "b",
+        yaxs = "i",
+        col = col.vec
       )
       abline(h = 0, col = "grey")
       abline(h = 1, col = "grey")
-      mtext(side = 2, line = 2.5, expression(1 - italic(SE(hat(r[y]))^2 / sigma[R])^2))
+      mtext(
+        side = 2,
+        line = 2.5,
+        expression(1 - italic(SE(hat(r[y]))^2 / sigma[R])^2)
+      )
 
       # bias correction (2nd axis, scaled by ymax)
-      if (shownew) lines(biasadjfun(yr, newbias[[1]], transform = transform), col = 4, lwd = 3, lty = 1)
+      if (shownew) {
+        lines(
+          biasadjfun(yr, newbias[[1]], transform = transform),
+          col = 4,
+          lwd = 3,
+          lty = 1
+        )
+      }
       legendlines <- 1
-      if (shownew) legendlines <- 1:2
-      lines(recruit[["Yr"]], recruit[["biasadjuster"]], col = 2, lwd = 3, lty = 2)
-      legend("topleft",
-        col = c(2, 4)[legendlines], lwd = 3, lty = (2:1)[legendlines],
-        inset = .01, cex = .9, bg = rgb(1, 1, 1, .8), box.col = NA,
+      if (shownew) {
+        legendlines <- 1:2
+      }
+      lines(
+        recruit[["Yr"]],
+        recruit[["biasadjuster"]],
+        col = 2,
+        lwd = 3,
+        lty = 2
+      )
+      legend(
+        "topleft",
+        col = c(2, 4)[legendlines],
+        lwd = 3,
+        lty = (2:1)[legendlines],
+        inset = .01,
+        cex = .9,
+        bg = rgb(1, 1, 1, .8),
+        box.col = NA,
         legend = c("bias adjust in model", "estimated alternative")[legendlines]
       )
       mtext(side = 1, line = 3, "Year")
@@ -312,7 +434,9 @@ SS_fitbiasramp <-
     )
 
     newvals <- newbias[[1]]
-    if (transform) newvals <- removeoffsets(newvals)
+    if (transform) {
+      newvals <- removeoffsets(newvals)
+    }
     newvals <- round(newvals, 4)
     df <- data.frame(value = newvals, label = names)
 
@@ -321,7 +445,10 @@ SS_fitbiasramp <-
         warning("Problem with convergence, here is output from 'optim':\n")
         print(newbias)
       }
-      message("Estimated values: \n", paste0(utils::capture.output(df), collpase = "\n"))
+      message(
+        "Estimated values: \n",
+        paste0(utils::capture.output(df), collpase = "\n")
+      )
     }
 
     if (plot) {
@@ -345,31 +472,42 @@ SS_fitbiasramp <-
         )
       for (iline in 1:4) {
         caption <- paste0(
-          caption, format(round(df[["value"]][iline], 1), nsmall = 1), "   ",
-          df[["label"]][iline], " \n"
+          caption,
+          format(round(df[["value"]][iline], 1), nsmall = 1),
+          "   ",
+          df[["label"]][iline],
+          " \n"
         )
       }
       caption <- paste0(caption, df[["value"]][5], "  ", df[["label"]][5])
       caption <- paste(caption, "</pre>")
 
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       plotbiasadj()
-      utils::capture.output(newbias,
+      utils::capture.output(
+        newbias,
         file = file.path(plotdir, "recruit_fit_bias_adjust_convergence.txt")
       )
-      utils::capture.output(print(format(df, justify = "left"), row.names = FALSE),
+      utils::capture.output(
+        print(format(df, justify = "left"), row.names = FALSE),
         file = file.path(plotdir, "recruit_fit_bias_adjust.txt")
       )
-      utils::capture.output(cat(caption),
+      utils::capture.output(
+        cat(caption),
         file = file.path(plotdir, "recruit_fit_bias_adjust_caption.txt")
       )
       dev.off()
     }
-
 
     if (!is.null(oldctl) & !is.null(newctl)) {
       # modify a control file to include estimates if file names are provided
@@ -377,13 +515,24 @@ SS_fitbiasramp <-
       # look for certain comments in file
       spot1 <- grep("last_early_yr|last_yr_nobias", ctlfile)
       spot2 <- grep("max_bias_adj_in_MPD", ctlfile)
-      if (spot1 != spot2 - 4) stop("error related to maxbias inputs in ctl file")
+      if (spot1 != spot2 - 4) {
+        stop("error related to maxbias inputs in ctl file")
+      }
       # replace values
       ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
       # write new file
       writeLines(ctlfile, newctl)
-      if (verbose) message("wrote new file to ", newctl, " with values", paste(newvals, collapse = ", "))
+      if (verbose) {
+        message(
+          "wrote new file to ",
+          newctl,
+          " with values",
+          paste(newvals, collapse = ", ")
+        )
+      }
     }
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "RecDev"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "RecDev"
+    }
     return(invisible(list(newbias = newbias, df = df, plotinfo = plotinfo)))
   }

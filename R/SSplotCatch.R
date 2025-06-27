@@ -78,38 +78,54 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotCatch <-
-  function(replist, subplots = 1:16, add = FALSE, areas = 1,
-           plot = TRUE, print = FALSE,
-           type = "l",
-           fleetlty = 1, fleetpch = 1,
-           fleetcols = "default", fleetnames = "default",
-           lwd = 3, areacols = NULL, areanames = "default",
-           minyr = -Inf, maxyr = Inf,
-           annualcatch = TRUE,
-           forecastplot = FALSE,
-           plotdir = "default", showlegend = TRUE,
-           legendloc = "topleft",
-           order = "default",
-           xlab = "Year",
-           labels = c(
-             "Harvest rate/Year", # 1
-             "Continuous F", # 2
-             "Landings", # 3
-             "Total catch", # 4
-             "Predicted discards", # 5 # should add units
-             "Discard fraction", # 6  # need to add by weight or by length
-             "(t)", # 7
-             "(numbers x1000)", # 8
-             "Observed and expected", # 9
-             "aggregated across seasons" # 10
-           ),
-           catchasnumbers = NULL,
-           catchbars = TRUE,
-           addmax = TRUE,
-           ymax = NULL,
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
-           cex.main = 1, # note: no plot titles yet implemented
-           verbose = TRUE) {
+  function(
+    replist,
+    subplots = 1:16,
+    add = FALSE,
+    areas = 1,
+    plot = TRUE,
+    print = FALSE,
+    type = "l",
+    fleetlty = 1,
+    fleetpch = 1,
+    fleetcols = "default",
+    fleetnames = "default",
+    lwd = 3,
+    areacols = NULL,
+    areanames = "default",
+    minyr = -Inf,
+    maxyr = Inf,
+    annualcatch = TRUE,
+    forecastplot = FALSE,
+    plotdir = "default",
+    showlegend = TRUE,
+    legendloc = "topleft",
+    order = "default",
+    xlab = "Year",
+    labels = c(
+      "Harvest rate/Year", # 1
+      "Continuous F", # 2
+      "Landings", # 3
+      "Total catch", # 4
+      "Predicted discards", # 5 # should add units
+      "Discard fraction", # 6  # need to add by weight or by length
+      "(t)", # 7
+      "(numbers x1000)", # 8
+      "Observed and expected", # 9
+      "aggregated across seasons" # 10
+    ),
+    catchasnumbers = NULL,
+    catchbars = TRUE,
+    addmax = TRUE,
+    ymax = NULL,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1, # note: no plot titles yet implemented
+    verbose = TRUE
+  ) {
     # IGT 16Apr2021: labels were not getting passed into the function.
     # I don't why by this work-around should bring them back until we can
     # figure out what's going on
@@ -207,12 +223,13 @@ SSplotCatch <-
       labels[5] <- paste(labels[5], labels[7])
     }
 
-
     # time series quantities used for multiple plots
     if (nseasons > 1) {
       timeseries[["Yr"]] <- timeseries[["Yr"]] + replist[["seasfracs"]]
     }
-    ts <- timeseries[timeseries[["Yr"]] >= minyr & timeseries[["Yr"]] <= maxyr, ]
+    ts <- timeseries[
+      timeseries[["Yr"]] >= minyr & timeseries[["Yr"]] <= maxyr,
+    ]
     # filter out forecast years if requested
     if (!forecastplot) {
       ts <- ts[ts[["Yr"]] <= endyr + 1, ]
@@ -237,7 +254,8 @@ SSplotCatch <-
     if (F_method == 1) {
       stringF <- "Hrate:_"
       ylabF <- labels[1]
-    } else { # for either continuous F or hybrid F (methods 2 and 3)
+    } else {
+      # for either continuous F or hybrid F (methods 2 and 3)
       stringF <- "F:_"
       ylabF <- labels[2]
     }
@@ -257,41 +275,103 @@ SSplotCatch <-
       stringB <- "sel(B)"
     }
     if (catchasnumbers) {
-      retmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar("retain(N)")) == "retain(N)"])
-      deadmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar("dead(N)")) == "dead(N)"])
-      totcatchmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar(stringN)) == stringN])
+      retmat <- as.matrix(ts[
+        goodrows,
+        substr(names(ts), 1, nchar("retain(N)")) == "retain(N)"
+      ])
+      deadmat <- as.matrix(ts[
+        goodrows,
+        substr(names(ts), 1, nchar("dead(N)")) == "dead(N)"
+      ])
+      totcatchmat <- as.matrix(ts[
+        goodrows,
+        substr(names(ts), 1, nchar(stringN)) == stringN
+      ])
       if (ncol(totcatchmat) == 1) {
-        colnames(totcatchmat) <- grep(stringN, names(ts), fixed = TRUE, value = TRUE)
+        colnames(totcatchmat) <- grep(
+          stringN,
+          names(ts),
+          fixed = TRUE,
+          value = TRUE
+        )
       }
     } else {
-      retmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar("retain(B)")) == "retain(B)"])
-      deadmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar("dead(B)")) == "dead(B)"])
-      totcatchmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar(stringB)) == stringB])
+      retmat <- as.matrix(ts[
+        goodrows,
+        substr(names(ts), 1, nchar("retain(B)")) == "retain(B)"
+      ])
+      deadmat <- as.matrix(ts[
+        goodrows,
+        substr(names(ts), 1, nchar("dead(B)")) == "dead(B)"
+      ])
+      totcatchmat <- as.matrix(ts[
+        goodrows,
+        substr(names(ts), 1, nchar(stringB)) == stringB
+      ])
       if (ncol(totcatchmat) == 1) {
-        colnames(totcatchmat) <- grep(stringB, names(ts), fixed = TRUE, value = TRUE)
+        colnames(totcatchmat) <- grep(
+          stringB,
+          names(ts),
+          fixed = TRUE,
+          value = TRUE
+        )
       }
     }
-    totobscatchmat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar("obs_cat")) == "obs_cat"])
-    Hratemat <- as.matrix(ts[goodrows, substr(names(ts), 1, nchar(stringF)) == stringF])
-
+    totobscatchmat <- as.matrix(ts[
+      goodrows,
+      substr(names(ts), 1, nchar("obs_cat")) == "obs_cat"
+    ])
+    Hratemat <- as.matrix(ts[
+      goodrows,
+      substr(names(ts), 1, nchar(stringF)) == stringF
+    ])
 
     # add total across areas
     if (nareas > 1) {
       for (iarea in 2:nareas) {
         arearows <- ts[["Area"]] == iarea & ts[["Era"]] %in% c("INIT", "TIME")
         if (forecastplot) {
-          arearows <- ts[["Area"]] == iarea & ts[["Era"]] %in% c("INIT", "TIME", "FORE")
+          arearows <- ts[["Area"]] == iarea &
+            ts[["Era"]] %in% c("INIT", "TIME", "FORE")
         }
         if (catchasnumbers) {
-          retmat <- retmat + as.matrix(ts[arearows, substr(names(ts), 1, nchar("retain(N)")) == "retain(N)"])
-          totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts), 1, nchar(stringN)) == stringN])
+          retmat <- retmat +
+            as.matrix(ts[
+              arearows,
+              substr(names(ts), 1, nchar("retain(N)")) == "retain(N)"
+            ])
+          totcatchmat <- totcatchmat +
+            as.matrix(ts[
+              arearows,
+              substr(names(ts), 1, nchar(stringN)) == stringN
+            ])
         } else {
-          retmat <- retmat + as.matrix(ts[arearows, substr(names(ts), 1, nchar("retain(B)")) == "retain(B)"])
-          deadmat <- deadmat + as.matrix(ts[arearows, substr(names(ts), 1, nchar("dead(B)")) == "dead(B)"])
-          totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts), 1, nchar(stringB)) == stringB])
+          retmat <- retmat +
+            as.matrix(ts[
+              arearows,
+              substr(names(ts), 1, nchar("retain(B)")) == "retain(B)"
+            ])
+          deadmat <- deadmat +
+            as.matrix(ts[
+              arearows,
+              substr(names(ts), 1, nchar("dead(B)")) == "dead(B)"
+            ])
+          totcatchmat <- totcatchmat +
+            as.matrix(ts[
+              arearows,
+              substr(names(ts), 1, nchar(stringB)) == stringB
+            ])
         }
-        totobscatchmat <- totobscatchmat + as.matrix(ts[arearows, substr(names(ts), 1, nchar("obs_cat")) == "obs_cat"])
-        Hratemat <- Hratemat + as.matrix(ts[arearows, substr(names(ts), 1, nchar(stringF)) == stringF])
+        totobscatchmat <- totobscatchmat +
+          as.matrix(ts[
+            arearows,
+            substr(names(ts), 1, nchar("obs_cat")) == "obs_cat"
+          ])
+        Hratemat <- Hratemat +
+          as.matrix(ts[
+            arearows,
+            substr(names(ts), 1, nchar(stringF)) == stringF
+          ])
       }
     }
 
@@ -302,10 +382,14 @@ SSplotCatch <-
     ghost <- rep(TRUE, nfleets_with_catch)
     ghost[(1:nfleets_with_catch)[colSums(totcatchmat) > 0]] <- FALSE
 
-    if (nfleets_with_catch == 1) showlegend <- FALSE
+    if (nfleets_with_catch == 1) {
+      showlegend <- FALSE
+    }
     # get fleet numbers from names used in timeseries
-    fleetnums <- unlist(strsplit(dimnames(totcatchmat)[[2]],
-      split = ":_", fixed = TRUE
+    fleetnums <- unlist(strsplit(
+      dimnames(totcatchmat)[[2]],
+      split = ":_",
+      fixed = TRUE
     ))
     fleetnums <- as.numeric(fleetnums[seq(2, length(fleetnums), 2)])
     fleetnames <- fleetnames[fleetnums]
@@ -331,7 +415,9 @@ SSplotCatch <-
 
     if (fleetcols[1] == "default") {
       fleetcols <- rich.colors.short(nfleets_with_catch)
-      if (nfleets_with_catch > 2) fleetcols <- rich.colors.short(nfleets_with_catch + 1)[-1]
+      if (nfleets_with_catch > 2) {
+        fleetcols <- rich.colors.short(nfleets_with_catch + 1)[-1]
+      }
     }
 
     # set default area-specific colors if not specified
@@ -355,7 +441,13 @@ SSplotCatch <-
       }
     }
     # generic function to plot catch, landings, discards or harvest rates
-    linefunc <- function(ymat, ylab, ymax = NULL, addtotal = TRUE, x = catchyrs) {
+    linefunc <- function(
+      ymat,
+      ylab,
+      ymax = NULL,
+      addtotal = TRUE,
+      x = catchyrs
+    ) {
       ymat <- as.matrix(ymat)
       if (addtotal & nfleets_with_catch > 1) {
         ytotal <- rowSums(ymat)
@@ -364,29 +456,57 @@ SSplotCatch <-
         ytotal <- rep(NA, nrow(ymat))
         if (is.null(ymax) || is.na(ymax)) ymax <- max(ymat, na.rm = TRUE)
       }
-      plot(x, ytotal, ylim = c(0, ymax), xlab = xlab, ylab = ylab, type = type, lwd = lwd, col = "black")
+      plot(
+        x,
+        ytotal,
+        ylim = c(0, ymax),
+        xlab = xlab,
+        ylab = ylab,
+        type = type,
+        lwd = lwd,
+        col = "black"
+      )
       abline(h = 0, col = "grey")
       # abline(h=1,col="grey")
       for (f in 1:nfleets_with_catch) {
         # if there are any non-NA values and the max is > 0
         if (any(!is.na(ymat[, f])) && max(ymat[, f], na.rm = TRUE) > 0) {
-          lines(x, ymat[, f],
-            type = type, col = fleetcols[f],
-            lty = fleetlty[f], lwd = lwd, pch = fleetpch[f]
+          lines(
+            x,
+            ymat[, f],
+            type = type,
+            col = fleetcols[f],
+            lty = fleetlty[f],
+            lwd = lwd,
+            pch = fleetpch[f]
           )
         }
       }
       if (showlegend & nfleets_with_catch != 1) {
-        if (type == "l") pchvec <- NA else pchvec <- c(1, fleetpch[!ghost])
+        if (type == "l") {
+          pchvec <- NA
+        } else {
+          pchvec <- c(1, fleetpch[!ghost])
+        }
         if (sum(!ghost) > 1 & addtotal) {
-          legend(legendloc,
-            lty = fleetlty[!ghost], lwd = lwd, pch = pchvec,
-            col = c("black", fleetcols[!ghost]), legend = c("Total", fleetnames[!ghost]), bty = "n"
+          legend(
+            legendloc,
+            lty = fleetlty[!ghost],
+            lwd = lwd,
+            pch = pchvec,
+            col = c("black", fleetcols[!ghost]),
+            legend = c("Total", fleetnames[!ghost]),
+            bty = "n"
           )
         } else {
-          legend(legendloc,
-            lty = fleetlty[!ghost], lwd = lwd, pch = pchvec,
-            col = fleetcols[!ghost], legend = fleetnames[!ghost], bty = "n"
+          legend(
+            legendloc,
+            lty = fleetlty[!ghost],
+            lwd = lwd,
+            pch = pchvec,
+            col = fleetcols[!ghost],
+            legend = fleetnames[!ghost],
+            bty = "n"
           )
         }
       }
@@ -396,13 +516,25 @@ SSplotCatch <-
     # function for stacked polygons
     stackfunc <- function(ymat, ylab, x = catchyrs, hashyrs = NULL) {
       ## call to function in plotrix (formerly copied into r4ss)
-      if (length(order) == ncol(ymat)) ymat <- ymat[, order]
+      if (length(order) == ncol(ymat)) {
+        ymat <- ymat[, order]
+      }
       stackpoly(
-        x = x, y = ymat, border = "black",
-        xlab = xlab, ylab = ylab, col = fleetcols[order], x.hash = hashyrs
+        x = x,
+        y = ymat,
+        border = "black",
+        xlab = xlab,
+        ylab = ylab,
+        col = fleetcols[order],
+        x.hash = hashyrs
       )
       if (showlegend) {
-        legend(legendloc, fill = fleetcols[!ghost], legend = fleetnames[!ghost], bty = "n")
+        legend(
+          legendloc,
+          fill = fleetcols[!ghost],
+          legend = fleetnames[!ghost],
+          bty = "n"
+        )
       }
       return(TRUE)
     } # end stackfunc
@@ -415,10 +547,20 @@ SSplotCatch <-
       } else {
         ylim <- c(0, ymax)
       }
-      if (length(order) == ncol(ymat)) ymat <- ymat[, order]
-      mp <- barplot(t(ymat),
-        xlab = xlab, ylab = ylab, axisnames = FALSE, ylim = ylim,
-        col = fleetcols[order], space = 0, yaxs = "i", axes = FALSE, add = add
+      if (length(order) == ncol(ymat)) {
+        ymat <- ymat[, order]
+      }
+      mp <- barplot(
+        t(ymat),
+        xlab = xlab,
+        ylab = ylab,
+        axisnames = FALSE,
+        ylim = ylim,
+        col = fleetcols[order],
+        space = 0,
+        yaxs = "i",
+        axes = FALSE,
+        add = add
       )
       # Get major and minor multiples for choosing labels:
       ntick <- length(mp)
@@ -431,7 +573,11 @@ SSplotCatch <-
           mult <- c(2, 2)
         } else if (ntick < 41) {
           mult <- c(5, 5)
-        } else if (ntick < 101) mult <- c(10, 5) else mult <- c(20, 5)
+        } else if (ntick < 101) {
+          mult <- c(10, 5)
+        } else {
+          mult <- c(20, 5)
+        }
       }
       # vertical axis
       if (nfleets_with_catch > 1) {
@@ -440,7 +586,9 @@ SSplotCatch <-
         ymax2 <- round(max(ymat))
       }
       yticks <- pretty(c(0, ymax2))
-      if (addmax) yticks <- sort(c(yticks, ymax2))
+      if (addmax) {
+        yticks <- sort(c(yticks, ymax2))
+      }
       axis(2, at = yticks)
       # in seasonal models, x values don't contain integers:
       # 1987.125 1987.375 1987.625 1987.875
@@ -456,10 +604,22 @@ SSplotCatch <-
       # Draw minor ticks:
       axis(side = 1, at = mp[minor.index], labels = FALSE, tcl = -0.5)
       # Draw major ticks & labels:
-      axis(side = 1, at = mp[label.index], labels = x.shift[label.index], tcl = -0.7)
+      axis(
+        side = 1,
+        at = mp[label.index],
+        labels = x.shift[label.index],
+        tcl = -0.7
+      )
 
       # add legend
-      if (showlegend) legend(legendloc, fill = fleetcols[!ghost], legend = fleetnames[!ghost], bty = "n")
+      if (showlegend) {
+        legend(
+          legendloc,
+          fill = fleetcols[!ghost],
+          legend = fleetnames[!ghost],
+          bty = "n"
+        )
+      }
       return(TRUE)
     }
 
@@ -471,89 +631,148 @@ SSplotCatch <-
     makeplots <- function(subplot) {
       a <- FALSE
       if (subplot == 1) {
-        a <- linefunc(ymat = retmat, ymax = ymax, ylab = labels[3], addtotal = TRUE)
+        a <- linefunc(
+          ymat = retmat,
+          ymax = ymax,
+          ylab = labels[3],
+          addtotal = TRUE
+        )
       }
       if (subplot == 2) {
         a <- stackfunc(ymat = retmat, ymax = ymax, ylab = labels[3], add = add)
       }
       # if observed catch differs from estimated by more than 0.1%, then make plot to compare
-      if (subplot == 3 &
-        diff(range(retmat - totobscatchmat, na.rm = TRUE)) /
-          max(totobscatchmat, na.rm = TRUE) > 0.001) {
+      if (
+        subplot == 3 &
+          diff(range(retmat - totobscatchmat, na.rm = TRUE)) /
+            max(totobscatchmat, na.rm = TRUE) >
+            0.001
+      ) {
         a <- linefunc(
-          ymat = retmat, ylab = paste(labels[9], labels[3]), addtotal = FALSE,
+          ymat = retmat,
+          ylab = paste(labels[9], labels[3]),
+          addtotal = FALSE,
           ymax = max(totobscatchmat, retmat)
         )
         for (f in 1:nfleets_with_catch) {
           if (max(totobscatchmat[, f], na.rm = TRUE) > 0) {
-            lines(catchyrs, totobscatchmat[, f],
-              type = type, col = fleetcols[f],
-              lty = 3, lwd = lwd, pch = 4
+            lines(
+              catchyrs,
+              totobscatchmat[, f],
+              type = type,
+              col = fleetcols[f],
+              lty = 3,
+              lwd = lwd,
+              pch = 4
             )
           }
         }
-        legend(legendloc,
-          lty = c(fleetlty[!ghost], rep(3, sum(!ghost))), lwd = lwd,
-          pch = c(fleetpch[!ghost], rep(4, sum(!ghost))), col = fleetcols[!ghost],
-          legend = c(fleetnames[!ghost], paste(fleetnames[!ghost], "obs.")), bty = "n"
+        legend(
+          legendloc,
+          lty = c(fleetlty[!ghost], rep(3, sum(!ghost))),
+          lwd = lwd,
+          pch = c(fleetpch[!ghost], rep(4, sum(!ghost))),
+          col = fleetcols[!ghost],
+          legend = c(fleetnames[!ghost], paste(fleetnames[!ghost], "obs.")),
+          bty = "n"
         )
       }
       if (max(discmat, na.rm = TRUE) > 0) {
         if (subplot == 4) {
-          a <- linefunc(ymat = totcatchmat, ymax = ymax, ylab = labels[4], addtotal = TRUE)
+          a <- linefunc(
+            ymat = totcatchmat,
+            ymax = ymax,
+            ylab = labels[4],
+            addtotal = TRUE
+          )
         }
         if (subplot == 5 & nfleets_with_catch > 1) {
-          a <- stackfunc(ymat = totcatchmat, ymax = ymax, ylab = labels[4], add = add)
+          a <- stackfunc(
+            ymat = totcatchmat,
+            ymax = ymax,
+            ylab = labels[4],
+            add = add
+          )
         }
         if (subplot == 6) {
-          a <- linefunc(ymat = discmat, ymax = ymax, ylab = labels[5], addtotal = TRUE)
+          a <- linefunc(
+            ymat = discmat,
+            ymax = ymax,
+            ylab = labels[5],
+            addtotal = TRUE
+          )
         }
         if (subplot == 7 & nfleets_with_catch > 1) {
           a <- stackfunc(ymat = discmat, ymax = ymax, ylab = labels[5])
         }
         if (subplot == 8) {
-          a <- linefunc(ymat = discfracmat, ymax = ymax, ylab = labels[6], addtotal = FALSE)
+          a <- linefunc(
+            ymat = discfracmat,
+            ymax = ymax,
+            ylab = labels[6],
+            addtotal = FALSE
+          )
         }
       }
       if (subplot == 9) {
-        a <- linefunc(ymat = Hratemat, ymax = ymax, ylab = ylabF, addtotal = FALSE)
+        a <- linefunc(
+          ymat = Hratemat,
+          ymax = ymax,
+          ylab = ylabF,
+          addtotal = FALSE
+        )
       }
       if (nseasons > 1) {
         if (subplot == 10) {
           a <- linefunc(
-            ymat = retmat2, ymax = ymax,
-            ylab = paste(labels[3], labels[10]), addtotal = TRUE, x = catchyrs2
+            ymat = retmat2,
+            ymax = ymax,
+            ylab = paste(labels[3], labels[10]),
+            addtotal = TRUE,
+            x = catchyrs2
           )
         }
         if (subplot == 11 & nfleets_with_catch > 1) {
           a <- stackfunc(
-            ymat = retmat2, ymax = ymax,
-            ylab = paste(labels[3], labels[10]), x = catchyrs2
+            ymat = retmat2,
+            ymax = ymax,
+            ylab = paste(labels[3], labels[10]),
+            x = catchyrs2
           )
         }
         if (max(discmat, na.rm = TRUE) > 0) {
           if (subplot == 12) {
             a <- linefunc(
-              ymat = totcatchmat2, ymax = ymax,
-              ylab = paste(labels[4], labels[10]), addtotal = TRUE, x = catchyrs2
+              ymat = totcatchmat2,
+              ymax = ymax,
+              ylab = paste(labels[4], labels[10]),
+              addtotal = TRUE,
+              x = catchyrs2
             )
           }
           if (subplot == 13 & nfleets_with_catch > 1) {
             a <- stackfunc(
-              ymat = totcatchmat2, ymax = ymax,
-              ylab = paste(labels[4], labels[10]), x = catchyrs2
+              ymat = totcatchmat2,
+              ymax = ymax,
+              ylab = paste(labels[4], labels[10]),
+              x = catchyrs2
             )
           }
           if (subplot == 14) {
             a <- linefunc(
-              ymat = discmat2, ymax = ymax,
-              ylab = paste(labels[5], labels[10]), addtotal = TRUE, x = catchyrs2
+              ymat = discmat2,
+              ymax = ymax,
+              ylab = paste(labels[5], labels[10]),
+              addtotal = TRUE,
+              x = catchyrs2
             )
           }
           if (subplot == 15 & nfleets_with_catch > 1) {
             a <- stackfunc(
-              ymat = discmat2, ymax = ymax,
-              ylab = paste(labels[5], labels[10]), x = catchyrs2
+              ymat = discmat2,
+              ymax = ymax,
+              ylab = paste(labels[5], labels[10]),
+              x = catchyrs2
             )
           }
         }
@@ -568,7 +787,11 @@ SSplotCatch <-
       return(a)
     } # end makeplots
 
-    if (plot) for (isubplot in subplots) makeplots(isubplot)
+    if (plot) {
+      for (isubplot in subplots) {
+        makeplots(isubplot)
+      }
+    }
 
     if (print) {
       for (isubplot in subplots) {
@@ -576,18 +799,27 @@ SSplotCatch <-
         myname <- subplot_names[isubplot]
         badstrings <- c(":", "  ", "__")
         for (i in seq_along(badstrings)) {
-          myname <- gsub(pattern = badstrings[i], replacement = " ", x = myname, fixed = T)
+          myname <- gsub(
+            pattern = badstrings[i],
+            replacement = " ",
+            x = myname,
+            fixed = T
+          )
         }
         myname <- gsub(" ", "_", myname)
         file <- paste0("catch", myname, ".png")
         # default caption is based on the subplot_names vector defined at the top
         caption <- substring(myname, 3)
         # add to caption for a few plots
-        if (exists("equil.catch.vec") &&
-          max(equil.catch.vec, na.rm = TRUE) > 0 &&
-          isubplot %in% 1:9) {
+        if (
+          exists("equil.catch.vec") &&
+            max(equil.catch.vec, na.rm = TRUE) > 0 &&
+            isubplot %in% 1:9
+        ) {
           caption <- paste(
-            caption, "<br>Note: the first ", nseasons,
+            caption,
+            "<br>Note: the first ",
+            nseasons,
             " values represent the unfinished equilibrium catch",
             " divided equally among all seasons."
           )
@@ -602,8 +834,14 @@ SSplotCatch <-
           )
         }
         plotinfo2 <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         # "a" is TRUE/FALSE indicator that plot got produced
@@ -634,7 +872,9 @@ SSplotCatch <-
       # totcatchmat2[["Yr"]] <- totcatchmat2Yr
       returnlist[["totcatchmat2"]] <- totcatchmat2
     }
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Catch"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "Catch"
+    }
     returnlist[["plotinfo"]] <- plotinfo
     return(invisible(returnlist))
   }

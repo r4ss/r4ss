@@ -26,9 +26,22 @@
 #' @references Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical
 #' model for stock assessment of southern bluefin tuna with temporal changes in
 #' selectivity. South African Journal of Marine Science 25:331-362.
-mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
-                      nshades = 100, axes = TRUE, xaxs = "i", yaxs = "i",
-                      xlab = "", ylab = "", las = 1, addbox = FALSE, ...) {
+mountains <- function(
+  zmat,
+  xvec = NULL,
+  yvec = NULL,
+  zscale = 3,
+  rev = TRUE,
+  nshades = 100,
+  axes = TRUE,
+  xaxs = "i",
+  yaxs = "i",
+  xlab = "",
+  ylab = "",
+  las = 1,
+  addbox = FALSE,
+  ...
+) {
   ## DESCRIPTION:
   # a function by Ian Taylor designed to look like the cool-looking Figure 7 in
   # Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical model for
@@ -41,13 +54,19 @@ mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
     }
   }
 
-  if (rev) yvec <- -yvec
+  if (rev) {
+    yvec <- -yvec
+  }
 
   # fill in vectors if not provided
   nrowz <- nrow(zmat)
   ncolz <- ncol(zmat)
-  if (is.null(yvec)) yvec <- 1:nrowz
-  if (is.null(xvec)) xvec <- 1:ncolz
+  if (is.null(yvec)) {
+    yvec <- 1:nrowz
+  }
+  if (is.null(xvec)) {
+    xvec <- 1:ncolz
+  }
 
   # define some limits
   xmin <- min(xvec)
@@ -56,7 +75,13 @@ mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
 
   ny <- length(yvec)
   if (ny != nrowz) {
-    stop("length(yvec)=", length(yvec), " and nrow(zmat)=", nrow(zmat), " should be equal")
+    stop(
+      "length(yvec)=",
+      length(yvec),
+      " and nrow(zmat)=",
+      nrow(zmat),
+      " should be equal"
+    )
   }
   if (length(xvec) != ncolz) {
     stop("length(xvec) must equal ncol(zmat)")
@@ -66,13 +91,24 @@ mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
   xvec2 <- c(xmin, xvec, xmax) # adding extra points for bottom corners of polygon
 
   # plot(0, type='n', xlim=c(xmin, xmax), ylim=c(0, 1.1*(ymax+ny)), xaxs='i', yaxs='i', ...)
-  plot(0,
-    type = "n", xlim = c(xmin, xmax), ylim = c(min(yvec), (max(yvec) + 1.1 * zmax)),
-    xaxs = xaxs, yaxs = yaxs, xlab = xlab, ylab = ylab,
-    axes = FALSE, ...
+  plot(
+    0,
+    type = "n",
+    xlim = c(xmin, xmax),
+    ylim = c(min(yvec), (max(yvec) + 1.1 * zmax)),
+    xaxs = xaxs,
+    yaxs = yaxs,
+    xlab = xlab,
+    ylab = ylab,
+    axes = FALSE,
+    ...
   )
 
-  if (rev) order <- 1:ny else order <- ny:1
+  if (rev) {
+    order <- 1:ny
+  } else {
+    order <- ny:1
+  }
   for (iy in order) {
     zvec <- as.numeric(zmat[iy, ])
     zvec2 <- c(0, zscale * zvec, 0) # row from z matrix
@@ -106,7 +142,10 @@ mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
         for (ipoly in 1:npoly) {
           xlo <- x3lo[ipoly * 2 + -1:0] # lower line intersections for individual polygon
           xhi <- x3hi[x3hi >= xlo[1] & x3hi <= xlo[2]] # upper line intersections
-          extra <- (zvec2 >= z1 & zvec2 <= z2 & xvec2 >= xlo[1] & xvec2 <= xlo[2]) # identifying extra points to add
+          extra <- (zvec2 >= z1 &
+            zvec2 <= z2 &
+            xvec2 >= xlo[1] &
+            xvec2 <= xlo[2]) # identifying extra points to add
           xhi2 <- c(xhi, xvec2[extra]) # adding extra points to vector of upper x-values
           zhi <- c(rep(z2, length(xhi)), zvec2[extra]) # add corresponding z-values
           zhi2 <- zhi[order(xhi2)] # put the z-values in order based on order of x-values
@@ -116,7 +155,8 @@ mountains <- function(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
           polygon(
             x = c(xlo[2:1], xhi2),
             y = yvec[iy] + c(z1, z1, zhi2),
-            col = grey(1 - .9 * z1 / zmax), border = grey(1 - .9 * z1 / zmax)
+            col = grey(1 - .9 * z1 / zmax),
+            border = grey(1 - .9 * z1 / zmax)
           )
         }
       }

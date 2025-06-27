@@ -45,22 +45,38 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotSPR <-
-  function(replist, add = FALSE, plot = TRUE, print = FALSE,
-           uncertainty = TRUE,
-           subplots = 1:4, forecastplot = FALSE,
-           col1 = "black", col2 = "blue", col3 = "green3", col4 = "red",
-           sprtarg = "default", btarg = "default", minbthresh = "default",
-           labels = c(
-             "Year", # 1
-             "SPR", # 2
-             "1-SPR", # 3
-             "Relative fishing intensity", # 4
-             "Relative spawning output" # 5
-           ),
-           pwidth = 6.5, pheight = 5.0, pheight_tall = 5.0,
-           punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           plotdir = "default",
-           verbose = TRUE) {
+  function(
+    replist,
+    add = FALSE,
+    plot = TRUE,
+    print = FALSE,
+    uncertainty = TRUE,
+    subplots = 1:4,
+    forecastplot = FALSE,
+    col1 = "black",
+    col2 = "blue",
+    col3 = "green3",
+    col4 = "red",
+    sprtarg = "default",
+    btarg = "default",
+    minbthresh = "default",
+    labels = c(
+      "Year", # 1
+      "SPR", # 2
+      "1-SPR", # 3
+      "Relative fishing intensity", # 4
+      "Relative spawning output" # 5
+    ),
+    pwidth = 6.5,
+    pheight = 5.0,
+    pheight_tall = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    plotdir = "default",
+    verbose = TRUE
+  ) {
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -96,7 +112,8 @@ SSplotSPR <-
       }
       if (grepl("SPR_at_B", SPRratioLabel)) {
         sprtarg <- replist[["derived_quants"]]["SPR_Btgt", "Value"]
-        sprtarg_label <- substring(SPRratioLabel,
+        sprtarg_label <- substring(
+          SPRratioLabel,
           first = nchar("(1-SPR)/(1-") + 1,
           last = nchar("(1-SPR)/(1-SPR_at_B48%")
         )
@@ -111,16 +128,30 @@ SSplotSPR <-
 
     # choose which points to plot
     good <- sprseries[["Yr"]] <= endyr
-    if (forecastplot) good <- rep(TRUE, nrow(sprseries))
+    if (forecastplot) {
+      good <- rep(TRUE, nrow(sprseries))
+    }
 
     spr_timeseries <- function() {
       if (!add) {
-        plot(0,
-          xlab = labels[1], ylab = labels[2], xlim = range(sprseries[["Yr"]][good]),
-          ylim = c(0, max(1, max(sprseries[["SPR"]][!is.na(sprseries[["SPR"]])]))), type = "n"
+        plot(
+          0,
+          xlab = labels[1],
+          ylab = labels[2],
+          xlim = range(sprseries[["Yr"]][good]),
+          ylim = c(
+            0,
+            max(1, max(sprseries[["SPR"]][!is.na(sprseries[["SPR"]])]))
+          ),
+          type = "n"
         )
       }
-      lines(sprseries[["Yr"]][good], sprseries[["SPR"]][good], type = "o", col = col2)
+      lines(
+        sprseries[["Yr"]][good],
+        sprseries[["SPR"]][good],
+        type = "o",
+        col = col2
+      )
       if (sprtarg > 0) {
         abline(h = sprtarg, col = col4, lty = 2)
       }
@@ -129,20 +160,30 @@ SSplotSPR <-
     }
 
     if (1 %in% subplots) {
-      if (plot) spr_timeseries()
+      if (plot) {
+        spr_timeseries()
+      }
       if (print) {
         file <- "SPR1_series.png"
         caption <- "Timeseries of SPR"
         if (sprtarg > 0) {
           caption <- paste0(
             caption,
-            ". Horizontal line is at ", sprtarg_label, ": ",
+            ". Horizontal line is at ",
+            sprtarg_label,
+            ": ",
             round(sprtarg, 3)
           )
         }
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         spr_timeseries()
@@ -153,17 +194,28 @@ SSplotSPR <-
     # temporary disable multi-season models until code cleanup
     if (2 %in% subplots) {
       if (nseasons > 1) {
-        message("Skipped 1-SPR plot because it's not yet configured for multi-season models\n")
+        message(
+          "Skipped 1-SPR plot because it's not yet configured for multi-season models\n"
+        )
       }
       if (nseasons == 1) {
         minus_spr_timeseries <- function() {
           if (!add) {
-            plot(0,
+            plot(
+              0,
               xlim = range(sprseries[["Yr"]][good]),
-              xlab = labels[1], ylab = labels[3], ylim = c(0, 1), type = "n"
+              xlab = labels[1],
+              ylab = labels[3],
+              ylim = c(0, 1),
+              type = "n"
             )
           }
-          lines(sprseries[["Yr"]][good], (1 - sprseries[["SPR"]][good]), type = "o", col = col2)
+          lines(
+            sprseries[["Yr"]][good],
+            (1 - sprseries[["SPR"]][good]),
+            type = "o",
+            col = col2
+          )
           if (sprtarg > 0) {
             abline(h = (1 - sprtarg), col = col4, lty = 2)
           }
@@ -171,20 +223,33 @@ SSplotSPR <-
           abline(h = 1, col = "grey")
         }
 
-        if (plot) minus_spr_timeseries()
+        if (plot) {
+          minus_spr_timeseries()
+        }
         if (print) {
           file <- "SPR2_minusSPRseries.png"
           caption <- "Timeseries of 1-SPR"
           if (sprtarg > 0) {
             caption <- paste0(
               caption,
-              ". Horizontal line is at 1 - ", sprtarg_label, ": ",
-              "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3)
+              ". Horizontal line is at 1 - ",
+              sprtarg_label,
+              ": ",
+              "1 - ",
+              round(sprtarg, 3),
+              " = ",
+              round(1 - sprtarg, 3)
             )
           }
           plotinfo <- save_png(
-            plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-            pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+            plotinfo = plotinfo,
+            file = file,
+            plotdir = plotdir,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
             caption = caption
           )
           minus_spr_timeseries()
@@ -194,10 +259,12 @@ SSplotSPR <-
     } # end check for subplot 2
 
     # get SPR ratio and uncertainty (used in suplots 3 and 4)
-    SPRratio <- derived_quants[grep(
-      "^SPRratio_",
-      derived_quants[["Label"]]
-    ), ]
+    SPRratio <- derived_quants[
+      grep(
+        "^SPRratio_",
+        derived_quants[["Label"]]
+      ),
+    ]
     # add "Yr" column based on string in label
     SPRratio[["Yr"]] <- as.numeric(substring(SPRratio[["Label"]], 10))
     # add "period" column to populate with different eras
@@ -213,6 +280,11 @@ SSplotSPR <-
       p = 0.025,
       mean = SPRratio[["Value"]],
       sd = SPRratio[["StdDev"]]
+    )
+    # assume that SPR ratio is non-negative
+    SPRratio[["lower"]] <- pmax(
+      SPRratio[["lower"]],
+      0
     )
 
     # get B ratio and uncertainty (used in suplots 3 and 4)
@@ -259,14 +331,20 @@ SSplotSPR <-
 
     spr_ratio_timeseries <- function() {
       if (!add) {
-        plot(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+        plot(
+          SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
           SPRratio[["Value"]][SPRratio[["period"]] == "time"],
-          xlab = labels[1], ylim = ylim, ylab = ylab, type = "n"
+          xlab = labels[1],
+          ylim = ylim,
+          ylab = ylab,
+          type = "n"
         )
       }
-      lines(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+      lines(
+        SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
         SPRratio[["Value"]][SPRratio[["period"]] == "time"],
-        type = "o", col = col2
+        type = "o",
+        col = col2
       )
       abline(h = 0, col = "grey")
       abline(h = 1, col = col4)
@@ -279,13 +357,17 @@ SSplotSPR <-
       ##   "Management target",
       ##   adj = 0
       ## )
-      lines(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+      lines(
+        SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
         SPRratio[["upper"]][SPRratio[["period"]] == "time"],
-        col = col2, lty = "dashed"
+        col = col2,
+        lty = "dashed"
       )
-      lines(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+      lines(
+        SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
         SPRratio[["lower"]][SPRratio[["period"]] == "time"],
-        col = col2, lty = "dashed"
+        col = col2,
+        lty = "dashed"
       )
     }
     if (3 %in% subplots) {
@@ -299,8 +381,14 @@ SSplotSPR <-
           SPRratioLabel
         )
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         spr_ratio_timeseries()
@@ -308,10 +396,7 @@ SSplotSPR <-
       }
     }
 
-
-    make.phase.plot.MLE <- function(x.max = 1.3,
-                                    y.max = 1.3,
-                                    period = "time") {
+    make.phase.plot.MLE <- function(x.max = 1.3, y.max = 1.3, period = "time") {
       # this function modified from make.phase.plot for Pacific Hake at
       # https://github.com/pacific-hake/hake-assessment/blob/master/R/figures-timeseries.R
 
@@ -342,7 +427,8 @@ SSplotSPR <-
         # col = rev(rich.colors.short(n = length(shared_yrs)))
       )
       # make empty plot
-      plot(phase_df[["Bratio_vals"]],
+      plot(
+        phase_df[["Bratio_vals"]],
         phase_df[["SPRratio_vals"]],
         type = "n",
         pch = 20,
@@ -395,9 +481,13 @@ SSplotSPR <-
 
       # get mean and variance-covariance matrix of bivariate normal
       # joint distribution based on normal approxmation from ADMB
-      if (isTRUE(Bratio_endyr_SD > 0 &
-        SPRratio_endyr_SD > 0 &
-        !is.null(B_SPR_endyr_corr))) {
+      if (
+        isTRUE(
+          Bratio_endyr_SD > 0 &
+            SPRratio_endyr_SD > 0 &
+            !is.null(B_SPR_endyr_corr)
+        )
+      ) {
         mu <- c(
           Bratio[["Value"]][Bratio[["Yr"]] == endyr],
           SPRratio[["Value"]][SPRratio[["Yr"]] == endyr]
@@ -425,10 +515,7 @@ SSplotSPR <-
         pts <- t(mu - (e1 %*% t(v1)))
 
         # add polygon
-        polygon(pts,
-          col = gray(0, alpha = 0.2),
-          border = NA
-        )
+        polygon(pts, col = gray(0, alpha = 0.2), border = NA)
       }
       # label a sequence of years
       # choice of years is first, last, and multiple of 10
@@ -444,7 +531,8 @@ SSplotSPR <-
         labels = phase_df[df_rows, "yr"],
         cex = 0.6,
         adj = c(-0.5, -0.3), # above and to the right
-        col = adjustcolor(phase_df[df_rows, "col"],
+        col = adjustcolor(
+          phase_df[df_rows, "col"],
           offset = c(-0.5, -0.5, -0.5, 0)
         )
       )
@@ -522,9 +610,13 @@ SSplotSPR <-
           "Warmer colors (red) represent early years and ",
           "colder colors (blue) represent recent years. "
         )
-        if (isTRUE(Bratio_endyr_SD > 0 &
-          SPRratio_endyr_SD > 0 &
-          !is.null(B_SPR_endyr_corr))) {
+        if (
+          isTRUE(
+            Bratio_endyr_SD > 0 &
+              SPRratio_endyr_SD > 0 &
+              !is.null(B_SPR_endyr_corr)
+          )
+        ) {
           caption <- paste0(
             caption,
             "Lines through the final point show 95% intervals ",
@@ -551,22 +643,35 @@ SSplotSPR <-
         if (sprtarg > 0 & SPRratioLabel == "1-SPR") {
           caption <- paste0(
             caption,
-            "The horizontal line is at 1 - ", sprtarg_label, ": ",
-            "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3),
+            "The horizontal line is at 1 - ",
+            sprtarg_label,
+            ": ",
+            "1 - ",
+            round(sprtarg, 3),
+            " = ",
+            round(1 - sprtarg, 3),
             ". "
           )
         }
 
         # save to png
         plotinfo <- save_png(
-          plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-          pheight = pheight_tall, punits = punits, res = res, ptsize = ptsize,
+          plotinfo = plotinfo,
+          file = file,
+          plotdir = plotdir,
+          pwidth = pwidth,
+          pheight = pheight_tall,
+          punits = punits,
+          res = res,
+          ptsize = ptsize,
           caption = caption
         )
         make.phase.plot.MLE()
         dev.off()
       } # end if print
     } # end if 4 %in% subplots
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "SPR"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "SPR"
+    }
     return(invisible(plotinfo))
   }

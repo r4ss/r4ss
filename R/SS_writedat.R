@@ -17,12 +17,14 @@
 #' @export
 #' @family read/write functions
 
-SS_writedat <- function(datlist,
-                        outfile,
-                        version = "3.30",
-                        overwrite = FALSE,
-                        faster = lifecycle::deprecated(),
-                        verbose = TRUE) {
+SS_writedat <- function(
+  datlist,
+  outfile,
+  version = "3.30",
+  overwrite = FALSE,
+  faster = lifecycle::deprecated(),
+  verbose = TRUE
+) {
   # function to write Stock Synthesis data files
   if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(
@@ -36,7 +38,9 @@ SS_writedat <- function(datlist,
 
   # check datlist
   if (datlist[["type"]] != "Stock_Synthesis_data_file") {
-    stop("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
+    stop(
+      "input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'"
+    )
   }
 
   # check version input
@@ -45,16 +49,14 @@ SS_writedat <- function(datlist,
   }
 
   # call function for SS version 3.24
-  if (version == "3.24") { # should work whether "version" is character or numeric
-    SS_writedat_3.24(datlist, outfile,
-      overwrite = overwrite, verbose = verbose
-    )
+  if (version == "3.24") {
+    # should work whether "version" is character or numeric
+    SS_writedat_3.24(datlist, outfile, overwrite = overwrite, verbose = verbose)
   }
 
   # call function for SS version 3.30
-  if (version == "3.30" | version == 3.3) { # turns out 3.30 != "3.30" in R
-    SS_writedat_3.30(datlist, outfile,
-      overwrite = overwrite, verbose = verbose
-    )
+  if (version == "3.30" | version == 3.3) {
+    # turns out 3.30 != "3.30" in R
+    SS_writedat_3.30(datlist, outfile, overwrite = overwrite, verbose = verbose)
   }
 }

@@ -16,17 +16,19 @@
 #' table_compweight(output)
 #' }
 #'
-table_compweight <- function(replist,
-                             dir = NULL,
-                             caption = paste(
-                               "Data weightings applied to compositions",
-                               "according to the `Francis` method. `Obs.` refers to the number of unique",
-                               "composition vectors included in the likelihood. `N input` and `N adj.`",
-                               "refer to the sample sizes of those vectors before and after being adjusted",
-                               "by the the weights."
-                             ),
-                             caption_CAAL = "`CAAL` is conditional age-at-length data.",
-                             verbose = TRUE) {
+table_compweight <- function(
+  replist,
+  dir = NULL,
+  caption = paste(
+    "Data weightings applied to compositions",
+    "according to the `Francis` method. `Obs.` refers to the number of unique",
+    "composition vectors included in the likelihood. `N input` and `N adj.`",
+    "refer to the sample sizes of those vectors before and after being adjusted",
+    "by the the weights."
+  ),
+  caption_CAAL = "`CAAL` is conditional age-at-length data.",
+  verbose = TRUE
+) {
   # check the input
   check_replist(replist)
   # create the rda_dir
@@ -52,8 +54,10 @@ table_compweight <- function(replist,
   # gather parts for table
   Age_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]]
   if (!is.null(Age_Comp_Fit_Summary)) {
-    CAAL_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]] |> dplyr::filter(Fleet %in% CAAL_fleets)
-    Age_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]] |> dplyr::filter(Fleet %in% Age_fleets)
+    CAAL_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]] |>
+      dplyr::filter(Fleet %in% CAAL_fleets)
+    Age_Comp_Fit_Summary <- replist[["Age_Comp_Fit_Summary"]] |>
+      dplyr::filter(Fleet %in% Age_fleets)
   } else {
     CAAL_Comp_Fit_Summary <- NULL
     Age_Comp_Fit_Summary <- NULL
@@ -96,7 +100,9 @@ table_compweight <- function(replist,
   )
   # write the table to an rda file
   if (verbose) {
-    cli::cli_alert_info("writing table to {file.path(rda_dir, 'table_compweight.rda')}")
+    cli::cli_alert_info(
+      "writing table to {file.path(rda_dir, 'table_compweight.rda')}"
+    )
   }
   save(table_compweight, file = file.path(rda_dir, "table_compweight.rda"))
 

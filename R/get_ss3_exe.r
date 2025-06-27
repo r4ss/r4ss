@@ -26,7 +26,9 @@
 get_ss3_exe <- function(dir = NULL, version = NULL) {
   if (is.null(dir)) {
     dir <- getwd()
-    message("No directory provided, the executable will be downloaded to the working directory")
+    message(
+      "No directory provided, the executable will be downloaded to the working directory"
+    )
   }
 
   if (!dir.exists(dir)) {
@@ -36,9 +38,16 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
   # Get latest release if version not specified
   if (is.null(version)) {
     if (grepl("/Users/runner/work/", dir) || grepl("/var/folders", dir)) {
-      latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1)
+      latest_release <- gh::gh(
+        "GET /repos/nmfs-ost/ss3-source-code/releases/latest",
+        page = 1
+      )
     } else {
-      latest_release <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/releases/latest", page = 1, .token = NA_character_)
+      latest_release <- gh::gh(
+        "GET /repos/nmfs-ost/ss3-source-code/releases/latest",
+        page = 1,
+        .token = NA_character_
+      )
     }
     tag <- latest_release[["tag_name"]]
   } else {
@@ -46,7 +55,10 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
     if (grepl("/Users/runner/work/", dir) || grepl("/var/folders", dir)) {
       all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags")
     } else {
-      all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags", .token = NA_character_)
+      all_tags <- gh::gh(
+        "GET /repos/nmfs-ost/ss3-source-code/tags",
+        .token = NA_character_
+      )
     }
     df_tags <- as.data.frame(do.call(rbind, all_tags))
     tags <- unlist(df_tags[["name"]])
@@ -63,23 +75,32 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
   }
 
   if (.Platform[["OS.type"]] == "windows") {
-    if (.Platform[["r_arch"]] == "x32") { # nocov start
+    if (.Platform[["r_arch"]] == "x32") {
+      # nocov start
       warning(
         "Stock Synthesis binary is not available for 32-bit ",
-        .Platform[["OS.type"]], "."
+        .Platform[["OS.type"]],
+        "."
       )
     } else {
       url <- paste0(
         "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-        tag, "/ss3_win.exe"
+        tag,
+        "/ss3_win.exe"
       )
       # try the download
       first_try <- tryCatch.W.E(
-        utils::download.file(url, destfile = file.path(dir, "ss3.exe"), mode = "wb")
+        utils::download.file(
+          url,
+          destfile = file.path(dir, "ss3.exe"),
+          mode = "wb"
+        )
       )
       # deal with potential SSL connect error (probably only NOAA computers)
-      if (!is.null(first_try[["warning"]]) &&
-        grepl("SSL connect error", first_try[["warning"]])) {
+      if (
+        !is.null(first_try[["warning"]]) &&
+          grepl("SSL connect error", first_try[["warning"]])
+      ) {
         stop(
           "SSL connect error. Try changing the following settings:\n",
           "  1. Run write('CURL_SSL_BACKEND=openssl', file = '~/.Renviron', append = TRUE) in your R session\n",
@@ -89,15 +110,23 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
         )
       }
       # deal with missing file at URL by trying older "ss" instead of "ss3"
-      if (!is.null(first_try[["warning"]]) &&
-        grepl("404 Not Found", first_try[["warning"]])) {
+      if (
+        !is.null(first_try[["warning"]]) &&
+          grepl("404 Not Found", first_try[["warning"]])
+      ) {
         url2 <- gsub("ss3_win", "ss_win", url)
         second_try <- tryCatch.W.E(
-          utils::download.file(url2, destfile = file.path(dir, "ss3.exe"), mode = "wb")
+          utils::download.file(
+            url2,
+            destfile = file.path(dir, "ss3.exe"),
+            mode = "wb"
+          )
         )
         # if file is still missing, stop with an error
-        if (!is.null(second_try[["warning"]]) &&
-          grepl("404 Not Found", second_try[["warning"]])) {
+        if (
+          !is.null(second_try[["warning"]]) &&
+            grepl("404 Not Found", second_try[["warning"]])
+        ) {
           stop(
             "The function can't find an executable at ",
             url,
@@ -113,7 +142,9 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       download_location <- file.path(dir, "ss3.exe")
       if (file.exists(download_location)) {
         message(paste0(
-          "The stock synthesis executable for Windows ", tag, " was downloaded to: ",
+          "The stock synthesis executable for Windows ",
+          tag,
+          " was downloaded to: ",
           download_location
         ))
       } else {
@@ -126,80 +157,124 @@ get_ss3_exe <- function(dir = NULL, version = NULL) {
       }
     }
   } else {
-    if (substr(R.version[["os"]], 1, 6) == "darwin" && R.version[["arch"]] == "aarch64") {
+    if (
+      substr(R.version[["os"]], 1, 6) == "darwin" &&
+        R.version[["arch"]] == "aarch64"
+    ) {
       url <- paste0(
         "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-        tag, "/ss3_osx_arm64"
+        tag,
+        "/ss3_osx_arm64"
       )
       try_arm64 <- tryCatch(
-        suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
-        error = function(e) "ss3 executable not available for macOS arm64 architecture
+        suppressWarnings(utils::download.file(
+          url,
+          destfile = file.path(dir, "ss3"),
+          mode = "wb"
+        )),
+        error = function(e) {
+          "ss3 executable not available for macOS arm64 architecture
             computers for versions prior to v.3.30.22.1"
+        }
       )
 
-      if (try_arm64 == "ss3 executable not available for macOS arm64 architecture computers for
-        versions prior to v.3.30.22.1") {
+      if (
+        try_arm64 ==
+          "ss3 executable not available for macOS arm64 architecture computers for
+        versions prior to v.3.30.22.1"
+      ) {
         print(try_arm64)
       } else {
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
         download_location <- file.path(dir, "ss3")
         message(paste0(
-          "The stock synthesis executable for Mac ", tag, " was downloaded to: ",
+          "The stock synthesis executable for Mac ",
+          tag,
+          " was downloaded to: ",
           download_location
         ))
       }
     } else {
-      if (substr(R.version[["os"]], 1, 6) == "darwin" && R.version[["arch"]] == "x86_64") {
+      if (
+        substr(R.version[["os"]], 1, 6) == "darwin" &&
+          R.version[["arch"]] == "x86_64"
+      ) {
         url <- paste0(
           "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-          tag, "/ss3_osx"
+          tag,
+          "/ss3_osx"
         )
         try_ss <- tryCatch(
-          suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
+          suppressWarnings(utils::download.file(
+            url,
+            destfile = file.path(dir, "ss3"),
+            mode = "wb"
+          )),
           error = function(e) "ss3 name not right for this version, trying ss"
         )
 
         if (try_ss == "ss3 name not right for this version, trying ss") {
           url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-            tag, "/ss_osx"
+            tag,
+            "/ss_osx"
           )
-          utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
+          utils::download.file(
+            url,
+            destfile = file.path(dir, "ss3"),
+            mode = "wb"
+          )
         }
         Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
         download_location <- file.path(dir, "ss3")
         message(paste0(
-          "The stock synthesis executable for Mac ", tag, " was downloaded to: ",
+          "The stock synthesis executable for Mac ",
+          tag,
+          " was downloaded to: ",
           download_location
         ))
       } else {
         if (R.version[["os"]] == "linux-gnu") {
           url <- paste0(
             "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-            tag, "/ss3_linux"
+            tag,
+            "/ss3_linux"
           )
           try_ss <- tryCatch(
-            suppressWarnings(utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")),
+            suppressWarnings(utils::download.file(
+              url,
+              destfile = file.path(dir, "ss3"),
+              mode = "wb"
+            )),
             error = function(e) "ss3 name not right for this version, trying ss"
           )
 
           if (try_ss == "ss3 name not right for this version, trying ss") {
             url <- paste0(
               "https://github.com/nmfs-ost/ss3-source-code/releases/download/",
-              tag, "/ss_linux"
+              tag,
+              "/ss_linux"
             )
-            utils::download.file(url, destfile = file.path(dir, "ss3"), mode = "wb")
+            utils::download.file(
+              url,
+              destfile = file.path(dir, "ss3"),
+              mode = "wb"
+            )
           }
           Sys.chmod(paths = file.path(dir, "ss3"), mode = "0700")
           Sys.chmod(paths = dir, mode = "0777")
           download_location <- file.path(dir, "ss3")
           message(paste0(
-            "The stock synthesis executable for Linux ", tag, " was downloaded to: ",
+            "The stock synthesis executable for Linux ",
+            tag,
+            " was downloaded to: ",
             download_location
           ))
         } else {
           stop(
-            "The Stock Synthesis executable is not available for ", R.version[["os"]], "."
+            "The Stock Synthesis executable is not available for ",
+            R.version[["os"]],
+            "."
           ) # nocov end
         }
       }

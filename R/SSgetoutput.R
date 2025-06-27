@@ -27,9 +27,19 @@
 #' @export
 #' @seealso [SS_output()] [SSsummarize()]
 SSgetoutput <-
-  function(keyvec = NULL, dirvec = NULL, getcovar = TRUE, getcomp = TRUE, forecast = TRUE,
-           verbose = TRUE, ncols = lifecycle::deprecated(), listlists = TRUE, underscore = FALSE,
-           save.lists = FALSE, SpawnOutputLabel = "Spawning output") {
+  function(
+    keyvec = NULL,
+    dirvec = NULL,
+    getcovar = TRUE,
+    getcomp = TRUE,
+    forecast = TRUE,
+    verbose = TRUE,
+    ncols = lifecycle::deprecated(),
+    listlists = TRUE,
+    underscore = FALSE,
+    save.lists = FALSE,
+    SpawnOutputLabel = "Spawning output"
+  ) {
     if (lifecycle::is_present(ncols)) {
       lifecycle::deprecate_warn(
         when = "1.46.2",
@@ -75,8 +85,7 @@ SSgetoutput <-
     dirvec <- paste(dirvec, "/", sep = "")
 
     # loop over directories or key strings
-    for (i in 1:n)
-    {
+    for (i in 1:n) {
       key <- keyvec[i]
       mydir <- dirvec[i]
       if (is.null(key)) {
@@ -111,21 +120,34 @@ SSgetoutput <-
       repfilesize <- file.info(fullfile)[["size"]]
 
       output <- NA
-      if (!is.na(repfilesize) && repfilesize > 0) { # if there's a non-empty file
+      if (!is.na(repfilesize) && repfilesize > 0) {
+        # if there's a non-empty file
         output <- SS_output(
-          dir = mydir, repfile = repFileName, covarfile = covarname,
-          compfile = compFileName, NoCompOK = NoCompOK,
-          warnfile = warnFileName, printstats = FALSE,
-          covar = mycovar, forecast = forecast, verbose = FALSE,
+          dir = mydir,
+          repfile = repFileName,
+          covarfile = covarname,
+          compfile = compFileName,
+          NoCompOK = NoCompOK,
+          warnfile = warnFileName,
+          printstats = FALSE,
+          covar = mycovar,
+          forecast = forecast,
+          verbose = FALSE,
           SpawnOutputLabel = SpawnOutputLabel
         )
         if (is.null(output)) {
           # for some reason covarfile exists, but is old so SS_output rejects
           message("output==NULL so trying again with covar=FALSE")
           output <- SS_output(
-            dir = mydir, repfile = repFileName, covarfile = covarname,
-            compfile = compFileName, NoCompOK = NoCompOK, printstats = FALSE,
-            covar = FALSE, forecast = forecast, verbose = FALSE,
+            dir = mydir,
+            repfile = repFileName,
+            covarfile = covarname,
+            compfile = compFileName,
+            NoCompOK = NoCompOK,
+            printstats = FALSE,
+            covar = FALSE,
+            forecast = forecast,
+            verbose = FALSE,
             SpawnOutputLabel = SpawnOutputLabel
           )
         }
@@ -141,7 +163,14 @@ SSgetoutput <-
       }
 
       if (save.lists) {
-        biglist.file <- paste("biglist", i, "_", format(Sys.time(), "%d-%b-%Y_%H.%M"), ".Rdata", sep = "")
+        biglist.file <- paste(
+          "biglist",
+          i,
+          "_",
+          format(Sys.time(), "%d-%b-%Y_%H.%M"),
+          ".Rdata",
+          sep = ""
+        )
         save(biglist, file = biglist.file)
       }
     }

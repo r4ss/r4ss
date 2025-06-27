@@ -43,8 +43,11 @@ get_comments <-
     res <-
       grep(
         x = dat[seq_len(firstNumericLine - 1)],
-        pattern = "^#C", value = TRUE
+        pattern = "^#C",
+        value = TRUE
       )
-    if (length(res) == 0) res <- NULL
+    if (length(res) == 0) {
+      res <- NULL
+    }
     return(res)
   }
