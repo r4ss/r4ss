@@ -214,7 +214,7 @@ SSplotComparisons <-
     labels = c(
       "Year", # 1
       "Spawning biomass (t)", # 2
-      "Fraction of unfished", # 3
+      "Fraction of unfished spawning biomass", # 3 automatically updated
       "Age-0 recruits (1,000s)", # 4
       "Recruitment deviations", # 5
       "Index", # 6
@@ -461,6 +461,12 @@ SSplotComparisons <-
         "because the models don't have matching SpawnOutputLabels"
       )
       SpawnOutputLabel <- labels[12]
+    }
+    if (
+      all(is.na(SpawnOutputUnits)) ||
+        any(SpawnOutputUnits == "numbers", na.rm = TRUE)
+    ) {
+      labels[3] <- gsub(labels[3], "spawning biomass", "spawning output")
     }
     FvalueLabel <- unique(FvalueLabels)
     if (length(FvalueLabel) > 1) {
