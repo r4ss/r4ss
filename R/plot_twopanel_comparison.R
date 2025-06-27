@@ -1,8 +1,8 @@
 #' Plot a two-panel comparison using SSplotComparisons
 #'
 #' Plot a two-panel time series comparison of
-#' spawning biomass and relative spawning biomass (or any other subplots,
-#' like recruitment and recdevs).
+#' spawning biomass and fraction of unfished spawning output (or any other 
+#' subplots, like recruitment and recdevs).
 #' By sharing the same horizontal axis label and requiring only a single caption,
 #' this makes it easier to show two quantities on a single page of a report.
 #'

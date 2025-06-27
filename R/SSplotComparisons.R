@@ -2498,7 +2498,7 @@ SSplotComparisons <-
         }
       }
       if (grepl("Bratio", parname)) {
-        xmin <- 0 # xmin=0 for relative spawning biomass plots
+        xmin <- 0 # xmin=0 for fraction of unfished spawning output plots
       }
       if (limit0) {
         xmin <- max(0, xmin) # by default no plot can go below 0
@@ -2560,7 +2560,7 @@ SSplotComparisons <-
           }
         }
         # add vertical lines for target and threshold
-        # relative spawning biomass values
+        # fraction of unfished spawning output values
         if (grepl("Bratio", parname)) {
           if (btarg > 0) {
             abline(v = btarg, col = "red", lty = 2)
@@ -2860,7 +2860,7 @@ SSplotComparisons <-
     }
 
     # subplot 3: biomass ratio
-    # (hopefully equal to spawning relative spawning biomass)
+    # (hopefully equal to fraction of unfished spawning output)
     if (3 %in% subplots) {
       if (verbose) {
         message(

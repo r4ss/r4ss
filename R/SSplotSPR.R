@@ -65,7 +65,7 @@ SSplotSPR <-
       "SPR", # 2
       "1-SPR", # 3
       "Relative fishing intensity", # 4
-      "Relative spawning output" # 5
+      "Fraction of unfished spawning output" # 5
     ),
     pwidth = 6.5,
     pheight = 5.0,
@@ -401,7 +401,7 @@ SSplotSPR <-
       # https://github.com/pacific-hake/hake-assessment/blob/master/R/figures-timeseries.R
 
       # Plots the relative fishing intensity in year t against
-      # relative spawning biomass in year t
+      # fraction of unfished spawning output in year t
 
       # find years that are shared by both sets of outputs
       shared_yrs <- intersect(

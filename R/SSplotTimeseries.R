@@ -17,8 +17,8 @@
 #'   \item 6 Summary biomass (t) at beginning of season 1 with forecast
 #'   \item 7 Spawning output with forecast with ~95% asymptotic intervals
 #'   \item 8 Spawning output by area (spatial models only)
-#'   \item 9 Relative spawning output with forecast with ~95% asymptotic intervals
-#'   \item 10 Relative spawning output by area (spatial models only)
+#'   \item 9 Fraction of unfished spawning output with forecast with ~95% asymptotic intervals
+#'   \item 10 Fraction of unfished spawning output by area (spatial models only)
 #'   \item 11 Age-0 recruits (1,000s) with forecast with ~95% asymptotic intervals
 #'   \item 12 Age-0 recruits by area (spatial models only)
 #'   \item 13 Fraction of recruits by area (spatial models only)
@@ -114,7 +114,7 @@ SSplotTimeseries <-
         "Summary biomass (t)", # 3
         "Summary biomass (t) at beginning of season", # 4
         "Spawning biomass (t)", # 5
-        "Relative spawning biomass", # 6
+        "Fraction of unfished spawning biomass", # 6
         replist[["SpawnOutputLabel"]], # 7
         "Age-0 recruits (1,000s)", # 8
         "Fraction of total Age-0 recruits", # 9
@@ -259,7 +259,7 @@ SSplotTimeseries <-
         ylab <- labels[5]
       }
 
-      # subplot9&10 = relative spawning output
+      # subplot9&10 = fraction of unfished spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
         yvals <- NA * ts[["SpawnBio"]] # placeholder to ensure the correct length
@@ -380,7 +380,7 @@ SSplotTimeseries <-
             if (
               max(ts[["SpawnBio"]][ts[["Area"]] == iarea], na.rm = TRUE) > 0
             ) {
-              # calculate relative spawning biomass
+              # calculate fraction of unfished spawning output
               yvals <- ts[["SpawnBio"]][ts[["Area"]] == iarea] /
                 (ts[["SpawnBio"]][
                   ts[["Area"]] == iarea & ts[["Seas"]] == spawnseas
@@ -428,7 +428,7 @@ SSplotTimeseries <-
             stdtable[["Yr"]] <- as.numeric(stdtable[["Yr"]])
           }
           if (subplot == 9) {
-            # relative spawning output
+            # fraction of unfished spawning output
             stdtable <- derived_quants[
               substring(derived_quants[["Label"]], 1, 6) == "Bratio",
             ]
@@ -588,7 +588,7 @@ SSplotTimeseries <-
         # abline(h=0,col="grey") # no longer required due to use of yaxs='i'
       }
 
-      # add references points to plot of relative biomass
+      # add references points to plot of fraction of unfished spawning output
       if (subplot %in% 9:10 & replist[["Bratio_label"]] == "B/B_0") {
         if (btarg < 1) {
           abline(h = btarg, col = "red")
