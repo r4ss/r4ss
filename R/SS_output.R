@@ -4138,6 +4138,28 @@ SS_output <-
     }
     returndat[["cpue"]] <- cpue
 
+    # table of info about environmental data
+    environmental_data_info <- match_report_table(
+      "ENVIRONMENTAL_DATA",
+      4,
+      which_blank = 1,
+      header = TRUE,
+      type.convert = TRUE
+    )
+    # env data
+    # using "rel_smrynum" as a unique marker because there is a blank line
+    # between info table read above and the main table of environmental data
+    environmental_data <- match_report_table(
+      "rel_smrynum",
+      0,
+      matchcol1 = 2, # "rel_smrynum" is in column 2
+      which_blank = 1,
+      header = TRUE,
+      type.convert = TRUE
+    )
+    returndat[["environmental_data_info"]] <- environmental_data_info
+    returndat[["environmental_data"]] <- environmental_data
+
     # Numbers at age
     natage <- match_report_table(
       "NUMBERS_AT_AGE",

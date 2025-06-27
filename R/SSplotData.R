@@ -17,7 +17,8 @@
 #' }
 #' @param subplot Deprecated. Use subplots instead.
 #' @param fleetcol Either the string "default", or a vector of colors to use
-#' for each fleet. If tagging data is included, an additional color needs to be
+#' for each fleet. If tagging data or environmental data are included,
+#' an additional color needs to be
 #' added for the tag releases which are not assigned to a fleet.
 #' @param datatypes Either the string "all", or a vector including some subset
 #' of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
@@ -129,45 +130,30 @@ SSplotData <- function(
   # tag data
   tagrelease <- replist[["tagrelease"]]
 
+  # environmental data
+  environmental_data <- replist[["environmental_data"]]
+
   # make table of data types
-  typetable <- matrix(
-    c(
-      "catch",
-      "Catches", # 1
-      "cpue",
-      "Abundance indices", # 2
-      "lendbase",
-      "Length compositions", # 3
-      "sizedbase",
-      "Size compositions", # 4
-      "agedbase",
-      "Age compositions", # 5
-      "condbase",
-      "Conditional age-at-length compositions", # 6
-      "ghostagedbase",
-      "Excluded age compositions", # 7
-      "ghostcondbase",
-      "Excluded conditional age-at-length compositions", # 8
-      "ghostlendbase",
-      "Excluded length compositions", # 9
-      "ladbase",
-      "Mean length-at-age", # 10
-      "wadbase",
-      "Mean weight-at-age", # 11
-      "mnwgt",
-      "Mean body weight", # 12
-      "discard",
-      "Discards", # 13
-      "tagrelease",
-      "Tag releases", # 14
-      "tagdbase1",
-      "Tag recaptures", # 15
-      "morphcompdbase",
-      "Morph compositions" # 16
-    ),
-    ncol = 2,
-    byrow = TRUE
-  )
+  # fmt: skip
+  typetable <- matrix(c(
+    "catch",              "Catches", # 1
+    "cpue",               "Abundance indices", # 2
+    "lendbase",           "Length compositions", # 3
+    "sizedbase",          "Size compositions", # 4
+    "agedbase",           "Age compositions", # 5
+    "condbase",           "Conditional age-at-length compositions", # 6
+    "ghostagedbase",      "Excluded age compositions", # 7
+    "ghostcondbase",      "Excluded conditional age-at-length compositions", # 8
+    "ghostlendbase",      "Excluded length compositions", # 9
+    "ladbase",            "Mean length-at-age", # 10
+    "wadbase",            "Mean weight-at-age", # 11
+    "mnwgt",              "Mean body weight", # 12
+    "discard",            "Discards", # 13
+    "tagrelease",         "Tag releases", # 14
+    "tagdbase1",          "Tag recaptures", # 15
+    "morphcompdbase",     "Morph compositions", # 16
+    "environmental_data", "Environmental data" # 17
+  ), ncol = 2, byrow = TRUE)
   # note: tagdbase2 excluded since it is not fleet specific and the years
   #       should always match those in tagdbase1
 
@@ -196,6 +182,10 @@ SSplotData <- function(
         size <- NULL
         # subset for this fleet
         dat.f <- dat[dat[["Fleet"]] == ifleet, ]
+        if (typename == "environmental_data") {
+          # environmental data is not fleet specific, so don't filter by fleet
+          dat.f <- dat
+        }
         # check for observations from this fleet
         if (nrow(dat.f) > 0) {
           # identify years from different data types
@@ -360,6 +350,20 @@ SSplotData <- function(
               size <- dat.agg[["x"]]
             }
           }
+          if (typename == "environmental_data" & ifleet == 1) {
+            if (nrow(dat.f) > 0) {
+              # Find columns that start with "env" and get years with any non-zero value
+              allyrs <- dat.f %>%
+                dplyr::select(Yr, dplyr::starts_with("env")) %>%
+                dplyr::filter(dplyr::if_any(
+                  dplyr::starts_with("env"),
+                  ~ . != 0
+                )) %>%
+                dplyr::pull(Yr) %>%
+                unique()
+              size <- rep(1, length(allyrs)) # size is not used for environmental data
+            }
+          }
 
           # expand table of years with data
           if (!is.null(allyrs) & length(allyrs) > 0) {
@@ -372,12 +376,20 @@ SSplotData <- function(
             size.sorted <- size[unique.index][order(yrs)]
             yrs.sorted <- yrs[order(yrs)]
 
+            # data that aren't associated with a fleet get a higher fleet number
+            # (associated with different colors)
+            fleet_id <- dplyr::case_when(
+              typename == "environmental_data" ~ nfleets + 1,
+              typename == "tagrelease" ~ nfleets + 1,
+              TRUE ~ ifleet
+            )
+
             # add to big typetable
             typetable <- rbind(
               typetable,
               data.frame(
                 yr = yrs.sorted,
-                fleet = ifelse(typename == "tagrelease", nfleets + 1, ifleet),
+                fleet = fleet_id,
                 itype = ntypes,
                 typename = typename,
                 size = size.sorted,
