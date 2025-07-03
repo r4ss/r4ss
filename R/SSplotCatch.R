@@ -631,9 +631,7 @@ SSplotCatch <-
     makeplots <- function(subplot) {
       a <- FALSE
       if (subplot == 1) {
-        label <- if (
-          any(grep("Ret", replist[["parameters"]][["Label"]]))
-        ) {
+        label <- if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
           labels[4]
         } else {
           labels[3]
@@ -646,9 +644,7 @@ SSplotCatch <-
         )
       }
       if (subplot == 2) {
-        label <- if (
-          any(grep("Ret", replist[["parameters"]][["Label"]]))
-        ) {
+        label <- if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
           labels[4]
         } else {
           labels[3]
