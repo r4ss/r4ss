@@ -654,8 +654,8 @@ SSplotCatch <-
           labels[4]
         } else {
           labels[3]
-          a <- stackfunc(ymat = retmat, ymax = ymax, ylab = label, add = add)
         }
+          a <- stackfunc(ymat = retmat, ymax = ymax, ylab = label, add = add)
       }
       # if observed catch differs from estimated by more than 0.1%, then make plot to compare
       if (
