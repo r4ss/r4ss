@@ -632,8 +632,7 @@ SSplotCatch <-
       a <- FALSE
       if (subplot == 1) {
         label <- if (
-          any(grep("Ret", replist[["sizeselex"]][["Label"]])) |
-            any(grep("Ret", replist[["ageselex"]][["Label"]]))
+          any(grep("Ret", replist[["parameters"]][["Label"]]))
         ) {
           labels[4]
         } else {
@@ -648,8 +647,7 @@ SSplotCatch <-
       }
       if (subplot == 2) {
         label <- if (
-          any(grep("Ret", replist[["sizeselex"]][["Label"]])) |
-            any(grep("Ret", replist[["ageselex"]][["Label"]]))
+          any(grep("Ret", replist[["parameters"]][["Label"]]))
         ) {
           labels[4]
         } else {
