@@ -631,7 +631,10 @@ SSplotCatch <-
     makeplots <- function(subplot) {
       a <- FALSE
       if (subplot == 1) {
-        label <- if(any(grep("Ret", replist$sizeselex$Label)) | any(grep("Ret", replist$ageselex$Label))){
+        label <- if (
+          any(grep("Ret", replist[["sizeselex"]][["Label"]])) |
+            any(grep("Ret", replist[["ageselex"]][["Label"]]))
+        ) {
           labels[4]
         } else {
           labels[3]
@@ -644,11 +647,14 @@ SSplotCatch <-
         )
       }
       if (subplot == 2) {
-        label <- if(any(grep("Ret", replist$sizeselex$Label)) | any(grep("Ret", replist$ageselex$Label))){
+        label <- if (
+          any(grep("Ret", replist[["sizeselex"]][["Label"]])) |
+            any(grep("Ret", replist[["ageselex"]][["Label"]]))
+        ) {
           labels[4]
         } else {
           labels[3]
-        a <- stackfunc(ymat = retmat, ymax = ymax, ylab = label, add = add)
+          a <- stackfunc(ymat = retmat, ymax = ymax, ylab = label, add = add)
         }
       }
       # if observed catch differs from estimated by more than 0.1%, then make plot to compare
