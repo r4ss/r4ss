@@ -631,7 +631,7 @@ SSplotCatch <-
     makeplots <- function(subplot) {
       a <- FALSE
       if (subplot == 1) {
-        if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
+        if (max(discmat, na.rm = TRUE) > 0) {
           label <- labels[4]
         } else {
           label <- labels[3]
@@ -644,7 +644,7 @@ SSplotCatch <-
         )
       }
       if (subplot == 2) {
-        if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
+        if (max(discmat, na.rm = TRUE) > 0)  {
           label <- labels[4]
         } else {
           label <- labels[3]
