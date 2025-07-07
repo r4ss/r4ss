@@ -276,7 +276,7 @@ SSplotTimeseries <-
         yvals[ts[["Yr"]] %in% quants[["Yr"]]] <- quants[["Value"]]
         if (replist[["Bratio_label"]] == "B/B_0") {
           # Fraction of unfished spawning biomass/output
-          ylab <- labels[6] 
+          ylab <- labels[6]
         } else {
           # Relative spawning biomass/output if the denominator is not unfished biomass
           ylab <- paste0(labels[12], ": ", replist[["Bratio_label"]])
