@@ -10,8 +10,8 @@
 #'
 #' *Basic plots for all models*
 #' \itemize{
-#'   \item 1 landings
-#'   \item 2 landings stacked
+#'   \item 1 total catch as line plot (if no discards) or landings (if discards present)
+#'   \item 2 total catch as stacked bars (if no discards) or landings (if discards present)
 #'   \item 3 observed and expected landings (if different)
 #'   \item 9 harvest rate
 #' }
@@ -632,9 +632,11 @@ SSplotCatch <-
       a <- FALSE
       if (subplot == 1) {
         if (max(discmat, na.rm = TRUE) > 0) {
-          label <- labels[4]
+          # if there are discards, label is Landings
+          label <- labels[3] # "Landings", # 3
         } else {
-          label <- labels[3]
+          # if not, this is total catch
+          label <- labels[4] # "Total catch", # 4
         }
         a <- linefunc(
           ymat = retmat,
@@ -645,9 +647,11 @@ SSplotCatch <-
       }
       if (subplot == 2) {
         if (max(discmat, na.rm = TRUE) > 0) {
-          label <- labels[4]
+          # if there are discards, label is Landings
+          label <- labels[3] # "Landings", # 3
         } else {
-          label <- labels[3]
+          # if not, this is total catch
+          label <- labels[4] # "Total catch", # 4
         }
         a <- stackfunc(ymat = retmat, ymax = ymax, ylab = label, add = add)
       }
@@ -687,6 +691,7 @@ SSplotCatch <-
           bty = "n"
         )
       }
+      # if there are discards, add additional plots
       if (max(discmat, na.rm = TRUE) > 0) {
         if (subplot == 4) {
           a <- linefunc(
