@@ -631,10 +631,10 @@ SSplotCatch <-
     makeplots <- function(subplot) {
       a <- FALSE
       if (subplot == 1) {
-        label <- if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
-          labels[4]
+        if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
+          label <- labels[4]
         } else {
-          labels[3]
+          label <- labels[3]
         }
         a <- linefunc(
           ymat = retmat,
@@ -644,10 +644,10 @@ SSplotCatch <-
         )
       }
       if (subplot == 2) {
-        label <- if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
-          labels[4]
+        if (any(grep("Ret", replist[["parameters"]][["Label"]]))) {
+          label <- labels[4]
         } else {
-          labels[3]
+          label <- labels[3]
         }
         a <- stackfunc(ymat = retmat, ymax = ymax, ylab = label, add = add)
       }
