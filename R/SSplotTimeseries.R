@@ -119,8 +119,9 @@ SSplotTimeseries <-
         "Age-0 recruits (1,000s)", # 8
         "Fraction of total Age-0 recruits", # 9
         "Management target", # 10
-        "Minimum stock size threshold"
-      ) # 11
+        "Minimum stock size threshold", # 11
+        "Relative spawning biomass" # 12
+      )
     }
 
     # get values from replist
@@ -169,6 +170,7 @@ SSplotTimeseries <-
       # quantity from test in SS_output
       labels[5] <- labels[7]
       labels[6] <- gsub("biomass", "output", labels[6])
+      labels[12] <- gsub("biomass", "output", labels[12])
     }
 
     # check area subsets
@@ -272,7 +274,13 @@ SSplotTimeseries <-
         # replace y-values with Bratio values from derived quantities
         # PROBLEM: this doesn't work for seasonal models
         yvals[ts[["Yr"]] %in% quants[["Yr"]]] <- quants[["Value"]]
-        ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
+        if (replist[["Bratio_label"]] == "B/B_0") {
+          # Fraction of unfished spawning biomass/output
+          ylab <- labels[6] 
+        } else {
+          # Relative spawning biomass/output if the denominator is not unfished biomass
+          ylab <- paste0(labels[12], ": ", replist[["Bratio_label"]])
+        }
       }
 
       # subplot11-15 = recruitment
