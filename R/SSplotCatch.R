@@ -644,7 +644,7 @@ SSplotCatch <-
         )
       }
       if (subplot == 2) {
-        if (max(discmat, na.rm = TRUE) > 0)  {
+        if (max(discmat, na.rm = TRUE) > 0) {
           label <- labels[4]
         } else {
           label <- labels[3]
