@@ -10,8 +10,8 @@
 #'
 #' *Basic plots for all models*
 #' \itemize{
-#'   \item 1 landings
-#'   \item 2 landings stacked
+#'   \item 1 total catch as line plot (if no discards) or landings (if discards present)
+#'   \item 2 total catch as stacked bars (if no discards) or landings (if discards present)
 #'   \item 3 observed and expected landings (if different)
 #'   \item 9 harvest rate
 #' }
@@ -631,15 +631,29 @@ SSplotCatch <-
     makeplots <- function(subplot) {
       a <- FALSE
       if (subplot == 1) {
+        if (max(discmat, na.rm = TRUE) > 0) {
+          # if there are discards, label is Landings
+          label <- labels[3] # "Landings", # 3
+        } else {
+          # if not, this is total catch
+          label <- labels[4] # "Total catch", # 4
+        }
         a <- linefunc(
           ymat = retmat,
           ymax = ymax,
-          ylab = labels[3],
+          ylab = label,
           addtotal = TRUE
         )
       }
       if (subplot == 2) {
-        a <- stackfunc(ymat = retmat, ymax = ymax, ylab = labels[3], add = add)
+        if (max(discmat, na.rm = TRUE) > 0) {
+          # if there are discards, label is Landings
+          label <- labels[3] # "Landings", # 3
+        } else {
+          # if not, this is total catch
+          label <- labels[4] # "Total catch", # 4
+        }
+        a <- stackfunc(ymat = retmat, ymax = ymax, ylab = label, add = add)
       }
       # if observed catch differs from estimated by more than 0.1%, then make plot to compare
       if (
@@ -677,6 +691,7 @@ SSplotCatch <-
           bty = "n"
         )
       }
+      # if there are discards, add additional plots
       if (max(discmat, na.rm = TRUE) > 0) {
         if (subplot == 4) {
           a <- linefunc(
