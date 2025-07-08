@@ -78,9 +78,9 @@ jobs:
           cov <- covr::package_coverage(
             type = c("none"),
             code = c(
-                    '"'"'library(testthat);
-                    ("tests/testthat/test-older_ss3.R")'"'"'
-                    ),
+              "library(testthat)",
+              'test_file("tests/testthat/test-older_ss3.R")'
+            ),
             quiet = FALSE,
             clean = FALSE,
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
