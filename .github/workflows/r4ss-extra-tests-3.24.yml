@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
   workflow_call:
 
-name: run-extra-tests-for-code-coverage
+name: run-extra-tests-3.24-for-code-coverage
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -53,6 +53,7 @@ jobs:
             any::covr
             any::devtools
             any::xml2
+            any::testthat
 
       - name: Get repository of SS3 models
         uses: actions/checkout@v4
@@ -66,16 +67,20 @@ jobs:
           rm  -rf test-models-repo
           ls inst/extdata
 
-      - name: Get the latest SS3 executable and move to expected location
+      - name: Get a 3.24 SS3 executable
         run: |
-          wget -O ss3 https://github.com/nmfs-ost/ss3-source-code/releases/latest/download/ss3_linux
+          wget -O ss3 https://vlab.noaa.gov/documents/259399/2000201/ss_3.24Z/037e3921-1f00-611a-1c30-d7a5c1063835?version=1.1&t=1608655599519&download=true
           sudo chmod a+x ss3
-          cp ss3 inst/extdata/simple_small/ss3
-          rm ss3
+          mv ss3 inst/extdata/simple_3.24/ss3
         
       - name: Test coverage
         run: |
           cov <- covr::package_coverage(
+            type = c("none"),
+            code = c(
+                    '"'"'library(testthat);
+                    ("tests/testthat/test-older_ss3.R")'"'"'
+                    )
             quiet = FALSE,
             clean = FALSE,
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
