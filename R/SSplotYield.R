@@ -51,7 +51,7 @@ SSplotYield <-
     plot = TRUE,
     print = FALSE,
     labels = c(
-      "Fraction unfished", # 1
+      "Fraction of unfished spawning biomass", # 1
       "Equilibrium yield (t)", # 2
       "Total biomass (t)", # 3
       "Surplus production (t)", # 4
@@ -73,6 +73,17 @@ SSplotYield <-
   ) {
     # table to store information on each plot
     plotinfo <- NULL
+
+    # update axis label based on spawning output units
+    # check if spawning output rather than spawning biomass is plotted
+    if (
+      is.null(replist[["SpawnOutputUnits"]]) ||
+        is.na(replist[["SpawnOutputUnits"]]) ||
+        replist[["SpawnOutputUnits"]] == "numbers"
+    ) {
+      # quantity from test in SS_output
+      labels[1] <- gsub("biomass", "output", labels[1])
+    }
 
     # extract quantities from replist
     equil_yield <- replist[["equil_yield"]]

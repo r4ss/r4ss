@@ -49,8 +49,8 @@ Numbering of subplots is as follows, where the spawning biomass plots
 \item 6 Summary biomass (t) at beginning of season 1 with forecast
 \item 7 Spawning output with forecast with ~95\% asymptotic intervals
 \item 8 Spawning output by area (spatial models only)
-\item 9 Relative spawning output with forecast with ~95\% asymptotic intervals
-\item 10 Relative spawning output by area (spatial models only)
+\item 9 Fraction of unfished spawning output with forecast with ~95\% asymptotic intervals
+\item 10 Fraction of unfished spawning output by area (spatial models only)
 \item 11 Age-0 recruits (1,000s) with forecast with ~95\% asymptotic intervals
 \item 12 Age-0 recruits by area (spatial models only)
 \item 13 Fraction of recruits by area (spatial models only)

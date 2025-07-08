@@ -17,8 +17,8 @@
 #'   \item 6 Summary biomass (t) at beginning of season 1 with forecast
 #'   \item 7 Spawning output with forecast with ~95% asymptotic intervals
 #'   \item 8 Spawning output by area (spatial models only)
-#'   \item 9 Relative spawning output with forecast with ~95% asymptotic intervals
-#'   \item 10 Relative spawning output by area (spatial models only)
+#'   \item 9 Fraction of unfished spawning output with forecast with ~95% asymptotic intervals
+#'   \item 10 Fraction of unfished spawning output by area (spatial models only)
 #'   \item 11 Age-0 recruits (1,000s) with forecast with ~95% asymptotic intervals
 #'   \item 12 Age-0 recruits by area (spatial models only)
 #'   \item 13 Fraction of recruits by area (spatial models only)
@@ -114,13 +114,14 @@ SSplotTimeseries <-
         "Summary biomass (t)", # 3
         "Summary biomass (t) at beginning of season", # 4
         "Spawning biomass (t)", # 5
-        "Relative spawning biomass", # 6
+        "Fraction of unfished spawning biomass", # 6
         replist[["SpawnOutputLabel"]], # 7
         "Age-0 recruits (1,000s)", # 8
         "Fraction of total Age-0 recruits", # 9
         "Management target", # 10
-        "Minimum stock size threshold"
-      ) # 11
+        "Minimum stock size threshold", # 11
+        "Relative spawning biomass" # 12
+      )
     }
 
     # get values from replist
@@ -169,6 +170,7 @@ SSplotTimeseries <-
       # quantity from test in SS_output
       labels[5] <- labels[7]
       labels[6] <- gsub("biomass", "output", labels[6])
+      labels[12] <- gsub("biomass", "output", labels[12])
     }
 
     # check area subsets
@@ -259,7 +261,7 @@ SSplotTimeseries <-
         ylab <- labels[5]
       }
 
-      # subplot9&10 = relative spawning output
+      # subplot9&10 = fraction of unfished spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
         yvals <- NA * ts[["SpawnBio"]] # placeholder to ensure the correct length
@@ -272,7 +274,13 @@ SSplotTimeseries <-
         # replace y-values with Bratio values from derived quantities
         # PROBLEM: this doesn't work for seasonal models
         yvals[ts[["Yr"]] %in% quants[["Yr"]]] <- quants[["Value"]]
-        ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
+        if (replist[["Bratio_label"]] == "B/B_0") {
+          # Fraction of unfished spawning biomass/output
+          ylab <- labels[6]
+        } else {
+          # Relative spawning biomass/output if the denominator is not unfished biomass
+          ylab <- paste0(labels[12], ": ", replist[["Bratio_label"]])
+        }
       }
 
       # subplot11-15 = recruitment
@@ -380,7 +388,7 @@ SSplotTimeseries <-
             if (
               max(ts[["SpawnBio"]][ts[["Area"]] == iarea], na.rm = TRUE) > 0
             ) {
-              # calculate relative spawning biomass
+              # calculate fraction of unfished spawning output
               yvals <- ts[["SpawnBio"]][ts[["Area"]] == iarea] /
                 (ts[["SpawnBio"]][
                   ts[["Area"]] == iarea & ts[["Seas"]] == spawnseas
@@ -428,7 +436,7 @@ SSplotTimeseries <-
             stdtable[["Yr"]] <- as.numeric(stdtable[["Yr"]])
           }
           if (subplot == 9) {
-            # relative spawning output
+            # fraction of unfished spawning output
             stdtable <- derived_quants[
               substring(derived_quants[["Label"]], 1, 6) == "Bratio",
             ]
@@ -588,7 +596,7 @@ SSplotTimeseries <-
         # abline(h=0,col="grey") # no longer required due to use of yaxs='i'
       }
 
-      # add references points to plot of relative biomass
+      # add references points to plot of fraction of unfished spawning output
       if (subplot %in% 9:10 & replist[["Bratio_label"]] == "B/B_0") {
         if (btarg < 1) {
           abline(h = btarg, col = "red")
