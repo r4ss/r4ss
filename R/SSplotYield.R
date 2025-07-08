@@ -90,11 +90,12 @@ SSplotYield <-
     # remove value associated with SPRloop 3 based on this comment in Report.sso:
     # "value 3 uses endyr F, which has different fleet allocation than benchmark"
     equil_yield <- equil_yield[equil_yield[["SPRloop"]] != 3, ]
-    # sort across the various iterations by increasing Depletion value
+    # sort across the various iterations by increasing values of the
+    # "SSB/Bzero" column
     # previously this was done in SS_output()
-    equil_yield <- equil_yield[
-      order(equil_yield[["Depletion"]], decreasing = FALSE),
-    ]
+    if ("SSB/Bzero" %in% names(equil_yield)) {
+      equil_yield <- dplyr::arrange(equil_yield, .data[["SSB/Bzero"]])
+    }
     # column named changed from Catch to Tot_Catch in SSv3.30
     if ("Tot_Catch" %in% names(equil_yield)) {
       equil_yield[["Catch"]] <- equil_yield[["Tot_Catch"]]
@@ -111,7 +112,7 @@ SSplotYield <-
         plot(
           0,
           type = "n",
-          xlim = c(0, max(equil_yield[["Depletion"]], 1, na.rm = TRUE)),
+          xlim = c(0, max(equil_yield[["SSB/Bzero"]], 1, na.rm = TRUE)),
           ylim = c(0, max(equil_yield[["Catch"]], na.rm = TRUE)),
           xlab = labels[1],
           ylab = labels[2]
@@ -122,7 +123,7 @@ SSplotYield <-
 
       # add lines for reference points (if requested)
       lines(
-        equil_yield[["Depletion"]],
+        equil_yield[["SSB/Bzero"]],
         equil_yield[["Catch"]],
         lwd = lwd,
         col = col,
@@ -158,9 +159,9 @@ SSplotYield <-
       }
       if ("Current" %in% refpoints) {
         which_val <- which(
-          abs(equil_yield[["Depletion"]] - replist[["current_depletion"]]) ==
+          abs(equil_yield[["SSB/Bzero"]] - replist[["current_depletion"]]) ==
             min(abs(
-              equil_yield[["Depletion"]] - replist[["current_depletion"]]
+              equil_yield[["SSB/Bzero"]] - replist[["current_depletion"]]
             ))
         )[1]
         lines(
@@ -196,9 +197,9 @@ SSplotYield <-
         # further test for bad values
         # (not sure the circumstances where this is needed)
         if (
-          any(!is.na(equil_yield[["Depletion"]])) &
+          any(!is.na(equil_yield[["SSB/Bzero"]])) &
             any(!is.na(equil_yield[["Catch"]])) &
-            any(!is.infinite(equil_yield[["Depletion"]]))
+            any(!is.infinite(equil_yield[["SSB/Bzero"]]))
         ) {
           if (1 %in% subplots) {
             # make plot
