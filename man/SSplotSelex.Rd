@@ -24,7 +24,7 @@ SSplotSelex(
   add = FALSE,
   labels = c("Length (cm)", "Age (yr)", "Year", "Selectivity", "Retention",
     "Discard mortality"),
-  col1 = "red",
+  col1 = "brown4",
   col2 = "blue",
   lwd = 2,
   spacepoints = 5,

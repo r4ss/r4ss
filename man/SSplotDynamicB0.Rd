@@ -18,7 +18,7 @@ SSplotDynamicB0(
   legend = TRUE,
   legendlabels = c("equilibrium", "without fishing", "with fishing"),
   legendloc = "bottom",
-  col = c("blue", "red"),
+  col = c("blue", "brown4"),
   lty = 1,
   lwd = 2,
   add = FALSE,

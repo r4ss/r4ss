@@ -15,7 +15,7 @@ SSplotBiology(
   forecast = FALSE,
   minyr = -Inf,
   maxyr = Inf,
-  colvec = c("red", "blue", "grey20"),
+  colvec = c("brown4", "blue", "grey20"),
   areacols = NULL,
   ltyvec = c(1, 2),
   shadealpha = 0.1,

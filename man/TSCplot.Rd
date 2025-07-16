@@ -14,7 +14,7 @@ TSCplot(
   cex.axis = 1.1,
   space = 0,
   pchDepl = 19,
-  colDepl = "red",
+  colDepl = "brown4",
   lwdDepl = 3,
   shiftDepl = 0.25,
   pchSpace = 5,
