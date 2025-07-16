@@ -49,8 +49,8 @@ Description: A collection of R functions for use with Stock Synthesis, a
     manipulating files, visualizing model parameterizations, and various
     other common stock assessment tasks.  This version of '{r4ss}' is
     compatible with Stock Synthesis versions 3.24 through 3.30
-    (specifically version 3.30.24.00-prerel, from July 2025). Support for 3.24
-    models is only through the core functions for reading output and
+    (specifically version 3.30.24.00-prerel, from July 2025). Support for
+    3.24 models is only through the core functions for reading output and
     plotting.
 License: GPL-3
 URL: https://github.com/r4ss/r4ss, https://r4ss.github.io/r4ss/
