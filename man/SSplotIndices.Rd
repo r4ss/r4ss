@@ -22,7 +22,7 @@ SSplotIndices(
   col1 = "default",
   col2 = "default",
   col3 = "blue",
-  col4 = "red",
+  col4 = "brown4",
   pch1 = 21,
   pch2 = 16,
   cex = 1,
