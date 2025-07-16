@@ -82,7 +82,7 @@ SSplotSpawnrecruit <-
     ptcol = "default",
     legend = TRUE,
     legendloc = NULL,
-    # line1="blue",line2="green3",line3="black",ptcol="red",
+    # line1="blue",line2="darkolivegreen4",line3="black",ptcol="brown4",
     minyr = "default",
     textmindev = 0.5,
     relative = FALSE,

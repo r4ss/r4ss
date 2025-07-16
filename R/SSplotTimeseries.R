@@ -599,7 +599,7 @@ SSplotTimeseries <-
       # add references points to plot of fraction of unfished spawning output
       if (subplot %in% 9:10 & replist[["Bratio_label"]] == "B/B_0") {
         if (btarg < 1) {
-          abline(h = btarg, col = "red")
+          abline(h = btarg, col = "brown4")
           text(
             max(startyr, minyr) + 4,
             btarg + 0.02 * diff(par()[["usr"]][3:4]),
@@ -608,7 +608,7 @@ SSplotTimeseries <-
           )
         }
         if (minbthresh < 1) {
-          abline(h = minbthresh, col = "red")
+          abline(h = minbthresh, col = "brown4")
           text(
             max(startyr, minyr) + 4,
             minbthresh + 0.02 * diff(par()[["usr"]][3:4]),
@@ -618,7 +618,7 @@ SSplotTimeseries <-
         }
       }
       if (subplot %in% 9:10) {
-        abline(h = 1.0, col = "red")
+        abline(h = 1.0, col = "brown4")
       }
 
       if (subplot %in% 14:15) {

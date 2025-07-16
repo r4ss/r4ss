@@ -99,7 +99,7 @@ SSplotPars <-
     nrows = 4,
     ncols = 2,
     ltyvec = c(1, 1, 3, 4),
-    colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
+    colvec = c("blue", "brown4", "black", "gray60", rgb(0, 0, 0, .5)),
     add = FALSE,
     plot = TRUE,
     print = FALSE,

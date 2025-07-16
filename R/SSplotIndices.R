@@ -111,7 +111,7 @@ SSplotIndices <-
     col1 = "default",
     col2 = "default",
     col3 = "blue",
-    col4 = "red",
+    col4 = "brown4",
     pch1 = 21,
     pch2 = 16,
     cex = 1,
@@ -702,7 +702,7 @@ SSplotIndices <-
       if (col1[1] == "default") {
         colvec1 <- "black"
         if (usecol & nseasons == 4) {
-          colvec1 <- c("blue4", "green3", "orange2", "red3")
+          colvec1 <- c("blue4", "darkolivegreen4", "orange2", "red3")
         }
         if (usecol & !nseasons %in% c(1, 4)) {
           colvec1 <- rich.colors.short(nseasons)
@@ -718,7 +718,7 @@ SSplotIndices <-
       if (col2[1] == "default") {
         colvec2 <- "blue"
         if (usecol & nseasons == 4) {
-          colvec2 <- c("blue4", "green3", "orange2", "red3")
+          colvec2 <- c("blue4", "darkolivegreen4", "orange2", "red3")
         }
         if (usecol & !nseasons %in% c(1, 4)) {
           colvec2 <- rich.colors.short(nseasons)

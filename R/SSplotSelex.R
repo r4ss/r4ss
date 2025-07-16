@@ -125,7 +125,7 @@ SSplotSelex <-
       "Retention", # 5
       "Discard mortality"
     ), # 6
-    col1 = "red",
+    col1 = "brown4",
     col2 = "blue",
     lwd = 2,
     spacepoints = 5,
@@ -1130,7 +1130,7 @@ SSplotSelex <-
                 lines(
                   as.numeric(as.vector(names(plotret)[-(1:5)])),
                   as.numeric(as.character(plotret[1, -(1:5)])),
-                  col = "red",
+                  col = "brown4",
                   type = "o",
                   pch = 3,
                   cex = .9
@@ -1162,7 +1162,7 @@ SSplotSelex <-
                 lines(
                   as.numeric(as.vector(names(plotdead)[-(1:5)])),
                   as.numeric(as.character(plotdead[1, -(1:5)])),
-                  col = "green3",
+                  col = "darkolivegreen4",
                   type = "o",
                   pch = 5,
                   cex = .9
@@ -1192,7 +1192,7 @@ SSplotSelex <-
                   "Discard = Sel*(1-Ret)"
                 )[selexlines],
                 lty = 1,
-                col = c("blue", "red", "orange", "purple", "green3", "grey50")[
+                col = c("blue", "brown4", "orange", "purple", "darkolivegreen4", "grey50")[
                   selexlines
                 ],
                 pch = c(1, 3, 4, 2, 5, 6)[selexlines],
@@ -1556,7 +1556,7 @@ SSplotSelex <-
       seldev_pars <- replist[["seldev_pars"]]
       seldev_matrix <- replist[["seldev_matrix"]]
       # define color palette
-      devcol.fn <- colorRampPalette(colors = c("red", "white", "blue"))
+      devcol.fn <- colorRampPalette(colors = c("brown4", "white", "blue"))
 
       # define function to make an image plot
       seldev_func <- function(m, mar = c(4.1, 4.1, 1, 1)) {

@@ -1598,7 +1598,7 @@ SSplotComps <-
                     0.5 +
                       c(cohortlines[icohort], cohortlines[icohort] + accuage),
                     c(0, accuage),
-                    col = "red"
+                    col = "brown4"
                   )
                 }
               }
@@ -2909,7 +2909,7 @@ SSplotComps <-
                     psmooth[["x"]][order(psmooth[["x"]])],
                     psmooth[["fit"]][order(psmooth[["x"]])],
                     lwd = 1.2,
-                    col = "red",
+                    col = "brown4",
                     lty = "dashed"
                   )
                 }
@@ -2918,12 +2918,12 @@ SSplotComps <-
                   abline(
                     v = mean(dbasegood2[["Nsamp_adj"]]),
                     lty = "22",
-                    col = "green3"
+                    col = "darkolivegreen4"
                   )
                   text(
                     x = mean(dbasegood2[["Nsamp_adj"]]),
                     y = 0,
-                    col = "green3",
+                    col = "darkolivegreen4",
                     "arithmetic mean",
                     srt = 90,
                     adj = c(-0.1, -0.3)
@@ -2932,12 +2932,12 @@ SSplotComps <-
                   abline(
                     h = 1 / mean(1 / dbasegood2[["effN"]]),
                     lty = "22",
-                    col = "green3"
+                    col = "darkolivegreen4"
                   )
                   text(
                     x = 0,
                     y = 1 / mean(1 / dbasegood2[["effN"]]),
-                    col = "green3",
+                    col = "darkolivegreen4",
                     "harmonic mean",
                     adj = c(-0.1, -0.3)
                   )

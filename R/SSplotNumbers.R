@@ -383,7 +383,7 @@ SSplotNumbers <-
               )
               # add line for mean age
               if (meanlines & all(!is.nan(meanage))) {
-                lines(natageyrs, meanage, col = "red", lwd = 3)
+                lines(natageyrs, meanage, col = "brown4", lwd = 3)
               }
             }
             meanAge.fn <- function() {
@@ -405,7 +405,7 @@ SSplotNumbers <-
               points(
                 natageyrs,
                 meanagef,
-                col = "red",
+                col = "brown4",
                 lty = 2,
                 pch = 1,
                 type = "o"
@@ -416,7 +416,7 @@ SSplotNumbers <-
                 c("Females", "Males"),
                 lty = c(2, 1),
                 pch = c(1, 4),
-                col = c("red", "blue")
+                col = c("brown4", "blue")
               )
             }
             if (plot) {
@@ -742,7 +742,7 @@ SSplotNumbers <-
                 )
                 # add line for mean length
                 if (meanlines & all(!is.nan(meanlen))) {
-                  lines(natlenyrs, meanlen, col = "red", lwd = 3)
+                  lines(natlenyrs, meanlen, col = "brown4", lwd = 3)
                 }
               }
               meanLen.fn <- function() {
@@ -764,7 +764,7 @@ SSplotNumbers <-
                 points(
                   natlenyrs,
                   meanlenf,
-                  col = "red",
+                  col = "brown4",
                   lty = 2,
                   pch = 1,
                   type = "o"
@@ -775,7 +775,7 @@ SSplotNumbers <-
                   c("Females", "Males"),
                   lty = c(2, 1),
                   pch = c(1, 4),
-                  col = c("red", "blue")
+                  col = c("brown4", "blue")
                 )
               }
               if (plot) {

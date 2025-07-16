@@ -622,7 +622,7 @@ SSplotComparisons <-
       col <- rich.colors.short(nlines)
     }
     if (is.null(col) & nlines == 3) {
-      col <- c("blue", "red", "green3")
+      col <- c("blue", "brown4", "darkolivegreen4")
     }
     if (is.null(shadecol)) {
       # new approach thanks to Trevor Branch
@@ -1251,12 +1251,12 @@ SSplotComparisons <-
 
       yticks <- pretty(par()[["yaxp"]][1:2])
       if (btarg > 0) {
-        abline(h = btarg, col = "red", lty = 2)
+        abline(h = btarg, col = "brown4", lty = 2)
         text(min(Bratio[["Yr"]]) + 4, btarg + 0.03, labels[10], adj = 0)
         yticks <- sort(c(btarg, yticks))
       }
       if (minbthresh > 0) {
-        abline(h = minbthresh, col = "red", lty = 2)
+        abline(h = minbthresh, col = "brown4", lty = 2)
         text(min(Bratio[["Yr"]]) + 4, minbthresh + 0.03, labels[11], adj = 0)
         yticks <- sort(c(minbthresh, yticks))
       }
@@ -1437,7 +1437,7 @@ SSplotComparisons <-
         if (isTRUE(SPRratioLabel == "1-SPR")) {
           # if starter file chooses raw SPR as the option for reporting,
           # don't show ratio
-          abline(h = sprtarg, col = "red", lty = 2)
+          abline(h = sprtarg, col = "brown4", lty = 2)
           text(SPRratio[["Yr"]][1] + 4, (sprtarg + 0.03), labels[10], adj = 0)
           mtext(
             side = 2,
@@ -1461,7 +1461,7 @@ SSplotComparisons <-
             )
           ) {
             # add right-hand vertical axis showing 1-SPR
-            abline(h = 1, col = "red", lty = 2)
+            abline(h = 1, col = "brown4", lty = 2)
             text(SPRratio[["Yr"]][1] + 4, 1 + 0.03, labels[10], adj = 0)
             axis(4, at = yticks, labels = yticks * (1 - sprtarg), las = 1)
             mtext(
@@ -2146,10 +2146,10 @@ SSplotComparisons <-
       abline(h = 1, v = 1, col = "grey", lty = 2)
 
       if (btarg > 0) {
-        abline(v = btarg, col = "red", lty = 2)
+        abline(v = btarg, col = "brown4", lty = 2)
       }
       if (sprtarg > 0) {
-        abline(h = sprtarg, col = "red", lty = 2)
+        abline(h = sprtarg, col = "brown4", lty = 2)
       }
 
       if (legend) {
@@ -2569,7 +2569,7 @@ SSplotComparisons <-
         # fraction of unfished spawning output values
         if (grepl("Bratio", parname)) {
           if (btarg > 0) {
-            abline(v = btarg, col = "red", lty = 2)
+            abline(v = btarg, col = "brown4", lty = 2)
             text(
               btarg + 0.03,
               par()[["usr"]][4],
@@ -2579,7 +2579,7 @@ SSplotComparisons <-
             )
           }
           if (minbthresh > 0) {
-            abline(v = minbthresh, col = "red", lty = 2)
+            abline(v = minbthresh, col = "brown4", lty = 2)
             text(
               minbthresh + 0.03,
               par()[["usr"]][4],

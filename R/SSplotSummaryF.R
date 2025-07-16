@@ -109,7 +109,7 @@ SSplotSummaryF <- function(
       pch = 16,
       type = "p"
     )
-    abline(h = Ftgt, col = "red")
+    abline(h = Ftgt, col = "brown4")
   }
   if (plot) {
     plotfun()

@@ -43,8 +43,8 @@ SSplotRecdevs <-
     forecastplot = FALSE,
     col1 = "black",
     col2 = "blue",
-    col3 = "green3",
-    col4 = "red",
+    col3 = "darkolivegreen4",
+    col4 = "brown4",
     legendloc = "topleft",
     labels = c(
       "Year", # 1
