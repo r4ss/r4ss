@@ -4557,7 +4557,7 @@ SS_output <-
     if (!is.na(match_report_line("repro_output"))) {
       returndat[["equil_yield"]] <- match_report_table(
         "SPR/YPR_Profile",
-        4,
+        3,
         "Finish",
         -1,
         header = TRUE,
