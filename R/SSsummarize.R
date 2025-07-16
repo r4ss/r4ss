@@ -143,6 +143,7 @@ SSsummarize <- function(
   npars <- NULL
   startyrs <- NULL
   endyrs <- NULL
+  BratioLabels <- NULL
   SPRratioLabels <- NULL
   FvalueLabels <- NULL
   SpawnOutputLabels <- NULL
@@ -348,6 +349,7 @@ SSsummarize <- function(
         imodel
       ] <- quantstemp[["StdDev"]][iquant]
     }
+    BratioLabels <- c(BratioLabels, stats[["BratioLabels"]])
     SPRratioLabels <- c(SPRratioLabels, stats[["SPRratioLabel"]])
     FvalueLabels <- c(FvalueLabels, stats[["F_std_basis"]])
     SpawnOutputLabels <- c(SpawnOutputLabels, stats[["SpawnOutputLabel"]])
@@ -450,7 +452,8 @@ SSsummarize <- function(
     grep("SSB_Btgt", quants[["Label"]], ignore.case = TRUE),
     grep("SSB_SPR", quants[["Label"]], ignore.case = TRUE),
     grep("SSB_MSY", quants[["Label"]], ignore.case = TRUE),
-    grep("SSB_F01", quants[["Label"]], ignore.case = TRUE)
+    grep("SSB_F01", quants[["Label"]], ignore.case = TRUE),
+    grep("SSB_for_SRR_bench", quants[["Label"]], ignore.case = TRUE)
   )
   # filter rows to only include time series
   SSBrows <- setdiff(SSBrows, SSBexclude)
@@ -850,6 +853,7 @@ SSsummarize <- function(
   mylist[["BratioSD"]] <- sort.fn(BratioSD)
   mylist[["BratioLower"]] <- sort.fn(BratioLower)
   mylist[["BratioUpper"]] <- sort.fn(BratioUpper)
+  mylist[["BratioLabels"]] <- BratioLabels
   mylist[["SPRratio"]] <- sort.fn(SPRratio)
   mylist[["SPRratioSD"]] <- sort.fn(SPRratioSD)
   mylist[["SPRratioLower"]] <- sort.fn(SPRratioLower)
