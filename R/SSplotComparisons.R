@@ -260,7 +260,7 @@ SSplotComparisons <-
     ptsize = 10,
     plotdir = NULL,
     filenameprefix = "",
-    densitynames = c("SSB_Virgin", "R0"),
+    densitynames = c("SSB_Virgin", "SR_LN(R0)"),
     densityxlabs = NULL,
     rescale = TRUE,
     densityscalex = 1,
