@@ -265,7 +265,7 @@ SSunavailableSpawningOutput <-
           xlab = "Year",
           ylab = "",
           ylim = c(0, max(total.spawning.output) * 1.25),
-          col = c("red", "green4", "blue"),
+          col = c("brown4", "darkolivegreen4", "blue"),
           las = 1
         )
         mtext(replist[["SpawnOutputLabel"]], 3, line = 0.25)
@@ -274,7 +274,7 @@ SSunavailableSpawningOutput <-
           "topright",
           c("Unavailable Small", "Unavailable Large", "Available"),
           bty = "n",
-          fill = c("red", "green4", "blue")
+          fill = c("brown4", "darkolivegreen4", "blue")
         )
 
         ### Plot the portion of the spawning output that is cryptic by year
@@ -295,8 +295,8 @@ SSunavailableSpawningOutput <-
           yaxs = "i"
         )
         mtext("Proportion of Spawning Output Unavailable", 3, line = 0.25)
-        lines(years, portion.unavailable.small, col = "red", lwd = 2)
-        lines(years, portion.unavailable.large, col = "green4", lwd = 2)
+        lines(years, portion.unavailable.small, col = "brown4", lwd = 2)
+        lines(years, portion.unavailable.large, col = "darkolivegreen4", lwd = 2)
         legend(
           "topright",
           c(
@@ -305,7 +305,7 @@ SSunavailableSpawningOutput <-
             "Unavailable Total"
           ),
           bty = "n",
-          col = c("red", "green4", "black"),
+          col = c("brown4", "darkolivegreen4", "black"),
           lty = c(1, 1, 1)
         )
 
@@ -341,7 +341,7 @@ SSunavailableSpawningOutput <-
               y = a,
               circles = radius.small,
               fg = "black",
-              bg = "red",
+              bg = "brown4",
               lty = 1,
               lwd = 0.001,
               inches = FALSE,
@@ -356,7 +356,7 @@ SSunavailableSpawningOutput <-
               y = a,
               circles = radius.large,
               fg = "black",
-              bg = "green4",
+              bg = "darkolivegreen4",
               lty = 1,
               lwd = 0.001,
               inches = FALSE,
@@ -415,7 +415,7 @@ SSunavailableSpawningOutput <-
           y = y.legend + smaller.circle * multiplier,
           circles = smaller.circle * multiplier,
           fg = "black",
-          bg = "red",
+          bg = "brown4",
           lty = 1,
           lwd = 0.001,
           inches = FALSE,
@@ -435,7 +435,7 @@ SSunavailableSpawningOutput <-
           y = y.legend + smaller.circle * multiplier,
           circles = smaller.circle * multiplier,
           fg = "black",
-          bg = "green4",
+          bg = "darkolivegreen4",
           lty = 1,
           lwd = 0.001,
           inches = FALSE,

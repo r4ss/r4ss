@@ -379,7 +379,7 @@ get_areacols <- function(areacols, nareas) {
   if (is.null(areacols)) {
     areacols <- rich.colors.short(nareas)
     if (nareas == 3) {
-      areacols <- c("blue", "red", "green3")
+      areacols <- c("blue", "brown4", "darkolivegreen4")
     }
     if (nareas > 3) {
       areacols <- rich.colors.short(nareas + 1)[-1]

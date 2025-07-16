@@ -59,7 +59,7 @@ SSplotTags <-
     res = 300,
     cex.main = 1,
     col1 = rgb(0, 0, 1, .7),
-    col2 = "red",
+    col2 = "brown4",
     col3 = "grey95",
     col4 = "grey70",
     labels = c(

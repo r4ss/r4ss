@@ -503,12 +503,12 @@ make_multifig <-
           effN_i1 <- effN[yr == yr_i]
           effN_i1_vec <- unlist(lapply(split(effN_i1, ptsy_i1), unique))
           ptsy_i1_vec <- sort(unique(ptsy_i1))
-          lines(effNline * effN_i1_vec, ptsy_i1_vec, col = "green3")
+          lines(effNline * effN_i1_vec, ptsy_i1_vec, col = "darkolivegreen4")
           if (!is.null(effNmean)) {
             lines(
               rep(effNline * effNmean, length(ptsy_i1_vec)),
               ptsy_i1_vec,
-              col = "green3",
+              col = "darkolivegreen4",
               lty = 2
             )
           }
