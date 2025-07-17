@@ -35,67 +35,49 @@ test_that("test-models work with SS_output() and SS_plots()", {
     paste(basename(all_mods), collapse = ",\n  ")
   )
 
-  #' Run test models with the purpose of being called using the furrr package to
-  #' run in parallel.
-  #'
-  #' @param models list of test models to run
-  run_models <- function(models) {
-    message("Now running without estimation: ", basename(models))
-    run(models, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
-  }
+  # make empty list to store output
+  all_output <- rep(list(NULL), length(all_mods))
 
-  ncores <- parallelly::availableCores(omit = 1)
-  future::plan(future::multisession, workers = ncores)
+  # run models
+  for (i in seq_along(all_mods)) {
+    cli::cli_alert_info(
+      "Now running without estimation: {basename(all_mods[i])}"
+    )
+    run(
+      all_mods[i],
+      exe = file.path(dir_exe, "ss3"),
+      extras = "-stopph 0 -nohess"
+    )
 
-  furrr::future_map(
-    .x = all_mods,
-    .f = function(x, dir_exe) {
-      message("Now running without estimation: ", basename(x))
-      run(x, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
-    },
-    dir_exe = dir_exe
-  )
-
-  out <- furrr::future_map(.x = all_mods, .f = function(x) {
-    if (!"Report.sso" %in% dir(x)) {
-      warning("No Report.sso file in ", x)
+    if (!"Report.sso" %in% dir(all_mods[i])) {
+      cli::cli_alert_warning("No Report.sso file in {all_mods[i]}")
     } else {
       #### Checks related to SS_output()
       message("Running SS_output()")
-      SS_output(x, verbose = FALSE, printstats = FALSE)
+      all_output[[i]] <- SS_output(
+        all_mods[[i]],
+        verbose = FALSE,
+        printstats = FALSE
+      )
     }
-  })
-
-  expect_true(all(unlist(purrr::map(out, is.list))))
-  expect_true(length(out) == length(all_mods))
-  expect_setequal(
-    unlist(purrr::map(out, function(x) {
-      tail(names(x), 1)
-    })),
-    "inputs"
-  )
-
-  plots <- furrr::future_map(.x = out, .f = function(x) {
-    message("Running SS_plots()")
-    SS_plots(x, verbose = FALSE)
-  })
-
-  expect_true(all(unlist(purrr::map(plots, function(x) {
-    "data_plot2.png" %in% x$file
-  }))))
-
-  # tables <- furrr::future_map(.x = out, .f = function(x) {
-  #   message("Running table_all()")
-  #   table_all(x, verbose = FALSE)
-  # })
-
-  # furr command above was failing, so trying to loop over the list of model output
-  for (i in 1:length(out)) {
-    table_all(out[[i]], verbose = TRUE)
   }
 
-  ## was failing here but probably due to user error
-  # expect_true(all(unlist(purrr::map(tables, function(x) {
-  #   "table_pars" %in% names(x)
-  # }))))
+  # confirm that there are no NULL outputs
+  expect_true(all(!sapply(all_output, is.null)))
+
+  expect_true(all(unlist(lapply(all_output, function(x) {
+    tail(names(x), 1) == "inputs"
+  }))))
+
+  for (i in seq_along(all_output)) {
+    cli::cli_alert_info("Running SS_plots() for model {basename(all_mods[i])}")
+    SS_plots(all_output[[i]], verbose = FALSE)
+    expect_true("data_plot2.png" %in% file.path(all_mods[i], "plots"))
+  }
+
+  for (i in seq_along(all_output)) {
+    cli::cli_alert_info("Running table_all() for model {basename(all_mods[i])}")
+    table_all(all_output[[i]], verbose = TRUE)
+    expect_true("table_parcounts.rda" %in% file.path(all_mods[i], "tables"))
+  }
 })
