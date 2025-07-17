@@ -227,7 +227,7 @@ add_legend <- function(
   legendsp = 0.9,
   col = NULL,
   pch = NULL,
-  pt.cex = 0.7,
+  pt.cex = 1,
   lty = 1,
   lwd = 2,
   type = "o"
