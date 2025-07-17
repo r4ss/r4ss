@@ -16,7 +16,7 @@ add_legend(
   pt.cex = 0.7,
   lty = 1,
   lwd = 2,
-  type = "l"
+  type = "o"
 )
 }
 \arguments{
