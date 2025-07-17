@@ -230,7 +230,7 @@ add_legend <- function(
   pt.cex = 0.7,
   lty = 1,
   lwd = 2,
-  type = "l"
+  type = "o"
 ) {
   if (is.null(legendorder)) {
     legendorder <- seq_along(legendlabels)
@@ -243,10 +243,21 @@ add_legend <- function(
     )
   }
 
+  # sort out NULL values and lengths of some inputs
+  if (is.null(pch)) {
+    pch <- rep(NA, length(legendlabels))
+  }
+  if (length(pch) < length(legendlabels)) {
+    pch <- rep(pch, length.out = length(legendlabels))
+  }
+  if (length(pt.cex) < length(legendlabels)) {
+    pt.cex <- rep(pt.cex, length.out = length(legendlabels))
+  }
   # if type input is "l" then turn off points on top of lines in legend
-  legend.pch <- -1
   if (type == "l") {
     legend.pch <- rep(NA, length(pch))
+  } else {
+    legend.pch <- pch
   }
   legend(
     legendloc,
