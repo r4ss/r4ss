@@ -534,8 +534,12 @@ SSsummarize <- function(
   recruitsSD <- quantsSD[grep("^Recr_", quantsSD[["Label"]]), ]
   # filter rows not associated with a year
   recr_exclude <- c("Recr_Unfished", "Recr_MSY_bmarkbio")
-  recruits <- recruits[!tolower(recruits[["Label"]]) %in% tolower(recr_exclude), ]
-  recruitsSD <- recruitsSD[!tolower(recruitsSD[["Label"]]) %in% tolower(recr_exclude), ]
+  recruits <- recruits[
+    !tolower(recruits[["Label"]]) %in% tolower(recr_exclude),
+  ]
+  recruitsSD <- recruitsSD[
+    !tolower(recruitsSD[["Label"]]) %in% tolower(recr_exclude),
+  ]
 
   if (
     length(grep("Recr_Unfished", recruits[["Label"]], ignore.case = TRUE)) > 0
