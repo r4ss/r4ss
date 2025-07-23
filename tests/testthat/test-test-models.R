@@ -35,67 +35,48 @@ test_that("test-models work with SS_output() and SS_plots()", {
     paste(basename(all_mods), collapse = ",\n  ")
   )
 
-  #' Run test models with the purpose of being called using the furrr package to
-  #' run in parallel.
-  #'
-  #' @param models list of test models to run
-  run_models <- function(models) {
-    message("Now running without estimation: ", basename(models))
-    run(models, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
-  }
-
-  ncores <- parallelly::availableCores(omit = 1)
+  ncores <- min(2, parallelly::availableCores(omit = 1))
   future::plan(future::multisession, workers = ncores)
 
-  furrr::future_map(
+  # Combined model run and result extraction
+  results <- furrr::future_map(
     .x = all_mods,
     .f = function(x, dir_exe) {
-      message("Now running without estimation: ", basename(x))
-      run(x, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
+      exe_path <- file.path(dir_exe, "ss3")
+      # Run the model
+      run(x, exe = exe_path, extras = "-stopph 0 -nohess")
+      # Check for output
+      if (!"Report.sso" %in% dir(x)) {
+        warning("No Report.sso file in ", x)
+        return(list(success = FALSE, model = basename(x)))
+      }
+      # Extract output and plots
+      out <- tryCatch(
+        SS_output(x, verbose = FALSE, printstats = FALSE),
+        error = function(e) e
+      )
+      plots <- tryCatch(
+        SS_plots(out, verbose = FALSE),
+        error = function(e) e
+      )
+      list(success = is.list(out), model = basename(x), output = out, plots = plots)
     },
     dir_exe = dir_exe
   )
-
-  out <- furrr::future_map(.x = all_mods, .f = function(x) {
-    if (!"Report.sso" %in% dir(x)) {
-      warning("No Report.sso file in ", x)
-    } else {
-      #### Checks related to SS_output()
-      message("Running SS_output()")
-      SS_output(x, verbose = FALSE, printstats = FALSE)
-    }
-  })
-
-  expect_true(all(unlist(purrr::map(out, is.list))))
-  expect_true(length(out) == length(all_mods))
+  
+  # Check outputs
+  expect_true(all(purrr::map_lgl(results, ~ .x$success)))
+  expect_true(length(results) == length(all_mods))
   expect_setequal(
-    unlist(purrr::map(out, function(x) {
-      tail(names(x), 1)
-    })),
+    unlist(purrr::map(results, ~ if(is.list(.x$output)) tail(names(.x$output), 1))),
     "inputs"
   )
+  expect_true(all(purrr::map_lgl(results, ~ {
+    is.list(.x$plots) && "data_plot2.png" %in% .x$plots$file
+  })))
 
-  plots <- furrr::future_map(.x = out, .f = function(x) {
-    message("Running SS_plots()")
-    SS_plots(x, verbose = FALSE)
-  })
-
-  expect_true(all(unlist(purrr::map(plots, function(x) {
-    "data_plot2.png" %in% x$file
-  }))))
-
-  # tables <- furrr::future_map(.x = out, .f = function(x) {
-  #   message("Running table_all()")
-  #   table_all(x, verbose = FALSE)
-  # })
-
-  # furr command above was failing, so trying to loop over the list of model output
-  for (i in 1:length(out)) {
-    table_all(out[[i]], verbose = TRUE)
+  # Run table_all sequentially for stability
+  for (res in results) {
+    if (is.list(res$output)) table_all(res$output, verbose = TRUE)
   }
-
-  ## was failing here but probably due to user error
-  # expect_true(all(unlist(purrr::map(tables, function(x) {
-  #   "table_pars" %in% names(x)
-  # }))))
 })
