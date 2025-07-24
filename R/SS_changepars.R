@@ -17,7 +17,7 @@
 #'   parameters to be modified. This is an alternative to `linenums`.
 #'   `strings` correspond to the commented parameter names included in
 #'   `control.ss_new`, or whatever is written as comment at the end
-#'   of the 14 number parameter lines. If `strings` is an exact match to a parameter 
+#'   of the 14 number parameter lines. If `strings` is an exact match to a parameter
 #'   name in `control.ss_new`, this parameter will be modified, otherwise
 #'   the function will check for parameters that are a partial match to
 #'    `strings.` Default=NULL.
@@ -146,14 +146,15 @@ SS_changepars <-
       if (!is.null(strings)) {
         # loop over vector of strings to add to goodnames vector
         for (i in seq_along(strings)) {
-          if( #Check is string matches a par exactly, if not check partial match
+          if (
+            #Check is string matches a par exactly, if not check partial match
             strings[i] %in% allnames
-          ){ #string is an exact match to par file
+          ) {
+            #string is an exact match to par file
             goodnames[[i]] <- allnames[allnames == strings[i]]
             #string is not exact match - look for partial
           } else {
-            goodnames[[i]] <- allnames[grep(strings[i], allnames, 
-                                            fixed = TRUE)]
+            goodnames[[i]] <- allnames[grep(strings[i], allnames, fixed = TRUE)]
           }
         }
         # remove duplicates and print some feedback
