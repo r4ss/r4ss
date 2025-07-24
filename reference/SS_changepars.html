@@ -103,7 +103,10 @@ the <code>strings</code> argument are needed. Default=NULL.</p></dd>
 parameters to be modified. This is an alternative to <code>linenums</code>.
 <code>strings</code> correspond to the commented parameter names included in
 <code>control.ss_new</code>, or whatever is written as comment at the end
-of the 14 number parameter lines. Default=NULL.</p></dd>
+of the 14 number parameter lines. If <code>strings</code> is an exact match to a parameter
+name in <code>control.ss_new</code>, this parameter will be modified, otherwise
+the function will check for parameters that are a partial match to
+<code>strings.</code> Default=NULL.</p></dd>
 
 
 <dt id="arg-newvals">newvals<a class="anchor" aria-label="anchor" href="#arg-newvals"></a></dt>
