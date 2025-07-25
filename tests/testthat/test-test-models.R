@@ -25,7 +25,7 @@ for (i in seq_along(mods)) {
       )
       mod <- basename(mods[i])
       mod_path <- file.path(models_path, "models", mod)
-      
+
       cli::cli_alert_info(
         "Now running without estimation: {mod}"
       )
@@ -46,23 +46,25 @@ for (i in seq_along(mods)) {
           printstats = FALSE
         )
       }
-      expect_true(!is.null(output))
-      expect_true("inputs" %in% names(output))
+      expect_true(exists("output"))
+      if (exists("output")) {
+        expect_true("inputs" %in% names(output))
 
-      cli::cli_alert_info(
-        "Running SS_plots() for model {mod}"
-      )
-      # make low-resolution plots to save time
-      SS_plots(output, verbose = FALSE, res = 50)
-      expect_true("data_plot2.png" %in% dir(file.path(mod_path, "plots")))
+        cli::cli_alert_info(
+          "Running SS_plots() for model {mod}"
+        )
+        # make low-resolution plots to save time
+        SS_plots(output, verbose = FALSE, res = 50)
+        expect_true("data_plot2.png" %in% dir(file.path(mod_path, "plots")))
 
-      cli::cli_alert_info(
-        "Running table_all() for model {mod}"
-      )
-      table_all(output, verbose = TRUE)
-      expect_true(
-        "table_parcounts.rda" %in% dir(file.path(mod_path, "tables"))
-      )
+        cli::cli_alert_info(
+          "Running table_all() for model {mod}"
+        )
+        table_all(output, verbose = TRUE)
+        expect_true(
+          "table_parcounts.rda" %in% dir(file.path(mod_path, "tables"))
+        )
+      }
     }
   ) # end testthat
 } # end loop over models
