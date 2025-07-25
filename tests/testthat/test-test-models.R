@@ -25,7 +25,7 @@ for (i in seq_along(mods)) {
       )
       mod <- basename(mods[i])
       mod_path <- file.path(models_path, "models", mod)
-      
+
       cli::cli_alert_info(
         "Now running without estimation: {mod}"
       )
