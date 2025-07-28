@@ -55,6 +55,8 @@ jobs:
           extra-packages: |
             any::covr
             any::devtools
+            any::future
+            any::furrr
 
       - name: Get repository of SS3 models
         uses: actions/checkout@v4
@@ -83,6 +85,7 @@ jobs:
         
       - name: Test coverage
         run: |
+          Sys.setenv(GITHUB_PAT = Sys.getenv("GITHUB_PAT"))
           covr::codecov(
             quiet = FALSE,
             clean = FALSE,
