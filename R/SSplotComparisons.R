@@ -854,6 +854,9 @@ SSplotComparisons <-
         Bratio[Bratio[["Yr"]] > endyr, imodel] <- NA
         BratioLower[Bratio[["Yr"]] > endyr, imodel] <- NA
         BratioUpper[Bratio[["Yr"]] > endyr, imodel] <- NA
+        SmryBio[SmryBio[["Yr"]] > endyr, imodel] <- NA
+        SmryBioLower[SmryBio[["Yr"]] > endyr, imodel] <- NA
+        SmryBioUpper[SmryBio[["Yr"]] > endyr, imodel] <- NA
         #### note: add generalized startyrvec option in the future
         ## if(exists("startyrvec")){
         ##   startyr <- startyrvec[iline]
