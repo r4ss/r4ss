@@ -1,82 +1,74 @@
 context("Read output and make plots for all test-models")
 
-test_that("test-models work with SS_output() and SS_plots()", {
-  skip_if(
-    !file.exists(system.file("extdata", "models", package = "r4ss")),
-    message = "No 'models' folder in 'extdata'"
-  )
-  # skip if no executable in simple_small path
-  # (should have been loaded there by
-  # .github\workflows\r4ss-extra-tests.yml)
+# download models to a temporary directory
+models_path <- file.path(tempdir(check = TRUE), "test-test-models")
+download_models(dir = models_path)
+mods <- list.dirs(
+  file.path(models_path, "models"),
+  full.names = FALSE,
+  recursive = FALSE
+)
 
-  # find simple_small
-  dir_exe <- system.file("extdata", "simple_small", package = "r4ss")
-  skip_if(
-    (!file.exists(file.path(dir_exe, "ss3")) &
-      !file.exists(file.path(dir_exe, "ss3.exe"))),
-    message = paste("skipping test: no exe called 'ss3' found in", dir_exe)
-  )
-  # temporary directory
-  mod_path <- file.path(tempdir(check = TRUE), "test-test-models")
-  on.exit(unlink(mod_path, recursive = TRUE), add = TRUE)
-  dir.create(mod_path, showWarnings = FALSE)
-  # copy all test models to temporary directory
-  orig_mod_path <- system.file("extdata", "models", package = "r4ss")
-  file.copy(orig_mod_path, mod_path, recursive = TRUE)
-  all_mods <- list.dirs(
-    file.path(mod_path, "models"),
-    full.names = TRUE,
-    recursive = FALSE
-  )
+# Set up parallel plan
+future::plan(multisession, workers = 2)
 
-  # run models without estimation and then run r4ss functions
-  message(
-    "Will run SS_output() and SS_plots() on models:\n  ",
-    paste(basename(all_mods), collapse = ",\n  ")
-  )
-
-  ncores <- min(2, parallelly::availableCores(omit = 1))
-  future::plan(future::multisession, workers = ncores)
-
-  # Combined model run and result extraction
-  results <- furrr::future_map(
-    .x = all_mods,
-    .f = function(x, dir_exe) {
-      exe_path <- file.path(dir_exe, "ss3")
-      # Run the model
-      run(x, exe = exe_path, extras = "-stopph 0 -nohess")
-      # Check for output
-      if (!"Report.sso" %in% dir(x)) {
-        warning("No Report.sso file in ", x)
-        return(list(success = FALSE, model = basename(x)))
+furrr::future_walk(mods, function(mod) {
+  test_that(
+    glue::glue(
+      "run SS_output() and SS_plots() on test model: {basename(mod)}"
+    ),
+    {
+      # find simple_small
+      dir_exe <- system.file("extdata", "simple_small", package = "r4ss")
+      skip_if(
+        (!file.exists(file.path(dir_exe, "ss3")) &
+           !file.exists(file.path(dir_exe, "ss3.exe"))),
+        message = paste("skipping test: no exe called 'ss3' found in", dir_exe)
+      )
+      mod_path <- file.path(models_path, "models", basename(mod))
+      
+      cli::cli_alert_info(
+        "Now running without estimation: {basename(mod)}"
+      )
+      run(
+        mod_path,
+        exe = file.path(dir_exe, "ss3"),
+        extras = "-stopph 0 -nohess"
+      )
+      
+      if (!"Report.sso" %in% dir(mod_path)) {
+        cli::cli_alert_warning("No Report.sso file in {mod_path}")
+      } else {
+        #### Checks related to SS_output()
+        message("Running SS_output()")
+        output <- SS_output(
+          mod_path,
+          verbose = FALSE,
+          printstats = FALSE
+        )
       }
-      # Extract output and plots
-      out <- tryCatch(
-        SS_output(x, verbose = FALSE, printstats = FALSE),
-        error = function(e) e
-      )
-      plots <- tryCatch(
-        SS_plots(out, verbose = FALSE),
-        error = function(e) e
-      )
-      list(success = is.list(out), model = basename(x), output = out, plots = plots)
-    },
-    dir_exe = dir_exe
-  )
-  
-  # Check outputs
-  expect_true(all(purrr::map_lgl(results, ~ .x$success)))
-  expect_true(length(results) == length(all_mods))
-  expect_setequal(
-    unlist(purrr::map(results, ~ if(is.list(.x$output)) tail(names(.x$output), 1))),
-    "inputs"
-  )
-  expect_true(all(purrr::map_lgl(results, ~ {
-    is.list(.x$plots) && "data_plot2.png" %in% .x$plots$file
-  })))
+      expect_true(exists("output"))
+      if (exists("output")) {
+        expect_true("inputs" %in% names(output))
+        
+        cli::cli_alert_info(
+          "Running SS_plots() for model {basename(mod)}"
+        )
+        # make low-resolution plots to save time
+        SS_plots(output, verbose = FALSE, res = 50)
+        expect_true("data_plot2.png" %in% dir(file.path(mod_path, "plots")))
+        
+        cli::cli_alert_info(
+          "Running table_all() for model {basename(mod)}"
+        )
+        table_all(output, verbose = TRUE)
+        expect_true(
+          "table_parcounts.rda" %in% dir(file.path(mod_path, "tables"))
+        )
+      }
+    }
+  ) # end testthat
+}) # end future_walk
 
-  # Run table_all sequentially for stability
-  for (res in results) {
-    if (is.list(res$output)) table_all(res$output, verbose = TRUE)
-  }
-})
+# Optionally, reset plan
+future::plan(sequential)
