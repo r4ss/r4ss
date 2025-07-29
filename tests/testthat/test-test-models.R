@@ -10,7 +10,7 @@ mods <- list.dirs(
 )
 
 # Set up parallel plan
-future::plan(multisession, workers = 2)
+future::plan("multisession", workers = 2)
 
 furrr::future_walk(mods, function(mod) {
   test_that(
@@ -71,4 +71,4 @@ furrr::future_walk(mods, function(mod) {
 }) # end future_walk
 
 # Optionally, reset plan
-future::plan(sequential)
+future::plan("sequential")
