@@ -72,7 +72,7 @@ jobs:
 
       - name: Get the latest SS3 executable and move to expected location
         run: |
-          wget -O ss3 https://github.com/nmfs-ost/ss3-source-code/releases/v3.30.24-prerel/download/ss3_linux
+          wget -O ss3 https://github.com/nmfs-ost/ss3-source-code/releases/download/v3.30.24-prerel/ss3_linux
           sudo chmod a+x ss3
           cp ss3 inst/extdata/simple_small/ss3
           rm ss3
