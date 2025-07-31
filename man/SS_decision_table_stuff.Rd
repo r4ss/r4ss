@@ -4,7 +4,12 @@
 \alias{SS_decision_table_stuff}
 \title{Extract total catch, spawning output, and fraction unfished from forecast years}
 \usage{
-SS_decision_table_stuff(replist, yrs = 2025:2036, digits = c(0, 0, 3))
+SS_decision_table_stuff(
+  replist,
+  yrs = 2025:2036,
+  digits = c(0, 0, 3),
+  OFL = FALSE
+)
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
@@ -17,6 +22,9 @@ SS_decision_table_stuff(replist, yrs = 2025:2036, digits = c(0, 0, 3))
 \item 2 spawning output
 \item 3 fraction unfished (column is called "depl")
 }}
+
+\item{OFL}{Logical indicating whether to include the overfishing limit (OFL)
+instead of spawning output in the table. Defaults to \code{FALSE}.}
 }
 \value{
 A tibble with columns for year, total catch (dead biomass),

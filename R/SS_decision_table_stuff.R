@@ -11,8 +11,8 @@
 #'   \item 2 spawning output
 #'   \item 3 fraction unfished (column is called "depl")
 #' }
-#' @param OFL Logical indicating whether to include the overfishing limit (OFL) 
-#' instead of spawning output in the table. Defaults to `FALSE`. 
+#' @param OFL Logical indicating whether to include the overfishing limit (OFL)
+#' instead of spawning output in the table. Defaults to `FALSE`.
 #' @export
 #' @return A tibble with columns for year, total catch (dead biomass),
 #' spawning output, and fraction unfished.
@@ -55,13 +55,15 @@ SS_decision_table_stuff <- function(
     )
   # replace the SpawnBio column with OFL
   if (OFL) {
-    OFL <- replist[["derived_quants"]]$Value[
-      replist[["derived_quants"]]$Label %in% paste0("OFLCatch_", tab$yr)
-    ] |> round(digits[2])
-    tab <- tab |> 
-    dplyr::select(-SpawnBio) |>
-    dplyr::mutate(OFL = OFL) |>
-    dplyr::relocate(OFL, .after = catch)
+    OFL <- replist[["derived_quants"]][["Value"]][
+      replist[["derived_quants"]][['Label']] %in%
+        paste0("OFLCatch_", tab[["yr"]])
+    ] |>
+      round(digits[2])
+    tab <- tab |>
+      dplyr::select(-SpawnBio) |>
+      dplyr::mutate(OFL = OFL) |>
+      dplyr::relocate(OFL, .after = catch)
   }
   return(tab)
 }
