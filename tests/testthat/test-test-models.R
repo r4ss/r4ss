@@ -1,101 +1,70 @@
 context("Read output and make plots for all test-models")
 
-test_that("test-models work with SS_output() and SS_plots()", {
-  skip_if(
-    !file.exists(system.file("extdata", "models", package = "r4ss")),
-    message = "No 'models' folder in 'extdata'"
-  )
-  # skip if no executable in simple_small path
-  # (should have been loaded there by
-  # .github\workflows\r4ss-extra-tests.yml)
+# download models to a temporary directory
+models_path <- file.path(tempdir(check = TRUE), "test-test-models")
+download_models(dir = models_path)
+mods <- list.dirs(
+  file.path(models_path, "models"),
+  full.names = FALSE,
+  recursive = FALSE
+)
 
-  # find simple_small
-  dir_exe <- system.file("extdata", "simple_small", package = "r4ss")
-  skip_if(
-    (!file.exists(file.path(dir_exe, "ss3")) &
-      !file.exists(file.path(dir_exe, "ss3.exe"))),
-    message = paste("skipping test: no exe called 'ss3' found in", dir_exe)
-  )
-  # temporary directory
-  mod_path <- file.path(tempdir(check = TRUE), "test-test-models")
-  on.exit(unlink(mod_path, recursive = TRUE), add = TRUE)
-  dir.create(mod_path, showWarnings = FALSE)
-  # copy all test models to temporary directory
-  orig_mod_path <- system.file("extdata", "models", package = "r4ss")
-  file.copy(orig_mod_path, mod_path, recursive = TRUE)
-  all_mods <- list.dirs(
-    file.path(mod_path, "models"),
-    full.names = TRUE,
-    recursive = FALSE
-  )
+# run models
+for (i in seq_along(mods)) {
+  test_that(
+    glue::glue(
+      "run SS_output() and SS_plots() on test model: {mods[i]}"
+    ),
+    {
+      # find simple_small
+      dir_exe <- system.file("extdata", "simple_small", package = "r4ss")
+      skip_if(
+        (!file.exists(file.path(dir_exe, "ss3")) &
+          !file.exists(file.path(dir_exe, "ss3.exe"))),
+        message = paste("skipping test: no exe called 'ss3' found in", dir_exe)
+      )
+      mod <- basename(mods[i])
+      mod_path <- file.path(models_path, "models", mod)
 
-  # run models without estimation and then run r4ss functions
-  message(
-    "Will run SS_output() and SS_plots() on models:\n  ",
-    paste(basename(all_mods), collapse = ",\n  ")
-  )
+      cli::cli_alert_info(
+        "Now running without estimation: {mod}"
+      )
+      run(
+        mod_path,
+        exe = file.path(dir_exe, "ss3"),
+        extras = "-stopph 0 -nohess"
+      )
 
-  #' Run test models with the purpose of being called using the furrr package to
-  #' run in parallel.
-  #'
-  #' @param models list of test models to run
-  run_models <- function(models) {
-    message("Now running without estimation: ", basename(models))
-    run(models, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
-  }
+      if (!"Report.sso" %in% dir(mod_path)) {
+        cli::cli_alert_warning("No Report.sso file in {mod_path}")
+      } else {
+        #### Checks related to SS_output()
+        message("Running SS_output()")
+        output <- SS_output(
+          mod_path,
+          verbose = FALSE,
+          printstats = FALSE
+        )
+      }
+      expect_true(exists("output"))
+      if (exists("output")) {
+        expect_true("inputs" %in% names(output))
 
-  ncores <- parallelly::availableCores(omit = 1)
-  future::plan(future::multisession, workers = ncores)
+        cli::cli_alert_info(
+          "Running SS_plots() for model {mod}"
+        )
+        # make low-resolution plots to save time
+        SS_plots(output, verbose = FALSE, res = 50)
+        expect_true("data_plot2.png" %in% dir(file.path(mod_path, "plots")))
 
-  furrr::future_map(
-    .x = all_mods,
-    .f = function(x, dir_exe) {
-      message("Now running without estimation: ", basename(x))
-      run(x, exe = file.path(dir_exe, "ss3"), extras = "-stopph 0 -nohess")
-    },
-    dir_exe = dir_exe
-  )
-
-  out <- furrr::future_map(.x = all_mods, .f = function(x) {
-    if (!"Report.sso" %in% dir(x)) {
-      warning("No Report.sso file in ", x)
-    } else {
-      #### Checks related to SS_output()
-      message("Running SS_output()")
-      SS_output(x, verbose = FALSE, printstats = FALSE)
+        cli::cli_alert_info(
+          "Running table_all() for model {mod}"
+        )
+        table_all(output, verbose = TRUE)
+        expect_true(
+          "table_parcounts.rda" %in% dir(file.path(mod_path, "tables"))
+        )
+      }
     }
-  })
-
-  expect_true(all(unlist(purrr::map(out, is.list))))
-  expect_true(length(out) == length(all_mods))
-  expect_setequal(
-    unlist(purrr::map(out, function(x) {
-      tail(names(x), 1)
-    })),
-    "inputs"
-  )
-
-  plots <- furrr::future_map(.x = out, .f = function(x) {
-    message("Running SS_plots()")
-    SS_plots(x, verbose = FALSE)
-  })
-
-  expect_true(all(unlist(purrr::map(plots, function(x) {
-    "data_plot2.png" %in% x$file
-  }))))
-
-  # tables <- furrr::future_map(.x = out, .f = function(x) {
-  #   message("Running table_all()")
-  #   table_all(x, verbose = FALSE)
-  # })
-
-  # furr command above was failing, so trying to loop over the list of model output
-  for (i in 1:length(out)) {
-    table_all(out[[i]], verbose = TRUE)
-  }
-
-  ## was failing here but probably due to user error
-  # expect_true(all(unlist(purrr::map(tables, function(x) {
-  #   "table_pars" %in% names(x)
-  # }))))
-})
+  ) # end testthat
+} # end loop over models
