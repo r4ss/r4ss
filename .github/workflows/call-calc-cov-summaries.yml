@@ -1,17 +1,26 @@
-# call a workflow that runs covr::codecov() to calculate code coverage
-name: call-calc_cov-summaries
+# call a workflow that runs covr::codecov() to calculate code coverage, then
+# uses octocov to summarize the coverage information and post it as appropriate.
+
+# note that a .octocov.yml file in the repository is also necessary.
+name: call-calc-cov-summaries
 # on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
-# The default is to run the workflow on every push or pull request to every branch.
+# The default is to run the workflow on every push or pull request opened to main.
 on:
   workflow_dispatch:
   push:
     branches:
       - main
   pull_request:
-    types: 
+    types:
       - opened
     branches:
       - main
+      
+# limits permissions to write, as the common use case is for pull requests;
+# this means certain options may not work, but makes the workflow more secure
+permissions:
+  pull-requests: write
+
 jobs:
   call-workflow:
     uses: nmfs-ost/ghactions4r/.github/workflows/calc-cov-summaries.yml@main

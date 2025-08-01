@@ -9,6 +9,12 @@ on:
   push:
     branches:
       - main
+
+# limits permissions to write, which is the minimum permissions needed to create
+# the coverage badge.
+permissions:
+  contents: write
+
 jobs:
   call-workflow:
-    uses: nmfs-fish-tools/ghactions4r/.github/workflows/create-cov-badge.yml@main
+    uses: nmfs-ost/ghactions4r/.github/workflows/create-cov-badge.yml@main
