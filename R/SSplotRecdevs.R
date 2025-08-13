@@ -306,7 +306,7 @@ SSplotRecdevs <-
           }
           if (4 %in% subplots) {
             file <- "recdevs4_cohort_contribution.png"
-            caption <- glue::glue("Recruitment deviations and relative cohort contributions to the {replist$endyr + 1} spawning output")
+            caption <- glue::glue("Recruitment deviations and relative cohort contributions to the {replist$endyr + 1} spawning output. Bubbles in recruitment deviations plot show the relative contribution of each cohort to the spawning output in the final year + 1. Only cohorts with a relative contribution greater than 0.01 are shown. The cohort contributions are calculated as the product of numbers, maturity, and fecundity in the final year + 1.")
             plotinfo <- save_png(
               plotinfo = plotinfo,
               file = file,
