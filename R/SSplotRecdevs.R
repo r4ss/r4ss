@@ -6,6 +6,13 @@
 #'
 #' @template replist
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows:
+#' \itemize{
+#'   \item 1 recruitment deviation time series
+#'   \item 2 recruitment deviation time series with uncertainty intervals
+#'   \item 3 recruitment deviation variance time series
+#'   \item 4 cohort contributions to spawning output in ending year + 1
+#' }
 #' @template plot
 #' @template print
 #' @param add add to existing plot (not yet implemented)
@@ -21,6 +28,7 @@
 #' @template labels
 #' @template pwidth
 #' @template pheight
+#' @template pheight_tall
 #' @template punits
 #' @template res
 #' @template ptsize
@@ -33,7 +41,7 @@
 SSplotRecdevs <-
   function(
     replist,
-    subplots = 1:3,
+    subplots = 1:4,
     plot = TRUE,
     print = FALSE,
     add = FALSE,
@@ -53,7 +61,8 @@ SSplotRecdevs <-
       "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"
     ), # 4
     pwidth = 6.5,
-    pheight = 5.0,
+    pheight = 4.0,
+    pheight_tall = 6.5,
     punits = "in",
     res = 300,
     ptsize = 10,
@@ -248,11 +257,15 @@ SSplotRecdevs <-
           if (1 %in% subplots) {
             recdevfunc(uncertainty = FALSE)
           }
-          if (uncertainty) {
-            if (2 %in% subplots) {
-              recdevfunc(uncertainty = TRUE)
-            }
-            if (3 %in% subplots) recdevfunc3()
+          if (uncertainty & 2 %in% subplots) {
+            recdevfunc(uncertainty = TRUE)
+          }
+          if (4 %in% subplots) {
+            p <- cohort_contributions(replist)
+            print(p)
+          }
+          if (uncertainty & 2 %in% subplots) {
+            recdevfunc3()
           }
         }
         if (print) {
@@ -274,47 +287,63 @@ SSplotRecdevs <-
             recdevfunc(uncertainty = FALSE)
             dev.off()
           }
-          if (uncertainty) {
-            if (2 %in% subplots) {
-              file <- "recdevs2_withbars.png"
-              caption <- "Recruitment deviations with 95% intervals"
-              plotinfo <- save_png(
-                plotinfo = plotinfo,
-                file = file,
-                plotdir = plotdir,
-                pwidth = pwidth,
-                pheight = pheight,
-                punits = punits,
-                res = res,
-                ptsize = ptsize,
-                caption = caption
+          if (uncertainty & 2 %in% subplots) {
+            file <- "recdevs2_withbars.png"
+            caption <- "Recruitment deviations with 95% intervals"
+            plotinfo <- save_png(
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
+              caption = caption
+            )
+            recdevfunc(uncertainty = TRUE)
+            dev.off()
+          }
+          if (4 %in% subplots) {
+            file <- "recdevs4_cohort_contribution.png"
+            caption <- glue::glue("Recruitment deviations and relative cohort contributions to the {replist$endyr + 1} spawning output")
+            plotinfo <- save_png(
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
+              caption = caption
+            )
+            p <- cohort_contributions(replist)
+            print(p)
+            dev.off()
+          }
+          if (uncertainty & 3 %in% subplots) {
+            file <- "recdevs3_varcheck.png"
+            caption <-
+              paste(
+                "Recruitment deviations variance check.<br>",
+                "See later figure of transformed variance values for comparison",
+                "with bias adjustment settings in the model."
               )
-              recdevfunc(uncertainty = TRUE)
-              dev.off()
-            }
-            if (3 %in% subplots) {
-              file <- "recdevs3_varcheck.png"
-              caption <-
-                paste(
-                  "Recruitment deviations variance check.<br>",
-                  "See later figure of transformed variance values for comparison",
-                  "with bias adjustment settings in the model."
-                )
-              plotinfo <- save_png(
-                plotinfo = plotinfo,
-                file = file,
-                plotdir = plotdir,
-                pwidth = pwidth,
-                pheight = pheight,
-                punits = punits,
-                res = res,
-                ptsize = ptsize,
-                caption = caption
-              )
-              recdevfunc3()
-              dev.off()
-            }
-          } # end if uncertinaty
+            plotinfo <- save_png(
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
+              caption = caption
+            )
+            recdevfunc3()
+            dev.off()
+          }
         } # end if print
       } # end if nrow(recdevs)>0
     } # end if max(recdev)>0

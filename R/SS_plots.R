@@ -798,6 +798,7 @@ SS_plots <-
           uncertainty = uncertainty,
           pwidth = pwidth,
           pheight = pheight,
+          pheight_tall = pheight_tall,
           punits = punits,
           ptsize = ptsize,
           res = res,

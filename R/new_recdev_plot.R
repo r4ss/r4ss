@@ -1,12 +1,39 @@
-new_recdev_plot <- function(replist, plot = TRUE, verbose = FALSE, ...) {
+#' Plot relative cohort contributions to spawning output in ending year + 1
+#'
+#' Plot shows recruitment deviations and relative cohort contributions 
+#' (the product of numbers, maturity, and fecundity) to the spawning output in 
+#' the final year + 1 of the model. Figure suggested by Andre Punt at a 2025 
+#' PFMC Groundfish Subcommittee meeting.
+#'
+#' @template replist
+#' @return ggplot object
+#' @param min_contribution Minimum relative contribution to include in the plot
+#'  (this impacts the range of years/cohorts shown).
+#' @author Ian G. Taylor
+#' @examples
+#' \dontrun{
+#' }
+#' @export
+cohort_contributions <- function(replist, min_contribution = 0.01) {
+    # if (replist$wtatage_switch) {
+    #     cli::cli_abort(
+    #         "This function is not yet compatible with models that use the empirical weight-at-age approach."
+    #     )
+    # }
+
     # get info on recdevs, filtering for only the most recent years
     # (back to first plus group cohort)
     recdev_info <- replist$recruit |>
-        dplyr::select(Yr, dev) |>
         dplyr::filter(
             Yr > replist$endyr - replist$accuage &
                 Yr <= replist$endyr + 1
-        )
+        ) |>
+        dplyr::mutate(
+            variable = "Recruitment deviation",
+            value = dev,
+            x = Yr
+        ) |>
+        dplyr::select(x, value, variable)
 
     # numbers at age in final year + 1
     final_info <- replist$natage |>
@@ -15,15 +42,25 @@ new_recdev_plot <- function(replist, plot = TRUE, verbose = FALSE, ...) {
         colSums() |>
         data.frame()
     names(final_info) <- "number"
-    # add info on maturity and fecundity from the table of
-    # biology in final year of the model
+    # add info on maturity and fecundity
+    if (replist$wtatage_switch) {
+        # from wtatage file
+        mat_x_fecund <- replist$wtatage |>
+            dplyr::filter(year == replist$endyr + 1, sex == 1, fleet == -2) |>
+            dplyr::select(paste(0:replist$accuage)) |>
+            as.numeric()
+    } else {
+        # from table of biology in final year of the model
+        mat_x_fecund <- replist$endgrowth |>
+            dplyr::filter(Sex == 1) |>
+            dplyr::pull("Mat*Fecund")
+    }
+
     final_info <- final_info |>
         dplyr::mutate(
             age = final_info |> rownames() |> as.numeric(),
             cohort = replist$endyr + 1 - age,
-            mat_x_fecund = replist$endgrowth |>
-                dplyr::filter(Sex == 1) |>
-                dplyr::pull("Mat*Fecund"),
+            mat_x_fecund = mat_x_fecund,
             number_x_mat_x_fecund = number * mat_x_fecund,
             rel_number = number / max(number),
             rel_mat_x_fecund = mat_x_fecund / max(mat_x_fecund),
@@ -49,28 +86,24 @@ new_recdev_plot <- function(replist, plot = TRUE, verbose = FALSE, ...) {
     # Combine recruitment deviations and rel_* lines into a single figure with four vertical panels
 
     # Prepare data for plotting
-    recdev_info_plot <- recdev_info |>
-        dplyr::mutate(
-            variable = "Recruitment deviation",
-            value = dev,
-            x = Yr
-        ) |>
-        dplyr::select(x, value, variable)
-    yrange <- c(-1.05, 1.05) * max(abs(recdev_info$dev))
-
     final_info_long_plot <- final_info_long |>
         dplyr::rename(x = cohort) |>
         dplyr::select(x, value, variable)
 
-    plot_data <- dplyr::bind_rows(recdev_info_plot, final_info_long_plot) |>
+    plot_data <- dplyr::bind_rows(recdev_info, final_info_long_plot) |>
         dplyr::arrange(x)
 
-    unit <- ifelse(
-        replist$SpawnOutputUnits == "biomass",
-        "Weight",
+    unit <- if (
+        !is.null(replist$SpawnOutputUnits) &&
+            replist$SpawnOutputUnits == "biomass"
+    ) {
+        "Weight"
+    } else {
         "Fecundity"
+    }
+    contribution_label <- glue::glue(
+        "Relative cohort contribution (Numbers x Maturity x {unit})"
     )
-
     # Set factor levels for desired panel order
     plot_data$variable <- factor(
         plot_data$variable,
@@ -82,11 +115,22 @@ new_recdev_plot <- function(replist, plot = TRUE, verbose = FALSE, ...) {
         ),
         labels = c(
             "Recruitment deviation",
-            glue::glue("Numbers x Maturity x {unit}"),
+            contribution_label,
             "Numbers",
             glue::glue("Maturity x {unit}")
         )
     )
+
+    # choose a minimum year to include
+    min_year <- plot_data |>
+        dplyr::filter(
+            variable == contribution_label,
+            value > min_contribution
+        ) |>
+        dplyr::pull(x) |>
+        min()
+    plot_data <- plot_data |>
+        dplyr::filter(x >= min_year)
 
     # Plot all panels in one figure
     p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = x, y = value)) +
@@ -98,13 +142,15 @@ new_recdev_plot <- function(replist, plot = TRUE, verbose = FALSE, ...) {
             ggplot2::aes(
                 size = dplyr::filter(
                     plot_data,
-                    variable == "Numbers x Maturity x Fecundity"
+                    variable == contribution_label
                 )$value
             )
         ) +
+        scale_y_continuous(expand = expansion(mult = c(0.1, 0.1))) +
         ggplot2::scale_size_continuous(
-            name = "Relative cohort contribution",
-            range = c(0, 5)
+            name = "",
+            range = c(0, 5),
+            guide = "none"
         ) +
         ggplot2::facet_wrap(~variable, ncol = 1, scales = "free_y") +
         ggplot2::geom_col(
@@ -117,13 +163,10 @@ new_recdev_plot <- function(replist, plot = TRUE, verbose = FALSE, ...) {
         ) +
         ggplot2::geom_hline(yintercept = 0, color = "black") +
         ggplot2::labs(
-            x = "Year",
-            y = "Cohort contribution relative to the maximum",
-            title = glue::glue(
-                "Recruitment deviations and relative cohort contributions to the {replist$endyr + 1} spawning output"
-            )
+            x = "Year or Cohort",
+            y = "Value relative to the maximum"
         ) +
         ggplot2::theme_minimal()
 
-    print(p)
+    return(p)
 }

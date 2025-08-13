@@ -6,7 +6,7 @@
 \usage{
 SSplotRecdevs(
   replist,
-  subplots = 1:3,
+  subplots = 1:4,
   plot = TRUE,
   print = FALSE,
   add = FALSE,
@@ -22,7 +22,8 @@ SSplotRecdevs(
   labels = c("Year", "Asymptotic standard error estimate", "Log recruitment deviation",
     "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"),
   pwidth = 6.5,
-  pheight = 5,
+  pheight = 4,
+  pheight_tall = 6.5,
   punits = "in",
   res = 300,
   ptsize = 10,
@@ -34,7 +35,14 @@ SSplotRecdevs(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows:
+\itemize{
+\item 1 recruitment deviation time series
+\item 2 recruitment deviation time series with uncertainty intervals
+\item 3 recruitment deviation variance time series
+\item 4 cohort contributions to spawning output in ending year + 1
+}}
 
 \item{plot}{Plot to active plot device?}
 
@@ -71,6 +79,10 @@ the string options.}
 \item{pheight}{Height of plots printed to png files in units of \code{punits}.
 Default is designed to allow two plots per page, with \code{pheight_tall} used
 for plots that work best with a taller format and a single plot per page.}
+
+\item{pheight_tall}{Height of tall plots printed to png files in units of
+\code{punits}, where the tall plots are a subset of the plots which typically
+work best in a taller format.}
 
 \item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
 (pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
