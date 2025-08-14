@@ -139,8 +139,8 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
   # Simplify column names
   names(x)[-seq(cols)] <- gsub("[a-z]", "", names(x)[-seq(cols)])
 
-  # Shuffle data frame if two sexes
-  if (all(x[["sex"]] %in% c(0, 3))) {
+  # Restructure data frame if the two sexes are side by side
+  if (any(duplicated(grepv("^.[0-9]", names(x))))) {
     ncomp <- (ncol(x) - length(cols)) / 2
     f <- x[seq(length(cols) + 1, length = ncomp)]
     f <- cbind(x[cols], f)
@@ -239,8 +239,8 @@ size2long <- function(x, measure = NULL, zero = TRUE) {
   # Simplify column names
   names(x)[-seq(cols)] <- gsub("[a-z]", "", names(x)[-seq(cols)])
 
-  # Shuffle data frame if two sexes
-  if (all(x[["sex"]] %in% c(0, 3))) {
+  # Restructure data frame if the two sexes are side by side
+  if (any(duplicated(grepv("^.[0-9]", names(x))))) {
     ncomp <- (ncol(x) - length(cols)) / 2
     f <- x[seq(length(cols) + 1, length = ncomp)]
     f <- cbind(x[cols], f)
