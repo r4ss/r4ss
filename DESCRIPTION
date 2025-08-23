@@ -94,3 +94,4 @@ Language: en-US
 LazyLoad: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Config/testthat/parallel: true
