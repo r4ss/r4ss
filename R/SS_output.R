@@ -2503,12 +2503,22 @@ SS_output <-
     }
     # section was renamed in 3.30.15.06
     if (!is.na(match_report_line("SPAWN_RECR_CURVE"))) {
+      # added line with 3.30.24
+      if(!is.na(grep("using_benchmark_SR_parameters:", rawrep[,2]))){
+        SPAWN_RECR_CURVE <- match_report_table(
+        "SPAWN_RECR_CURVE",
+        2,
+        header = TRUE,
+        type.convert = TRUE
+      )
+      } else {
       SPAWN_RECR_CURVE <- match_report_table(
         "SPAWN_RECR_CURVE",
         1,
         header = TRUE,
         type.convert = TRUE
       )
+      }
     }
 
     ## FIT_LEN_COMPS
