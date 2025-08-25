@@ -1,8 +1,8 @@
 #' Plot relative cohort contributions to spawning output in ending year + 1
 #'
-#' Plot shows recruitment deviations and relative cohort contributions 
-#' (the product of numbers, maturity, and fecundity) to the spawning output in 
-#' the final year + 1 of the model. Figure suggested by Andre Punt at a 2025 
+#' Plot shows recruitment deviations and relative cohort contributions
+#' (the product of numbers, maturity, and fecundity) to the spawning output in
+#' the final year + 1 of the model. Figure suggested by Andre Punt at a 2025
 #' PFMC Groundfish Subcommittee meeting.
 #'
 #' @template replist
@@ -14,7 +14,7 @@
 #' \dontrun{
 #' }
 #' @export
-cohort_contributions <- function(replist, min_contribution = 0.01) {
+cohort_contributions <- function(replist, min_contribution = 0.01, option = 1) {
     # if (replist$wtatage_switch) {
     #     cli::cli_abort(
     #         "This function is not yet compatible with models that use the empirical weight-at-age approach."
@@ -104,6 +104,8 @@ cohort_contributions <- function(replist, min_contribution = 0.01) {
     contribution_label <- glue::glue(
         "Relative cohort contribution (Numbers x Maturity x {unit})"
     )
+    mat_label <- glue::glue("Maturity x {unit}")
+
     # Set factor levels for desired panel order
     plot_data$variable <- factor(
         plot_data$variable,
@@ -117,7 +119,7 @@ cohort_contributions <- function(replist, min_contribution = 0.01) {
             "Recruitment deviation",
             contribution_label,
             "Numbers",
-            glue::glue("Maturity x {unit}")
+            mat_label
         )
     )
 
@@ -132,41 +134,96 @@ cohort_contributions <- function(replist, min_contribution = 0.01) {
     plot_data <- plot_data |>
         dplyr::filter(x >= min_year)
 
-    # Plot all panels in one figure
-    p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = x, y = value)) +
-        ggplot2::geom_point(
-            data = dplyr::filter(
-                plot_data,
-                variable == "Recruitment deviation"
-            ),
-            ggplot2::aes(
-                size = dplyr::filter(
+    if (option == 1) {
+        # Plot all panels in one figure
+        p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = x, y = value)) +
+            ggplot2::geom_point(
+                data = dplyr::filter(
                     plot_data,
-                    variable == contribution_label
-                )$value
-            )
-        ) +
-        scale_y_continuous(expand = expansion(mult = c(0.1, 0.1))) +
-        ggplot2::scale_size_continuous(
-            name = "",
-            range = c(0, 5),
-            guide = "none"
-        ) +
-        ggplot2::facet_wrap(~variable, ncol = 1, scales = "free_y") +
-        ggplot2::geom_col(
-            data = dplyr::filter(
-                plot_data,
-                variable != "Recruitment deviation"
-            ),
-            fill = "blue4",
-            alpha = 0.7
-        ) +
-        ggplot2::geom_hline(yintercept = 0, color = "black") +
-        ggplot2::labs(
-            x = "Year or Cohort",
-            y = "Value relative to the maximum"
-        ) +
-        ggplot2::theme_minimal()
-
+                    variable == "Recruitment deviation"
+                ),
+                ggplot2::aes(
+                    size = dplyr::filter(
+                        plot_data,
+                        variable == contribution_label
+                    )$value
+                )
+            ) +
+            scale_y_continuous(expand = expansion(mult = c(0.1, 0.1))) +
+            ggplot2::scale_size_continuous(
+                name = "",
+                range = c(0, 5),
+                guide = "none"
+            ) +
+            ggplot2::facet_wrap(~variable, ncol = 1, scales = "free_y") +
+            ggplot2::geom_col(
+                data = dplyr::filter(
+                    plot_data,
+                    variable != "Recruitment deviation"
+                ),
+                fill = "blue4",
+                alpha = 0.7
+            ) +
+            ggplot2::geom_hline(yintercept = 0, color = "black") +
+            ggplot2::labs(
+                x = "Year or Cohort",
+                y = "Value relative to the maximum"
+            ) +
+            ggplot2::theme_minimal()
+    }
+    if (option == 2) {
+        p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = x, y = value)) +
+            ggplot2::geom_point(
+                data = dplyr::filter(
+                    plot_data,
+                    variable == "Recruitment deviation"
+                ),
+                ggplot2::aes(
+                    size = dplyr::filter(
+                        plot_data,
+                        variable == contribution_label
+                    )$value
+                )
+            ) +
+            scale_y_continuous(expand = expansion(mult = c(0.1, 0.1))) +
+            ggplot2::scale_size_continuous(
+                name = glue::glue("Relative cohort contribution\n(Numbers x Maturity x {unit})"),
+                range = c(0, 10)
+            ) +
+            ggplot2::labs(
+                x = "Year",
+                y = "Recruitment deviation"
+            ) +
+            ggplot2::geom_hline(yintercept = 0, color = "black") +
+            ggplot2::theme_minimal()
+    }
+    if (option == 3) {
+        p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = x, y = value)) +
+            ggplot2::geom_point(
+                size = 3,
+                data = dplyr::filter(
+                    plot_data,
+                    variable == "Recruitment deviation"
+                ),
+                ggplot2::aes(
+                    color = dplyr::filter(
+                        plot_data,
+                        variable == mat_label
+                    )$value
+                )
+            ) +
+            scale_y_continuous(expand = expansion(mult = c(0.1, 0.1))) +
+            ggplot2::scale_color_continuous(
+                name = glue::glue("Maturity x {tolower(unit)}\nof cohort in {replist$endyr + 1}\nrelative to the max"),
+                low = "lightblue",
+                high = "darkblue"
+            ) +
+            ggplot2::labs(
+                x = "Year",
+                y = "Recruitment deviation"
+            ) +
+            ggplot2::geom_hline(yintercept = 0, color = "black") +
+            ggplot2::theme_minimal()
+    }
     return(p)
 }

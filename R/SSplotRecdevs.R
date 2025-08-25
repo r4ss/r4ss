@@ -305,8 +305,10 @@ SSplotRecdevs <-
             dev.off()
           }
           if (4 %in% subplots) {
-            file <- "recdevs4_cohort_contribution.png"
-            caption <- glue::glue("Recruitment deviations and relative cohort contributions to the {replist$endyr + 1} spawning output. Bubbles in recruitment deviations plot show the relative contribution of each cohort to the spawning output in the final year + 1. Only cohorts with a relative contribution greater than 0.01 are shown. The cohort contributions are calculated as the product of numbers, maturity, and fecundity in the final year + 1.")
+            file <- "recdevs4_cohort_contribution_option1.png"
+            caption <- glue::glue(
+              "Recruitment deviations and relative cohort contributions to the {replist$endyr + 1} spawning output. Point sizes in recruitment deviations plot (top panel) show the relative contribution of each cohort to the spawning output calculated as the product of numbers, maturity, and fecundity in {replist$endyr + 1}."
+            )
             plotinfo <- save_png(
               plotinfo = plotinfo,
               file = file,
@@ -318,10 +320,53 @@ SSplotRecdevs <-
               ptsize = ptsize,
               caption = caption
             )
-            p <- cohort_contributions(replist)
+            p <- cohort_contributions(replist, option = 1)
             print(p)
             dev.off()
           }
+
+          if (4 %in% subplots) {
+            file <- "recdevs4_cohort_contribution_option2.png"
+            caption <- glue::glue(
+              "Recruitment deviations time series. Points are scaled by the relative contribution of each cohort to the spawning output in {replist$endyr + 1} calculated as the product of numbers, maturity, and fecundity in that year."
+            )
+            plotinfo <- save_png(
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
+              caption = caption
+            )
+            p <- cohort_contributions(replist, option = 2)
+            print(p)
+            dev.off()
+          }
+
+          if (4 %in% subplots) {
+            file <- "recdevs4_cohort_contribution_option3.png"
+            caption <- glue::glue(
+              "Recruitment deviations time series. Color of points indicates the the product of relative maturity and fecundity of each cohort in {replist$endyr + 1}."
+            )
+            plotinfo <- save_png(
+              plotinfo = plotinfo,
+              file = file,
+              plotdir = plotdir,
+              pwidth = pwidth,
+              pheight = pheight,
+              punits = punits,
+              res = res,
+              ptsize = ptsize,
+              caption = caption
+            )
+            p <- cohort_contributions(replist, option = 3)
+            print(p)
+            dev.off()
+          }
+
           if (uncertainty & 3 %in% subplots) {
             file <- "recdevs3_varcheck.png"
             caption <-
