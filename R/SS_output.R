@@ -2498,7 +2498,7 @@ SS_output <-
     # in version 3.30.24, an additional table was added
     # and an additional row with parameter labels was added
     # below the header
-    if (!is.na(grep("using_benchmark_SR_parameters:", rawrep[, 2]))) {
+    if (any(grepl("using_benchmark_SR_parameters:", rawrep[, 2]))) {
       # if 3.30.24 or later with two SPAWN_RECR_CURVE sections for initial and benchmark
       SPAWN_RECR_CURVE <- list()
       # Extract parameters, remove empty values, and convert to numeric
