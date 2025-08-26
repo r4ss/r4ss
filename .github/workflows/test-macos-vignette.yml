@@ -41,6 +41,7 @@ jobs:
             years = 0:-5, # years relative to ending year of model
             exe = "ss3"
           )
+        shell: Rscript {0}
       
       - name: upload echoinput
         uses: actions/upload-artifact@v4
