@@ -44,6 +44,14 @@ jobs:
             years = 0:-5, # years relative to ending year of model
             exe = "ss3"
           )
+          replist_old <- SS_output(old_mod_path)
+          dir_new <- file.path(new_mod_path, "retrospectives", "retro-1")
+          replist_new <- SS_output(dir_new)
+          replist_new$StartTime == replist_old$StartTime
+          if(replist_new$StartTime == replist_old$StartTime) {
+            stop("New Report file not generated, something didn't work properly")
+          }
+
         shell: Rscript {0}
       
       - name: upload echoinput
