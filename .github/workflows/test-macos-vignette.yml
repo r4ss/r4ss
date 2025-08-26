@@ -22,11 +22,10 @@ jobs:
             any::covr
             any::devtools
             any::here
-            any::pak
 
       - name: test
         run: |
-          pak::pkg_install("r4ss/r4ss")
+          devtools::install_github("r4ss/r4ss", ref = "fix_SPAWN_RECR_CURVE_read")
           library(r4ss)
           old_mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
           dir.create(here::here("simple"))
