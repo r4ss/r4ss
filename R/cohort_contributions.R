@@ -123,7 +123,8 @@ cohort_contributions <- function(replist, min_contribution = 0.01, option = 1) {
         )
     )
 
-    # choose a minimum year to include
+    # choose a minimum year to include based on cohort contributions
+    # above the threshold (default 0.01)
     min_year <- plot_data |>
         dplyr::filter(
             variable == contribution_label,
@@ -131,6 +132,10 @@ cohort_contributions <- function(replist, min_contribution = 0.01, option = 1) {
         ) |>
         dplyr::pull(x) |>
         min()
+    # don't include years outside the time series
+    if (min_year < replist$startyr) {
+        min_year <- replist$startyr
+    }
     plot_data <- plot_data |>
         dplyr::filter(x >= min_year)
 
