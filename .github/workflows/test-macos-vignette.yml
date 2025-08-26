@@ -33,7 +33,6 @@ jobs:
           new_mod_path <- here::here("simple")
           all_files <- list.files(old_mod_path, full.names = TRUE)
           file.copy(from = all_files, to = new_mod_path)
-          get_ss3_exe(dir = new_mod_path)
           retro(
             dir = new_mod_path, # wherever the model files are
             oldsubdir = "", # subfolder within dir
