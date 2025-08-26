@@ -22,6 +22,10 @@ jobs:
             any::covr
             any::devtools
             any::here
+      
+      - name: Change permissions on ss3
+        run: |
+          chmod a+x inst/extdata/simple_small/ss3
 
       - name: test
         run: |
