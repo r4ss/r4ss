@@ -72,6 +72,13 @@ SSplotRecdevs <-
   ) {
     # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment
 
+    # skip cohort contributions plot if SS version < 3.30
+    if (replist$SS_versionNumeric < 3.30) {
+      if (4 %in% subplots & verbose) {
+        message("Skipping subplot 4 because SS version < 3.30")
+      }
+      subplots <- subplots[subplots != 4]
+    }
     # table to store information on each plot
     plotinfo <- NULL
     if (plotdir == "default") {

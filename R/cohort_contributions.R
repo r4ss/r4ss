@@ -15,11 +15,11 @@
 #' }
 #' @export
 cohort_contributions <- function(replist, min_contribution = 0.01, option = 1) {
-    # if (replist$wtatage_switch) {
-    #     cli::cli_abort(
-    #         "This function is not yet compatible with models that use the empirical weight-at-age approach."
-    #     )
-    # }
+    if (replist$SS_versionNumeric < 3.30) {
+        cli::cli_abort(
+            "This function does not work with SS3 version prior to 3.30."
+        )
+    }
 
     # get info on recdevs, filtering for only the most recent years
     # (back to first plus group cohort)
