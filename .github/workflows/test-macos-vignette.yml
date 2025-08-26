@@ -36,6 +36,7 @@ jobs:
           new_mod_path <- here::here("simple")
           all_files <- list.files(old_mod_path, full.names = TRUE)
           file.copy(from = all_files, to = new_mod_path)
+          Sys.chmod(paths = file.path(new_mod_path, "ss3"), mode = "0700")
           retro(
             dir = new_mod_path, # wherever the model files are
             oldsubdir = "", # subfolder within dir
