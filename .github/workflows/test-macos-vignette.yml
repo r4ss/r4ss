@@ -22,18 +22,21 @@ jobs:
             any::covr
             any::devtools
             any::here
-            any::pak
+      
+      - name: Change permissions on ss3
+        run: |
+          chmod a+x inst/extdata/simple_small/ss3
 
       - name: test
         run: |
-          pak::pkg_install("r4ss/r4ss")
+          devtools::install_github("r4ss/r4ss", ref = "fix_SPAWN_RECR_CURVE_read")
           library(r4ss)
           old_mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
           dir.create(here::here("simple"))
           new_mod_path <- here::here("simple")
           all_files <- list.files(old_mod_path, full.names = TRUE)
           file.copy(from = all_files, to = new_mod_path)
-          get_ss3_exe(dir = new_mod_path)
+          Sys.chmod(paths = file.path(new_mod_path, "ss3"), mode = "0700")
           retro(
             dir = new_mod_path, # wherever the model files are
             oldsubdir = "", # subfolder within dir
@@ -41,6 +44,14 @@ jobs:
             years = 0:-5, # years relative to ending year of model
             exe = "ss3"
           )
+          replist_old <- SS_output(old_mod_path)
+          dir_new <- file.path(new_mod_path, "retrospectives", "retro-1")
+          replist_new <- SS_output(dir_new)
+          if(replist_new$StartTime == replist_old$StartTime) {
+            stop("New Report file not generated, something didn't work properly")
+          }
+
+        shell: Rscript {0}
       
       - name: upload echoinput
         uses: actions/upload-artifact@v4
