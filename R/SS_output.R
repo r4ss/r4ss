@@ -2498,11 +2498,11 @@ SS_output <-
     # in version 3.30.24, an additional table was added
     # and an additional row with parameter labels was added
     # below the header
-    if (any(grepl("using_benchmark_SR_parameters:", rawrep[, 2]))) {
+    if (any(grepl("using_benchmark_SR_parameters", rawrep[, 2]))) {
       # if 3.30.24 or later with two SPAWN_RECR_CURVE sections for initial and benchmark
       SPAWN_RECR_CURVE <- list()
       # Extract parameters, remove empty values, and convert to numeric
-      pars <- rawrep[grep("using_virgin_SR_parameters", rawrep[, 2]), 3:10]
+      pars <- rawrep[grep("using_virgin_SR_parameters", rawrep[, 2]), -(1:2)]
       pars <- pars[pars != ""] |> as.numeric()
       SPAWN_RECR_CURVE[["virgin_parameters"]] <- pars
       # read table of virgin spawner-recruit curve
@@ -2515,7 +2515,7 @@ SS_output <-
 
       # 2nd SPAWN_RECR_CURVE table associated with benchmark values
       # Extract parameters, remove empty values, and convert to numeric
-      pars <- rawrep[grep("using_benchmark_SR_parameters", rawrep[, 2]), 3:10]
+      pars <- rawrep[grep("using_benchmark_SR_parameters", rawrep[, 2]), -(1:2)]
       pars <- pars[pars != ""] |> as.numeric()
       SPAWN_RECR_CURVE[["benchmark_parameters"]] <- pars
       SPAWN_RECR_CURVE[["benchmark"]] <- match_report_table(
