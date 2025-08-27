@@ -4680,6 +4680,9 @@ SS_output <-
           type.convert = TRUE
         )
       }
+      # remove extra line that wasn't filtered above in some cases
+      # https://github.com/r4ss/r4ss/issues/1048
+      M_by_area <- type.convert(M_by_area[M_by_area$Area != "Note:", ], as.is = TRUE)
       returndat["Z_by_area"] <- list(Z_by_area)
       returndat["M_by_area"] <- list(M_by_area)
     }
