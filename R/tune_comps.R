@@ -870,76 +870,77 @@ get_last_phase <- function(ctl) {
 }
 
 #' Plot the comp tunings from tune_comps() by iteration
-#' 
+#'
 #' @param weights The list of variance adjustment tables created by
 #' [tune_comps()]. This can either by the list of both "tuning_table_list"
 #' and "weights" returned by [tune_comps()] or just the "weights" list.
-#' @param dir Directory in which to save the plot as a png file. 
-#' If `dir == NULL` then the plot will be created in the default 
+#' @param dir Directory in which to save the plot as a png file.
+#' If `dir == NULL` then the plot will be created in the default
 #' graphics device.
-#' 
-plot_tunings <- function(weights, dir = NULL){
-  # if the function is called outside of tune_comps() using the 
+#'
+plot_tunings <- function(weights, dir = NULL) {
+  # Declare global variables to avoid "no visible binding" errors
+  utils::globalVariables(c("iteration", "value", "fleet", "data_type"))
+
+  browser()
+  # if the function is called outside of tune_comps() using the
   # output from that function, then extract weights
-  if("tuning_table_list" %in% names(weights)) {
+  if ("tuning_table_list" %in% names(weights)) {
     weights <- weights$weights
   }
   if (length(weights) == 1) {
-    stop("weights needs more than 1 column")
-  }
-  niters_tuning <- length(weights)
-    labels <- paste(
-      c(
-        "Survey CV",
-        "Discard SD",
-        "Bodywt CV",
-        "Len",
-        "Age",
-        "Size-at-age",
-        "Size"
-      )[weights[[1]]$Data_type],
-      "Fleet", weights[[1]]$Fleet
-    )
-
-    colvec <- rich.colors.short(nrow(weights_df))
-    ylab <- "Sample size multiplier"
-    if (any(weights[[1]]$Data_type %in% 1:3)) {
-      ylab <- "Variance adjustment"
-    }
-    # get a dataframe of values
-    weights_df <- as.data.frame(weights) |>
-      dplyr::select(starts_with("Value"))
-
-    if(!is.null(dir)) {
-      save_png(plotinfo = NULL,
-      file = "tuning_values.png",
-      plotdir = dir,
-      pwidth = 6.5,
-      pheight = 6.5,
-      punits = "in",
-      res = 300,
-      ptsize = 10
-    )
-    }
-    matplot(
-      x = 1:niters_tuning, y = t(weights_df),
-      type = "o", lwd = 3, pch = 1:nrow(weights_df),
-      col = colvec, ylim = c(0, 1.2 * max(1, max(weights_df))),
-      yaxs = "i", xlab = "Iteration", ylab = ylab,
-      axes = FALSE
-    )
-    axis(1, at = 1:niters_tuning)
-    axis(2, las = 1)
-    box()
-    legend("bottomleft", 
-      legend = labels,
-      lwd = 3,
-      col = colvec, 
-      pch = 1:nrow(weights_df),
-      bty = "n"
-    )
-    if (!is.null(dir)) {
-      dev.off()
-    }
+    stop("tune_comps needs more than one iteration to make a plot")
   }
 
+  # Combine list of dataframes into one long dataframe with iteration column using tidyverse
+  weights_df <- purrr::map_dfr(
+    seq_along(weights),
+    ~ dplyr::mutate(weights[[.x]], iteration = .x)
+  ) |>
+    dplyr::mutate(
+      data_type = factor(
+        factor,
+        levels = c(1, 2, 3, 4, 5, 6, 7),
+        labels = c(
+          "Survey CV",
+          "Discard SD",
+          "Bodywt CV",
+          "Len",
+          "Age",
+          "Size-at-age",
+          "Size"
+        )
+      )
+    )
+
+  ylab <- "Sample size multiplier"
+  if (any(weights[[1]]$Data_type %in% 1:3)) {
+    ylab <- "Variance adjustment"
+  }
+  p <- ggplot(
+    weights_df,
+    aes(
+      x = iteration,
+      y = value,
+      color = factor(fleet),
+      group = interaction(data_type, fleet),
+      shape = data_type
+    )
+  ) +
+    geom_line(size = 1.2) +
+    geom_point(size = 2) +
+    labs(x = "Iteration", y = ylab, color = "Fleet", shape = "Data Type") +
+    theme_minimal(base_size = 14) +
+    expand_limits(y = 0)
+
+  if (!is.null(dir)) {
+    ggsave(
+      filename = file.path(dir, "tuning_values.png"),
+      plot = p,
+      width = 6.5,
+      height = 6.5,
+      units = "in",
+      dpi = 300
+    )
+  }
+}
