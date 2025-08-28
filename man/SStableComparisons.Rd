@@ -11,7 +11,7 @@ SStableComparisons(
   names = c("Recr_Virgin", "R0", "steep", "NatM", "L_at_Amax", "VonBert_K", "SSB_Virg",
     "Bratio_2025", "SPRratio_2024"),
   digits = NULL,
-  modelnames = "default",
+  modelnames = NULL,
   csv = FALSE,
   csvdir = "workingdirectory",
   csvfile = "parameter_comparison_table.csv",
@@ -37,7 +37,7 @@ match substring of labels in \code{summaryoutput[["pars"]]} or
 reporting each quantity.}
 
 \item{modelnames}{optional vector of labels to use as column names. Default
-is 'model1','model2',etc.}
+is \code{summaryoutput[["modelnames"]]}.}
 
 \item{csv}{write resulting table to CSV file?}
 
@@ -56,9 +56,12 @@ reduction of the full information in various parts of the list created using
 the \code{SSsummarize} function.
 }
 \seealso{
-\code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=SSplotComparisons]{SSplotComparisons()}},
-\code{\link[=SS_output]{SS_output()}}
+Other model comparison functions: 
+\code{\link{SSgetoutput}()},
+\code{\link{SSplotComparisons}()},
+\code{\link{SSsummarize}()}
 }
 \author{
 Ian Taylor
 }
+\concept{model comparison functions}

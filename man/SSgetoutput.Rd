@@ -11,11 +11,11 @@ SSgetoutput(
   getcomp = TRUE,
   forecast = TRUE,
   verbose = TRUE,
-  ncols = lifecycle::deprecated(),
-  listlists = TRUE,
+  listlists = lifecycle::deprecated(),
   underscore = FALSE,
   save.lists = FALSE,
-  SpawnOutputLabel = "Spawning output"
+  SpawnOutputLabel = "Spawning output",
+  modelnames = NULL
 )
 }
 \arguments{
@@ -37,10 +37,7 @@ Default=FALSE.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{ncols}{Deprecated. Value is now calculated automatically.}
-
-\item{listlists}{Save output from each model as a element of a list (i.e.
-make a list of lists). Default = TRUE.}
+\item{listlists}{Deprecated argument that wasn't working.}
 
 \item{underscore}{Add an underscore '_' between any file names and any keys
 in keyvec. Default=FALSE.}
@@ -59,9 +56,26 @@ fecundity parameters which are calculated outside of the SS3 model.}
 Apply the function \code{\link[=SS_output]{SS_output()}} multiple times and save output as
 individual objects or a list of lists.
 }
+\examples{
+# contrived example where the same model is read twice
+mydir <- file.path(
+  path.package("r4ss"),
+  file.path("extdata", "simple_small")
+)
+models <- SSgetoutput(
+  dirvec = c(mydir, mydir),
+  modelnames = c("simple_small", "simple_small_again")
+)
+}
 \seealso{
-\code{\link[=SS_output]{SS_output()}} \code{\link[=SSsummarize]{SSsummarize()}}
+\code{\link[=SS_output]{SS_output()}}
+
+Other model comparison functions: 
+\code{\link{SSplotComparisons}()},
+\code{\link{SSsummarize}()},
+\code{\link{SStableComparisons}()}
 }
 \author{
 Ian Taylor
 }
+\concept{model comparison functions}

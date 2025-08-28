@@ -15,9 +15,7 @@
 #' @param forecast Choice to read or not read forecast quantities.
 #' Default=FALSE.
 #' @template verbose
-#' @param ncols Deprecated. Value is now calculated automatically.
-#' @param listlists Save output from each model as a element of a list (i.e.
-#' make a list of lists). Default = TRUE.
+#' @param listlists Deprecated argument that wasn't working.
 #' @param underscore Add an underscore '_' between any file names and any keys
 #' in keyvec. Default=FALSE.
 #' @param save.lists Save each list of parsed output as a .Rdata file (with default
@@ -25,7 +23,18 @@
 #' @inheritParams SS_output
 #' @author Ian Taylor
 #' @export
-#' @seealso [SS_output()] [SSsummarize()]
+#' @seealso [SS_output()]
+#' @family model comparison functions
+#' @examples
+#' # contrived example where the same model is read twice
+#' mydir <- file.path(
+#'   path.package("r4ss"),
+#'   file.path("extdata", "simple_small")
+#' )
+#' models <- SSgetoutput(
+#'   dirvec = c(mydir, mydir),
+#'   modelnames = c("simple_small", "simple_small_again")
+#' )
 SSgetoutput <-
   function(
     keyvec = NULL,
@@ -34,17 +43,16 @@ SSgetoutput <-
     getcomp = TRUE,
     forecast = TRUE,
     verbose = TRUE,
-    ncols = lifecycle::deprecated(),
-    listlists = TRUE,
+    listlists = lifecycle::deprecated(),
     underscore = FALSE,
     save.lists = FALSE,
-    SpawnOutputLabel = "Spawning output"
+    SpawnOutputLabel = "Spawning output",
+    modelnames = NULL
   ) {
-    if (lifecycle::is_present(ncols)) {
-      lifecycle::deprecate_warn(
-        when = "1.46.2",
-        what = "SSgetoutput(ncols)",
-        Details = "ncols now calculated automatically by SS_output()"
+    if (lifecycle::is_present(listlists)) {
+      lifecycle::deprecate_stop(
+        when = "1.52.1",
+        what = "SSgetoutput(listlists)"
       )
     }
 
@@ -58,9 +66,7 @@ SSgetoutput <-
     }
 
     # change inputs so that keyvec and dirvec have matching lengths or keyvec=NULL
-    if (listlists) {
-      biglist <- list()
-    }
+    biglist <- list()
     n1 <- length(keyvec)
     n2 <- length(dirvec)
     if (n1 > 1 & n2 > 1 & n1 != n2) {
@@ -68,14 +74,32 @@ SSgetoutput <-
     } else {
       n <- max(1, n1, n2) # n=1 or n=length of either optional input vector
     }
+
+    # apply optional input of modelnames
+    if (!is.null(modelnames)) {
+      if (length(modelnames) == n) {
+        objectnames <- modelnames
+      } else {
+        cli::cli_abort(
+          "length of modelnames input ({length(modelnames)}) does not match number of models ({n})"
+        )
+      }
+    }
+
+    # if keyvec is length 1, recycled to length n
     if (n1 == 1) {
       keyvec <- rep(keyvec, n)
     }
-    objectnames <- paste("replist", keyvec, sep = "")
-    if (n1 == 0) {
-      objectnames <- paste("replist", 1:n, sep = "")
+    # default model names if not provided by user
+    if (is.null(modelnames)) {
+      objectnames <- paste("replist", keyvec, sep = "")
+      if (n1 == 0) {
+        # if keyvec is NULL, use sequential numbering
+        objectnames <- paste("replist", 1:n, sep = "")
+      }
     }
 
+    # working directory is defult if dirvec not provided
     if (n2 == 0) {
       dirvec <- getwd()
     }
@@ -158,10 +182,9 @@ SSgetoutput <-
       if (verbose) {
         message("added element '", newobject, "' to list")
       }
-      if (listlists) {
-        biglist[[newobject]] <- output
-      }
+      biglist[[newobject]] <- output
 
+      # IGT (Aug 2025): not clear if the option to save Rdata files is useful
       if (save.lists) {
         biglist.file <- paste(
           "biglist",
@@ -173,6 +196,7 @@ SSgetoutput <-
         )
         save(biglist, file = biglist.file)
       }
-    }
+    } # end loop over models
+
     return(invisible(biglist))
   }
