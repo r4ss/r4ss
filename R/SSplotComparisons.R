@@ -104,7 +104,7 @@
 #' values (implemented as `adjustcolor(col=col, alpha.f=shadealpha)`)
 #' @template legend
 #' @param legendlabels Optional vector of labels to include in legend. Default
-#' is 'model1','model2',etc.
+#' is `summaryoutput[["modelnames"]]`.
 #' @template legendloc
 #' @param legendorder Optional vector of model numbers that can be used to have
 #' the legend display the model names in an order that is different than that
@@ -163,8 +163,7 @@
 #' useful to turn off. Defaults to TRUE.
 #' @author Ian G. Taylor, John R. Wallace
 #' @export
-#' @seealso [SS_plots()], [SSsummarize()],
-#' [SS_output()], [SSgetoutput()]
+#' @family model comparison functions
 #' @examples
 #' \dontrun{
 #' # directories where models were run need to be defined
@@ -333,36 +332,6 @@ SSplotComparisons <-
       }
       par(par)
     }
-
-    # subfunction to add legend
-    # legendfun <- function(legendlabels, cumulative = FALSE) {
-    #   if (cumulative) {
-    #     legendloc <- "topleft"
-    #   }
-    #   if (is.numeric(legendloc)) {
-    #     Usr <- par()[["usr"]]
-    #     legendloc <- list(
-    #       x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
-    #       y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3])
-    #     )
-    #   }
-    #
-    #   # if type input is "l" then turn off points on top of lines in legend
-    #   legend.pch <- pch
-    #   if (type == "l") {
-    #     legend.pch <- rep(NA, length(pch))
-    #   }
-    #   legend(legendloc,
-    #     legend = legendlabels[legendorder],
-    #     col = col[legendorder],
-    #     lty = lty[legendorder],
-    #     seg.len = 2,
-    #     lwd = lwd[legendorder],
-    #     pch = legend.pch[legendorder],
-    #     bty = "n",
-    #     ncol = legendncol
-    #   )
-    # }
 
     # get stuff from summary output
     n <- summaryoutput[["n"]]
@@ -648,7 +617,7 @@ SSplotComparisons <-
     }
 
     if (!is.expression(legendlabels[1]) && is.null(legendlabels)) {
-      legendlabels <- paste("model", 1:nlines)
+      legendlabels <- summaryoutput[["modelnames"]]
     }
 
     # open new window if requested

@@ -30,7 +30,7 @@
 #' @template verbose
 #' @author Ian Taylor
 #' @export
-#' @seealso [SSgetoutput()]
+#' @family model comparison functions
 SSsummarize <- function(
   biglist,
   sizeselfactor = "Lsel",

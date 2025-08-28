@@ -208,7 +208,7 @@ values (implemented as \code{adjustcolor(col=col, alpha.f=shadealpha)})}
 \item{legend}{Add a legend?}
 
 \item{legendlabels}{Optional vector of labels to include in legend. Default
-is 'model1','model2',etc.}
+is \code{summaryoutput[["modelnames"]]}.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
@@ -342,9 +342,12 @@ SSplotComparisons(mod.sum,
 
 }
 \seealso{
-\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SSsummarize]{SSsummarize()}},
-\code{\link[=SS_output]{SS_output()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
+Other model comparison functions: 
+\code{\link{SSgetoutput}()},
+\code{\link{SSsummarize}()},
+\code{\link{SStableComparisons}()}
 }
 \author{
 Ian G. Taylor, John R. Wallace
 }
+\concept{model comparison functions}

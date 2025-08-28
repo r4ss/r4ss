@@ -17,7 +17,7 @@
 #' @param digits Optional vector of the number of decimal digits to use in
 #' reporting each quantity.
 #' @param modelnames optional vector of labels to use as column names. Default
-#' is 'model1','model2',etc.
+#' is `summaryoutput[["modelnames"]]`.
 #' @param csv write resulting table to CSV file?
 #' @param csvdir directory for optional CSV file
 #' @param csvfile filename for CSV file
@@ -25,8 +25,7 @@
 #' @param mcmc summarize MCMC output in table?
 #' @author Ian Taylor
 #' @export
-#' @seealso [SSsummarize()], [SSplotComparisons()],
-#' [SS_output()]
+#' @family model comparison functions
 SStableComparisons <- function(
   summaryoutput,
   models = "all",
@@ -50,7 +49,7 @@ SStableComparisons <- function(
     "SPRratio_2024"
   ),
   digits = NULL,
-  modelnames = "default",
+  modelnames = NULL,
   csv = FALSE,
   csvdir = "workingdirectory",
   csvfile = "parameter_comparison_table.csv",
@@ -76,8 +75,8 @@ SStableComparisons <- function(
   ncols <- length(models)
   nsexes <- nsexes[models]
 
-  if (modelnames[1] == "default") {
-    modelnames <- paste("model", 1:ncols, sep = "")
+  if (is.null(modelnames)) {
+    modelnames <- summaryoutput[["modelnames"]]
   }
   tab <- as.data.frame(matrix(NA, nrow = 0, ncol = ncols + 1))
 

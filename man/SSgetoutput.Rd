@@ -68,6 +68,8 @@ models <- SSgetoutput(
 )
 }
 \seealso{
+\code{\link[=SS_output]{SS_output()}}
+
 Other model comparison functions: 
 \code{\link{SSplotComparisons}()},
 \code{\link{SSsummarize}()},
