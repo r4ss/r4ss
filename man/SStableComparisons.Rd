@@ -11,7 +11,7 @@ SStableComparisons(
   names = c("Recr_Virgin", "R0", "steep", "NatM", "L_at_Amax", "VonBert_K", "SSB_Virg",
     "Bratio_2025", "SPRratio_2024"),
   digits = NULL,
-  modelnames = NULL,
+  modelnames = summaryoutput[["modelnames"]],
   csv = FALSE,
   csvdir = "workingdirectory",
   csvfile = "parameter_comparison_table.csv",

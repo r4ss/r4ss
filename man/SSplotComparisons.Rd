@@ -42,7 +42,7 @@ SSplotComparisons(
   uncertainty = TRUE,
   shadealpha = 0.1,
   legend = TRUE,
-  legendlabels = NULL,
+  legendlabels = summaryoutput[["modelnames"]],
   legendloc = "topright",
   legendorder = NULL,
   legendncol = 1,

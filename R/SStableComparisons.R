@@ -49,7 +49,7 @@ SStableComparisons <- function(
     "SPRratio_2024"
   ),
   digits = NULL,
-  modelnames = NULL,
+  modelnames = summaryoutput[["modelnames"]],
   csv = FALSE,
   csvdir = "workingdirectory",
   csvfile = "parameter_comparison_table.csv",
@@ -75,9 +75,6 @@ SStableComparisons <- function(
   ncols <- length(models)
   nsexes <- nsexes[models]
 
-  if (is.null(modelnames)) {
-    modelnames <- summaryoutput[["modelnames"]]
-  }
   tab <- as.data.frame(matrix(NA, nrow = 0, ncol = ncols + 1))
 
   # get MLE values for table

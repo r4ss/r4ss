@@ -245,7 +245,7 @@ SSplotComparisons <-
     uncertainty = TRUE,
     shadealpha = 0.1,
     legend = TRUE,
-    legendlabels = NULL,
+    legendlabels = summaryoutput[["modelnames"]],
     legendloc = "topright",
     legendorder = NULL,
     legendncol = 1,
@@ -614,10 +614,6 @@ SSplotComparisons <-
     }
     if (length(lwd) < nlines) {
       lwd <- rep(lwd, nlines)[1:nlines]
-    }
-
-    if (!is.expression(legendlabels[1]) && is.null(legendlabels)) {
-      legendlabels <- summaryoutput[["modelnames"]]
     }
 
     # open new window if requested
