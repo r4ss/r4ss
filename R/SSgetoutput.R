@@ -37,17 +37,18 @@
 #' )
 SSgetoutput <-
   function(
-      keyvec = NULL,
-      dirvec = NULL,
-      getcovar = TRUE,
-      getcomp = TRUE,
-      forecast = TRUE,
-      verbose = TRUE,
-      listlists = lifecycle::deprecated(),
-      underscore = FALSE,
-      save.lists = FALSE,
-      SpawnOutputLabel = "Spawning output",
-      modelnames = NULL) {
+    keyvec = NULL,
+    dirvec = NULL,
+    getcovar = TRUE,
+    getcomp = TRUE,
+    forecast = TRUE,
+    verbose = TRUE,
+    listlists = lifecycle::deprecated(),
+    underscore = FALSE,
+    save.lists = FALSE,
+    SpawnOutputLabel = "Spawning output",
+    modelnames = NULL
+  ) {
     if (lifecycle::is_present(listlists)) {
       lifecycle::deprecate_stop(
         when = "1.52.1",
