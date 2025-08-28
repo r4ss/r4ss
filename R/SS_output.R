@@ -2491,25 +2491,63 @@ SS_output <-
       )
     }
 
-    # starting in 3.30.11.00, a table with the full spawn recr curve was added
+    # read SPAWN_RECR_CURVE table(s)
+
     SPAWN_RECR_CURVE <- NULL
-    if (!is.na(match_report_line("Full_Spawn_Recr_Curve"))) {
-      SPAWN_RECR_CURVE <- match_report_table(
-        "Full_Spawn_Recr_Curve",
-        1,
-        header = TRUE,
-        type.convert = TRUE
-      )
-    }
-    # section was renamed in 3.30.15.06
-    if (!is.na(match_report_line("SPAWN_RECR_CURVE"))) {
-      SPAWN_RECR_CURVE <- match_report_table(
+
+    # in version 3.30.24, an additional table was added
+    # and an additional row with parameter labels was added
+    # below the header
+    if (any(grepl("using_benchmark_SR_parameters", rawrep[, 2]))) {
+      # if 3.30.24 or later with two SPAWN_RECR_CURVE sections for initial and benchmark
+      SPAWN_RECR_CURVE <- list()
+      # Extract parameters, remove empty values, and convert to numeric
+      pars <- rawrep[grep("using_virgin_SR_parameters", rawrep[, 2]), -(1:2)]
+      pars <- pars[pars != ""] |> as.numeric()
+      SPAWN_RECR_CURVE[["virgin_parameters"]] <- pars
+      # read table of virgin spawner-recruit curve
+      SPAWN_RECR_CURVE[["virgin"]] <- match_report_table(
         "SPAWN_RECR_CURVE",
-        1,
+        adjust1 = 2,
         header = TRUE,
         type.convert = TRUE
       )
-    }
+
+      # 2nd SPAWN_RECR_CURVE table associated with benchmark values
+      # Extract parameters, remove empty values, and convert to numeric
+      pars <- rawrep[grep("using_benchmark_SR_parameters", rawrep[, 2]), -(1:2)]
+      pars <- pars[pars != ""] |> as.numeric()
+      SPAWN_RECR_CURVE[["benchmark_parameters"]] <- pars
+      SPAWN_RECR_CURVE[["benchmark"]] <- match_report_table(
+        "using_benchmark_SR_parameters",
+        adjust1 = 1,
+        matchcol1 = 2,
+        header = TRUE,
+        type.convert = TRUE
+      )
+    } else {
+      # if NOT 3.30.24 or later, read single table of spawner-recruit curve (older format)
+
+      # code below works for 3.30.11.00 (when table was added) to 3.30.15.06
+      if (!is.na(match_report_line("Full_Spawn_Recr_Curve"))) {
+        SPAWN_RECR_CURVE <- match_report_table(
+          "Full_Spawn_Recr_Curve",
+          1,
+          header = TRUE,
+          type.convert = TRUE
+        )
+      }
+      # code below works for after section renamed in 3.30.15.06
+      # up to but not including 3.30.24 when additional changes were added
+      if (!is.na(match_report_line("SPAWN_RECR_CURVE"))) {
+        SPAWN_RECR_CURVE <- match_report_table(
+          "SPAWN_RECR_CURVE",
+          1,
+          header = TRUE,
+          type.convert = TRUE
+        )
+      }
+    } # end else case for older output of single SPAWN_RECR_CURVE
 
     ## FIT_LEN_COMPS
     if (SS_versionNumeric >= 3.30) {
