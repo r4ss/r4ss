@@ -109,6 +109,10 @@ retro <- function(
     dir <- masterdir
   }
 
+  if (RemoveBlocks) {
+    cli::cli_abort("RemoveBlocks=TRUE is not implemented yet")
+  }
+
   olddir <- file.path(dir, oldsubdir)
   newdir <- file.path(dir, newsubdir)
 
