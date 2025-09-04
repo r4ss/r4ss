@@ -167,8 +167,8 @@ get_SIS_info <- function(
   catch_tab[["Year"]] <- as.numeric(catch_tab[["Year"]])
   # aggregate across areas if needed
   if (model[["nareas"]] > 1) {
-    catch_tab <- catch_tab |> 
-      dplyr::group_by(Year) |> 
+    catch_tab <- catch_tab |>
+      dplyr::group_by(Year) |>
       dplyr::summarise(
         Catch_bio = sum(Catch_bio),
         Catch_n = sum(Catch_n)
