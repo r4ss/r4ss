@@ -144,10 +144,10 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
     ncomp <- (ncol(x) - length(cols)) / 2
     f <- x[seq(length(cols) + 1, length = ncomp)]
     f <- cbind(x[cols], f)
-    f[["sex"]] <- "f"
+    f[["sex"]] <- 1
     m <- x[seq(length(cols) + ncomp + 1, length = ncomp)]
     m <- cbind(x[cols], m)
-    m[["sex"]] <- "m"
+    m[["sex"]] <- 2
     x <- rbind(f, m)
   }
 
@@ -244,10 +244,10 @@ size2long <- function(x, measure = NULL, zero = TRUE) {
     ncomp <- (ncol(x) - length(cols)) / 2
     f <- x[seq(length(cols) + 1, length = ncomp)]
     f <- cbind(x[cols], f)
-    f[["sex"]] <- "f"
+    f[["sex"]] <- 1
     m <- x[seq(length(cols) + ncomp + 1, length = ncomp)]
     m <- cbind(x[cols], m)
-    m[["sex"]] <- "m"
+    m[["sex"]] <- 2
     x <- rbind(f, m)
   }
 
