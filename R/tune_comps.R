@@ -882,7 +882,6 @@ plot_tunings <- function(weights, dir = NULL) {
   # Declare global variables to avoid "no visible binding" errors
   utils::globalVariables(c("iteration", "value", "fleet", "data_type"))
 
-  browser()
   # if the function is called outside of tune_comps() using the
   # output from that function, then extract weights
   if ("tuning_table_list" %in% names(weights)) {
