@@ -2290,12 +2290,17 @@ SS_output <-
     rmse_table <- NULL
     breakpoints_for_bias_adjustment_ramp <- NULL
     sigma_R_in <- parameters["SR_sigmaR", "Value"]
-
-    # read new expanded SPAWN_RECRUIT table header (3.30.23)
-    if (!is.na(match_report_line("#Expanded_Spawn_Recr_report"))) {
+    recruit <- NULL
+    # read new expanded SPAWN_RECRUIT table header (3.30.24)
+    if (
+      !is.na(match_report_line("timevary_bio_4SRR", obj = rawrep[, 3])) &
+        length(grep("SPAWN_RECRUIT", rawrep[, 1])) <= 1
+      # NOTE: this part excludes reading the new table in the beta versions that
+      # had both old and new tables
+    ) {
       srhead <- match_report_table(
-        "#Expanded_Spawn_Recr_report",
-        adjust1 = 2,
+        "SPAWN_RECRUIT",
+        adjust1 = 0,
         which_blank = 1,
         blank_lines = rep_blank_lines
       )
@@ -2357,6 +2362,10 @@ SS_output <-
         matchcol1 = 13,
         header = TRUE
       )
+      recruit[recruit == "_"] <- NA
+      # TODO: remove the filtering below and modify plotting functions instead
+      recruit <- recruit[-(1:2), ] # remove rows for Virg and Init)
+      recruit <- type.convert(recruit, as.is = TRUE)
     } else {
       # read old SPAWN_RECRUIT table header
 
@@ -2469,10 +2478,9 @@ SS_output <-
       }
     }
 
-    if (is.null(raw_recruit)) {
-      recruit <- NULL
-    } else {
-      # process SPAWN_RECRUIT table
+    # clean up STOCK_RECRUIT table
+    if (is.null(recruit) && !is.null(raw_recruit)) {
+      # process old SPAWN_RECRUIT table
       names(raw_recruit) <- raw_recruit[1, ]
       raw_recruit[raw_recruit == "_"] <- NA
       raw_recruit <- raw_recruit[-(1:2), ] # remove header rows
