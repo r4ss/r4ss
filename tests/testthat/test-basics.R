@@ -70,10 +70,10 @@ test_that("get_ncol() finds the correct number of columns for SS_output()", {
   results <- mapply(r4ss:::get_ncol, reportfiles)
   expect_true(is.atomic(results))
   # 55 and 56 are values for simple_3.24 and simple_3.30.XX models
-  # 61 is the value for simple_small
+  # 62 is the value for simple_small
   expect(
-    all(results %in% c(55, 56, 61)),
-    "Optimum width of Report.sso wasn't 55, 56, or 61"
+    all(results %in% c(55, 56, 62)),
+    "Optimum width of Report.sso wasn't 55, 56, or 62"
   )
 })
 
