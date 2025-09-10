@@ -2290,14 +2290,14 @@ SS_output <-
     rmse_table <- NULL
     breakpoints_for_bias_adjustment_ramp <- NULL
     sigma_R_in <- parameters["SR_sigmaR", "Value"]
-
+    recruit <- NULL
     # read new expanded SPAWN_RECRUIT table header (3.30.24)
     if (
       !is.na(match_report_line("timevary_bio_4SRR", obj = rawrep[, 3])) &
         length(grep("SPAWN_RECRUIT", rawrep[, 1])) <= 1
+      # NOTE: this part excludes reading the new table in the beta versions that
+      # had both old and new tables
     ) {
-      # beta version had duplicate tables
-
       srhead <- match_report_table(
         "SPAWN_RECRUIT",
         adjust1 = 0,
@@ -2479,10 +2479,7 @@ SS_output <-
     }
 
     # clean up STOCK_RECRUIT table
-    if (is.null(recruit) && is.null(raw_recruit)) {
-      recruit <- NULL
-    }
-    if (is.null(recruit) && is.null(raw_recruit)) {
+    if (is.null(recruit) && !is.null(raw_recruit)) {
       # process old SPAWN_RECRUIT table
       names(raw_recruit) <- raw_recruit[1, ]
       raw_recruit[raw_recruit == "_"] <- NA
