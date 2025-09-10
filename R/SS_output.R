@@ -2292,8 +2292,11 @@ SS_output <-
     sigma_R_in <- parameters["SR_sigmaR", "Value"]
 
     # read new expanded SPAWN_RECRUIT table header (3.30.24)
-    if (!is.na(match_report_line("timevary_bio_4SRR", obj = rawrep[,3])) &
-      length(grep("SPAWN_RECRUIT", rawrep[,1])) <= 1) { # beta version had duplicate tables
+    if (
+      !is.na(match_report_line("timevary_bio_4SRR", obj = rawrep[, 3])) &
+        length(grep("SPAWN_RECRUIT", rawrep[, 1])) <= 1
+    ) {
+      # beta version had duplicate tables
 
       srhead <- match_report_table(
         "SPAWN_RECRUIT",
@@ -2359,6 +2362,10 @@ SS_output <-
         matchcol1 = 13,
         header = TRUE
       )
+      recruit[recruit == "_"] <- NA
+      # TODO: remove the filtering below and modify plotting functions instead
+      recruit <- recruit[-(1:2), ] # remove rows for Virg and Init)
+      recruit <- type.convert(recruit, as.is = TRUE)
     } else {
       # read old SPAWN_RECRUIT table header
 
@@ -2471,9 +2478,10 @@ SS_output <-
       }
     }
 
+    # clean up STOCK_RECRUIT table
     if (is.null(recruit) && is.null(raw_recruit)) {
       recruit <- NULL
-    } 
+    }
     if (is.null(recruit) && is.null(raw_recruit)) {
       # process old SPAWN_RECRUIT table
       names(raw_recruit) <- raw_recruit[1, ]
