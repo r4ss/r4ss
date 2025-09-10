@@ -1,19 +1,20 @@
-#V3.30.23.00;_safe;_compile_date:_Nov  4 2024;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
+#V3.30.24.00;_safe;_compile_date:_Sep 10 2025;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 #C forecast file written by R function SS_writeforecast
 #C rerun model to get more complete formatting in forecast.ss_new
 #C should work with SS version: 3.3
 #C file write time: 2022-06-15 15:53:34
 # for all year entries except rebuilder; enter either: actual year, -999 for styr, 0 for endyr, neg number for rel. endyr
-1 # Benchmarks: 0=skip; 1=calc F_spr,F_btgt,F_msy; 2=calc F_spr,F0.1,F_msy; 3=add F_Blimit; 
+1 # Benchmarks: 0=skip; 1=calc F_spr,F_Btgt,F_msy; 2=calc F_spr,F0.1,F_msy; 3=add F_Blimit; 
 2 # Do_MSY: 1= set to F(SPR); 2=calc F(MSY); 3=set to F(Btgt) or F0.1; 4=set to F(endyr); 5=calc F(MEY) with MSY_unit options
 # if Do_MSY=5, enter MSY_Units; then list fleet_ID, cost/F, price/mt, include_in_Fmey_scaling; # -fleet_ID to fill; -9999 to terminate
 0.5 # SPR target (e.g. 0.40)
-0.4 # Biomass target (e.g. 0.40)
-#_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF, beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
+0.4 # Biomass target (e.g. 0.40) as fraction of SSB_virgin if depletion basis = 1 or time_vary compatibility = 0, else as fraction of SSB_unfished in benchmark
+#0.5 # COND: Do_Benchmark==3;  Blimit as fraction of Bmsy (neg value to use as frac of SSB_virgin or SSB_unfished) (e.g. 0.50)#
+# Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF, beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
  0 0 0 0 0 0 0 0 0 0
 #  2022 2022 2022 2022 2022 2022 2022 2022 2022 2022
 # value <0 convert to endyr-value; except -999 converts to start_yr; must be >=start_yr and <=endyr
-1 #Bmark_relF_Basis: 1 = use year range; 2 = set relF same as forecast below
+1 # Bmark_relF_Basis: 1 = use year range; 2 = set relF same as forecast below
 #
 1 # Forecast: -1=none; 0=simple_1yr; 1=F(SPR); 2=F(MSY) 3=F(Btgt) or F0.1; 4=Ave F (uses first-last relF yrs); 5=input annual F scalar
 # where none and simple require no input after this line; simple sets forecast F same as end year F
@@ -25,7 +26,7 @@
 0 # Forecast selectivity (0=fcast selex is mean from year range; 1=fcast selectivity from time-vary parms). NOTE: logic reverses in new format
 # A revised protocol for the Fcast_yr specification is available and recommended. Template is below.
 #
-#-12345  # code to invoke new format for expanded fcast year controls
+# -12345  # code to invoke new format for expanded fcast year controls
 # biology and selectivity vectors are updated annually in the forecast according to timevary parameters, so check end year of blocks and dev vectors
 # input in this section directs creation of means over historical years to override any time_vary changes
 # Factors implemented so far: 1=M, 4=recr_dist, 5=migration, 10=selectivity, 11=rel_F, 12=recruitment
@@ -41,17 +42,18 @@
 #-9999 0 0 0
 #
 1 # Control rule method (0: none; 1: ramp does catch=f(SSB), buffer on F; 2: ramp does F=f(SSB), buffer on F; 3: ramp does catch=f(SSB), buffer on catch; 4: ramp does F=f(SSB), buffer on catch) 
-# values for top, bottom and buffer exist, but not used when Policy=0
-0.4 # Control rule inflection for constant F (as frac of Bzero, e.g. 0.40); must be > control rule cutoff, or set to -1 to use Bmsy/SSB_unf 
-0.1 # Control rule cutoff for no F (as frac of Bzero, e.g. 0.10) 
-0.75 # Buffer:  enter Control rule target as fraction of Flimit (e.g. 0.75), negative value invokes list of [year, scalar] with filling from year to YrMax 
+# values for top, bottom and buffer required, but not used when Policy=0
+0.4 # Control rule inflection for constant F (as frac of HCR_anchor, see below); must be > control rule cutoff
+0.1 # Control rule cutoff for no F (as frac of HCR_anchor, e.g. 0.10) 
+0.75 # Buffer:  enter Control rule target as fraction of Flimit (e.g. 0.75), negative value invokes list of [year, scalar]. -year fills from year to YrMax 
+# Also see HCR_anchor below to use virgin vs benchmark SSB or Bmsy as basis for inflection and cutoff
 #
 3 #_N forecast loops (1=OFL only; 2=ABC; 3=get F from forecast ABC catch with allocations applied)
 3 # First forecast loop with stochastic recruitment
 1 # Forecast base recruitment:  0= spawn_recr; 1=mult*spawn_recr_fxn; 2=mult*VirginRecr; 3=deprecated; 4=mult*mean_over_yr_range
 # for option 4, set phase for fore_recr_devs to -1 in control to get constant mean in MCMC, else devs will be applied
 1 # multiplier on base recruitment 
-0 # not used
+2 # HCR_anchor: 0 or 2 uses unfished benchmark SSB (old hardwired approach); 1 = virgin SSB; 3 = BMSY
 #
 2050  # FirstYear for caps and allocations (should be after years with fixed inputs) 
 0 # stddev of log(realized catch/target catch) in forecast (set value>0.0 to cause active impl_error)
