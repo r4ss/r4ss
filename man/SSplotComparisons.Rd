@@ -72,7 +72,8 @@ SSplotComparisons(
   par = list(mar = c(5, 4, 1, 1) + 0.1),
   verbose = TRUE,
   mcmcVec = FALSE,
-  show_equilibrium = TRUE
+  show_equilibrium = TRUE,
+  ...
 )
 }
 \arguments{
@@ -306,6 +307,9 @@ MLE}
 \item{show_equilibrium}{Whether to show the equilibrium values for
 SSB. For some model comparisons, these might not be comparable and thus
 useful to turn off. Defaults to TRUE.}
+
+\item{...}{Additional arguments passed to \code{\link[=add_legend]{add_legend()}}, which
+can include \code{legendcex}, \code{legendsp}, and \code{pt.cex}.}
 }
 \description{
 Creates a user-chosen set of plots comparing model output from a summary of
