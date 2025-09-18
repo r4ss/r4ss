@@ -352,7 +352,7 @@ SS_readforecast <- function(
     forelist <- add_elem(forelist, "ControlRuleMethod")
     forelist <- add_elem(forelist, "BforconstantF")
     forelist <- add_elem(forelist, "BfornoF")
-    if(forelist[["BfornoF"]] < 0){
+    if (forelist[["BfornoF"]] < 0) {
       forelist <- add_elem(forelist, "ProtectionLevel")
     }
     forelist <- add_elem(forelist, "Flimitfraction")

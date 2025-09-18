@@ -168,7 +168,7 @@ SS_writeforecast <- function(
       wl("ControlRuleMethod")
       wl("BforconstantF")
       wl("BfornoF")
-      if(mylist[["BfornoF"]] < 0){
+      if (mylist[["BfornoF"]] < 0) {
         wl("ProtectionLevel")
       }
       wl("Flimitfraction")
