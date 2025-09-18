@@ -161,7 +161,7 @@
 #' @param show_equilibrium Whether to show the equilibrium values for
 #' SSB. For some model comparisons, these might not be comparable and thus
 #' useful to turn off. Defaults to TRUE.
-#' @param ... Additional arguments passed to [add_legend()], which 
+#' @param ... Additional arguments passed to [add_legend()], which
 #' can include `legendcex`, `legendsp`, and `pt.cex`.
 #' @author Ian G. Taylor, John R. Wallace
 #' @export
