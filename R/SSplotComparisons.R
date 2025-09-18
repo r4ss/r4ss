@@ -161,6 +161,8 @@
 #' @param show_equilibrium Whether to show the equilibrium values for
 #' SSB. For some model comparisons, these might not be comparable and thus
 #' useful to turn off. Defaults to TRUE.
+#' @param ... Additional arguments passed to [add_legend()], which 
+#' can include `legendcex`, `legendsp`, and `pt.cex`.
 #' @author Ian G. Taylor, John R. Wallace
 #' @export
 #' @family model comparison functions
@@ -275,7 +277,8 @@ SSplotComparisons <-
     par = list(mar = c(5, 4, 1, 1) + .1),
     verbose = TRUE,
     mcmcVec = FALSE,
-    show_equilibrium = TRUE
+    show_equilibrium = TRUE,
+    ...
   ) {
     # switch to avoid repetition of warning about mean recruitment
     meanRecWarning <- TRUE
@@ -1105,7 +1108,8 @@ SSplotComparisons <-
           col = col,
           pch = pch,
           lwd = lwd,
-          lty = lty
+          lty = lty,
+          ...
         )
       }
       # return upper y-limit
