@@ -117,7 +117,8 @@ multiple models, where the collection was created using the
 <span>  par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  mcmcVec <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  show_equilibrium <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  show_equilibrium <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -478,6 +479,11 @@ MLE</p></dd>
 <dd><p>Whether to show the equilibrium values for
 SSB. For some model comparisons, these might not be comparable and thus
 useful to turn off. Defaults to TRUE.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments passed to <code><a href="add_legend.html">add_legend()</a></code>, which
+can include <code>legendcex</code>, <code>legendsp</code>, and <code>pt.cex</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
