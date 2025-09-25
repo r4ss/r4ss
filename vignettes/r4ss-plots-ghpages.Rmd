@@ -1,0 +1,88 @@
+---
+title: "Customizing {r4ss} output and posting to github pages"
+author: "Ian Taylor and Kathryn Doering"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Customizing r4ss output}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(r4ss)
+```
+
+# Overview
+
+The html output from `r4ss::SS_plots()` can be posted to [GitHub
+Pages](https://pages.github.com/). This is an easy way to share model results
+publicly. For example, [html output for a big skate
+assessment](https://r4ss.github.io/r4ss/BigSkate/) is hosted on Github Pages. In
+this vignette, we demonstrate how to add custom plots created outside of {r4ss} 
+to the html output and provide links to documentation for hosting on Github.
+
+
+# Creating plots
+
+See the documentation details by calling `?r4ss::SS_plots` in the R console.
+This provides information on how `SS_plots()` works and how the html output can
+be modified to customize the html output.
+
+# Example: Creating plots from simple and adding a custom tab
+## read model output
+```{r, read-model-output}
+example_path <- system.file("extdata", package = "r4ss")
+simple_small <- SS_output(file.path(example_path, "simple_small"),
+  verbose = FALSE, printstats = FALSE
+)
+```
+
+## make the default plots and associated HTML files
+```{r, make-default-plots}
+SS_plots(simple_small)
+```
+
+## Make custom plots and write CSV file with info about them 
+
+Note: all files need to be in the same directory. `SS_html()` uses `basename()` and `dirname()` 
+which prevent the use of subdirectories to organize the files. 
+```{r make-custom-plots}
+plotdir <- file.path(example_path, "simple_small/plots/")
+
+SSplotComparisons(
+  SSsummarize(list(simple_small, simple_small)),
+  print = TRUE, plot = FALSE, plotdir = plotdir
+)
+
+data.frame(
+  file = dir(plotdir) |> grep(pattern = "^compare[0-9]", value = TRUE),
+  caption = "add caption",
+  alt_text = "add alt-text",
+  category = "comparisons",
+  png_time = NA,
+  StartTime = simple_small$StartTime
+) |>
+  write.csv(
+    file = file.path(plotdir, "plotInfoTable_comparisons.csv"),
+    row.names = FALSE
+  )
+```
+
+## Add custom plots to the .csv
+```{r make-custom-plots}
+SS_html(simple_small,
+  filenotes = "default plots plus comparisons",
+  plotdir = file.path(example_path, "simple_small/plots"),
+  verbose = TRUE
+)
+```
+
+# Getting the plots onto github
+Instructions for using Github Pages are thoroughly documented in the [Github
+Documentation](https://docs.github.com/en/pages/quickstart).
