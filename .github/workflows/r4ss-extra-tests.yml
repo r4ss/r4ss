@@ -35,7 +35,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: update linux packages
         run: |
@@ -57,7 +57,7 @@ jobs:
             any::devtools
 
       - name: Get repository of SS3 models
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: 'nmfs-ost/ss3-test-models'
           path: test-models-repo
