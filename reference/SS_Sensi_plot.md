@@ -1,0 +1,196 @@
+# Create relative sensitivity plots as described in Cope and Gertseva (2020)
+
+Uses output from
+[`SSsummarize()`](https://r4ss.github.io/r4ss/reference/SSsummarize.md)
+to make a figure showing sensitivity of various quantities of interest.
+
+## Usage
+
+``` r
+SS_Sensi_plot(
+  model.summaries,
+  dir = "",
+  current.year,
+  mod.names,
+  Sensi.RE.out = "Sensi_RE_out.DMP",
+  CI = 0.95,
+  TRP.in = 0.4,
+  LRP.in = 0.25,
+  sensi_xlab = "Sensitivity scenarios",
+  ylims.in = c(-1, 2, -1, 2, -1, 2, -1, 2, -1, 2, -1, 2),
+  plot.figs = c(1, 1, 1, 1, 1, 1),
+  sensi.type.breaks = NA,
+  anno.x = NA,
+  anno.y = NA,
+  anno.lab = NA,
+  spawn.lab = NA,
+  yield.lab = NA,
+  F.lab = NA
+)
+```
+
+## Arguments
+
+- model.summaries:
+
+  Output from
+  [`SSsummarize()`](https://r4ss.github.io/r4ss/reference/SSsummarize.md)
+  summarizing results of models to be included
+
+- dir:
+
+  A file path to the directory of interest. The default value is
+  `dir = NULL`, which leads to using the current working directory.
+
+- current.year:
+
+  Year to report output
+
+- mod.names:
+
+  List the names of the sensitivity runs
+
+- Sensi.RE.out:
+
+  Saved file of relative changes
+
+- CI:
+
+  Confidence interval box based on the reference model
+
+- TRP.in:
+
+  Target relative abundance value
+
+- LRP.in:
+
+  Limit relative abundance value
+
+- sensi_xlab:
+
+  X-axis label
+
+- ylims.in:
+
+  Y-axis label
+
+- plot.figs:
+
+  Which plots to make/save?
+
+- sensi.type.breaks:
+
+  vertical breaks that can separate out types of sensitivities
+
+- anno.x:
+
+  Horizontal positioning of the sensitivity types labels
+
+- anno.y:
+
+  Vertical positioning of the sensitivity types labels
+
+- anno.lab:
+
+  Sensitivity types labels
+
+- spawn.lab:
+
+  Label for spawning output or spawning biomass. By default it will be
+  set to "SO" if any model has spawning output in numbers and "SB" if
+  all models have spawning output in biomass. Subscripts will be added
+  for 0 or current year.
+
+- yield.lab:
+
+  Label for yield reference point. By default it will be set to
+  something like "Yield(SPR=0.3)" where the SPR value is the SPR target.
+  If the models have different SPR targets, it will be set to "Yield(tgt
+  SPR)".
+
+- F.lab:
+
+  Label for F reference point. By default it will be set to something
+  like "F(SPR=0.3)" where the SPR value is the SPR target. If the models
+  have different SPR targets, it will be set to "F(tgt SPR)".
+
+## References
+
+Cope, J. and Gertseva, V. 2020. A new way to visualize and report
+structural and data uncertainty in stock assessments. Can. J. Fish.
+Aquat. Sci. 77:1275-1280. https://doi.org/10.1139/cjfas-2020-0082
+
+## See also
+
+[`SSsummarize()`](https://r4ss.github.io/r4ss/reference/SSsummarize.md)
+
+## Author
+
+Jason Cope
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Set directory and extract ouput from models
+# Model 1 needs to be the Reference model, with sensitivity runs following
+# from run 2 on.
+
+# Note: models are available in Jason Cope's github repository:
+# https://github.com/shcaba/Stock-Assessment-Sensitivity-Plots/
+dir <-
+  "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
+models.dirs <- paste0("Cab_SCS_MS_", 1:19)
+zz <- SSgetoutput(dirvec = file.path(dir, models.dirs))
+
+# Use the summarize function in r4ss to get model summaries
+model.summaries <- SSsummarize(zz)
+
+# Define the names of each model. This will be used to label runs in the
+# table and in the figures.
+mod.names <- c(
+  "Reference",
+  "M: Fix to 2009",
+  "M: Fix to prior",
+  "M: Fix to Hamel",
+  "M: Fix to VBGF",
+  "M: Fix to OR",
+  "VBGF 2009",
+  "VBGF Grebel",
+  "OR maturity",
+  "Est. h",
+  "All rec devs",
+  "No rec devs",
+  "High bias adj.",
+  "Harmonic mean",
+  "Dirichlet",
+  "Wts = 1",
+  "No blocks",
+  "First blocks in 2000",
+  "Alt rec catches"
+)
+
+# Run the sensitivity plot function
+SS_Sensi_plot(
+  model.summaries = model.summaries,
+  dir = dir,
+  current.year = 2019,
+  mod.names = mod.names, # List the names of the sensitivity runs
+  likelihood.out = c(1, 1, 0),
+  Sensi.RE.out = "Sensi_RE_out.DMP", # Saved file of relative errors
+  CI = 0.95, # Confidence interval box based on the reference model
+  TRP.in = 0.4, # Target relative abundance value
+  LRP.in = 0.25, # Limit relative abundance value
+  sensi_xlab = "Sensitivity scenarios", # X-axis label
+  ylims.in = c(-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1), # Y-axis label
+  plot.figs = c(1, 1, 1, 1, 1, 1), # Which plots to make/save?
+  sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks
+  anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
+  anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
+  anno.lab = c(
+    "Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.",
+    "Other"
+  ) # Sensitivity types labels
+)
+} # }
+```

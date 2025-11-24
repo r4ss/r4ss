@@ -1,0 +1,202 @@
+# Changelog
+
+## r4ss 1.52.0 (April 2025)
+
+- Add several functions for making tables. The functions all save .rda
+  files containing a list of dataframe and caption.
+  - [`table_pars()`](https://r4ss.github.io/r4ss/reference/table_pars.md)
+    Information on all model parameters
+  - [`table_parcounts()`](https://r4ss.github.io/r4ss/reference/table_parcounts.md)
+    Count of different parameter types
+  - [`table_ts()`](https://r4ss.github.io/r4ss/reference/table_ts.md)
+    Annual time series of various quantities (biomass, recruitment,
+    etc.)
+  - [`table_config()`](https://r4ss.github.io/r4ss/reference/table_config.md)
+    Description of model configurations (bins, age range, etc.)
+  - `table_compweights()` Composition weights and sample sizes if using
+    the Francis method
+- Revised two existing functions and renamed them for consistency:
+  - [`SSexecutivesummary()`](https://r4ss.github.io/r4ss/reference/SSexecutivesummary.md)
+    -\>
+    [`table_exec_summary()`](https://r4ss.github.io/r4ss/reference/table_exec_summary.md)
+    makes a set of tables commonly used in the executive summary of
+    Pacific Fishery Management Council (PFMC) stock assessments, but
+    many may be useful for other assessments as well.
+  - `SStablebiology()` -\>
+    [`table_biology()`](https://r4ss.github.io/r4ss/reference/table_biology.md)
+    tables of biology at age and selectivity at age and length
+
+## r4ss 1.51.0 (18 December 2024)
+
+- Bug fixes
+- Compatibility with SS3 version 3.30.23 and 3.30.23.1
+
+## r4ss 1.50.0 (29 July 2024)
+
+- Bug fixes
+
+- Clean up columns names in functions for reading input files to match
+  the .ss_new files written by SS3 as shown in the table below.
+
+  | old      | new      |
+  |----------|----------|
+  | “Yr”     | “year”   |
+  | “Seas”   | “month”  |
+  | “FltSvy” | “fleet”  |
+  | “Gender” | “sex”    |
+  | “Part”   | “part”   |
+  | “Ageerr” | “ageerr” |
+
+## r4ss 1.49.3 (24 July 2024)
+
+- Replaces magrittr pipe %\>% with native pipe \|\>
+- Minimum R version is now 4.1.0
+
+## r4ss 1.48.0 (27 March 2023)
+
+- Bug fixes and cosmetic changes
+  - Use {pkgdown} to develop a better website
+  - Change logo
+  - Update install instructions on README to use {pak}
+
+## r4ss 1.47.0 (31 January 2023)
+
+- Support new SS3 option to estimate separate Dirichlet-multinomial
+  parameters for retained vs discards
+  - SS3 version 3.30.21 models will also have all info on D-M parameters
+    read directly from Report.sso instead of the data file
+- Numerous minor bug fixes
+- Adds dependency on ‘dplyr’ and ‘magrittr’
+
+## r4ss 1.46.1 (29 July 2022)
+
+- Major revamp of all functions that run the Stock Synthesis executable
+  <https://github.com/r4ss/r4ss/pull/722>
+  - Functions that run the executable have been renamed:
+    <https://github.com/r4ss/r4ss/issues/723>:
+    - `run_SS_models()` -\>
+      [`run()`](https://r4ss.github.io/r4ss/reference/run.md) (now has
+      defaults which allow you to simply call
+      [`run()`](https://r4ss.github.io/r4ss/reference/run.md) in the
+      current working directory as well as and better support for having
+      the Stock Synthesis executable in your path)
+    - [`SS_profile()`](https://r4ss.github.io/r4ss/reference/SS_profile.md)
+      -\>
+      [`profile()`](https://r4ss.github.io/r4ss/reference/profile.md)
+    - [`SS_doRetro()`](https://r4ss.github.io/r4ss/reference/SS_doRetro.md)
+      -\> [`retro()`](https://r4ss.github.io/r4ss/reference/retro.md)
+    - [`SS_RunJitter()`](https://r4ss.github.io/r4ss/reference/SS_RunJitter.md)
+      -\> [`jitter()`](https://r4ss.github.io/r4ss/reference/jitter.md)
+    - [`SS_tune_comps()`](https://r4ss.github.io/r4ss/reference/SS_tune_comps.md)
+      -\>
+      [`tune_comps()`](https://r4ss.github.io/r4ss/reference/tune_comps.md)
+  - Functions have more consistent inputs (e.g., always `dir` instead of
+    `mydir`, `File`, or `masterdir`, and now defaulting to the current
+    working directory)
+  - Input `show_in_console = FALSE` can be used with all these functions
+    and will pipe output to a text file keeping R console cleaner while
+    models run
+- Deprecates functions that relate to 3.24 models, like
+  [`SS_readdat_3.24()`](https://r4ss.github.io/r4ss/reference/SS_readdat_3.24.md)
+  (although
+  [`SS_output()`](https://r4ss.github.io/r4ss/reference/SS_output.md) is
+  still compatible back to version 3.24)
+  <https://github.com/r4ss/r4ss/pull/718>
+- Introduces new “simple_small” example model but removes older
+  examples, reducing total package size
+  <https://github.com/r4ss/r4ss/pull/700>
+- Uses new columns names in BIOLOGY output
+  <https://github.com/r4ss/r4ss/pull/711>
+- Numerous bug fixes
+- Adds dependency on ‘tidyr’
+- Removes never-completed function `SSbootstrap()`
+
+## r4ss 1.44.0 (23 May 2022)
+
+CRAN release: 2022-05-26
+
+- Minor improvements and bug fixes
+- Compatibility with SS3 version 3.30.19
+- Submitted to CRAN
+
+## r4ss 1.43.2 (04 April 2022)
+
+- Standardize version = “3.30” in read and write functions and deprecate
+  NULL as an option
+
+## r4ss 1.43.1 (18 February 2022)
+
+- Added Common Utility Functions
+
+## r4ss 1.39.1 (18 August 2020)
+
+- Numerous bug fixes and minor improvements
+- Compatibility with SS version 3.30.16
+
+## r4ss 1.38.0 (25 March 2020)
+
+- Numerous bug fixes and minor improvements
+- Compatibility with SS version 3.30.15
+- Expansion of capabilities for functions to read and write SS input
+  files
+- Dependent on fewer packages but now depends on R version 3.5.0 or
+  newer
+
+## r4ss 1.36.1 (16 October 2019)
+
+CRAN release: 2019-10-18
+
+- Numerous minor bug fixes and minor improvements
+- Compatibility with SS versions 3.24 through 3.30.14
+- Submitted to CRAN
+
+## r4ss 1.33.1 (5 November 2018)
+
+- Numerous minor bug fixes and minor improvements
+- Compatibility with SS versions 3.24 through 3.30.13-beta
+
+## r4ss 1.30.1 (February 2, 2018)
+
+- Fix bugs in new stock-recruit plot, and cohort lines added to bubbles
+
+## r4ss 1.30.0 (January 25, 2018)
+
+- Limited support for models that use Dirichlet-Multinomial likelihood
+  (currently only works for age compositions, not length comps)
+
+## r4ss 1.29.1 (January 11, 2018)
+
+- Support for SS version 3.30.10.00 available on VLab today
+- Some changes in column names and other variables to match cleanup of
+  terminology in latest Stock Synthesis
+- New Vignette (very limited but provides a start to be improved on)
+
+## r4ss 1.25.0 - 1.28.0
+
+- Slacked off on updating this NEWS file
+
+## r4ss 1.24.3
+
+- Implemented automated R package check on Travis-CI
+
+## r4ss 1.24.2
+
+- SS_varadjust now works for use in automating variance adjustments at
+  the bottom of the control file
+- Improvements related to testing SS version 3.30 including converting
+  SS_readdat into a wrapper function that calls separate functions for
+  SS v3.24 and v3.30
+
+## r4ss 1.24.1
+
+- Minor bug fixes and other small edits
+
+## r4ss 1.24.0
+
+CRAN release: 2015-12-23
+
+- First CRAN update since r4ss 1.22.1 in July 2014.
+- Variety of new defaults in plots
+- Help from various new contributors
+- See <https://github.com/r4ss/r4ss> for more detail on changes and new
+  features
