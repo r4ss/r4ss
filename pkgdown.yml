@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   example-plots: example-plots.html
   r4ss-intro-vignette: r4ss-intro-vignette.html
-last_built: 2025-11-24T15:22Z
+last_built: 2025-12-15T17:40Z
 urls:
   reference: https://r4ss.github.io/r4ss/reference
   article: https://r4ss.github.io/r4ss/articles
