@@ -2305,6 +2305,16 @@ SS_output <-
         blank_lines = rep_blank_lines
       )
 
+      # type of stock recruit relationship
+      SRRtype <- srhead |>
+        dplyr::filter(X3 == "SR_Function") |>
+        dplyr::pull(X1) |>
+        as.numeric()
+      returndat[["SRRtype"]] <- SRRtype
+      # could add number of SR parameters too if desired
+      # but current output labels are SR_Function and N_SRparms 
+      # so inconsistent with "SRR" used above
+
       # Bias adjustment ramp
       biascol <- grep("breakpoints_for_bias", srhead) # which column contains the string
       breakpoints_for_bias_adjustment_ramp <- srhead[
@@ -4791,12 +4801,14 @@ SS_output <-
     returndat[["FleetNames"]] <- FleetNames
     returndat[["repfiletime"]] <- repfiletime
 
-    # type of stock recruit relationship
-    SRRtype <- rawrep[match_report_line("SPAWN_RECRUIT"), 3]
-    if (!is.na(SRRtype) && SRRtype == "Function:") {
-      SRRtype <- as.numeric(rawrep[match_report_line("SPAWN_RECRUIT"), 4])
+    # type of stock recruit relationship (if not read above)
+    if (is.null(returndat[["SRRtype"]])) {
+      SRRtype <- rawrep[match_report_line("SPAWN_RECRUIT"), 3]
+      if (!is.na(SRRtype) && SRRtype == "Function:") {
+        SRRtype <- as.numeric(rawrep[match_report_line("SPAWN_RECRUIT"), 4])
+      }
+      returndat[["SRRtype"]] <- SRRtype
     }
-    returndat[["SRRtype"]] <- SRRtype
 
     # get "sigma" used by Pacific Council in P-star calculations
     SSB_final_Label <- paste0("SSB_", endyr + 1)
