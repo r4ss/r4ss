@@ -339,34 +339,34 @@ SSplotYield <-
     } # end sprodfunc
 
     # function to plot time series of Yield per recruit
-# function to plot time series of Yield per recruit
-YPR_timeseries <- function() {
-  # decide which column to use: prefer "SPR", fall back to "YPR"
-  if ("SPR" %in% names(sprseries)) {
-    y_col <- "SPR"
-  } else {
-    y_col <- "YPR"
-  }
-  # exclude forecast years
-  if ("Era" %in% names(sprseries)) {
-    sub <- sprseries[["Era"]] != "FORE"
-  } else {
-    # older versions of SS didn't include the Era column
-    sub <- sprseries[["Yr"]] <= replist[["endyr"]]
-  }
-  # plot a line
-  plot(
-    x = sprseries[["Yr"]][sub],
-    y = sprseries[[y_col]][sub],
-    ylim = c(0, 1.1 * max(sprseries[[y_col]][sub], na.rm = TRUE)),
-    xlab = "Year",
-    ylab = labels[5],
-    type = "l",
-    lwd = 2,
-    col = "blue",
-    yaxs = "i"
-  )
-} # end YPR_timeseries function# end YPR_timeseries function
+    # function to plot time series of Yield per recruit
+    YPR_timeseries <- function() {
+      # decide which column to use: prefer "SPR", fall back to "YPR"
+      if ("SPR" %in% names(sprseries)) {
+        y_col <- "SPR"
+      } else {
+        y_col <- "YPR"
+      }
+      # exclude forecast years
+      if ("Era" %in% names(sprseries)) {
+        sub <- sprseries[["Era"]] != "FORE"
+      } else {
+        # older versions of SS didn't include the Era column
+        sub <- sprseries[["Yr"]] <= replist[["endyr"]]
+      }
+      # plot a line
+      plot(
+        x = sprseries[["Yr"]][sub],
+        y = sprseries[[y_col]][sub],
+        ylim = c(0, 1.1 * max(sprseries[[y_col]][sub], na.rm = TRUE)),
+        xlab = "Year",
+        ylab = labels[5],
+        type = "l",
+        lwd = 2,
+        col = "blue",
+        yaxs = "i"
+      )
+    } # end YPR_timeseries function# end YPR_timeseries function
 
     if (3 %in% subplots) {
       if (plot) {
