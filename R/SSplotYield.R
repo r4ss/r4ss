@@ -366,7 +366,7 @@ SSplotYield <-
         col = "blue",
         yaxs = "i"
       )
-    } # end YPR_timeseries function# end YPR_timeseries function
+    } # end YPR_timeseries function
 
     if (3 %in% subplots) {
       if (plot) {
