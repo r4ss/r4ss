@@ -13,6 +13,8 @@
 #' }
 #' @param OFL Logical indicating whether to include the overfishing limit (OFL)
 #' instead of spawning output in the table. Defaults to `FALSE`.
+#' @param smry_bio Logical indicating whether to replace spawning out and
+#' depletion with summary biomass.
 #' @export
 #' @return A tibble with columns for year, total catch (dead biomass),
 #' spawning output, and fraction unfished.
@@ -24,9 +26,19 @@ SS_decision_table_stuff <- function(
   replist,
   yrs = 2025:2036,
   digits = c(0, 0, 3),
-  OFL = FALSE
+  OFL = FALSE,
+  smry_bio = FALSE
 ) {
+  # default is to use spawning biomass
   unfished <- replist[["derived_quants"]]["SSB_Virgin", "Value"]
+  SpawnBio_column <- "SpawnBio"
+  if (smry_bio) {
+    # optionally use summary biomass instead
+    # first value in annual time series should be initial (not equilibrium) summary biomass
+    unfished <- replist[["annual_time_series"]][["Bio_Smry_an"]][1]
+    SpawnBio_column <- "Bio_Smry"
+  }
+
   tab <- replist[["timeseries"]] |>
     dplyr::filter(Yr %in% yrs) |>
     dplyr::group_by(Yr) |>
@@ -35,7 +47,10 @@ SS_decision_table_stuff <- function(
         dplyr::across(dplyr::starts_with("dead(B)")),
         na.rm = TRUE
       )),
-      spawn_bio = sum(SpawnBio, na.rm = TRUE)
+      spawn_bio = sum(
+        if (smry_bio) dplyr::across(Bio_smry) else dplyr::across(SpawnBio),
+        na.rm = TRUE
+      )
     ) |>
     dplyr::mutate(
       # calculation of fraction_unfished is independent of Bratio definition
@@ -61,7 +76,7 @@ SS_decision_table_stuff <- function(
     ] |>
       round(digits[2])
     tab <- tab |>
-      dplyr::select(-SpawnBio) |>
+      dplyr::select(-dplyr::any_of(c("SpawnBio", "Bio_smry"))) |>
       dplyr::mutate(OFL = OFL) |>
       dplyr::relocate(OFL, .after = catch)
   }
