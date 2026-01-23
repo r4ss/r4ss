@@ -184,7 +184,7 @@ TSCplot <- function(
     names.arg = SP[["Yr"]],
     ylim = ylimBar,
     ylab = "",
-    col = "yellow",
+    col = colBar,
     cex = cexBarLabels,
     cex.axis = cex.axis,
     space = space,
