@@ -1,0 +1,62 @@
+Report_keyword          ,report_number,r4ss_keyword,section
+DEFINITIONS,1,"$N_seasons, $nseasons, $N_sub_seasons, $Season_Durations, $seasdurations, $Spawn_month, $spawnmonth, $Spawn_seas, $spawnseas, $Spawn_timing_in_season, $N_areas, $nareas, $Start_year, $startyr, $End_year, $endyr, $Retro_year, $N_forecast_yrs, $nforecastyears, $N_sexes, $nsexes, $Max_age, $accuage, $Empirical_wt_at_age, $N_bio_patterns, $N_platoons, $NatMort_option, $GrowthModel_option, $Maturity_option, $Fecundity_option, $Start_from_par, $Do_all_priors, $Use_softbound, $N_nudata, $Max_phase, $Current_phase, $Jitter, $ALK_tolerance, $Length_comp_error_controls, $Age_comp_error_controls, $Size_comp_error_controls",main
+DERIVED_QUANTITIES,6,$derived_quants,main
+ENVIRONMENTAL_DATA,33,$environmental_data_info and $environmental_data,main
+Input_Variance_Adjustment,3,NA,main
+LIKELIHOOD,2,"$likelihoods_used, $likelihoods_by_fleet, and $Parm_devs_detail",main
+MGparm_By_Year_after_adjustments,7,$MGparmAdj,main
+MORPH_INDEXING,11,$morph_indexing,main
+OVERALL_COMPS,30,NA,main
+PARAMETERS,5,$parameters,main
+Parm_devs_detail,4,$Parm_devs_detail,main
+BIOMASS_AT_AGE,36,$batage,timeseries
+BIOMASS_AT_LENGTH,38,$batlen,timeseries
+CATCH,15,$catch,timeseries
+DISCARD_AT_AGE,41,$discard_at_age,timeseries
+EXPLOITATION,14,$exploitation,timeseries
+CATCH_AT_AGE,40,$catage,timeseries
+F_AT_AGE,39,$fatage,timeseries
+MEAN_SIZE_TIMESERIES,49,$growthseries,timeseries
+NUMBERS_AT_AGE,35,$natage,timeseries
+NUMBERS_AT_LENGTH,37,$natlen,timeseries
+SPAWN_RECRUIT,19,$recruit,timeseries
+SPAWN_RECR_CURVE,20,$SPAWN_RECR_CURVE,timeseries
+SPR_SERIES,17,$sprseries,timeseries
+TIME_SERIES,16,$timeseries,timeseries
+ANNUAL_TIME_SERIES,61,$annual_time_series,timeseries
+COMPOSITION_DATABASE,52,NA,fits
+DISCARD_SPECIFICATION,24,$discard_spec,fits
+DISCARD_OUTPUT,25,$discard,fits
+INDEX_1,21,$index_variance_tuning_check,fits
+INDEX_2,22,$cpue,fits
+INDEX_3,23,NA,fits
+FIT_LEN_COMPS,27,$len_comp_fit_table,fits
+FIT_AGE_COMPS,28,$age_comp_fit_table,fits
+FIT_SIZE_COMPS,29,$size_comp_fit_table,fits
+MEAN_BODY_WT_OUTPUT,26,$mean_body_wt,fits
+TAG_Recapture,34,$tagrelease,fits
+AGE_SELEX,32,$ageselex,selectivity
+LEN_SELEX,31,$sizeselex,selectivity
+selparm(Size)_By_Year_after_adjustments,8,$SelSizeAdj,selectivity
+selparm(Age)_By_Year_after_adjustments,9,$SelAgeAdj,selectivity
+SELEX_database,53,NA,selectivity
+AGE_AGE_KEY,51,$AAK,biology
+AGE_LENGTH_KEY,50,$ALK,biology
+AGE_SPECIFIC_K,44,NA,biology
+BIOLOGY,42,$biology,biology
+Biology_at_age_in_endyr,47,$endgrowth,biology
+Growth_Parameters,45,$Growth_Parameters,biology
+MEAN_BODY_WT(Begin),48,$mean_body_wt,biology
+MOVEMENT,13,$movement,biology
+Natural_Mortality,43,"$M_type, $Natural_Mortality, $Natural_Mortality_Bmark, $Natural_Mortality_endyr",biology
+RECRUITMENT_DIST,10,"$recruitment_dist (a list containing $recruit_dist, $recruit_dist_Bmark, and $recruit_dist_endyr)",biology
+Seas_Effects,46,$Seas_Effects,biology
+SIZEFREQ_TRANSLATION,12,NA,biology
+Dynamic_Bzero,59,$Dynamic_Bzero,reference_points
+GLOBAL_MSY,55,NA,reference_points
+Kobe_Plot,18,"$Kobe, $Kobe_warn, $Kobe_MSY_basis",reference_points
+SPR/YPR_Profile,54,$equil_yield,reference_points
+SS_summary.sso,56,NA,List_Additional_Tables
+rebuilder.sso,57,NA,List_Additional_Tables
+SIStable.sso,58,NA,List_Additional_Tables
+wtatage.ss_new,60,$wtatage,List_Additional_Tables
