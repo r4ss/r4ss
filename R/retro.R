@@ -173,4 +173,5 @@ retro <- function(
       warning("The retrospective model run failed in ", newdir_iyr)
     }
   })
+  invisible(file.path(dir, newsubdir, subdirnames))
 }
