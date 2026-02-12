@@ -1,6 +1,6 @@
-#' Convert SS3 data into format required by FIMS (works for petrale and opaka so far)
+#' Convert SS3 data into format required by FIMS
 #'
-#' Uses output from `r4ss::SS_read()` or `r4ss::SS_readdat()` and does
+#' Uses output from `r4ss::SS_read()` and does
 #' filtering, simplifying, and reformatting.
 #'
 #' @param ss3_inputs A list containing `dat` and `wtatage` such as that
@@ -23,16 +23,28 @@
 #' @author Ian G. Taylor, Megumi Oshima, Kelli F. Johnson
 #' @export
 
-get_ss3_data <- function(ss3_inputs, fleets = NULL, ages = NULL, lengths = NULL) {
+ss3_data_to_fims <- function(
+  ss3_inputs,
+  fleets = NULL,
+  ages = NULL,
+  lengths = NULL
+) {
+  # check if input is a string and if so, try to read in the data using SS_read()
+  if (is.character(ss3_inputs)) {
+    cli::cli_alert_info("Reading in data from {.code {ss3_inputs}} using {.code r4ss::SS_read()}")
+    ss3_inputs <- r4ss::SS_read(dir = ss3_inputs, read_wtatage = TRUE)
+  }
   # check inputs for necessary elements
   if (!is.list(ss3_inputs) || !"dat" %in% names(ss3_inputs)) {
-    stop("`ss3_inputs` should be a list containing both 'dat' and 'wtatage'")
+    cli::cli_abort("`ss3_inputs` should be a list containing both 'dat' and 'wtatage'")
   }
   if (!"wtatage" %in% names(ss3_inputs)) {
-    stop("'ss3_inputs' is missing element 'wtatage'. You may have to add it by running 'r4ss::SS_readwtatage()'")
+    cli::cli_abort(
+      "'ss3_inputs' is missing element 'wtatage'. You may have to add it by running 'r4ss::SS_readwtatage()'"
+    )
   }
   if (any(ss3_inputs[["wtatage"]][["year"]] < 0)) {
-    stop(
+    cli::cli_abort(
       "The 'wtatage' element includes negative years which can't yet be processed by this function, please use the wtatage.ss_new file."
     )
   }
@@ -83,25 +95,30 @@ get_ss3_data <- function(ss3_inputs, fleets = NULL, ages = NULL, lengths = NULL)
   # check for any gaps in landings time series
   years <- min(catch_by_year_fleet$year):max(catch_by_year_fleet$year)
   if (!all(years %in% catch_by_year_fleet$year)) {
-    stop("missing years in landings")
+    cli::cli_abort("missing years in landings")
   }
 
-  # convert indices to FIMSFrame format
-  index_info <- dat$CPUE |>
-    dplyr::filter(index %in% fleets) |>
-    dplyr::select(year, index, obs, se_log) |> 
-    dplyr::arrange(index, year)
+  if (!is.null(dat$CPUE)) {
+    # convert indices to FIMSFrame format
+    index_info <- dat$CPUE |>
+      dplyr::filter(index %in% fleets) |>
+      dplyr::select(year, index, obs, se_log) |>
+      dplyr::arrange(index, year)
 
-  indices <- data.frame(
-    type = "index",
-    name = paste0("fleet", index_info$index),
-    age = NA,
-    length = NA,
-    timing = index_info$year,
-    value = index_info$obs,
-    unit = "",
-    uncertainty = index_info$se_log
-  )
+    indices <- data.frame(
+      type = "index",
+      name = paste0("fleet", index_info$index),
+      age = NA,
+      length = NA,
+      timing = index_info$year,
+      value = index_info$obs,
+      unit = "",
+      uncertainty = index_info$se_log
+    )
+  } else {
+    indices <- NULL
+  }
+
 
   if (!is.null(dat$agecomp)) {
     # partially convert age comps (filter, make into long table)
@@ -114,15 +131,16 @@ get_ss3_data <- function(ss3_inputs, fleets = NULL, ages = NULL, lengths = NULL)
       rowSums()
     # couldn't figure out dplyr approach to rescaling the subset of columns
     # with female proportions to sum to 1.0
-    fcols <- dat$agecomp |> dplyr::select(dplyr::starts_with("f", ignore.case = FALSE))
+    fcols <- dat$agecomp |>
+      dplyr::select(dplyr::starts_with("f", ignore.case = FALSE))
     if (length(fcols) > 0) {
       dat$agecomp[, names(dat$agecomp) %in% paste0("f", ages)] <-
         dat$agecomp[, names(dat$agecomp) %in% paste0("f", ages)] /
-          dat$agecomp$sum_fem
+        dat$agecomp$sum_fem
     } else {
       dat$agecomp[, names(dat$agecomp) %in% paste0("a", ages)] <-
         dat$agecomp[, names(dat$agecomp) %in% paste0("a", ages)] /
-          dat$agecomp$sum_fem
+        dat$agecomp$sum_fem
     }
 
     # further processing
@@ -131,7 +149,8 @@ get_ss3_data <- function(ss3_inputs, fleets = NULL, ages = NULL, lengths = NULL)
       dplyr::filter(fleet %in% fleets) |> # filter by requested fleets
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
-      tidyr::pivot_longer( # convert columns f1...f17 to values in a new "age" colum of a longer table
+      tidyr::pivot_longer(
+        # convert columns f1...f17 to values in a new "age" colum of a longer table
         cols = dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses a1, a2, ...
         names_to = "age",
         values_to = "value"
@@ -171,13 +190,14 @@ get_ss3_data <- function(ss3_inputs, fleets = NULL, ages = NULL, lengths = NULL)
       dplyr::filter(fleet %in% fleets) |> # filter by requested fleets
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
-      tidyr::pivot_longer( # convert columns f1...f17 to values in a new "length" colum of a longer table
+      tidyr::pivot_longer(
+        # convert columns f1...f17 to values in a new "length" colum of a longer table
         cols = dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses a1, a2, ...
         names_to = "length",
         values_to = "value"
       ) |>
       dplyr::mutate(length = as.numeric(substring(length, first = 2))) |> # convert "l17" to 17
-      dplyr::select(year, fleet, Nsamp, length, value) |> 
+      dplyr::select(year, fleet, Nsamp, length, value) |>
       dplyr::arrange(fleet, year, length)
 
     # finish converting age comps to FIMSFrame format
