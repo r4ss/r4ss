@@ -14,6 +14,10 @@
 #' @param ss_new A logical that controls if the `.ss_new` files or
 #'   the original input files are read in.
 #'   The default is to read the original files.
+#' @param read_wtatage A logical that controls if the weight-at-age file is read in
+#'   for models that use parametric growth. For such models, it will read the
+#'   wtatage.ss_new file regardless of the setting of `ss_new` = TRUE/FALSE
+#'   because wtatage.ss typically doesn't exist for these models.
 #' @inheritParams r4ss_params
 #' @author Ian G. Taylor, Kelli F. Johnson
 #' @return An invisible list is returned.
@@ -27,7 +31,7 @@
 #' * control
 #' * starter
 #' * forecast
-#' * wtatage (will be NULL if not required by the model)
+#' * wtatage (will be NULL if not required by the model and read_wtatage = FALSE)
 #' * par (will be NULL if not required by model or if control and par
 #' do not match)
 #'
@@ -53,7 +57,12 @@
 #'   "simple_long_wtatage"
 #' ))
 #' }
-SS_read <- function(dir = getwd(), ss_new = FALSE, verbose = FALSE) {
+SS_read <- function(
+  dir = getwd(),
+  ss_new = FALSE,
+  read_wtatage = FALSE,
+  verbose = FALSE
+) {
   # Read in starter first to find the names of the input files
   start <- SS_readstarter(
     file = file.path(dir, ifelse(ss_new, "starter.ss_new", "starter.ss")),
@@ -93,10 +102,16 @@ SS_read <- function(dir = getwd(), ss_new = FALSE, verbose = FALSE) {
     fore = fore
   )
 
-  # only read weight-at-age file if required by the model
+  # read weight-at-age file if required by the model
   if (ctl[["EmpiricalWAA"]]) {
     wtatage <- r4ss::SS_readwtatage(
       file = file.path(dir, ifelse(ss_new, "wtatage.ss_new", "wtatage.ss")),
+      verbose = verbose
+    )
+    return_list[["wtatage"]] <- wtatage
+  } else if (read_wtatage) {
+    wtatage <- r4ss::SS_readwtatage(
+      file = file.path(dir, "wtatage.ss_new"),
       verbose = verbose
     )
     return_list[["wtatage"]] <- wtatage
