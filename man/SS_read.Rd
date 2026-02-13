@@ -4,7 +4,7 @@
 \alias{SS_read}
 \title{Read all Stock Synthesis input files for a model}
 \usage{
-SS_read(dir = getwd(), ss_new = FALSE, verbose = FALSE)
+SS_read(dir = getwd(), ss_new = FALSE, read_wtatage = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{dir}{A file path to the directory of interest or a raw github URL (see
@@ -13,6 +13,11 @@ example). The default is the current working directory, \code{dir = getwd()}.}
 \item{ss_new}{A logical that controls if the \code{.ss_new} files or
 the original input files are read in.
 The default is to read the original files.}
+
+\item{read_wtatage}{A logical that controls if the weight-at-age file is read in
+for models that use parametric growth. For such models, it will read the
+wtatage.ss_new file regardless of the setting of \code{ss_new} = TRUE/FALSE
+because wtatage.ss typically doesn't exist for these models.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
@@ -30,7 +35,7 @@ the following input files:
 \item control
 \item starter
 \item forecast
-\item wtatage (will be NULL if not required by the model)
+\item wtatage (will be NULL if not required by the model and read_wtatage = FALSE)
 \item par (will be NULL if not required by model or if control and par
 do not match)
 }

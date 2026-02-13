@@ -3,14 +3,17 @@
 #' Uses output from `r4ss::SS_read()` and does
 #' filtering, simplifying, and reformatting.
 #'
+#' @param ss3_dir Directory containing the SS3 input and output model
+#' files. Alternatively the SS3 input and output lists can be input
+#' directly using `ss3_inputs` and `ss3_output`
+#' @param ss_new Logical indicating whether to read in the .ss_new files
+#' instead of the original input files. Beneficial for dealining with
+#' negative years in the wtatage file which can't yet be processed by
+#' this function.
 #' @param ss3_inputs A list containing `dat` and `wtatage` such as that
-#' created by `r4ss::SS_read()` or by running `r4ss::SS_readdat()` and
-#' `r4ss::SS_readwtatage()` and combining the results in a list.
-#' Note: if the SS3 model has parametric growth then `r4ss::SS_read()` won't
-#' read the `wtatage.ss` file and it needs to be added to the list by
-#' separately running `r4ss::SS_readwtatage()` or taking it from the list
-#' created by `r4ss::SS_output()`.
-#'
+#' created by `r4ss::SS_read()`. Only required if `ss3_dir` is not provided.
+#' @param ss3_output A list created by `r4ss::SS_output()`. Only required if
+#' `ss3_dir` is not provided.
 #' @param fleets Which fleets to include in the processed output.
 #' Note that the only start year population weight-at-age is read from the
 #' `wtatage` element (fleet = 0). NULL will default to including all fleets
@@ -24,19 +27,41 @@
 #' @export
 
 ss3_data_to_fims <- function(
-  ss3_inputs,
+  ss3_dir = NULL,
+  ss_new = TRUE,
+  ss3_inputs = NULL,
+  ss3_output = NULL,
   fleets = NULL,
   ages = NULL,
   lengths = NULL
 ) {
   # check if input is a string and if so, try to read in the data using SS_read()
-  if (is.character(ss3_inputs)) {
-    cli::cli_alert_info("Reading in data from {.code {ss3_inputs}} using {.code r4ss::SS_read()}")
-    ss3_inputs <- r4ss::SS_read(dir = ss3_inputs, read_wtatage = TRUE)
+  if (!is.null(ss3_dir)) {
+    if (!is.character(ss3_dir)) {
+      cli::cli_abort("{.code ss3_dir} should be a character string")
+    }
+    cli::cli_alert_info(
+      "Reading in data from {.code {ss3_dir}} using {.code r4ss::SS_read()}"
+    )
+    ss3_inputs <- r4ss::SS_read(
+      dir = ss3_dir,
+      ss_new = ss_new,
+      read_wtatage = TRUE
+    )
+    cli::cli_alert_info(
+      "Reading in output from {.code {ss3_dir}} using {.code r4ss::SS_output()}"
+    )
+    ss3_output <- r4ss::SS_output(
+      dir = ss3_dir,
+      verbose = FALSE,
+      printstats = FALSE,
+    )
   }
   # check inputs for necessary elements
   if (!is.list(ss3_inputs) || !"dat" %in% names(ss3_inputs)) {
-    cli::cli_abort("`ss3_inputs` should be a list containing both 'dat' and 'wtatage'")
+    cli::cli_abort(
+      "`ss3_inputs` should be a list containing both 'dat' and 'wtatage'"
+    )
   }
   if (!"wtatage" %in% names(ss3_inputs)) {
     cli::cli_abort(
@@ -119,7 +144,6 @@ ss3_data_to_fims <- function(
     indices <- NULL
   }
 
-
   if (!is.null(dat$agecomp)) {
     # partially convert age comps (filter, make into long table)
 
@@ -192,7 +216,7 @@ ss3_data_to_fims <- function(
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
       tidyr::pivot_longer(
         # convert columns f1...f17 to values in a new "length" colum of a longer table
-        cols = dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses a1, a2, ...
+        cols = dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses l1, l2, ...
         names_to = "length",
         values_to = "value"
       ) |>
@@ -235,6 +259,77 @@ ss3_data_to_fims <- function(
     ) |>
     dplyr::select(-year)
 
+  ## age to length conversion matrix
+  if (!is.null(lencomps)) {
+    timing_length_combinations <- lencomps |>
+      dplyr::select(timing, name) |>
+      dplyr::distinct()
+  }
+
+  # initially always take the matrix for females in the middle of season 1
+  ALK <- ss3_output$ALK[,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
+  ages <- as.integer(colnames(ALK))
+  lengths <- as.integer(rownames(ALK))
+
+  # function to provide length at age from SS3 output
+  length_at_age_lookup <- function(age, length) {
+    if (age %in% ages & length %in% lengths) {
+      return(ALK[as.character(length), as.character(age)])
+    } else {
+      return(NA)
+    }
+  }
+
+  # create empty data frame to store the age to length conversions
+  age_to_length <- data.frame(
+    type = character(),
+    name = character(),
+    age = integer(),
+    length = integer(),
+    timing = character()
+  )
+  # for every combination of timing and name (fleet) that has length comps
+  # create a data frame with age, length to which values will be added
+  for (irow in 1:nrow(timing_length_combinations)) {
+    age_to_length <- rbind(
+      age_to_length,
+      expand.grid(
+        name = timing_length_combinations$name[irow],
+        timing = timing_length_combinations$timing[irow],
+        age = ages,
+        length = lengths
+      )
+    )
+  }
+  # now fill in the value column with the proportion of each age
+  # within each length bin
+  age_to_length <- age_to_length |>
+    rowwise() |>
+    mutate(value = length_at_age_lookup(age, length))
+
+  # now add additional columns
+  age_to_length <- age_to_length |>
+    mutate(
+      type = "age-to-length-conversion",
+      unit = "proportion",
+      uncertainty = NA
+    ) |>
+    select(names(res))
+
   # combine all data sources
-  res <- rbind(res, landings, indices, agecomps, lencomps, wtatage)
+  res <- rbind(
+    res,
+    landings,
+    indices,
+    agecomps,
+    lencomps,
+    wtatage,
+    age_to_length
+  )
+
+  # remove forecast years
+  res <- res |>
+    dplyr::filter(timing <= dat$endyr + 1)
+
+  return(res)
 }
