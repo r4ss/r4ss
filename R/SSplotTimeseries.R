@@ -372,11 +372,11 @@ SSplotTimeseries <-
         if (subplot == 9) {
           # sum up total across areas differently for spawning depletion
           yvals2 <- rep(NA, length(ts[["YrSeas"]]))
-          for (iyr in seq_along(yvals)) {
+          for (iyr in seq_along(yvals2)) {
             y <- ts[["YrSeas"]][iyr]
-            yvals[iyr] <- sum(ts[["SpawnBio"]][ts[["YrSeas"]] == y])
+            yvals2[iyr] <- sum(ts[["SpawnBio"]][ts[["YrSeas"]] == y])
           }
-          yvals <- yvals / yvals[!is.na(yvals)][1] # total depletion
+          yvals <- yvals2 / yvals2[!is.na(yvals2)][1] # total depletion
           yvals <- yvals / depletion_multiplier
         }
         ymax <- max(yvals, 1, na.rm = TRUE)
