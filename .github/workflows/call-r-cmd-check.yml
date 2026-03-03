@@ -7,7 +7,9 @@ on:
       # - '.github/**'
       - 'README.md'
   workflow_dispatch:
-  
+env:
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   call-workflow:
     uses: nmfs-ost/ghactions4r/.github/workflows/r-cmd-check.yml@main
