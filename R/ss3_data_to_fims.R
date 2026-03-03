@@ -331,24 +331,6 @@ ss3_data_to_fims <- function(
   res <- res |>
     dplyr::filter(timing <= dat$endyr + 1)
 
-  # convert timing to datestart and dateend format required by FIMSFrame
-  res <- res |>
-    dplyr::mutate(
-      datestart = as.Date(paste0(timing, "-01-01")),
-      dateend = as.Date(paste0(timing, "-12-31"))
-    ) |>
-    # reorder columns (excluding timing column)
-    dplyr::select(
-      type,
-      name,
-      age,
-      length,
-      datestart,
-      dateend,
-      value,
-      unit,
-      uncertainty
-    )
 
   return(res)
 }
