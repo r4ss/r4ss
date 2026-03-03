@@ -3453,7 +3453,7 @@ SS_output <-
     mean_size <- match_report_table(
       "MEAN_SIZE_TIMESERIES",
       1,
-      "mean_size_Jan_1",
+      "mean_size",
       -2,
       cols = 1:(4 + accuage + 1),
       header = TRUE,
