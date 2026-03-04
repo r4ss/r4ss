@@ -3066,6 +3066,17 @@ SSplotComps <-
                     "<br>Francis data weighting method TA1.8:"
                   )
                   if (!is.null(tmp[1])) {
+                    # get current variance adjustment for this fleet
+                    if (kind == "LEN") {
+                      Curr_Var_Adj <- replist[["Length_Comp_Fit_Summary"]] |>
+                        dplyr::filter(Fleet == f) |>
+                        dplyr::pull(Curr_Var_Adj)
+                    }
+                    if (kind %in% c("AGE", "cond")) {
+                      Curr_Var_Adj <- replist[["Age_Comp_Fit_Summary"]] |>
+                        dplyr::filter(Fleet == f) |>
+                        dplyr::pull(Curr_Var_Adj)
+                    }
                     vals <- paste0(
                       "thinner intervals (with capped ends) show ",
                       "result of further adjusting sample sizes ",
@@ -3080,8 +3091,21 @@ SSplotComps <-
                       round(tmp[2], 4),
                       "-",
                       round(tmp[3], 4),
-                      ")"
+                      ")<br>Current variance is ",
+                      round(Curr_Var_Adj, 4),
+                      " so adjusted weight would be ",
+                      round(tmp[1] * Curr_Var_Adj, 4)
                     )
+
+                    # add message that the current variance adjustment is close to 1.0
+                    if (tmp[1] * Curr_Var_Adj > 1.0) {
+                      vals <- paste0(
+                        vals,
+                        "<br><b>Applying the suggested variance adjustment would require up-weighting ",
+                        "(e.g. via <code>r4ss::tune_comps(..., allow_up_tuning = TRUE)</code>) ",
+                        "which may not be recommended depending on the source of the input sample sizes.</b>"
+                      )
+                    }
                   } else {
                     vals <- "too few points to calculate adjustments."
                   }
