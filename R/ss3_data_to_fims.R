@@ -101,9 +101,16 @@ ss3_data_to_fims <- function(
   )
 
   # aggregate landings across fleets
-  catch_by_year_fleet <- dat$catch |>
-    dplyr::filter(year != -999) |> # year = -999 in SS3 designates initial equilibrium catch
+  n_catch_before <- nrow(dat$catch)
+  catch_filtered <- dat$catch |>
+    dplyr::filter(year != -999) # year = -999 in SS3 designates initial equilibrium catch
+  n_catch_before_fleet <- nrow(catch_filtered)
+  catch_by_year_fleet <- catch_filtered |>
     dplyr::filter(fleet %in% fleets)
+  n_catch_after <- nrow(catch_by_year_fleet)
+  cli::cli_alert_info(
+    "catch rows before fleet filter: {n_catch_before_fleet}; after: {n_catch_after}"
+  )
 
   # convert landings to FIMSFrame format
   landings <- data.frame(
@@ -125,8 +132,14 @@ ss3_data_to_fims <- function(
 
   if (!is.null(dat$CPUE)) {
     # convert indices to FIMSFrame format
-    index_info <- dat$CPUE |>
-      dplyr::filter(index %in% fleets) |>
+    n_cpue_before <- nrow(dat$CPUE)
+    cpue_filtered <- dat$CPUE |>
+      dplyr::filter(index %in% fleets)
+    n_cpue_after <- nrow(cpue_filtered)
+    cli::cli_alert_info(
+      "CPUE rows before fleet filter: {n_cpue_before}; after: {n_cpue_after}"
+    )
+    index_info <- cpue_filtered |>
       dplyr::select(year, index, obs, se_log) |>
       dplyr::arrange(index, year)
 
@@ -168,9 +181,15 @@ ss3_data_to_fims <- function(
     }
 
     # further processing
+    n_agecomp_before <- nrow(dat$agecomp)
+    agecomp_filtered <- dat$agecomp |>
+      dplyr::filter(fleet %in% fleets)
+    n_agecomp_after <- nrow(agecomp_filtered)
+    cli::cli_alert_info(
+      "agecomp rows before fleet filter: {n_agecomp_before}; after: {n_agecomp_after}"
+    )
     age_info <-
-      dat$agecomp |>
-      dplyr::filter(fleet %in% fleets) |> # filter by requested fleets
+      agecomp_filtered |>
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
       tidyr::pivot_longer(
@@ -192,7 +211,7 @@ ss3_data_to_fims <- function(
     # finish converting age comps to FIMSFrame format
     agecomps <- data.frame(
       type = "age_comp",
-      name = paste0("fleet", abs(age_info$fleet)), # abs to include fleet == -4
+      name = paste0("fleet", abs(age_info$fleet)), # abs to include negative fleet numbers which may contain marginal ages
       age = age_info$age,
       length = NA,
       timing = age_info$year,
@@ -209,9 +228,15 @@ ss3_data_to_fims <- function(
   ## Length composition data
   if (!is.null(dat[["lencomp"]])) {
     # leaving out the re-scaling part for females to 1
+    n_lencomp_before <- nrow(dat$lencomp)
+    lencomp_filtered <- dat$lencomp |>
+      dplyr::filter(fleet %in% fleets) # filter by requested fleets
+    n_lencomp_after <- nrow(lencomp_filtered)
+    cli::cli_alert_info(
+      "lencomp rows before fleet filter: {n_lencomp_before}; after: {n_lencomp_after}"
+    )
     len_info <-
-      dat$lencomp |>
-      dplyr::filter(fleet %in% fleets) |> # filter by requested fleets
+      lencomp_filtered |>
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
       tidyr::pivot_longer(
