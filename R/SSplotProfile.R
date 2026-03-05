@@ -6,8 +6,7 @@
 #'
 #'
 #' @param summaryoutput List created by the function [SSsummarize()].
-#' @template plot
-#' @template print
+#' @inheritParams r4ss_params
 #' @param models Optional subset of the models described in
 #' `summaryoutput`. Either "all" or a vector of numbers indicating
 #' columns in summary tables.
@@ -55,15 +54,6 @@
 #' @param yaxs The style of axis interval calculation to be used for the y-axis
 #' (see ?par for more info).
 #' @param type Line type (see ?plot for more info).
-#' @template legend
-#' @template legendloc
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template plotdir
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 #' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
 #' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
@@ -71,7 +61,6 @@
 #' @param cutoff_prob Probability associated with `add_cutoff` above.
 #' @param add_no_prior_line Add line showing total likelihood without
 #' the prior (only appears when profiled parameter that includes a prior)
-#' @template verbose
 #' @param \dots Additional arguments passed to the `plot` command.
 #' @note Someday the function [profile()] will be improved and
 #' made to work directly with this plotting function, but they don't yet work

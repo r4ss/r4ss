@@ -4,12 +4,10 @@
 #' created using [SS_readwtatage()]
 #'
 #' @param mylist Object created by [SS_readwtatage()].
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param file Filename for new weight-at-age file, which
 #' will be appended to `dir` to create a full file path.
 #' Default="wtatage.ss".
-#' @template overwrite
-#' @template verbose
 #' @param warn Deprecated.
 #' @author Kelli F. Johnson
 #' @export

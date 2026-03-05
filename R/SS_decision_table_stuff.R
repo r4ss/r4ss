@@ -3,7 +3,7 @@
 #' Values of total catch, spawning output, and fraction unfished are extracted
 #' from the forecast years of a time series table for inclusion in a decision table.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param yrs Range of years from which to extract values
 #' @param digits Vector of number of digits to round to in table for
 #' \itemize{

@@ -6,7 +6,7 @@
 #' but that older version is now deprecated.
 #'
 #' @inheritParams table_exec_summary
-#' @template fleetnames
+#' @inheritParams r4ss_params
 #' @param selexyr The year to summarize selectivity, the default is the final
 #' model year.
 #'

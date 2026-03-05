@@ -27,7 +27,7 @@
 #' 0.025 for 95% intervals.
 #' @param upperCI Quantile for upper bound on calculated intervals. Default =
 #' 0.975 for 95% intervals.
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Ian Taylor
 #' @export
 #' @family model comparison functions

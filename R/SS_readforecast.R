@@ -3,14 +3,12 @@
 #' read Stock Synthesis forecast file into list object in R
 #'
 #'
-#' @template file
+#' @inheritParams r4ss_params
 #' @param Nfleets Number of fleets (not required in 3.30).
 #' @param Nareas Number of areas (not required in 3.30).
 #' @param nseas number of seasons (not required in 3.30).
-#' @template version
 #' @param readAll Should the function continue even if Forecast = 0 or -1
 #' (at which point SS stops reading)?
-#' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @family read/write functions

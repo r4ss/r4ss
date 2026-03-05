@@ -25,8 +25,7 @@
 #' not recommended because it will lead to biased results.}
 #' }
 #'
-#' @template replist
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param startvalues A vector of 5 values for the starting points in the
 #' minimization. Default=NULL.
 #' @param method A method to apply to the 'optim' function. See ?optim for
@@ -36,9 +35,6 @@
 #' uncertainty, or just the second panel in the set?  Default=TRUE.
 #' @param transform An experimental option to treat the transform the 5
 #' quantities to improve minimization. Doesn't work well. Default=FALSE.
-#' @template plot
-#' @template print
-#' @template plotdir
 #' @param shownew Include new estimated bias adjustment values on top of values
 #' used in the model? (TRUE/FALSE)
 #' @param oldctl Optional name of existing control file to modify.
@@ -49,16 +45,12 @@
 #' or "psoptim". If not equal to either of these, then optim is used.
 #' @param exclude_forecast Exclude forecast values in the estimation of
 #' alternative bias adjustment inputs?
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template cex.main
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()]
-#' @template methot2011cjfas
+#' @references Methot, R.D. and Taylor, I.G., 2011.
+#' Adjusting for bias due to variability of estimated recruitments in fishery assessment models.
+#' Can. J. Fish. Aquat. Sci., 68:1744-1760.
 #'
 SS_fitbiasramp <-
   function(

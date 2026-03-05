@@ -8,10 +8,7 @@
 #' pertain to the version of your control file can be left at their
 #' default values.
 #'
-#' @template file
-#' @template verbose
-#' @template readctl_vars
-#' @template version
+#' @inheritParams r4ss_params
 #' @param N_CPUE_obs Number of CPUE observations. Used only in control file 3.24
 #'  syntax if `use_datlist = FALSE`.
 #' @param catch_mult_fleets Integer vector of fleets using the catch multiplier

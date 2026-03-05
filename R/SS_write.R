@@ -7,9 +7,7 @@
 #' six model input files.
 #'
 #' @param inputlist list created by [SS_read()]
-#' @template dir
-#' @template overwrite
-#' @template verbose
+#' @inheritParams r4ss_params
 #'
 #' @author Ian G. Taylor
 #'

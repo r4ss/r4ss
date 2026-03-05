@@ -24,7 +24,7 @@
 #'   calculation of the Wood's Hole Mohn's rho value, which is computed across
 #'   the range of years in the model. If this parameter is missing, the default
 #'   is to use the `startyr` of the reference model.
-#' @template verbose
+#' @inheritParams r4ss_params
 #'
 #' @author Chantel R. Wetzel, Carey R. McGilliard, and Kelli F. Johnson
 #' @references

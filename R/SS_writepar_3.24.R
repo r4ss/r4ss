@@ -8,7 +8,7 @@
 #' @param parlist  List object created by [SS_readpar_3.24()].
 #' @param outfile Filename for where to write new parameter file.
 #' @param overwrite Should existing files be overwritten? Default=TRUE.
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]

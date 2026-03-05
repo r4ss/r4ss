@@ -3,9 +3,7 @@
 #' Read Stock Synthesis (version 3.30) control file into list object in R.
 #' This function should be called from SS_readctl.
 #'
-#' @template file
-#' @template verbose
-#' @template readctl_vars
+#' @inheritParams r4ss_params
 #' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier
@@ -2307,7 +2305,7 @@ get_tv_parlabs <- function(full_parms, block_design) {
 #'  Defaults to NULL, which can be the case if no variance adjustments were
 #'  included in the model.
 #' @param Nfleets Number of fleets in the model
-#' @template fleetnames
+#' @inheritParams r4ss_params
 #' @return A dataframe of 3.24 variance adjustments.
 translate_3.30_to_3.24_var_adjust <- function(
   Variance_adjustment_list = NULL,
@@ -2351,7 +2349,7 @@ translate_3.30_to_3.24_var_adjust <- function(
 #' @param Q_options The Q options list element in the 3.30
 #'  control file r4ss list output generated from [SS_readctl].
 #' @param Nfleets Number of fleets in the model
-#' @template fleetnames
+#' @inheritParams r4ss_params
 #' @return A dataframe containing the 3.24 Q setup.
 translate_3.30_to_3.24_Q_setup <- function(
   Q_options,

@@ -4,16 +4,7 @@
 #' are unavailable because they're too small to be selected from ones that are
 #' too big to be selected
 #'
-#' @template replist
-#' @template plot
-#' @template print
-#' @template plotdir
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
+#' @inheritParams r4ss_params
 #' @author Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 #' @export
 

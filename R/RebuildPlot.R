@@ -6,7 +6,7 @@
 #' coast groundfish stocks that were overfished and in a rebuilding
 #' plan. Therefore there's no need to have it available to all r4ss
 #' users.
-#' @template deprecated_dots
+#' @inheritParams r4ss_params
 #'
 #' @author Ian G. Taylor
 #' @export

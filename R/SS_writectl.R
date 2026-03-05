@@ -7,9 +7,7 @@
 #'
 #' @param ctllist List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new control file.
-#' @template version
-#' @template overwrite
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert,
 #' Kathryn L. Doering, Nathan R. Vaughan
 #' @export

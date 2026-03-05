@@ -2,7 +2,7 @@
 #'
 #' Plots the spawning output with and without fishing mortality
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param ylab Y-axis label. Default is "Spawning biomass (t)" which is replaced
 #' by `replist[["SpawnOutputLabel"]]` for models with
 #' `replist[["SpawnOutputUnits"]] == "numbers"`
@@ -11,19 +11,13 @@
 #' @param forecast Show forecast years in plot? Only applies if yrs = "all".
 #' @param yrs Which years to include. Default "all" will show startyr to endyr + 1
 #' modified by the arguments `forecast`.
-#' @template plot
-#' @template print
-#' @template plotdir
-#' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' These intervals will only appear when uncertainty in the dynamic B0
 #' estimates is available via the control file settings for
 #' "read specs for more stddev reporting".
-#' @template legend
 #' @param legendlabels Character vector with labels for the unfished
 #' equilibrium point (if `equilibrium = TRUE`) and the two lines showing
 #' spawning biomass or output without and with fishing.
-#' @template legendloc
 #' @param col Optional vector of colors to be used for the two lines
 #' (single value will apply to both lines).
 #' @param lty Optional vector of line types to be used for the two lines
@@ -31,13 +25,6 @@
 #' @param lwd Optional vector of line widths to be used for the two lines.
 #'  Single value will apply to both lines.
 #' @param add add to existing plot
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template mainTitle
-#' @template mar
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [SSplotTimeseries()]

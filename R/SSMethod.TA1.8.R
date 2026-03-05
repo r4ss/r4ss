@@ -35,7 +35,7 @@
 #' @param fleet vector of one or more fleet numbers whose data are to
 #' be analysed simultaneously (the output N multiplier applies
 #' to all fleets combined)
-#' @template fleetnames
+#' @inheritParams r4ss_params
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).

@@ -4,28 +4,15 @@
 #' based on T-distributions as specified in model.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param ymax Optional input to override default ymax value.
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If `plotdat = FALSE` then subplot 1 is not created, regardless of
 #' choice of `subplots`.
-#' @template plot
-#' @template print
-#' @template plotdir
-#' @template fleets
-#' @template fleetnames
 #' @param datplot Make data-only plot of discards? This can override the choice
 #' of `subplots`.
-#' @template labels
 #' @param col1 first color to use in plot (for expected values)
 #' @param col2 second color to use in plot (for observations and intervals)
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template verbose
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

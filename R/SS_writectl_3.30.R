@@ -6,8 +6,7 @@
 #'
 #' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
-#' @template overwrite
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Kathryn L. Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki,
 #' Nathan R. Vaughan
 #' @export

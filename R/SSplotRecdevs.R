@@ -4,10 +4,8 @@
 #' measures related to bias adjustment.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots vector controlling which subplots to create
-#' @template plot
-#' @template print
 #' @param add add to existing plot (not yet implemented)
 #' @param uncertainty include plots showing uncertainty?
 #' @param minyr optional input for minimum year to show in plots
@@ -17,16 +15,6 @@
 #' @param col2 second color used
 #' @param col3 third color used
 #' @param col4 fourth color used
-#' @template legendloc
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template plotdir
-#' @template verbose
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso [SS_plots()], [SS_fitbiasramp()]

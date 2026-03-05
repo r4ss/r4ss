@@ -5,8 +5,7 @@
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
 #' functions is ending, so please update models to 3.30.
 #'
-#' @template file
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values

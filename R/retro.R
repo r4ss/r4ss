@@ -1,6 +1,6 @@
 #' Deprecated function to run a retrospective analyses, renamed to retro()
 #'
-#' @template deprecated_dots
+#' @inheritParams r4ss_params
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_doRetro() has been renamed as [retro()]. See
@@ -43,8 +43,7 @@ SS_doRetro <-
 #' blocks is removed from top of control file. Blocks can cause problems for
 #' retrospective analyses, but the method for removing them is overly
 #' simplistic and probably won't work in most cases. Default=FALSE.
-#' @template exe
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #'

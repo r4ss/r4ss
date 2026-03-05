@@ -2,7 +2,7 @@
 #'
 #' Function has not been fully tested yet
 #'
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #' Default="control_modified.ss".
@@ -15,9 +15,6 @@
 #' (may need to increase from default if you have a huge number of fleets)
 #' @param maxrows Maximum number of rows to search among in 3.30 models
 #' (may need to increase from default if you have a huge number of fleets)
-#' @template overwrite
-#' @template version
-#' @template verbose
 #' @author Ian G. Taylor, Gwladys I. Lambert
 #' @seealso [tune_comps()], [SS_parlines()], [SS_changepars()]
 #' @export

@@ -8,8 +8,7 @@
 #'
 #' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
-#' @template overwrite
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Yukio Takeuchi, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @seealso [SS_readctl()], [SS_readctl_3.24()],[SS_readstarter()],

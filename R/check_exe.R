@@ -4,12 +4,11 @@
 #' an input argument to numerous `r4ss` functions is available in the
 #' location specified by `dir` or in the path.
 #'
-#' @template exe
+#' @inheritParams r4ss_params
 #' @param dir The directory where `exe` is located (if not in path).
 #' Defaults to `getwd()` but can be an absolute path, a path relative to
 #' the working directory or a path relative to a directory that's in the
 #' PATH. Can also be a vector of directories.
-#' @template verbose
 #' @author Kelli F. Johnson, Ian G. Taylor
 #' @return A list containing `$exe` and `$path`.
 #' `$exe` is the cleaned version of the `exe` file name input. Windows

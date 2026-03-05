@@ -4,12 +4,10 @@
 #' plots for time-varying selectivity.
 #'
 #'
-#' @template replist
-#' @template fleets
+#' @inheritParams r4ss_params
 #' @param infotable Optional table of information controlling appearance of
 #' plot and legend. Is produced as output and can be modified and entered as
 #' input.
-#' @template fleetnames
 #' @param sizefactors Which elements of the factors column of SIZE_SELEX should
 #' be included in plot of selectivity across multiple fleets?
 #' @param agefactors Which elements of the factors column of AGE_SELEX should
@@ -72,29 +70,14 @@
 #' @param subplot Deprecated. Use subplots instead.
 #' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
 #' = 1.0 for all ages beginning at age 1)?
-#' @template lwd
 #' @param spacepoints number of years between points shown on top of lines (for
 #' long timeseries, points every year get mashed together)
 #' @param staggerpoints number of years to stagger the first point (if
 #' `spacepoints > 1`) for each line (so that adjacent lines have points in
 #' different years)
-#' @template legendloc
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template plot
-#' @template print
 #' @param add Add to existing plot (not yet implemented)
-#' @template labels
 #' @param col1 color for female growth curve
 #' @param col2 color for male growth curve
-#' @template cex.main
-#' @template mainTitle
-#' @template mar
-#' @template plotdir
-#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

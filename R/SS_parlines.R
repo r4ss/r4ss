@@ -16,9 +16,7 @@
 #'
 #'
 #' @param ctlfile File name of control file including path.
-#' @template dir
-#' @template version
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param active Should only active parameters (those with positive phase) be
 #' output? Default=FALSE.
 #' @author Ian Taylor

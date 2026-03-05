@@ -4,8 +4,7 @@
 #' parameter distributions. MCMC not required to make function work.
 #'
 #'
-#' @template replist
-#' @template plotdir
+#' @inheritParams r4ss_params
 #' @param xlab Label on horizontal axis.
 #' @param ylab Label on vertical axis.
 #' @param showmle Show MLE estimate and asymptotic variance estimate with blue
@@ -24,7 +23,6 @@
 #' Otherwise, limits are based on the model results.
 #' @param ylim Optional y-axis limits to be applied to all plots.
 #' Otherwise, limits are based on the model results.
-#' @template verbose
 #' @param debug Provide additional messages to help with debugging when the
 #' function fails.
 #' @param nrows How many rows in multi-figure plot.
@@ -33,13 +31,6 @@
 #' distributions and the median of the posterior distribution.
 #' @param colvec Vector of colors used for lines and polygons showing MLE,
 #' initial value, prior, posterior, and median of the posterior.
-#' @template plot
-#' @template print
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
 #' @param strings Subset parameters included in the plot using substring from
 #' parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both
 #' estimated quantities in this model).

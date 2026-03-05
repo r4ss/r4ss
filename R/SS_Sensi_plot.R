@@ -5,7 +5,7 @@
 #'
 #' @param model.summaries Output from [SSsummarize()]
 #' summarizing results of models to be included
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param current.year Year to report output
 #' @param mod.names List the names of the sensitivity runs
 #' @param Sensi.RE.out  Saved file of relative changes

@@ -17,7 +17,7 @@
 #' @param outpattern File name of output data file. Default="BootData".
 #' @param number Append bootstrap number to the file name chosen in
 #' `outpattern`? Default=F.
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param fillblank Replace blank lines with "#". Helps with running on linux.
 #' Default=TRUE.
 #' @param MLE Grab the maximum likelihood values from the second block in

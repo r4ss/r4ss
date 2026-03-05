@@ -5,10 +5,8 @@
 #'
 #'
 #' @param mylist List object created by [SS_readstarter()].
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param file Filename for new starter file. Default="starter.ss".
-#' @template overwrite
-#' @template verbose
 #' @param warn Deprecated.
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn R. Doering
 #' @export

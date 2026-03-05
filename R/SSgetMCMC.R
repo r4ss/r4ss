@@ -4,8 +4,7 @@
 #' files) from a model.
 #'
 #'
-#' @template dir
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param writecsv Write key parameters and certainty nuisance quantities to a
 #' CSV file.
 #' @param postname Name of file with parameter posteriors (default matches

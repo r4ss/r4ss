@@ -5,10 +5,7 @@
 #' model, not the input data file.
 #'
 #'
-#' @template replist
-#' @template plot
-#' @template print
-#' @template plotdir
+#' @inheritParams r4ss_params
 #' @param subplots vector controlling which subplots to create
 #' Currently there are only 2 subplots:
 #' \itemize{
@@ -24,28 +21,17 @@
 #' of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 #' "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
 #' "wadbase", "mnwgt", "discard", "tagrelease", "tagdbase1", and "morphcompdbase".
-#' @template fleets
-#' @template fleetnames
 #' @param ghost TRUE/FALSE indicator for whether to show presence of
 #' composition data from ghost fleets (data for which the fit is shown, but is
 #' not included in the likelihood calculations).
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
 #' @param margins margins of plot (passed to par() function), which may need to
 #' be increased if fleet names run off right-hand margin
 #' @param cex Character expansion for points showing isolated years of data
-#' @template lwd
-#' @template verbose
 #' @param maxsize The size (cex) of the largest bubble in the datasize
 #' plot. Default is 1.
 #' @param alphasize The transparency of the bubbles in the datasize
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
-#' @template mainTitle
 #' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
 #' @seealso [SS_plots()], [SS_output()],

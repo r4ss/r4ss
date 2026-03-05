@@ -4,14 +4,13 @@
 #' wrapper which calls SS_readdat_3.30 (previously additional functions,
 #' but they have been deprecated).
 #'
-#' @template file
+#' @inheritParams r4ss_params
 #' @param version SS version number.
 #'  Currently "2.00", "3.00", "3.24" or "3.30" are supported, but all
 #'  versions prior to "3.30" have been deprecated.
 #'  either as character or numeric values (noting that numeric 3.30  = 3.3). If
 #'  version is NULL, the version (3.24 or 3.30) will be looked for on the first
 #'  line of the file.
-#' @template verbose
 #' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values

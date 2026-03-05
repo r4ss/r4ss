@@ -1,7 +1,6 @@
 #' Read in a weight-at-age data file as a data frame
 #'
-#' @template file
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @export
 #' @return Returns a data frame with a variable number of columns based on the
 #' number of ages that are included in the file. Though, the first columns

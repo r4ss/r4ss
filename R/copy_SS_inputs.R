@@ -9,7 +9,7 @@
 #' @param dir.new New location to which the files should be copied,
 #' either an absolute path or relative to the working directory.
 #' @param create.dir Create `dir.new` directory if it doesn't exist already?
-#' @template overwrite
+#' @inheritParams r4ss_params
 #' @param recursive A logical value passed to the `recursive` argument of
 #' [dir.create()] that specifies if elements of the path other than the last
 #' be created?
@@ -18,7 +18,6 @@
 #' dir.exe (if provided)?
 #' @param copy_par Copy any .par files found in `dir.old` to `dir.new`?
 #' @param dir.exe Path to executable to copy instead of any in `dir.old`.
-#' @template verbose
 #' @return
 #' A logical value is invisibly returned, indicating whether all input files
 #' were copied successfully.

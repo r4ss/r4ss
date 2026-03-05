@@ -39,8 +39,7 @@
 #' Default is NULL, and if not explicitly specified the program will attempt to
 #' detect these automatically based on the length of relevant lines from the CTL
 #' file.
-#' @template exe
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras` and `show_in_console`.
 #' @seealso [read.admbFit()], [getADMBHessian()]
