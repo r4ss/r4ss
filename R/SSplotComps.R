@@ -3077,6 +3077,15 @@ SSplotComps <-
                         dplyr::filter(Fleet == f) |>
                         dplyr::pull(Curr_Var_Adj)
                     }
+                    if (kind == "SIZE") {
+                      Curr_Var_Adj <- replist[["Size_Comp_Fit_Summary"]] |>
+                        dplyr::filter(Fleet == f) |>
+                        dplyr::pull(Curr_Var_Adj)
+                      if (length(Curr_Var_Adj) > 1) {
+                        Curr_Var_Adj <- Curr_Var_Adj[1]
+                        cli::cli_warn("Multiple variance adjustments found for fleet {f}, using the first value.")
+                      }
+                    }
                     vals <- paste0(
                       "thinner intervals (with capped ends) show ",
                       "result of further adjusting sample sizes ",
@@ -3091,7 +3100,7 @@ SSplotComps <-
                       round(tmp[2], 4),
                       "-",
                       round(tmp[3], 4),
-                      ")<br>Current variance is ",
+                      ")<br>Current variance adjustment is ",
                       round(Curr_Var_Adj, 4),
                       " so adjusted weight would be ",
                       round(tmp[1] * Curr_Var_Adj, 4)
