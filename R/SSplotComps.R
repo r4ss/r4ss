@@ -3094,17 +3094,26 @@ SSplotComps <-
                       }
                       return(result)
                     }
-                    
+
                     # Get variance adjustment based on kind
                     Curr_Var_Adj <- NULL
                     if (kind == "LEN") {
-                      Curr_Var_Adj <- get_var_adj(replist[["Length_Comp_Fit_Summary"]], f)
+                      Curr_Var_Adj <- get_var_adj(
+                        replist[["Length_Comp_Fit_Summary"]],
+                        f
+                      )
                     } else if (kind %in% c("AGE", "cond")) {
-                      Curr_Var_Adj <- get_var_adj(replist[["Age_Comp_Fit_Summary"]], f)
+                      Curr_Var_Adj <- get_var_adj(
+                        replist[["Age_Comp_Fit_Summary"]],
+                        f
+                      )
                     } else if (kind == "SIZE") {
-                      Curr_Var_Adj <- get_var_adj(replist[["Size_Comp_Fit_Summary"]], f)
+                      Curr_Var_Adj <- get_var_adj(
+                        replist[["Size_Comp_Fit_Summary"]],
+                        f
+                      )
                     }
-                    
+
                     vals <- paste0(
                       "thinner intervals (with capped ends) show ",
                       "result of further adjusting sample sizes ",
@@ -3121,12 +3130,12 @@ SSplotComps <-
                       round(tmp[3], 4),
                       ")"
                     )
-                    
+
                     # Only add variance adjustment info if it exists and is valid
                     if (!is.null(Curr_Var_Adj) && !is.na(Curr_Var_Adj)) {
                       # Calculate adjusted weight
                       adjusted_weight <- tmp[1] * Curr_Var_Adj
-                      
+
                       vals <- paste0(
                         vals,
                         "<br>Current variance adjustment is ",
@@ -3134,7 +3143,7 @@ SSplotComps <-
                         " so adjusted weight would be ",
                         round(adjusted_weight, 4)
                       )
-                      
+
                       # add message if adjustment would require up-weighting
                       if (adjusted_weight > 1.0) {
                         vals <- paste0(
