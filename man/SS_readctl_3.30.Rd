@@ -26,7 +26,6 @@ SS_readctl_3.30(
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
-
 See the formal arguments for a possible default filename.}
 
 \item{verbose}{A logical value specifying if output should be printed
@@ -39,21 +38,25 @@ can not be determined from control file. Defaults to TRUE.}
 \code{\link[=SS_writedat]{SS_writedat()}}. If character, should be the file name of an SS data file.}
 
 \item{nseas}{number of seasons in the model. This information is not
-explicitly available in control file and used only if \code{use_datlist = FALSE}.}
+explicitly available in control file and used only if
+\code{use_datlist = FALSE}.}
 
-\item{N_areas}{number of spatial areas in the model. Default = 1. This information is not
-explicitly available in control file and used only if if \code{use_datlist = FALSE}.}
+\item{N_areas}{number of spatial areas in the model. Default = 1. This
+information is not explicitly available in control file and used only if
+\code{use_datlist = FALSE}.}
 
 \item{Nages}{oldest age in the model. This information is also not
-explicitly available in control file and used only if \code{use_datlist = FALSE}.}
+explicitly available in control file and used only if
+\code{use_datlist = FALSE}.}
 
 \item{Nsexes}{number of sexes in the model. This information is also not
-explicitly available in control file and used only if \code{use_datlist = FALSE}.}
+explicitly available in control file and used only if
+\code{use_datlist = FALSE}.}
 
-\item{Npopbins}{number of population bins in the model. This information is also not
-explicitly available in control file and this information is only required if length based
-maturity vector is directly supplied (Maturity option of 6).  and used only
-if \code{use_datlist = FALSE}.}
+\item{Npopbins}{number of population bins in the model. This information is
+also not explicitly available in control file and this information is only
+required if length based maturity vector is directly supplied (Maturity
+option of 6). Used only if \code{use_datlist = FALSE}.}
 
 \item{Nfleets}{number of fishery and survey fleets in the model. This information is also not
 explicitly available in control file}
@@ -63,14 +66,15 @@ type 1 or 2; not surveys). Used to set the number of survey parameters.
 Only used if tagging data is in the model and \code{use_datlist} is FALSE.}
 
 \item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to
-be read set 1 (but in fact any non zero numeric in R) or TRUE to enable to
-read them 0 or FALSE to disable them. This information is not
-explicitly available in control file and used only if \code{use_datlist = FALSE}.}
+be read. Set 1 (but in fact any non zero numeric in R) or TRUE to enable
+reading them; 0 or FALSE to disable them. This information is not
+explicitly available in control file and used only if
+\code{use_datlist = FALSE}.}
 
-\item{N_tag_groups}{number of tag release group. Default =NA. This information
-is not explicitly available control file  and used only if
+\item{N_tag_groups}{number of tag release group. Default = NA. This
+information is not explicitly available in control file and used only if
 \code{use_datlist = FALSE}. This information is only required if custom tag
-parameters is enabled (TG_custom=1)}
+parameters is enabled (TG_custom=1).}
 
 \item{catch_mult_fleets}{integer vector of fleets using the catch multiplier
 option. Defaults to NULL and should be left as such if 1) the catch

@@ -8,7 +8,6 @@ SS_read_summary(file = "ss_summary.sso", verbose = FALSE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
-
 See the formal arguments for a possible default filename.}
 
 \item{verbose}{A logical value specifying if output should be printed

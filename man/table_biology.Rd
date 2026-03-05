@@ -20,7 +20,8 @@ table_biology(
 is NULL where a table folder will be created where the Report.sso file is
 located associated with \code{replist}.}
 
-\item{fleetnames}{Optional replacement for fleetnames used in data file.}
+\item{fleetnames}{String of fleet names. Default is NULL which will use the
+the model fleet names.}
 
 \item{selexyr}{The year to summarize selectivity, the default is the final
 model year.}

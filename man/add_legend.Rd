@@ -24,8 +24,8 @@ add_legend(
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \code{help("legend")} for more info on
-the string options.}
+the x and y dimensions, respectively. See \code{help("legend")} for more info
+on the string options.}
 
 \item{legendorder}{Optional vector of model numbers that can be used to have
 the legend display the model names in an order that is different than that

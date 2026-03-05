@@ -344,8 +344,8 @@ Default=F.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \code{help("legend")} for more info on
-the string options.}
+the x and y dimensions, respectively. See \code{help("legend")} for more info
+on the string options.}
 
 \item{minyr}{First year to show in time-series and time-varying plots}
 

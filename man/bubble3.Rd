@@ -56,8 +56,8 @@ sqrt(z)). Default=TRUE.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \code{help("legend")} for more info on
-the string options.}
+the x and y dimensions, respectively. See \code{help("legend")} for more info
+on the string options.}
 
 \item{legend.z}{If a legend is added, what z values will be shown. Default
 is c(-3,-2,-1,.1,1,2,3) for Pearson-like quantities and a smaller range for
