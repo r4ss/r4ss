@@ -3083,7 +3083,9 @@ SSplotComps <-
                         dplyr::pull(Curr_Var_Adj)
                       if (length(Curr_Var_Adj) > 1) {
                         Curr_Var_Adj <- Curr_Var_Adj[1]
-                        cli::cli_warn("Multiple variance adjustments found for fleet {f}, using the first value.")
+                        cli::cli_warn(
+                          "Multiple variance adjustments found for fleet {f}, using the first value."
+                        )
                       }
                     }
                     vals <- paste0(
