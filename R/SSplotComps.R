@@ -3083,7 +3083,9 @@ SSplotComps <-
                         dplyr::pull(Curr_Var_Adj)
                       if (length(Curr_Var_Adj) > 1) {
                         Curr_Var_Adj <- Curr_Var_Adj[1]
-                        cli::cli_warn("Multiple variance adjustments found for fleet {f}, using the first value.")
+                        cli::cli_warn(
+                          "Multiple variance adjustments found for fleet {f}, using the first value."
+                        )
                       }
                     }
                     vals <- paste0(
@@ -3100,11 +3102,17 @@ SSplotComps <-
                       round(tmp[2], 4),
                       "-",
                       round(tmp[3], 4),
-                      ")<br>Current variance adjustment is ",
-                      round(Curr_Var_Adj, 4),
-                      " so adjusted weight would be ",
-                      round(tmp[1] * Curr_Var_Adj, 4)
+                      ")"
                     )
+                    if (!is.na(Curr_Var_Adj) && !is.null(Curr_Var_Adj)) {
+                      vals <- paste0(
+                        vals,
+                        "<br>Current variance adjustment is ",
+                        round(Curr_Var_Adj, 4),
+                        " so adjusted weight would be ",
+                        round(tmp[1] * Curr_Var_Adj, 4)
+                      )
+                    }
 
                     # add message that the current variance adjustment is close to 1.0
                     if (tmp[1] * Curr_Var_Adj > 1.0) {
