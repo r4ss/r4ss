@@ -3067,27 +3067,44 @@ SSplotComps <-
                   )
                   if (!is.null(tmp[1])) {
                     # get current variance adjustment for this fleet
-                    if (kind == "LEN") {
-                      Curr_Var_Adj <- replist[["Length_Comp_Fit_Summary"]] |>
-                        dplyr::filter(Fleet == f) |>
-                        dplyr::pull(Curr_Var_Adj)
-                    }
-                    if (kind %in% c("AGE", "cond")) {
-                      Curr_Var_Adj <- replist[["Age_Comp_Fit_Summary"]] |>
-                        dplyr::filter(Fleet == f) |>
-                        dplyr::pull(Curr_Var_Adj)
-                    }
-                    if (kind == "SIZE") {
-                      Curr_Var_Adj <- replist[["Size_Comp_Fit_Summary"]] |>
-                        dplyr::filter(Fleet == f) |>
-                        dplyr::pull(Curr_Var_Adj)
-                      if (length(Curr_Var_Adj) > 1) {
-                        Curr_Var_Adj <- Curr_Var_Adj[1]
-                        cli::cli_warn(
-                          "Multiple variance adjustments found for fleet {f}, using the first value."
-                        )
+                    # helper function to safely extract variance adjustment
+                    get_var_adj <- function(summary_table, fleet) {
+                      if (is.null(summary_table)) {
+                        return(NULL)
                       }
+                      filtered <- dplyr::filter(summary_table, Fleet == fleet)
+                      if (nrow(filtered) == 0) {
+                        return(NULL)
+                      }
+                      # try Curr_Var_Adj first (used in Age_Comp_Fit_Summary)
+                      # then Var_Adj (used in older formats)
+                      if ("Curr_Var_Adj" %in% names(filtered)) {
+                        result <- dplyr::pull(filtered, Curr_Var_Adj)
+                      } else if ("Var_Adj" %in% names(filtered)) {
+                        result <- dplyr::pull(filtered, Var_Adj)
+                      } else {
+                        return(NULL)
+                      }
+                      # handle multiple values (e.g., SIZE comps with multiple methods)
+                      if (length(result) > 1) {
+                        cli::cli_warn(
+                          "Multiple variance adjustments found for fleet {fleet}, using the first value."
+                        )
+                        result <- result[1]
+                      }
+                      return(result)
                     }
+                    
+                    # Get variance adjustment based on kind
+                    Curr_Var_Adj <- NULL
+                    if (kind == "LEN") {
+                      Curr_Var_Adj <- get_var_adj(replist[["Length_Comp_Fit_Summary"]], f)
+                    } else if (kind %in% c("AGE", "cond")) {
+                      Curr_Var_Adj <- get_var_adj(replist[["Age_Comp_Fit_Summary"]], f)
+                    } else if (kind == "SIZE") {
+                      Curr_Var_Adj <- get_var_adj(replist[["Size_Comp_Fit_Summary"]], f)
+                    }
+                    
                     vals <- paste0(
                       "thinner intervals (with capped ends) show ",
                       "result of further adjusting sample sizes ",
@@ -3104,24 +3121,29 @@ SSplotComps <-
                       round(tmp[3], 4),
                       ")"
                     )
-                    if (!is.na(Curr_Var_Adj) && !is.null(Curr_Var_Adj)) {
+                    
+                    # Only add variance adjustment info if it exists and is valid
+                    if (!is.null(Curr_Var_Adj) && !is.na(Curr_Var_Adj)) {
+                      # Calculate adjusted weight
+                      adjusted_weight <- tmp[1] * Curr_Var_Adj
+                      
                       vals <- paste0(
                         vals,
                         "<br>Current variance adjustment is ",
                         round(Curr_Var_Adj, 4),
                         " so adjusted weight would be ",
-                        round(tmp[1] * Curr_Var_Adj, 4)
+                        round(adjusted_weight, 4)
                       )
-                    }
-
-                    # add message that the current variance adjustment is close to 1.0
-                    if (tmp[1] * Curr_Var_Adj > 1.0) {
-                      vals <- paste0(
-                        vals,
-                        "<br><b>Applying the suggested variance adjustment would require up-weighting ",
-                        "(e.g. via <code>r4ss::tune_comps(..., allow_up_tuning = TRUE)</code>) ",
-                        "which may not be recommended depending on the source of the input sample sizes.</b>"
-                      )
+                      
+                      # add message if adjustment would require up-weighting
+                      if (adjusted_weight > 1.0) {
+                        vals <- paste0(
+                          vals,
+                          "<br><b>Applying the suggested variance adjustment would require up-weighting ",
+                          "(e.g. via <code>r4ss::tune_comps(..., allow_up_tuning = TRUE)</code>) ",
+                          "which may not be recommended depending on the source of the input sample sizes.</b>"
+                        )
+                      }
                     }
                   } else {
                     vals <- "too few points to calculate adjustments."
