@@ -1,7 +1,7 @@
 #' Shared parameter documentation
 #'
 #' This function exists solely to provide shared parameter documentation
-#' via \code{@inheritParams} for other functions in the package.
+#' via `@inheritParams` for other functions in the package.
 #'
 #' @param replist A list object created by \code{\link{SS_output}()}.
 #' @param verbose A logical value specifying if output should be printed
@@ -144,5 +144,5 @@ r4ss_params <- function(
     ...) {
   # This function is never called directly; it exists only to provide shared
   # parameter documentation via @inheritParams for other functions.
-  NULL
+  stop("r4ss_params() is an internal documentation function and should not be called directly.")
 }

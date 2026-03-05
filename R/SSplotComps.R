@@ -42,7 +42,6 @@
 #' conditional age-at-length data will be produced for all years.  Useful to
 #' see if growth curves are ok, or to see the information on year classes move
 #' through the conditional data. Default=-1.
-#' @inheritParams r4ss_params
 #' @param sexes which sexes to show plots for. Default="all" which will include
 #' males, females, and unsexed. This option is not fully implemented for all
 #' plots.
