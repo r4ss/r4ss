@@ -7,7 +7,7 @@
 SS_tune_comps(...)
 }
 \arguments{
-\item{...}{Any arguments associated with the now-deprecated functions.}
+\item{...}{Additional arguments (unused, for compatibility only).}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}

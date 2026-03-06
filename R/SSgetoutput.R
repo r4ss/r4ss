@@ -14,7 +14,7 @@
 #' and memory). Default=TRUE.
 #' @param forecast Choice to read or not read forecast quantities.
 #' Default=FALSE.
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param listlists Deprecated argument that wasn't working.
 #' @param underscore Add an underscore '_' between any file names and any keys
 #' in keyvec. Default=FALSE.

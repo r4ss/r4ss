@@ -3,22 +3,12 @@
 #' Plots the summary F (or harvest rate) as set up in the starter file Needs a
 #' lot of work to be generalized
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param yrs Which years to include.
 #' @param Ftgt Target F where horizontal line is shown.
 #' @param ylab Y-axis label.
-#' @template plot
-#' @template print
-#' @template plotdir
-#' @template verbose
 #' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' @param add add to existing plot
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template mar
 #' @author Allan Hicks
 #' @export
 #' @seealso [SSplotTimeseries()]

@@ -1,7 +1,7 @@
 #' Function to pull values and calculate confidence intervals from model output
 #' called from `r4ss::table_exec_summary()`.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param label The parameter name to calculate confidence intervals for. The name
 #'  is based on the names in the `replist` object.
 #' @param yrs Vector of years to calculate confidence intervals for.

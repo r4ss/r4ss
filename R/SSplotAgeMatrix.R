@@ -4,7 +4,7 @@
 #' as a histogram. Values are from the AGE_LENGTH_KEY and AGE_AGE_KEY sections
 #' of Report.sso (ALK and AAK in the list created by SS_output)
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param option Switch set to either 1 for length at true age or
 #' 2 for obs. age at true age
 #' @param slices Optional input to choose which matrix (slice of the 3D-array)
@@ -23,17 +23,6 @@
 #' the polygon up.
 #' @param shift_lo A numeric value specifying the amount to shift the bottom
 #' of the polygon up.
-#' @template plot
-#' @template print
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template mainTitle
-#' @template plotdir
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [SSplotNumbers()]

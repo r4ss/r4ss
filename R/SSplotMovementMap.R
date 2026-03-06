@@ -4,7 +4,7 @@
 #' rates between cells.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param xlim range of longitude values in the map
 #' @param ylim range of latitude values in the map
 #' @param polygonlist a list of data frames, each with two columns representing

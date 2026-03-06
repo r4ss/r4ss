@@ -62,7 +62,10 @@ The default is \code{res = 300}.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 \code{help("png")} in R for details).}
 
-\item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
+\item{mar}{Either NULL to allow the default (which depends on whether the
+main title is included or not) or a numerical vector of the form
+c(bottom, left, top, right) which gives the number of lines of margin to
+be specified on the four sides of the plot, which is passed to \code{par()}.}
 }
 \description{
 Plots the summary F (or harvest rate) as set up in the starter file Needs a

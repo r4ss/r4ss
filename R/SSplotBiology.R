@@ -3,9 +3,7 @@
 #' Plot biology related quantities from Stock Synthesis model output, including
 #' mean weight, maturity, fecundity, and spawning output.
 #'
-#' @template replist
-#' @template plot
-#' @template print
+#' @inheritParams r4ss_params
 #' @param add add to existing plot
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:
@@ -48,29 +46,16 @@
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
 #' @param colvec vector of length 3 with colors for various points/lines
-#' @template areacols
 #' @param ltyvec vector of length 2 with lty for females/males in growth plots
 #' values can be applied to other plots in the future
 #' @param shadealpha Transparency parameter used to make default shadecol
 #' values (see ?rgb for more info)
-#' @template legendloc
-#' @template plotdir
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template pheight_tall
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
 #' @param imageplot_text Whether to add numerical text to the image plots
 #' when using weight at age. Defaults to FALSE.
 #' @param imageplot_text_round The number of significant digits to which
 #' the image plot text is rounded. Defaults to 0, meaning whole numbers. If
 #' all your values are small and there's no contrast in the text, you might
 #' want to make this 1 or 2.
-#' @template mainTitle
-#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

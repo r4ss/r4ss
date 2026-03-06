@@ -6,7 +6,7 @@
 #' decreases the need for users to pre-specify a width when reading
 #' in files.
 #'
-#' @template file
+#' @inheritParams r4ss_params
 #' @param nrows Deprecated.
 #' @param skip integer: the number of lines of the data file to skip
 #' before beginning to read data.

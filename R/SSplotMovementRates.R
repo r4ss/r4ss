@@ -5,27 +5,16 @@
 #' pattern across years (if the MGparm_By_Year_after_adjustments table (report:7)
 #' is available in the Report.sso file)
 #'
-#' @template replist
-#' @template plot
-#' @template print
+#' @inheritParams r4ss_params
 #' @param subplots which subplots to create.
-#' @template plotdir
 #' @param colvec vector of colors for each movement rate in the plot
 #' @param ylim optional input for y range of the plot. By default plot ranges
 #' from 0 to 10% above highest movement rate (not including fish staying in an
 #' area).
 #' @param legend add a legend designating which color goes with which pair of
 #' areas?
-#' @template legendloc
 #' @param moveseas choice of season for which movement rates are shown
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()], [SSplotMovementRates()],

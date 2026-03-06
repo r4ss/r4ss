@@ -6,7 +6,7 @@
 #' groundfish assessments. Additionally, .csv files of historical catches,
 #' time-series, and numbers-at-age are created.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param plotfolder Directory where a new `tables` directory will be created,
 #'   which will be used to store the output from this function. The default is
 #'   the dir location where the Report.sso file is located.
@@ -15,7 +15,6 @@
 #' @param es_only A logical that specifies if only the executive summary tables
 #'   should be produced. The default is `FALSE`, which leads to all executive
 #'   summary and auxiliary tables being produced (see Return).
-#' @template fleetnames
 #' @param add_text A single character object, where the default is `"model
 #'   area"`. The text will be added to some of the table captions to indicate
 #'   what the results apply to. Besides the default, one could use `"base
@@ -58,7 +57,6 @@
 #'   `FALSE`.
 #' @param match_digits Deprecated as of version 1.49.1 because this function
 #'   just returns an unformatted csv file now.
-#' @template verbose
 #'
 #' @return
 #' Individual .csv files for each executive summary table and additional tables

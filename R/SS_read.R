@@ -14,7 +14,7 @@
 #' @param ss_new A logical that controls if the `.ss_new` files or
 #'   the original input files are read in.
 #'   The default is to read the original files.
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Ian G. Taylor, Kelli F. Johnson
 #' @return An invisible list is returned.
 #' The first element (`dir`) is the directory that was provided in the

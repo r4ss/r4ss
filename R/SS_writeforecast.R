@@ -5,13 +5,11 @@
 #'
 #'
 #' @param mylist List object created by [SS_readforecast()].
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param file Filename for new forecast file. Default="forecast.ss".
 #' @param writeAll Should the function continue even if Forecast=0
 #' (at which point SS stops reading, and remaining elements in list may not be
 #' available, depending on settings used in SS_readforecast)
-#' @template overwrite
-#' @template verbose
 #' @author Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @family read/write functions

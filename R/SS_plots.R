@@ -5,7 +5,7 @@
 #' multiple PNG files. This is now just a wrapper which calls on separate
 #' functions to make all the plots.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param plot Plot sets to be created, see list of plots below.  Use to
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
 #' not available in the model run will automatically be skipped, whether called
@@ -56,23 +56,18 @@
 #' can be either relative (to the working directory) or absolute paths.
 #' The function will attempt to create the directory it doesn't exist, but it
 #' does not do so recursively.
-#' @template fleets
 #' @param areas Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing areas for which plots should be made in a multi-area model.
 #' By default, plots will be made for all areas (excepting cases where the
 #' function has not yet been updated for multi-area models). Default="all".
-#' @template fleetnames
 #' @param fleetcols Either the string "default", or a vector of colors to use
 #' for each fleet.  Default="default".
 #' @param fleetlty Vector of line types used for each fleet in some plots.
 #' Default=1.
 #' @param fleetpch Vector of point types used for each fleet in some plots.
 #' Default=1.
-#' @template lwd
-#' @template areacols
 #' @param areanames Optional vector of names for each area used in titles.
 #' Default="default".
-#' @template verbose
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the timeseries plots and
@@ -134,14 +129,6 @@
 #' @param effNline show line for effective sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param showlegend Display legends in various plots?
-#' @template pwidth
-#' @template pheight
-#' @template pheight_tall
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template mainTitle
-#' @template cex.main
 #' @param selexlines Vector controlling which lines should be shown on
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.
@@ -170,7 +157,6 @@
 #' Default=F.
 #' @param catchbars show catch by fleet as barplot instead of stacked polygons
 #' (default=TRUE)
-#' @template legendloc
 #' @param minyr First year to show in time-series and time-varying plots
 #' @param maxyr Last year to show in time-series and time-varying plots. This
 #' can either be an alternative to, or redundant with, the forecastplot input.

@@ -8,7 +8,7 @@
 #' contained within the list produced by this function.
 #'
 #'
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param dir.mcmc Optional directory containing MCMC output. This can either be
 #' relative to `dir`, such that `file.path(dir, dir.mcmc)`
 #' will end up in the right place, or an absolute path.
@@ -23,7 +23,6 @@
 #' @param warn Read the Warning.sso file?
 #' @param covar Read covar.sso?
 #' @param readwt Read the weight-at-age file?
-#' @template verbose
 #' @param printstats Print summary statistics about the output to the R GUI?
 #' @param hidewarn Hides some warnings output from the R GUI.
 #' @param NoCompOK Allow the function to work without a CompReport file.

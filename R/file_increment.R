@@ -10,7 +10,7 @@
 #' @param path Directory where model files are located.
 #' @param i An integer value to append to the file name before the
 #' `.sso` extension.
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param pattern A character value specifying the file names to search
 #' for in `getwd()`.
 #' @author Kelli F. Johnson

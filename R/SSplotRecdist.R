@@ -5,9 +5,7 @@
 #' file.
 #'
 #'
-#' @template replist
-#' @template plot
-#' @template print
+#' @inheritParams r4ss_params
 #' @param areanames optional vector to replace c("Area1","Area2",...)
 #' @param seasnames optional vector to replace c("Season1","Season2",...)
 #' @param xlab optional x-axis label (if the area names aren\'t informative
@@ -19,14 +17,6 @@
 #' "Initial", "Benchmark", and "End year"
 #' @param sexes either 1 to only plot female distribution, 2 for males, or 1:2
 #' to make both plots
-#' @template plotdir
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SSplotRecdevs()]

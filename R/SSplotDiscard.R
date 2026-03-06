@@ -3,7 +3,7 @@
 #' Plot fit to discard fraction from Stock Synthesis output file.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots Vector of which plots to make
 #' \itemize{
 #'   \item 1 data only
@@ -13,14 +13,8 @@
 #' }
 #' If `plotdat = FALSE` then subplots 1 and 3 are not created, regardless of
 #' choice of `subplots`.
-#' @template plot
-#' @template print
-#' @template plotdir
-#' @template fleets
-#' @template fleetnames
 #' @param datplot Make data-only plot of discards? This can override the choice
 #' of `subplots`.
-#' @template labels
 #' @param yhi Maximum y-value which will always be included in the plot
 #' (all data included regardless). Default = 1 so that discard fractions are always
 #' plotted on a 0-1 range, but total discard amounts which are greater than this value
@@ -29,13 +23,6 @@
 #' discard amounts are very high)
 #' @param col1 First color to use in plot (for expected values)
 #' @param col2 Second color to use in plot (for observations and intervals)
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template verbose
 #' @author Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
 #' @export
 #' @seealso [SS_plots()]

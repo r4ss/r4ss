@@ -3,8 +3,7 @@
 #' read Stock Synthesis ss_summary.sso file into list object in R
 #'
 #'
-#' @template file
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @return Output will be a list with four elements, `header`,
 #' `likelihoods`, `parameters`, and `derived_quants`.
 #' Each is a data frame with rownames indicating the quantity shown in each row.

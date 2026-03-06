@@ -1,6 +1,6 @@
 #' Deprecated function to tune composition data, renamed to tune_comps()
 #'
-#' @template deprecated_dots
+#' @inheritParams r4ss_params
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_tune_comps() has been renamed as [tune_comps()]. See
@@ -75,8 +75,7 @@ SS_tune_comps <-
 #' tables, to both align the notation among them and also facilitate the
 #' future addition of the Multivariate-Tweedie likelihood.
 #'
-#' @template replist
-#' @template fleets
+#' @inheritParams r4ss_params
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
 #'  The first option, `none`, will only return information about the
 #'  Francis and MI weights that are suggested.
@@ -92,13 +91,9 @@ SS_tune_comps <-
 #' @param init_run Should the model be run before calculating the tunings?
 #'  Defaults to `FALSE`. This run is not counted as an iteration for
 #'  `niters_tuning` and will not be used if `option = "DM"`.
-#' @template dir
-#' @template verbose
 #' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
 #'  FALSE, which caps tuning values at 1.
-#' @template exe
 #' @param model Deprecated. Use `exe` instead.
-#' @template extras
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `show_in_console`.
 #'
@@ -603,12 +598,11 @@ tune_comps <- function(
 
 #' Get the tuning table
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param fleets A vector of fleet numbers
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'
 #' @param digits Number of digits to round numbers to
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
-#' @template verbose
 get_tuning_table <- function(
   replist,
   fleets,

@@ -7,15 +7,12 @@
 #' but the name seems to have stuck.
 #' @param summaryoutput List created by the function
 #' [SSsummarize()].
-#' @template plot
-#' @template print
+#' @inheritParams r4ss_params
 #' @param component Which likelihood component to plot. Default is "Length_like".
 #' @param main Title for plot. Should match component.
 #' @param models Optional subset of the models described in
 #' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
-#' @template fleets
-#' @template fleetnames
 #' @param profile.string Character string used to find parameter over which the
 #' profile was conducted. If `exact=FALSE`, this can be a substring of
 #' one of the SS parameter labels found in the Report.sso file.
@@ -31,7 +28,6 @@
 #' @param pch Optional vector of plot characters for the points.
 #' @param lty Line total for the likelihood components.
 #' @param lty.total Line type for the total likelihood.
-#' @template lwd
 #' @param lwd.total Line width for the total likelihood.
 #' @param cex Character expansion for the points representing the likelihood
 #' components.
@@ -46,21 +42,11 @@
 #' @param yaxs The style of axis interval calculation to be used for the y-axis
 #' (see ?par for more info).
 #' @param type Line type (see ?plot for more info).
-#' @template legend
-#' @template legendloc
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template plotdir
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 #' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
 #' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
 #' can be adjusted using the `cutoff_prob` below.
 #' @param cutoff_prob Probability associated with `add_cutoff` above.
-#' @template verbose
 #' @param fleetgroups Optional character vector, with length equal to
 #' the number of declared fleets, where fleets with the same value are
 #' aggregated

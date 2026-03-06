@@ -2,10 +2,8 @@
 #'
 #' Plot time series of SPR, 1-SPR, the chosen SPR ratio and the phase plot.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param add add to existing plot (not yet implemented)
-#' @template plot
-#' @template print
 #' @param uncertainty include plots showing uncertainty?
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:
@@ -31,16 +29,6 @@
 #' @param minbthresh minimum biomass threshold to be used in plots
 #' showing depletion. May be omitted by setting to NA. "default" chooses
 #' based on model output.
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template pheight_tall
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template plotdir
-#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

@@ -7,8 +7,10 @@
 #' @param directory Directory where all results are located, one level above
 #' directory for particular run.
 #' @param run Directory with files from a particular run.
-#' @template file
-#' @templateVar file_t posteriors
+#' @param file Filename either with full path or relative to working directory.
+#'   Contents of the file that is referenced here should contain posterior samples
+#'   for nuisance parameters, e.g., posteriors.sso or
+#'   something written by \code{\link{SSgetMCMC}}.
 #' @param namefile The (optional) file name of the dimension and names of
 #' posteriors.
 #' @param names Read in names file (T) or use generic naming (F).

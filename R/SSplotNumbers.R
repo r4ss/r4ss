@@ -5,7 +5,7 @@
 #' sex-ratio, and ageing imprecision patterns.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows,
 #' \itemize{
@@ -21,13 +21,10 @@
 #'   \item 9: no plot yet
 #'   \item 10: Distribution of observed age at true age by ageing error type
 #' }
-#' @template plot
-#' @template print
 #' @param numbers.unit Units for numbers. Default (based on typical Stock Synthesis
 #' setup) is thousands (numbers.unit=1000).
 #' @param areas optional subset of areas to plot for spatial models
 #' @param areanames names for areas. Default is to use Area1, Area2,...
-#' @template areacols
 #' @param pntscalar maximum bubble size for bubble plots; each plot scaled
 #' independently based on this maximum size and the values plotted. Often some
 #' plots look better with one value and others with a larger or smaller value.
@@ -40,16 +37,6 @@
 #' with SSv3.11)
 #' @param meanlines add lines for mean age or length on top of bubble plots
 #' @param add add to existing plot? (not yet implemented)
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template cex.main
-#' @template plotdir
-#' @template mainTitle
-#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_output()], [SS_plots()]

@@ -4,8 +4,7 @@
 #' model with any additional arguments specified by `extras`.
 #'
 #' @param dir Directory containing the model input files.
-#' @template exe
-#' @template extras
+#' @inheritParams r4ss_params
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted while running iteratively.
 #' @param show_in_console Show output in the R console? If FALSE,
@@ -13,7 +12,6 @@
 #' `console_output_file`) at the end of the model run.
 #' @param console_output_file File to store console output (if
 #' show_in_console = FALSE).
-#' @template verbose
 #'
 #' @return Returns one of five messages:
 #' "ran model", "model run failed", "unknown run status", "not a

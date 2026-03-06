@@ -5,11 +5,9 @@
 #' shown in units of both numbers and biomass.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
-#' @template plot
-#' @template print
 #' @param cohortcols Vector of colors to show for each cohort. Default is range
 #' of colors shade indicating time period.
 #' @param cohortfrac What fraction of the cohorts to include in plot. If value
@@ -23,17 +21,7 @@
 #' `cohortlabvec`.
 #' @param cohortlabvec Optional vector of birth years for cohorts to label in
 #' plot. Value overrides `cohortlabfrac`.
-#' @template lwd
-#' @template plotdir
 #' @param xlab x-label for all plots
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

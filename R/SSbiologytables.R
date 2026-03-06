@@ -5,14 +5,12 @@
 #' for West Coast groundfish.  Works with Stock Synthesis versions 3.30.12
 #' and later.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param printfolder The sub-directory under 'dir' (see below) in which the
 #' PNG files will be located.  The default sub-directory is "plots".
 #' The directory will be created if it doesn not exist.
 #' If 'printfolder' is set to "", it is ignored and the PNG files will
 #' be located in the directory specified by 'dir'.
-#' @template dir
-#' @template fleetnames
 #' @param selexyr The year to summarize selectivity, the default is the final
 #' model yr strings to use for each fleet name. Default="default".
 #'

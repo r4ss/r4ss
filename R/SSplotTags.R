@@ -3,7 +3,7 @@
 #' Plot observed and expected tag recaptures in aggregate and by tag group.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots vector controlling which subplots to create
 #' @param latency period of tag mixing to exclude from plots (in future could
 #' be included in SS output)
@@ -13,27 +13,16 @@
 #' @param cols number or columns of panels for regular plots
 #' @param tagrows number or rows of panels for multi-panel plots
 #' @param tagcols number or columns of panels for multi-panel plots
-#' @template plot
-#' @template print
 #' @param pntscalar maximum bubble size for balloon plots; each plot scaled
 #' independently based on this maximum size and the values plotted. Often some
 #' plots look better with one value and others with a larger or smaller value.
 #' Default=2.6
 #' @param minnbubble minimum number of years below which blank years will be
 #' added to bubble plots to avoid cropping
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template cex.main
 #' @param col1 color for bubbles
 #' @param col2 color for lines with expected values
 #' @param col3 shading color for observations within latency period
 #' @param col4 shading color for observations after latency period
-#' @template labels
-#' @template plotdir
-#' @template verbose
 #' @author Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 #' @import ggplot2
 #' @export

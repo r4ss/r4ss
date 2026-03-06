@@ -3,7 +3,7 @@
 #' Plot composition data and fits from Stock Synthesis output.  Multi-figure
 #' plots depend on `make_multifig`.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows, where subplots 21 to 24
 #' (aggregated across years) are provided first, and subplots
@@ -42,10 +42,6 @@
 #' conditional age-at-length data will be produced for all years.  Useful to
 #' see if growth curves are ok, or to see the information on year classes move
 #' through the conditional data. Default=-1.
-#' @template plot
-#' @template print
-#' @template fleets
-#' @template fleetnames
 #' @param sexes which sexes to show plots for. Default="all" which will include
 #' males, females, and unsexed. This option is not fully implemented for all
 #' plots.
@@ -89,13 +85,6 @@
 #' transparent red)
 #' @param blue What color to use for males in bubble plots (default is slightly
 #' transparent blue)
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template plotdir
-#' @template cex.main
 #' @param linepos should lines be added before points (linepos=1) or after
 #' (linepos=2)?
 #' @param fitbar show fit to bars instead of points
@@ -105,7 +94,6 @@
 #' input vs. effective sample size?
 #' @param cohortlines optional vector of birth years for cohorts for which to
 #' add growth curves to numbers at length bubble plots
-#' @template labels
 #' @param printmkt show market categories in plot titles?
 #' @param printsex show sex in plot titles?
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
@@ -129,13 +117,11 @@
 #' sample size. Occasionally a calculation of effective N blows up to very
 #' large numbers, rendering it impossible to observe the relationship for other
 #' data. Default=5000.
-#' @template verbose
 #' @param scalebins Rescale expected and observed proportions by dividing by
 #' bin width for models where bins have different widths? Caution!: May not
 #' work correctly in all cases.
 #' @param addMeans Add parameter means in addition to medians for MCMC
 #' posterior distributions in which the median and mean differ.
-#' @template mainTitle
 #' @param \dots additional arguments that will be passed to
 #' the `par` command in the [make_multifig()] function.
 #' @author Ian Taylor

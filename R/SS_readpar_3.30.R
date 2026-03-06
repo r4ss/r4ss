@@ -10,7 +10,7 @@
 #' @param ctlsource list or character. If list, should be a list produced
 #' from [SS_writectl()]. If character, should be the full file location of an
 #' SS control file.
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Nathan R. Vaughan
 #' @export
 #' @seealso [SS_writepar_3.30()],

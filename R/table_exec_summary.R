@@ -7,7 +7,7 @@
 #' also created. This function is modified from `SSexecutivesummary()`
 #' associated with the adoption of the {asar} template.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param dir Directory where the .rda files will be written. The default value
 #'   is NULL where a table folder will be created where the Report.sso file is
 #'   located associated with `replist`.
@@ -23,7 +23,6 @@
 #' @param endyr Optional input to choose a different ending year for tables,
 #'   which could be useful for catch-only updates. The default is `NULL`, which
 #'   leads to using the ending year defined in Report.sso.
-#' @template verbose
 #'
 #' @return
 #' Individual .rda files containing a list of table and caption

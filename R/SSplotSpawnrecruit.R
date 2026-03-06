@@ -3,26 +3,16 @@
 #' Plot spawner-recruit curve based on output from Stock Synthesis model.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots Vector of which subplots to show.  1=plot without labels,
 #' 2=plot with year labels.
 #' @param subplot Deprecated - use subplots.
 #' @param add add to existing plot?
-#' @template plot
-#' @template print
 #' @param xlim optional control of x range
 #' @param ylim optional control of y range
 #' @param labels vector containing x-axis label for models with spawning biomass
 #' in metric tons, y-axis label, and alternative x-axis for models with a fecundity
 #' relationship making spawning output not equal to spawning biomass.
-#' @template bioscale
-#' @template plotdir
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template verbose
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points
 #' (where the 4th value for the points is the color of the circle around the
 #' background color provided by `ptcol`
@@ -31,8 +21,6 @@
 #' @param ptcol vector or single value for the color of the points, "default"
 #' will by replaced by a vector of colors of length equal to
 #' `nrow(replist[["recruit"]])`
-#' @template legend
-#' @template legendloc
 #' @param minyr minimum year of recruitment deviation to show in plot
 #' @param textmindev minimum recruitment deviation for label to be added so
 #' only extreme devs are labeled (labels are added to first and last years as

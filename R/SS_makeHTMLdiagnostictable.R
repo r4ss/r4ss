@@ -3,8 +3,7 @@
 #' Creates html tables that show diagnostic outputs, including status
 #' checks, gradients, and correlations.
 #'
-#' @template replist
-#' @template plotdir
+#' @inheritParams r4ss_params
 #' @param gradmax the largest gradient value for estimated parameter
 #' @param ncor number of rows in tables of correlations
 #' @param cormax threshold for highlighting high correlations

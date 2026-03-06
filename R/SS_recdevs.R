@@ -17,11 +17,10 @@
 #' deviation = sigmaR? Default=TRUE.
 #' @param scaleyrs Vector of years over which rescaling (if chosen) should
 #' occur.
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param ctlfile Name of control file to modify.  Default="control.ss_new".
 #' @param newctlfile Name of new file to output modified control file.
 #' Default="control_modified.ss".
-#' @template verbose
 #' @param writectl Write new file? Default=TRUE.
 #' @param returnctl Return contents ctl file as an object in the R workspace.
 #' Default=FALSE.

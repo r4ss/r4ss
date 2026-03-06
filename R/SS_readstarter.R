@@ -1,7 +1,6 @@
 #' Read Stock Synthesis starter file as a list
 #'
-#' @template file
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @return A list with one element for each line of input values.
 #' List elements containing the name of the control and data file are
 #' particularly helpful, i.e., `ctlfile` and `datfile`, respectively.

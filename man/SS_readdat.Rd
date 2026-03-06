@@ -14,7 +14,6 @@ SS_readdat(
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
-
 See the formal arguments for a possible default filename.}
 
 \item{version}{SS version number.

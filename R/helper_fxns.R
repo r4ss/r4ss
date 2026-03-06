@@ -7,7 +7,7 @@
 #' the file new data file was named `data.ss_new`.
 #' `_echo` was added to the name when the file was parsed into three separate
 #' files.
-#' @template dir
+#' @inheritParams r4ss_params
 #' @return A string with the name of the data .ss_new file. If not found, will
 #'  be NA. Both of strings are searched for using `dir(pattern = )` and
 #'  if both exist, then `data_echo.ss_new` is returned. If the `dir` input
@@ -30,8 +30,7 @@ get_dat_new_name <- function(dir) {
 #' Get the name of the .par file in a directory
 #'
 #' In previous versions of Stock Synthesis,
-#' @template dir
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @return A string with the name of the .par file. If not found, will
 #'  be NA. If multiple files exist, preference is given to ss3.par
 #' (default as of 3.30.22.1), followed by ss.par, followed by the most recently
@@ -197,7 +196,7 @@ SSdiagsTime2Year <- function(ss3out, time.steps = 0.25, end.time) {
 #' ss3diags function to add legend to plots
 #'
 #' @param legendlabels Optional vector of labels to include in legend.
-#' @template legendloc
+#' @inheritParams r4ss_params
 #' @param legendorder Optional vector of model numbers that can be used to have
 #' the legend display the model names in an order that is different than that
 #' which is represented in the summary input object.
@@ -310,12 +309,7 @@ rich.colors.short <- function(n, alpha = 1) {
 #'
 #' @param plotinfo table of information about all plots
 #' @param file filename to write to (including .png extension)
-#' @template plotdir
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
+#' @inheritParams r4ss_params
 #' @param caption caption for the image
 #' @param alt_text alternative text for screen readers
 #' (if left as NA then will be set by SS_html() based on the caption)
@@ -370,7 +364,7 @@ save_png <- function(
 #' this was previously contained within SS_plots() and 4 of the SSplotXXX()
 #' functions.
 #'
-#' @template areacols
+#' @inheritParams r4ss_params
 #' @param nareas number of areas
 #' @author Ian G. Taylor
 

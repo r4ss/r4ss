@@ -9,10 +9,9 @@
 #'
 #' @param datlist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new data file.
-#' @template overwrite
+#' @inheritParams r4ss_params
 #' @param faster Deprecated. Speed up writing by writing length and age comps without aligning
 #' the columns (by using write.table instead of print.data.frame)
-#' @template verbose
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kelli F. Johnson,
 #' Chantel R. Wetzel
 #' @export

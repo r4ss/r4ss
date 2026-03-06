@@ -7,7 +7,7 @@
 #' [nmfs-ost/ss3-test-models repository](https://github.com/nmfs-ost/ss3-test-models#test-models)
 #' that you want to download. The default is `"main"`, which is the
 #' stable/default branch.
-#' @template overwrite
+#' @inheritParams r4ss_params
 #' @return Invisibly return a logical revealing whether the files were copied
 #'  (TRUE) or not (FALSE). This function is used for its side effects of
 #'  downloading SS3 test models.

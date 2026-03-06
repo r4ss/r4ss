@@ -7,7 +7,7 @@
 DoProjectPlots(...)
 }
 \arguments{
-\item{...}{Any arguments associated with the now-deprecated functions.}
+\item{...}{Additional arguments (unused, for compatibility only).}
 }
 \description{
 The function has been moved to

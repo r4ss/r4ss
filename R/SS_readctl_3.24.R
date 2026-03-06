@@ -7,9 +7,7 @@
 #' Support for 3.24 models within the r4ss `SS_read*` and `SS_write*()`
 #' functions is ending, so please update models to 3.30.
 #'
-#' @template file
-#' @template verbose
-#' @template readctl_vars
+#' @inheritParams r4ss_params
 #' @param Nfleet number of fisheries in the model. This information is also not
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets in the model. This information is also not

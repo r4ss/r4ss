@@ -7,7 +7,7 @@
 #' Used by [profile()] and the \pkg{ss3sim} package.
 #'
 #'
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #'   Default="control_modified.ss".
@@ -70,7 +70,6 @@
 #'   value to the given parameter but change the remaining parameters, where
 #'   the vector of values needs to be in the same order as either
 #'   `linenums` or `strings`.
-#' @template verbose
 #' @author Ian Taylor, Christine Stawitz, Chantel Wetzel, Kiva L. Oken
 #' @seealso [SS_parlines()], [profile()]
 #' @export

@@ -6,8 +6,7 @@
 #' (and potentially additional functions in the future).
 #'
 #'
-#' @template file
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param echoall Deprecated.
 #' @param section Which data set to read. Only applies for a data.ss_new file
 #' created by Stock Synthesis. Allows the choice of either expected values

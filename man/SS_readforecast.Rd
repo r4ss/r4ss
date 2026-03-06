@@ -16,7 +16,6 @@ SS_readforecast(
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
-
 See the formal arguments for a possible default filename.}
 
 \item{Nfleets}{Number of fleets (not required in 3.30).}
@@ -26,7 +25,7 @@ See the formal arguments for a possible default filename.}
 \item{nseas}{number of seasons (not required in 3.30).}
 
 \item{version}{SS version number. Currently "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).
+either as character or numeric values (noting that numeric 3.30 = 3.3).
 \code{version = NULL} is no longer the default or an allowed entry.
 The default is \code{version = "3.30"}.}
 

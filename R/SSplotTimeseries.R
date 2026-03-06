@@ -4,7 +4,7 @@
 #' report file. Some values have optional uncertainty intervals.
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplot number controlling which subplot to create
 #' Numbering of subplots is as follows, where the spawning biomass plots
 #' (7 to 10) are provided first when this function is called by [SS_plots()]:
@@ -27,33 +27,18 @@
 #' }
 #' @param add add to existing plot? (not yet implemented)
 #' @param areas optional subset of areas to plot for spatial models
-#' @template areacols
 #' @param areanames names for areas. Default is to use Area1, Area2,...
 #' @param forecastplot add points from forecast years
 #' @param uncertainty add intervals around quantities for which uncertainty is
 #' available
-#' @template bioscale
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
-#' @template plot
-#' @template print
-#' @template plotdir
-#' @template verbose
 #' @param btarg Target depletion to be used in plots showing depletion. May be
 #' omitted by setting to 0. "default" chooses value based on modeloutput.
 #' @param minbthresh Threshold depletion to be used in plots showing depletion.
 #' May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
 #' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
 #' @param xlab x axis label for all plots
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template mainTitle
-#' @template mar
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

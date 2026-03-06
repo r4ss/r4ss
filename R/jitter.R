@@ -1,6 +1,6 @@
 #' Deprecated function to run jitters, renamed to jitter()
 #'
-#' @template deprecated_dots
+#' @inheritParams r4ss_params
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_RunJitter() has been renamed as [jitter()]. See
@@ -40,9 +40,7 @@ SS_RunJitter <-
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   The default is `NULL`, which will leave the starter file unchanged.
-#' @template exe
-#' @template verbose
-#' @template extras
+#' @inheritParams r4ss_params
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `show_in_console`, and `skipfinished`.
 #'
@@ -267,9 +265,7 @@ jitter <- function(
 #' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
 #' @param dir Directory where model files are located.
-#' @template extras
-#' @template exe
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
 #'   Cannot be `NULL`. Defaults to zero (initial values read from control file).

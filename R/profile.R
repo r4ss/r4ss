@@ -1,6 +1,6 @@
 #' Deprecated function to run a likelihood profile, renamed to profile().
 #'
-#' @template deprecated_dots
+#' @inheritParams r4ss_params
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_profile() has been renamed as [profile()]. See
@@ -22,7 +22,7 @@ SS_profile <- function(...) {
 #' Iteratively changes the control file for the chosen parameter. This
 #' function was formerly called `SS_profile()`.
 #'
-#' @template dir
+#' @inheritParams r4ss_params
 #' @param oldctlfile Source control file. Default = "control.ss_new"
 #' @param masterctlfile Deprecated. Use `oldctlfile` instead.
 #' @param newctlfile Destination for new control files (must match entry in
@@ -55,8 +55,6 @@ SS_profile <- function(...) {
 #' @param prior_check Check to make sure the starter file is set to include
 #' the prior likelihood contribution in the total likelihood.  Default = TRUE.
 #' @param read_like Deprecated.
-#' @template exe
-#' @template verbose
 #' @param conv_criteria Maximum gradient for a model to be considered converged.
 #' Defaults to 0.01.
 #' @param ... Additional arguments passed to [r4ss::run()], such as

@@ -4,7 +4,7 @@
 #' production is based on Walters et al. (2008).
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:
 #' \itemize{
@@ -17,21 +17,9 @@
 #' @param refpoints character vector of which reference points to display in
 #' subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.
 #' @param add add to existing plot? (not yet implemented)
-#' @template plot
-#' @template print
-#' @template labels
 #' @param col line color for equilibrium plot
 #' @param col2 line color for dynamic surplus production plot
 #' @param lty line type (only applied to equilibrium yield plot at this time)
-#' @template lwd
-#' @template cex.main
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template plotdir
-#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
