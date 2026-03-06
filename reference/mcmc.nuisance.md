@@ -38,7 +38,6 @@ mcmc.nuisance(
 - file:
 
   Filename either with full path or relative to working directory.
-
   Contents of the file that is referenced here should contain posterior
   samples for nuisance parameters, e.g., posteriors.sso or something
   written by

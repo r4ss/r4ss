@@ -17,9 +17,8 @@ SS_readdat_3.24(
 
 - file:
 
-  Filename either with full path or relative to working directory.
-
-  See the formal arguments for a possible default filename.
+  Filename either with full path or relative to working directory. See
+  the formal arguments for a possible default filename.
 
 - verbose:
 

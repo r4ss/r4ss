@@ -12,9 +12,8 @@ SS_read_summary(file = "ss_summary.sso", verbose = FALSE)
 
 - file:
 
-  Filename either with full path or relative to working directory.
-
-  See the formal arguments for a possible default filename.
+  Filename either with full path or relative to working directory. See
+  the formal arguments for a possible default filename.
 
 - verbose:
 

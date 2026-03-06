@@ -87,6 +87,10 @@ plot_twopanel_comparison(
 
   A logical value specifying if output should be printed to the screen.
 
+- ...:
+
+  Additional arguments (unused, for compatibility only).
+
 - dots:
 
   additional arguments that will get passed to

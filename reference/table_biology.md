@@ -32,7 +32,8 @@ table_biology(
 
 - fleetnames:
 
-  Optional replacement for fleetnames used in data file.
+  String of fleet names. Default is NULL which will use the the model
+  fleet names.
 
 - selexyr:
 

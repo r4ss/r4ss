@@ -31,9 +31,8 @@ SS_readctl_3.30(
 
 - file:
 
-  Filename either with full path or relative to working directory.
-
-  See the formal arguments for a possible default filename.
+  Filename either with full path or relative to working directory. See
+  the formal arguments for a possible default filename.
 
 - verbose:
 
@@ -58,7 +57,7 @@ SS_readctl_3.30(
 - N_areas:
 
   number of spatial areas in the model. Default = 1. This information is
-  not explicitly available in control file and used only if if
+  not explicitly available in control file and used only if
   `use_datlist = FALSE`.
 
 - Nages:
@@ -76,7 +75,7 @@ SS_readctl_3.30(
   number of population bins in the model. This information is also not
   explicitly available in control file and this information is only
   required if length based maturity vector is directly supplied
-  (Maturity option of 6). and used only if `use_datlist = FALSE`.
+  (Maturity option of 6). Used only if `use_datlist = FALSE`.
 
 - Nfleets:
 
@@ -91,18 +90,18 @@ SS_readctl_3.30(
 
 - Do_AgeKey:
 
-  Flag to indicate if 7 additional ageing error parameters to be read
-  set 1 (but in fact any non zero numeric in R) or TRUE to enable to
-  read them 0 or FALSE to disable them. This information is not
+  Flag to indicate if 7 additional ageing error parameters to be read.
+  Set 1 (but in fact any non zero numeric in R) or TRUE to enable
+  reading them; 0 or FALSE to disable them. This information is not
   explicitly available in control file and used only if
   `use_datlist = FALSE`.
 
 - N_tag_groups:
 
-  number of tag release group. Default =NA. This information is not
-  explicitly available control file and used only if
+  number of tag release group. Default = NA. This information is not
+  explicitly available in control file and used only if
   `use_datlist = FALSE`. This information is only required if custom tag
-  parameters is enabled (TG_custom=1)
+  parameters is enabled (TG_custom=1).
 
 - catch_mult_fleets:
 

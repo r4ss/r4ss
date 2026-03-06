@@ -12,9 +12,8 @@ SS_readwtatage(file = "wtatage.ss", verbose = TRUE)
 
 - file:
 
-  Filename either with full path or relative to working directory.
-
-  See the formal arguments for a possible default filename.
+  Filename either with full path or relative to working directory. See
+  the formal arguments for a possible default filename.
 
 - verbose:
 

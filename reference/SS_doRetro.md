@@ -14,7 +14,7 @@ SS_doRetro(...)
 
 - ...:
 
-  Any arguments associated with the now-deprecated functions.
+  Additional arguments (unused, for compatibility only).
 
 ## See also
 
