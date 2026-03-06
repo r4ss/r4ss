@@ -405,7 +405,7 @@ SS_output <-
 
     if (verbose) {
       if ((maxnonblank + 1) == ncols) {
-        cli::cli_alert_success("Got Report files using ncols = {ncols}")
+        cli::cli_alert_success("Got Report file (using ncols = {ncols})")
       }
       if ((maxnonblank + 1) < ncols) {
         cli::cli_alert_success(
@@ -593,10 +593,14 @@ SS_output <-
         # number of rows isn't equal to number of warnings, just used to
         # detect empty file
         warnrows <- length(warnlines)
-        if (verbose && warnrows > 0) {
-          cli::cli_alert_success(
-            "Got warning file. Final line:{tail(warnlines, 1)}"
-          )
+        if (verbose) {
+          cli::cli_alert_success("Got warning file")
+
+          if (warnrows > 0) {
+            cli::cli_alert_warning(
+              "Final line shows non-zero number of messages: '{tail(warnlines, 1)}'"
+            )
+          }
         }
       }
     } else {
@@ -997,7 +1001,7 @@ SS_output <-
         duplicates <- compdbase |>
           dplyr::select(-Cum_obs, -Cum_exp) |>
           duplicated()
-        if (verbose) {
+        if (verbose & sum(duplicates) > 0) {
           cli::cli_alert_info(
             "Removing {sum(duplicates)} out of {nrow(compdbase)} rows in CompReport.sso which are duplicates."
           )
@@ -1236,73 +1240,73 @@ SS_output <-
         if (nrow(lendbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(lendbase)} rows of length comp data"
+            " " = "{nrow(lendbase)} rows of length comp data"
           )
         }
         if (nrow(sizedbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(sizedbase)} rows of generalized size comp data"
+            " " = "{nrow(sizedbase)} rows of generalized size comp data"
           )
         }
         if (nrow(agedbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(agedbase)} rows of age comp data"
+            " " = "{nrow(agedbase)} rows of age comp data"
           )
         }
         if (nrow(condbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(condbase)} rows of conditional age-at-length data"
+            " " = "{nrow(condbase)} rows of conditional age-at-length data"
           )
         }
         if (nrow(ghostagedbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(ghostagedbase)} rows of ghost fleet age comp data"
+            " " = "{nrow(ghostagedbase)} rows of ghost fleet age comp data"
           )
         }
         if (nrow(ghostcondbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(ghostcondbase)} rows of ghost fleet conditional age-at-length data"
+            " " = "{nrow(ghostcondbase)} rows of ghost fleet conditional age-at-length data"
           )
         }
         if (nrow(ghostlendbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(ghostlendbase)} rows of ghost fleet length comp data"
+            " " = "{nrow(ghostlendbase)} rows of ghost fleet length comp data"
           )
         }
         if (nrow(ladbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(ladbase)} rows of mean length at age data"
+            " " = "{nrow(ladbase)} rows of mean length at age data"
           )
         }
         if (nrow(wadbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(wadbase)} rows of mean weight at age data"
+            " " = "{nrow(wadbase)} rows of mean weight at age data"
           )
         }
         if (nrow(tagdbase1) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(tagdbase1)} rows of 'TAG1' comp data"
+            " " = "{nrow(tagdbase1)} rows of 'TAG1' comp data"
           )
         }
         if (nrow(tagdbase2) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(tagdbase2)} rows of 'TAG2' comp data"
+            " " = "{nrow(tagdbase2)} rows of 'TAG2' comp data"
           )
         }
         if (nrow(morphcompdbase) > 0) {
           sample_size_bullets <- c(
             sample_size_bullets,
-            "*" = "{nrow(morphcompdbase)} rows of morph comp data"
+            " " = "{nrow(morphcompdbase)} rows of morph comp data"
           )
         }
 
@@ -2853,21 +2857,30 @@ SS_output <-
             fit_len_comps_select <- fit_len_comps |>
               dplyr::rename(Like_sum = Like) |> # like for vector not bin
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
-            lendbase <- dplyr::left_join(lendbase, fit_len_comps_select)
+            lendbase <- suppressMessages(dplyr::left_join(
+              lendbase,
+              fit_len_comps_select
+            ))
           }
           # add info to age comp data
           if (nrow(agedbase) > 0) {
             fit_age_comps_select <- fit_age_comps |>
               dplyr::rename(Like_sum = Like) |> # like for vector not bin
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
-            agedbase <- dplyr::left_join(agedbase, fit_age_comps_select)
+            agedbase <- suppressMessages(dplyr::left_join(
+              agedbase,
+              fit_age_comps_select
+            ))
           }
           # add info to conditional age-at-length comp data
           if (nrow(condbase) > 0) {
             fit_cond_age_select <- fit_age_comps |>
               dplyr::rename(Like_sum = Like) |> # like for vector not bin
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM)
-            condbase <- dplyr::left_join(condbase, fit_cond_age_select)
+            condbase <- suppressMessages(dplyr::left_join(
+              condbase,
+              fit_cond_age_select
+            ))
           }
           # add info to generalized size comp data
           if (nrow(sizedbase) > 0) {
@@ -2875,7 +2888,10 @@ SS_output <-
               dplyr::rename(Like_sum = Like) |> # like for vector not bin
               dplyr::rename(method = Method) |> # making it match what's in sizedbase
               dplyr::select(Fleet, Time, Sexes, Part, Nsamp_DM, method)
-            sizedbase <- dplyr::left_join(sizedbase, fit_size_comps_select)
+            sizedbase <- suppressMessages(dplyr::left_join(
+              sizedbase,
+              fit_size_comps_select
+            ))
           }
         } # end test for whether CompReport.sso info is available
         # end approach used starting in 3.30.21
@@ -3045,9 +3061,6 @@ SS_output <-
       sd = jitter_info[["sigma"]]
     )
 
-    if (verbose) {
-      cli::cli_alert_success("Finished primary run statistics list")
-    }
     flush.console()
 
     # add stuff to list to return
