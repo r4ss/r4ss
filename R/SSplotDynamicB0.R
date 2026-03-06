@@ -56,11 +56,11 @@ SSplotDynamicB0 <- function(
 ) {
   Dynamic_Bzero <- replist[["Dynamic_Bzero"]]
   if (is.null(Dynamic_Bzero)) {
-    warning('No element "Dynamic_Bzero" in replist input')
+     cli::cli_warn('No element "Dynamic_Bzero" in replist input')
     return()
   }
   if (!"SSB_nofishing" %in% names(replist[["Dynamic_Bzero"]])) {
-    warning(
+     cli::cli_warn(
       "Skipping Dynamic B0 plot (not yet working for this model configuration)"
     )
     return()
@@ -133,7 +133,7 @@ SSplotDynamicB0 <- function(
 
   if (uncertainty & nrow(quants_SSB_nofishing) == 0) {
     uncertainty <- FALSE
-    warning(
+     cli::cli_warn(
       "Dynamic B0 not found in derived quantities, ",
       "changing uncertainty to FALSE. ",
       "To get uncertainty, modify control file under ",
@@ -350,7 +350,7 @@ SSplotDynamicB0 <- function(
     }
   }
   if (verbose) {
-    message("Plotting Dynamic B0")
+    cli::cli_alert_info("Plotting Dynamic B0")
   }
   return(invisible(plotinfo))
 }

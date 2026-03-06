@@ -109,7 +109,7 @@ SSplotPars <-
       Prior_Like <- NULL
 
       if (is.na(Ptype)) {
-        warning("problem with prior type interpretation. Ptype:", Ptype)
+        cli::cli_warn("problem with prior type interpretation. Ptype: {Ptype}")
       }
 
       Pconst <- 0.0001
@@ -138,7 +138,7 @@ SSplotPars <-
         Bprior <- tau * mu
         Aprior <- tau * (1 - mu) # CASAL's m and n
         if (Bprior <= 1.0 | Aprior <= 1.0) {
-          warning("bad Beta prior")
+          cli::cli_warn("bad Beta prior")
         }
         Prior_Like <- (1.0 - Bprior) *
           log(Pconst + Pval - Pmin) +
@@ -157,7 +157,7 @@ SSplotPars <-
         if (Pmin > 0.0) {
           Prior_Like <- 0.5 * ((log(Pval) - Pr + 0.5 * Psd^2) / Psd)^2
         } else {
-          warning("cannot do prior in log space for parm with min <=0.0")
+          cli::cli_warn("cannot do prior in log space for parm with min <=0.0")
         }
       }
 
@@ -178,11 +178,10 @@ SSplotPars <-
         Prior_Like <- rep(0., length(Pval))
       }
       if (is.null(Prior_Like)) {
-        warning(
+        cli::cli_warn(
           "Problem calculating prior. The prior type doesn't match ",
-          "any of the options in the SSplotPars function.\n",
-          "Ptype: ",
-          Ptype
+          "any of the options in the SSplotPars function. ",
+          "Ptype: {Ptype}"
         )
       }
       return(Prior_Like)
@@ -204,13 +203,28 @@ SSplotPars <-
       stop("Inputs 'print' and 'add' can't both be TRUE")
     }
     if (print & plot) {
-      warning(
+      cli::cli_warn(
         "Inputs 'print' and 'plot' can't both be TRUE\n",
         "changing to 'plot = FALSE'"
       )
     }
 
     parameters <- replist[["parameters"]]
+
+    # get mcmc results from replist created by SS_output
+    mcmc <- replist[["mcmc"]]
+    if (showpost && is.null(mcmc)) {
+      cli::cli_alert_info(
+        "$mcmc not found in input 'replist', changing input to 'showpost=FALSE'"
+      )
+      showpost <- FALSE
+    }
+    if (showpost && length(mcmc) < 20) {
+      cli::cli_alert_info(
+        "mcmc output has fewer than 20 rows, changing input to 'showpost=FALSE'"
+      )
+      showpost <- FALSE
+    }
 
     # subset for only active parameters
     allnames <- parameters[["Label"]][!is.na(parameters[["Active_Cnt"]])]
@@ -230,17 +244,19 @@ SSplotPars <-
       }
       goodnames <- unique(goodnames)
       if (verbose) {
-        message("Active parameters matching input vector 'strings':")
+        cli::cli_alert_info(
+          "Active parameters matching input vector 'strings':"
+        )
         print(goodnames)
       }
       if (length(goodnames) == 0) {
-        warning("No active parameters match input vector 'strings'.")
+        cli::cli_warn("No active parameters match input vector 'strings'.")
         return()
       }
     } else {
       goodnames <- allnames
       if (length(goodnames) == 0) {
-        warning("No active parameters.")
+        cli::cli_warn("No active parameters.")
         return()
       }
     }
@@ -249,7 +265,7 @@ SSplotPars <-
     skip <- grep("Impl_err_", goodnames)
     if (length(skip) > 0) {
       goodnames <- goodnames[-skip]
-      message(
+      cli::cli_alert_info(
         "Skipping 'Impl_err_' parameters which don't have bounds reported"
       )
     }
@@ -257,7 +273,7 @@ SSplotPars <-
     skip <- grep("F_fleet_", goodnames)
     if (length(skip) > 0) {
       goodnames <- goodnames[-skip]
-      message(
+      cli::cli_alert_info(
         "Skipping 'F_fleet_' parameters which aren't yet supported by this function"
       )
     }
@@ -290,14 +306,12 @@ SSplotPars <-
       if (length(devrows) > 0) {
         goodnames <- goodnames[-devrows]
         if (verbose) {
-          message(
-            "Excluding ",
-            length(devrows),
-            " deviation parameters because input 'showdev' = FALSE"
+          cli::cli_alert_info(
+            "Excluding {length(devrows)} deviation parameters because input 'showdev' = FALSE"
           )
         }
         if (length(goodnames) == 0) {
-          message("no parameters to plot")
+          cli::cli_n("no parameters to plot")
           return()
         }
       }
@@ -309,9 +323,9 @@ SSplotPars <-
           length(grep("DEVmult", x = goodnames)) > 0 |
           length(grep("ARDEV", x = goodnames)) > 0
       ) {
-        warning(
-          "Parameter deviates are not fully implemented in this function.\n",
-          "Prior and bounds unavailable so these are skipped and\n",
+        cli::cli_warn(
+          "Parameter deviates are not fully implemented in this function. ",
+          "Prior and bounds unavailable so these are skipped and ",
           "fitrange is set to TRUE for those parameters."
         )
       }
@@ -320,20 +334,18 @@ SSplotPars <-
     # get vector of standard deviations and test for NA or 0 values
     stds <- parameters[["Parm_StDev"]][parameters[["Label"]] %in% goodnames]
     if (showmle & (all(is.na(stds)) || min(stds, na.rm = TRUE) <= 0)) {
-      message(
-        "Some parameters have std. dev. values in Report.sso equal to 0.\n",
-        "  Asymptotic uncertainty estimates will not be shown.\n",
-        "  Try re-running the model with the Hessian but no MCMC."
+      cli::cli_alert_info(
+        "Some parameters have std. dev. values in Report.sso equal to 0. ",
+        "Asymptotic uncertainty estimates will not be shown. ",
+        "Try re-running the model with the Hessian but no MCMC."
       )
     }
 
     # number of parameters
     npars <- length(goodnames)
     if (is.null(strings) & verbose) {
-      messagetext <- paste0(
-        "Plotting distributions for ",
-        npars,
-        " estimated parameters."
+      messagetext <- glue::glue(
+        "Plotting distributions for {npars} estimated parameters."
       )
       if (!showdev) {
         messagetext <- gsub(
@@ -343,7 +355,7 @@ SSplotPars <-
           fixed = TRUE
         )
       }
-      message(messagetext)
+      cli::cli_alert_info(messagetext)
     }
     # number of pages, each with nrows x ncols parameters
     npages <- ceiling(npars / (nrows * ncols))
@@ -438,7 +450,7 @@ SSplotPars <-
     } # end function wrapping up plotting
 
     if (debug) {
-      message("Making plots of parameters:")
+      cli::cli_alert_info("Making plots of parameters:")
     }
 
     if (plot & !add) {
@@ -453,7 +465,7 @@ SSplotPars <-
       parname <- goodnames[ipar]
 
       if (debug) {
-        message("    ", parname)
+        cli::cli_alert_info("    {parname}")
       }
       parline <- parameters[parameters[["Label"]] == parname, ]
 
@@ -554,21 +566,6 @@ SSplotPars <-
         }
       }
 
-      # get mcmc results from replist created by SS_output
-      mcmc <- replist[["mcmc"]]
-      if (showpost && is.null(mcmc)) {
-        message(
-          "$mcmc not found in input 'replist', changing input to 'showpost=FALSE'"
-        )
-        showpost <- FALSE
-      }
-      if (showpost && length(mcmc) < 20) {
-        message(
-          "mcmc output has fewer than 20 rows, changing input to 'showpost=FALSE'"
-        )
-        showpost <- FALSE
-      }
-
       goodpost <- FALSE
       if (showpost) {
         # modify parname to remove parentheses as done by read.table
@@ -585,7 +582,7 @@ SSplotPars <-
           xmax <- max(xmax, quantile(post, 0.999)) # update x range
           goodpost <- TRUE
         } else {
-          warning("parameter '", postparname, "', not found in posteriors.")
+          cli::cli_warn("parameter '{postparname}' not found in posteriors.")
         }
       }
 
@@ -691,7 +688,9 @@ SSplotPars <-
         }
         # define filename
         file <- paste0("parameter_distributions", pagetext, ".png", sep = "")
-        cli::cli_alert_info("saving file to {plotdir}/{file}")
+        if (debug) {
+          cli::cli_alert_info("saving file to {file.path(plotdir, file)}")
+        }
         # start png file and add to plotinfo
         plotinfo <- save_png(
           plotinfo = plotinfo,

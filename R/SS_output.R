@@ -278,16 +278,14 @@ SS_output <-
     SS_versionMin <- 3.24
 
     # test for version compatibility with this code
-    if (SS_versionNumeric < SS_versionMin | SS_versionNumeric > SS_versionMax) {
+    if (SS_versionNumeric < SS_versionMin) {
       cli::cli_warn(
-        "This function tested on SS versions 3.24 and 3.30. ",
-        "  You are using {strsplit(SS_version, split = ';')[[1]][1]} which MIGHT NOT WORK with this package."
+        "This function tested on SS versions 3.24 and 3.30. You are using {strsplit(SS_version, split = ';')[[1]][1]} which MIGHT NOT WORK with this package."
       )
     } else {
       if (verbose) {
         cli::cli_alert_info(
-          "This function tested on SS versions 3.24 and 3.30.",
-          " You are using {strsplit(SS_version, split = ';')[[1]][1]} which SHOULD work with this package."
+          "You are using {strsplit(SS_version, split = ';')[[1]][1]} which SHOULD work with this package."
         )
       }
     }
@@ -407,14 +405,13 @@ SS_output <-
 
     if (verbose) {
       if ((maxnonblank + 1) == ncols) {
-        cli::cli_alert_success("Got all columns using ncols = {ncols}")
+        cli::cli_alert_success("Got Report files using ncols = {ncols}")
       }
       if ((maxnonblank + 1) < ncols) {
         cli::cli_alert_success(
-          "Got all columns. To speed code, use ncols = {maxnonblank + 1} in the future."
+          "Got Report file. To speed code, use ncols = {maxnonblank + 1} in the future."
         )
       }
-      cli::cli_alert_success("Got Report file")
     }
     flush.console()
 
@@ -4059,9 +4056,11 @@ SS_output <-
         wtatage_switch
     ) {
       if (verbose) {
-        cli::cli_alert_info(
-          "Setting minimum biomass threshhold to 0.10",
-          " because this looks like the Pacific Hake model.",
+        cli::cli_warn(
+          "Setting minimum biomass threshhold to 0.10"
+        )
+        cli::cli_text(
+          " This looks like the Pacific Hake model.",
           " You can replace or override in SS_plots via the 'minbthresh' input."
         )
       }
