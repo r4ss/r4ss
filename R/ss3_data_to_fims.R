@@ -100,7 +100,7 @@ ss3_data_to_fims <- function(
     uncertainty = double()
   )
 
-  # aggregate landings across fleets
+  # get landings data and filter by fleet and year
   n_catch_before <- nrow(dat$catch)
   catch_filtered <- dat$catch |>
     dplyr::filter(year != -999) # year = -999 in SS3 designates initial equilibrium catch
@@ -222,10 +222,11 @@ ss3_data_to_fims <- function(
       uncertainty = round(age_info$Nsamp)
     )
   } else {
+    # if no age comps present
     agecomps <- NULL
   }
 
-  ## Length composition data
+  # Length composition data
   if (!is.null(dat[["lencomp"]])) {
     # leaving out the re-scaling part for females to 1
     n_lencomp_before <- nrow(dat$lencomp)
@@ -263,19 +264,20 @@ ss3_data_to_fims <- function(
       uncertainty = round(len_info$Nsamp)
     )
   } else {
+    # if no length comps present
     lencomps <- NULL # not sure if we need this but wanting to avoid an error if missing age or length comps
   }
 
-  ## Weight-at-age data
+  # Weight-at-age data
   wtatage <- ss3_inputs$wtatage |>
     dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |>
     dplyr::select("year", dplyr::matches("[0-9]+")) |>
-    tidyr::pivot_longer(names_to = "age", cols = -year) |>
-    dplyr::filter(age %in% ages) |>
+    tidyr::pivot_longer(cols = -year, names_to = "age") |>
+    dplyr::mutate(age = as.numeric(age)) |>
+    dplyr::filter(age <= max(ages)) |>
     dplyr::mutate(
       type = "weight-at-age",
       name = "fleet1",
-      age = as.integer(age),
       length = NA,
       timing = year,
       value = value / 1000, # covert to metric tons (SS3)
@@ -284,62 +286,66 @@ ss3_data_to_fims <- function(
     ) |>
     dplyr::select(-year)
 
-  ## age to length conversion matrix
+  # get age-to-length conversion matrix
+  # TODO: is it correct to make this conditional on length comps existing?
   if (!is.null(lencomps)) {
     timing_length_combinations <- lencomps |>
       dplyr::select(timing, name) |>
       dplyr::distinct()
-  }
 
-  # initially always take the matrix for females in the middle of season 1
-  ALK <- ss3_output$ALK[,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
-  ages <- as.integer(colnames(ALK))
-  lengths <- as.integer(rownames(ALK))
+    # initially always take the matrix for females in the middle of season 1
+    ALK <- ss3_output$ALK[,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
+    ages <- as.integer(colnames(ALK))
+    lengths <- as.integer(rownames(ALK))
 
-  # function to provide length at age from SS3 output
-  length_at_age_lookup <- function(age, length) {
-    if (age %in% ages & length %in% lengths) {
-      return(ALK[as.character(length), as.character(age)])
-    } else {
-      return(NA)
+    # function to provide length at age from SS3 output
+    length_at_age_lookup <- function(age, length) {
+      if (age %in% ages & length %in% lengths) {
+        return(ALK[as.character(length), as.character(age)])
+      } else {
+        return(NA)
+      }
     }
-  }
 
-  # create empty data frame to store the age to length conversions
-  age_to_length <- data.frame(
-    type = character(),
-    name = character(),
-    age = integer(),
-    length = integer(),
-    timing = character()
-  )
-  # for every combination of timing and name (fleet) that has length comps
-  # create a data frame with age, length to which values will be added
-  for (irow in 1:nrow(timing_length_combinations)) {
-    age_to_length <- rbind(
-      age_to_length,
-      expand.grid(
-        name = timing_length_combinations$name[irow],
-        timing = timing_length_combinations$timing[irow],
-        age = ages,
-        length = lengths
-      )
+    # create empty data frame to store the age to length conversions
+    age_to_length <- data.frame(
+      type = character(),
+      name = character(),
+      age = integer(),
+      length = integer(),
+      timing = character()
     )
-  }
-  # now fill in the value column with the proportion of each age
-  # within each length bin
-  age_to_length <- age_to_length |>
-    rowwise() |>
-    mutate(value = length_at_age_lookup(age, length))
+    # for every combination of timing and name (fleet) that has length comps
+    # create a data frame with age, length to which values will be added
+    for (irow in 1:nrow(timing_length_combinations)) {
+      age_to_length <- rbind(
+        age_to_length,
+        expand.grid(
+          name = timing_length_combinations$name[irow],
+          timing = timing_length_combinations$timing[irow],
+          age = ages,
+          length = lengths
+        )
+      )
+    }
+    # now fill in the value column with the proportion of each age
+    # within each length bin
+    age_to_length <- age_to_length |>
+      rowwise() |>
+      mutate(value = length_at_age_lookup(age, length))
 
-  # now add additional columns
-  age_to_length <- age_to_length |>
-    mutate(
-      type = "age-to-length-conversion",
-      unit = "proportion",
-      uncertainty = NA
-    ) |>
-    select(names(res))
+    # now add additional columns
+    age_to_length <- age_to_length |>
+      mutate(
+        type = "age-to-length-conversion",
+        unit = "proportion",
+        uncertainty = NA
+      ) |>
+      select(names(res))
+  } else {
+    # if no length comps, then we don't need the age to length conversion matrix
+    age_to_length <- NULL
+  }
 
   # combine all data sources
   res <- rbind(
@@ -352,10 +358,9 @@ ss3_data_to_fims <- function(
     age_to_length
   )
 
-  # remove any forecast years
+  # remove any projection/forecast years
   res <- res |>
-    dplyr::filter(timing <= dat$endyr + 1)
-
+    dplyr::filter(timing <= dat$endyr)
 
   return(res)
 }
