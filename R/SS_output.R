@@ -3768,9 +3768,6 @@ SS_output <-
           ]
       }
     }
-    if (nsexes == 1) {
-      tsspaw_bio <- tsspaw_bio / 2
-    }
     depletionseries <- tsspaw_bio / tsspaw_bio[1]
     stats[["SBzero"]] <- tsspaw_bio[1]
     stats[["current_depletion"]] <- depletionseries[length(depletionseries)]
