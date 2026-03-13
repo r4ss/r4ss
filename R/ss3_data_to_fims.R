@@ -15,7 +15,7 @@
 #' @param ss3_output A list created by `r4ss::SS_output()`. Only required if
 #' `ss3_dir` is not provided.
 #' @param fleets Which fleets to include in the processed output.
-#' Note that the only start year population weight-at-age is read from the
+#' Note that the only start year population weight_at_age is read from the
 #' `wtatage` element (fleet = 0). NULL will default to including all fleets
 #' from the SS3 model.
 #' @param ages Vector of ages to index. NULL will default to using
@@ -268,7 +268,7 @@ ss3_data_to_fims <- function(
     lencomps <- NULL # not sure if we need this but wanting to avoid an error if missing age or length comps
   }
 
-  # Weight-at-age data
+  # weight_at_age data
   wtatage <- ss3_inputs$wtatage |>
     dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |>
     dplyr::select("year", dplyr::matches("[0-9]+")) |>
@@ -276,7 +276,7 @@ ss3_data_to_fims <- function(
     dplyr::mutate(age = as.numeric(age)) |>
     dplyr::filter(age <= max(ages)) |>
     dplyr::mutate(
-      type = "weight-at-age",
+      type = "weight_at_age",
       name = "fleet1",
       length = NA,
       timing = year,
@@ -337,7 +337,7 @@ ss3_data_to_fims <- function(
     # now add additional columns
     age_to_length <- age_to_length |>
       mutate(
-        type = "age-to-length-conversion",
+        type = "age_to_length_conversion",
         unit = "proportion",
         uncertainty = NA
       ) |>
