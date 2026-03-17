@@ -593,7 +593,7 @@ copy_SS_inputs(dir.old = example_path, dir.new = mod_path)
 #> copying files from
 #>  /home/runner/work/_temp/Library/r4ss/extdata/simple_small
 #> to
-#>  /tmp/RtmpYewHQS/simple_mod
+#>  /tmp/RtmpVx4asq/simple_mod
 #> copying complete
 # copy over the Report file to provide information about the last run
 file.copy(

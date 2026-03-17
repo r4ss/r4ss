@@ -94,11 +94,13 @@ Authors:
 
 - Eric Fletcher
 
-- Elizabeth F. Gugliotti
+- Elizabeth Perl
 
 - Kiva L. Oken
 
 - Arni Magnusson
+
+- Peter Kuriyama
 
 ## Examples
 

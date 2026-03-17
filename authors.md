@@ -72,11 +72,13 @@
 
 - **Eric Fletcher**. Author.
 
-- **Elizabeth F. Gugliotti**. Author.
+- **Elizabeth Perl**. Author.
 
 - **Kiva L. Oken**. Author.
 
 - **Arni Magnusson**. Author.
+
+- **Peter Kuriyama**. Author.
 
 ## Citation
 
