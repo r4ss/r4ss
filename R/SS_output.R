@@ -1777,26 +1777,30 @@ SS_output <-
       #
       # the code below parses those strings to figure out age vs. length,
       # separate the numeric year value and bin number
-      seldev_label_info <- strsplit(seldev_pars[["Label"]], split = "_")
-      seldev_label_info <- data.frame(do.call(
+      seldev_label_info <- do.call(
         rbind,
-        lapply(seldev_label_info, rbind)
-      ))
+        lapply(strsplit(seldev_pars[["Label"]], split = "_AR"), rbind)
+      )
+
+      seldev_label_info2 <- strsplit(seldev_label_info[, 2], split = "_")
+      seldev_label_info2 <- do.call(rbind, lapply(seldev_label_info2, rbind))
+
+      seldev_label_info <- cbind(seldev_label_info[, 1], seldev_label_info2)
 
       # add columns to pars data.frame with info from labels
-      seldev_pars[["Fleet"]] <- seldev_label_info[["X1"]]
+      seldev_pars[["Fleet"]] <- seldev_label_info[, 1]
       yr_col <- grep("^y\\d\\d\\d\\d$", seldev_label_info[1, ])
       # probably always the final column will be one that starts with
       # A or L (upper or lower case) and ends with a bin number
       type_bin_col <- grep("^[aAlL].*\\d+$", seldev_label_info[1, ])
       seldev_pars[["Year"]] <- as.numeric(substring(
-        seldev_label_info[[yr_col]],
+        seldev_label_info[, yr_col],
         2
       ))
       # note: bin was indicated by "a" for length- and age-based selectivity
       # until early 2020 when separate "A" or "Lbin" codes were used
       seldev_pars[["Type"]] <- ifelse(
-        substring(seldev_label_info[[type_bin_col]], 1, 1) %in%
+        substring(seldev_label_info[, type_bin_col], 1, 1) %in%
           c("A", "a"),
         yes = "age",
         no = "length"
@@ -1805,7 +1809,7 @@ SS_output <-
       first_bin_digit <- ifelse(seldev_pars[["Type"]] == "age", 2, 5)
       # parse bin (age or length bin)
       seldev_pars[["Bin"]] <- as.numeric(substring(
-        seldev_label_info[[type_bin_col]],
+        seldev_label_info[, type_bin_col],
         first_bin_digit
       ))
       # remove label column which is redundant with rownames
