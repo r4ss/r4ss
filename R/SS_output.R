@@ -1779,7 +1779,7 @@ SS_output <-
       # separate the numeric year value and bin number
       seldev_label_info <- do.call(
         rbind,
-        lapply(strsplit(seldev_pars[["Label"]], split = "_AR"), rbind)
+        lapply(strsplit(seldev_pars[["Label"]], split = "_ARDEV_"), rbind)
       )
 
       seldev_label_info2 <- strsplit(seldev_label_info[, 2], split = "_")
