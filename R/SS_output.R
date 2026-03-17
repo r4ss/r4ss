@@ -2325,6 +2325,9 @@ SS_output <-
 
       # get some quantities from expanded SPAWN_RECRUIT
       timevary_bio_4SRR <- srhead[grep("timevary_bio_4SRR", srhead[, 3]), 1] |>
+        # remove string "#_Regime_used_to_offset_from_SRR" from start
+        # before converting to numeric
+        sub(pattern = "#_Regime_used_to_offset_from_SRR", replacement = "") |>
         as.numeric()
       # unformatted table of values under "Quantities for MSY and other benchmark calculations"
       SR_quants <- srhead[
