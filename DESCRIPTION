@@ -38,9 +38,10 @@ Authors@R: c(
     person("Lee", "Qi", role = "aut"),
     person("Megumi", "Oshima", role = "aut"),
     person("Eric", "Fletcher", role = "aut"),
-    person("Elizabeth F.", "Gugliotti", role = "aut"),
+    person("Elizabeth", "Perl", role = "aut"),
     person("Kiva L.", "Oken", role = "aut"),
-    person("Arni", "Magnusson", role = "aut")
+    person("Arni", "Magnusson", role = "aut"),
+    person("Peter", "Kuriyama", role = "aut")
   )
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr.
