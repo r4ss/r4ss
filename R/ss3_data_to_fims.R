@@ -115,7 +115,7 @@ ss3_data_to_fims <- function(
   # convert landings to FIMSFrame format
   landings <- data.frame(
     type = "landings",
-    name = paste0("fleet", catch_by_year_fleet$fleet), # landings aggregated to fleet 1
+    name = dat$fleetnames[catch_by_year_fleet$fleet],
     age = NA,
     length = NA,
     timing = catch_by_year_fleet$year,
@@ -145,7 +145,7 @@ ss3_data_to_fims <- function(
 
     indices <- data.frame(
       type = "index",
-      name = paste0("fleet", index_info$index),
+      name = dat$fleetnames[index_info$index],
       age = NA,
       length = NA,
       timing = index_info$year,
@@ -211,7 +211,7 @@ ss3_data_to_fims <- function(
     # finish converting age comps to FIMSFrame format
     agecomps <- data.frame(
       type = "age_comp",
-      name = paste0("fleet", abs(age_info$fleet)), # abs to include negative fleet numbers which may contain marginal ages
+      name = dat$fleetnames[abs(age_info$fleet)], # abs to include negative fleet numbers which may contain marginal ages
       age = age_info$age,
       length = NA,
       timing = age_info$year,
@@ -253,7 +253,7 @@ ss3_data_to_fims <- function(
     # finish converting age comps to FIMSFrame format
     lencomps <- data.frame(
       type = "length_comp", # will likely need to change name
-      name = paste0("fleet", abs(len_info$fleet)), # abs to include fleet == -4
+      name = dat$fleetnames[abs(len_info$fleet)], # abs to include fleet == -4
       age = NA,
       length = len_info$length,
       timing = len_info$year,
@@ -270,14 +270,14 @@ ss3_data_to_fims <- function(
 
   # weight_at_age data
   wtatage <- ss3_inputs$wtatage |>
-    dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |>
+    dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |> # TODO make this more flexible
     dplyr::select("year", dplyr::matches("[0-9]+")) |>
     tidyr::pivot_longer(cols = -year, names_to = "age") |>
     dplyr::mutate(age = as.numeric(age)) |>
     dplyr::filter(age <= max(ages)) |>
     dplyr::mutate(
       type = "weight_at_age",
-      name = "fleet1",
+      name = dat$fleetnames[1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
       length = NA,
       timing = year,
       value = value / 1000, # covert to metric tons (SS3)
@@ -360,7 +360,8 @@ ss3_data_to_fims <- function(
 
   # remove any projection/forecast years
   res <- res |>
-    dplyr::filter(timing <= dat$endyr)
+    dplyr::filter_out(timing > dat$endyr + 1) |> 
+    dplyr::filter_out(type != "weight_at_age" & timing > dat$endyr)
 
   return(res)
 }
