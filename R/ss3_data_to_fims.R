@@ -108,9 +108,12 @@ ss3_data_to_fims <- function(
   catch_by_year_fleet <- catch_filtered |>
     dplyr::filter(fleet %in% fleets)
   n_catch_after <- nrow(catch_by_year_fleet)
-  cli::cli_alert_info(
-    "catch rows before fleet filter: {n_catch_before_fleet}; after: {n_catch_after}"
-  )
+  # provide message if any rows were removed by filter
+  if (n_catch_after < n_catch_before_fleet) {
+    cli::cli_alert_info(
+      "catch rows before fleet filter: {n_catch_before_fleet}; after: {n_catch_after}"
+    )
+  }
 
   # convert landings to FIMSFrame format
   landings <- data.frame(
@@ -136,9 +139,12 @@ ss3_data_to_fims <- function(
     cpue_filtered <- dat$CPUE |>
       dplyr::filter(index %in% fleets)
     n_cpue_after <- nrow(cpue_filtered)
-    cli::cli_alert_info(
-      "CPUE rows before fleet filter: {n_cpue_before}; after: {n_cpue_after}"
-    )
+    # provide message if any rows were removed by filter
+    if (n_cpue_after < n_cpue_before) {
+      cli::cli_alert_info(
+        "CPUE rows before fleet filter: {n_cpue_before}; after: {n_cpue_after}"
+      )
+    }
     index_info <- cpue_filtered |>
       dplyr::select(year, index, obs, se_log) |>
       dplyr::arrange(index, year)
@@ -185,9 +191,12 @@ ss3_data_to_fims <- function(
     agecomp_filtered <- dat$agecomp |>
       dplyr::filter(fleet %in% fleets)
     n_agecomp_after <- nrow(agecomp_filtered)
-    cli::cli_alert_info(
-      "agecomp rows before fleet filter: {n_agecomp_before}; after: {n_agecomp_after}"
-    )
+    # provide message if any rows were removed by filter
+    if (n_agecomp_after < n_agecomp_before) {
+      cli::cli_alert_info(
+        "agecomp rows before fleet filter: {n_agecomp_before}; after: {n_agecomp_after}"
+      )
+    }
     age_info <-
       agecomp_filtered |>
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
@@ -233,9 +242,12 @@ ss3_data_to_fims <- function(
     lencomp_filtered <- dat$lencomp |>
       dplyr::filter(fleet %in% fleets) # filter by requested fleets
     n_lencomp_after <- nrow(lencomp_filtered)
-    cli::cli_alert_info(
-      "lencomp rows before fleet filter: {n_lencomp_before}; after: {n_lencomp_after}"
-    )
+    # provide message if any rows were removed by filter
+    if (n_lencomp_after < n_lencomp_before) {
+      cli::cli_alert_info(
+        "lencomp rows before fleet filter: {n_lencomp_before}; after: {n_lencomp_after}"
+      )
+    }
     len_info <-
       lencomp_filtered |>
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
@@ -360,7 +372,7 @@ ss3_data_to_fims <- function(
 
   # remove any projection/forecast years
   res <- res |>
-    dplyr::filter_out(timing > dat$endyr + 1) |> 
+    dplyr::filter_out(timing > dat$endyr + 1) |>
     dplyr::filter_out(type != "weight_at_age" & timing > dat$endyr)
 
   return(res)
