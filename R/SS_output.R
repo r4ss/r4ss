@@ -278,10 +278,10 @@ SS_output <-
 
     # test for version compatibility with this code
     if (SS_versionNumeric < SS_versionMin | SS_versionNumeric > SS_versionMax) {
-      cli::cli_warn(paste0("This function tested on SS versions 3.24 and 3.30.\n", "  You are using ", strsplit(SS_version, split = ";")[[1]][1], " which MIGHT NOT WORK with this package."))
+      cli::cli_warn(paste0("This function tested on SS versions 3.24 and 3.30.", "  You are using ", strsplit(SS_version, split = ";")[[1]][1], " which MIGHT NOT WORK with this package."))
     } else {
       if (verbose) {
-        cli::cli_inform(paste0("This function tested on SS versions 3.24 and 3.30.\n", "  You are using ", strsplit(SS_version, split = ";")[[1]][1], " which SHOULD work with this package."))
+        cli::cli_inform(paste0("This function tested on SS versions 3.24 and 3.30.", "  You are using ", strsplit(SS_version, split = ";")[[1]][1], " which SHOULD work with this package."))
       }
     }
 
@@ -323,10 +323,10 @@ SS_output <-
           }
           comptime <- findtime(comphead)
           if (is.null(comptime) || is.null(repfiletime)) {
-            cli::cli_inform("problem comparing the file creation times:\n  Report.sso:{repfiletime}\n  CompReport.sso:{comptime}\n")
+            cli::cli_inform("problem comparing the file creation times: Report.sso:{repfiletime} CompReport.sso:{comptime}")
           } else {
             if (comptime != repfiletime) {
-              cli::cli_inform("CompReport time:{comptime}\n")
+              cli::cli_inform("CompReport time:{comptime}")
               cli::cli_abort("{shortrepfile} and {compfile} were from different model runs.")
             }
           }
@@ -376,7 +376,7 @@ SS_output <-
     nonblanks <- apply(rawrep, 2, emptytest) < 1
     maxnonblank <- max(0, (1:ncols)[nonblanks == TRUE])
     if (maxnonblank == ncols) {
-      cli::cli_abort("all columns are used and some data may been missed,\n  increase 'ncols' input above current value (ncols={ncols})")
+      cli::cli_abort("all columns are used and some data may been missed, increase 'ncols' input above current value (ncols={ncols})")
     }
 
     # check for revised format to facilitate custom reporting
@@ -499,7 +499,7 @@ SS_output <-
       filetimes <- file.info(file.path(dir, logfile_name))[["mtime"]]
       logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
-        cli::cli_inform("Multiple files in directory match pattern *.log\nchoosing most recently modified file:{logfile_name}\n")
+        cli::cli_inform("Multiple files in directory match pattern *.log choosing most recently modified file:{logfile_name}")
       }
     }
     if (
@@ -974,7 +974,7 @@ SS_output <-
         # make correction to tag output associated with 3.24f (fixed in later versions)
         if (substr(SS_version, 1, 9) == "SS-V3.24f") {
           if (!hidewarn) {
-            cli::cli_inform("Correcting for bug in tag data output associated with SSv3.24f\n")
+            cli::cli_inform("Correcting for bug in tag data output associated with SSv3.24f")
           }
           tag1rows <- compdbase[["Sexes"]] == "TAG1"
           if (any(tag1rows)) {
@@ -1004,7 +1004,7 @@ SS_output <-
             compdbase[["Kind"]] != "TAG2"
         )
         if (n > 0) {
-          cli::cli_warn("{n} rows from composition database have NA sample size\nbut are not part of a super-period. (Maybe input as N=0?)\n")
+          cli::cli_warn("{n} rows from composition database have NA sample size but are not part of a super-period. (Maybe input as N=0?)")
         }
         compdbase <- type.convert(compdbase, as.is = TRUE)
 
@@ -1176,65 +1176,65 @@ SS_output <-
         tagdbase2 <- compdbase[compdbase[["Kind"]] == "TAG2", ]
         # consider range of bins for conditional age at length data
         if (verbose) {
-          cli::cli_inform(paste0("CompReport file separated by this code as follows", " (rows = Ncomps*Nbins):\n", if (nrow(lendbase) > 0) {
+          cli::cli_inform(paste0("CompReport file separated by this code as follows", " (rows = Ncomps*Nbins):", if (nrow(lendbase) > 0) {
               paste0(
                 "  ",
                 nrow(lendbase),
-                " rows of length comp data\n"
+                " rows of length comp data"
               )
             }, if (nrow(sizedbase) > 0) {
               paste0(
                 "  ",
                 nrow(sizedbase),
-                " rows of generalized size comp data\n"
+                " rows of generalized size comp data"
               )
             }, if (nrow(agedbase) > 0) {
               paste0(
                 "  ",
                 nrow(agedbase),
-                " rows of age comp data\n"
+                " rows of age comp data"
               )
             }, if (nrow(condbase) > 0) {
               paste0(
                 "  ",
                 nrow(condbase),
-                " rows of conditional age-at-length data\n"
+                " rows of conditional age-at-length data"
               )
             }, if (nrow(ghostagedbase) > 0) {
               paste0(
                 "  ",
                 nrow(ghostagedbase),
-                " rows of ghost fleet age comp data\n"
+                " rows of ghost fleet age comp data"
               )
             }, if (nrow(ghostcondbase) > 0) {
               paste0(
                 "  ",
                 nrow(ghostcondbase),
-                " rows of ghost fleet conditional age-at-length data\n"
+                " rows of ghost fleet conditional age-at-length data"
               )
             }, if (nrow(ghostlendbase) > 0) {
               paste0(
                 "  ",
                 nrow(ghostlendbase),
-                " rows of ghost fleet length comp data\n"
+                " rows of ghost fleet length comp data"
               )
             }, if (nrow(ladbase) > 0) {
               paste0(
                 "  ",
                 nrow(ladbase),
-                " rows of mean length at age data\n"
+                " rows of mean length at age data"
               )
             }, if (nrow(wadbase) > 0) {
               paste0(
                 "  ",
                 nrow(wadbase),
-                " rows of mean weight at age data\n"
+                " rows of mean weight at age data"
               )
             }, if (nrow(tagdbase1) > 0) {
               paste0(
                 "  ",
                 nrow(tagdbase1),
-                " rows of 'TAG1' comp data\n"
+                " rows of 'TAG1' comp data"
               )
             }, if (nrow(tagdbase2) > 0) {
               paste0(
@@ -1255,7 +1255,7 @@ SS_output <-
           Lbin_ranges <- as.data.frame(table(agedbase[["Lbin_range"]]))
           names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
           if (length(unique(agedbase[["Lbin_range"]])) > 1) {
-            cli::cli_warn(paste0("different ranges of Lbin_lo to Lbin_hi found in age comps.\n", paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"), "\n consider increasing 'aalmaxbinrange' to designate\n", "some of these data as conditional age-at-length."))
+            cli::cli_warn(paste0("different ranges of Lbin_lo to Lbin_hi found in age comps.\n", paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"), "\nconsider increasing 'aalmaxbinrange' to designate some of these data as conditional age-at-length."))
           }
           agebins <- sort(unique(agedbase[["Bin"]][!is.na(agedbase[["Bin"]])]))
         } else {
@@ -1777,7 +1777,7 @@ SS_output <-
         covartime <- findtime(covarhead)
         # the conversion to R time class below may no longer be necessary as strings should match
         if (is.null(covartime) || is.null(repfiletime)) {
-          cli::cli_inform("problem comparing the file creation times:\n  Report.sso:{repfiletime}\n  covar.sso:{covartime}")
+          cli::cli_inform("problem comparing the file creation times: Report.sso:{repfiletime} covar.sso:{covartime}")
         } else {
           if (covartime != repfiletime) {
             cli::cli_inform("covar time:{covartime}")
@@ -1788,7 +1788,7 @@ SS_output <-
         # covar file exists, but has problems
         nowrite <- grep("do not write", covarhead)
         if (length(nowrite) > 0) {
-          cli::cli_warn("covar file contains the warning\n     '{covarhead[nowrite]}'\n  input 'covar' changed to FALSE.\n")
+          cli::cli_warn("covar file contains the warning '{covarhead[nowrite]}' input 'covar' changed to FALSE.")
           covar <- FALSE
         }
       }
@@ -1815,7 +1815,7 @@ SS_output <-
         stats[["N_estimated_parameters"]] <- N_estimated_parameters2
       } else {
         if (stats[["N_estimated_parameters"]] != N_estimated_parameters2) {
-          cli::cli_warn(paste0(stats[["N_estimated_parameters"]], " estimated parameters indicated by the par file\n  ", N_estimated_parameters2, " estimated parameters shown in the covar file\n  ", "Returning the par file value: ", stats[["N_estimated_parameters"]]))
+          cli::cli_warn(paste0(stats[["N_estimated_parameters"]], " estimated parameters indicated by the par file", N_estimated_parameters2, " estimated parameters shown in the covar file", "Returning the par file value: ", stats[["N_estimated_parameters"]]))
         }
       }
       # check for NA values (see https://github.com/r4ss/r4ss/issues/830)
@@ -1826,7 +1826,7 @@ SS_output <-
       checkbadrun <- unique(stdtable[["std"]])
       if (length(checkbadrun) == 1) {
         if (checkbadrun %in% c(NA, "NaN", "na")) {
-          cli::cli_abort("No quantities were estimated in the covar file \nand allestimates of standard deviation are {checkbadrun}. \nTry re-runningstock synthesis.")
+          cli::cli_abort("No quantities were estimated in the covar file and allestimates of standard deviation are {checkbadrun}. Try re-runningstock synthesis.")
         }
       }
 
@@ -1873,7 +1873,7 @@ SS_output <-
           }
           mcmc <- SSgetMCMC(dir = dir.mcmc.full)
         } else {
-          cli::cli_warn("skipping reading MCMC output because posterior.sso file not found in \n{dir.mcmc.full}")
+          cli::cli_warn("skipping reading MCMC output because posterior.sso file not found in {dir.mcmc.full}")
           mcmc <- NULL
         }
       }
@@ -2835,7 +2835,7 @@ SS_output <-
             !any(age_data_info[["CompError"]] > 0) &
               !any(len_data_info[["CompError"]] > 0)
           ) {
-            cli::cli_abort("Problem with Dirichlet-Multinomial parameters: \n  Report file indicates parameters exist, but no CompError values\n  in data.ss_new are > 0.")
+            cli::cli_abort("Problem with Dirichlet-Multinomial parameters: Report file indicates parameters exist, but no CompError values in data.ss_new are > 0.")
           }
         } # end check for no Length_ or Age_comp_error_controls tables
 
@@ -4840,7 +4840,7 @@ SS_output <-
 
     # print list of statistics
     if (printstats) {
-      cli::cli_inform("\nStatistics shown below (to turn off, change input to printstats=FALSE)")
+      cli::cli_inform("Statistics shown below (to turn off, change input to printstats=FALSE)")
 
       # remove scientific notation (only for display, not returned values,
       # which were added to returndat already)

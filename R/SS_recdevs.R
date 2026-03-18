@@ -115,7 +115,7 @@ SS_recdevs <-
     # check for keyword at start of following section
     key2 <- grep("Fishing Mortality info", ctl)
     if (length(key2) == 0) {
-      cli::cli_warn("The phrase 'Fishing Mortality info' does not occur after the\nrecdev section; Format of control file may be messy.")
+      cli::cli_warn("The phrase 'Fishing Mortality info' does not occur after the recdev section; Format of control file may be messy.")
     } else {
       key2 == key2[1]
     }

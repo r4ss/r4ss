@@ -88,7 +88,7 @@ copy_SS_inputs <- function(
   }
 
   if (verbose) {
-    cli::cli_inform("copying files from\n {dir.old}\nto\n {dir.new}")
+    cli::cli_inform("copying files from {dir.old} to {dir.new}")
   }
 
   results <- rep(NA, 6)

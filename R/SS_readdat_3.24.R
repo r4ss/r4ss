@@ -52,7 +52,7 @@ SS_readdat_3.24 <- function(
       24
     ))
     if (!section %in% 1:Nsections) {
-      cli::cli_abort("The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n")
+      cli::cli_abort("The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.")
     }
     if (section == 1) {
       end <- grep("#_expected values with no error added", dat)
@@ -166,7 +166,7 @@ SS_readdat_3.24 <- function(
   i <- i + Ntypes
   if (verbose) {
     cli::cli_inform("areas:{areas}")
-    cli::cli_inform(paste0("fleet info:\n", paste0(
+    cli::cli_inform(paste0("fleet info:", paste0(
         utils::capture.output(
           data.frame(
             fleet = 1:Ntypes,
@@ -396,7 +396,7 @@ SS_readdat_3.24 <- function(
   datlist[["N_agebins"]] <- N_agebins <- allnums[i]
   i <- i + 1
   if (verbose) {
-    cli::cli_inform("N_agebins ={N_agebins}\n")
+    cli::cli_inform("N_agebins ={N_agebins}")
   }
   if (N_agebins > 0) {
     agebin_vector <- allnums[i:(i + N_agebins - 1)]
@@ -581,7 +581,7 @@ SS_readdat_3.24 <- function(
     ]
     i <- i + N_sizefreq_methods
     if (verbose) {
-      cli::cli_inform("details of generalized size frequency methods:\n")
+      cli::cli_inform("details of generalized size frequency methods:")
       print(data.frame(
         method = 1:N_sizefreq_methods,
         nbins = nbins_per_method,
@@ -635,11 +635,11 @@ SS_readdat_3.24 <- function(
           }
         )
       if (verbose) {
-        cli::cli_inform("Method ={imethod}  (first two rows, ten columns):\n")
+        cli::cli_inform("Method ={imethod} (first two rows, ten columns):")
         print(sizefreq_data_tmp[1:min(Nrows, 2), 1:min(Ncols, 10)])
       }
       if (any(sizefreq_data_tmp[["Method"]] != imethod)) {
-        cli::cli_abort(paste0("Problem with method in size frequency data:\n", "Expecting method: ", imethod, "\n", "Read method(s): ", paste(unique(sizefreq_data_tmp[["Method"]]), collapse = ", ")))
+        cli::cli_abort(paste0("Problem with method in size frequency data; Expecting method: ", imethod, "; Read method(s): ", paste(unique(sizefreq_data_tmp[["Method"]]), collapse = ", ")))
       }
       sizefreq_data_list[[imethod]] <- sizefreq_data_tmp
       i <- i + Nrows * Ncols
@@ -692,7 +692,7 @@ SS_readdat_3.24 <- function(
         "Nrelease"
       )
       if (verbose) {
-        cli::cli_inform("Head of tag release data:\n")
+        cli::cli_inform("Head of tag release data:")
         print(head(tag_releases))
       }
     } else {

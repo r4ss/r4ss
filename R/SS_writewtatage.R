@@ -22,7 +22,7 @@ SS_writewtatage <- function(
   warn = lifecycle::deprecated()
 ) {
   if (verbose) {
-    cli::cli_inform("running SS_writewtatage\n")
+    cli::cli_inform("running SS_writewtatage")
   }
 
   if (lifecycle::is_present(warn)) {
@@ -47,12 +47,12 @@ SS_writewtatage <- function(
   }
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_abort("file exists:{outfile}\n  set overwrite=TRUE to replace\n")
+      cli::cli_abort("file exists:{outfile} set overwrite=TRUE to replace")
     } else {
       file.remove(outfile)
     }
   } else {
-    if (verbose) cli::cli_inform("writing new file:{outfile}\n")
+    if (verbose) cli::cli_inform("writing new file:{outfile}")
   }
 
   # record current max characters per line and then expand in case of long lines
@@ -60,7 +60,7 @@ SS_writewtatage <- function(
   options(width = 1000)
 
   if (verbose) {
-    cli::cli_inform("opening connection to {outfile}\n")
+    cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   on.exit(close(zz))
@@ -104,5 +104,5 @@ SS_writewtatage <- function(
   # restore printing width to whatever the user had before
   options(width = oldwidth)
   sink()
-  if (verbose) cli::cli_inform("file written to {outfile}\n")
+  if (verbose) cli::cli_inform("file written to {outfile}")
 }

@@ -409,7 +409,7 @@ SS_plots <-
       dir.isdir <- file.info(dir)[["isdir"]]
       # create directory
       if (is.na(dir.isdir) | !dir.isdir) {
-        cli::cli_inform("Directory doesn't exist, attempting to create:\n{dir}")
+        cli::cli_inform("Directory doesn't exist, attempting to create: {dir}")
         dir.create(dir)
       }
       # test again (even though failure to create dir should have already caused error)
@@ -418,7 +418,7 @@ SS_plots <-
       dir.isdir <- file.info(dir)[["isdir"]]
       # create
       if (is.na(dir.isdir) | !dir.isdir) {
-        cli::cli_abort("Not able to create directory:\n{dir}\n")
+        cli::cli_abort("Not able to create directory: {dir}")
       }
     }
 
@@ -436,7 +436,7 @@ SS_plots <-
         dir.create(plotdir)
       }
       if (verbose) {
-        cli::cli_inform("Plots will be written to PNG files in the directory:\n  {plotdir}")
+        cli::cli_inform("Plots will be written to PNG files in the directory: {plotdir}")
       }
       # get info on any older plots inside the plotdir directory
       csv.files <- grep("plotInfoTable.+csv", dir(plotdir), value = TRUE)
@@ -459,7 +459,7 @@ SS_plots <-
           StartTimeName <- gsub(" ", "_", StartTimeName, fixed = TRUE)
           StartTimeName <- gsub("._", "_", StartTimeName, fixed = TRUE)
           plotdir.old <- file.path(dir, paste0("plots_", StartTimeName))
-          cli::cli_inform("NOTE: the directory\n   {plotdir}\n  contains plots from a previous model run, renaming to\n   {plotdir.old}")
+          cli::cli_inform("NOTE: the directory {plotdir} contains plots from a previous model run, renaming to {plotdir.old}")
           file.rename(plotdir, plotdir.old)
           # create a new, empty directory for the new plots
           dir.create(plotdir)
@@ -828,7 +828,7 @@ SS_plots <-
             cli::cli_inform("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.")
           }
         } else {
-          cli::cli_inform("skipping bias adjustment fit because\ninput list element 'rmse_table' has non-numeric 'RMSE' column")
+          cli::cli_inform("skipping bias adjustment fit because input list element 'rmse_table' has non-numeric 'RMSE' column")
         }
       } else {
         if (verbose) {
@@ -2281,7 +2281,7 @@ SS_plots <-
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
-          cli::cli_inform("Skipping movement plots (group {igroup}) because no movement in model\n")
+          cli::cli_inform("Skipping movement plots (group {igroup}) because no movement in model")
         }
       } # end if movement included in model
     } # end if igroup in plot or print
@@ -2421,7 +2421,7 @@ SS_plots <-
       }
       write.csv(plotInfoTable, csvname, row.names = FALSE)
       if (verbose) {
-        cli::cli_inform("Wrote table of info on PNG files to:\n   {csvname}")
+        cli::cli_inform("Wrote table of info on PNG files to: {csvname}")
       }
       # write HTML files to display the images
       if (html) {

@@ -147,9 +147,9 @@ jitter <- function(
   # setwd(dir)
 
   if (verbose) {
-    cli::cli_inform("Temporarily changing working directory to:\n{dir}")
+    cli::cli_inform("Temporarily changing working directory to: {dir}")
     if (!file.exists("Report.sso")) {
-      cli::cli_inform("Copy output files from a converged run into\n{dir}\nprior to running jitter to enable easier comparisons.")
+      cli::cli_inform("Copy output files from a converged run into {dir} prior to running jitter to enable easier comparisons.")
     }
     cli::cli_inform("Checking starter file")
   }
@@ -164,7 +164,7 @@ jitter <- function(
     starter[["parmtrace"]]
   )
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
-    cli::cli_abort("Change the jitter value in the starter file to be > 0\nor change the 'jitter_fraction' argument to be > 0.", call = NULL)
+    cli::cli_abort("Change the jitter value in the starter file to be > 0 or change the 'jitter_fraction' argument to be > 0.", call = NULL)
   }
   if (!is.null(jitter_fraction)) {
     starter[["jitter_fraction"]] <- jitter_fraction

@@ -179,7 +179,7 @@ SSplotProfile <-
     n <- summaryoutput[["n"]]
     likelihoods <- summaryoutput[["likelihoods"]]
     if (is.null(likelihoods)) {
-      cli::cli_abort("Input 'summaryoutput' needs to be a list output from SSsummarize\nand have an element named 'likelihoods'.")
+      cli::cli_abort("Input 'summaryoutput' needs to be a list output from SSsummarize and have an element named 'likelihoods'.")
     }
     pars <- summaryoutput[["pars"]]
     par_prior_likes <- summaryoutput[["par_prior_likes"]]
@@ -189,7 +189,7 @@ SSplotProfile <-
       models <- 1:n
     } else {
       if (!all(models %in% 1:n)) {
-        cli::cli_abort("Input 'models' should be a vector of values from 1 to n={n} (for your inputs).\n")
+        cli::cli_abort("Input 'models' should be a vector of values from 1 to n={n} (for your inputs).")
       }
     }
 
@@ -204,7 +204,7 @@ SSplotProfile <-
     }
     parlabel <- pars[["Label"]][parnumber]
     if (length(parlabel) > 1) {
-      cli::cli_abort(paste0("Multiple parameters matching profile.string='", profile.string, "':\n", paste(parlabel, collapse = ", "), "\nYou may need to use 'exact=TRUE'.", sep = ""))
+      cli::cli_abort(paste0("Multiple parameters matching profile.string='", profile.string, "':", paste(parlabel, collapse = ", "), "You may need to use 'exact=TRUE'.", sep = ""))
     }
 
     # get vector of parameter values
@@ -278,7 +278,7 @@ SSplotProfile <-
 
     nlines <- sum(include)
     if (verbose) {
-      cli::cli_inform("Likelihood components showing max change as fraction of total change.\nTo change which components are included, change input 'minfraction'.\n")
+      cli::cli_inform("Likelihood components showing max change as fraction of total change. To change which components are included, change input 'minfraction'.")
       print(data.frame(
         frac_change = round(change.fraction, 4),
         include = include,

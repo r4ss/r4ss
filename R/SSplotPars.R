@@ -178,7 +178,7 @@ SSplotPars <-
         Prior_Like <- rep(0., length(Pval))
       }
       if (is.null(Prior_Like)) {
-        cli::cli_warn("Problem calculating prior. The prior type doesn't match any of the options in the SSplotPars function.\nPtype: {Ptype}")
+        cli::cli_warn("Problem calculating prior. The prior type doesn't match any of the options in the SSplotPars function. Ptype: {Ptype}")
       }
       return(Prior_Like)
     } # end GetPrior function
@@ -197,7 +197,7 @@ SSplotPars <-
       cli::cli_abort("Inputs 'print' and 'add' can't both be TRUE")
     }
     if (print & plot) {
-      cli::cli_warn("Inputs 'print' and 'plot' can't both be TRUE\nchanging to 'plot = FALSE'")
+      cli::cli_warn("Inputs 'print' and 'plot' can't both be TRUE changing to 'plot = FALSE'")
     }
 
     parameters <- replist[["parameters"]]
@@ -291,14 +291,14 @@ SSplotPars <-
           length(grep("DEVmult", x = goodnames)) > 0 |
           length(grep("ARDEV", x = goodnames)) > 0
       ) {
-        cli::cli_warn("Parameter deviates are not fully implemented in this function.\nPrior and bounds unavailable so these are skipped and\nfitrange is set to TRUE for those parameters.")
+        cli::cli_warn("Parameter deviates are not fully implemented in this function. Prior and bounds unavailable so these are skipped and fitrange is set to TRUE for those parameters.")
       }
     }
 
     # get vector of standard deviations and test for NA or 0 values
     stds <- parameters[["Parm_StDev"]][parameters[["Label"]] %in% goodnames]
     if (showmle & (all(is.na(stds)) || min(stds, na.rm = TRUE) <= 0)) {
-      cli::cli_inform("Some parameters have std. dev. values in Report.sso equal to 0.\n  Asymptotic uncertainty estimates will not be shown.\n  Try re-running the model with the Hessian but no MCMC.")
+      cli::cli_inform("Some parameters have std. dev. values in Report.sso equal to 0. Asymptotic uncertainty estimates will not be shown. Try re-running the model with the Hessian but no MCMC.")
     }
 
     # number of parameters

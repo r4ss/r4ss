@@ -250,7 +250,7 @@ SStableComparisons <- function(
   if (nrow(tab) > 0) {
     rownames(tab) <- 1:nrow(tab)
   } else {
-    cli::cli_warn("'names' and 'likenames' didn't match any variables so output is empty\n")
+    cli::cli_warn("'names' and 'likenames' didn't match any variables so output is empty")
   }
 
   # write CSV if requested

@@ -182,7 +182,7 @@ SSplotSPR <-
     # temporary disable multi-season models until code cleanup
     if (2 %in% subplots) {
       if (nseasons > 1) {
-        cli::cli_inform("Skipped 1-SPR plot because it's not yet configured for multi-season models\n")
+        cli::cli_inform("Skipped 1-SPR plot because it's not yet configured for multi-season models")
       }
       if (nseasons == 1) {
         minus_spr_timeseries <- function() {

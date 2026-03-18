@@ -118,7 +118,7 @@ PinerPlot <-
     lbtg <- summaryoutput[["likelihoods_by_tag_group"]]
 
     if (is.null(lbf)) {
-      cli::cli_abort("Input 'summaryoutput' needs to be a list output from SSsummarize\nand have an element named 'likelihoods_by_fleet'.")
+      cli::cli_abort("Input 'summaryoutput' needs to be a list output from SSsummarize and have an element named 'likelihoods_by_fleet'.")
     }
     # count of fleets
     nfleets <- ncol(lbf) - 3
@@ -127,7 +127,7 @@ PinerPlot <-
     FleetNames <- summaryoutput[["FleetNames"]][[1]]
     # stop if lengths don't match
     if (length(FleetNames) != nfleets) {
-      cli::cli_abort(paste0("problem with FleetNames: length!= ", nfleets, "\n", paste(FleetNames, collapse = "\n")))
+      cli::cli_abort(paste0("problem with FleetNames: length!= ", nfleets, "; fleet names: ", paste(FleetNames, collapse = ", ")))
     }
     # stop if component input isn't found in table
     component_options <- c(
@@ -135,7 +135,7 @@ PinerPlot <-
       unique(lbtg[["Label"]][-grep("_lambda", lbtg[["Label"]])])
     )
     if (!component %in% component_options) {
-      cli::cli_abort(paste0("input 'component' needs to be one of the following\n", paste("    ", component_options, "\n")))
+      cli::cli_abort(paste0("input 'component' needs to be one of the following", paste("    ", component_options, "")))
     }
 
     if (fleetnames[1] == "default") {
@@ -147,7 +147,7 @@ PinerPlot <-
       models <- 1:n
     } else {
       if (!all(models %in% 1:n)) {
-        cli::cli_abort("Input 'models' should be a vector of values from 1 to n={n} (for your inputs).\n")
+        cli::cli_abort("Input 'models' should be a vector of values from 1 to n={n} (for your inputs).")
       }
     }
     # check number of fleets to be plotted
@@ -155,7 +155,7 @@ PinerPlot <-
       fleets <- 1:nfleets
     } else {
       if (!all(fleets %in% 1:nfleets)) {
-        cli::cli_abort("Input 'fleets' should be a vector of values from 1 to nfleets={nfleets} (for your inputs).\n")
+        cli::cli_abort("Input 'fleets' should be a vector of values from 1 to nfleets={nfleets} (for your inputs).")
       }
     }
 
@@ -170,10 +170,10 @@ PinerPlot <-
     }
     parlabel <- pars[["Label"]][parnumber]
     if (length(parlabel) > 1) {
-      cli::cli_abort(paste0("Multiple parameters matching profile.string='", profile.string, "':\n", paste(parlabel, collapse = ", "), "\nYou may need to use 'exact=TRUE'.", sep = ""))
+      cli::cli_abort(paste0("Multiple parameters matching profile.string='", profile.string, "':", paste(parlabel, collapse = ", "), "You may need to use 'exact=TRUE'.", sep = ""))
     }
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
-    cli::cli_inform(paste0("Parameter matching profile.string = '", profile.string, "': '", parlabel, "\nParameter values (after subsetting based on input 'models'): ", paste0(parvec, collase = ", ")))
+    cli::cli_inform(paste0("Parameter matching profile.string = '", profile.string, "': '", parlabel, "Parameter values (after subsetting based on input 'models'):", paste0(parvec, collase = ", ")))
     if (xlim[1] == "default") {
       xlim <- range(parvec)
     }
@@ -233,7 +233,7 @@ PinerPlot <-
     column.max <- apply(data.frame(prof.table[, -c(1:3)]), 2, max, na.rm = TRUE)
     change.fraction <- column.max / max(prof.table[, 3], na.rm = TRUE)
     include <- change.fraction >= minfraction
-    cli::cli_inform(paste0("Fleet-specific likelihoods showing max change as fraction of total change.\n", "To change which components are included, change input 'minfraction'.\n", paste0(
+    cli::cli_inform(paste0("Fleet-specific likelihoods showing max change as fraction of total change.", "To change which components are included, change input 'minfraction'.", paste0(
         utils::capture.output(print(data.frame(
           frac_change = round(change.fraction, 4),
           include = include

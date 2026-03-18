@@ -73,7 +73,7 @@ SSmakeMmatrix <- function(
   maxage <- nrow(mat) - 1 # maximum age (assuming first age=0)
   ages <- 0:maxage # vector of ages
 
-  cli::cli_inform("Calculating inputs to Stock Synthesis for a matrix of natural mortality values\n over the range of ages: {min(ages)} to {maxage}")
+  cli::cli_inform("Calculating inputs to Stock Synthesis for a matrix of natural mortality values over the range of ages: {min(ages)} to {maxage}")
 
   Msetup <- c(
     "# three lines to paste near top of control file:\n",
@@ -146,7 +146,7 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  cli::cli_inform(paste0("\n# stuff to paste below the line labeled 'CohortGrowDev'\n", "1 #_custom mortality/growth environmental setup\n", paste0(utils::capture.output(Mlinks), collapse = "\n")))
+  cli::cli_inform(paste0("# stuff to paste below the line labeled 'CohortGrowDev'\n", "1 #_custom mortality/growth environmental setup\n", paste0(utils::capture.output(Mlinks), collapse = "\n")))
 
   # create a data frame of environmental variables
   Menv <- NULL

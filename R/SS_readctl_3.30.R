@@ -123,7 +123,7 @@ SS_readctl_3.30 <- function(
       ind <- ind + 1
     }
     if (ind == length(dat)) {
-      cli::cli_abort("SS_readctl_3.30-find.index: Error - the value of {str} was not found. Check the control file and make sure all data frames are correctly formed.\n")
+      cli::cli_abort("SS_readctl_3.30-find.index: Error - the value of {str} was not found. Check the control file and make sure all data frames are correctly formed.")
     }
     ind
   }
@@ -343,13 +343,13 @@ SS_readctl_3.30 <- function(
   # recruitment timing and distribution ----
   ctllist <- add_elem(ctllist, "recr_dist_method")
   if (ctllist[["recr_dist_method"]] == "1") {
-    cli::cli_warn("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n")
+    cli::cli_warn("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4.")
   }
   if (
     ctllist[["recr_dist_method"]] == "4" &&
       (ctllist[["N_GP"]] != 1 || ctllist[["N_areas"]] != 1)
   ) {
-    cli::cli_abort("recr_dist_method 4 should only be used when GPxSettlementxArea=1. \n")
+    cli::cli_abort("recr_dist_method 4 should only be used when GPxSettlementxArea=1.")
   }
 
   ctllist <- add_elem(ctllist, "recr_global_area")
@@ -359,7 +359,7 @@ SS_readctl_3.30 <- function(
   ctllist <- add_elem(ctllist, "recr_dist_inx") # recruitment interaction requested
   if (ctllist[["recr_dist_inx"]] > 0) {
     # give warning but don't stop for now
-    cli::cli_warn("Recr_dist_inx should not be used in SS version 3.30. Please set to 0. \n")
+    cli::cli_warn("Recr_dist_inx should not be used in SS version 3.30. Please set to 0.")
   }
   ctllist <- add_df(
     ctllist,
@@ -435,7 +435,7 @@ SS_readctl_3.30 <- function(
     cli::cli_abort(paste0("natM_type =", ctllist[["natM_type"]], " is not yet implemented in this script"))
   }
   if (verbose) {
-    cli::cli_inform("N_natMparms ={N_natMparms}\n")
+    cli::cli_inform("N_natMparms ={N_natMparms}")
   }
 
   # growth setup ----
@@ -2029,7 +2029,7 @@ SS_readctl_3.30 <- function(
         valid_input <- FALSE
       }
       if (valid_input == FALSE) {
-        cli::cli_warn("Incorrect inputs detected for stddev_reporting_specs when using option 2. Assuming that no input for dynamic B0 or Summary Bio were provided, as in SS 3.30.15 and .16.\nPlaceholder 0s added for ctllist[['stddev_reporting_specs']][12:13].\nIf the user is using version 3.30.15 or 3.30.16, the 0s should  be removed before writing out the file by using the code \nctllist[['stddev_reporting_specs']] <- ctllist[['stddev_reporting_specs']][1:11]")
+        cli::cli_warn("Incorrect inputs detected for stddev_reporting_specs when using option 2. Assuming that no input for dynamic B0 or Summary Bio were provided, as in SS 3.30.15 and .16. Placeholder 0s added for ctllist[['stddev_reporting_specs']][12:13]. If the user is using version 3.30.15 or 3.30.16, the 0s should be removed before writing out the file by using the code ctllist[['stddev_reporting_specs']] <- ctllist[['stddev_reporting_specs']][1:11]")
         ctllist$".i" <- ctllist$".i" - 2 # back up
         ctllist[["stddev_reporting_specs"]] <-
           c(ctllist[["stddev_reporting_specs"]][1:11], 0, 0)
@@ -2096,11 +2096,11 @@ SS_readctl_3.30 <- function(
   }
   if (ctllist$".dat"[ctllist$".i"] == 999) {
     if (verbose) {
-      cli::cli_inform("read of control file complete (final value = 999)\n")
+      cli::cli_inform("read of control file complete (final value = 999)")
     }
     ctllist[["eof"]] <- TRUE
   } else {
-    cli::cli_warn(paste0("Error: final value is", ctllist$".dat"[ctllist$".i"], " but ", "should be 999\n"))
+    cli::cli_warn(paste0("Error: final value is", ctllist$".dat"[ctllist$".i"], " but ", "should be 999"))
     ctllist[["eof"]] <- FALSE
   }
   ctllist$".dat" <- NULL

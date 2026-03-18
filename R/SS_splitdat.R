@@ -75,7 +75,7 @@ SS_splitdat <-
     MLEend <- starts[1] - 1
 
     if (MLE & length(MLEstart) == 0) {
-      cli::cli_abort("no MLE values in {inname}\n  change 'N bootstrap datafiles' in starter.ss to 2 or greater")
+      cli::cli_abort("no MLE values in {inname} change 'N bootstrap datafiles' in starter.ss to 2 or greater")
     }
     inputstring <- "#_observed data"
     inputstart <- grep(inputstring, filelines)
@@ -85,12 +85,12 @@ SS_splitdat <-
       inputend <- MLEstart - 1
     }
     if (length(inputstart) == 0) {
-      cli::cli_abort("no values in {inname}\n  change 'N bootstrap datafiles' in starter.ss to 1 or greater")
+      cli::cli_abort("no values in {inname} change 'N bootstrap datafiles' in starter.ss to 1 or greater")
     }
 
     if (!MLE & !inputs) {
       if (length(starts) == 0) {
-        cli::cli_abort("no bootstrap values in {inname}\n  change 'N bootstrap datafiles' in starter.ss to 3 or greater")
+        cli::cli_abort("no bootstrap values in {inname} change 'N bootstrap datafiles' in starter.ss to 3 or greater")
       }
       for (i in seq_along(starts)) {
         outfile <- paste(

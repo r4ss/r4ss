@@ -85,7 +85,12 @@ get_SIS_info <- function(
     sep = "_"
   )
 
-  cli::cli_inform(paste0("writing SIS info to CSV files:\n", file.path(dir, filename_values), "\n", file.path(dir, filename_timeseries)))
+  cli::cli_inform(paste0(
+    "writing SIS info to CSV files: ",
+    file.path(dir, filename_values),
+    " and ",
+    file.path(dir, filename_timeseries)
+  ))
 
   # years to report for catch-related quantities
   startyr <- model[["startyr"]]
@@ -213,7 +218,7 @@ get_SIS_info <- function(
   # merge columns from time series, catch, F, and SPR together
   tab <- merge(merge(merge(ts_tab, catch_tab), F_tab), spr_tab)
   if (nrow(tab) != length(years) || any(tab[["Year"]] != years)) {
-    cli::cli_abort(paste0("problem with mismatch of years:\n", "range(years): ", range(years), "\n", "range(tab[['Year']]): ", range(tab[["Year"]]), "\n"))
+    cli::cli_abort(paste0("problem with mismatch of years; range(years): ", range(years), "; range(tab[['Year']]): ", range(tab[["Year"]])))
   }
 
   # replace NA with 0 in exploitation rate for years with 0 catch

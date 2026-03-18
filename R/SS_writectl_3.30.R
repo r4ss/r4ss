@@ -22,7 +22,7 @@ SS_writectl_3.30 <- function(
   verbose = FALSE
 ) {
   if (verbose) {
-    cli::cli_inform("Running SS_writectl_3.30\n")
+    cli::cli_inform("Running SS_writectl_3.30")
   }
   # input checks
   if (ctllist[["ReadVersion"]] != "3.30") {
@@ -38,7 +38,7 @@ SS_writectl_3.30 <- function(
     }
   }
   if (verbose) {
-    cli::cli_inform("Opening connection to {outfile}\n")
+    cli::cli_inform("Opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at") # open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
@@ -567,7 +567,7 @@ SS_writectl_3.30 <- function(
 
   if (ctllist[["recdev_adv"]] == 1) {
     if (verbose) {
-      cli::cli_inform("Writing 13 advanced SRR options\n")
+      cli::cli_inform("Writing 13 advanced SRR options")
     }
     wl(
       "recdev_early_start",
@@ -1036,5 +1036,5 @@ SS_writectl_3.30 <- function(
 
   # cleanup -----
   # options(width=oldwidth,max.print=oldmax.print)
-  if (verbose) cli::cli_inform("File written to {outfile}\n")
+  if (verbose) cli::cli_inform("File written to {outfile}")
 }

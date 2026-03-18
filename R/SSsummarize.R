@@ -788,12 +788,12 @@ SSsummarize <- function(
       get("verbose", envir = parent.frame()) &
         deparse(substitute(data)) == "pars"
     ) {
-      cli::cli_inform(paste0("For model(s) ", paste(fix, collapse = ", "), ", values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for\n", paste(
+      cli::cli_inform(paste0("For model(s) ", paste(fix, collapse = ", "), ", values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for", paste(
           data[oldrows, "Label"],
           data[newrows, "Label"],
           sep = " -> ",
           collapse = ", "
-        ), "\nwere copied from x -> y."))
+        ), "were copied from x -> y."))
     }
     data[newrows, fix] <- data[oldrows, fix]
     return(data)

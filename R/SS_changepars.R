@@ -161,11 +161,11 @@ SS_changepars <-
           any(duplicated(unlist(goodnames))) &
             (repeat.vals & any(sapply(inargs, length) > 1))
         ) {
-          cli::cli_abort("Entries in 'strings' did not map to unique parameters and\nit is unclear how to order the par names to match the order\nof other arguments provided to SS_changepars.\nE.g., strings = c('CV', 'Mal') each return 'CV_young_Mal_GP_1'\nand should be changed to strings = c('young_Fem', 'old_Fem', 'Mal')\nto get all CV and all Male parameters.")
+          cli::cli_abort("Entries in 'strings' did not map to unique parameters and it is unclear how to order the par names to match the order of other arguments provided to SS_changepars. E.g., strings = c('CV', 'Mal') each return 'CV_young_Mal_GP_1' and should be changed to strings = c('young_Fem', 'old_Fem', 'Mal') to get all CV and all Male parameters.")
         }
         goodnames <- unique(unlist(goodnames))
         if (verbose) {
-          cli::cli_inform(paste0("Parameter names in control file matching input vector \n", "'strings' (n=", length(goodnames), "): ", paste0(goodnames, collapse = ", ")))
+          cli::cli_inform("Parameter names in control file matching input vector 'strings' (n={length(goodnames)}): {paste0(goodnames, collapse = ', ')}")
         }
         if (length(goodnames) == 0) {
           cli::cli_abort("No parameters names match input vector 'strings'")
@@ -211,7 +211,7 @@ SS_changepars <-
         assign(ii, rep(tmp, nvals))
       }
       if (length(get(ii)) != nvals) {
-        cli::cli_abort(paste0(paste0("'", ii, "'"), " and either 'linenums' or 'strings'", " should have the same number of elements,\n", "instead of ", length(get(ii)), " and ", length(linenums), ".\n", "Note: a string can map to multiple parameters, here are your pars,\n", paste(goodnames, collapse = "\n")))
+        cli::cli_abort(paste0(paste0("'", ii, "'"), " and either 'linenums' or 'strings'", " should have the same number of elements, instead of ", length(get(ii)), " and ", length(linenums), ". Note: a string can map to multiple parameters, here are your pars: ", paste(goodnames, collapse = ", ")))
       }
     }
 
@@ -292,10 +292,10 @@ SS_changepars <-
       }
       # check bounds relative to new values
       if (vec[3] < vec[1]) {
-        cli::cli_warn("value {vec[3]} is now below lower bound {vec[1]} for {cmnt}\n")
+        cli::cli_warn("value {vec[3]} is now below lower bound {vec[1]} for {cmnt}")
       }
       if (vec[3] > vec[2]) {
-        cli::cli_warn("value {vec[3]} is now above upper bound {vec[2]} for {cmnt}\n")
+        cli::cli_warn("value {vec[3]} is now above upper bound {vec[2]} for {cmnt}")
       }
 
       newphase[i] <- vec[7]

@@ -96,7 +96,7 @@ mcmc.out <- function(
   filename <- file.path(directory, run, file) # put directory,run and file names together for use
   # warning if file does not exist
   if (!file.exists(filename)) {
-    cli::cli_abort("file doesn't exist:\n{filename}")
+    cli::cli_abort("file doesn't exist: {filename}")
   }
 
   mcmcdata <- read.table(

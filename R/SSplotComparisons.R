@@ -431,7 +431,7 @@ SSplotComparisons <-
     if (!is.logical(uncertainty) & is.numeric(uncertainty)) {
       if (any(!uncertainty %in% 1:n)) {
         # stop if numerical values aren't integers <= n
-        cli::cli_abort("'uncertainty' should be a subset of the integers\n 1-{n}, where n={n} is the number of models.\n  Or it can be a single TRUE/FALSE value.\n  Or a vector of TRUE/FALSE, of length n={n}")
+        cli::cli_abort("'uncertainty' should be a subset of the integers 1-{n}, where n={n} is the number of models. Or it can be a single TRUE/FALSE value. Or a vector of TRUE/FALSE, of length n={n}")
       } else {
         # convert integers to logical
         uncertainty <- 1:n %in% uncertainty
@@ -444,7 +444,7 @@ SSplotComparisons <-
     }
     # if all that hasn't yet made it length n, then stop
     if (length(uncertainty) != n) {
-      cli::cli_abort("'uncertainty' as TRUE/FALSE should have length 1 or n.\n  length(uncertainty) = {length(uncertainty)}")
+      cli::cli_abort("'uncertainty' as TRUE/FALSE should have length 1 or n. length(uncertainty) = {length(uncertainty)}")
     }
     # some feedback about uncertainty settings
     if (all(uncertainty)) {
@@ -464,7 +464,7 @@ SSplotComparisons <-
     }
     #### no longer dividing by 2 for single-sex models
     if (length(unique(nsexes)) > 1) {
-      cli::cli_warn("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\nto get female-only spawning biomass output by SS for a single-sex model,\nuse the new Nsexes = -1 option in the data file.")
+      cli::cli_warn("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models to get female-only spawning biomass output by SS for a single-sex model, use the new Nsexes = -1 option in the data file.")
     }
     # check number of models to be plotted
     if (models[1] == "all") {
@@ -482,7 +482,7 @@ SSplotComparisons <-
       mcmcVec <- rep(mcmcVec, nlines)
     }
     if (nlines != length(mcmcVec)) {
-      cli::cli_abort("Input 'mcmcVec' must equal 1 or the number of models.\n")
+      cli::cli_abort("Input 'mcmcVec' must equal 1 or the number of models.")
     }
 
     # if index plots are requested, do some checks on inputs
@@ -510,7 +510,7 @@ SSplotComparisons <-
       }
       # check for mismatched lengths of list elements
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
-        cli::cli_warn("Skipping index plots;\nFleets have different numbers of indices listed in 'indexfleets'.")
+        cli::cli_warn("Skipping index plots; Fleets have different numbers of indices listed in 'indexfleets'.")
         indexfleets <- NULL
       }
 
@@ -697,7 +697,7 @@ SSplotComparisons <-
         mean <- apply(mcmc.tmp, 2, mean, na.rm = TRUE)
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
         if (!meanRecWarning) {
-          cli::cli_inform("note: using mean recruitment from MCMC instead of median,\nbecause it is more comparable to MLE\n")
+          cli::cli_inform("note: using mean recruitment from MCMC instead of median, because it is more comparable to MLE")
           meanRecWarning <- TRUE
         }
         recruits[, imodel] <- mean[match(recruits[["Label"]], mcmclabs)]
@@ -3023,7 +3023,7 @@ SSplotComparisons <-
         if (length(expandednames) == 0) {
           cli::cli_warn("No parameter/quantity names matching 'densitynames' input.")
         } else {
-          cli::cli_inform(paste0("Parameter/quantity names matching 'densitynames' input:\n", paste0(expandednames, collapse = ", ")))
+          cli::cli_inform(paste0("Parameter/quantity names matching 'densitynames' input:", paste0(expandednames, collapse = ", ")))
           ndensities <- length(expandednames)
           # make a table to store associated x-labels
           densitytable <- data.frame(

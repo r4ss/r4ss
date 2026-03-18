@@ -65,7 +65,7 @@ populate_multiple_folders <- function(
 
   # note source and destination directories
   if (verbose) {
-    cli::cli_inform("copying files from\n {outerdir.old}\nto\n {outerdir.new}")
+    cli::cli_inform("copying files from {outerdir.old} to {outerdir.new}")
   }
 
   # empty data frame to attach things to

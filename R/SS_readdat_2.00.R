@@ -166,7 +166,7 @@ SS_readdat_2.00 <- function(
   areas <- datlist[["areas"]]
   if (verbose) {
     cli::cli_inform("areas:{areas}")
-    cli::cli_inform(paste0("fleet info:\n", paste0(
+    cli::cli_inform(paste0("fleet info:", paste0(
         utils::capture.output(
           data.frame(
             fleet = 1:Ntypes,

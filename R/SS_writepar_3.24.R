@@ -44,7 +44,7 @@ SS_writepar_3.24 <- function(
   }
 
   if (verbose) {
-    cli::cli_inform("Opening connection to {outfile}\n")
+    cli::cli_inform("Opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at") # open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.

@@ -30,7 +30,7 @@ SS_writestarter <- function(
     cli::cli_inform("running SS_writestarter")
   }
   if (mylist[["type"]] != "Stock_Synthesis_starter_file") {
-    cli::cli_abort("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
+    cli::cli_abort("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'")
   }
   # this command will hopefully prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
@@ -49,7 +49,7 @@ SS_writestarter <- function(
   }
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_abort("file exists: {outfile} \n  set overwrite=TRUE to replace\n")
+      cli::cli_abort("file exists: {outfile} set overwrite=TRUE to replace")
     } else {
       file.remove(outfile)
     }

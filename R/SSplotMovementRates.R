@@ -372,7 +372,7 @@ SSplotMovementRates <-
           } # end if(FALSE) turning off section that isn't working
         } # end check for time-varying movement
       } else {
-        cli::cli_inform("Skipping time varying movement plots (subplot 2), most likely\nbecause MGparm_By_Year_after_adjustments table (report:7) is\nnot reported in the Report.sso file.")
+        cli::cli_inform("Skipping time varying movement plots (subplot 2), most likely because MGparm_By_Year_after_adjustments table (report:7) is not reported in the Report.sso file.")
       }
     } # end subplot 2
     returnlist <- list()

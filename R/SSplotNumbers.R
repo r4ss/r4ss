@@ -93,7 +93,7 @@ SSplotNumbers <-
 
     natage <- replist[["natage"]]
     if (is.null(natage)) {
-      cli::cli_inform("Skipped some plots because NUMBERS_AT_AGE unavailable\n in the report file. The starter file may be set to produce\n limited report detail.")
+      cli::cli_inform("Skipped some plots because NUMBERS_AT_AGE unavailable in the report file. The starter file may be set to produce limited report detail.")
     } else {
       # get stuff from replist
       ngpatterns <- max(natage[["Bio_Pattern"]])
@@ -842,7 +842,7 @@ SSplotNumbers <-
                     ...
                   )
                 } else {
-                  cli::cli_warn("Skipping plot of sex ratio by length and year\n  due to mismatch in length of table and vector of years.\n  This may be due to 0 values in the table.")
+                  cli::cli_warn("Skipping plot of sex ratio by length and year due to mismatch in length of table and vector of years. This may be due to 0 values in the table.")
                 }
               }
               if (plot & 8 %in% subplots) {

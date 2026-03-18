@@ -55,7 +55,7 @@ SSplotSummaryF <- function(
     ),
   ]
   if (all(is.na(Ftot[["Value"]]))) {
-    cli::cli_warn("Skipping SSplotSummaryF because no real values found in DERIVED_QUANTITIES\n    Values with labels like F_2012 may not be real.\n")
+    cli::cli_warn("Skipping SSplotSummaryF because no real values found in DERIVED_QUANTITIES Values with labels like F_2012 may not be real.")
     return()
   }
   Fmax <- max(c(Ftot[["Value"]], Ftgt + 0.01), na.rm = TRUE)

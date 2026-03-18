@@ -83,7 +83,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ",i=", forelist$".i", "\n", paste0(forelist[[name]], collapse = "\n")))
+      cli::cli_inform(paste0(name, ",i=", forelist$".i", ": ", paste0(forelist[[name]], collapse = "\n")))
     }
     return(forelist)
   }
@@ -97,7 +97,7 @@ SS_readforecast <- function(
       ind <- ind + 1
     }
     if (ind == length(dat)) {
-      cli::cli_abort("SS_readctl_3.30-find.index: Error - the value of {str} was not found. Check the control file and make sure all data frames are correctly formed.\n")
+      cli::cli_abort("SS_readctl_3.30-find.index: Error - the value of {str} was not found. Check the control file and make sure all data frames are correctly formed.")
     }
     ind
   }
@@ -151,7 +151,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ",i=", forelist$".i", "\n", paste0(forelist[[which(names(forelist) == name)]], collapse = "\n")))
+      cli::cli_inform(paste0(name, ",i=", forelist$".i", ": ", paste0(forelist[[which(names(forelist) == name)]], collapse = "\n")))
     }
     return(forelist)
   }
@@ -253,13 +253,13 @@ SS_readforecast <- function(
     # stop reading if forecast 0 or -1 used, and no other lines present
     # (aside from 999), but readAll = TRUE.
     if (verbose) {
-      cli::cli_inform(paste0("Forecast =", forelist[["Forecast"]], "\n"))
+      cli::cli_inform(paste0("Forecast =", forelist[["Forecast"]], ""))
     }
     cli::cli_warn("readAll selected as TRUE, but lines beyond Forecast are not present in the forecasting file, so skipping remainder of file")
   } else {
     # continue reading forecast
     if (verbose) {
-      cli::cli_inform(paste0("Forecast =", forelist[["Forecast"]], "\n"))
+      cli::cli_inform(paste0("Forecast =", forelist[["Forecast"]], ""))
     }
     forelist <- add_elem(forelist, "Nforecastyrs")
     # check for compatible input with forecast option 1.
@@ -470,11 +470,11 @@ SS_readforecast <- function(
     }
     if (forelist$".dat"[forelist$".i"] == 999) {
       if (verbose) {
-        cli::cli_inform("read of forecast file complete (final value = 999)\n")
+        cli::cli_inform("read of forecast file complete (final value = 999)")
       }
       forelist[["eof"]] <- TRUE
     } else {
-      cli::cli_warn(paste0("Error: final value is ", forelist$".dat"[forelist$".i"], " but ", "should be 999\n"))
+      cli::cli_warn(paste0("Error: final value is ", forelist$".dat"[forelist$".i"], " but ", "should be 999"))
       forelist[["eof"]] <- FALSE
     }
   }

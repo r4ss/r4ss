@@ -103,7 +103,8 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
       # like /usr/sbin/ but it's size is much smaller (about 100k vs 7MB)
       if (file.info(normalizePath(path_to_exe))[["size"]] < 1e6) {
         if (verbose) {
-          cli::cli_inform(paste0("Executable found that isn't Stock Synthesis: ", path_to_exe, "\n  File size is too small: ", file.info(normalizePath(path_to_exe))[["size"]]))
+          exe_size <- file.info(normalizePath(path_to_exe))[["size"]]
+          cli::cli_inform("Executable found that isn't Stock Synthesis: {path_to_exe}; File size is too small: {exe_size}")
         }
         path_to_exe <- ""
       } else {

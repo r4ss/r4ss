@@ -36,7 +36,7 @@ SS_html <- function(
   verbose = TRUE
 ) {
   if (verbose) {
-    cli::cli_inform("Running 'SS_html':\n  By default, this function will look in the directory where PNG files were created\n  for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'\n  HTML files are written to link to these plots and put in the same directory.\n\n")
+    cli::cli_inform("Running 'SS_html': By default, this function will look in the directory where PNG files were created for CSV files with the name 'plotInfoTable...' written by 'SS_plots.' HTML files are written to link to these plots and put in the same directory.")
   }
   if (is.null(plotdir)) {
     cli::cli_abort("input 'plotdir' required")

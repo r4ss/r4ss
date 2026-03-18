@@ -141,10 +141,10 @@ SSplotBiology <-
     # test for presence of wtatage_switch
     wtatage_switch <- replist[["wtatage_switch"]]
     if (wtatage_switch) {
-      cli::cli_inform("Note: this model uses the empirical weight-at-age input.\n      Plots of many quantities related to growth are skipped.")
+      cli::cli_inform("Note: this model uses the empirical weight-at-age input. Plots of many quantities related to growth are skipped.")
     } else {
       if (is.null(replist[["endgrowth"]])) {
-        cli::cli_inform("Skipping biology plots because model output doesn't include\n biology-at-age information (endgrowth), likely because\n brief output was specified in starter.ss.")
+        cli::cli_inform("Skipping biology plots because model output doesn't include biology-at-age information (endgrowth), likely because brief output was specified in starter.ss.")
         return()
       }
     }
@@ -304,7 +304,7 @@ SSplotBiology <-
     }
     # check dimensions
     if (length(morphs) > nsexes) {
-      cli::cli_warn("!Error with morph indexing in SSplotBiology function.\n Code is not set up to handle multiple growth patterns or birth seasons.\n")
+      cli::cli_warn("!Error with morph indexing in SSplotBiology function. Code is not set up to handle multiple growth patterns or birth seasons.")
     }
 
     ## # stuff from selectivity that is not used
@@ -1245,7 +1245,7 @@ SSplotBiology <-
         plotinfo.tmp <- plotinfo.tmp[, c("file", "caption", "alt_text")]
         plotinfo <- rbind(plotinfo, plotinfo.tmp)
       } else {
-        cli::cli_inform("Skipped some plots because AGE_LENGTH_KEY unavailable in report file\nbecause starter file set to produce limited report detail.")
+        cli::cli_inform("Skipped some plots because AGE_LENGTH_KEY unavailable in report file because starter file set to produce limited report detail.")
       }
     }
 
@@ -1253,7 +1253,7 @@ SSplotBiology <-
     growth_curve_labeled_fn <- function(option = 1) {
       # growth
       if (is.null(Growth_Parameters)) {
-        cli::cli_inform("Need updated SS_output function to get Growth_Parameters output\n")
+        cli::cli_inform("Need updated SS_output function to get Growth_Parameters output")
         return()
       }
       # save current parameter settings
@@ -1999,12 +1999,12 @@ SSplotBiology <-
     # Time-varying growth
     if (is.null(growthvaries)) {
       if (verbose) {
-        cli::cli_inform("No check for time-varying growth because starter file set to produce\nlimited report detail.")
+        cli::cli_inform("No check for time-varying growth because starter file set to produce limited report detail.")
       }
     } else {
       # temporarily disable multi-season plotting of time-varying growth
       if (is.null(growthseries)) {
-        cli::cli_warn("No time-varying growth info because starter file set to produce\nlimited report detail.")
+        cli::cli_warn("No time-varying growth info because starter file set to produce limited report detail.")
       } else {
         # if growth is time varying and weight-at-age not used
         if (growthvaries & !wtatage_switch) {
@@ -2218,7 +2218,7 @@ SSplotBiology <-
           }
         }
       } else {
-        cli::cli_inform("Skipping timevarying quantity plots (subplot 24), most likely\nbecause the MGparm_By_Year_after_adjustments table (report:7)\nis not reported in the Report.sso file.")
+        cli::cli_inform("Skipping timevarying quantity plots (subplot 24), most likely because the MGparm_By_Year_after_adjustments table (report:7) is not reported in the Report.sso file.")
       }
     }
 

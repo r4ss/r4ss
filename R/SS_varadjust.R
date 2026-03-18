@@ -70,7 +70,7 @@ SS_varadjust <- function(
     cli::cli_abort("Input 'newrow' requires the input 'rownumber' (which row within the table)")
   }
   if (!is.null(rownumber) && !rownumber %in% 1:6) {
-    cli::cli_abort("Input 'rownumber' should be an integer specifying which of the rows\nof the variance adjustment table will be replaced with 'newrow'")
+    cli::cli_abort("Input 'rownumber' should be an integer specifying which of the rows of the variance adjustment table will be replaced with 'newrow'")
   }
 
   # combine directory and filenames
@@ -83,7 +83,7 @@ SS_varadjust <- function(
   # find line matching keyword and complain if 0 or 2+ lines found
   keyword_line <- grep(keyword, ctl_lines)
   if (length(keyword_line) != 1) {
-    cli::cli_abort("keyword input '{keyword}' found {length(keyword_line)} times.\nIt should be a unique string immediately before variance adjustments.")
+    cli::cli_abort("keyword input '{keyword}' found {length(keyword_line)} times. It should be a unique string immediately before variance adjustments.")
   }
   # read control file as a table of values
   ctl <- read.table(
@@ -193,7 +193,7 @@ SS_varadjust <- function(
   # check for existence of file and warn if present and overwrite=FALSE
   if (file.exists(newctlfile)) {
     if (!overwrite) {
-      cli::cli_abort("File exists and input 'overwrite'=FALSE:\n      {newctlfile}\n")
+      cli::cli_abort("File exists and input 'overwrite'=FALSE: {newctlfile}")
     } else {
       file.remove(newctlfile)
     }

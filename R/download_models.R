@@ -52,7 +52,7 @@ download_models <- function(
     exdir = dir
   )
   if (dir.exists(file.path(dir, "models")) & overwrite == FALSE) {
-    cli::cli_warn(paste0("The model directory ", file.path(dir, "models"), " already exists ", "\nand overwrite is FALSE. So, no new files will be written."))
+    cli::cli_warn(paste0("The model directory ", file.path(dir, "models"), " already exists ", "and overwrite is FALSE. So, no new files will be written."))
   }
   dir.create(file.path(dir, "models"), showWarnings = FALSE)
   copy_status <- file.copy(

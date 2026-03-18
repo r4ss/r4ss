@@ -216,7 +216,7 @@ SSplotIndices <-
       upper_input <- input_intervals[["upper"]]
 
       if (max(upper_total) == Inf) {
-        cli::cli_warn("Removing upper interval on indices with infinite upper quantile values.\nCheck the uncertainty inputs for the indices.")
+        cli::cli_warn("Removing upper interval on indices with infinite upper quantile values. Check the uncertainty inputs for the indices.")
         upper_total[upper_total == Inf] <- 100 *
           max(cpueuse[["Obs"]][upper_total == Inf])
       }
@@ -598,7 +598,7 @@ SSplotIndices <-
 
     # check for super periods
     if (length(grep("supr_per", cpue[["Supr_Per"]]))) {
-      cli::cli_warn("Some indices have superperiods. Values will be plotted\nin year/season associated with data in report file.")
+      cli::cli_warn("Some indices have superperiods. Values will be plotted in year/season associated with data in report file.")
       cpue <- cpue[!is.na(cpue[["Dev"]]), ]
     }
 

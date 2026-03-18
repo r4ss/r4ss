@@ -44,7 +44,7 @@ SS_writeforecast <- function(
   outfile <- paste(dir, file, sep = "/")
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_abort("file exists: {outfile} \n  set overwrite=TRUE to replace\n")
+      cli::cli_abort("file exists: {outfile} set overwrite=TRUE to replace")
     } else {
       if (verbose) {
         cli::cli_inform("overwriting file:{outfile}")
@@ -167,10 +167,10 @@ SS_writeforecast <- function(
 
       wl("First_forecast_loop_with_stochastic_recruitment")
       if (!is.null(mylist[["Forecast_loop_control_3"]])) {
-        cli::cli_warn("Forecast_loop_control_3 has been renamed to fcast_rec_option\n so only fcast_rec_option will be written to the file.")
+        cli::cli_warn("Forecast_loop_control_3 has been renamed to fcast_rec_option so only fcast_rec_option will be written to the file.")
       }
       if (!is.null(mylist[["Forecast_loop_control_4"]])) {
-        cli::cli_warn("Forecast_loop_control_4 has been renamed to fcast_rec_val\n so only fcast_rec_val will be written to the file.")
+        cli::cli_warn("Forecast_loop_control_4 has been renamed to fcast_rec_val so only fcast_rec_val will be written to the file.")
       }
       wl("fcast_rec_option")
       wl("fcast_rec_val")

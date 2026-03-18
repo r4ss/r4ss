@@ -49,7 +49,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   }
   strings <- strings[is.na(suppressWarnings(as.numeric(strings)))]
   if (length(strings) > 2) {
-    cli::cli_warn(paste0("Too many strings in starter file?\n", "Choosing first 2 of these as data and control file names:\n", paste(strings, collapse = "\n")))
+    cli::cli_warn(paste0("Too many strings in starter file? Choosing first 2 of these as data and control file names: ", paste(strings, collapse = ", ")))
   }
   mylist[["datfile"]] <- strings[1]
   mylist[["ctlfile"]] <- strings[2]

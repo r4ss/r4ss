@@ -622,7 +622,7 @@ get_tuning_table <- function(
         has_conditional <- FALSE
       }
       if (has_marginal & has_conditional) {
-        cli::cli_warn("fleet {fleet} has both conditional ages and marginal ages\ntuning will be based on conditional ages")
+        cli::cli_warn("fleet {fleet} has both conditional ages and marginal ages tuning will be based on conditional ages")
       }
       if (has_marginal | has_conditional) {
         # data is present, calculate stuff

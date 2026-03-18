@@ -66,7 +66,7 @@ SS_readctl_3.24 <- function(
   # function to read Stock Synthesis data files
 
   if (verbose) {
-    cli::cli_inform("running SS_readctl_3.24\n")
+    cli::cli_inform("running SS_readctl_3.24")
   }
   dat <- readLines(file, warn = FALSE)
 
@@ -118,7 +118,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ", i = ", ctllist$".i", "\n", paste0(ctllist[name], collapse = "\n")))
+      cli::cli_inform(paste0(name, ", i = ", ctllist$".i", ": ", paste0(ctllist[name], collapse = "\n")))
     }
     return(ctllist)
   }
@@ -146,7 +146,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ", i = ", ctllist$".i", "\n", paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n")))
+      cli::cli_inform(paste0(name, ", i = ", ctllist$".i", ": ", paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n")))
     }
     return(ctllist)
   }
@@ -1818,7 +1818,7 @@ SS_readctl_3.24 <- function(
     }
     ctllist[["eof"]] <- TRUE
   } else {
-    cli::cli_inform(paste0("Error: final value is", ctllist$".dat"[ctllist$".i"], ", but should be 999\n"))
+    cli::cli_inform(paste0("Error: final value is", ctllist$".dat"[ctllist$".i"], ", but should be 999"))
     ctllist[["eof"]] <- FALSE
   }
   ctllist$".dat" <- NULL

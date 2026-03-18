@@ -422,10 +422,10 @@ SS_fitbiasramp <-
 
     if (verbose) {
       if (newbias[["convergence"]] != 0) {
-        cli::cli_warn("Problem with convergence, here is output from 'optim':\n")
+        cli::cli_warn("Problem with convergence, here is output from 'optim':")
         print(newbias)
       }
-      cli::cli_inform(paste0("Estimated values: \n", paste0(utils::capture.output(df), collpase = "\n")))
+      cli::cli_inform(paste0("Estimated values:", paste0(utils::capture.output(df), collpase = "")))
     }
 
     if (plot) {
