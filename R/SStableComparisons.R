@@ -156,7 +156,7 @@ SStableComparisons <- function(
         }
         if (!is.null(digits)) {
           if (verbose) {
-            cli::cli_inform("rounded to{digit}digits")
+            cli::cli_inform("rounded to {digit} digits")
           }
           vals[, -1] <- round(vals[, -1], digit)
         }
@@ -231,7 +231,7 @@ SStableComparisons <- function(
         }
         if (!is.null(digits)) {
           if (verbose) {
-            cli::cli_inform("rounded to{digit}digits")
+            cli::cli_inform("rounded to {digit} digits")
           }
           vals[, -1] <- round(vals[, -1], digit)
         }

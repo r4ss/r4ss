@@ -75,7 +75,7 @@ run <- function(
 
   # confirm that dir exists
   if (!dir.exists(dir)) {
-    cli::cli_warn("not a directory:{dir}")
+    cli::cli_warn("not a directory: {dir}")
     results <- "not a directory"
   } else {
     if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
@@ -102,7 +102,7 @@ run <- function(
         ),
         error = function(err) {
           if (grepl("'CreateProcess' failed to run", err)) {
-            cli::cli_abort("There is a problem with the SS3 executable, perhaps due to mismatch with the operating system. Please make sure that you have the correctexecutable and it is named appropriately for your operating system")
+            cli::cli_abort("There is a problem with the SS3 executable, perhaps due to mismatch with the operating system. Please make sure that you have the correct executable and it is named appropriately for your operating system")
           } else {
             err
           }

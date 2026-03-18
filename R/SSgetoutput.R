@@ -120,7 +120,7 @@ SSgetoutput <-
       newobject <- objectnames[i]
 
       if (verbose & !is.null(key)) {
-        cli::cli_inform("getting files with key ={key}")
+        cli::cli_inform("getting files with key = {key}")
       }
 
       repFileName <- paste("Report", key2, ".sso", sep = "")

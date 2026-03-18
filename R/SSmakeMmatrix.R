@@ -73,7 +73,7 @@ SSmakeMmatrix <- function(
   maxage <- nrow(mat) - 1 # maximum age (assuming first age=0)
   ages <- 0:maxage # vector of ages
 
-  cli::cli_inform("Calculating inputs to Stock Synthesis for a matrix of natural mortality values\n over the range of ages:{min(ages)}to{maxage}")
+  cli::cli_inform("Calculating inputs to Stock Synthesis for a matrix of natural mortality values\n over the range of ages: {min(ages)} to {maxage}")
 
   Msetup <- c(
     "# three lines to paste near top of control file:\n",
@@ -174,5 +174,5 @@ SSmakeMmatrix <- function(
     sink()
     close(zz)
   }
-  if (!is.null(outfile)) cli::cli_inform("file written to{outfile}")
+  if (!is.null(outfile)) cli::cli_inform("file written to {outfile}")
 }

@@ -235,7 +235,7 @@ SS_varadjust <- function(
   sink()
   close(zz)
   if (verbose) {
-    cli::cli_inform("file written to{newctlfile}")
+    cli::cli_inform("file written to {newctlfile}")
   }
   # return table of values
   return(invisible(ctl))

@@ -220,7 +220,7 @@ TSCplot <- function(
   }
   if (!is.null(makePNG)) {
     dev.off()
-    cli::cli_inform("The plot is in png file{makePNG}")
+    cli::cli_inform("The plot is in png file {makePNG}")
   }
 
   invisible(SP)

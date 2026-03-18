@@ -109,7 +109,7 @@ SSplotPars <-
       Prior_Like <- NULL
 
       if (is.na(Ptype)) {
-        cli::cli_warn("problem with prior type interpretation. Ptype:{Ptype}")
+        cli::cli_warn("problem with prior type interpretation. Ptype: {Ptype}")
       }
 
       Pconst <- 0.0001

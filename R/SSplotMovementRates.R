@@ -83,7 +83,7 @@ SSplotMovementRates <-
 
         if (nrow(move2) == 0) {
           if (verbose) {
-            cli::cli_inform("Skipping movement rate plot: no movement in season{moveseas[iseas]}")
+            cli::cli_inform("Skipping movement rate plot: no movement in season {moveseas[iseas]}")
           }
         } else {
           move3 <- move2[, -(1:6)]
@@ -191,10 +191,10 @@ SSplotMovementRates <-
             ]
             nmoves <- nrow(moveinfo)
             if (verbose) {
-              cli::cli_inform("N movement rates:{nmoves}")
+              cli::cli_inform("N movement rates: {nmoves}")
             }
             if (nareas > 2) {
-              cli::cli_warn("Time-varying movement plots not yet configuredfor models with N areas > 2")
+              cli::cli_warn("Time-varying movement plots not yet configured for models with N areas > 2")
             } else {
               yrvec <- replist[["startyr"]]:replist[["endyr"]]
               nyrs <- length(yrvec)

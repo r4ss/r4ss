@@ -1610,7 +1610,7 @@ SSplotSelex <-
       #   by info on the growth within the season when each fleet operates.
       growdat <- growdat[growdat[["Seas"]] == season, ]
       if (nseasons > 1) {
-        cli::cli_inform("Warning: plots showing growth curve with selectivity are using season {season} growth, which may not match the timing of the fishery.")
+        cli::cli_warn("Plots showing growth curve with selectivity are using season {season} growth, which may not match the timing of the fishery.")
       }
 
       # Mid year mean length at age with 95% range of lengths (by sex if applicable)

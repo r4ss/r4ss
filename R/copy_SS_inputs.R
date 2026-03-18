@@ -59,14 +59,14 @@ copy_SS_inputs <- function(
 
   # check for presence of old directory
   if (dir.old != "" & !dir.exists(dir.old)) {
-    cli::cli_abort("dir.old doesn't exist:{dir.old}")
+    cli::cli_abort("dir.old doesn't exist: {dir.old}")
   }
   # check for presence of new directory, and create if requested
   if (!dir.exists(dir.new)) {
     if (create.dir) {
       dir.create(dir.new, recursive = recursive)
     } else {
-      cli::cli_abort("'dir.create=FALSE' and dir.new doesn't exist:{dir.new}")
+      cli::cli_abort("'dir.create=FALSE' and dir.new doesn't exist: {dir.new}")
     }
   }
   # read starter file to figure out what other inputs are

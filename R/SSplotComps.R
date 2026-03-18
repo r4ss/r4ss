@@ -1538,7 +1538,7 @@ SSplotComps <-
             # add lines for growth of individual cohorts if requested
             if (length(cohortlines) > 0) {
               for (icohort in seq_along(cohortlines)) {
-                cli::cli_inform("  Adding line for{cohortlines[icohort]}cohort\n")
+                cli::cli_inform("  Adding line for {cohortlines[icohort]} cohort\n")
                 if (kind == "LEN") {
                   lines(
                     growdatF[["Age"]] + cohortlines[icohort],
@@ -2202,7 +2202,7 @@ SSplotComps <-
               # add lines for growth of individual cohorts if requested
               if (length(cohortlines) > 0) {
                 for (icohort in seq_along(cohortlines)) {
-                  cli::cli_inform("  Adding line for{cohortlines[icohort]}cohort\n")
+                  cli::cli_inform("  Adding line for {cohortlines[icohort]} cohort\n")
                   if (kind == "LEN") {
                     if (nsexes > 1) {
                       lines(
@@ -2648,7 +2648,7 @@ SSplotComps <-
             goodbins <- intersect(aalbin, dbase[["Lbin_hi"]])
             if (length(goodbins) > 0) {
               if (length(badbins) > 0) {
-                cli::cli_inform("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data:{badbins}\n       the following inputs for 'aalbin' are fine:{goodbins}\n")
+                cli::cli_inform("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data: {badbins}\n       the following inputs for 'aalbin' are fine: {goodbins}\n")
               }
               for (ibin in seq_along(goodbins)) {
                 # loop over good bins

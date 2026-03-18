@@ -479,7 +479,7 @@ SS_plots <-
       )
       pdf(file = pdffile, width = pwidth, height = pheight)
       if (verbose) {
-        cli::cli_inform("PDF file with plots will be:{pdffile}")
+        cli::cli_inform("PDF file with plots will be: {pdffile}")
       }
     }
 
@@ -2417,7 +2417,7 @@ SS_plots <-
       if (file.exists(csvname)) {
         # Warn if file exists (and will be overwritten, losing information).
         # In the future the file name could be changed to avoid this
-        cli::cli_warn("Overwriting{csvname}")
+        cli::cli_warn("Overwriting {csvname}")
       }
       write.csv(plotInfoTable, csvname, row.names = FALSE)
       if (verbose) {

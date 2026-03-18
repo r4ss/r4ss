@@ -120,7 +120,7 @@ SS_splitdat <-
           paste("#C MLE data file created from", infile, "to", outfile)
         )
         if (verbose) {
-          cli::cli_inform("MLE data file created from{infile}to{outfile}")
+          cli::cli_inform("MLE data file created from {infile} to {outfile}")
         }
         writeLines(c(notes, filelines[MLEstart:MLEend]), outfile)
       }

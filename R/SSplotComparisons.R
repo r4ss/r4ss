@@ -320,7 +320,7 @@ SSplotComparisons <-
       )
       pdf(file = pdffile, width = pwidth, height = pheight)
       if (verbose) {
-        cli::cli_inform("PDF file with plots will be:{pdffile}")
+        cli::cli_inform("PDF file with plots will be: {pdffile}")
       }
       par(par)
     }
@@ -2603,7 +2603,7 @@ SSplotComparisons <-
           # that applies to both MLE and MCMC
 
           if (densitytails & densitymiddle) {
-            cli::cli_warn("You are shading both tails and central 95% of density plotswhich is illogical")
+            cli::cli_warn("You are shading both tails and central 95% of density plots which is illogical")
           }
 
           doShade <- FALSE

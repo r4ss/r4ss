@@ -397,7 +397,7 @@ SSplotSPR <-
       Bratio_vals <- Bratio[["Value"]][Bratio[["Yr"]] %in% shared_yrs]
       SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% shared_yrs]
       if (length(Bratio_vals) != length(SPRratio_vals)) {
-        cli::cli_inform("Bratio and SPRratio vectors are different in length,skipping phase plot.")
+        cli::cli_inform("Bratio and SPRratio vectors are different in length, skipping phase plot.")
         return()
       }
       # put things into a data.frame to keep track of relationships

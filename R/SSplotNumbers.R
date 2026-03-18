@@ -159,7 +159,7 @@ SSplotNumbers <-
         cli::cli_inform("Numbers at age plots are for only the first birth season")
       }
       if (ngpatterns > 1) {
-        cli::cli_inform("Numbers at age plots may not deal correctly with growth patterns:no guarantees!")
+        cli::cli_inform("Numbers at age plots may not deal correctly with growth patterns: no guarantees!")
       }
       if (nseasons > 1) {
         cli::cli_inform("Numbers at age plots are for season 1 only")
@@ -891,7 +891,7 @@ SSplotNumbers <-
           BirthSeas <- min(bseas)
         }
         if (length(bseas) > 1) {
-          cli::cli_inform("showing equilibrium age for first birth season{BirthSeas}")
+          cli::cli_inform("showing equilibrium age for first birth season {BirthSeas}")
         }
 
         # sort out plot title

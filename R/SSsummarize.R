@@ -604,7 +604,7 @@ SSsummarize <- function(
           0
       )
     ) {
-      cli::cli_warn("years for InitAge parameters differ between models,use InitAgeYrs matrix")
+      cli::cli_warn("years for InitAge parameters differ between models, use InitAgeYrs matrix")
     } else {
       pars[["Yr"]][InitAgeRows] <- apply(InitAgeYrs, 1, max, na.rm = TRUE)
     }
@@ -744,7 +744,7 @@ SSsummarize <- function(
               good <- !is.na(x.Yr[, icol])
               if (sum(good) > 1) {
                 # warn if more than 1 value
-                cli::cli_warn("multiple recdevs values associated with year ={Yr}")
+                cli::cli_warn("multiple recdevs values associated with year = {Yr}")
               }
               if (sum(good) == 1) {
                 # put good value into new row

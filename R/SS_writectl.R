@@ -47,7 +47,7 @@ SS_writectl <- function(
   # Check user inputs and/or prepare the file to be overwitten.
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_abort("Outfile called {outfile} exists and input 'overwrite'= FALSE.Please set overwrite = TRUE if you wish to overwrite the file.")
+      cli::cli_abort("Outfile called {outfile} exists and input 'overwrite'= FALSE. Please set overwrite = TRUE if you wish to overwrite the file.")
     } else if (overwrite) {
       file.remove(outfile)
     }

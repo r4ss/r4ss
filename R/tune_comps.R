@@ -452,7 +452,7 @@ tune_comps <- function(
   # DM ----
   if (option == "DM") {
     if (init_run) {
-      cli::cli_warn("Init run was TRUE, but option == DM, so no initial run was done.The model will only be run if niters > 0.")
+      cli::cli_warn("Init run was TRUE, but option == DM, so no initial run was done. The model will only be run if niters > 0.")
     }
     # determine which fleets specified by user are included in model
     fleets_len <- fleets[fleets %in% unique(dat[["lencomp"]][, "fleet"])]
@@ -622,7 +622,7 @@ get_tuning_table <- function(
         has_conditional <- FALSE
       }
       if (has_marginal & has_conditional) {
-        cli::cli_warn("fleet{fleet}has both conditional ages and marginal ages\ntuning will be based on conditional ages")
+        cli::cli_warn("fleet {fleet} has both conditional ages and marginal ages\ntuning will be based on conditional ages")
       }
       if (has_marginal | has_conditional) {
         # data is present, calculate stuff

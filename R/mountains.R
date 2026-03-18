@@ -50,7 +50,7 @@ mountains <- function(
 
   for (icol in 1:ncol(zmat)) {
     if (!is.numeric(zmat[, icol])) {
-      cli::cli_abort("Column{icol}of zmat is not numeric")
+      cli::cli_abort("Column {icol} of zmat is not numeric")
     }
   }
 

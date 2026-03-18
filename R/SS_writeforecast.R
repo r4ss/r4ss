@@ -282,5 +282,5 @@ SS_writeforecast <- function(
   options(width = oldwidth)
   sink()
   close(zz)
-  if (verbose) cli::cli_inform("file written to{outfile}")
+  if (verbose) cli::cli_inform("file written to {outfile}")
 }

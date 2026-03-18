@@ -59,7 +59,7 @@ populate_multiple_folders <- function(
     if (create.dir) {
       dir.create(outerdir.new)
     } else {
-      cli::cli_abort("'dir.create=FALSE' and outerdir.new doesn't exist:{outerdir.new}")
+      cli::cli_abort("'dir.create=FALSE' and outerdir.new doesn't exist: {outerdir.new}")
     }
   }
 

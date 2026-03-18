@@ -104,5 +104,5 @@ SS_writewtatage <- function(
   # restore printing width to whatever the user had before
   options(width = oldwidth)
   sink()
-  if (verbose) cli::cli_inform("file written to{outfile}\n")
+  if (verbose) cli::cli_inform("file written to {outfile}\n")
 }
