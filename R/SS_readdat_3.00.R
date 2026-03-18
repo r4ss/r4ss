@@ -120,7 +120,7 @@ SS_readdat_3.00 <- function(
   datlist[["type"]] <- "Stock_Synthesis_data_file"
   datlist[["ReadVersion"]] <- "3.00"
   if (verbose) {
-    cli::cli_inform(paste0("SS_readdat_3.00 - SS version = ", datlist[["ReadVersion"]]))
+    cli::cli_inform("{paste(\"SS_readdat_3.00 - SS version = \", datlist[[\"ReadVersion\"]], sep = \"\")}")
   }
 
   # model dimensions
@@ -171,18 +171,7 @@ SS_readdat_3.00 <- function(
   i <- i + Ntypes
   if (verbose) {
     cli::cli_inform("areas:{areas}")
-    cli::cli_inform(paste0("fleet info:", paste0(
-        utils::capture.output(
-          data.frame(
-            fleet = 1:Ntypes,
-            name = fleetnames,
-            area = areas,
-            timing = surveytiming,
-            type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
-          )
-        ),
-        collapse = "\n"
-      )))
+    cli::cli_inform("{paste(\"fleet info:\", paste(utils::capture.output(\n          data.frame(\n            fleet = 1:Ntypes,\n            name = fleetnames,\n            area = areas,\n            timing = surveytiming,\n            type = c(rep(\"FISHERY\", Nfleet), rep(\"SURVEY\", Nsurveys))\n          )\n        ), sep = \"\", collapse = \"\\n\"), sep = \"\")}")
   }
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming, areas))
@@ -637,7 +626,7 @@ SS_readdat_3.00 <- function(
         print(sizefreq_data_tmp[1:min(Nrows, 2), 1:min(Ncols, 10)])
       }
       if (any(sizefreq_data_tmp[["Method"]] != imethod)) {
-        cli::cli_abort(paste0("Problem with method in size frequency data; Expecting method: ", imethod, "; Read method(s): ", paste(unique(sizefreq_data_tmp[["Method"]]), collapse = ", ")))
+        cli::cli_abort("{paste(\"Problem with method in size frequency data; Expecting method: \", imethod, \"; Read method(s): \", paste(unique(sizefreq_data_tmp[[\"Method\"]]), collapse = \", \"), sep = \"\")}")
       }
       sizefreq_data_list[[imethod]] <- sizefreq_data_tmp
       i <- i + Nrows * Ncols

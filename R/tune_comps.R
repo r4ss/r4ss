@@ -273,7 +273,7 @@ tune_comps <- function(
   } else {
     if (!all(fleets %in% seq_len(dat[["Nfleets"]]))) {
       fleets <- fleets[fleets %in% seq_len(dat[["Nfleets"]])]
-      cli::cli_warn(paste0("Not all fleets are included in the model. Changing fleets to ", "use only ones in the model: ", paste0(fleets, collapse = ", ")))
+      cli::cli_warn("Not all fleets are included in the model. Changing fleets to use only ones in the model: {paste(fleets, collapse = ', ')}")
       if (length(fleets) == 0) {
         cli::cli_abort("Please specify fleets used in the model")
       }
@@ -284,7 +284,7 @@ tune_comps <- function(
   # get the highest phase in the model
   last_phase <- get_last_phase(ctl)
   if (last_phase >= start[["last_estimation_phase"]]) {
-    cli::cli_warn(paste0("The last phase used in the control file, ", last_phase, ", is higher or the same as the last_estimation_phase in the ", "starter file currently set to ", start[["last_estimation_phase"]], ".", "Changing the last_estimation_phase in the starter file to ", last_phase + 1, "."))
+    cli::cli_warn("{paste(\"The last phase used in the control file, \", last_phase, \", is higher or the same as the last_estimation_phase in the \", \"starter file currently set to \", start[[\"last_estimation_phase\"]], \".\", \"Changing the last_estimation_phase in the starter file to \", last_phase + 1, \".\", sep = \"\")}")
     start[["last_estimation_phase"]] <- last_phase + 1
     SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
   }
@@ -475,7 +475,7 @@ tune_comps <- function(
     # add check that last_phase is less than max_phase in starter. If not,
     # modify the max phase and send warning.
     if (last_phase >= start[["last_estimation_phase"]]) {
-      cli::cli_warn(paste0("The last phase used in the control file, ", last_phase, ", is higher or the same as the last_estimation_phase in the ", "starter file currently set to ", start[["last_estimation_phase"]], ".", "Changing the last_estimation_phase in the starter file to ", last_phase + 1, "."))
+      cli::cli_warn("{paste(\"The last phase used in the control file, \", last_phase, \", is higher or the same as the last_estimation_phase in the \", \"starter file currently set to \", start[[\"last_estimation_phase\"]], \".\", \"Changing the last_estimation_phase in the starter file to \", last_phase + 1, \".\", sep = \"\")}")
       start[["last_estimation_phase"]] <- last_phase + 1
       SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
     }

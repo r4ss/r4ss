@@ -77,7 +77,7 @@ copy_SS_inputs <- function(
   if (file.exists(starter_file)) {
     starter <- SS_readstarter(starter_file, verbose = FALSE)
   } else {
-    cli::cli_warn(paste0("file not found: ", file.path(starter_file)))
+    cli::cli_warn("file not found: {starter_file}")
     return(invisible(FALSE))
   }
 
@@ -175,7 +175,7 @@ copy_SS_inputs <- function(
       ]
       exefiles <- grep(pattern = "^[^.]+$", x = exefiles, value = TRUE)
       if (verbose) {
-        cli::cli_inform(paste0("Unix binaries are: ", paste0(exefiles, collapse = ", ")))
+        cli::cli_inform("Unix binaries are: {paste(exefiles, collapse = ', ')}")
       }
     }
     if (length(exefiles) == 0) {

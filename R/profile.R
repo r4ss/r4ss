@@ -340,7 +340,7 @@ profile <- function(
       if (!is.null(string)) {
         profilevec_df <- data.frame(profilevec)
         names(profilevec_df) <- string
-        cli::cli_inform(paste0("Profiling over ", npars, " parameters:\n", paste0(profilevec_df, collapse = "\n")))
+        cli::cli_inform("Profiling over {npars} parameters:\n{paste(profilevec_df, collapse = '\n')}")
       }
     }
   }
@@ -354,7 +354,7 @@ profile <- function(
     }
   }
   if (verbose) {
-    cli::cli_inform(paste0("Doing runs: ", paste(whichruns, collapse = ", "), ", out of n =", n))
+    cli::cli_inform("Doing runs: {paste(whichruns, collapse = ', ')}, out of n = {n}")
   }
 
   # note: std file name is independent of executable name
@@ -369,7 +369,8 @@ profile <- function(
   starter <- SS_readstarter(file.path(dir, starter.file), verbose = FALSE)
   # check for new control file
   if (starter[["ctlfile"]] != newctlfile) {
-    cli::cli_abort(paste0("starter file should be changed to change", "'", starter[["ctlfile"]], "' to '", newctlfile, "'"))
+    current_ctlfile <- starter[["ctlfile"]]
+    cli::cli_abort("starter file should be changed to change '{current_ctlfile}' to '{newctlfile}'")
   }
   # check for prior in likelihood
   if (prior_check & starter[["prior_like"]] == 0) {
@@ -507,7 +508,7 @@ profile <- function(
           paste("# changed from", parval, "to", profilevec[i])
         )
         par <- c(par, "#", note)
-        cli::cli_inform(paste0(note, collapse = "\n"))
+        cli::cli_inform("{paste(note, collapse = '\n')}")
         # write new par file
         writeLines(par, file.path(dir, paste0("ss_input_par", i, ".ss")))
         writeLines(par, file.path(profile_dir, parfile))

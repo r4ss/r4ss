@@ -325,7 +325,7 @@ SS_writedat_3.30 <- function(
       zero_lencomp <-
         apply(d[["lencomp"]][, -seq_len(6)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_lencomp == TRUE)) {
-        cli::cli_warn(paste0("Lines of all zero length comp found. SS will exit on error if", " a line of comps is all zeros, so removing. Line(s) ", paste0(which(zero_lencomp), collapse = ", ")))
+        cli::cli_warn("{paste(\"Lines of all zero length comp found. SS will exit on error if\", \" a line of comps is all zeros, so removing. Line(s) \", paste(which(zero_lencomp), sep = \"\", collapse = \", \"), sep = \"\")}")
         d[["lencomp"]] <- d[["lencomp"]][!zero_lencomp, ]
       }
     }
@@ -370,7 +370,7 @@ SS_writedat_3.30 <- function(
       zero_agecomp <-
         apply(d[["agecomp"]][, -seq_len(9)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_agecomp == TRUE)) {
-        cli::cli_warn(paste0("Lines of all zero age comp found. SS will exit on error if", " a line of comps is all zeros, so removing. Line(s) ", paste0(which(zero_agecomp), collapse = ", ")))
+        cli::cli_warn("{paste(\"Lines of all zero age comp found. SS will exit on error if\", \" a line of comps is all zeros, so removing. Line(s) \", paste(which(zero_agecomp), sep = \"\", collapse = \", \"), sep = \"\")}")
         d[["agecomp"]] <- d[["agecomp"]][!zero_agecomp, ]
       }
     }

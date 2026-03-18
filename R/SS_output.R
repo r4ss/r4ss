@@ -278,10 +278,10 @@ SS_output <-
 
     # test for version compatibility with this code
     if (SS_versionNumeric < SS_versionMin | SS_versionNumeric > SS_versionMax) {
-      cli::cli_warn(paste0("This function tested on SS versions 3.24 and 3.30.", "  You are using ", strsplit(SS_version, split = ";")[[1]][1], " which MIGHT NOT WORK with this package."))
+      cli::cli_warn("{paste(\"This function tested on SS versions 3.24 and 3.30.\", \"  You are using \", strsplit(SS_version, split = \";\")[[1]][1], \" which MIGHT NOT WORK with this package.\", sep = \"\")}")
     } else {
       if (verbose) {
-        cli::cli_inform(paste0("This function tested on SS versions 3.24 and 3.30.", "  You are using ", strsplit(SS_version, split = ";")[[1]][1], " which SHOULD work with this package."))
+        cli::cli_inform("{paste(\"This function tested on SS versions 3.24 and 3.30.\", \"  You are using \", strsplit(SS_version, split = \";\")[[1]][1], \" which SHOULD work with this package.\", sep = \"\")}")
       }
     }
 
@@ -388,7 +388,7 @@ SS_output <-
         cli::cli_inform("Got all columns using ncols = {ncols}")
       }
       if ((maxnonblank + 1) < ncols) {
-        cli::cli_inform(paste0("Got all columns. To speed code, use ncols = ", maxnonblank + 1, " in the future."))
+        cli::cli_inform("{paste(\"Got all columns. To speed code, use ncols = \", maxnonblank + 1, \" in the future.\", sep = \"\")}")
       }
       cli::cli_inform("Got Report file")
     }
@@ -1176,86 +1176,14 @@ SS_output <-
         tagdbase2 <- compdbase[compdbase[["Kind"]] == "TAG2", ]
         # consider range of bins for conditional age at length data
         if (verbose) {
-          cli::cli_inform(paste0("CompReport file separated by this code as follows", " (rows = Ncomps*Nbins):", if (nrow(lendbase) > 0) {
-              paste0(
-                "  ",
-                nrow(lendbase),
-                " rows of length comp data"
-              )
-            }, if (nrow(sizedbase) > 0) {
-              paste0(
-                "  ",
-                nrow(sizedbase),
-                " rows of generalized size comp data"
-              )
-            }, if (nrow(agedbase) > 0) {
-              paste0(
-                "  ",
-                nrow(agedbase),
-                " rows of age comp data"
-              )
-            }, if (nrow(condbase) > 0) {
-              paste0(
-                "  ",
-                nrow(condbase),
-                " rows of conditional age-at-length data"
-              )
-            }, if (nrow(ghostagedbase) > 0) {
-              paste0(
-                "  ",
-                nrow(ghostagedbase),
-                " rows of ghost fleet age comp data"
-              )
-            }, if (nrow(ghostcondbase) > 0) {
-              paste0(
-                "  ",
-                nrow(ghostcondbase),
-                " rows of ghost fleet conditional age-at-length data"
-              )
-            }, if (nrow(ghostlendbase) > 0) {
-              paste0(
-                "  ",
-                nrow(ghostlendbase),
-                " rows of ghost fleet length comp data"
-              )
-            }, if (nrow(ladbase) > 0) {
-              paste0(
-                "  ",
-                nrow(ladbase),
-                " rows of mean length at age data"
-              )
-            }, if (nrow(wadbase) > 0) {
-              paste0(
-                "  ",
-                nrow(wadbase),
-                " rows of mean weight at age data"
-              )
-            }, if (nrow(tagdbase1) > 0) {
-              paste0(
-                "  ",
-                nrow(tagdbase1),
-                " rows of 'TAG1' comp data"
-              )
-            }, if (nrow(tagdbase2) > 0) {
-              paste0(
-                "  ",
-                nrow(tagdbase2),
-                " rows of 'TAG2' comp data"
-              )
-            }, if (nrow(morphcompdbase) > 0) {
-              paste0(
-                "  ",
-                nrow(morphcompdbase),
-                " rows of morph comp data"
-              )
-            }))
+          cli::cli_inform("{paste(\"CompReport file separated by this code as follows\", \" (rows = Ncomps*Nbins):\", if (nrow(lendbase) > 0) {\n              paste(\"  \", nrow(lendbase), \" rows of length comp data\", sep = \"\")\n            }, if (nrow(sizedbase) > 0) {\n              paste(\"  \", nrow(sizedbase), \" rows of generalized size comp data\", sep = \"\")\n            }, if (nrow(agedbase) > 0) {\n              paste(\"  \", nrow(agedbase), \" rows of age comp data\", sep = \"\")\n            }, if (nrow(condbase) > 0) {\n              paste(\"  \", nrow(condbase), \" rows of conditional age-at-length data\", sep = \"\")\n            }, if (nrow(ghostagedbase) > 0) {\n              paste(\"  \", nrow(ghostagedbase), \" rows of ghost fleet age comp data\", sep = \"\")\n            }, if (nrow(ghostcondbase) > 0) {\n              paste(\"  \", nrow(ghostcondbase), \" rows of ghost fleet conditional age-at-length data\", sep = \"\")\n            }, if (nrow(ghostlendbase) > 0) {\n              paste(\"  \", nrow(ghostlendbase), \" rows of ghost fleet length comp data\", sep = \"\")\n            }, if (nrow(ladbase) > 0) {\n              paste(\"  \", nrow(ladbase), \" rows of mean length at age data\", sep = \"\")\n            }, if (nrow(wadbase) > 0) {\n              paste(\"  \", nrow(wadbase), \" rows of mean weight at age data\", sep = \"\")\n            }, if (nrow(tagdbase1) > 0) {\n              paste(\"  \", nrow(tagdbase1), \" rows of 'TAG1' comp data\", sep = \"\")\n            }, if (nrow(tagdbase2) > 0) {\n              paste(\"  \", nrow(tagdbase2), \" rows of 'TAG2' comp data\", sep = \"\")\n            }, if (nrow(morphcompdbase) > 0) {\n              paste(\"  \", nrow(morphcompdbase), \" rows of morph comp data\", sep = \"\")\n            }, sep = \"\")}")
         }
         # convert bin indices to true lengths
         if (nrow(agedbase) > 0) {
           Lbin_ranges <- as.data.frame(table(agedbase[["Lbin_range"]]))
           names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
           if (length(unique(agedbase[["Lbin_range"]])) > 1) {
-            cli::cli_warn(paste0("different ranges of Lbin_lo to Lbin_hi found in age comps.\n", paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"), "\nconsider increasing 'aalmaxbinrange' to designate some of these data as conditional age-at-length."))
+            cli::cli_warn("{paste(\"different ranges of Lbin_lo to Lbin_hi found in age comps.\\n\", paste(utils::capture.output(print(Lbin_ranges)), collapse = \"\\n\"), \"\\nconsider increasing 'aalmaxbinrange' to designate some of these data as conditional age-at-length.\", sep = \"\")}")
           }
           agebins <- sort(unique(agedbase[["Bin"]][!is.na(agedbase[["Bin"]])]))
         } else {
@@ -1815,12 +1743,12 @@ SS_output <-
         stats[["N_estimated_parameters"]] <- N_estimated_parameters2
       } else {
         if (stats[["N_estimated_parameters"]] != N_estimated_parameters2) {
-          cli::cli_warn(paste0(stats[["N_estimated_parameters"]], " estimated parameters indicated by the par file", N_estimated_parameters2, " estimated parameters shown in the covar file", "Returning the par file value: ", stats[["N_estimated_parameters"]]))
+          cli::cli_warn("{paste(stats[[\"N_estimated_parameters\"]], \" estimated parameters indicated by the par file\", N_estimated_parameters2, \" estimated parameters shown in the covar file\", \"Returning the par file value: \", stats[[\"N_estimated_parameters\"]], sep = \"\")}")
         }
       }
       # check for NA values (see https://github.com/r4ss/r4ss/issues/830)
       if (any(is.na(stdtable[["std"]]))) {
-        cli::cli_warn(paste0("NA value for parameter uncertainty found in ", sum(is.na(stdtable[["std"]])), " rows of covar.sso file. ", "First par with NA: ", stdtable[["name"]][is.na(stdtable[["std"]])]))
+        cli::cli_warn("{paste(\"NA value for parameter uncertainty found in \", sum(is.na(stdtable[[\"std\"]])), \" rows of covar.sso file. \", \"First par with NA: \", stdtable[[\"name\"]][is.na(stdtable[[\"std\"]])], sep = \"\")}")
       }
       Nstd <- sum(stdtable[["std"]] > 0, na.rm = TRUE)
       checkbadrun <- unique(stdtable[["std"]])

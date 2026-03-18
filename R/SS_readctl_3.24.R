@@ -118,7 +118,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ", i = ", ctllist$".i", ": ", paste0(ctllist[name], collapse = "\n")))
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", \": \", paste(ctllist[name], sep = \"\", collapse = \"\\n\"), sep = \"\")}")
     }
     return(ctllist)
   }
@@ -146,7 +146,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ", i = ", ctllist$".i", ": ", paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n")))
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", \": \", paste(ctllist[[which(names(ctllist) == name)]], sep = \"\", collapse = \"\\n\"), sep = \"\")}")
     }
     return(ctllist)
   }
@@ -160,7 +160,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ", i = ", ctllist$".i", " ;", ctllist[[which(names(ctllist) == name)]]))
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", \" ;\", ctllist[[which(names(ctllist) == name)]], sep = \"\")}")
     }
     return(ctllist)
   }
@@ -179,7 +179,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ", i = ", ctllist$".i"))
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", sep = \"\")}")
     }
     return(ctllist)
   }
@@ -271,7 +271,7 @@ SS_readctl_3.24 <- function(
   )
   srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE")
   if (verbose) {
-    cli::cli_inform(paste0("SS_readctl_3.24 - read version = ", ctllist[["ReadVersion"]]))
+    cli::cli_inform("{paste(\"SS_readctl_3.24 - read version = \", ctllist[[\"ReadVersion\"]], sep = \"\")}")
   }
 
   # beginning of ctl ----
@@ -378,7 +378,7 @@ SS_readctl_3.24 <- function(
       col.names = paste0("Age_", 0:Nages)
     )
   } else {
-    cli::cli_abort(paste0("natM_type = ", ctllist[["natM_type"]], " is not yet implemented in this script"))
+    cli::cli_abort("{paste(\"natM_type = \", ctllist[[\"natM_type\"]], \" is not yet implemented in this script\", sep = \"\")}")
   }
   if (verbose) {
     cli::cli_inform("N_natMparms = {N_natMparms}")
@@ -419,7 +419,7 @@ SS_readctl_3.24 <- function(
       col.names = paste0("Age_", 0:Nages)
     )
   } else {
-    cli::cli_abort(paste0("GrowthModel ", ctllist[["GrowthModel"]], " is not supported yet."))
+    cli::cli_abort("{paste(\"GrowthModel \", ctllist[[\"GrowthModel\"]], \" is not supported yet.\", sep = \"\")}")
   }
   MGparm_per_def <- N_natMparms + N_growparms
   ctllist[["N_natMparms"]] <- N_natMparms
@@ -557,7 +557,7 @@ SS_readctl_3.24 <- function(
     MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", SexLabel[1])
     cnt <- cnt + 1
   } else {
-    cli::cli_abort(paste0("Fecundity option ", ctllist[["fecundity_option"]], " is not supported"))
+    cli::cli_abort("{paste(\"Fecundity option \", ctllist[[\"fecundity_option\"]], \" is not supported\", sep = \"\")}")
   }
   if (ctllist[["Nsexes"]] == 2) {
     MGparmLabel[cnt] <- paste0("Wtlen_1_", SexLabel[2])
@@ -796,7 +796,7 @@ SS_readctl_3.24 <- function(
       "SR_autocorr"
     )
   } else {
-    cli::cli_abort(paste0("SR_function ", ctllist[["SR_function"]], " is not supported yet."))
+    cli::cli_abort("{paste(\"SR_function \", ctllist[[\"SR_function\"]], \" is not supported yet.\", sep = \"\")}")
   }
 
   ctllist <- add_df(
@@ -1818,7 +1818,7 @@ SS_readctl_3.24 <- function(
     }
     ctllist[["eof"]] <- TRUE
   } else {
-    cli::cli_inform(paste0("Error: final value is", ctllist$".dat"[ctllist$".i"], ", but should be 999"))
+    cli::cli_inform("{paste(\"Error: final value is\", ctllist$\".dat\"[ctllist$\".i\"], \", but should be 999\", sep = \"\")}")
     ctllist[["eof"]] <- FALSE
   }
   ctllist$".dat" <- NULL

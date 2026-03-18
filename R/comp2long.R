@@ -133,7 +133,7 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
     "Nsamp"
   )
   if (!all(cols[-1] %in% names(x))) {
-    cli::cli_abort(paste0("'x' must contain ", paste(cols[-1], collapse = ", ")))
+    cli::cli_abort("'x' must contain {paste(cols[-1], collapse = ', ')}")
   }
 
   # Simplify column names
@@ -219,7 +219,7 @@ size2long <- function(x, measure = NULL, zero = TRUE) {
   # Check column names
   cols <- c("method", "year", "month", "fleet", "sex", "part", "Nsamp")
   if (!all(cols[-1] %in% names(x))) {
-    cli::cli_abort(paste0("'x' must contain ", paste(cols[-1], collapse = ", ")))
+    cli::cli_abort("'x' must contain {paste(cols[-1], collapse = ', ')}")
   }
 
   # Distinguish between length comps and generalized size comps

@@ -117,16 +117,12 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
     }
     if (path_to_exe == "") {
       # if not in path or specified directory, create error
-      cli::cli_abort(paste0(
-        exename,
-        " not found in ",
-        ifelse(
-          test = length(dir) == 1,
-          yes = dir, # spell out directory in error if `dir` isn't a vector
-          no = "any of the input 'dir' values"
-        ), # generic if it's a vector
-        " nor in the path."
-      ))
+      dir_text <- ifelse(
+        test = length(dir) == 1,
+        yes = dir, # spell out directory in error if `dir` isn't a vector
+        no = "any of the input 'dir' values"
+      ) # generic if it's a vector
+      cli::cli_abort("{exename} not found in {dir_text} nor in the path.")
     }
   } # end check for is.null(path_to_exe)
 

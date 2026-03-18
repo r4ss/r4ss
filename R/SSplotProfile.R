@@ -200,18 +200,18 @@ SSplotProfile <-
       parnumber <- grep(profile.string, pars[["Label"]])
     }
     if (length(parnumber) <= 0) {
-      cli::cli_abort(paste0("No parameters matching profile.string='", profile.string, "'", sep = ""))
+      cli::cli_abort("{paste(\"No parameters matching profile.string='\", profile.string, \"'\", sep = \"\")}")
     }
     parlabel <- pars[["Label"]][parnumber]
     if (length(parlabel) > 1) {
-      cli::cli_abort(paste0("Multiple parameters matching profile.string='", profile.string, "':", paste(parlabel, collapse = ", "), "You may need to use 'exact=TRUE'.", sep = ""))
+      cli::cli_abort("{paste(\"Multiple parameters matching profile.string='\", profile.string, \"':\", paste(parlabel, collapse = \", \"), \"You may need to use 'exact=TRUE'.\", sep = \"\")}")
     }
 
     # get vector of parameter values
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
     if (verbose) {
       cli::cli_inform("Parameter matching profile.string={profile.string}: {parlabel}")
-      cli::cli_inform(paste0("Parameter values (after subsetting based on input 'models'): ", paste0(parvec, collapse = ", ")))
+      cli::cli_inform("{paste(\"Parameter values (after subsetting based on input 'models'): \", paste(parvec, sep = \"\", collapse = \", \"), sep = \"\")}")
     }
 
     # get vector of prior likelihoods for this parameter
@@ -230,7 +230,7 @@ SSplotProfile <-
     }
 
     if (verbose & add_no_prior_line) {
-      cli::cli_inform(paste0("Parameter prior likelihoods: ", paste0(par_prior_like_vec, collapse = ", ")))
+      cli::cli_inform("{paste(\"Parameter prior likelihoods: \", paste(par_prior_like_vec, sep = \"\", collapse = \", \"), sep = \"\")}")
     }
 
     # set x-axis limits

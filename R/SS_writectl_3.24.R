@@ -227,7 +227,7 @@ SS_writectl_3.24 <- function(
   } else if (ctllist[["natM_type"]] == 0) {
     # Just to skip
   } else {
-    cli::cli_abort(paste0("natM_type :", ctllist[["natM_type"]], "is not supported"))
+    cli::cli_abort("{paste(\"natM_type :\", ctllist[[\"natM_type\"]], \"is not supported\", sep = \"\")}")
   }
   ## Growth ##
   wl(
@@ -472,7 +472,7 @@ SS_writectl_3.24 <- function(
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)) {
       prob_flts <-
         which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)
-      cli::cli_abort(paste0("must create base Q parm to use Q_power for fleet(s): ", paste0(prob_flts, collapse = ", ")))
+      cli::cli_abort("{paste(\"must create base Q parm to use Q_power for fleet(s): \", paste(prob_flts, sep = \"\", collapse = \", \"), sep = \"\")}")
     }
     printdf("Q_power", header = header)
     header <- FALSE
@@ -480,7 +480,7 @@ SS_writectl_3.24 <- function(
   # Q-env
   if (sum(ctllist[["Q_setup"]][, 2]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)) {
-      cli::cli_abort(paste0("must create base Q parm to use Q_env for fleet: ", which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)))
+      cli::cli_abort("{paste(\"must create base Q parm to use Q_env for fleet: \", which(ctllist[[\"Q_setup\"]][(ctllist[[\"Q_setup\"]][, 2] > 0), 4] < 2), sep = \"\")}")
     }
     printdf("Q_env", header = header)
     header <- FALSE

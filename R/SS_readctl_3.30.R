@@ -109,7 +109,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ", i=", ctllist$".i"))
+      cli::cli_inform("{paste(name, \", i=\", ctllist$\".i\", sep = \"\")}")
     }
     return(ctllist)
   }
@@ -177,7 +177,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ",i=", ctllist$".i"))
+      cli::cli_inform("{paste(name, \",i=\", ctllist$\".i\", sep = \"\")}")
     }
     return(ctllist)
   }
@@ -192,7 +192,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ",i=", ctllist$".i", " ;", ctllist[[which(names(ctllist) == name)]]))
+      cli::cli_inform("{paste(name, \",i=\", ctllist$\".i\", \" ;\", ctllist[[which(names(ctllist) == name)]], sep = \"\")}")
     }
     return(ctllist)
   }
@@ -211,7 +211,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste0(name, ",i=", ctllist$".i"))
+      cli::cli_inform("{paste(name, \",i=\", ctllist$\".i\", sep = \"\")}")
     }
     return(ctllist)
   }
@@ -290,7 +290,7 @@ SS_readctl_3.30 <- function(
     } else if (datlist[["lbin_method"]] == 3) {
       ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbinspop"]] # read actual input
     } else {
-      cli::cli_abort(paste0("datlist[['lbin_method']] is ", datlist[["lbin_method"]], "but only can be 1", ", 2, or 3."))
+      cli::cli_abort("{paste(\"datlist[['lbin_method']] is \", datlist[[\"lbin_method\"]], \"but only can be 1\", \", 2, or 3.\", sep = \"\")}")
     }
     ctllist[["Nfleets"]] <- Nfleets <- datlist[["Nfleets"]]
     # ctllist[["Nsurveys"]]<-Nsurveys<-datlist[["Nsurveys"]]
@@ -321,7 +321,7 @@ SS_readctl_3.30 <- function(
   ctllist[["eof"]] <- FALSE
 
   if (verbose) {
-    cli::cli_inform(paste0("SS_readctl_3.30 - read version = ", ctllist[["ReadVersion"]]))
+    cli::cli_inform("{paste(\"SS_readctl_3.30 - read version = \", ctllist[[\"ReadVersion\"]], sep = \"\")}")
   }
   # beginning of ctl ----
   # weight at age option
@@ -432,7 +432,7 @@ SS_readctl_3.30 <- function(
     ctllist <- add_elem(ctllist, name = "Lorenzen_minage") ## Minimum age to calculate average M for Lorenzen M
     ctllist <- add_elem(ctllist, name = "Lorenzen_maxage") ## Maximum age to calculate average M for Lorenzen M
   } else {
-    cli::cli_abort(paste0("natM_type =", ctllist[["natM_type"]], " is not yet implemented in this script"))
+    cli::cli_abort("{paste(\"natM_type =\", ctllist[[\"natM_type\"]], \" is not yet implemented in this script\", sep = \"\")}")
   }
   if (verbose) {
     cli::cli_inform("N_natMparms ={N_natMparms}")
@@ -462,7 +462,7 @@ SS_readctl_3.30 <- function(
     ctllist <- add_vec(ctllist, name = "Age_K_points", length = Age_K_count)
     #  points at which age-specific multipliers to K will be applied
   } else {
-    cli::cli_abort(paste0("Growth Model ", ctllist[["GrowthModel"]], " is not supported yet"))
+    cli::cli_abort("{paste(\"Growth Model \", ctllist[[\"GrowthModel\"]], \" is not supported yet\", sep = \"\")}")
   }
   MGparm_per_def <- N_natMparms + N_growparms
   ctllist[["N_natMparms"]] <- N_natMparms
@@ -916,7 +916,7 @@ SS_readctl_3.30 <- function(
       "SR_autocorr"
     )
   } else {
-    cli::cli_inform(paste0("SR_function=", ctllist[["SR_function"]], " is not supported yet."))
+    cli::cli_inform("{paste(\"SR_function=\", ctllist[[\"SR_function\"]], \" is not supported yet.\", sep = \"\")}")
     return(ctllist)
   }
 
@@ -1382,7 +1382,7 @@ SS_readctl_3.30 <- function(
     tmp_size_selex_Nparms <-
       selex_patterns[as.character(ctllist[["size_selex_types"]][j, "Pattern"])]
     if (is.na(tmp_size_selex_Nparms)) {
-      cli::cli_abort(paste0("Pattern ", as.character(ctllist[["size_selex_types"]][j, "Pattern"]), " was used for the size selectivity pattern fleet or survey, but it", " is not valid."))
+      cli::cli_abort("{paste(\"Pattern \", as.character(ctllist[[\"size_selex_types\"]][j, \"Pattern\"]), \" was used for the size selectivity pattern fleet or survey, but it\", \" is not valid.\", sep = \"\")}")
     }
     # pattern 6 is a special case of number of params, so account for here.
     if (ctllist[["size_selex_types"]][j, "Pattern"] == 6) {
@@ -1945,7 +1945,7 @@ SS_readctl_3.30 <- function(
       warn_comp <- ctllist[["lambdas"]][chk1, "like_comp"]
       warn_flt <- ctllist[["lambdas"]][chk1, "fleet"]
       warn_phz <- ctllist[["lambdas"]][chk1, "phase"]
-      cli::cli_warn(paste0("Duplicate lambda input for likelihood component(s): ", paste0(warn_comp, collapse = ", "), "; fleet(s): ", paste0(warn_flt, collapse = ", "), "; phase(s):", paste0(warn_phz, collapse = ", ")))
+      cli::cli_warn("{paste(\"Duplicate lambda input for likelihood component(s): \", paste(warn_comp, sep = \"\", collapse = \", \"), \"; fleet(s): \", paste(warn_flt, sep = \"\", collapse = \", \"), \"; phase(s):\", paste(warn_phz, sep = \"\", collapse = \", \"), sep = \"\")}")
     }
     tmp_rownames <- vector(mode = "character", length = ctllist[["N_lambdas"]])
     for (i in seq_len(ctllist[["N_lambdas"]])) {
@@ -2035,7 +2035,7 @@ SS_readctl_3.30 <- function(
           c(ctllist[["stddev_reporting_specs"]][1:11], 0, 0)
       }
     } else {
-      cli::cli_abort(paste0("more_stddev_reporting read as ", ctllist[["more_stddev_reporting"]], ", but this is either not a valid SS option or not yet implemented ", "in the SS_readctl function."))
+      cli::cli_abort("{paste(\"more_stddev_reporting read as \", ctllist[[\"more_stddev_reporting\"]], \", but this is either not a valid SS option or not yet implemented \", \"in the SS_readctl function.\", sep = \"\")}")
     }
     ## Selex bin
     if (
@@ -2100,7 +2100,7 @@ SS_readctl_3.30 <- function(
     }
     ctllist[["eof"]] <- TRUE
   } else {
-    cli::cli_warn(paste0("Error: final value is", ctllist$".dat"[ctllist$".i"], " but ", "should be 999"))
+    cli::cli_warn("{paste(\"Error: final value is\", ctllist$\".dat\"[ctllist$\".i\"], \" but \", \"should be 999\", sep = \"\")}")
     ctllist[["eof"]] <- FALSE
   }
   ctllist$".dat" <- NULL

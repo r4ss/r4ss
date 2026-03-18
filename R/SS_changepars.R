@@ -165,7 +165,7 @@ SS_changepars <-
         }
         goodnames <- unique(unlist(goodnames))
         if (verbose) {
-          cli::cli_inform("Parameter names in control file matching input vector 'strings' (n={length(goodnames)}): {paste0(goodnames, collapse = ', ')}")
+          cli::cli_inform("Parameter names in control file matching input vector 'strings' (n={length(goodnames)}): {paste(goodnames, collapse = ', ')}")
         }
         if (length(goodnames) == 0) {
           cli::cli_abort("No parameters names match input vector 'strings'")
@@ -184,7 +184,7 @@ SS_changepars <-
     }
     ctlsubset <- ctl[linenums]
     if (verbose) {
-      cli::cli_inform(paste0("line numbers in control file (n=", length(linenums), "): ", paste(linenums, collapse = ", ")))
+      cli::cli_inform("line numbers in control file (n={length(linenums)}): {paste(linenums, collapse = ', ')}")
     }
 
     # define objects to store changes
@@ -211,7 +211,7 @@ SS_changepars <-
         assign(ii, rep(tmp, nvals))
       }
       if (length(get(ii)) != nvals) {
-        cli::cli_abort(paste0(paste0("'", ii, "'"), " and either 'linenums' or 'strings'", " should have the same number of elements, instead of ", length(get(ii)), " and ", length(linenums), ". Note: a string can map to multiple parameters, here are your pars: ", paste(goodnames, collapse = ", ")))
+        cli::cli_abort("'{ii}' and either 'linenums' or 'strings' should have the same number of elements, instead of {length(get(ii))} and {length(linenums)}. Note: a string can map to multiple parameters, here are your pars: {paste(goodnames, collapse = ', ')}")
       }
     }
 
@@ -348,7 +348,8 @@ SS_changepars <-
       newvals <- NA
     }
     if (verbose) {
-      cli::cli_inform(paste0("Wrote new file to ", newctlfile, " with the following changes:\n", paste0(utils::capture.output(results), collapse = "\n")))
+      results_text <- paste(utils::capture.output(results), collapse = "\n")
+      cli::cli_inform("Wrote new file to {newctlfile} with the following changes:\n{results_text}")
     }
     return(invisible(results))
   } # end function

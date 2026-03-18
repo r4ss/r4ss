@@ -223,7 +223,7 @@ mcmc.out <- function(
       ) # plot nothing
 
       if (!requireNamespace("gtools", quietly = TRUE)) {
-        cli::cli_warn(paste0("Package \"gtools\" needed for the running average plot. Please install it."), call = NULL)
+        cli::cli_warn('Package "gtools" needed for the running average plot. Please install it.', call = NULL)
       } else {
         lines(gtools::running(
           mcmcobject[, i],

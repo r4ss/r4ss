@@ -128,7 +128,7 @@ SSMethod.TA1.8 <-
     } else {
       # if custom names input, check length
       if (length(fleetnames) != fit[["nfleets"]]) {
-        cli::cli_abort(paste0("fleetnames needs to be NULL or have length = nfleets = ", fit[["nfleets"]]))
+        cli::cli_abort("{paste(\"fleetnames needs to be NULL or have length = nfleets = \", fit[[\"nfleets\"]], sep = \"\")}")
       }
     }
     # Select the type of datbase
@@ -162,7 +162,7 @@ SSMethod.TA1.8 <-
     # if generalized size comp is used, check for mix of units
     if (type == "size") {
       if (length(unique(dbase[["units"]])) > 1) {
-        cli::cli_warn(paste0("Mix of units being compared:", unique(dbase[["units"]])))
+        cli::cli_warn("{paste(\"Mix of units being compared:\", unique(dbase[[\"units\"]]), sep = \"\")}")
       }
     }
     # create label for partitions

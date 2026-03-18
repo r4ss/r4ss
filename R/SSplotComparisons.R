@@ -454,7 +454,7 @@ SSplotComparisons <-
       cli::cli_inform("not showing uncertainty for any models")
     }
     if (any(uncertainty) & !all(uncertainty)) {
-      cli::cli_inform(paste0("showing uncertainty for model", ifelse(sum(uncertainty) > 1, "s: ", " "), paste(which(uncertainty), collapse = ",")))
+      cli::cli_inform("{paste(\"showing uncertainty for model\", ifelse(sum(uncertainty) > 1, \"s: \", \" \"), paste(which(uncertainty), collapse = \",\"), sep = \"\")}")
     }
     for (i in 1:n) {
       if (all(is.na(quantsSD[, i]) | quantsSD[, i] == 0)) {
@@ -2341,7 +2341,7 @@ SSplotComparisons <-
           }
           # warn if too many columns
           if (length(mcmcColumn) > 1) {
-            cli::cli_warn(paste0("Too many columns selected from MCMC for model ", imodel, ":", paste0(names(mcmc[[imodel]])[mcmcColumn], collapse = ", "), ". Please specify a unique label in the mcmc dataframe", "or specify mcmcVec = FALSE for model ", imodel, " (or mcmcVec = FALSE applying to all models). "))
+            cli::cli_warn("{paste(\"Too many columns selected from MCMC for model \", imodel, \":\", paste(names(mcmc[[imodel]])[mcmcColumn], sep = \"\", collapse = \", \"), \". Please specify a unique label in the mcmc dataframe\", \"or specify mcmcVec = FALSE for model \", imodel, \" (or mcmcVec = FALSE applying to all models). \", sep = \"\")}")
             good[iline] <- FALSE
           }
           # add density
@@ -2704,7 +2704,7 @@ SSplotComparisons <-
     uncertaintyplots <- intersect(c(2, 4, 6, 8, 10, 12), subplots)
     if (!any(uncertainty) & length(uncertaintyplots) > 0) {
       # warn if uncertainty is off but uncertainty plots are requested
-      cli::cli_inform(paste0("skipping plots with uncertainty:", paste(uncertaintyplots, collapse = ",")))
+      cli::cli_inform("{paste(\"skipping plots with uncertainty:\", paste(uncertaintyplots, collapse = \",\"), sep = \"\")}")
     }
     # subplot 1: spawning biomass
     if (1 %in% subplots) {
@@ -3023,7 +3023,7 @@ SSplotComparisons <-
         if (length(expandednames) == 0) {
           cli::cli_warn("No parameter/quantity names matching 'densitynames' input.")
         } else {
-          cli::cli_inform(paste0("Parameter/quantity names matching 'densitynames' input:", paste0(expandednames, collapse = ", ")))
+          cli::cli_inform("{paste(\"Parameter/quantity names matching 'densitynames' input:\", paste(expandednames, sep = \"\", collapse = \", \"), sep = \"\")}")
           ndensities <- length(expandednames)
           # make a table to store associated x-labels
           densitytable <- data.frame(

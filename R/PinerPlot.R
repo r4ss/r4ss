@@ -127,7 +127,7 @@ PinerPlot <-
     FleetNames <- summaryoutput[["FleetNames"]][[1]]
     # stop if lengths don't match
     if (length(FleetNames) != nfleets) {
-      cli::cli_abort(paste0("problem with FleetNames: length!= ", nfleets, "; fleet names: ", paste(FleetNames, collapse = ", ")))
+      cli::cli_abort("{paste(\"problem with FleetNames: length!= \", nfleets, \"; fleet names: \", paste(FleetNames, collapse = \", \"), sep = \"\")}")
     }
     # stop if component input isn't found in table
     component_options <- c(
@@ -135,7 +135,7 @@ PinerPlot <-
       unique(lbtg[["Label"]][-grep("_lambda", lbtg[["Label"]])])
     )
     if (!component %in% component_options) {
-      cli::cli_abort(paste0("input 'component' needs to be one of the following", paste("    ", component_options, "")))
+      cli::cli_abort("{paste(\"input 'component' needs to be one of the following\", paste(\"    \", component_options, \"\"), sep = \"\")}")
     }
 
     if (fleetnames[1] == "default") {
@@ -166,14 +166,14 @@ PinerPlot <-
       parnumber <- grep(profile.string, pars[["Label"]])
     }
     if (length(parnumber) <= 0) {
-      cli::cli_abort(paste0("No parameters matching profile.string='", profile.string, "'", sep = ""))
+      cli::cli_abort("{paste(\"No parameters matching profile.string='\", profile.string, \"'\", sep = \"\")}")
     }
     parlabel <- pars[["Label"]][parnumber]
     if (length(parlabel) > 1) {
-      cli::cli_abort(paste0("Multiple parameters matching profile.string='", profile.string, "':", paste(parlabel, collapse = ", "), "You may need to use 'exact=TRUE'.", sep = ""))
+      cli::cli_abort("{paste(\"Multiple parameters matching profile.string='\", profile.string, \"':\", paste(parlabel, collapse = \", \"), \"You may need to use 'exact=TRUE'.\", sep = \"\")}")
     }
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
-    cli::cli_inform(paste0("Parameter matching profile.string = '", profile.string, "': '", parlabel, "Parameter values (after subsetting based on input 'models'):", paste0(parvec, collase = ", ")))
+    cli::cli_inform("{paste(\"Parameter matching profile.string = '\", profile.string, \"': '\", parlabel, \"Parameter values (after subsetting based on input 'models'):\", paste(parvec, sep = \"\", collase = \", \"), sep = \"\")}")
     if (xlim[1] == "default") {
       xlim <- range(parvec)
     }
@@ -233,13 +233,7 @@ PinerPlot <-
     column.max <- apply(data.frame(prof.table[, -c(1:3)]), 2, max, na.rm = TRUE)
     change.fraction <- column.max / max(prof.table[, 3], na.rm = TRUE)
     include <- change.fraction >= minfraction
-    cli::cli_inform(paste0("Fleet-specific likelihoods showing max change as fraction of total change.", "To change which components are included, change input 'minfraction'.", paste0(
-        utils::capture.output(print(data.frame(
-          frac_change = round(change.fraction, 4),
-          include = include
-        ))),
-        collapse = "\n"
-      )))
+    cli::cli_inform("{paste(\"Fleet-specific likelihoods showing max change as fraction of total change.\", \"To change which components are included, change input 'minfraction'.\", paste(utils::capture.output(print(data.frame(\n          frac_change = round(change.fraction, 4),\n          include = include\n        ))), sep = \"\", collapse = \"\\n\"), sep = \"\")}")
 
     # subset values and reorder values
     # Note: first 3 columns are "model", "Label", and "ALL", and

@@ -121,7 +121,7 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  cli::cli_inform(paste0("Mortality params to paste into the first block of parameter lines:\n", paste0(utils::capture.output(Mparams), collapse = "\n")))
+  cli::cli_inform("{paste(\"Mortality params to paste into the first block of parameter lines:\\n\", paste(utils::capture.output(Mparams), sep = \"\", collapse = \"\\n\"), sep = \"\")}")
   printdf(Mparams)
 
   # create data frame of environmental link parameters
@@ -146,7 +146,7 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  cli::cli_inform(paste0("# stuff to paste below the line labeled 'CohortGrowDev'\n", "1 #_custom mortality/growth environmental setup\n", paste0(utils::capture.output(Mlinks), collapse = "\n")))
+  cli::cli_inform("{paste(\"# stuff to paste below the line labeled 'CohortGrowDev'\\n\", \"1 #_custom mortality/growth environmental setup\\n\", paste(utils::capture.output(Mlinks), sep = \"\", collapse = \"\\n\"), sep = \"\")}")
 
   # create a data frame of environmental variables
   Menv <- NULL
@@ -166,7 +166,7 @@ SSmakeMmatrix <- function(
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 
-  cli::cli_inform(paste0("Environmental variables to paste into the bottom of the data file:\n", maxage + 1, " # N environmental variables\n", nrow(Menv), " # N environmental observations\n", paste0(utils::capture.output(Menv), collapse = "\n")))
+  cli::cli_inform("{paste(\"Environmental variables to paste into the bottom of the data file:\\n\", maxage + 1, \" # N environmental variables\\n\", nrow(Menv), \" # N environmental observations\\n\", paste(utils::capture.output(Menv), sep = \"\", collapse = \"\\n\"), sep = \"\")}")
 
   # restore things to how they were
   options(width = oldwidth, max.print = oldmax.print)

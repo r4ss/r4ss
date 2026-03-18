@@ -49,12 +49,12 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   }
   strings <- strings[is.na(suppressWarnings(as.numeric(strings)))]
   if (length(strings) > 2) {
-    cli::cli_warn(paste0("Too many strings in starter file? Choosing first 2 of these as data and control file names: ", paste(strings, collapse = ", ")))
+    cli::cli_warn("{paste(\"Too many strings in starter file? Choosing first 2 of these as data and control file names: \", paste(strings, collapse = \", \"), sep = \"\")}")
   }
   mylist[["datfile"]] <- strings[1]
   mylist[["ctlfile"]] <- strings[2]
   if (verbose) {
-    cli::cli_inform(paste0("  data, control files: ", mylist[["datfile"]], ", ", mylist[["ctlfile"]], sep = ""))
+    cli::cli_inform("{paste(\"  data, control files: \", mylist[[\"datfile\"]], \", \", mylist[[\"ctlfile\"]], sep = \"\")}")
   }
 
   # get numbers (could be better integrated with function above)
@@ -128,7 +128,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["converge_criterion"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    cli::cli_inform(paste0("  converge_criterion = ", mylist[["converge_criterion"]]))
+    cli::cli_inform("{paste(\"  converge_criterion = \", mylist[[\"converge_criterion\"]], sep = \"\")}")
   }
   mylist[["retro_yr"]] <- allnums[i]
   i <- i + 1
@@ -141,7 +141,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["SPR_basis"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    cli::cli_inform(paste0("  SPR_basis = ", mylist[["SPR_basis"]]))
+    cli::cli_inform("{paste(\"  SPR_basis = \", mylist[[\"SPR_basis\"]], sep = \"\")}")
   }
   mylist[["F_std_units"]] <- allnums[i]
   i <- i + 1
@@ -160,7 +160,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["F_std_basis"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    cli::cli_inform(paste0("  F_std_basis = ", mylist[["F_std_basis"]]))
+    cli::cli_inform("{paste(\"  F_std_basis = \", mylist[[\"F_std_basis\"]], sep = \"\")}")
   }
 
   # last value in vector of numerical values
@@ -175,8 +175,8 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     mylist[["ALK_tolerance"]] <- allnums[i]
     i <- i + 1
     if (verbose) {
-      cli::cli_inform(paste0("  MCMC_output_detail = ", mylist[["MCMC_output_detail"]]))
-      cli::cli_inform(paste0("  ALK_tolerance = ", mylist[["ALK_tolerance"]]))
+      cli::cli_inform("{paste(\"  MCMC_output_detail = \", mylist[[\"MCMC_output_detail\"]], sep = \"\")}")
+      cli::cli_inform("{paste(\"  ALK_tolerance = \", mylist[[\"ALK_tolerance\"]], sep = \"\")}")
     }
   }
 
@@ -189,7 +189,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     # read seed and check final value
     mylist[["seed"]] <- mylist[["final"]]
     if (verbose) {
-      cli::cli_inform(paste0("Reading a random seed value:", mylist[["seed"]]))
+      cli::cli_inform("{paste(\"Reading a random seed value:\", mylist[[\"seed\"]], sep = \"\")}")
     }
 
     mylist[["final"]] <- final <- allnums[i]

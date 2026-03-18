@@ -471,7 +471,7 @@ SSplotTimeseries <-
             stdtable[["lower"]] <- pmax(v - 1.96 * std, 0) # max of value or 0
           }
           if (max(stdtable[["Yr"]]) < max(floor(ts[["YrSeas"]]))) {
-            cli::cli_warn(paste0(max(stdtable[["Yr"]]), " is the last year with uncertainty in Report file, but ", max(ts[["YrSeas"]]), " is last year of time series. ", "Consider changing starter file input for ", "'max yr for sdreport outputs' to -2"))
+            cli::cli_warn("{paste(max(stdtable[[\"Yr\"]]), \" is the last year with uncertainty in Report file, but \", max(ts[[\"YrSeas\"]]), \" is last year of time series. \", \"Consider changing starter file input for \", \"'max yr for sdreport outputs' to -2\", sep = \"\")}")
           }
           stdtable <- stdtable[
             stdtable[["Yr"]] >= minyr & stdtable[["Yr"]] <= maxyr,

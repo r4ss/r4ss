@@ -124,7 +124,7 @@ SSsummarize <- function(
   }
   # check summary biomass age
   if (length(unique(summary_ages)) > 1) {
-    cli::cli_warn(paste0("Age used in summary biomass calculations differs among models:", paste(summary_ages, collapse = " ")))
+    cli::cli_warn("{paste(\"Age used in summary biomass calculations differs among models:\", paste(summary_ages, collapse = \" \"), sep = \"\")}")
   }
   # notes about what runs were used
   sim <- NULL
@@ -316,7 +316,7 @@ SSsummarize <- function(
       ] <- parstemp[["Pr_Like"]][ipar]
     }
     if (verbose) {
-      cli::cli_inform(paste0("  N active pars = ", sum(!is.na(parstemp[["Active_Cnt"]]))))
+      cli::cli_inform("{paste(\"  N active pars = \", sum(!is.na(parstemp[[\"Active_Cnt\"]])), sep = \"\")}")
     }
 
     ## compile derived quantities
@@ -788,12 +788,7 @@ SSsummarize <- function(
       get("verbose", envir = parent.frame()) &
         deparse(substitute(data)) == "pars"
     ) {
-      cli::cli_inform(paste0("For model(s) ", paste(fix, collapse = ", "), ", values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for", paste(
-          data[oldrows, "Label"],
-          data[newrows, "Label"],
-          sep = " -> ",
-          collapse = ", "
-        ), "were copied from x -> y."))
+      cli::cli_inform("{paste(\"For model(s) \", paste(fix, collapse = \", \"), \", values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for\", paste(\n          data[oldrows, \"Label\"],\n          data[newrows, \"Label\"],\n          sep = \" -> \",\n          collapse = \", \"\n        ), \"were copied from x -> y.\", sep = \"\")}")
     }
     data[newrows, fix] <- data[oldrows, fix]
     return(data)

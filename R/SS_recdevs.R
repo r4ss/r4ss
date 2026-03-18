@@ -53,10 +53,10 @@ SS_recdevs <-
     readfun <- function(string, maxlen = Inf) {
       line1 <- grep(string, ctl)
       if (length(line1) < 1) {
-        cli::cli_abort(paste0("no line contains the phrase, '", string, "'", sep = ""))
+        cli::cli_abort("{paste(\"no line contains the phrase, '\", string, \"'\", sep = \"\")}")
       }
       if (length(line1) > 1) {
-        cli::cli_abort(paste0("more than one line contains the phrase, '", string, "'", sep = ""))
+        cli::cli_abort("{paste(\"more than one line contains the phrase, '\", string, \"'\", sep = \"\")}")
       }
 
       # split parameter line at hash mark

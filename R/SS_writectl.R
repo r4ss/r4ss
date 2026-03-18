@@ -39,7 +39,7 @@ SS_writectl <- function(
     version <- "3.30"
   }
   if (ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
-    cli::cli_abort(paste0("Input 'version' does not match ctllist[['ReadVersion']] of ", "'", ctllist[["ReadVersion"]], "'."))
+    cli::cli_abort("{paste(\"Input 'version' does not match ctllist[['ReadVersion']] of \", \"'\", ctllist[[\"ReadVersion\"]], \"'.\", sep = \"\")}")
   }
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     cli::cli_abort("Input 'version' should be either '3.24' or '3.30'")

@@ -319,8 +319,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
       colnames(temp_Frate_2) <- c("year", "seas", "fleet", "F")
       parlist[["F_rate"]] <- temp_Frate_2
     } else {
-      cli::cli_abort(paste0("The length of the catch matrix (", length(temp_Frate_1[, 1]), ", or ", length(temp_Frate_2[, 1]), "
-           with zero catches removed) does not match with the length of the F_rate parameter vector (", length(grep("F_rate", parvals)), ")"))
+      cli::cli_abort("{paste(\"The length of the catch matrix (\", length(temp_Frate_1[, 1]), \", or \", length(temp_Frate_2[, 1]), \"\n           with zero catches removed) does not match with the length of the F_rate parameter vector (\", length(grep(\"F_rate\", parvals)), \")\", sep = \"\")}")
     }
   }
 

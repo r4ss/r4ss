@@ -92,7 +92,7 @@ SS_readdat_2.00 <- function(
   datlist[["type"]] <- "Stock_Synthesis_data_file"
   datlist[["ReadVersion"]] <- "2.00"
   if (verbose) {
-    cli::cli_inform(paste0("SS_readdat_2.00 - read version = ", datlist[["ReadVersion"]]))
+    cli::cli_inform("{paste(\"SS_readdat_2.00 - read version = \", datlist[[\"ReadVersion\"]], sep = \"\")}")
   }
 
   # return(datlist)
@@ -166,18 +166,7 @@ SS_readdat_2.00 <- function(
   areas <- datlist[["areas"]]
   if (verbose) {
     cli::cli_inform("areas:{areas}")
-    cli::cli_inform(paste0("fleet info:", paste0(
-        utils::capture.output(
-          data.frame(
-            fleet = 1:Ntypes,
-            name = fleetnames,
-            area = areas,
-            timing = surveytiming,
-            type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
-          )
-        ),
-        collapse = "\n"
-      )))
+    cli::cli_inform("{paste(\"fleet info:\", paste(utils::capture.output(\n          data.frame(\n            fleet = 1:Ntypes,\n            name = fleetnames,\n            area = areas,\n            timing = surveytiming,\n            type = c(rep(\"FISHERY\", Nfleet), rep(\"SURVEY\", Nsurveys))\n          )\n        ), sep = \"\", collapse = \"\\n\"), sep = \"\")}")
   }
 
   # fleet info

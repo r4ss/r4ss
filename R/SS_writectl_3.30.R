@@ -26,7 +26,7 @@ SS_writectl_3.30 <- function(
   }
   # input checks
   if (ctllist[["ReadVersion"]] != "3.30") {
-    cli::cli_abort(paste0("ReadVersion must be '3.30', but is ", ctllist[["ReadVersion"]], ". ", "Please make sure the control file list object is created from a 3.30", " SS3 model and not an earlier version."))
+    cli::cli_abort("{paste(\"ReadVersion must be '3.30', but is \", ctllist[[\"ReadVersion\"]], \". \", \"Please make sure the control file list object is created from a 3.30\", \" SS3 model and not an earlier version.\", sep = \"\")}")
   }
 
   if (file.exists(outfile)) {
@@ -346,7 +346,7 @@ SS_writectl_3.30 <- function(
     wl("Lorenzen_maxage", comment = "#_maximum age for Age-range Lorenzen M;")
     writeComment(" #_later read 1P per Sex x G Morph", con = zz)
   } else {
-    cli::cli_abort(paste0("natM_type : ", ctllist[["natM_type"]], " is not supported"))
+    cli::cli_abort("{paste(\"natM_type : \", ctllist[[\"natM_type\"]], \" is not supported\", sep = \"\")}")
   }
   # Growth Setup ----
   wl(
@@ -379,7 +379,7 @@ SS_writectl_3.30 <- function(
   }
   # Below check added so users can investigate why the ctllist can't be written.
   if (!ctllist[["GrowthModel"]] %in% c(1:5, 8)) {
-    cli::cli_abort(paste0("The GrowthModel", ctllist[["GrowthModel"]], "in ctllist ", ctllist, " is not an option in SS3 3.30. Valid growth options are 1-5 and 8."))
+    cli::cli_abort("{paste(\"The GrowthModel\", ctllist[[\"GrowthModel\"]], \"in ctllist \", ctllist, \" is not an option in SS3 3.30. Valid growth options are 1-5 and 8.\", sep = \"\")}")
   }
   writeComment("#", con = zz)
   wl(
@@ -404,7 +404,7 @@ SS_writectl_3.30 <- function(
   )
   # Below check added to help users with troubleshooting
   if (!ctllist[["maturity_option"]] %in% c(1:6)) {
-    cli::cli_abort(paste0("Invalid maturity option used. ctllist[['maturity_option']] is", ctllist[["maturity_option"]], ", but must be 1, 2, 3, 4, 5, or 6."))
+    cli::cli_abort("{paste(\"Invalid maturity option used. ctllist[['maturity_option']] is\", ctllist[[\"maturity_option\"]], \", but must be 1, 2, 3, 4, 5, or 6.\", sep = \"\")}")
   }
   # Below if statements are lines are conditional on the maturity option chosen
   if (ctllist[["maturity_option"]] %in% c(3, 4)) {
@@ -431,7 +431,7 @@ SS_writectl_3.30 <- function(
     )
   )
   if (!ctllist[["hermaphroditism_option"]] %in% c(0, 1, -1)) {
-    cli::cli_abort(paste0("Invalid hermaphroditism_option specified in ctllist. Its value is ", ctllist[["hermaphroditism_option"]], ", but can only be 0, 1, or -1."))
+    cli::cli_abort("{paste(\"Invalid hermaphroditism_option specified in ctllist. Its value is \", ctllist[[\"hermaphroditism_option\"]], \", but can only be 0, 1, or -1.\", sep = \"\")}")
   }
   # Below if statement conditional on the hermaphroditism option chosen
   if (ctllist[["hermaphroditism_option"]] %in% c(1, -1)) {
@@ -861,7 +861,7 @@ SS_writectl_3.30 <- function(
     }
     writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
   } else {
-    cli::cli_abort(paste0("ctllist[['Use_2D_AR1_selectivity']] has value ", ctllist[["Use_2D_AR1_selectivity"]], ", but can only have value 0 or 1."))
+    cli::cli_abort("{paste(\"ctllist[['Use_2D_AR1_selectivity']] has value \", ctllist[[\"Use_2D_AR1_selectivity\"]], \", but can only have value 0 or 1.\", sep = \"\")}")
   }
   # Tag model parameters ----
   writeComment("# Tag loss and Tag reporting parameters go next", con = zz)
@@ -881,7 +881,7 @@ SS_writectl_3.30 <- function(
     printdf("TG_Report_fleet", header = FALSE)
     printdf("TG_Report_fleet_decay", header = FALSE)
   } else {
-    cli::cli_abort(paste0("ctllist[['TG_custom']] has value ", ctllist[["TG_custom"]], " but can only", "have value 0 or 1."))
+    cli::cli_abort("{paste(\"ctllist[['TG_custom']] has value \", ctllist[[\"TG_custom\"]], \" but can only\", \"have value 0 or 1.\", sep = \"\")}")
   }
   # Time varying parameters for tagging, would go here, if implemented.
   if (verbose) {

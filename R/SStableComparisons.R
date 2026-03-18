@@ -152,7 +152,7 @@ SStableComparisons <- function(
           }
         }
         if (verbose) {
-          cli::cli_inform(paste0("added ", nrow(vals), " row", ifelse(nrow(vals) != 1, "s", "")))
+          cli::cli_inform("{paste(\"added \", nrow(vals), \" row\", ifelse(nrow(vals) != 1, \"s\", \"\"), sep = \"\")}")
         }
         if (!is.null(digits)) {
           if (verbose) {
@@ -175,7 +175,7 @@ SStableComparisons <- function(
         digit <- digits[iname]
       }
       if (verbose) {
-        cli::cli_inform(paste0("name=", name, "; ", sep = ""))
+        cli::cli_inform("{paste(\"name=\", name, \"; \", sep = \"\")}")
       }
       if (name == "BLANK") {
         if (verbose) {

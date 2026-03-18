@@ -118,7 +118,7 @@ SS_fitbiasramp <-
       )
     }
     if (verbose) {
-      cli::cli_inform(paste0("startvalues =", paste(startvalues, collapse = ", ")))
+      cli::cli_inform("{paste(\"startvalues =\", paste(startvalues, collapse = \", \"), sep = \"\")}")
     }
 
     makeoffsets <- function(values) {
@@ -146,7 +146,7 @@ SS_fitbiasramp <-
       startvalues <- makeoffsets(startvalues)
     }
     if (verbose & transform) {
-      cli::cli_inform(paste0("transformed startvalues =", paste(startvalues, collapse = ", ")))
+      cli::cli_inform("{paste(\"transformed startvalues =\", paste(startvalues, collapse = \", \"), sep = \"\")}")
     }
 
     biasadjfit <- function(
@@ -215,7 +215,7 @@ SS_fitbiasramp <-
       if (altmethod == "psoptim") {
         # pso package no longer included by default since this option is rarely used
         if (!requireNamespace("pso", quietly = TRUE)) {
-          cli::cli_abort(paste0("Package \"pso\" needed for this function to work. Please install it."), call = NULL)
+          cli::cli_abort("{paste(\"Package \\\"pso\\\" needed for this function to work. Please install it.\", sep = \"\")}", call = NULL)
         }
 
         biasadjfit(
@@ -425,7 +425,7 @@ SS_fitbiasramp <-
         cli::cli_warn("Problem with convergence, here is output from 'optim':")
         print(newbias)
       }
-      cli::cli_inform(paste0("Estimated values:", paste0(utils::capture.output(df), collpase = "")))
+      cli::cli_inform("{paste(\"Estimated values:\", paste(utils::capture.output(df), sep = \"\", collpase = \"\"), sep = \"\")}")
     }
 
     if (plot) {
@@ -500,7 +500,7 @@ SS_fitbiasramp <-
       # write new file
       writeLines(ctlfile, newctl)
       if (verbose) {
-        cli::cli_inform(paste0("wrote new file to ", newctl, " with values", paste(newvals, collapse = ", ")))
+        cli::cli_inform("{paste(\"wrote new file to \", newctl, \" with values\", paste(newvals, collapse = \", \"), sep = \"\")}")
       }
     }
     if (!is.null(plotinfo)) {
