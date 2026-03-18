@@ -269,7 +269,7 @@ make_multifig_sexratio <-
     if (sexratio.option == 1) {
       # females:males
       if (nrow(df[!is.na(df[["se.ratio"]]), ]) == 0) {
-        warning(paste("No SE of ratio found, defaulting to ymax of 4"))
+        cli::cli_warn("No SE of ratio found, defaulting to ymax of 4")
         yrange <- c(0, 4)
       } else {
         yrange <- c(

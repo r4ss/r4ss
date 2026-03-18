@@ -133,7 +133,7 @@ SS_read <- function(dir = getwd(), ss_new = FALSE, verbose = FALSE) {
         silent = !verbose
       )
     } else {
-      warning("Model set to use .par file but no file found.")
+      cli::cli_warn("Model set to use .par file but no file found.")
     }
     return_list[["par"]] <- par
   }

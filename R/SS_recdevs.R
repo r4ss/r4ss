@@ -53,10 +53,10 @@ SS_recdevs <-
     readfun <- function(string, maxlen = Inf) {
       line1 <- grep(string, ctl)
       if (length(line1) < 1) {
-        stop("no line contains the phrase, '", string, "'", sep = "")
+        cli::cli_abort("{paste(\"no line contains the phrase, '\", string, \"'\", sep = \"\")}")
       }
       if (length(line1) > 1) {
-        stop("more than one line contains the phrase, '", string, "'", sep = "")
+        cli::cli_abort("{paste(\"more than one line contains the phrase, '\", string, \"'\", sep = \"\")}")
       }
 
       # split parameter line at hash mark
@@ -67,7 +67,7 @@ SS_recdevs <-
       vec <- as.numeric(vecstrings[vecstrings != ""])
       # check for length
       if (length(vec) > maxlen) {
-        stop(paste(
+        cli::cli_abort(paste(
           "this line has more than ",
           maxlen,
           " value",
@@ -91,19 +91,19 @@ SS_recdevs <-
     # make sure model includes recdevs and get some information
     do_recdev <- readfun("do_recdev", maxlen = 1)
     if (do_recdev == 0) {
-      stop("do_recdev should be set to 1 or 2")
+      cli::cli_abort("do_recdev should be set to 1 or 2")
     }
     yrs <- fyr:lyr
     Nrecdevs <- lyr - fyr + 1
     phase <- readfun("recdev phase", maxlen = 1)
     advanced <- readfun("advanced options", maxlen = 1)
     if (advanced != 1) {
-      stop("advanced options must be turned on in control file")
+      cli::cli_abort("advanced options must be turned on in control file")
     }
     if (phase > 0) {
       newphase <- -abs(phase)
       if (verbose) {
-        message("Changing recdev phase to negative: ", newphase)
+        cli::cli_inform("Changing recdev phase to negative: {newphase}")
       }
       ctl[grep("recdev phase", ctl)] <- paste(newphase, "#_recdev phase")
     }
@@ -115,10 +115,7 @@ SS_recdevs <-
     # check for keyword at start of following section
     key2 <- grep("Fishing Mortality info", ctl)
     if (length(key2) == 0) {
-      warning(
-        "The phrase 'Fishing Mortality info' does not occur after the\n",
-        "recdev section; Format of control file may be messy."
-      )
+      cli::cli_warn("The phrase 'Fishing Mortality info' does not occur after the recdev section; Format of control file may be messy.")
     } else {
       key2 == key2[1]
     }
@@ -126,13 +123,7 @@ SS_recdevs <-
     # generate new recdevs
     if (!is.null(recdevs)) {
       if (length(recdevs) != Nrecdevs) {
-        stop(paste(
-          "input 'recdevs' has length=",
-          length(recdevs),
-          " but Nrecdevs=lyr-fyr+1=",
-          Nrecdevs,
-          sep = ""
-        ))
+        cli::cli_abort("input 'recdevs' has length={length(recdevs)} but Nrecdevs=lyr-fyr+1={Nrecdevs}")
       } else {
         newdevs <- recdevs
       }
@@ -146,14 +137,7 @@ SS_recdevs <-
         scaleyrs <- yrs %in% scaleyrs
       }
       if (verbose) {
-        message(
-          "Rescaling recdevs vector so yrs ",
-          min(yrs[scaleyrs]),
-          ":",
-          max(yrs[scaleyrs]),
-          " have mean 0 and std. dev. = sigmaR = ",
-          sigmaR
-        )
+        cli::cli_inform("Rescaling recdevs vector so yrs {min(yrs[scaleyrs])}:{max(yrs[scaleyrs])} have mean 0 and std. dev. = sigmaR = {sigmaR}")
       }
       newdevs <- sigmaR *
         (newdevs - mean(newdevs[scaleyrs])) /
@@ -192,7 +176,7 @@ SS_recdevs <-
     if (writectl) {
       writeLines(ctl, newctlfile)
       if (verbose) {
-        message("Wrote new file: ", newctlfile)
+        cli::cli_inform("Wrote new file: {newctlfile}")
       }
     }
     # reset working directory

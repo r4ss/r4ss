@@ -27,12 +27,10 @@ SS_writestarter <- function(
     )
   }
   if (verbose) {
-    message("running SS_writestarter")
+    cli::cli_inform("running SS_writestarter")
   }
   if (mylist[["type"]] != "Stock_Synthesis_starter_file") {
-    stop(
-      "input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n"
-    )
+    cli::cli_abort("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'")
   }
   # this command will hopefully prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
@@ -51,16 +49,12 @@ SS_writestarter <- function(
   }
   if (file.exists(outfile)) {
     if (!overwrite) {
-      stop(paste(
-        "file exists:",
-        outfile,
-        "\n  set overwrite=TRUE to replace\n"
-      ))
+      cli::cli_abort("file exists: {outfile} set overwrite=TRUE to replace")
     } else {
       file.remove(outfile)
     }
   } else {
-    if (verbose) message("writing new file: ", outfile)
+    if (verbose) cli::cli_inform("writing new file: {outfile}")
   }
 
   # record current max characters per line and then expand in case of long lines
@@ -68,7 +62,7 @@ SS_writestarter <- function(
   options(width = 1000)
 
   if (verbose) {
-    message("opening connection to ", outfile)
+    cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   sink(zz)
@@ -174,6 +168,6 @@ SS_writestarter <- function(
   sink()
   close(zz)
   if (verbose) {
-    message("file written to ", outfile)
+    cli::cli_inform("file written to {outfile}")
   }
 }

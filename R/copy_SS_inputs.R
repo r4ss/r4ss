@@ -54,19 +54,19 @@ copy_SS_inputs <- function(
 ) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir.old) | length(dir.old) != 1) {
-    stop("Input 'dir.old' should be a character string for a directory")
+    cli::cli_abort("Input 'dir.old' should be a character string for a directory")
   }
 
   # check for presence of old directory
   if (dir.old != "" & !dir.exists(dir.old)) {
-    stop("dir.old doesn't exist:", dir.old)
+    cli::cli_abort("dir.old doesn't exist: {dir.old}")
   }
   # check for presence of new directory, and create if requested
   if (!dir.exists(dir.new)) {
     if (create.dir) {
       dir.create(dir.new, recursive = recursive)
     } else {
-      stop("'dir.create=FALSE' and dir.new doesn't exist:", dir.new)
+      cli::cli_abort("'dir.create=FALSE' and dir.new doesn't exist: {dir.new}")
     }
   }
   # read starter file to figure out what other inputs are
@@ -77,18 +77,18 @@ copy_SS_inputs <- function(
   if (file.exists(starter_file)) {
     starter <- SS_readstarter(starter_file, verbose = FALSE)
   } else {
-    warning("file not found: ", file.path(starter_file))
+    cli::cli_warn("file not found: {starter_file}")
     return(invisible(FALSE))
   }
 
   # check for starter file in new location
   if (!overwrite && file.exists(file.path(dir.new, "starter.ss"))) {
-    warning("overwrite = FALSE and starter.ss exists in ", dir.new)
+    cli::cli_warn("overwrite = FALSE and starter.ss exists in {dir.new}")
     return(invisible(FALSE))
   }
 
   if (verbose) {
-    message("copying files from\n ", dir.old, "\nto\n ", dir.new)
+    cli::cli_inform("copying files from {dir.old} to {dir.new}")
   }
 
   results <- rep(NA, 6)
@@ -175,14 +175,14 @@ copy_SS_inputs <- function(
       ]
       exefiles <- grep(pattern = "^[^.]+$", x = exefiles, value = TRUE)
       if (verbose) {
-        message("Unix binaries are: ", paste0(exefiles, collapse = ", "))
+        cli::cli_inform("Unix binaries are: {paste(exefiles, collapse = ', ')}")
       }
     }
     if (length(exefiles) == 0) {
-      warning("No executable files found in ", dir.exe)
+      cli::cli_warn("No executable files found in {dir.exe}")
     }
     if (length(exefiles) > 1) {
-      warning("Copying multiple executable files")
+      cli::cli_warn("Copying multiple executable files")
     }
     for (file in exefiles) {
       results[6] <- file.copy(
@@ -210,15 +210,15 @@ copy_SS_inputs <- function(
   # check for successful copying
   if (all(results, na.rm = TRUE)) {
     if (verbose) {
-      message("copying complete")
+      cli::cli_inform("copying complete")
     }
     return(invisible(TRUE))
   } else {
     if (verbose) {
       if (overwrite) {
-        warning("at least 1 file failed to copy")
+        cli::cli_warn("at least 1 file failed to copy")
       } else {
-        warning("at least 1 file failed to copy, try 'overwrite = TRUE'")
+        cli::cli_warn("at least 1 file failed to copy, try 'overwrite = TRUE'")
       }
     }
     return(invisible(FALSE))

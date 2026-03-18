@@ -145,7 +145,5 @@ r4ss_params <- function(
 ) {
   # This function is never called directly; it exists only to provide shared
   # parameter documentation via @inheritParams for other functions.
-  stop(
-    "r4ss_params() is an internal documentation function and should not be called directly."
-  )
+  cli::cli_abort("r4ss_params() is an internal documentation function and should not be called directly.")
 }

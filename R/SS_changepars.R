@@ -161,27 +161,14 @@ SS_changepars <-
           any(duplicated(unlist(goodnames))) &
             (repeat.vals & any(sapply(inargs, length) > 1))
         ) {
-          stop(
-            "Entries in 'strings' did not map to unique parameters and\n",
-            "it is unclear how to order the par names to match the order\n",
-            "of other arguments provided to SS_changepars.\n",
-            "E.g., strings = c('CV', 'Mal') each return 'CV_young_Mal_GP_1'\n",
-            "and should be changed to strings = c('young_Fem', 'old_Fem', 'Mal')\n",
-            "to get all CV and all Male parameters."
-          )
+          cli::cli_abort("Entries in 'strings' did not map to unique parameters and it is unclear how to order the par names to match the order of other arguments provided to SS_changepars. E.g., strings = c('CV', 'Mal') each return 'CV_young_Mal_GP_1' and should be changed to strings = c('young_Fem', 'old_Fem', 'Mal') to get all CV and all Male parameters.")
         }
         goodnames <- unique(unlist(goodnames))
         if (verbose) {
-          message(
-            "Parameter names in control file matching input vector \n",
-            "'strings' (n=",
-            length(goodnames),
-            "): ",
-            paste0(goodnames, collapse = ", ")
-          )
+          cli::cli_inform("Parameter names in control file matching input vector 'strings' (n={length(goodnames)}): {paste(goodnames, collapse = ', ')}")
         }
         if (length(goodnames) == 0) {
-          stop("No parameters names match input vector 'strings'")
+          cli::cli_abort("No parameters names match input vector 'strings'")
         }
       }
       nvals <- length(goodnames)
@@ -192,17 +179,12 @@ SS_changepars <-
       }
     } else {
       if (is.null(linenums)) {
-        stop("valid input needed for either 'linenums' or 'strings'")
+        cli::cli_abort("valid input needed for either 'linenums' or 'strings'")
       }
     }
     ctlsubset <- ctl[linenums]
     if (verbose) {
-      message(
-        "line numbers in control file (n=",
-        length(linenums),
-        "): ",
-        paste(linenums, collapse = ", ")
-      )
+      cli::cli_inform("line numbers in control file (n={length(linenums)}): {paste(linenums, collapse = ', ')}")
     }
 
     # define objects to store changes
@@ -224,26 +206,12 @@ SS_changepars <-
       }
       if (length(tmp) != nvals & repeat.vals) {
         if (length(tmp) > 1) {
-          stop(
-            "SS_changepars doesn't yet accommodate ",
-            "repeat.vals=TRUE and of length(.) > 1"
-          )
+          cli::cli_abort("SS_changepars doesn't yet accommodate repeat.vals=TRUE and of length(.) > 1")
         }
         assign(ii, rep(tmp, nvals))
       }
       if (length(get(ii)) != nvals) {
-        stop(
-          paste0("'", ii, "'"),
-          " and either 'linenums' or 'strings'",
-          " should have the same number of elements,\n",
-          "instead of ",
-          length(get(ii)),
-          " and ",
-          length(linenums),
-          ".\n",
-          "Note: a string can map to multiple parameters, here are your pars,\n",
-          paste(goodnames, collapse = "\n")
-        )
+        cli::cli_abort("'{ii}' and either 'linenums' or 'strings' should have the same number of elements, instead of {length(get(ii))} and {length(linenums)}. Note: a string can map to multiple parameters, here are your pars: {paste(goodnames, collapse = ', ')}")
       }
     }
 
@@ -260,7 +228,7 @@ SS_changepars <-
       vecstrings <- strsplit(splitline[1], split = "[[:blank:]]+")[[1]]
       vec <- type.convert(vecstrings[vecstrings != ""], as.is = TRUE)
       if (max(is.na(vec)) == 1) {
-        stop("There's a problem with a non-numeric value in line ", linenums[i])
+        cli::cli_abort("There's a problem with a non-numeric value in line {linenums[i]}")
       }
       # store information on old value and replace with new value (unless NULL)
       oldvals[i] <- vec[3]
@@ -324,26 +292,10 @@ SS_changepars <-
       }
       # check bounds relative to new values
       if (vec[3] < vec[1]) {
-        warning(
-          "value ",
-          vec[3],
-          " is now below lower bound ",
-          vec[1],
-          " for ",
-          cmnt,
-          "\n"
-        )
+        cli::cli_warn("value {vec[3]} is now below lower bound {vec[1]} for {cmnt}")
       }
       if (vec[3] > vec[2]) {
-        warning(
-          "value ",
-          vec[3],
-          " is now above upper bound ",
-          vec[2],
-          " for ",
-          cmnt,
-          "\n"
-        )
+        cli::cli_warn("value {vec[3]} is now above upper bound {vec[2]} for {cmnt}")
       }
 
       newphase[i] <- vec[7]
@@ -396,12 +348,8 @@ SS_changepars <-
       newvals <- NA
     }
     if (verbose) {
-      message(
-        "Wrote new file to ",
-        newctlfile,
-        " with the following changes:\n",
-        paste0(utils::capture.output(results), collapse = "\n")
-      )
+      results_text <- paste(utils::capture.output(results), collapse = "\n")
+      cli::cli_inform("Wrote new file to {newctlfile} with the following changes:\n{results_text}")
     }
     return(invisible(results))
   } # end function

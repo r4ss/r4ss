@@ -160,31 +160,26 @@ SSplotProfile <-
   ) {
     if (print) {
       if (is.null(plotdir)) {
-        stop("to print PNG files, you must supply a directory as 'plotdir'")
+        cli::cli_abort("to print PNG files, you must supply a directory as 'plotdir'")
       }
       # create directory if it's missing
       if (!file.exists(plotdir)) {
         if (verbose) {
-          message("creating directory:", plotdir)
+          cli::cli_inform("creating directory:{plotdir}")
         }
         dir.create(plotdir, recursive = TRUE)
       }
     }
 
     if (length(components) != length(component.labels)) {
-      stop(
-        "Inputs 'components' and 'component.labels' should have equal length"
-      )
+      cli::cli_abort("Inputs 'components' and 'component.labels' should have equal length")
     }
 
     # get stuff from summary output
     n <- summaryoutput[["n"]]
     likelihoods <- summaryoutput[["likelihoods"]]
     if (is.null(likelihoods)) {
-      stop(
-        "Input 'summaryoutput' needs to be a list output from SSsummarize\n",
-        "and have an element named 'likelihoods'."
-      )
+      cli::cli_abort("Input 'summaryoutput' needs to be a list output from SSsummarize and have an element named 'likelihoods'.")
     }
     pars <- summaryoutput[["pars"]]
     par_prior_likes <- summaryoutput[["par_prior_likes"]]
@@ -194,11 +189,7 @@ SSplotProfile <-
       models <- 1:n
     } else {
       if (!all(models %in% 1:n)) {
-        stop(
-          "Input 'models' should be a vector of values from 1 to n=",
-          n,
-          " (for your inputs).\n"
-        )
+        cli::cli_abort("Input 'models' should be a vector of values from 1 to n={n} (for your inputs).")
       }
     }
 
@@ -209,38 +200,18 @@ SSplotProfile <-
       parnumber <- grep(profile.string, pars[["Label"]])
     }
     if (length(parnumber) <= 0) {
-      stop(
-        "No parameters matching profile.string='",
-        profile.string,
-        "'",
-        sep = ""
-      )
+      cli::cli_abort("{paste(\"No parameters matching profile.string='\", profile.string, \"'\", sep = \"\")}")
     }
     parlabel <- pars[["Label"]][parnumber]
     if (length(parlabel) > 1) {
-      stop(
-        "Multiple parameters matching profile.string='",
-        profile.string,
-        "':\n",
-        paste(parlabel, collapse = ", "),
-        "\nYou may need to use 'exact=TRUE'.",
-        sep = ""
-      )
+      cli::cli_abort("{paste(\"Multiple parameters matching profile.string='\", profile.string, \"':\", paste(parlabel, collapse = \", \"), \"You may need to use 'exact=TRUE'.\", sep = \"\")}")
     }
 
     # get vector of parameter values
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
     if (verbose) {
-      message(
-        "Parameter matching profile.string=",
-        profile.string,
-        ": ",
-        parlabel
-      )
-      message(
-        "Parameter values (after subsetting based on input 'models'): ",
-        paste0(parvec, collapse = ", ")
-      )
+      cli::cli_inform("Parameter matching profile.string={profile.string}: {parlabel}")
+      cli::cli_inform("{paste(\"Parameter values (after subsetting based on input 'models'): \", paste(parvec, sep = \"\", collapse = \", \"), sep = \"\")}")
     }
 
     # get vector of prior likelihoods for this parameter
@@ -259,10 +230,7 @@ SSplotProfile <-
     }
 
     if (verbose & add_no_prior_line) {
-      message(
-        "Parameter prior likelihoods: ",
-        paste0(par_prior_like_vec, collapse = ", ")
-      )
+      cli::cli_inform("{paste(\"Parameter prior likelihoods: \", paste(par_prior_like_vec, sep = \"\", collapse = \", \"), sep = \"\")}")
     }
 
     # set x-axis limits
@@ -310,10 +278,7 @@ SSplotProfile <-
 
     nlines <- sum(include)
     if (verbose) {
-      message(
-        "Likelihood components showing max change as fraction of total change.\n",
-        "To change which components are included, change input 'minfraction'.\n"
-      )
+      cli::cli_inform("Likelihood components showing max change as fraction of total change. To change which components are included, change input 'minfraction'.")
       print(data.frame(
         frac_change = round(change.fraction, 4),
         include = include,
@@ -322,7 +287,7 @@ SSplotProfile <-
     }
     # stop function if nothing left
     if (nlines == 0) {
-      stop("No components included, 'minfraction' should be smaller.")
+      cli::cli_abort("No components included, 'minfraction' should be smaller.")
     }
     component.labels.used <- component.labels.good[include]
 
@@ -413,11 +378,7 @@ SSplotProfile <-
       if (is.null(profile.label)) {
         # use parameter label for x-axis label
         profile.label <- parlabel
-        message(
-          "The input profile.label = NULL and the parameter label doesn't ",
-          "correspond to an automatically generated label. ",
-          "Setting profile.label equal to the parameter label."
-        )
+        cli::cli_inform("The input profile.label = NULL and the parameter label doesn't correspond to an automatically generated label. Setting profile.label equal to the parameter label.")
       }
     }
 

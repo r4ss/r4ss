@@ -28,9 +28,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   } else if (is.list(datsource)) {
     datlist <- datsource
   } else {
-    stop(
-      "Reading parameter file contents requires a data file location or list object be specified"
-    )
+    cli::cli_abort("Reading parameter file contents requires a data file location or list object be specified")
   }
 
   if (is.character(ctlsource)) {
@@ -44,14 +42,12 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   } else if (is.list(ctlsource)) {
     ctllist <- ctlsource
   } else {
-    stop(
-      "Reading parameter file contents requires a control file location or list object be specified"
-    )
+    cli::cli_abort("Reading parameter file contents requires a control file location or list object be specified")
   }
 
   # function to read Stock Synthesis parameter files
   if (verbose) {
-    message("running SS_readpar_3.30")
+    cli::cli_inform("running SS_readpar_3.30")
   }
   parvals <- readLines(parfile, warn = FALSE)
 
@@ -68,7 +64,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     if (!is.null(ctllist[["MG_parms"]])) {
       parlist[["MG_parms"]] <- ctllist[["MG_parms"]][, 3:4]
     } else {
-      stop("Missing ctllist[['MG_parms']]")
+      cli::cli_abort("Missing ctllist[['MG_parms']]")
     }
     # Add time varying mortality and growth parameters if they exist
     if (
@@ -126,7 +122,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     if (!is.null(ctllist[["SR_parms"]])) {
       parlist[["SR_parms"]] <- ctllist[["SR_parms"]][, 3:4]
     } else {
-      stop("Missing ctllist[['SR_parms']]")
+      cli::cli_abort("Missing ctllist[['SR_parms']]")
     }
     # Add time varying stock recruitment parameters if they exist
     if (
@@ -323,16 +319,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
       colnames(temp_Frate_2) <- c("year", "seas", "fleet", "F")
       parlist[["F_rate"]] <- temp_Frate_2
     } else {
-      stop(
-        "The length of the catch matrix (",
-        length(temp_Frate_1[, 1]),
-        ", or ",
-        length(temp_Frate_2[, 1]),
-        "
-           with zero catches removed) does not match with the length of the F_rate parameter vector (",
-        length(grep("F_rate", parvals)),
-        ")"
-      )
+      cli::cli_abort("{paste(\"The length of the catch matrix (\", length(temp_Frate_1[, 1]), \", or \", length(temp_Frate_2[, 1]), \"\n           with zero catches removed) does not match with the length of the F_rate parameter vector (\", length(grep(\"F_rate\", parvals)), \")\", sep = \"\")}")
     }
   }
 
@@ -344,7 +331,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
     if (!is.null(ctllist[["Q_parms"]])) {
       parlist[["Q_parms"]] <- ctllist[["Q_parms"]][, 3:4]
     } else {
-      stop("Missing ctllist[['Q_parms']]")
+      cli::cli_abort("Missing ctllist[['Q_parms']]")
     }
     # Add time varying catchability Q parameters if they exist
     if (

@@ -46,12 +46,12 @@ populate_multiple_folders <- function(
 ) {
   # check to make sure the first input is in the correct format
   if (!is.character(outerdir.old) | length(outerdir.old) != 1) {
-    stop("Input 'outerdir.old' should be a character string")
+    cli::cli_abort("Input 'outerdir.old' should be a character string")
   }
 
   # check for presence of old directory
   if (outerdir.old != "" & !dir.exists(outerdir.old)) {
-    stop("outerdir.old doesn't exist: ", outerdir.old)
+    cli::cli_abort("outerdir.old doesn't exist: {outerdir.old}")
   }
 
   # check for presence of new directory, and create if requested
@@ -59,13 +59,13 @@ populate_multiple_folders <- function(
     if (create.dir) {
       dir.create(outerdir.new)
     } else {
-      stop("'dir.create=FALSE' and outerdir.new doesn't exist:", outerdir.new)
+      cli::cli_abort("'dir.create=FALSE' and outerdir.new doesn't exist: {outerdir.new}")
     }
   }
 
   # note source and destination directories
   if (verbose) {
-    message("copying files from\n ", outerdir.old, "\nto\n ", outerdir.new)
+    cli::cli_inform("copying files from {outerdir.old} to {outerdir.new}")
   }
 
   # empty data frame to attach things to
@@ -80,13 +80,13 @@ populate_multiple_folders <- function(
     # check to make sure it's a directory
     if (dir.exists(file.path(outerdir.old, dir))) {
       if (verbose) {
-        message("copying ", dir)
+        cli::cli_inform("copying {dir}")
       }
       # check for presence of starter file
       if (!"starter.ss" %in% tolower(dir(file.path(outerdir.old, dir)))) {
         if (verbose) {
           # note that starter file is missing in a subfolder
-          message("skipping ", dir, " which doesn't contain a starter.ss file")
+          cli::cli_inform("skipping {dir} which doesn't contain a starter.ss file")
         }
       } else {
         # if starter file is present, then copy the input files
@@ -112,7 +112,7 @@ populate_multiple_folders <- function(
           results.exe <- results.files
         }
         if (!results.files) {
-          warning("at least 1 input file failed to copy")
+          cli::cli_warn("at least 1 input file failed to copy")
         }
         # copy executable from a central location if requested
         if (is.character(exe.dir)) {
@@ -124,7 +124,7 @@ populate_multiple_folders <- function(
             overwrite = overwrite
           )
           if (!results.exe) {
-            warning("executable failed to copy")
+            cli::cli_warn("executable failed to copy")
           }
         }
         dir.info <- rbind(

@@ -50,13 +50,13 @@ run <- function(
 ) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir)) {
-    stop("Input 'dir' should be a character string")
+    cli::cli_abort("Input 'dir' should be a character string")
   }
   if (!is.logical(show_in_console)) {
-    stop("Input 'show_in_console' should be TRUE or FALSE")
+    cli::cli_abort("Input 'show_in_console' should be TRUE or FALSE")
   }
   if (!show_in_console & !is.character(console_output_file)) {
-    stop("Input 'console_output_file' should be a character string")
+    cli::cli_abort("Input 'console_output_file' should be a character string")
   }
   if (length(dir) > 1) {
     lifecycle::deprecate_stop(
@@ -75,38 +75,22 @@ run <- function(
 
   # confirm that dir exists
   if (!dir.exists(dir)) {
-    warning("not a directory:", dir)
+    cli::cli_warn("not a directory: {dir}")
     results <- "not a directory"
   } else {
     if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
       # skip directories that have results in them
-      message(
-        "Skipping ",
-        dir,
-        " because it contains",
-        " a Report.sso file and skipfinished = TRUE"
-      )
+      cli::cli_inform("Skipping {dir} because it contains a Report.sso file and skipfinished = TRUE")
       results <- "contained Report.sso"
     } else {
       # run model
       setwd(dir) # change working directory
       # provide some messages
       if (verbose) {
-        message(
-          "Changing working directory to ",
-          dir,
-          " and running model using the command: ",
-          command,
-          " ",
-          extras
-        )
+        cli::cli_inform("Changing working directory to {dir} and running model using the command: {command} {extras}")
       }
       if (!show_in_console && verbose) {
-        message(
-          "Input 'show_in_console' = FALSE, ",
-          "so writing console output to ",
-          console_output_file
-        )
+        cli::cli_inform("Input 'show_in_console' = FALSE, so writing console output to {console_output_file}")
       }
       # call system2() to actually run the model
       console_output <- tryCatch(
@@ -118,11 +102,7 @@ run <- function(
         ),
         error = function(err) {
           if (grepl("'CreateProcess' failed to run", err)) {
-            stop(
-              "There is a problem with the SS3 executable, perhaps due to mismatch ",
-              "with the operating system. Please make sure that you have the correct",
-              "executable and it is named appropriately for your operating system"
-            )
+            cli::cli_abort("There is a problem with the SS3 executable, perhaps due to mismatch with the operating system. Please make sure that you have the correct executable and it is named appropriately for your operating system")
           } else {
             err
           }
@@ -143,7 +123,7 @@ run <- function(
           con = console_output_file
         )
         if (verbose) {
-          message("console output written to ", console_output_file)
+          cli::cli_inform("console output written to {console_output_file}")
         }
       }
       # determine if run finished

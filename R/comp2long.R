@@ -92,7 +92,7 @@ comp2long <- function(x, ...) {
     }
   }
   if (!is.data.frame(x)) {
-    stop("composition data not found")
+    cli::cli_abort("composition data not found")
   }
 
   # Call age2long() or size2long()
@@ -117,7 +117,7 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
     }
   }
   if (!is.data.frame(x)) {
-    stop("age composition data not found")
+    cli::cli_abort("age composition data not found")
   }
 
   # Check column names
@@ -133,7 +133,7 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
     "Nsamp"
   )
   if (!all(cols[-1] %in% names(x))) {
-    stop("'x' must contain ", paste(cols[-1], collapse = ", "))
+    cli::cli_abort("'x' must contain {paste(cols[-1], collapse = ', ')}")
   }
 
   # Simplify column names
@@ -185,7 +185,7 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
   ]
   if (expand) {
     if (!is.integer(out[["freq"]])) {
-      stop("expand = TRUE requires composition frequencies to be integers")
+      cli::cli_abort("expand = TRUE requires composition frequencies to be integers")
     }
     out <- out[rep(seq_len(nrow(out)), out[["freq"]]), ]
     out[["freq"]] <- 1L
@@ -213,13 +213,13 @@ size2long <- function(x, measure = NULL, zero = TRUE) {
     }
   }
   if (!is.data.frame(x)) {
-    stop("size composition data not found")
+    cli::cli_abort("size composition data not found")
   }
 
   # Check column names
   cols <- c("method", "year", "month", "fleet", "sex", "part", "Nsamp")
   if (!all(cols[-1] %in% names(x))) {
-    stop("'x' must contain ", paste(cols[-1], collapse = ", "))
+    cli::cli_abort("'x' must contain {paste(cols[-1], collapse = ', ')}")
   }
 
   # Distinguish between length comps and generalized size comps
