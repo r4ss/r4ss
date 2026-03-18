@@ -51,31 +51,26 @@ SS_varadjust <- function(
   # check for consistency of inputs
   if (!is.null(newtable)) {
     if (!is.null(newrow)) {
-      stop("You can't input both 'newtable' and 'newrow'")
+      cli::cli_abort("You can't input both 'newtable' and 'newrow'")
     }
     # call function for SS version 3.24
     if (version == "3.24") {
       # should work whether "version" is character or numeric
       if (!is.data.frame(newtable) || nrow(newtable) != 6) {
-        stop("Input 'newtable' must be a data.frame with 6 rows")
+        cli::cli_abort("Input 'newtable' must be a data.frame with 6 rows")
       }
     } else {
       # version 3.30
       if (!is.data.frame(newtable)) {
-        stop("Input 'newtable' must be a data.frame")
+        cli::cli_abort("Input 'newtable' must be a data.frame")
       }
     }
   }
   if (!is.null(newrow) & is.null(rownumber)) {
-    stop(
-      "Input 'newrow' requires the input 'rownumber' (which row within the table)"
-    )
+    cli::cli_abort("Input 'newrow' requires the input 'rownumber' (which row within the table)")
   }
   if (!is.null(rownumber) && !rownumber %in% 1:6) {
-    stop(
-      "Input 'rownumber' should be an integer specifying which of the rows\n",
-      "of the variance adjustment table will be replaced with 'newrow'"
-    )
+    cli::cli_abort("Input 'rownumber' should be an integer specifying which of the rows\nof the variance adjustment table will be replaced with 'newrow'")
   }
 
   # combine directory and filenames
@@ -88,14 +83,7 @@ SS_varadjust <- function(
   # find line matching keyword and complain if 0 or 2+ lines found
   keyword_line <- grep(keyword, ctl_lines)
   if (length(keyword_line) != 1) {
-    stop(
-      "keyword input '",
-      keyword,
-      "' found ",
-      length(keyword_line),
-      " times.\n",
-      "It should be a unique string immediately before variance adjustments."
-    )
+    cli::cli_abort("keyword input '{keyword}' found {length(keyword_line)} times.\nIt should be a unique string immediately before variance adjustments.")
   }
   # read control file as a table of values
   ctl <- read.table(
@@ -163,22 +151,19 @@ SS_varadjust <- function(
   options(warn = old_warn)
 
   if (verbose) {
-    message(
-      "Existing table of variance adjustments:\n",
-      paste0(utils::capture.output(ctl), collapse = "\n")
-    )
+    cli::cli_inform(paste0("Existing table of variance adjustments:\n", paste0(utils::capture.output(ctl), collapse = "\n")))
   }
 
   if (is.null(newrow) & is.null(newtable)) {
     if (verbose) {
-      message("No new adjustments provided, so no file written.")
+      cli::cli_inform("No new adjustments provided, so no file written.")
     }
     return(invisible(ctl))
   }
   # replace table
   if (!is.null(newrow)) {
     if (length(newrow) != ncol(ctl)) {
-      stop("newrow has the wrong length")
+      cli::cli_abort("newrow has the wrong length")
     } else {
       ctl[rownumber, ] <- newrow
     }
@@ -186,17 +171,14 @@ SS_varadjust <- function(
 
   if (!is.null(newtable)) {
     if (version == "3.24" & ncol(newtable) != ncol(ctl)) {
-      stop("newtable has the wrong number of columns")
+      cli::cli_abort("newtable has the wrong number of columns")
     } else {
       ctl <- newtable
     }
   }
 
   if (verbose) {
-    message(
-      "New table of variance adjustments:\n",
-      paste0(utils::capture.output(ctl), collapse = "\n")
-    )
+    cli::cli_inform(paste0("New table of variance adjustments:\n", paste0(utils::capture.output(ctl), collapse = "\n")))
   }
 
   # absolute position of the rows to change
@@ -211,7 +193,7 @@ SS_varadjust <- function(
   # check for existence of file and warn if present and overwrite=FALSE
   if (file.exists(newctlfile)) {
     if (!overwrite) {
-      stop("File exists and input 'overwrite'=FALSE:\n      ", newctlfile, "\n")
+      cli::cli_abort("File exists and input 'overwrite'=FALSE:\n      {newctlfile}\n")
     } else {
       file.remove(newctlfile)
     }
@@ -219,7 +201,7 @@ SS_varadjust <- function(
 
   # open connection to file
   if (verbose) {
-    message("opening connection to ", newctlfile)
+    cli::cli_inform("opening connection to {newctlfile}")
   }
   zz <- file(newctlfile, open = "at")
   sink(zz)
@@ -253,7 +235,7 @@ SS_varadjust <- function(
   sink()
   close(zz)
   if (verbose) {
-    message("file written to", newctlfile)
+    cli::cli_inform("file written to{newctlfile}")
   }
   # return table of values
   return(invisible(ctl))

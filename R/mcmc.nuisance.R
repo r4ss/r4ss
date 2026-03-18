@@ -62,7 +62,7 @@ mcmc.nuisance <- function(
 
   # warning if file does not exist
   if (!file.exists(filename)) {
-    stop("file doesn't exist:\n", filename)
+    cli::cli_abort("file doesn't exist:\n{filename}")
   }
 
   mcmcdata <- read.table(
@@ -90,10 +90,7 @@ mcmc.nuisance <- function(
         names(mcmcdata)[grep(labelstrings[istring], names(mcmcdata))]
       )
     }
-    message(
-      "All labels matching the input 'labelstrings': ",
-      paste0(labels, collapse = ", ")
-    )
+    cli::cli_inform(paste0("All labels matching the input 'labelstrings': ", paste0(labels, collapse = ", ")))
     mcmcdata <- mcmcdata[, names(mcmcdata) %in% labels]
   } else {
     # when "all" are requested, exclude Iter and Objective_function columns

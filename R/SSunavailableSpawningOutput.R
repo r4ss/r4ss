@@ -36,11 +36,9 @@ SSunavailableSpawningOutput <-
           replist[["catch_units"]][1:replist[["nfishfleets"]]]
       )
       if (!catch.units.same) {
-        warning(
-          "Catch units for all fleets are not equal. Calculated weighted
+        cli::cli_warn("Catch units for all fleets are not equal. Calculated weighted
              mean selectivity for calculating unavailable spawning
-             output may not be accurate."
-        )
+             output may not be accurate.")
       }
       # define fleet_type which is missing from 3.24
       fleet_type <- c(

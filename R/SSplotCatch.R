@@ -181,12 +181,7 @@ SSplotCatch <-
         # check for other fleets with catch_units = 2 = numbers
         # and warn that to be careful interpreting plots
         if (2 %in% catch_units[fleet_types != 3]) {
-          warning(
-            "Catch is a mix of numbers and biomass,",
-            " so be careful interpreting catch plots.\n",
-            "  Use 'SS_plots(..., catchasnumbers = TRUE)'",
-            " to get plots in numbers"
-          )
+          cli::cli_warn("Catch is a mix of numbers and biomass, so be careful interpreting catch plots.\n  Use 'SS_plots(..., catchasnumbers = TRUE)' to get plots in numbers")
         }
       }
     }

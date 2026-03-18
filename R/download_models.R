@@ -39,13 +39,7 @@ download_models <- function(
       destfile = zip_file_path
     ),
     error = function(e) {
-      stop(
-        "The test-models zip file could not be downloaded.",
-        " Does the branch (",
-        branch,
-        ") exist?",
-        call. = FALSE
-      )
+      cli::cli_abort("The test-models zip file could not be downloaded. Does the branch ({branch}) exist?", call = NULL)
     }
   )
   list_files <- utils::unzip(list = TRUE, zipfile = zip_file_path)
@@ -58,12 +52,7 @@ download_models <- function(
     exdir = dir
   )
   if (dir.exists(file.path(dir, "models")) & overwrite == FALSE) {
-    warning(
-      "The model directory ",
-      file.path(dir, "models"),
-      " already exists ",
-      "\nand overwrite is FALSE. So, no new files will be written."
-    )
+    cli::cli_warn(paste0("The model directory ", file.path(dir, "models"), " already exists ", "\nand overwrite is FALSE. So, no new files will be written."))
   }
   dir.create(file.path(dir, "models"), showWarnings = FALSE)
   copy_status <- file.copy(

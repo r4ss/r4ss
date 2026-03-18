@@ -22,16 +22,14 @@ SS_writectl <- function(
 ) {
   # function to write Stock Synthesis data files
   if (verbose) {
-    message("Running SS_writectl")
+    cli::cli_inform("Running SS_writectl")
   }
   # Check user inputs are valid to avoid issues with functions.
   # check ctllist
   stopifnot(is.list(ctllist))
   stopifnot("type" %in% names(ctllist))
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
-    stop(
-      "Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file"
-    )
+    cli::cli_abort("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
   }
   if (is.null(version)) {
     lifecycle::deprecate_stop(
@@ -41,25 +39,15 @@ SS_writectl <- function(
     version <- "3.30"
   }
   if (ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
-    stop(
-      "Input 'version' does not match ctllist[['ReadVersion']] of ",
-      "'",
-      ctllist[["ReadVersion"]],
-      "'."
-    )
+    cli::cli_abort(paste0("Input 'version' does not match ctllist[['ReadVersion']] of ", "'", ctllist[["ReadVersion"]], "'."))
   }
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
-    stop("Input 'version' should be either '3.24' or '3.30'")
+    cli::cli_abort("Input 'version' should be either '3.24' or '3.30'")
   }
   # Check user inputs and/or prepare the file to be overwitten.
   if (file.exists(outfile)) {
     if (!overwrite) {
-      stop(
-        "Outfile called ",
-        outfile,
-        " exists and input 'overwrite'= FALSE.",
-        "Please set overwrite = TRUE if you wish to overwrite the file."
-      )
+      cli::cli_abort("Outfile called {outfile} exists and input 'overwrite'= FALSE.Please set overwrite = TRUE if you wish to overwrite the file.")
     } else if (overwrite) {
       file.remove(outfile)
     }

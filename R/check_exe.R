@@ -49,16 +49,16 @@
 check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   # check to make sure the first input is in the correct format
   if (!is.character(exe)) {
-    stop("Input 'exe' should be a character vector")
+    cli::cli_abort("Input 'exe' should be a character vector")
   }
   if (!is.character(dir)) {
-    stop("Input 'dir' should be a character vector")
+    cli::cli_abort("Input 'dir' should be a character vector")
   }
 
   # remove extension from exe (if present)
   exe_no_extension <- gsub("\\.exe$", "", exe)
   if (!is.na(file.info(exe)[["isdir"]]) && file.info(exe)[["isdir"]]) {
-    stop("Input 'exe' is a directory, it should include the file name as well")
+    cli::cli_abort("Input 'exe' is a directory, it should include the file name as well")
   }
 
   # exe name with extension added back on Windows
@@ -78,7 +78,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   if (file.exists(file.path(dir, exename))) {
     path_to_exe <- path.expand(dir)
     if (verbose) {
-      message("Executable found in directory ", path_to_exe)
+      cli::cli_inform("Executable found in directory {path_to_exe}")
     }
     # add ./ to exename so it knows to run in the current directory
     # but only if the exename doesn't include additional directory
@@ -103,17 +103,12 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
       # like /usr/sbin/ but it's size is much smaller (about 100k vs 7MB)
       if (file.info(normalizePath(path_to_exe))[["size"]] < 1e6) {
         if (verbose) {
-          message(
-            "Executable found that isn't Stock Synthesis: ",
-            path_to_exe,
-            "\n  File size is too small: ",
-            file.info(normalizePath(path_to_exe))[["size"]]
-          )
+          cli::cli_inform(paste0("Executable found that isn't Stock Synthesis: ", path_to_exe, "\n  File size is too small: ", file.info(normalizePath(path_to_exe))[["size"]]))
         }
         path_to_exe <- ""
       } else {
         if (verbose) {
-          message("Executable found at ", path_to_exe)
+          cli::cli_inform("Executable found at {path_to_exe}")
         }
         # remove filename to just get path
         path_to_exe <- dirname(path_to_exe)
@@ -121,7 +116,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
     }
     if (path_to_exe == "") {
       # if not in path or specified directory, create error
-      stop(
+      cli::cli_abort(paste0(
         exename,
         " not found in ",
         ifelse(
@@ -130,7 +125,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
           no = "any of the input 'dir' values"
         ), # generic if it's a vector
         " nor in the path."
-      )
+      ))
     }
   } # end check for is.null(path_to_exe)
 

@@ -25,19 +25,17 @@ SS_readforecast <- function(
   # function to read Stock Synthesis forecast files
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     # turns out 3.30 != "3.30" in R
-    stop("version must be either 3.24 or 3.30")
+    cli::cli_abort("version must be either 3.24 or 3.30")
   }
 
   if (version == "3.24") {
     if (is.null(Nfleets) | is.null(Nareas) | is.null(nseas)) {
-      stop(
-        "version 3.24 must include values for Nfleets, Nareas, and nseas. At least one of these is missing"
-      )
+      cli::cli_abort("version 3.24 must include values for Nfleets, Nareas, and nseas. At least one of these is missing")
     }
   }
 
   if (verbose) {
-    message("running SS_readforecast")
+    cli::cli_inform("running SS_readforecast")
   }
   dat <- readLines(file, warn = FALSE)
 
@@ -85,13 +83,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      message(
-        name,
-        ",i=",
-        forelist$".i",
-        "\n",
-        paste0(forelist[[name]], collapse = "\n")
-      )
+      cli::cli_inform(paste0(name, ",i=", forelist$".i", "\n", paste0(forelist[[name]], collapse = "\n")))
     }
     return(forelist)
   }
@@ -105,14 +97,7 @@ SS_readforecast <- function(
       ind <- ind + 1
     }
     if (ind == length(dat)) {
-      stop(
-        "SS_readctl_3.30-find.index: Error - ",
-        "the value of ",
-        str,
-        " was not found. ",
-        "Check the control file and make sure all ",
-        "data frames are correctly formed.\n"
-      )
+      cli::cli_abort("SS_readctl_3.30-find.index: Error - the value of {str} was not found. Check the control file and make sure all data frames are correctly formed.\n")
     }
     ind
   }
@@ -166,13 +151,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      message(
-        name,
-        ",i=",
-        forelist$".i",
-        "\n",
-        paste0(forelist[[which(names(forelist) == name)]], collapse = "\n")
-      )
+      cli::cli_inform(paste0(name, ",i=", forelist$".i", "\n", paste0(forelist[[which(names(forelist) == name)]], collapse = "\n")))
     }
     return(forelist)
   }
@@ -187,13 +166,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      message(
-        name,
-        ",i=",
-        forelist$".i",
-        " ;",
-        forelist[[which(names(forelist) == name)]]
-      )
+      cli::cli_inform(paste0(name, ",i=", forelist$".i", " ;", forelist[[which(names(forelist) == name)]]))
     }
     return(forelist)
   }
@@ -212,7 +185,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      message(name, ",i=", forelist$".i")
+      cli::cli_inform(paste0(name, ",i=", forelist$".i"))
     }
     return(forelist)
   }
@@ -262,17 +235,13 @@ SS_readforecast <- function(
     forelist <- add_vec(forelist, length = 10, name = "Bmark_years")
   }
   if (verbose) {
-    message("Benchmark years: ", forelist[["Bmark_years"]])
+    cli::cli_inform(paste0("Benchmark years: ", forelist[["Bmark_years"]]))
   }
   forelist <- add_elem(forelist, "Bmark_relF_Basis")
   forelist <- add_elem(forelist, "Forecast")
   if (forelist[["Forecast"]] %in% c(0, -1) & !readAll) {
     if (verbose) {
-      message(
-        "Forecast is ",
-        forelist[["Forecast"]],
-        " and input readAll=FALSE so skipping remainder of file"
-      )
+      cli::cli_inform(paste0("Forecast is ", forelist[["Forecast"]], " and input readAll=FALSE so skipping remainder of file"))
     }
   } else if (
     forelist[["Forecast"]] %in%
@@ -284,28 +253,19 @@ SS_readforecast <- function(
     # stop reading if forecast 0 or -1 used, and no other lines present
     # (aside from 999), but readAll = TRUE.
     if (verbose) {
-      message("Forecast =", forelist[["Forecast"]], "\n")
+      cli::cli_inform(paste0("Forecast =", forelist[["Forecast"]], "\n"))
     }
-    warning(
-      "readAll selected as TRUE, but lines beyond Forecast are not ",
-      "present in the forecasting file, so skipping remainder of ",
-      "file"
-    )
+    cli::cli_warn("readAll selected as TRUE, but lines beyond Forecast are not present in the forecasting file, so skipping remainder of file")
   } else {
     # continue reading forecast
     if (verbose) {
-      message("Forecast =", forelist[["Forecast"]], "\n")
+      cli::cli_inform(paste0("Forecast =", forelist[["Forecast"]], "\n"))
     }
     forelist <- add_elem(forelist, "Nforecastyrs")
     # check for compatible input with forecast option 1.
     if (forelist[["Forecast"]] == 0 & forelist[["Nforecastyrs"]] != 1) {
       if (forelist[["SSversion"]] == 3.3) {
-        warning(
-          "Forecast = 0 should always be used with 1 forecast year. ",
-          "Changing Nforecastyrs to 1. If you would prefer to use 0 years ",
-          "of forecast, please use Forecast = -1; if you would like to ",
-          " forecast for > 1 year, please select a value of Forecast > 0."
-        )
+        cli::cli_warn("Forecast = 0 should always be used with 1 forecast year. Changing Nforecastyrs to 1. If you would prefer to use 0 years of forecast, please use Forecast = -1; if you would like to  forecast for > 1 year, please select a value of Forecast > 0.")
         forelist[["Nforecastyrs"]] <- 1
       }
     }
@@ -331,7 +291,7 @@ SS_readforecast <- function(
       )
     }
     if (verbose) {
-      message("Forecast years: ", forelist[["Fcast_years"]])
+      cli::cli_inform(paste0("Forecast years: ", forelist[["Fcast_years"]]))
     }
     # 3.30 models that don't use the new table input above read
     # additional selectivity setting
@@ -341,7 +301,7 @@ SS_readforecast <- function(
     ) {
       forelist <- add_elem(forelist, "Fcast_selex")
       if (verbose) {
-        message("Forecast selectivity option: ", forelist[["Fcast_selex"]])
+        cli::cli_inform(paste0("Forecast selectivity option: ", forelist[["Fcast_selex"]]))
       }
     } else {
       forelist[["Fcast_selex"]] <- NA
@@ -376,13 +336,7 @@ SS_readforecast <- function(
     # hardwired approach
     if (forelist[["HCR_anchor"]] == -1) {
       forelist[["HCR_anchor"]] <- 0
-      warning(
-        "As of SS3 version 3.30.24, this line that was unused is now",
-        " HCR_anchor: 0 or 2 uses unfished benchmark SSB (old hardwired",
-        " approach); 1 = virgin SSB; 3 = BMSY. The r4ss function changes",
-        " this automatically to 0 but please update accordingly if using",
-        " version 3.30.24."
-      )
+      cli::cli_warn("As of SS3 version 3.30.24, this line that was unused is now HCR_anchor: 0 or 2 uses unfished benchmark SSB (old hardwired approach); 1 = virgin SSB; 3 = BMSY. The r4ss function changes this automatically to 0 but please update accordingly if using version 3.30.24.")
     }
     forelist <- add_elem(forelist, "FirstYear_for_caps_and_allocations")
     forelist <- add_elem(forelist, "stddev_of_log_catch_ratio")
@@ -516,16 +470,11 @@ SS_readforecast <- function(
     }
     if (forelist$".dat"[forelist$".i"] == 999) {
       if (verbose) {
-        message("read of forecast file complete (final value = 999)\n")
+        cli::cli_inform("read of forecast file complete (final value = 999)\n")
       }
       forelist[["eof"]] <- TRUE
     } else {
-      warning(
-        "Error: final value is ",
-        forelist$".dat"[forelist$".i"],
-        " but ",
-        "should be 999\n"
-      )
+      cli::cli_warn(paste0("Error: final value is ", forelist$".dat"[forelist$".i"], " but ", "should be 999\n"))
       forelist[["eof"]] <- FALSE
     }
   }

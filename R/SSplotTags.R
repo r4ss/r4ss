@@ -76,20 +76,13 @@ SSplotTags <-
     tagdbase2 <- replist[["tagdbase2"]]
     if (is.null(tagdbase2) || nrow(tagdbase2) == 0) {
       if (verbose) {
-        message("skipping tag plots because there's no tagging data")
+        cli::cli_inform("skipping tag plots because there's no tagging data")
       }
     } else {
       # filter tag groups if requested
       if (!is.null(taggroups)) {
         tagdbase2 <- tagdbase2[tagdbase2[["Repl."]] %in% taggroups, ]
-        message(
-          "Filtered tag groups for plotting based on input vector taggroups\n",
-          "Plots will show",
-          length(unique(tagdbase2[["Repl."]])),
-          "out of",
-          length(unique(replist[["tagdbase2"]][["Repl."]])),
-          "total included in the model."
-        )
+        cli::cli_inform(paste0("Filtered tag groups for plotting based on input vector taggroups\n", "Plots will show", length(unique(tagdbase2[["Repl."]])), "out of", length(unique(replist[["tagdbase2"]][["Repl."]])), "total included in the model."))
       }
 
       # calculations needed for printing to multiple PNG files

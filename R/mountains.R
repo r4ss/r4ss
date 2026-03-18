@@ -50,7 +50,7 @@ mountains <- function(
 
   for (icol in 1:ncol(zmat)) {
     if (!is.numeric(zmat[, icol])) {
-      stop("Column", icol, "of zmat is not numeric")
+      cli::cli_abort("Column{icol}of zmat is not numeric")
     }
   }
 
@@ -75,16 +75,10 @@ mountains <- function(
 
   ny <- length(yvec)
   if (ny != nrowz) {
-    stop(
-      "length(yvec)=",
-      length(yvec),
-      " and nrow(zmat)=",
-      nrow(zmat),
-      " should be equal"
-    )
+    cli::cli_abort("length(yvec)={length(yvec)} and nrow(zmat)={nrow(zmat)} should be equal")
   }
   if (length(xvec) != ncolz) {
-    stop("length(xvec) must equal ncol(zmat)")
+    cli::cli_abort("length(xvec) must equal ncol(zmat)")
   }
 
   zseq <- seq(0, zmax, length = nshades)

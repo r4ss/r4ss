@@ -82,12 +82,10 @@ SS_fitbiasramp <-
     plotinfo <- NULL
 
     if (!is.list(replist) | replist[["SS_versionNumeric"]] < 3.11) {
-      stop(
-        "this function needs an input object created by SS_output from SS version 3.11 or greater"
-      )
+      cli::cli_abort("this function needs an input object created by SS_output from SS version 3.11 or greater")
     }
     if (replist[["inputs"]][["covar"]] == FALSE) {
-      stop("you need to have covar=TRUE in the input to the SS_output function")
+      cli::cli_abort("you need to have covar=TRUE in the input to the SS_output function")
     }
     parameters <- replist[["parameters"]]
     startyr <- replist[["startyr"]]
@@ -102,12 +100,10 @@ SS_fitbiasramp <-
     }
 
     if (!is.numeric(rmse_table[["RMSE"]])) {
-      stop("Input list element 'rmse_table' has non-numeric 'RMSE' column.")
+      cli::cli_abort("Input list element 'rmse_table' has non-numeric 'RMSE' column.")
     }
     if (max(rmse_table[["RMSE"]]) == 0) {
-      stop(
-        "No bias adjustment needed. Root mean squared error of recruit devs is 0."
-      )
+      cli::cli_abort("No bias adjustment needed. Root mean squared error of recruit devs is 0.")
     }
 
     if (is.null(startvalues)) {
@@ -122,7 +118,7 @@ SS_fitbiasramp <-
       )
     }
     if (verbose) {
-      message("startvalues =", paste(startvalues, collapse = ", "))
+      cli::cli_inform(paste0("startvalues =", paste(startvalues, collapse = ", ")))
     }
 
     makeoffsets <- function(values) {
@@ -150,10 +146,7 @@ SS_fitbiasramp <-
       startvalues <- makeoffsets(startvalues)
     }
     if (verbose & transform) {
-      message(
-        "transformed startvalues =",
-        paste(startvalues, collapse = ", ")
-      )
+      cli::cli_inform(paste0("transformed startvalues =", paste(startvalues, collapse = ", ")))
     }
 
     biasadjfit <- function(
@@ -222,10 +215,7 @@ SS_fitbiasramp <-
       if (altmethod == "psoptim") {
         # pso package no longer included by default since this option is rarely used
         if (!requireNamespace("pso", quietly = TRUE)) {
-          stop(
-            "Package \"pso\" needed for this function to work. Please install it.",
-            call. = FALSE
-          )
+          cli::cli_abort(paste0("Package \"pso\" needed for this function to work. Please install it."), call = NULL)
         }
 
         biasadjfit(
@@ -318,7 +308,7 @@ SS_fitbiasramp <-
     # test for presence of estimated recruitment deviations
     if (max(val) == 0 | length(val) == 0) {
       if (verbose) {
-        message("No rec devs estimated in this model")
+        cli::cli_inform("No rec devs estimated in this model")
       }
       return()
     }
@@ -328,9 +318,7 @@ SS_fitbiasramp <-
 
     ylim <- range(recdev_hi, recdev_lo)
     if (verbose) {
-      message(
-        "Now estimating alternative recruitment bias adjustment fraction..."
-      )
+      cli::cli_inform("Now estimating alternative recruitment bias adjustment fraction...")
     }
     newbias <- optimfun(
       yr = yr,
@@ -434,13 +422,10 @@ SS_fitbiasramp <-
 
     if (verbose) {
       if (newbias[["convergence"]] != 0) {
-        warning("Problem with convergence, here is output from 'optim':\n")
+        cli::cli_warn("Problem with convergence, here is output from 'optim':\n")
         print(newbias)
       }
-      message(
-        "Estimated values: \n",
-        paste0(utils::capture.output(df), collpase = "\n")
-      )
+      cli::cli_inform(paste0("Estimated values: \n", paste0(utils::capture.output(df), collpase = "\n")))
     }
 
     if (plot) {
@@ -508,19 +493,14 @@ SS_fitbiasramp <-
       spot1 <- grep("last_early_yr|last_yr_nobias", ctlfile)
       spot2 <- grep("max_bias_adj_in_MPD", ctlfile)
       if (spot1 != spot2 - 4) {
-        stop("error related to maxbias inputs in ctl file")
+        cli::cli_abort("error related to maxbias inputs in ctl file")
       }
       # replace values
       ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
       # write new file
       writeLines(ctlfile, newctl)
       if (verbose) {
-        message(
-          "wrote new file to ",
-          newctl,
-          " with values",
-          paste(newvals, collapse = ", ")
-        )
+        cli::cli_inform(paste0("wrote new file to ", newctl, " with values", paste(newvals, collapse = ", ")))
       }
     }
     if (!is.null(plotinfo)) {

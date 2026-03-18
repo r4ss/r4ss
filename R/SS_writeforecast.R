@@ -24,13 +24,11 @@ SS_writeforecast <- function(
 ) {
   # function to write Stock Synthesis forecast files
   if (verbose) {
-    message("running SS_writeforecast")
+    cli::cli_inform("running SS_writeforecast")
   }
 
   if (!is.list(mylist) || mylist[["type"]] != "Stock_Synthesis_forecast_file") {
-    stop(
-      "input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'"
-    )
+    cli::cli_abort("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'")
   }
 
   # this command will hopefully prevent earlier issues of getting stuck with all R
@@ -46,19 +44,15 @@ SS_writeforecast <- function(
   outfile <- paste(dir, file, sep = "/")
   if (file.exists(outfile)) {
     if (!overwrite) {
-      stop(paste(
-        "file exists:",
-        outfile,
-        "\n  set overwrite=TRUE to replace\n"
-      ))
+      cli::cli_abort("file exists: {outfile} \n  set overwrite=TRUE to replace\n")
     } else {
       if (verbose) {
-        message("overwriting file:", outfile)
+        cli::cli_inform("overwriting file:{outfile}")
       }
       file.remove(outfile)
     }
   } else {
-    if (verbose) message("writing new file:", outfile)
+    if (verbose) cli::cli_inform("writing new file:{outfile}")
   }
 
   # preliminary setup
@@ -66,7 +60,7 @@ SS_writeforecast <- function(
   options(width = 1000)
 
   if (verbose) {
-    message("opening connection to ", outfile)
+    cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   sink(zz)
@@ -115,12 +109,7 @@ SS_writeforecast <- function(
     if (mylist[["Forecast"]] <= 0 & is.null(mylist[["eof"]])) {
       # only continue beyond this point if Forecast is not 0 or writeAll==TRUE,
       # so do not do other processing.
-      warning(
-        "Even though writeAll == TRUE, r4ss cannot write past ",
-        "mylist[['Forecast']] because needed list elements past Forecast ",
-        "in mylist are not available. But, the saved file will still be a ",
-        "useable Stock Synthesis forecast file."
-      )
+      cli::cli_warn("Even though writeAll == TRUE, r4ss cannot write past mylist[['Forecast']] because needed list elements past Forecast in mylist are not available. But, the saved file will still be a useable Stock Synthesis forecast file.")
     } else {
       wl("Nforecastyrs")
       wl("F_scalar")
@@ -178,26 +167,16 @@ SS_writeforecast <- function(
 
       wl("First_forecast_loop_with_stochastic_recruitment")
       if (!is.null(mylist[["Forecast_loop_control_3"]])) {
-        warning(
-          "Forecast_loop_control_3 has been renamed to fcast_rec_option\n",
-          " so only fcast_rec_option will be written to the file."
-        )
+        cli::cli_warn("Forecast_loop_control_3 has been renamed to fcast_rec_option\n so only fcast_rec_option will be written to the file.")
       }
       if (!is.null(mylist[["Forecast_loop_control_4"]])) {
-        warning(
-          "Forecast_loop_control_4 has been renamed to fcast_rec_val\n",
-          " so only fcast_rec_val will be written to the file."
-        )
+        cli::cli_warn("Forecast_loop_control_4 has been renamed to fcast_rec_val\n so only fcast_rec_val will be written to the file.")
       }
       wl("fcast_rec_option")
       wl("fcast_rec_val")
       # new option added in 3.30.22 to forecast using average values
       if (!is.null(mylist[["Fcast_MGparm_averaging"]])) {
-        warning(
-          "Fcast_MGparm_averaging was temporarily in place to support",
-          " beta versions of SS3 version 3.30.22, but has been replaced",
-          " by the new Fcast_years table input format."
-        )
+        cli::cli_warn("Fcast_MGparm_averaging was temporarily in place to support beta versions of SS3 version 3.30.22, but has been replaced by the new Fcast_years table input format.")
         mylist[["Fcast_loop_control_5"]] <- 0
       }
       wl("HCR_anchor")
@@ -303,5 +282,5 @@ SS_writeforecast <- function(
   options(width = oldwidth)
   sink()
   close(zz)
-  if (verbose) message("file written to", outfile)
+  if (verbose) cli::cli_inform("file written to{outfile}")
 }

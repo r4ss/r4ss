@@ -42,7 +42,7 @@ SS_readdat_2.00 <- function(
   }
 
   if (verbose) {
-    message("running SS_readdat_2.00")
+    cli::cli_inform("running SS_readdat_2.00")
   }
   dat <- readLines(file, warn = FALSE)
 
@@ -92,7 +92,7 @@ SS_readdat_2.00 <- function(
   datlist[["type"]] <- "Stock_Synthesis_data_file"
   datlist[["ReadVersion"]] <- "2.00"
   if (verbose) {
-    message("SS_readdat_2.00 - read version = ", datlist[["ReadVersion"]])
+    cli::cli_inform(paste0("SS_readdat_2.00 - read version = ", datlist[["ReadVersion"]]))
   }
 
   # return(datlist)
@@ -165,10 +165,8 @@ SS_readdat_2.00 <- function(
   datlist[["areas"]] <- 1
   areas <- datlist[["areas"]]
   if (verbose) {
-    message("areas:", areas)
-    message(
-      "fleet info:\n",
-      paste0(
+    cli::cli_inform("areas:{areas}")
+    cli::cli_inform(paste0("fleet info:\n", paste0(
         utils::capture.output(
           data.frame(
             fleet = 1:Ntypes,
@@ -179,8 +177,7 @@ SS_readdat_2.00 <- function(
           )
         ),
         collapse = "\n"
-      )
-    )
+      )))
   }
 
   # fleet info
@@ -202,7 +199,7 @@ SS_readdat_2.00 <- function(
 
   # catch
   if (verbose) {
-    message("N_catch =", N_catch)
+    cli::cli_inform("N_catch ={N_catch}")
   }
   Nvals <- N_catch * (Nfleet)
   catch <- data.frame(matrix(
@@ -224,7 +221,7 @@ SS_readdat_2.00 <- function(
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_cpue =", N_cpue)
+    cli::cli_inform("N_cpue ={N_cpue}")
   }
   if (N_cpue > 0) {
     CPUEinfo <- data.frame(matrix(
@@ -258,7 +255,7 @@ SS_readdat_2.00 <- function(
   i <- i + 1
 
   if (verbose) {
-    message("N_discard =", N_discard)
+    cli::cli_inform("N_discard ={N_discard}")
   }
   if (N_discard > 0) {
     # discard data
@@ -298,7 +295,7 @@ SS_readdat_2.00 <- function(
   datlist[["N_meanbodywt"]] <- N_meanbodywt <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_meanbodywt =", N_meanbodywt)
+    cli::cli_inform("N_meanbodywt ={N_meanbodywt}")
   }
 
   if (N_meanbodywt > 0) {
@@ -342,7 +339,7 @@ SS_readdat_2.00 <- function(
   i <- i + 1
 
   if (verbose) {
-    message("N_lencomp =", N_lencomp)
+    cli::cli_inform("N_lencomp ={N_lencomp}")
   }
 
   if (N_lencomp > 0) {
@@ -381,7 +378,7 @@ SS_readdat_2.00 <- function(
   datlist[["N_agebins"]] <- N_agebins <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_agebins =", N_agebins)
+    cli::cli_inform("N_agebins ={N_agebins}")
   }
   if (N_agebins > 0) {
     agebin_vector <- allnums[i:(i + N_agebins - 1)]
@@ -411,7 +408,7 @@ SS_readdat_2.00 <- function(
   datlist[["N_agecomp"]] <- N_agecomp <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_agecomp =", N_agecomp)
+    cli::cli_inform("N_agecomp ={N_agecomp}")
   }
 
   datlist[["Lbin_method"]] <- NULL
@@ -419,7 +416,7 @@ SS_readdat_2.00 <- function(
 
   if (N_agecomp > 0) {
     if (N_agebins == 0) {
-      stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
+      cli::cli_abort("N_agecomp ={N_agecomp} but N_agebins = 0")
     }
     Ncols <- N_agebins * datlist[["Nsexes"]] + 9
     agecomp <- data.frame(matrix(
@@ -462,7 +459,7 @@ SS_readdat_2.00 <- function(
   datlist[["N_MeanSize_at_Age_obs"]] <- N_MeanSize_at_Age_obs <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs)
+    cli::cli_inform("N_MeanSize_at_Age_obs ={N_MeanSize_at_Age_obs}")
   }
   if (N_MeanSize_at_Age_obs > 0) {
     Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
@@ -535,11 +532,11 @@ SS_readdat_2.00 <- function(
 
   if (allnums[i] == 999) {
     if (verbose) {
-      message("read of data file 2.00 complete (final value = 999)")
+      cli::cli_inform("read of data file 2.00 complete (final value = 999)")
     }
     datlist[["eof"]] <- TRUE
   } else {
-    stop("final value is", allnums[i], " but should be 999")
+    cli::cli_abort("final value is{allnums[i]} but should be 999")
     datlist[["eof"]] <- FALSE
   }
 

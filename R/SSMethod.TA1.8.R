@@ -114,10 +114,10 @@ SSMethod.TA1.8 <-
     # Check the type is correct and the sexes is correct
     is.in <- function(x, y) !is.na(match(x, y))
     if (!is.in(type, c("age", "len", "size", "con"))) {
-      stop('Illegal value for type (should be "age", "len", "size", or "con")')
+      cli::cli_abort('Illegal value for type (should be "age", "len", "size", or "con")')
     } else {
       if (sum(!is.in(sexes, c(0:3))) > 0) {
-        stop("Unrecognised value for sexes")
+        cli::cli_abort("Unrecognised value for sexes")
       }
     }
 
@@ -128,10 +128,7 @@ SSMethod.TA1.8 <-
     } else {
       # if custom names input, check length
       if (length(fleetnames) != fit[["nfleets"]]) {
-        stop(
-          "fleetnames needs to be NULL or have length = nfleets = ",
-          fit[["nfleets"]]
-        )
+        cli::cli_abort(paste0("fleetnames needs to be NULL or have length = nfleets = ", fit[["nfleets"]]))
       }
     }
     # Select the type of datbase
@@ -159,13 +156,13 @@ SSMethod.TA1.8 <-
     if (is.null(seas)) {
       seas <- "comb"
       if (length(unique(dbase[["Seas"]])) > 1) {
-        message("Combining data from multiple seasons")
+        cli::cli_inform("Combining data from multiple seasons")
       }
     }
     # if generalized size comp is used, check for mix of units
     if (type == "size") {
       if (length(unique(dbase[["units"]])) > 1) {
-        warning("Mix of units being compared:", unique(dbase[["units"]]))
+        cli::cli_warn(paste0("Mix of units being compared:", unique(dbase[["units"]])))
       }
     }
     # create label for partitions
@@ -209,7 +206,7 @@ SSMethod.TA1.8 <-
     if (length(uindx) == 1) {
       # presumably the method is meaningless of there's only 1 point,
       # but it's good to be able to have the function play through
-      message("Only one point to plot")
+      cli::cli_inform("Only one point to plot")
       return()
     }
 

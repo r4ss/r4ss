@@ -80,12 +80,12 @@ SSplotSPR <-
 
     # message about skipping plots
     if (is.null(sprseries)) {
-      message("Skipping SPR plots: no output available")
+      cli::cli_inform("Skipping SPR plots: no output available")
       return()
     }
     # at least one non-converged model had NaN values for all years
     if (all(is.nan(sprseries[["SPR"]]))) {
-      warning("NaN values in SPR series, skipping plots")
+      cli::cli_warn("NaN values in SPR series, skipping plots")
       return()
     }
 
@@ -182,9 +182,7 @@ SSplotSPR <-
     # temporary disable multi-season models until code cleanup
     if (2 %in% subplots) {
       if (nseasons > 1) {
-        message(
-          "Skipped 1-SPR plot because it's not yet configured for multi-season models\n"
-        )
+        cli::cli_inform("Skipped 1-SPR plot because it's not yet configured for multi-season models\n")
       }
       if (nseasons == 1) {
         minus_spr_timeseries <- function() {
@@ -399,10 +397,7 @@ SSplotSPR <-
       Bratio_vals <- Bratio[["Value"]][Bratio[["Yr"]] %in% shared_yrs]
       SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% shared_yrs]
       if (length(Bratio_vals) != length(SPRratio_vals)) {
-        message(
-          "Bratio and SPRratio vectors are different in length,",
-          "skipping phase plot."
-        )
+        cli::cli_inform("Bratio and SPRratio vectors are different in length,skipping phase plot.")
         return()
       }
       # put things into a data.frame to keep track of relationships

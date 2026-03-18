@@ -35,7 +35,7 @@ SSplotMCMC_ExtraSelex <- function(
 
   cols <- grep("Selex_std", names(post))
   if (length(cols) == 0) {
-    stop("no columns in posteriors include text 'Selex_std'")
+    cli::cli_abort("no columns in posteriors include text 'Selex_std'")
   } else {
     sel <- post[, cols]
     names <- names(post)[cols]

@@ -96,7 +96,7 @@ mcmc.out <- function(
   filename <- file.path(directory, run, file) # put directory,run and file names together for use
   # warning if file does not exist
   if (!file.exists(filename)) {
-    stop("file doesn't exist:\n", filename)
+    cli::cli_abort("file doesn't exist:\n{filename}")
   }
 
   mcmcdata <- read.table(
@@ -128,7 +128,7 @@ mcmc.out <- function(
 
   if (!is.null(colNames)) {
     if (length(colNames) != numparams) {
-      warning("numparams argument overidden by length of colNames argument")
+      cli::cli_warn("numparams argument overidden by length of colNames argument")
     }
     numparams <- length(colNames)
     mcmcdata <- mcmcdata[, colNames]
@@ -223,10 +223,7 @@ mcmc.out <- function(
       ) # plot nothing
 
       if (!requireNamespace("gtools", quietly = TRUE)) {
-        warning(
-          "Package \"gtools\" needed for the running average plot. Please install it.",
-          call. = FALSE
-        )
+        cli::cli_warn(paste0("Package \"gtools\" needed for the running average plot. Please install it."), call = NULL)
       } else {
         lines(gtools::running(
           mcmcobject[, i],

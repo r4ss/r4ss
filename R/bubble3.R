@@ -66,7 +66,7 @@ bubble3 <- function(
   # This function is vaguely based on bubble() from gstat.
   # Not sure anymore what happened to bubble2.
   if (diff(range(length(x), length(y), length(z))) > 0) {
-    stop("x, y, and z should all be equal in length")
+    cli::cli_abort("x, y, and z should all be equal in length")
   }
   if (length(col) == 1) {
     col <- rep(col, length(x))

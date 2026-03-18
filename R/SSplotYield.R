@@ -236,14 +236,10 @@ SSplotYield <-
             }
           }
         } else {
-          message(
-            "Skipped equilibrium yield plots: equil_yield has all NA values"
-          )
+          cli::cli_inform("Skipped equilibrium yield plots: equil_yield has all NA values")
         }
       } else {
-        message(
-          "Skipped equilibrium yield plots: no equil_yield results in this model"
-        )
+        cli::cli_inform("Skipped equilibrium yield plots: no equil_yield results in this model")
       }
     } # end equilibrium yield plots
 
@@ -415,9 +411,7 @@ SSplotYield <-
       sprseries <- replist[["sprseries"]]
       if (is.null(sprseries)) {
         if (verbose) {
-          message(
-            "Skipping yield per recruit plot because SPR_SERIES not in output"
-          )
+          cli::cli_inform("Skipping yield per recruit plot because SPR_SERIES not in output")
         }
       } else {
         if (plot) {

@@ -58,7 +58,7 @@ SS_readctl_3.30 <- function(
 
   # function to read Stock Synthesis data files
   if (verbose) {
-    message("running SS_readctl_3.30")
+    cli::cli_inform("running SS_readctl_3.30")
   }
   dat <- readLines(file, warn = FALSE)
   ctl_with_cmts <- dat # save original read in file with commemts
@@ -109,7 +109,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(name, ", i=", ctllist$".i")
+      cli::cli_inform(paste0(name, ", i=", ctllist$".i"))
     }
     return(ctllist)
   }
@@ -123,14 +123,7 @@ SS_readctl_3.30 <- function(
       ind <- ind + 1
     }
     if (ind == length(dat)) {
-      stop(
-        "SS_readctl_3.30-find.index: Error - ",
-        "the value of ",
-        str,
-        " was not found. ",
-        "Check the control file and make sure all ",
-        "data frames are correctly formed.\n"
-      )
+      cli::cli_abort("SS_readctl_3.30-find.index: Error - the value of {str} was not found. Check the control file and make sure all data frames are correctly formed.\n")
     }
     ind
   }
@@ -184,7 +177,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(name, ",i=", ctllist$".i")
+      cli::cli_inform(paste0(name, ",i=", ctllist$".i"))
     }
     return(ctllist)
   }
@@ -199,13 +192,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(
-        name,
-        ",i=",
-        ctllist$".i",
-        " ;",
-        ctllist[[which(names(ctllist) == name)]]
-      )
+      cli::cli_inform(paste0(name, ",i=", ctllist$".i", " ;", ctllist[[which(names(ctllist) == name)]]))
     }
     return(ctllist)
   }
@@ -224,7 +211,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(name, ",i=", ctllist$".i")
+      cli::cli_inform(paste0(name, ",i=", ctllist$".i"))
     }
     return(ctllist)
   }
@@ -280,12 +267,12 @@ SS_readctl_3.30 <- function(
   } else {
     if (is.character(datlist)) {
       if (!file.exists(datlist)) {
-        stop("Cannot find data file specified in datlist: ", datlist)
+        cli::cli_abort("Cannot find data file specified in datlist: {datlist}")
       }
       datlist <- SS_readdat(file = datlist, version = "3.30", verbose = verbose)
     }
     if (is.null(datlist)) {
-      stop("datlist from SS_readdat is needed if use_datlist is TRUE")
+      cli::cli_abort("datlist from SS_readdat is needed if use_datlist is TRUE")
     }
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
@@ -303,12 +290,7 @@ SS_readctl_3.30 <- function(
     } else if (datlist[["lbin_method"]] == 3) {
       ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbinspop"]] # read actual input
     } else {
-      stop(
-        "datlist[['lbin_method']] is ",
-        datlist[["lbin_method"]],
-        "but only can be 1",
-        ", 2, or 3."
-      )
+      cli::cli_abort(paste0("datlist[['lbin_method']] is ", datlist[["lbin_method"]], "but only can be 1", ", 2, or 3."))
     }
     ctllist[["Nfleets"]] <- Nfleets <- datlist[["Nfleets"]]
     # ctllist[["Nsurveys"]]<-Nsurveys<-datlist[["Nsurveys"]]
@@ -339,7 +321,7 @@ SS_readctl_3.30 <- function(
   ctllist[["eof"]] <- FALSE
 
   if (verbose) {
-    message("SS_readctl_3.30 - read version = ", ctllist[["ReadVersion"]])
+    cli::cli_inform(paste0("SS_readctl_3.30 - read version = ", ctllist[["ReadVersion"]]))
   }
   # beginning of ctl ----
   # weight at age option
@@ -361,15 +343,13 @@ SS_readctl_3.30 <- function(
   # recruitment timing and distribution ----
   ctllist <- add_elem(ctllist, "recr_dist_method")
   if (ctllist[["recr_dist_method"]] == "1") {
-    warning(
-      "recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n"
-    )
+    cli::cli_warn("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n")
   }
   if (
     ctllist[["recr_dist_method"]] == "4" &&
       (ctllist[["N_GP"]] != 1 || ctllist[["N_areas"]] != 1)
   ) {
-    stop("recr_dist_method 4 should only be used when GPxSettlementxArea=1. \n")
+    cli::cli_abort("recr_dist_method 4 should only be used when GPxSettlementxArea=1. \n")
   }
 
   ctllist <- add_elem(ctllist, "recr_global_area")
@@ -379,9 +359,7 @@ SS_readctl_3.30 <- function(
   ctllist <- add_elem(ctllist, "recr_dist_inx") # recruitment interaction requested
   if (ctllist[["recr_dist_inx"]] > 0) {
     # give warning but don't stop for now
-    warning(
-      "Recr_dist_inx should not be used in SS version 3.30. Please set to 0. \n"
-    )
+    cli::cli_warn("Recr_dist_inx should not be used in SS version 3.30. Please set to 0. \n")
   }
   ctllist <- add_df(
     ctllist,
@@ -454,14 +432,10 @@ SS_readctl_3.30 <- function(
     ctllist <- add_elem(ctllist, name = "Lorenzen_minage") ## Minimum age to calculate average M for Lorenzen M
     ctllist <- add_elem(ctllist, name = "Lorenzen_maxage") ## Maximum age to calculate average M for Lorenzen M
   } else {
-    stop(
-      "natM_type =",
-      ctllist[["natM_type"]],
-      " is not yet implemented in this script"
-    )
+    cli::cli_abort(paste0("natM_type =", ctllist[["natM_type"]], " is not yet implemented in this script"))
   }
   if (verbose) {
-    message("N_natMparms =", N_natMparms, "\n")
+    cli::cli_inform("N_natMparms ={N_natMparms}\n")
   }
 
   # growth setup ----
@@ -488,7 +462,7 @@ SS_readctl_3.30 <- function(
     ctllist <- add_vec(ctllist, name = "Age_K_points", length = Age_K_count)
     #  points at which age-specific multipliers to K will be applied
   } else {
-    stop("Growth Model ", ctllist[["GrowthModel"]], " is not supported yet")
+    cli::cli_abort(paste0("Growth Model ", ctllist[["GrowthModel"]], " is not supported yet"))
   }
   MGparm_per_def <- N_natMparms + N_growparms
   ctllist[["N_natMparms"]] <- N_natMparms
@@ -801,11 +775,7 @@ SS_readctl_3.30 <- function(
           flt
         })
         pred_indices <- unlist(tmp_pred_flts)
-        message(
-          "Based on control file parameter names, assuming there are ",
-          length(pred_indices),
-          " predation mortality parameters in MGparms."
-        )
+        cli::cli_inform("Based on control file parameter names, assuming there are {length(pred_indices)} predation mortality parameters in MGparms.")
       } else {
         pred_indices <- integer(0)
       }
@@ -834,10 +804,7 @@ SS_readctl_3.30 <- function(
     any(ctllist[["MG_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
       ctllist[["time_vary_auto_generation"]][1] == 0
   ) {
-    warning(
-      "There are time varying MG parameters, and AUTOGEN for MG is 0, so",
-      " not expecting any short parameter lines."
-    )
+    cli::cli_warn("There are time varying MG parameters, and AUTOGEN for MG is 0, so not expecting any short parameter lines.")
   }
   if (
     any(ctllist[["MG_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -878,7 +845,7 @@ SS_readctl_3.30 <- function(
   N_SRparm2 <- N_SRparm[as.numeric(ctllist[["SR_function"]])] + 3
 
   if (is.na(ctllist[["SR_function"]])) {
-    stop("SR_function is NA, which is not valid.")
+    cli::cli_abort("SR_function is NA, which is not valid.")
   }
 
   ctllist <- add_elem(ctllist, "Use_steep_init_equi") # 0/1 to use steepness in initial equ recruitment calculation
@@ -949,7 +916,7 @@ SS_readctl_3.30 <- function(
       "SR_autocorr"
     )
   } else {
-    message("SR_function=", ctllist[["SR_function"]], " is not supported yet.")
+    cli::cli_inform(paste0("SR_function=", ctllist[["SR_function"]], " is not supported yet."))
     return(ctllist)
   }
 
@@ -968,10 +935,7 @@ SS_readctl_3.30 <- function(
     any(ctllist[["SR_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
       ctllist[["time_vary_auto_generation"]][2] == 0
   ) {
-    warning(
-      "There are time varying SR parameters, and AUTOGEN for SR is 0, so",
-      " not expecting any short parameter lines."
-    )
+    cli::cli_warn("There are time varying SR parameters, and AUTOGEN for SR is 0, so not expecting any short parameter lines.")
   }
   if (
     any(ctllist[["SR_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -1098,12 +1062,7 @@ SS_readctl_3.30 <- function(
       parm_error <- TRUE
     }
     if (parm_error) {
-      stop(
-        "Could not determine the number of initial F params from control ",
-        "file comments. Please specify N_rows_equil_catch instead of leaving",
-        " NULL or read from a data list object by setting use_datlist = TRUE",
-        " and specifying the datlist"
-      )
+      cli::cli_abort("Could not determine the number of initial F params from control file comments. Please specify N_rows_equil_catch instead of leaving NULL or read from a data list object by setting use_datlist = TRUE and specifying the datlist")
     }
   }
   # get the comments. This will determine how big the df is.
@@ -1159,11 +1118,7 @@ SS_readctl_3.30 <- function(
         "Q_options"
       ]][["fleet"]]]
     } else {
-      stop(
-        "There was a error reading the Q_options, possibly due to ",
-        "the presence of initial F params prior to that input. ",
-        "Check that the line 'initial_F_parms; count = ' is correct."
-      )
+      cli::cli_abort("There was a error reading the Q_options, possibly due to the presence of initial F params prior to that input. Check that the line 'initial_F_parms; count = ' is correct.")
     }
   }
   # q parlines ----
@@ -1276,10 +1231,7 @@ SS_readctl_3.30 <- function(
       any(ctllist[["Q_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
         ctllist[["time_vary_auto_generation"]][3] == 0
     ) {
-      warning(
-        "There are time varying q parameters, and AUTOGEN for ",
-        "q is 0, so not expecting any short parameter lines."
-      )
+      cli::cli_warn("There are time varying q parameters, and AUTOGEN for q is 0, so not expecting any short parameter lines.")
     }
     if (
       any(ctllist[["Q_parms"]][, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -1392,12 +1344,7 @@ SS_readctl_3.30 <- function(
     n_labs = NULL
   ) {
     if (!sel_type %in% c("s", "a")) {
-      stop(
-        "sel_type cannot be ",
-        sel_type,
-        ". Please change sel_type to 's' ",
-        "for size or 'a' for age."
-      )
+      cli::cli_abort("sel_type cannot be {sel_type}. Please change sel_type to 's' for size or 'a' for age.")
     }
     if (sel_type == "s") {
       sel_name <- "SizeSel"
@@ -1422,10 +1369,7 @@ SS_readctl_3.30 <- function(
     if (!is.null(n_labs)) {
       if (length(labs) != n_labs) {
         # do a check and generate warning if input provided
-        warning(
-          "the length of labs generated was not equal to the prespecified",
-          "n_labs"
-        )
+        cli::cli_warn("the length of labs generated was not equal to the prespecifiedn_labs")
       }
     }
     labs
@@ -1438,12 +1382,7 @@ SS_readctl_3.30 <- function(
     tmp_size_selex_Nparms <-
       selex_patterns[as.character(ctllist[["size_selex_types"]][j, "Pattern"])]
     if (is.na(tmp_size_selex_Nparms)) {
-      stop(
-        "Pattern ",
-        as.character(ctllist[["size_selex_types"]][j, "Pattern"]),
-        " was used for the size selectivity pattern fleet or survey, but it",
-        " is not valid."
-      )
+      cli::cli_abort(paste0("Pattern ", as.character(ctllist[["size_selex_types"]][j, "Pattern"]), " was used for the size selectivity pattern fleet or survey, but it", " is not valid."))
     }
     # pattern 6 is a special case of number of params, so account for here.
     if (ctllist[["size_selex_types"]][j, "Pattern"] == 6) {
@@ -1712,7 +1651,7 @@ SS_readctl_3.30 <- function(
     }
   }
   if (verbose) {
-    message("Read size and age selectivity setup.")
+    cli::cli_inform("Read size and age selectivity setup.")
   }
   # Selex parameters
   if (sum(length(unlist(size_selex_label))) > 0) {
@@ -1775,10 +1714,7 @@ SS_readctl_3.30 <- function(
     ) &
       ctllist[["time_vary_auto_generation"]][5] == 0
   ) {
-    warning(
-      "There are time varying size selectivity  parameters, and AUTOGEN ",
-      "for selectivity is 0, so not expecting any short parameter lines."
-    )
+    cli::cli_warn("There are time varying size selectivity  parameters, and AUTOGEN for selectivity is 0, so not expecting any short parameter lines.")
   }
   if (
     any(
@@ -1787,10 +1723,7 @@ SS_readctl_3.30 <- function(
     ) &
       ctllist[["time_vary_auto_generation"]][5] == 0
   ) {
-    warning(
-      "There are time varying size selectivity  parameters, and AUTOGEN ",
-      "for selectivity is 0, so not expecting any short parameter lines."
-    )
+    cli::cli_warn("There are time varying size selectivity  parameters, and AUTOGEN for selectivity is 0, so not expecting any short parameter lines.")
   }
   if (
     any(
@@ -2012,14 +1945,7 @@ SS_readctl_3.30 <- function(
       warn_comp <- ctllist[["lambdas"]][chk1, "like_comp"]
       warn_flt <- ctllist[["lambdas"]][chk1, "fleet"]
       warn_phz <- ctllist[["lambdas"]][chk1, "phase"]
-      warning(
-        "Duplicate lambda input for likelihood component(s): ",
-        paste0(warn_comp, collapse = ", "),
-        "; fleet(s): ",
-        paste0(warn_flt, collapse = ", "),
-        "; phase(s):",
-        paste0(warn_phz, collapse = ", ")
-      )
+      cli::cli_warn(paste0("Duplicate lambda input for likelihood component(s): ", paste0(warn_comp, collapse = ", "), "; fleet(s): ", paste0(warn_flt, collapse = ", "), "; phase(s):", paste0(warn_phz, collapse = ", ")))
     }
     tmp_rownames <- vector(mode = "character", length = ctllist[["N_lambdas"]])
     for (i in seq_len(ctllist[["N_lambdas"]])) {
@@ -2103,27 +2029,13 @@ SS_readctl_3.30 <- function(
         valid_input <- FALSE
       }
       if (valid_input == FALSE) {
-        warning(
-          "Incorrect inputs detected for stddev_reporting_specs when ",
-          "using option 2. Assuming that no input for dynamic B0 or ",
-          "Summary Bio were provided, as in SS 3.30.15 and .16.\n",
-          "Placeholder 0s added for ",
-          "ctllist[['stddev_reporting_specs']][12:13].\nIf the user ",
-          "is using version 3.30.15 or 3.30.16, the 0s should  be ",
-          "removed before writing out the file by using the code ",
-          "\nctllist[['stddev_reporting_specs']] <- ctllist[['stddev_reporting_specs']][1:11]"
-        )
+        cli::cli_warn("Incorrect inputs detected for stddev_reporting_specs when using option 2. Assuming that no input for dynamic B0 or Summary Bio were provided, as in SS 3.30.15 and .16.\nPlaceholder 0s added for ctllist[['stddev_reporting_specs']][12:13].\nIf the user is using version 3.30.15 or 3.30.16, the 0s should  be removed before writing out the file by using the code \nctllist[['stddev_reporting_specs']] <- ctllist[['stddev_reporting_specs']][1:11]")
         ctllist$".i" <- ctllist$".i" - 2 # back up
         ctllist[["stddev_reporting_specs"]] <-
           c(ctllist[["stddev_reporting_specs"]][1:11], 0, 0)
       }
     } else {
-      stop(
-        "more_stddev_reporting read as ",
-        ctllist[["more_stddev_reporting"]],
-        ", but this is either not a valid SS option or not yet implemented ",
-        "in the SS_readctl function."
-      )
+      cli::cli_abort(paste0("more_stddev_reporting read as ", ctllist[["more_stddev_reporting"]], ", but this is either not a valid SS option or not yet implemented ", "in the SS_readctl function."))
     }
     ## Selex bin
     if (
@@ -2144,13 +2056,7 @@ SS_readctl_3.30 <- function(
         (ctllist[["stddev_reporting_specs"]][5] > 0 |
           ctllist[["stddev_reporting_specs"]][6] > 0)
     ) {
-      warning(
-        "Additional stddev reporting being used with a model using ",
-        "empirical weight at age. Note that even if number of growth",
-        " ages > 0, SS will ignore these and not expect any input for ",
-        "the line stddev_reporting_growth. Changing ",
-        "ctllist[['stdev_reporting_specs']][6] to 0 to make this clear."
-      )
+      cli::cli_warn("Additional stddev reporting being used with a model using empirical weight at age. Note that even if number of growth ages > 0, SS will ignore these and not expect any input for the line stddev_reporting_growth. Changing ctllist[['stdev_reporting_specs']][6] to 0 to make this clear.")
       ctllist[["stddev_reporting_specs"]][6] <- 0
     }
     if (
@@ -2190,16 +2096,11 @@ SS_readctl_3.30 <- function(
   }
   if (ctllist$".dat"[ctllist$".i"] == 999) {
     if (verbose) {
-      message("read of control file complete (final value = 999)\n")
+      cli::cli_inform("read of control file complete (final value = 999)\n")
     }
     ctllist[["eof"]] <- TRUE
   } else {
-    warning(
-      "Error: final value is",
-      ctllist$".dat"[ctllist$".i"],
-      " but ",
-      "should be 999\n"
-    )
+    cli::cli_warn(paste0("Error: final value is", ctllist$".dat"[ctllist$".i"], " but ", "should be 999\n"))
     ctllist[["eof"]] <- FALSE
   }
   ctllist$".dat" <- NULL
@@ -2237,10 +2138,7 @@ get_tv_parlabs <- function(full_parms, block_design) {
         tmp_blk_design <- block_design[[n_blk]]
         # Get the start year for each block
         if (is.null(tmp_blk_design)) {
-          stop(
-            "Time blocks used in parameter setup, but not defined in the top",
-            "of the control file. Please define the time blocks."
-          )
+          cli::cli_abort("Time blocks used in parameter setup, but not defined in the topof the control file. Please define the time blocks.")
         }
         blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
         lbl <- block_method_label[block_fxn[i] + 1]
@@ -2403,7 +2301,7 @@ translate_3.30_to_3.24_Q_setup <- function(
       }
     }
   } else {
-    message("Q_options was NULL, so could not determine Q_setup.")
+    cli::cli_inform("Q_options was NULL, so could not determine Q_setup.")
     Q_setup <- NULL
   }
   Q_setup

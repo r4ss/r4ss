@@ -36,15 +36,11 @@ SS_readdat_3.30 <-
     }
 
     if (verbose) {
-      message("Running SS_readdat_3.30")
+      cli::cli_inform("Running SS_readdat_3.30")
     }
     dat <- readLines(file, warn = FALSE)
     if (length(dat) < 20) {
-      warning(
-        "Data file appears to be empty or incomplete.\n",
-        "  If this is data.ss_new, change starter file to have\n",
-        "  nonzero value for 'Number of datafiles to produce'"
-      )
+      cli::cli_warn("Data file appears to be empty or incomplete.\n  If this is data.ss_new, change starter file to have\n  nonzero value for 'Number of datafiles to produce'")
       return()
     }
 
@@ -72,28 +68,19 @@ SS_readdat_3.30 <-
 
     Nsections <- length(sec.end.inds)
     if (!Nsections) {
-      stop("Error - There was no EOF marker (999) in the data file.")
+      cli::cli_abort("Error - There was no EOF marker (999) in the data file.")
     }
     if (is.null(section)) {
       if (Nsections > 1 & verbose) {
-        message(
-          "The supplied data file has ",
-          Nsections,
-          ifelse(Nsections == 1, " section. ", " sections. "),
-          " Using section = 1."
-        )
+        cli::cli_inform(paste0("The supplied data file has ", Nsections, ifelse(Nsections == 1, " section. ", " sections. "), " Using section = 1."))
       }
       section <- 1
     }
     if (!section %in% 1:Nsections) {
       if (Nsections == 1) {
-        stop("The 'section' input must be 1 for this data file.\n")
+        cli::cli_abort("The 'section' input must be 1 for this data file.\n")
       } else {
-        stop(
-          "The 'section' input must be between 1 and ",
-          Nsections,
-          " for this data file.\n"
-        )
+        cli::cli_abort("The 'section' input must be between 1 and {Nsections} for this data file.\n")
       }
     }
     if (!is.null(section)) {
@@ -114,14 +101,7 @@ SS_readdat_3.30 <-
         ind <- ind + 1
       }
       if (ind == length(dat)) {
-        stop(
-          "SS_readdat_3.30-find.index: Error - ",
-          "the value of ",
-          str,
-          " was not found. ",
-          "Check the data file and make sure all ",
-          "data frames are correctly formed.\n"
-        )
+        cli::cli_abort("SS_readdat_3.30-find.index: Error - the value of {str} was not found. Check the data file and make sure all data frames are correctly formed.\n")
       }
       ind
     }
@@ -203,7 +183,7 @@ SS_readdat_3.30 <-
     datlist[["N_areas"]] <- get.val(dat, ind)
     datlist[["Nfleets"]] <- get.val(dat, ind)
     if (verbose) {
-      message("Read general model dimensions.")
+      cli::cli_inform("Read general model dimensions.")
     }
     ## Fleet data ----
     datlist[["fleetinfo"]] <- get.df(dat, ind, datlist[["Nfleets"]])
@@ -223,20 +203,16 @@ SS_readdat_3.30 <-
           datlist[["fleetinfo"]][["need_catch_mult"]] == 1
       )
     ) {
-      stop(
-        "Catch multipler can be used only for fleet_type = 1; Check fleet = ",
-        paste0(
+      cli::cli_abort(paste0("Catch multipler can be used only for fleet_type = 1; Check fleet = ", paste0(
           which(
             datlist[["fleetinfo"]][["type"]] != 1 &
               datlist[["fleetinfo"]][["need_catch_mult"]] == 1
           ),
           collapse = ", "
-        ),
-        " in fleet info."
-      )
+        ), " in fleet info."))
     }
     if (verbose) {
-      message("Read fleet information.")
+      cli::cli_inform("Read fleet information.")
     }
 
     datlist[["fleetnames"]] <- datlist[["fleetinfo"]][["fleetname"]]
@@ -271,7 +247,7 @@ SS_readdat_3.30 <-
         ]
       )
       if (verbose) {
-        message("Read bycatch data.")
+        cli::cli_inform("Read bycatch data.")
       }
     }
 
@@ -285,7 +261,7 @@ SS_readdat_3.30 <-
       "catch_se"
     )
     if (verbose) {
-      message("Read catches.")
+      cli::cli_inform("Read catches.")
     }
     ## CPUE data  ----
     datlist[["CPUEinfo"]] <- get.df(dat, ind, datlist[["Nfleets"]])
@@ -297,7 +273,7 @@ SS_readdat_3.30 <-
     rownames(datlist[["CPUEinfo"]]) <- datlist[["fleetnames"]]
 
     if (verbose) {
-      message("Read CPUE data.")
+      cli::cli_inform("Read CPUE data.")
     }
 
     ## CPUE data matrix
@@ -345,7 +321,7 @@ SS_readdat_3.30 <-
         "stderr"
       )
       if (verbose) {
-        message("Read discards.")
+        cli::cli_inform("Read discards.")
       }
     } else {
       datlist[["discard_fleet_info"]] <- NULL
@@ -369,7 +345,7 @@ SS_readdat_3.30 <-
         )
       }
       if (verbose) {
-        message("Read mean body weight.")
+        cli::cli_inform("Read mean body weight.")
       }
     } else {
       datlist[["DF_for_meanbodywt"]] <- NULL
@@ -476,16 +452,12 @@ SS_readdat_3.30 <-
         ) ==
           0
         if (any(zero_lencomp == TRUE)) {
-          warning(
-            "Lines of all zero length comp found. SS will exit on error if",
-            " a line of comps is all zeroes and year is positive. Line(s) ",
-            paste0(which(zero_lencomp), collapse = ", ")
-          )
+          cli::cli_warn(paste0("Lines of all zero length comp found. SS will exit on error if", " a line of comps is all zeroes and year is positive. Line(s) ", paste0(which(zero_lencomp), collapse = ", ")))
         }
       }
 
       if (verbose) {
-        message("Read Length composition data.")
+        cli::cli_inform("Read Length composition data.")
       }
     }
 
@@ -572,16 +544,12 @@ SS_readdat_3.30 <-
         ) ==
           0
         if (any(zero_agecomp == TRUE)) {
-          warning(
-            "Lines of all zero age comp found. SS will exit on error if",
-            " a line of comps is all zeros. Line(s) ",
-            paste0(which(zero_agecomp), collapse = ", ")
-          )
+          cli::cli_warn(paste0("Lines of all zero age comp found. SS will exit on error if", " a line of comps is all zeros. Line(s) ", paste0(which(zero_agecomp), collapse = ", ")))
         }
       }
 
       if (verbose) {
-        message("Read age composition data.")
+        cli::cli_inform("Read age composition data.")
       }
     }
     # check DM pars ----)
@@ -603,15 +571,7 @@ SS_readdat_3.30 <-
               datlist[["age_info"]][["ParmSelect"]]
             )
         ) {
-          warning(
-            "Dirichlet multinomial parameters must be sequential with no ",
-            " missing integers starting from 1. \nMissing DM parameter ",
-            "labeled  ",
-            i,
-            ", so SS will exit on error for this model ",
-            "configuration. \nPlease revise the numbering of the DM ",
-            "parameters in the length/age info ParmSelect column."
-          )
+          cli::cli_warn("Dirichlet multinomial parameters must be sequential with no  missing integers starting from 1. \nMissing DM parameter labeled  {i}, so SS will exit on error for this model configuration. \nPlease revise the numbering of the DM parameters in the length/age info ParmSelect column.")
         }
       }
     }
@@ -623,10 +583,7 @@ SS_readdat_3.30 <-
       xx <- dat[ind:endmwa]
       if (length(unique(sapply(strsplit(xx, "\\s+"), length))) > 1) {
         if (verbose) {
-          message(
-            "Format of MeanSize_at_Age_obs appears to have sample sizes\n",
-            "on separate lines than other inputs."
-          )
+          cli::cli_inform("Format of MeanSize_at_Age_obs appears to have sample sizes\non separate lines than other inputs.")
         }
         xx <- paste(xx[seq_along(xx) %% 2 == 1], xx[seq_along(xx) %% 2 == 0])
       }
@@ -638,9 +595,7 @@ SS_readdat_3.30 <-
       # check terminator row
       test <- get.vec(dat, ind)
       if (test[1] != -9999) {
-        warning(
-          "Problem with read of MeanSize_at_Age, terminator value != -9999"
-        )
+        cli::cli_warn("Problem with read of MeanSize_at_Age, terminator value != -9999")
       }
 
       colnames(datlist[["MeanSize_at_Age_obs"]]) <-
@@ -703,7 +658,7 @@ SS_readdat_3.30 <-
       colnames(datlist[["envdat"]]) <- c("year", "variable", "value")
 
       if (verbose) {
-        message("Read environmental variable data.")
+        cli::cli_inform("Read environmental variable data.")
       }
     } else {
       datlist[["envdat"]] <- NULL
@@ -768,21 +723,14 @@ SS_readdat_3.30 <-
         if (
           any(datlist[["sizefreq_data_list"]][[imethod]][, "method"] != imethod)
         ) {
-          stop(
-            "Problem with method in size frequency data:\n",
-            "Expecting method: ",
-            imethod,
-            "\n",
-            "Read method(s): ",
-            paste(
+          cli::cli_abort(paste0("Problem with method in size frequency data:\n", "Expecting method: ", imethod, "\n", "Read method(s): ", paste(
               unique(datlist[["sizefreq_data_list"]][["method"]]),
               collapse = ", "
-            )
-          )
+            )))
         }
       }
       if (verbose) {
-        message("Read size frequency data.")
+        cli::cli_inform("Read size frequency data.")
       }
     } else {
       datlist[["nbins_per_method"]] <- NULL
@@ -833,7 +781,7 @@ SS_readdat_3.30 <-
           "Nrecap"
         )
         if (verbose) {
-          message("Read tag recapture data.")
+          cli::cli_inform("Read tag recapture data.")
         }
       } else {
         datlist[["tag_recaps"]] <- NULL
@@ -843,12 +791,7 @@ SS_readdat_3.30 <-
     ## Morphometrics composition data ----
     datlist[["morphcomp_data"]] <- get.val(dat, ind)
     if (datlist[["morphcomp_data"]]) {
-      warning(
-        "Morph comp data not yet supported by SS_readdat_3.30\n",
-        "  Please post issue to https://github.com/r4ss/r4ss/issues\n",
-        "  or email ian.taylor@noaa.gov",
-        "if you want this functionality added."
-      )
+      cli::cli_warn("Morph comp data not yet supported by SS_readdat_3.30\n  Please post issue to https://github.com/r4ss/r4ss/issues\n  or email ian.taylor@noaa.govif you want this functionality added.")
     }
 
     ## Selectivity priors ----
@@ -858,14 +801,9 @@ SS_readdat_3.30 <-
     eof <- get.val(dat, ind)
     if (verbose) {
       if (Nsections == 1) {
-        message("Read of data file complete. Final value = ", eof)
+        cli::cli_inform("Read of data file complete. Final value = {eof}")
       } else {
-        message(
-          "Read of section ",
-          section,
-          " of data file complete. Final value = ",
-          eof
-        )
+        cli::cli_inform("Read of section {section} of data file complete. Final value = {eof}")
       }
     }
     datlist[["eof"]] <- FALSE

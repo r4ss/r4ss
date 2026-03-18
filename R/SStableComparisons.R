@@ -57,7 +57,7 @@ SStableComparisons <- function(
   mcmc = FALSE
 ) {
   if (verbose) {
-    message("running SStableComparisons")
+    cli::cli_inform("running SStableComparisons")
   }
 
   # get stuff from summary output
@@ -98,11 +98,11 @@ SStableComparisons <- function(
         digit <- digits[iname]
       }
       if (verbose) {
-        message("name=", name, ";")
+        cli::cli_inform("name={name};")
       }
       if (name == "BLANK") {
         if (verbose) {
-          message("added a blank row to the table")
+          cli::cli_inform("added a blank row to the table")
         }
         # add to table
         tab <- rbind(tab, " ")
@@ -152,16 +152,11 @@ SStableComparisons <- function(
           }
         }
         if (verbose) {
-          message(
-            "added ",
-            nrow(vals),
-            " row",
-            ifelse(nrow(vals) != 1, "s", "")
-          )
+          cli::cli_inform(paste0("added ", nrow(vals), " row", ifelse(nrow(vals) != 1, "s", "")))
         }
         if (!is.null(digits)) {
           if (verbose) {
-            message("rounded to", digit, "digits")
+            cli::cli_inform("rounded to{digit}digits")
           }
           vals[, -1] <- round(vals[, -1], digit)
         }
@@ -180,11 +175,11 @@ SStableComparisons <- function(
         digit <- digits[iname]
       }
       if (verbose) {
-        message("name=", name, "; ", sep = "")
+        cli::cli_inform(paste0("name=", name, "; ", sep = ""))
       }
       if (name == "BLANK") {
         if (verbose) {
-          message("added a blank row to the table")
+          cli::cli_inform("added a blank row to the table")
         }
         # add to table
         tab <- rbind(tab, " ")
@@ -199,9 +194,7 @@ SStableComparisons <- function(
           tmp <- mcmcTable[, grep(name, names(mcmcTable), fixed = TRUE)]
           if (!is.null(dim(tmp))) {
             if (ncol(tmp) > 0) {
-              stop(
-                "This only works with a single column from the mcmc. Use a specific name"
-              )
+              cli::cli_abort("This only works with a single column from the mcmc. Use a specific name")
             }
           }
           if (!is.null(dim(tmp)) && ncol(tmp) == 0) {
@@ -238,13 +231,13 @@ SStableComparisons <- function(
         }
         if (!is.null(digits)) {
           if (verbose) {
-            message("rounded to", digit, "digits")
+            cli::cli_inform("rounded to{digit}digits")
           }
           vals[, -1] <- round(vals[, -1], digit)
         }
 
         if (verbose) {
-          message("added an mcmc row")
+          cli::cli_inform("added an mcmc row")
         }
         # add to table
         tab <- rbind(tab, vals)
@@ -257,9 +250,7 @@ SStableComparisons <- function(
   if (nrow(tab) > 0) {
     rownames(tab) <- 1:nrow(tab)
   } else {
-    warning(
-      "'names' and 'likenames' didn't match any variables so output is empty\n"
-    )
+    cli::cli_warn("'names' and 'likenames' didn't match any variables so output is empty\n")
   }
 
   # write CSV if requested
@@ -268,7 +259,7 @@ SStableComparisons <- function(
       csvdir <- getwd()
     }
     fullpath <- paste(csvdir, csvfile, sep = "/")
-    message("writing table to: ", fullpath)
+    cli::cli_inform("writing table to: {fullpath}")
     write.csv(tab, fullpath, row.names = FALSE)
   }
   # return table
