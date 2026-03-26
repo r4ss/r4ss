@@ -15,13 +15,15 @@
 #' @param ss3_output A list created by `r4ss::SS_output()`. Only required if
 #' `ss3_dir` is not provided.
 #' @param fleets Which fleets to include in the processed output.
-#' Note that the only start year population weight_at_age is read from the
+#' Note that the only start year population weight-at-age is read from the
 #' `wtatage` element (fleet = 0). NULL will default to including all fleets
 #' from the SS3 model.
-#' @param ages Vector of ages to index. NULL will default to using
-#' all age data bins from the SS3 model.
-#' @param lengths Vector of lengths to index. NULL will default to using
-#' all length data bins from the SS3 model.
+#' @param maxage Max age to include in the processed output.
+#' NULL will default to using age 0 up to the maximum age data bin in
+#' the SS3 model.
+#' @param lengths Vector of lengths to include in the processed output.
+#' Needs to be a subset of the length bins in the SS3 model.
+#' NULL will default to using all length data bins from the SS3 model.
 #' @return A data frame that can be passed to `FIMS::FIMSFrame()`
 #' @author Ian G. Taylor, Megumi Oshima, Kelli F. Johnson
 #' @export
@@ -32,7 +34,7 @@ ss3_data_to_fims <- function(
   ss3_inputs = NULL,
   ss3_output = NULL,
   fleets = NULL,
-  ages = NULL,
+  maxage = NULL,
   lengths = NULL
 ) {
   # check if input is a string and if so, try to read in the data using SS_read()
@@ -70,7 +72,7 @@ ss3_data_to_fims <- function(
   }
   if (any(ss3_inputs[["wtatage"]][["year"]] < 0)) {
     cli::cli_abort(
-      "The 'wtatage' element includes negative years which can't yet be processed by this function, please use the wtatage.ss_new file."
+      "The 'wtatage' element includes negative years which can't yet be processed by this function, please use the wtatage.ss_new file"
     )
   }
 
@@ -81,12 +83,20 @@ ss3_data_to_fims <- function(
   if (is.null(fleets)) {
     fleets <- seq_along(dat$fleetnames)
   }
-  if (is.null(ages)) {
-    ages <- dat$agebin_vector
+  if (is.null(maxage)) {
+    ages <- 0:max(dat$agebin_vector)
+  } else {
+    ages <- 0:maxage
   }
+  cli::cli_alert_info(
+    "Using age bins: {paste(ages, collapse = ', ')}"
+  )
   if (is.null(lengths)) {
     lengths <- dat$lbin_vector
   }
+  cli::cli_alert_info(
+    "Using length bins: {paste(lengths, collapse = ', ')}"
+  )
 
   # create empty data frame
   res <- data.frame(
@@ -102,9 +112,12 @@ ss3_data_to_fims <- function(
 
   # get landings data and filter by fleet and year
   n_catch_before <- nrow(dat$catch)
+  # remove initial equilibrium catch rows (year = -999)
   catch_filtered <- dat$catch |>
-    dplyr::filter(year != -999) # year = -999 in SS3 designates initial equilibrium catch
+    dplyr::filter(year != -999)
+  # count rows of catch data
   n_catch_before_fleet <- nrow(catch_filtered)
+  # filter by fleet (if fleets provided)
   catch_by_year_fleet <- catch_filtered |>
     dplyr::filter(fleet %in% fleets)
   n_catch_after <- nrow(catch_by_year_fleet)
@@ -113,6 +126,15 @@ ss3_data_to_fims <- function(
     cli::cli_alert_info(
       "catch rows before fleet filter: {n_catch_before_fleet}; after: {n_catch_after}"
     )
+  }
+  # modify any rows with 0 catch
+  n_catch_zeros <- sum(catch_by_year_fleet$catch == 0)
+  if (n_catch_zeros > 0) {
+    cli::cli_alert_info(
+      "adding 0.1 to {n_catch_zeros} rows with zero catch"
+    )
+    catch_by_year_fleet <- catch_by_year_fleet |>
+      dplyr::mutate(catch = ifelse(catch == 0, 0.1, catch))
   }
 
   # convert landings to FIMSFrame format
@@ -156,7 +178,7 @@ ss3_data_to_fims <- function(
       length = NA,
       timing = index_info$year,
       value = index_info$obs,
-      unit = "",
+      unit = "mt",
       uncertainty = index_info$se_log
     )
   } else {
@@ -164,28 +186,6 @@ ss3_data_to_fims <- function(
   }
 
   if (!is.null(dat$agecomp)) {
-    # partially convert age comps (filter, make into long table)
-
-    # first rescale females to sum to 1.0
-    # (data processing step had females + males sum to 100 for no good reason)
-    dat$agecomp$sum_fem <-
-      dat$agecomp |>
-      dplyr::select(dplyr::starts_with(c("f", "a"), ignore.case = FALSE)) |> # get female comps (or comps if single-sex)
-      rowSums()
-    # couldn't figure out dplyr approach to rescaling the subset of columns
-    # with female proportions to sum to 1.0
-    fcols <- dat$agecomp |>
-      dplyr::select(dplyr::starts_with("f", ignore.case = FALSE))
-    if (length(fcols) > 0) {
-      dat$agecomp[, names(dat$agecomp) %in% paste0("f", ages)] <-
-        dat$agecomp[, names(dat$agecomp) %in% paste0("f", ages)] /
-        dat$agecomp$sum_fem
-    } else {
-      dat$agecomp[, names(dat$agecomp) %in% paste0("a", ages)] <-
-        dat$agecomp[, names(dat$agecomp) %in% paste0("a", ages)] /
-        dat$agecomp$sum_fem
-    }
-
     # further processing
     n_agecomp_before <- nrow(dat$agecomp)
     agecomp_filtered <- dat$agecomp |>
@@ -197,10 +197,49 @@ ss3_data_to_fims <- function(
         "agecomp rows before fleet filter: {n_agecomp_before}; after: {n_agecomp_after}"
       )
     }
+
+    # if no age-0 observations, then insert columns for age-0 up to first age bin with 0 values
+    # to avoid issues with missing age bins in the FIMSFrame
+    if (!0 %in% dat$agebin_vector) {
+      first_age_bin <- min(dat$agebin_vector)
+      # should be OK if resulting names are a0, f1, f2, etc.
+      new_column_names <- paste0("a", 0:(first_age_bin - 1))
+      # matrix of zeros
+      new_columns <- data.frame(matrix(
+        0,
+        nrow = nrow(agecomp_filtered),
+        ncol = length(new_column_names)
+      ))
+      names(new_columns) <- new_column_names
+      cli::cli_alert_info(
+        "Adding columns for missing age bins: {paste(new_column_names, collapse = ', ')}"
+      )
+      # add to data
+      Nsamp_column <- which(colnames(agecomp_filtered) == "Nsamp")
+      agecomp_filtered <- cbind(
+        agecomp_filtered[, 1:Nsamp_column],
+        new_columns,
+        agecomp_filtered[, (Nsamp_column + 1):ncol(agecomp_filtered)]
+      )
+    }
+
     age_info <-
       agecomp_filtered |>
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
+      # rescale to sum to Nsamp within each row after removing columns for males
+      dplyr::rowwise() |>
+      dplyr::mutate(
+        dplyr::across(
+          dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]"),
+          ~ .x /
+            sum(
+              c_across(dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]")),
+              na.rm = TRUE
+            )
+        )
+      ) |>
+      dplyr::ungroup() |>
       tidyr::pivot_longer(
         # convert columns f1...f17 to values in a new "age" colum of a longer table
         cols = dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses a1, a2, ...
@@ -215,7 +254,9 @@ ss3_data_to_fims <- function(
       tidyr::fill(Nsamp, .direction = "updown") |>
       dplyr::mutate(value = ifelse(is.na(value), 0, value)) |>
       dplyr::ungroup() |>
-      dplyr::arrange(fleet, year, age)
+      dplyr::arrange(fleet, year, age) #|>
+    # Change from proportion to number
+    #dplyr::mutate(value = (value * Nsamp) |> round(0))
 
     # finish converting age comps to FIMSFrame format
     agecomps <- data.frame(
@@ -224,8 +265,8 @@ ss3_data_to_fims <- function(
       age = age_info$age,
       length = NA,
       timing = age_info$year,
-      value = age_info$value + 0.001, # add constant to avoid 0 values
-      unit = "",
+      value = age_info$value, # + 0.001, # add constant to avoid 0 values
+      unit = "proportion", #"number",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
       # uncertainty = round(age_info$Nsamp * age_info$value)
       uncertainty = round(age_info$Nsamp)
@@ -237,7 +278,6 @@ ss3_data_to_fims <- function(
 
   # Length composition data
   if (!is.null(dat[["lencomp"]])) {
-    # leaving out the re-scaling part for females to 1
     n_lencomp_before <- nrow(dat$lencomp)
     lencomp_filtered <- dat$lencomp |>
       dplyr::filter(fleet %in% fleets) # filter by requested fleets
@@ -248,10 +288,24 @@ ss3_data_to_fims <- function(
         "lencomp rows before fleet filter: {n_lencomp_before}; after: {n_lencomp_after}"
       )
     }
+
     len_info <-
       lencomp_filtered |>
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
+      # rescale to sum to 1.0 within each row after removing columns for males
+      dplyr::rowwise() |>
+      dplyr::mutate(
+        dplyr::across(
+          dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"),
+          ~ .x /
+            sum(
+              c_across(dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]")),
+              na.rm = TRUE
+            )
+        )
+      ) |>
+      dplyr::ungroup() |>
       tidyr::pivot_longer(
         # convert columns f1...f17 to values in a new "length" colum of a longer table
         cols = dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses l1, l2, ...
@@ -260,7 +314,9 @@ ss3_data_to_fims <- function(
       ) |>
       dplyr::mutate(length = as.numeric(substring(length, first = 2))) |> # convert "l17" to 17
       dplyr::select(year, fleet, Nsamp, length, value) |>
-      dplyr::arrange(fleet, year, length)
+      dplyr::arrange(fleet, year, length) # |>
+    # Change from proportion to number
+    #dplyr::mutate(value = (value * Nsamp) |> round(0))
 
     # finish converting age comps to FIMSFrame format
     lencomps <- data.frame(
@@ -269,8 +325,8 @@ ss3_data_to_fims <- function(
       age = NA,
       length = len_info$length,
       timing = len_info$year,
-      value = len_info$value + 0.001, # add constant to avoid 0 values
-      unit = "",
+      value = len_info$value, # + 0.001, # add constant to avoid 0 values
+      unit = "proportion", #"number",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
       # uncertainty = round(len_info$Nsamp * len_info$value)
       uncertainty = round(len_info$Nsamp)
@@ -301,19 +357,60 @@ ss3_data_to_fims <- function(
   # get age-to-length conversion matrix
   # TODO: is it correct to make this conditional on length comps existing?
   if (!is.null(lencomps)) {
-    timing_length_combinations <- lencomps |>
-      dplyr::select(timing, name) |>
-      dplyr::distinct()
-
     # initially always take the matrix for females in the middle of season 1
     ALK <- ss3_output$ALK[,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
-    ages <- as.integer(colnames(ALK))
-    lengths <- as.integer(rownames(ALK))
+
+    # check for bin widths different between data and population length bins
+    if (
+      dat$lbin_vector |> diff() |> unique() !=
+        dat$lbin_vector_pop |> diff() |> unique()
+    ) {
+      cli::cli_alert_danger(
+        "Age-to-length conversion matrix from SS3 is based on population length
+         bins which have different widths than the data length bins. 
+         The function will not aggregate length bins so the results may not 
+         make sense."
+      )
+    }
+    # check for values in dat$lbin_vector_pop that are not in dat$lbin_vector
+    # and filter them from the age_to_length data frame if they exist
+    if (!identical(dat$lbin_vector_pop, dat$lbin_vector)) {
+      cli::cli_alert_info(
+        "Aggregating length bins in the `age_to_length_conversion` to match data bins"
+      )
+      # population bins below the first data bin
+      low_bins <- dat$lbin_vector_pop[
+        dat$lbin_vector_pop < min(dat$lbin_vector)
+      ]
+      # population bins above the last data bin
+      high_bins <- dat$lbin_vector_pop[
+        dat$lbin_vector_pop > max(dat$lbin_vector)
+      ]
+      # remove last bin (really just an upper bound)
+      high_bins <- high_bins[high_bins != max(dat$lbin_vector_pop)]
+    } else {
+      low_bins <- NULL
+      high_bins <- NULL
+    }
 
     # function to provide length at age from SS3 output
     length_at_age_lookup <- function(age, length) {
-      if (age %in% ages & length %in% lengths) {
-        return(ALK[as.character(length), as.character(age)])
+      if (age %in% ages && length %in% lengths) {
+        # add the low or high population bins to the first and last data bin
+        if (length == min(lengths)) {
+          length_vec <- c(low_bins, length)
+        } else if (length == max(lengths)) {
+          length_vec <- c(length, high_bins)
+        } else {
+          length_vec <- length
+        }
+        if (!all(as.character(length_vec) %in% dimnames(ALK)[[1]])) {
+          cli::cli_abort(
+            "Length bins in the age-to-length conversion matrix do not match the length bins in the data. Check that the population length bins in the SS3 model are consistent with the data length bins."
+          )
+        }
+        value <- ALK[as.character(length_vec), as.character(age)] |> sum()
+        return(value)
       } else {
         return(NA)
       }
@@ -327,28 +424,17 @@ ss3_data_to_fims <- function(
       length = integer(),
       timing = character()
     )
-    # for every combination of timing and name (fleet) that has length comps
-    # create a data frame with age, length to which values will be added
-    for (irow in 1:nrow(timing_length_combinations)) {
-      age_to_length <- rbind(
-        age_to_length,
-        expand.grid(
-          name = timing_length_combinations$name[irow],
-          timing = timing_length_combinations$timing[irow],
-          age = ages,
-          length = lengths
-        )
-      )
-    }
-    # now fill in the value column with the proportion of each age
-    # within each length bin
-    age_to_length <- age_to_length |>
+    # create a data frame with every combination of age and length
+    age_to_length <-
+      expand.grid(
+        age = ages,
+        length = lengths
+      ) |>
       rowwise() |>
-      mutate(value = length_at_age_lookup(age, length))
-
-    # now add additional columns
-    age_to_length <- age_to_length |>
+      mutate(value = length_at_age_lookup(age, length)) |>
       mutate(
+        name = NA,
+        timing = NA,
         type = "age_to_length_conversion",
         unit = "proportion",
         uncertainty = NA
@@ -370,9 +456,9 @@ ss3_data_to_fims <- function(
     age_to_length
   )
 
-  # remove any projection/forecast years
+  # remove any projection/forecast years (where weight-at-age is 1 year beyond the rest)
   res <- res |>
-    dplyr::filter_out(timing > dat$endyr + 1) |>
+    dplyr::filter_out(type == "weight_at_age" & timing > dat$endyr + 1) |>
     dplyr::filter_out(type != "weight_at_age" & timing > dat$endyr)
 
   return(res)
