@@ -119,9 +119,10 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   }
 
   # Build stock recruitment parameter list
-  if (length(grep("SR_parm", parvals)) > 0) {
+  # note that the name in the .par file changed from SR_parm to SRparm in 2025
+  if (length(grep("SR", parvals)) > 0) {
     # Read in the values for stock recruitment parameters
-    SR_seq <- as.numeric(parvals[(grep("SR_parm", parvals) + 1)])
+    SR_seq <- as.numeric(parvals[(grep("SR", parvals) + 1)])
     # Create list object from the base control file parameter matrix
     if (!is.null(ctllist[["SR_parms"]])) {
       parlist[["SR_parms"]] <- ctllist[["SR_parms"]][, 3:4]
