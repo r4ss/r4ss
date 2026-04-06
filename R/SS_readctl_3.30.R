@@ -580,10 +580,10 @@ SS_readctl_3.30 <- function(
         cnt <- cnt + 5 + Age_K_count
       } else if (ctllist[["GrowthModel"]] == 8) {
         tmp <- c(
-          "L_at_Amin",
-          "L_at_Amax",
-          "VonBert_K",
-          "Cessation",
+          "L_at_Age0",
+          "Linf",
+          "rmax",
+          "Cessation",  
           "CV_young",
           "CV_old"
         )
