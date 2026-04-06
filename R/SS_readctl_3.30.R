@@ -583,7 +583,7 @@ SS_readctl_3.30 <- function(
           "L_at_Age0",
           "Linf",
           "rmax",
-          "Cessation",  
+          "Cessation",
           "CV_young",
           "CV_old"
         )
