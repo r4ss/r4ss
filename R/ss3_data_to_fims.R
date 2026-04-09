@@ -369,10 +369,9 @@ ss3_data_to_fims <- function(
     ALK <- ss3_output[["ALK"]][,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
 
     # check for bin widths different between data and population length bins
-    if (
-      dat[["lbin_vector"]] |> diff() |> unique() !=
-        dat[["lbin_vector_pop"]] |> diff() |> unique()
-    ) {
+    data_bin_widths <- sort(unique(diff(dat[["lbin_vector"]])))
+    pop_bin_widths <- sort(unique(diff(dat[["lbin_vector_pop"]])))
+    if (!identical(data_bin_widths, pop_bin_widths)) {
       cli::cli_alert_danger(
         "Age-to-length conversion matrix from SS3 is based on population length
          bins which have different widths than the data length bins. 
