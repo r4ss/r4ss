@@ -77,14 +77,14 @@ ss3_data_to_fims <- function(
   }
 
   # pull out dat element from the list to simplify code
-  dat <- ss3_inputs$dat
+  dat <- ss3_inputs[["dat"]]
 
   # fill in any missing inputs
   if (is.null(fleets)) {
-    fleets <- seq_along(dat$fleetnames)
+    fleets <- seq_along(dat[["fleetnames"]])
   }
   if (is.null(maxage)) {
-    ages <- 0:max(dat$agebin_vector)
+    ages <- 0:max(dat[["agebin_vector"]])
   } else {
     ages <- 0:maxage
   }
@@ -92,7 +92,7 @@ ss3_data_to_fims <- function(
     "Using age bins: {paste(ages, collapse = ', ')}"
   )
   if (is.null(lengths)) {
-    lengths <- dat$lbin_vector
+    lengths <- dat[["lbin_vector"]]
   }
   cli::cli_alert_info(
     "Using length bins: {paste(lengths, collapse = ', ')}"
@@ -111,9 +111,9 @@ ss3_data_to_fims <- function(
   )
 
   # get landings data and filter by fleet and year
-  n_catch_before <- nrow(dat$catch)
+  n_catch_before <- nrow(dat[["catch"]])
   # remove initial equilibrium catch rows (year = -999)
-  catch_filtered <- dat$catch |>
+  catch_filtered <- dat[["catch"]] |>
     dplyr::filter(year != -999)
   # count rows of catch data
   n_catch_before_fleet <- nrow(catch_filtered)
@@ -128,7 +128,7 @@ ss3_data_to_fims <- function(
     )
   }
   # modify any rows with 0 catch
-  n_catch_zeros <- sum(catch_by_year_fleet$catch == 0)
+  n_catch_zeros <- sum(catch_by_year_fleet[["catch"]] == 0)
   if (n_catch_zeros > 0) {
     cli::cli_alert_info(
       "adding 0.1 to {n_catch_zeros} rows with zero catch"
@@ -140,25 +140,25 @@ ss3_data_to_fims <- function(
   # convert landings to FIMSFrame format
   landings <- data.frame(
     type = "landings",
-    name = dat$fleetnames[catch_by_year_fleet$fleet],
+    name = dat[["fleetnames"]][catch_by_year_fleet[["fleet"]]],
     age = NA,
     length = NA,
-    timing = catch_by_year_fleet$year,
-    value = catch_by_year_fleet$catch,
+    timing = catch_by_year_fleet[["year"]],
+    value = catch_by_year_fleet[["catch"]],
     unit = "mt",
-    uncertainty = catch_by_year_fleet$catch_se
+    uncertainty = catch_by_year_fleet[["catch_se"]]
   )
 
   # check for any gaps in landings time series
-  years <- min(catch_by_year_fleet$year):max(catch_by_year_fleet$year)
-  if (!all(years %in% catch_by_year_fleet$year)) {
+  years <- min(catch_by_year_fleet[["year"]]):max(catch_by_year_fleet[["year"]])
+  if (!all(years %in% catch_by_year_fleet[["year"]])) {
     cli::cli_abort("missing years in landings")
   }
 
-  if (!is.null(dat$CPUE)) {
+  if (!is.null(dat[["CPUE"]])) {
     # convert indices to FIMSFrame format
-    n_cpue_before <- nrow(dat$CPUE)
-    cpue_filtered <- dat$CPUE |>
+    n_cpue_before <- nrow(dat[["CPUE"]])
+    cpue_filtered <- dat[["CPUE"]] |>
       dplyr::filter(index %in% fleets)
     n_cpue_after <- nrow(cpue_filtered)
     # provide message if any rows were removed by filter
@@ -173,22 +173,22 @@ ss3_data_to_fims <- function(
 
     indices <- data.frame(
       type = "index",
-      name = dat$fleetnames[index_info$index],
+      name = dat[["fleetnames"]][index_info[["index"]]],
       age = NA,
       length = NA,
-      timing = index_info$year,
-      value = index_info$obs,
+      timing = index_info[["year"]],
+      value = index_info[["obs"]],
       unit = "mt",
-      uncertainty = index_info$se_log
+      uncertainty = index_info[["se_log"]]
     )
   } else {
     indices <- NULL
   }
 
-  if (!is.null(dat$agecomp)) {
+  if (!is.null(dat[["agecomp"]])) {
     # further processing
-    n_agecomp_before <- nrow(dat$agecomp)
-    agecomp_filtered <- dat$agecomp |>
+    n_agecomp_before <- nrow(dat[["agecomp"]])
+    agecomp_filtered <- dat[["agecomp"]] |>
       dplyr::filter(fleet %in% fleets)
     n_agecomp_after <- nrow(agecomp_filtered)
     # provide message if any rows were removed by filter
@@ -200,8 +200,8 @@ ss3_data_to_fims <- function(
 
     # if no age-0 observations, then insert columns for age-0 up to first age bin with 0 values
     # to avoid issues with missing age bins in the FIMSFrame
-    if (!0 %in% dat$agebin_vector) {
-      first_age_bin <- min(dat$agebin_vector)
+    if (!0 %in% dat[["agebin_vector"]]) {
+      first_age_bin <- min(dat[["agebin_vector"]])
       # should be OK if resulting names are a0, f1, f2, etc.
       new_column_names <- paste0("a", 0:(first_age_bin - 1))
       # matrix of zeros
@@ -261,15 +261,15 @@ ss3_data_to_fims <- function(
     # finish converting age comps to FIMSFrame format
     agecomps <- data.frame(
       type = "age_comp",
-      name = dat$fleetnames[abs(age_info$fleet)], # abs to include negative fleet numbers which may contain marginal ages
-      age = age_info$age,
+      name = dat[["fleetnames"]][abs(age_info[["fleet"]])], # abs to include negative fleet numbers which may contain marginal ages
+      age = age_info[["age"]],
       length = NA,
-      timing = age_info$year,
-      value = age_info$value, # + 0.001, # add constant to avoid 0 values
+      timing = age_info[["year"]],
+      value = age_info[["value"]], # + 0.001, # add constant to avoid 0 values
       unit = "proportion", #"number",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
-      # uncertainty = round(age_info$Nsamp * age_info$value)
-      uncertainty = round(age_info$Nsamp)
+      # uncertainty = round(age_info[["Nsamp"]] * age_info[["value"]])
+      uncertainty = round(age_info[["Nsamp"]])
     )
   } else {
     # if no age comps present
@@ -278,8 +278,8 @@ ss3_data_to_fims <- function(
 
   # Length composition data
   if (!is.null(dat[["lencomp"]])) {
-    n_lencomp_before <- nrow(dat$lencomp)
-    lencomp_filtered <- dat$lencomp |>
+    n_lencomp_before <- nrow(dat[["lencomp"]])
+    lencomp_filtered <- dat[["lencomp"]] |>
       dplyr::filter(fleet %in% fleets) # filter by requested fleets
     n_lencomp_after <- nrow(lencomp_filtered)
     # provide message if any rows were removed by filter
@@ -321,15 +321,15 @@ ss3_data_to_fims <- function(
     # finish converting age comps to FIMSFrame format
     lencomps <- data.frame(
       type = "length_comp", # will likely need to change name
-      name = dat$fleetnames[abs(len_info$fleet)], # abs to include fleet == -4
+      name = dat[["fleetnames"]][abs(len_info[["fleet"]])], # abs to include fleet == -4
       age = NA,
-      length = len_info$length,
-      timing = len_info$year,
-      value = len_info$value, # + 0.001, # add constant to avoid 0 values
+      length = len_info[["length"]],
+      timing = len_info[["year"]],
+      value = len_info[["value"]], # + 0.001, # add constant to avoid 0 values
       unit = "proportion", #"number",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
-      # uncertainty = round(len_info$Nsamp * len_info$value)
-      uncertainty = round(len_info$Nsamp)
+      # uncertainty = round(len_info[["Nsamp"]] * len_info[["value"]])
+      uncertainty = round(len_info[["Nsamp"]])
     )
   } else {
     # if no length comps present
@@ -337,7 +337,7 @@ ss3_data_to_fims <- function(
   }
 
   # weight_at_age data
-  wtatage <- ss3_inputs$wtatage |>
+  wtatage <- ss3_inputs[["wtatage"]] |>
     dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |> # TODO make this more flexible
     dplyr::select("year", dplyr::matches("[0-9]+")) |>
     tidyr::pivot_longer(cols = -year, names_to = "age") |>
@@ -345,7 +345,7 @@ ss3_data_to_fims <- function(
     dplyr::filter(age <= max(ages)) |>
     dplyr::mutate(
       type = "weight_at_age",
-      name = dat$fleetnames[1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
+      name = dat[["fleetnames"]][1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
       length = NA,
       timing = year,
       value = value / 1000, # covert to metric tons (SS3)
@@ -358,12 +358,12 @@ ss3_data_to_fims <- function(
   # TODO: is it correct to make this conditional on length comps existing?
   if (!is.null(lencomps)) {
     # initially always take the matrix for females in the middle of season 1
-    ALK <- ss3_output$ALK[,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
+    ALK <- ss3_output[["ALK"]][,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
 
     # check for bin widths different between data and population length bins
     if (
-      dat$lbin_vector |> diff() |> unique() !=
-        dat$lbin_vector_pop |> diff() |> unique()
+      dat[["lbin_vector"]] |> diff() |> unique() !=
+        dat[["lbin_vector_pop"]] |> diff() |> unique()
     ) {
       cli::cli_alert_danger(
         "Age-to-length conversion matrix from SS3 is based on population length
@@ -372,22 +372,22 @@ ss3_data_to_fims <- function(
          make sense."
       )
     }
-    # check for values in dat$lbin_vector_pop that are not in dat$lbin_vector
+    # check for values in dat[["lbin_vector_pop"]] that are not in dat[["lbin_vector"]]
     # and filter them from the age_to_length data frame if they exist
-    if (!identical(dat$lbin_vector_pop, dat$lbin_vector)) {
+    if (!identical(dat[["lbin_vector_pop"]], dat[["lbin_vector"]])) {
       cli::cli_alert_info(
         "Aggregating length bins in the `age_to_length_conversion` to match data bins"
       )
       # population bins below the first data bin
-      low_bins <- dat$lbin_vector_pop[
-        dat$lbin_vector_pop < min(dat$lbin_vector)
+      low_bins <- dat[["lbin_vector_pop"]][
+        dat[["lbin_vector_pop"]] < min(dat[["lbin_vector"]])
       ]
       # population bins above the last data bin
-      high_bins <- dat$lbin_vector_pop[
-        dat$lbin_vector_pop > max(dat$lbin_vector)
+      high_bins <- dat[["lbin_vector_pop"]][
+        dat[["lbin_vector_pop"]] > max(dat[["lbin_vector"]])
       ]
       # remove last bin (really just an upper bound)
-      high_bins <- high_bins[high_bins != max(dat$lbin_vector_pop)]
+      high_bins <- high_bins[high_bins != max(dat[["lbin_vector_pop"]])]
     } else {
       low_bins <- NULL
       high_bins <- NULL
@@ -458,8 +458,8 @@ ss3_data_to_fims <- function(
 
   # remove any projection/forecast years (where weight-at-age is 1 year beyond the rest)
   res <- res |>
-    dplyr::filter_out(type == "weight_at_age" & timing > dat$endyr + 1) |>
-    dplyr::filter_out(type != "weight_at_age" & timing > dat$endyr)
+    dplyr::filter_out(type == "weight_at_age" & timing > dat[["endyr"]] + 1) |>
+    dplyr::filter_out(type != "weight_at_age" & timing > dat[["endyr"]])
 
   return(res)
 }
