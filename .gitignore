@@ -29,7 +29,7 @@ plots
 *.hst
 *.psv
 *.ss_new
-!wtatage.ss_new
+!inst/extdata/simple_small/wtatage.ss_new
 data_boot*
 data_expval.ss
 gradient.1
