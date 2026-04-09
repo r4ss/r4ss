@@ -374,16 +374,17 @@ ss3_data_to_fims <- function(
     if (!identical(data_bin_widths, pop_bin_widths)) {
       cli::cli_alert_danger(
         "Age-to-length conversion matrix from SS3 is based on population length
-         bins which have different widths than the data length bins. 
-         The function will not aggregate length bins so the results may not 
-         make sense."
+         bins which have different minimum bin widths than the data length bins. 
+         The function will not aggregate all the proportions, and the results may not 
+         make sense. Consider modifying the SS3 model to have matching population 
+         and data bins."
       )
     }
     # check for values in dat[["lbin_vector_pop"]] that are not in dat[["lbin_vector"]]
     # and filter them from the age_to_length data frame if they exist
     if (!identical(dat[["lbin_vector_pop"]], dat[["lbin_vector"]])) {
       cli::cli_alert_info(
-        "Aggregating length bins in the `age_to_length_conversion` to match data bins"
+        "Aggregating low and high length bins in the `age_to_length_conversion` to match first and last data bins"
       )
       # population bins below the first data bin
       low_bins <- dat[["lbin_vector_pop"]][
