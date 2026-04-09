@@ -7,7 +7,7 @@
 #' files. Alternatively the SS3 input and output lists can be input
 #' directly using `ss3_inputs` and `ss3_output`
 #' @param ss_new Logical indicating whether to read in the .ss_new files
-#' instead of the original input files. Beneficial for dealining with
+#' instead of the original input files. Beneficial for dealing with
 #' negative years in the wtatage file which can't yet be processed by
 #' this function.
 #' @param ss3_inputs A list containing `dat` and `wtatage` such as that

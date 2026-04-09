@@ -10,7 +10,7 @@ ss3_data_to_fims(
   ss3_inputs = NULL,
   ss3_output = NULL,
   fleets = NULL,
-  ages = NULL,
+  maxage = NULL,
   lengths = NULL
 )
 }
@@ -20,7 +20,7 @@ files. Alternatively the SS3 input and output lists can be input
 directly using \code{ss3_inputs} and \code{ss3_output}}
 
 \item{ss_new}{Logical indicating whether to read in the .ss_new files
-instead of the original input files. Beneficial for dealining with
+instead of the original input files. Beneficial for dealing with
 negative years in the wtatage file which can't yet be processed by
 this function.}
 
@@ -35,11 +35,13 @@ Note that the only start year population weight-at-age is read from the
 \code{wtatage} element (fleet = 0). NULL will default to including all fleets
 from the SS3 model.}
 
-\item{ages}{Vector of ages to index. NULL will default to using
-all age data bins from the SS3 model.}
+\item{maxage}{Max age to include in the processed output.
+NULL will default to using age 0 up to the maximum age data bin in
+the SS3 model.}
 
-\item{lengths}{Vector of lengths to index. NULL will default to using
-all length data bins from the SS3 model.}
+\item{lengths}{Vector of lengths to include in the processed output.
+Needs to be a subset of the length bins in the SS3 model.
+NULL will default to using all length data bins from the SS3 model.}
 }
 \value{
 A data frame that can be passed to \code{FIMS::FIMSFrame()}
