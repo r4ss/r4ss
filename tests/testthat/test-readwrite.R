@@ -75,6 +75,9 @@ test_that("models can be read and written", {
     # the length of the native starter object
     expect_equal(length(start), length(allfiles[["start"]]))
 
+    # check option to read wtatage.ss_new file even if not required by the model
+    allfiles2 <- SS_read(m, read_wtatage = TRUE)
+
     #### Checks related to SS_write* functions
     files <- file.path(
       m,
@@ -89,8 +92,6 @@ test_that("models can be read and written", {
     # remove files
     lapply(files, function(x) file.remove(x))
 
-    # check option to read wtatage.ss_new file even if not required by the model
-    allfiles2 <- SS_read(m, read_wtatage = TRUE)
     expect_true(all(
       c("dat", "ctl", "start", "fore", "wtatage") %in% names(allfiles2)
     ))
