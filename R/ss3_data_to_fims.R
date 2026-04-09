@@ -27,7 +27,7 @@
 #' @return A data frame that can be passed to `FIMS::FIMSFrame()`
 #' @author Ian G. Taylor, Megumi Oshima, Kelli F. Johnson
 #' @export
-
+#' @seealso [SS_write()] can be used to write the input files using the list
 ss3_data_to_fims <- function(
   ss3_dir = NULL,
   ss_new = TRUE,

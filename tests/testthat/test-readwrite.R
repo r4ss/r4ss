@@ -89,6 +89,12 @@ test_that("models can be read and written", {
     # remove files
     lapply(files, function(x) file.remove(x))
 
+    allfiles2 <- SS_read(m, read_wtatage = TRUE)
+    expect_true(all(
+      c("dat", "ctl", "start", "fore", "wtatage") %in% names(allfiles2)
+    ))
+
+
     # write files individually
     message("Now writing model ", basename(m))
     SS_writestarter(start, dir = m, verbose = FALSE)

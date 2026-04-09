@@ -62,7 +62,7 @@ Imports:
     cli,
     coda,
     corpcor,
-    dplyr,
+    dplyr (>= 1.2.0),
     forcats,
     furrr,
     future,
