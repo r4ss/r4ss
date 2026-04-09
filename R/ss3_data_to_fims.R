@@ -56,7 +56,7 @@ ss3_data_to_fims <- function(
     ss3_output <- r4ss::SS_output(
       dir = ss3_dir,
       verbose = FALSE,
-      printstats = FALSE,
+      printstats = FALSE
     )
   }
   # check inputs for necessary elements
@@ -348,7 +348,7 @@ ss3_data_to_fims <- function(
       name = dat[["fleetnames"]][1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
       length = NA,
       timing = year,
-      value = value / 1000, # covert to metric tons (SS3)
+      value = value / 1000, # convert to metric tons (SS3)
       unit = "mt",
       uncertainty = NA
     ) |>
@@ -357,6 +357,14 @@ ss3_data_to_fims <- function(
   # get age-to-length conversion matrix
   # TODO: is it correct to make this conditional on length comps existing?
   if (!is.null(lencomps)) {
+    if (!is.list(ss3_output) || is.null(ss3_output[["ALK"]])) {
+      cli::cli_abort(
+        c(
+          "Age-to-length conversion requires `ss3_output` with an `ALK` component.",
+          "i" = "Provide `ss3_output` containing `ALK`, or supply `ss3_dir` so SS3 output can be read when length compositions are present."
+        )
+      )
+    }
     # initially always take the matrix for females in the middle of season 1
     ALK <- ss3_output[["ALK"]][,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
 
@@ -439,7 +447,7 @@ ss3_data_to_fims <- function(
         unit = "proportion",
         uncertainty = NA
       ) |>
-      select(names(res))
+      dplyr::select(dplyr::all_of(names(res)))
   } else {
     # if no length comps, then we don't need the age to length conversion matrix
     age_to_length <- NULL

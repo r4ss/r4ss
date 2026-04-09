@@ -31,7 +31,8 @@
 #' * control
 #' * starter
 #' * forecast
-#' * wtatage (will be NULL if not required by the model and read_wtatage = FALSE)
+#' * wtatage (may be absent if not required by the model and
+#'   `read_wtatage = FALSE`)
 #' * par (will be NULL if not required by model or if control and par
 #' do not match)
 #'
