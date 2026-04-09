@@ -1,11 +1,11 @@
 context("Convert SS3 data to FIMS format")
 
 test_that("ss3_data_to_fims() runs on simple_small", {
-    path <- system.file("extdata", "simple_small", package = "r4ss")
+  path <- system.file("extdata", "simple_small", package = "r4ss")
 
-    expect_no_error(
-        fims_data <- ss3_data_to_fims(ss3_dir = path, ss_new = FALSE)
-    )
+  expect_no_error(
+    fims_data <- ss3_data_to_fims(ss3_dir = path, ss_new = FALSE)
+  )
 })
 
 test_that("ss3_data_to_fims() output has expected structure and values", {
