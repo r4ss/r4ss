@@ -3,10 +3,8 @@ context("Convert SS3 data to FIMS format")
 test_that("ss3_data_to_fims() runs on simple_small", {
     path <- system.file("extdata", "simple_small", package = "r4ss")
 
-    simple_small_input <- SS_read(dir = path)
-
     expect_no_error(
-        fims_data <- ss3_data_to_fims(ss3_dir = path)
+        fims_data <- ss3_data_to_fims(ss3_dir = path, ss_new = FALSE)
     )
 })
 
@@ -37,6 +35,9 @@ test_that("ss3_data_to_fims() output has expected structure and values", {
             fims_data$type
     ))
 })
+
+
+simple_small_input <- SS_read(dir = path)
 
 test_that("ss3_data_to_fims() age-to-length conversion data has expected dimensions", {
     years <- simple_small_input[["dat"]][["styr"]]:simple_small_input[["dat"]][[
