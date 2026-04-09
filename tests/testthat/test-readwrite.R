@@ -94,7 +94,6 @@ test_that("models can be read and written", {
       c("dat", "ctl", "start", "fore", "wtatage") %in% names(allfiles2)
     ))
 
-
     # write files individually
     message("Now writing model ", basename(m))
     SS_writestarter(start, dir = m, verbose = FALSE)

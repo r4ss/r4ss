@@ -50,6 +50,9 @@ A data frame that can be passed to \code{FIMS::FIMSFrame()}
 Uses output from \code{r4ss::SS_read()} and does
 filtering, simplifying, and reformatting.
 }
+\seealso{
+\code{\link[=SS_write]{SS_write()}} can be used to write the input files using the list
+}
 \author{
 Ian G. Taylor, Megumi Oshima, Kelli F. Johnson
 }
