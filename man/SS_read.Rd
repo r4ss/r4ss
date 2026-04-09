@@ -35,7 +35,8 @@ the following input files:
 \item control
 \item starter
 \item forecast
-\item wtatage (will be NULL if not required by the model and read_wtatage = FALSE)
+\item wtatage (may be absent if not required by the model and
+\code{read_wtatage = FALSE})
 \item par (will be NULL if not required by model or if control and par
 do not match)
 }
