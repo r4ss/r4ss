@@ -89,6 +89,7 @@ test_that("models can be read and written", {
     # remove files
     lapply(files, function(x) file.remove(x))
 
+    # check option to read wtatage.ss_new file even if not required by the model
     allfiles2 <- SS_read(m, read_wtatage = TRUE)
     expect_true(all(
       c("dat", "ctl", "start", "fore", "wtatage") %in% names(allfiles2)

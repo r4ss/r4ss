@@ -111,11 +111,18 @@ SS_read <- function(
     )
     return_list[["wtatage"]] <- wtatage
   } else if (read_wtatage) {
-    wtatage <- r4ss::SS_readwtatage(
-      file = file.path(dir, "wtatage.ss_new"),
-      verbose = verbose
-    )
-    return_list[["wtatage"]] <- wtatage
+    if (!file.exists(file.path(dir, "wtatage.ss_new"))) {
+      cli::cli_alert_warning(
+        "Model does not require weight-at-age file and no wtatage.ss_new file found. Skipping reading weight-at-age file."
+      )
+      return_list[["wtatage"]] <- NULL
+    } else {
+      wtatage <- r4ss::SS_readwtatage(
+        file = file.path(dir, "wtatage.ss_new"),
+        verbose = verbose
+      )
+      return_list[["wtatage"]] <- wtatage
+    }
   }
 
   # only read .par file if required by the model
