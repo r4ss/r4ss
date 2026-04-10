@@ -120,7 +120,7 @@ NegLogInt_Fn <- function(
 
   # Error messages
   if (ReDoBiasRamp == TRUE & is.null(BiasRamp_linenum_Vec)) {
-    stop("If ReDoBiasRamp==TRUE, then BiasRamp_linenum_Vec must be specified")
+    cli::cli_abort("If ReDoBiasRamp==TRUE, then BiasRamp_linenum_Vec must be specified")
   }
 
   # Make sure print is high enough for when passing values to ADMB

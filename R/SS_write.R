@@ -48,7 +48,7 @@ SS_write <- function(inputlist, dir = "", overwrite = FALSE, verbose = FALSE) {
   if (dir != "") {
     if (!dir.exists(dir)) {
       if (verbose) {
-        message("Creating new directory: ", dir)
+        cli::cli_inform("Creating new directory: {dir}")
       }
       dir.create(dir, recursive = TRUE)
     }
@@ -63,10 +63,7 @@ SS_write <- function(inputlist, dir = "", overwrite = FALSE, verbose = FALSE) {
       verbose = verbose
     )
   } else {
-    stop(
-      '"start" element of input list not available ',
-      "(required to get names of data and control files)"
-    )
+    cli::cli_abort("{paste('\"start\" element of input list not available', \" (required to get names of data and control files)\", sep = \"\")}")
   }
 
   # write data file
@@ -137,6 +134,6 @@ SS_write <- function(inputlist, dir = "", overwrite = FALSE, verbose = FALSE) {
 
   # message noting that all files have been written
   if (verbose) {
-    message("Wrote all input files to ", dir)
+    cli::cli_inform("Wrote all input files to {dir}")
   }
 }

@@ -66,7 +66,7 @@ SS_readctl_3.24 <- function(
   # function to read Stock Synthesis data files
 
   if (verbose) {
-    message("running SS_readctl_3.24\n")
+    cli::cli_inform("running SS_readctl_3.24")
   }
   dat <- readLines(file, warn = FALSE)
 
@@ -118,13 +118,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(
-        name,
-        ", i = ",
-        ctllist$".i",
-        "\n",
-        paste0(ctllist[name], collapse = "\n")
-      )
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", \": \", paste(ctllist[name], sep = \"\", collapse = \"\\n\"), sep = \"\")}")
     }
     return(ctllist)
   }
@@ -152,13 +146,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(
-        name,
-        ", i = ",
-        ctllist$".i",
-        "\n",
-        paste0(ctllist[[which(names(ctllist) == name)]], collapse = "\n")
-      )
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", \": \", paste(ctllist[[which(names(ctllist) == name)]], sep = \"\", collapse = \"\\n\"), sep = \"\")}")
     }
     return(ctllist)
   }
@@ -172,13 +160,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(
-        name,
-        ", i = ",
-        ctllist$".i",
-        " ;",
-        ctllist[[which(names(ctllist) == name)]]
-      )
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", \" ;\", ctllist[[which(names(ctllist) == name)]], sep = \"\")}")
     }
     return(ctllist)
   }
@@ -197,7 +179,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      message(name, ", i = ", ctllist$".i")
+      cli::cli_inform("{paste(name, \", i = \", ctllist$\".i\", sep = \"\")}")
     }
     return(ctllist)
   }
@@ -228,12 +210,12 @@ SS_readctl_3.24 <- function(
   } else {
     if (is.character(datlist)) {
       if (!file.exists(datlist)) {
-        stop("Cannot find data file specified in datlist: ", datlist)
+        cli::cli_abort("Cannot find data file specified in datlist: {datlist}")
       }
       datlist <- SS_readdat(file = datlist, version = "3.24", verbose = FALSE)
     }
     if (is.null(datlist)) {
-      stop("datlist from SS_readdat is needed if use_datlist is TRUE")
+      cli::cli_abort("datlist from SS_readdat is needed if use_datlist is TRUE")
     }
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
@@ -289,7 +271,7 @@ SS_readctl_3.24 <- function(
   )
   srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE")
   if (verbose) {
-    message("SS_readctl_3.24 - read version = ", ctllist[["ReadVersion"]])
+    cli::cli_inform("{paste(\"SS_readctl_3.24 - read version = \", ctllist[[\"ReadVersion\"]], sep = \"\")}")
   }
 
   # beginning of ctl ----
@@ -298,7 +280,7 @@ SS_readctl_3.24 <- function(
 
   ctllist <- add_elem(ctllist, "N_platoon")
   if (ctllist[["N_platoon"]] > 1) {
-    stop("sub morphs are not supported yet")
+    cli::cli_abort("sub morphs are not supported yet")
     ctllist <- add_elem(ctllist, "submorphdist")
   } else {
     ctllist[["sd_ratio"]] <- 1.0
@@ -396,14 +378,10 @@ SS_readctl_3.24 <- function(
       col.names = paste0("Age_", 0:Nages)
     )
   } else {
-    stop(
-      "natM_type = ",
-      ctllist[["natM_type"]],
-      " is not yet implemented in this script"
-    )
+    cli::cli_abort("{paste(\"natM_type = \", ctllist[[\"natM_type\"]], \" is not yet implemented in this script\", sep = \"\")}")
   }
   if (verbose) {
-    message("N_natMparms = ", N_natMparms)
+    cli::cli_inform("N_natMparms = {N_natMparms}")
   }
   # growth setup ----
   ctllist <- add_elem(ctllist, name = "GrowthModel")
@@ -430,7 +408,7 @@ SS_readctl_3.24 <- function(
     )
     #  points at which age-specific multipliers to K will be applied
   } else if (ctllist[["GrowthModel"]] == 4) {
-    stop("GrowthModel == 4 is not implemented")
+    cli::cli_abort("GrowthModel == 4 is not implemented")
     N_growparms <- 2 # for the two CV parameters
     k1 <- ctllist[["N_GP"]] * ctllist[["Nsexes"]] # for reading age_natmort
     ctllist <- add_df(
@@ -441,7 +419,7 @@ SS_readctl_3.24 <- function(
       col.names = paste0("Age_", 0:Nages)
     )
   } else {
-    stop("GrowthModel ", ctllist[["GrowthModel"]], " is not supported yet.")
+    cli::cli_abort("{paste(\"GrowthModel \", ctllist[[\"GrowthModel\"]], \" is not supported yet.\", sep = \"\")}")
   }
   MGparm_per_def <- N_natMparms + N_growparms
   ctllist[["N_natMparms"]] <- N_natMparms
@@ -579,11 +557,7 @@ SS_readctl_3.24 <- function(
     MGparmLabel[cnt] <- paste0("Eggs_slope_wt_", SexLabel[1])
     cnt <- cnt + 1
   } else {
-    stop(
-      "Fecundity option ",
-      ctllist[["fecundity_option"]],
-      " is not supported"
-    )
+    cli::cli_abort("{paste(\"Fecundity option \", ctllist[[\"fecundity_option\"]], \" is not supported\", sep = \"\")}")
   }
   if (ctllist[["Nsexes"]] == 2) {
     MGparmLabel[cnt] <- paste0("Wtlen_1_", SexLabel[2])
@@ -745,7 +719,7 @@ SS_readctl_3.24 <- function(
   N_SRparm2 <- N_SRparm[as.numeric(ctllist[["SR_function"]])] + 4
 
   if (is.na(ctllist[["SR_function"]])) {
-    stop("SR_function is NA")
+    cli::cli_abort("SR_function is NA")
   }
   # SR parms ----
   SRparmsLabels <- if (ctllist[["SR_function"]] == 3) {
@@ -822,7 +796,7 @@ SS_readctl_3.24 <- function(
       "SR_autocorr"
     )
   } else {
-    stop("SR_function ", ctllist[["SR_function"]], " is not supported yet.")
+    cli::cli_abort("{paste(\"SR_function \", ctllist[[\"SR_function\"]], \" is not supported yet.\", sep = \"\")}")
   }
 
   ctllist <- add_df(
@@ -859,7 +833,7 @@ SS_readctl_3.24 <- function(
     ctllist <- add_elem(ctllist, "N_Read_recdevs") # _read_recdevs
 
     if (ctllist[["period_of_cycles_in_recr"]] > 0) {
-      stop("Reading full parameters for recr cycles is not yet coded")
+      cli::cli_abort("Reading full parameters for recr cycles is not yet coded")
     }
     if (ctllist[["N_Read_recdevs"]] > 0) {
       ctllist <- add_df(
@@ -1462,7 +1436,7 @@ SS_readctl_3.24 <- function(
     }
   }
   if (verbose) {
-    message("Read size and age selectivity setup")
+    cli::cli_inform("Read size and age selectivity setup")
   }
   # Selex parlines ----
   # _LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn
@@ -1840,15 +1814,11 @@ SS_readctl_3.24 <- function(
   }
   if (ctllist$".dat"[ctllist$".i"] == 999) {
     if (verbose) {
-      message("read of control file complete (final value = 999)")
+      cli::cli_inform("read of control file complete (final value = 999)")
     }
     ctllist[["eof"]] <- TRUE
   } else {
-    message(
-      "Error: final value is",
-      ctllist$".dat"[ctllist$".i"],
-      ", but should be 999\n"
-    )
+    cli::cli_inform("{paste(\"Error: final value is\", ctllist$\".dat\"[ctllist$\".i\"], \", but should be 999\", sep = \"\")}")
     ctllist[["eof"]] <- FALSE
   }
   ctllist$".dat" <- NULL

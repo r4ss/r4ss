@@ -118,7 +118,7 @@ retro <- function(
   # get model file names from olddir
   startfile <- dir(olddir)[tolower(dir(olddir)) == "starter.ss"]
   if (length(startfile) == 0) {
-    stop("No starter.ss file found in ", olddir)
+    cli::cli_abort("No starter.ss file found in {olddir}")
   }
 
   # read original starter (later written to each folder)
@@ -133,7 +133,7 @@ retro <- function(
   furrr::future_walk(seq_along(years), function(iyr) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
     if (verbose) {
-      message("Running retrospective in ", newdir_iyr)
+      cli::cli_inform("Running retrospective in {newdir_iyr}")
     }
 
     # copy original input files to retro folder
@@ -169,7 +169,7 @@ retro <- function(
     # add rough check for if the model ran (although a report file may exist if
     # if the model only ran part of the way through). Warn the user in this case.
     if (!file.exists(file.path(newdir_iyr, "Report.sso"))) {
-      warning("The retrospective model run failed in ", newdir_iyr)
+      cli::cli_warn("The retrospective model run failed in {newdir_iyr}")
     }
   })
   invisible(file.path(dir, newsubdir, subdirnames))

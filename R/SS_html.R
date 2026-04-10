@@ -36,15 +36,10 @@ SS_html <- function(
   verbose = TRUE
 ) {
   if (verbose) {
-    message(
-      "Running 'SS_html':\n",
-      "  By default, this function will look in the directory where PNG files were created\n",
-      "  for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'\n",
-      "  HTML files are written to link to these plots and put in the same directory.\n\n"
-    )
+    cli::cli_inform("Running 'SS_html': By default, this function will look in the directory where PNG files were created for CSV files with the name 'plotInfoTable...' written by 'SS_plots.' HTML files are written to link to these plots and put in the same directory.")
   }
   if (is.null(plotdir)) {
-    stop("input 'plotdir' required")
+    cli::cli_abort("input 'plotdir' required")
   }
   # check for table in directory with PNG files
   if (is.null(plotInfoTable)) {
@@ -54,7 +49,7 @@ SS_html <- function(
       filenames <- filenames[grep("plotInfoTable", filenames)]
       filenames <- filenames[grep(".csv", filenames)]
       if (length(filenames) == 0) {
-        stop("No CSV files with name 'plotInfoTable...'")
+        cli::cli_abort("No CSV files with name 'plotInfoTable...'")
       }
       plotInfoTable <- NULL
       # loop over matching CSV files and combine them
@@ -76,7 +71,7 @@ SS_html <- function(
           for (irun in seq_along(runs)) {
             msg <- c(msg, paste("    ", runs[irun], "\n"))
           }
-          warning(msg)
+          cli::cli_warn(msg)
         } else {
           msg <- c(
             "CSV files with name 'plotInfoTable...' are from multiple model runs.\n",
@@ -86,7 +81,7 @@ SS_html <- function(
           for (irun in seq_along(runs)) {
             msg <- c(msg, paste("    ", runs[irun], "\n"))
           }
-          stop(msg)
+          cli::cli_abort(msg)
         }
       }
       # look for duplicate file names
@@ -95,9 +90,7 @@ SS_html <- function(
       # loop over duplicates and remove rows for older instance
       if (length(duplicates) > 0) {
         if (verbose) {
-          message(
-            "Removing duplicate rows in combined plotInfoTable based on multiple CSV files"
-          )
+          cli::cli_inform("Removing duplicate rows in combined plotInfoTable based on multiple CSV files")
         }
         for (idup in seq_along(duplicates)) {
           duprows <- grep(
@@ -113,11 +106,11 @@ SS_html <- function(
         }
       }
     } else {
-      stop("Need input for 'replist' or 'plotInfoTable'")
+      cli::cli_abort("Need input for 'replist' or 'plotInfoTable'")
     }
   }
   if (!is.data.frame(plotInfoTable)) {
-    stop("'plotInfoTable' needs to be a data frame")
+    cli::cli_abort("'plotInfoTable' needs to be a data frame")
   }
 
   plotInfoTable[["basename"]] <- basename(as.character(plotInfoTable[["file"]]))
@@ -139,7 +132,7 @@ SS_html <- function(
       htmlfile <- file.path(plotdir, "_SS_output.html")
       htmlhome <- htmlfile
       if (verbose) {
-        message("Home HTML file with output will be: ", htmlhome)
+        cli::cli_inform("Home HTML file with output will be: {htmlhome}")
       }
     } else {
       category <- categories[icat]
@@ -478,7 +471,7 @@ SS_html <- function(
   # thanks John Wallace for finding the browseURL command
   if (openfile) {
     if (verbose) {
-      message("Opening HTML file in your default web-browser.")
+      cli::cli_inform("Opening HTML file in your default web-browser.")
     }
     # check for presence of file
     # alternative location for file in the path is relative to the working directory

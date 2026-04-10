@@ -255,9 +255,7 @@ SSplotComps <-
       fleets <- 1:nfleets
     } else {
       if (length(intersect(fleets, 1:nfleets)) != length(fleets)) {
-        stop(
-          "Input 'fleets' should be 'all' or a vector of values between 1 and nfleets."
-        )
+        cli::cli_abort("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
       }
     }
     if (fleetnames[1] == "default") {
@@ -343,21 +341,13 @@ SSplotComps <-
           axis1labs <- sizebinlabs
         } else {
           axis1labs <- axis1
-          warning(
-            "Input 'sizebinlabs' differs in length from the unique Bin\n",
-            "  values associated with sizemethod = ",
-            sizemethod,
-            ". Using bin values instead."
-          )
+          cli::cli_warn("Input 'sizebinlabs' differs in length from the unique Bin values associated with sizemethod = {sizemethod}. Using bin values instead.")
         }
       } else {
         # evenly spaced units in length or weight rather than sizebins
         sizeunits <- unique(dbase_kind[["units"]])
         if (length(sizeunits) > 1) {
-          stop(
-            "!error with size units in generalized size comp plots:\n",
-            "    more than one unit value per method.\n"
-          )
+          cli::cli_abort("!error with size units in generalized size comp plots: more than one unit value per method.")
         }
         if (sizeunits %in% c("in", "cm")) {
           kindlab <- paste(labels[10], " (", sizeunits, ")", sep = "")
@@ -463,10 +453,7 @@ SSplotComps <-
       !(kind %in%
         c("LEN", "SIZE", "AGE", "cond", "GSTAGE", "GSTLEN", "L@A", "W@A"))
     ) {
-      stop(
-        "Input 'kind' to SSplotComps needs to be one of the following:\n  ",
-        "'LEN','SIZE','AGE','cond','GSTAGE','GSTLEN','L@A','W@A'."
-      )
+      cli::cli_abort("Input 'kind' to SSplotComps needs to be one of the following: 'LEN','SIZE','AGE','cond','GSTAGE','GSTLEN','L@A','W@A'.")
     }
 
     if (datonly) {
@@ -490,10 +477,7 @@ SSplotComps <-
     if (
       any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")
     ) {
-      message(
-        "Removing super-period composition values labeled 'skip'\n",
-        "and designating super-period values with a '*'"
-      )
+      cli::cli_inform("Removing super-period composition values labeled 'skip' and designating super-period values with a '*'")
       dbase_kind <- dbase_kind[
         dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip",
       ]
@@ -821,9 +805,7 @@ SSplotComps <-
       # for age or length comps, but not conditional AAL
       dbasef <- dbase_kind[dbase_kind[["Fleet"]] %in% fleets, ]
       if ("Nsamp_DM" %in% names(dbasef) && any(!is.na(dbasef[["Nsamp_DM"]]))) {
-        warning(
-          "Sample sizes in plots by fleet aggregating across years within each season have not yet been updated to reflect Dirichlet-Multinomial likelihood"
-        )
+        cli::cli_warn("Sample sizes in plots by fleet aggregating across years within each season have not yet been updated to reflect Dirichlet-Multinomial likelihood")
       }
       # check for the presence of data
       if (nrow(dbasef) > 0) {
@@ -927,9 +909,7 @@ SSplotComps <-
               )
               agg <- agg[agg[["f"]] %in% fleets, ]
               if (any(agg[["s"]] <= 0)) {
-                message(
-                  "super-periods may not work correctly in plots of aggregated comps"
-                )
+                cli::cli_inform("super-periods may not work correctly in plots of aggregated comps")
                 agg <- agg[agg[["s"]] > 0, ]
               }
               agg[["obs"]] <- agg[["obs"]] / agg[["Nsamp_adj"]]
@@ -1080,9 +1060,7 @@ SSplotComps <-
         if (
           "Nsamp_DM" %in% names(dbasef) && any(!is.na(dbasef[["Nsamp_DM"]]))
         ) {
-          warning(
-            "Sample sizes in plots by fleet aggregating across seasons within a year have not yet been updated to reflect Dirichlet-Multinomial likelihood"
-          )
+          cli::cli_warn("Sample sizes in plots by fleet aggregating across seasons within a year have not yet been updated to reflect Dirichlet-Multinomial likelihood")
         }
 
         # check for the presence of data
@@ -1462,11 +1440,7 @@ SSplotComps <-
 
             if (max_n_ageerr > 1) {
               if (ageerr_warning) {
-                message(
-                  "Multiple samples with different ageing error types within fleet/year.\n",
-                  "Plots label '2005a3' indicates ageing error type 3 for 2005 sample.\n",
-                  "Bubble plots may be misleading with overlapping bubbles.\n"
-                )
+                cli::cli_inform("Multiple samples with different ageing error types within fleet/year. Plots label '2005a3' indicates ageing error type 3 for 2005 sample. Bubble plots may be misleading with overlapping bubbles.")
                 ageerr_warning <- FALSE
               }
               # add 1/1000 of a year for each ageing error type to distinguish
@@ -1564,7 +1538,7 @@ SSplotComps <-
             # add lines for growth of individual cohorts if requested
             if (length(cohortlines) > 0) {
               for (icohort in seq_along(cohortlines)) {
-                message("  Adding line for", cohortlines[icohort], "cohort\n")
+                cli::cli_inform(" Adding line for {cohortlines[icohort]} cohort")
                 if (kind == "LEN") {
                   lines(
                     growdatF[["Age"]] + cohortlines[icohort],
@@ -1740,11 +1714,7 @@ SSplotComps <-
 
           if (max_n_ageerr > 1) {
             if (ageerr_warning) {
-              message(
-                "Note: multiple samples with different ageing error types within fleet/year.\n",
-                "     Plots label '2005a3' indicates ageing error type 3 for 2005 sample.\n",
-                "     Bubble plots may be misleading with overlapping bubbles.\n"
-              )
+              cli::cli_inform("Note: multiple samples with different ageing error types within fleet/year. Plots label '2005a3' indicates ageing error type 3 for 2005 sample. Bubble plots may be misleading with overlapping bubbles.")
               ageerr_warning <- FALSE
             }
             # add 1/1000 of a year for each ageing error type to distinguish between types within a year
@@ -2232,7 +2202,7 @@ SSplotComps <-
               # add lines for growth of individual cohorts if requested
               if (length(cohortlines) > 0) {
                 for (icohort in seq_along(cohortlines)) {
-                  message("  Adding line for", cohortlines[icohort], "cohort\n")
+                  cli::cli_inform(" Adding line for {cohortlines[icohort]} cohort")
                   if (kind == "LEN") {
                     if (nsexes > 1) {
                       lines(
@@ -2344,27 +2314,9 @@ SSplotComps <-
                 # scaling when displaying both input and effective
                 sampsizeline <- effNline <- max(dbase[["Bin"]]) /
                   max(dbase[["Nsamp_adj"]], dbase[["effN"]], na.rm = TRUE)
-                message(
-                  "  Fleet ",
-                  f,
-                  " ",
-                  titlesex,
-                  "adj. input & effective N in red & green scaled by ",
-                  effNline,
-                  "\n",
-                  sep = ""
-                )
+                cli::cli_inform("{paste(\"  Fleet \", f, \" \", titlesex, \"adj. input & effective N in red & green scaled by \", effNline, sep = \"\")}")
               } else {
-                message(
-                  "  Fleet ",
-                  f,
-                  " ",
-                  titlesex,
-                  "adj. input N in red scaled by ",
-                  sampsizeline,
-                  "\n",
-                  sep = ""
-                )
+                cli::cli_inform("{paste(\"  Fleet \", f, \" \", titlesex, \"adj. input N in red scaled by \", sampsizeline, sep = \"\")}")
               }
             }
             # function to make plots
@@ -2696,14 +2648,7 @@ SSplotComps <-
             goodbins <- intersect(aalbin, dbase[["Lbin_hi"]])
             if (length(goodbins) > 0) {
               if (length(badbins) > 0) {
-                message(
-                  "Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data:",
-                  badbins,
-                  "\n",
-                  "       the following inputs for 'aalbin' are fine:",
-                  goodbins,
-                  "\n"
-                )
+                cli::cli_inform("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data: {badbins} the following inputs for 'aalbin' are fine: {goodbins}")
               }
               for (ibin in seq_along(goodbins)) {
                 # loop over good bins

@@ -41,7 +41,7 @@ plotCI <-
     }
     if (is.null(y)) {
       if (is.null(x)) {
-        stop("both x and y NULL")
+        cli::cli_abort("both x and y NULL")
       }
       y <- as.numeric(x)
       x <- seq(along = x)

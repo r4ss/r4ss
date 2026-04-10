@@ -93,11 +93,7 @@ SSplotNumbers <-
 
     natage <- replist[["natage"]]
     if (is.null(natage)) {
-      message(
-        "Skipped some plots because NUMBERS_AT_AGE unavailable\n",
-        " in the report file. The starter file may be set to produce\n",
-        " limited report detail."
-      )
+      cli::cli_inform("Skipped some plots because NUMBERS_AT_AGE unavailable in the report file. The starter file may be set to produce limited report detail.")
     } else {
       # get stuff from replist
       ngpatterns <- max(natage[["Bio_Pattern"]])
@@ -127,9 +123,7 @@ SSplotNumbers <-
         areas <- 1:nareas
       } else {
         if (length(intersect(areas, 1:nareas)) != length(areas)) {
-          stop(
-            "Input 'areas' should be 'all' or a vector of values between 1 and nareas."
-          )
+          cli::cli_abort("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
         }
       }
       if (areanames[1] == "default") {
@@ -140,9 +134,7 @@ SSplotNumbers <-
       areacols <- get_areacols(areacols, nareas)
 
       if (SS_versionNumeric <= 3.1) {
-        stop(
-          "numbers at age plots no longer supported for SS version 3.10 and earlier"
-        )
+        cli::cli_abort("numbers at age plots no longer supported for SS version 3.10 and earlier")
       }
 
       ###########
@@ -158,22 +150,19 @@ SSplotNumbers <-
       if ("Settlement" %in% names(natage)) {
         settlement <- unique(natage[["Settlement"]])
         if (length(settlement) > 1) {
-          message("Numbers at age plots only show first settlement event")
+          cli::cli_inform("Numbers at age plots only show first settlement event")
         }
       }
       birth_seas_name <- grep("^BirthSeas", colnames(natage), value = TRUE)
       bseas <- unique(natage[[birth_seas_name]])
       if (length(bseas) > 1) {
-        message("Numbers at age plots are for only the first birth season")
+        cli::cli_inform("Numbers at age plots are for only the first birth season")
       }
       if (ngpatterns > 1) {
-        message(
-          "Numbers at age plots may not deal correctly with growth patterns:",
-          "no guarantees!"
-        )
+        cli::cli_inform("Numbers at age plots may not deal correctly with growth patterns: no guarantees!")
       }
       if (nseasons > 1) {
-        message("Numbers at age plots are for season 1 only")
+        cli::cli_inform("Numbers at age plots are for season 1 only")
         # change plot labels for seasonal models
         labels[16] <- gsub(
           pattern = "of year",
@@ -274,9 +263,7 @@ SSplotNumbers <-
               sextitle <- paste0(sextitle, " in ", areanames[iarea])
             }
             if (!period[iperiod] %in% c("B", "M")) {
-              stop(
-                "'period' input to SSplotNumbers should include only 'B' or 'M'"
-              )
+              cli::cli_abort("'period' input to SSplotNumbers should include only 'B' or 'M'")
             }
             if (period[iperiod] == "B") {
               periodtitle <- labels[16]
@@ -531,10 +518,7 @@ SSplotNumbers <-
             }
           } else {
             if (verbose) {
-              message(
-                "skipped sex ratio contour plot because females=males ",
-                "for all ages and years"
-              )
+              cli::cli_inform("skipped sex ratio contour plot because females=males for all ages and years")
             }
           }
         } # end area loop
@@ -641,9 +625,7 @@ SSplotNumbers <-
               } else if (period[iperiod] == "M") {
                 periodtitle <- labels[17]
               } else {
-                stop(
-                  "'period' input to SSplotNumbers should include only 'B' or 'M'"
-                )
+                cli::cli_abort("'period' input to SSplotNumbers should include only 'B' or 'M'")
               }
               plottitle1 <- paste0(
                 periodtitle,
@@ -860,11 +842,7 @@ SSplotNumbers <-
                     ...
                   )
                 } else {
-                  warning(
-                    "Skipping plot of sex ratio by length and year\n  ",
-                    "due to mismatch in length of table and vector of years.\n  ",
-                    "This may be due to 0 values in the table."
-                  )
+                  cli::cli_warn("Skipping plot of sex ratio by length and year due to mismatch in length of table and vector of years. This may be due to 0 values in the table.")
                 }
               }
               if (plot & 8 %in% subplots) {
@@ -893,10 +871,7 @@ SSplotNumbers <-
               }
             } else {
               if (verbose) {
-                message(
-                  "skipped sex ratio contour plot because females=males",
-                  " for all lengths and years"
-                )
+                cli::cli_inform("skipped sex ratio contour plot because females=males for all lengths and years")
               }
             }
           } # end area loop
@@ -916,7 +891,7 @@ SSplotNumbers <-
           BirthSeas <- min(bseas)
         }
         if (length(bseas) > 1) {
-          message("showing equilibrium age for first birth season", BirthSeas)
+          cli::cli_inform("showing equilibrium age for first birth season {BirthSeas}")
         }
 
         # sort out plot title
@@ -978,10 +953,7 @@ SSplotNumbers <-
                 col = areacols[iarea],
                 add = TRUE
               )
-              message(
-                "Multiple matching lines in equilibrium plot indicate multiple ",
-                "morphs or platoons within each area/sex combination."
-              )
+              cli::cli_inform("Multiple matching lines in equilibrium plot indicate multiple morphs or platoons within each area/sex combination.")
             }
             legendlty <- c(legendlty, m)
             legendcol <- c(legendcol, areacols[iarea])

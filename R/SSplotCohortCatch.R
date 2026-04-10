@@ -74,14 +74,11 @@ SSplotCohortCatch <-
     SS_versionshort <- toupper(substr(replist[["SS_version"]], 1, 8))
 
     if (is.null(wtatage)) {
-      warning(
-        "No weight-at-age data in replist[['wtatage']]\n",
-        "plots of cohort contributions will be in numbers only"
-      )
+      cli::cli_warn("No weight-at-age data in replist[['wtatage']] plots of cohort contributions will be in numbers only")
       subplots <- setdiff(subplots, 2) # removing subplot 2 from the list
     } else {
       if (nseasons > 1) {
-        warning("Plots of catch by cohort might not work for seasonal models.")
+        cli::cli_warn("Plots of catch by cohort might not work for seasonal models.")
       }
     }
 

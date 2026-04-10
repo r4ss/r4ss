@@ -1,3 +1,7 @@
+# r4ss (development version)
+* Replace base R `message()`, `warning()`, and `stop()` calls with `{cli}` equivalents (`cli::cli_inform()`, `cli::cli_warn()`, and `cli::cli_abort()`) throughout the package for improved message formatting.
+* Change default value of `printstats` in `SS_output()` from `TRUE` to `FALSE` to reduce console output.
+
 # r4ss 1.52.0 (April 2025)
 * Add several functions for making tables. The functions all save .rda files containing a list of dataframe and caption.
   * `table_pars()` Information on all model parameters
