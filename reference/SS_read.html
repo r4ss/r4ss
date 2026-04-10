@@ -21,7 +21,7 @@ the control and data files."><meta property="og:image" content="https://r4ss.git
 
     <a class="navbar-brand me-2" href="../index.html">r4ss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.52.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.53.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@ the control and data files.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SS_read</span><span class="op">(</span>dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, ss_new <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SS_read</span><span class="op">(</span>dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, ss_new <span class="op">=</span> <span class="cn">FALSE</span>, read_wtatage <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,6 +80,13 @@ example). The default is the current working directory, <code>dir = getwd()</cod
 <dd><p>A logical that controls if the <code>.ss_new</code> files or
 the original input files are read in.
 The default is to read the original files.</p></dd>
+
+
+<dt id="arg-read-wtatage">read_wtatage<a class="anchor" aria-label="anchor" href="#arg-read-wtatage"></a></dt>
+<dd><p>A logical that controls if the weight-at-age file is read in
+for models that use parametric growth. For such models, it will read the
+wtatage.ss_new file regardless of the setting of <code>ss_new</code> = TRUE/FALSE
+because wtatage.ss typically doesn't exist for these models.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -99,7 +106,8 @@ the following input files:</p><ul><li><p>data</p></li>
 <li><p>control</p></li>
 <li><p>starter</p></li>
 <li><p>forecast</p></li>
-<li><p>wtatage (will be NULL if not required by the model)</p></li>
+<li><p>wtatage (may be absent if not required by the model and
+<code>read_wtatage = FALSE</code>)</p></li>
 <li><p>par (will be NULL if not required by model or if control and par
 do not match)</p></li>
 </ul></div>

@@ -12,7 +12,7 @@ files.
 ## Usage
 
 ``` r
-SS_read(dir = getwd(), ss_new = FALSE, verbose = FALSE)
+SS_read(dir = getwd(), ss_new = FALSE, read_wtatage = FALSE, verbose = FALSE)
 ```
 
 ## Arguments
@@ -27,6 +27,13 @@ SS_read(dir = getwd(), ss_new = FALSE, verbose = FALSE)
 
   A logical that controls if the `.ss_new` files or the original input
   files are read in. The default is to read the original files.
+
+- read_wtatage:
+
+  A logical that controls if the weight-at-age file is read in for
+  models that use parametric growth. For such models, it will read the
+  wtatage.ss_new file regardless of the setting of `ss_new` = TRUE/FALSE
+  because wtatage.ss typically doesn't exist for these models.
 
 - verbose:
 
@@ -48,7 +55,8 @@ in the following input files:
 
 - forecast
 
-- wtatage (will be NULL if not required by the model)
+- wtatage (may be absent if not required by the model and
+  `read_wtatage = FALSE`)
 
 - par (will be NULL if not required by model or if control and par do
   not match)

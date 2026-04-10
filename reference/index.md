@@ -411,6 +411,9 @@
 - [`signif_string()`](https://r4ss.github.io/r4ss/reference/signif_string.md)
   : Convert a numeric vector to character with chosen significant digits
 
+- [`ss3_data_to_fims()`](https://r4ss.github.io/r4ss/reference/ss3_data_to_fims.md)
+  : Convert SS3 data into format required by FIMS
+
 - [`sspar()`](https://r4ss.github.io/r4ss/reference/sspar.md) : Allow
   Multi-Plots Set the par() to options suitable for ss3diags multi
   plots.
