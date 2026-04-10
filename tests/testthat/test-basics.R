@@ -319,3 +319,25 @@ test_that("SS_readstarter() and SS_writestarter() both work", {
   )
   expect_true(file.exists(file.path(temp_path, "teststarter.ss")))
 })
+
+###############################################################################
+# testing SS_read() and SS_write()on simple_small
+################################################################################
+
+test_that("SS_read() and SS_write() work on simple_small", {
+  simple_small_input <- SS_read(
+    file.path(example_path, "simple_small"),
+    read_wtatage = TRUE
+  )
+
+  expect_true(all(
+    c("dat", "ctl", "start", "fore", "wtatage") %in% names(simple_small_input)
+  ))
+
+  wrote <- SS_write(
+    simple_small_input,
+    dir = temp_path,
+    overwrite = TRUE,
+    verbose = FALSE
+  )
+})
