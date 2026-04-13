@@ -395,6 +395,48 @@ series, and fits to data.  Plots are sent to R GUI, single PDF file, or
 multiple PNG files. This is now just a wrapper which calls on separate
 functions to make all the plots.
 }
+\details{
+Functions to make groups of plots (e.g., \code{SSplotBiology()}) are
+called by \code{SS_plots()}. These functions invisibly return a table with
+details on the plots created. This table is  manipulated in \code{SS_plots()} and
+written to a CSV file called \code{plotInfoTable_*.csv}, where * is replaced by
+the date that the plots were created. One column of info is \code{category},
+which isncludes a category for the plot (e.g., biology plots will all be
+labeled as the \code{bio} category.)
+
+If \code{html = TRUE}, \code{SS_html()} is called at the end of \code{SS_plots()} to create
+the html output. A new tab in the html output for each unique value in the
+\code{category} column of \code{plotInfoTable_*.csv}.
+
+A new html file for each category is created with a name set by
+\code{paste("_SS_output_", category, ".html", sep = "")} which includes
+information on all the plots or tables associated with that category in the
+order they appear in the CSV files. The tabbed output at the top of each
+html file includes references to all the other files. If there are
+duplicated file names in the CSV files (e.g., from multiple calls to
+\code{SS_plots()} with different inputs), the one with the more recent \code{png_time}
+is used. To view the html output, open \verb{_SS_output.html} in a browser.
+
+Note that \code{SS_plots()} will avoid overwriting old plots created from running
+\code{SS_plots()} by renaming old plotting output with the date appended to the
+end of the file name (e.g., if \code{plots} is the \code{plotdir}, then it would be
+renamed to something like \code{plots_StartTime_Tue_Jun_22_17.34.28_2021}). The
+new output will be added to the specified \code{plotdir}.
+
+Users can add their own figures to the html view. This can be done by either
+multiple calls to \code{SS_plots()} with different arguments, or generating plots
+outside of r4ss, adding details about these plots to a new
+\code{plotInfoTable_*.csv} file, and calling \code{SS_html()} directly. Creating a
+plotInfoTable_*.csv filename that is alphabetically earlier than the ones
+created by \code{r4ss} should put the extra plots above the other r4ss plots
+within that category. Adding any value for \code{category} other than the
+existing defaults creates a new tab.
+
+Multiple calls to \code{SS_plots()} with different arguments is possible, but if
+adding more panels to a given plot, file may be generated that are no longer
+needed, e.g., a lingering "page3" file when all the files now fit on pages 1
+and 2.
+}
 \references{
 Walters, Hilborn, and Christensen, 2008, Surplus production
 dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
