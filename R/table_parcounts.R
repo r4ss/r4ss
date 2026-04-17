@@ -58,13 +58,13 @@ table_parcounts <- function(
   get_dev_count <- function(table) {
     if (!is.null(table)) {
       table |>
-        dplyr::filter(dev_PH > 0, dev_minyr < dev_maxyr) |>
+        dplyr::filter(dev_PH > 0, dev_minyr != 0, dev_minyr <= dev_maxyr) |>
         dplyr::mutate(Count = dev_maxyr - dev_minyr + 1) |>
         # make list of rownames() repeated by Count
         (\(x) {
           dplyr::mutate(
             x,
-            Labels = purrr::map2(rownames(x), x$Count, ~ rep(.x, .y))
+            Labels = purrr::map2(rownames(x), x[["Count"]], ~ rep(.x, .y))
           )
         })() |>
         dplyr::pull(Labels) |>
@@ -124,7 +124,7 @@ table_parcounts <- function(
       sum(grepl("^NatM", MGparms_labs)),
       # M time-variation
       sum(grepl("^NatM", MGparms_tv_labs)) +
-        sum(grepl("^NatM", get_dev_count(ctl[["MG_parms_tv"]]))),
+        sum(grepl("^NatM", get_dev_count(ctl[["MG_parms"]]))),
       # Growth mean
       sum(grepl("^L_at_", MGparms_labs)) +
         sum(grepl("_K_", MGparms_labs)),
@@ -133,7 +133,7 @@ table_parcounts <- function(
         sum(grepl("^SD_", MGparms_labs)),
       # Growth time-variation
       sum(!grepl("^NatM", MGparms_tv_labs)) +
-        sum(!grepl("^NatM", get_dev_count(ctl[["MG_parms_tv"]]))),
+        sum(!grepl("^NatM", get_dev_count(ctl[["MG_parms"]]))),
       # Recruitment stock-recruit
       length(SRparms_labs),
       # Recruitment stock-recruit variation
@@ -175,7 +175,7 @@ table_parcounts <- function(
       sum(grepl("^F_", parlabs)),
       # F parameters initial equilibrium
       sum(grepl("^InitF_", parlabs)),
-      
+
       # Dirichlet-Multinomial parameters
       sum(grepl("DM_theta", parlabs))
     )
