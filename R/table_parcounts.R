@@ -64,7 +64,7 @@ table_parcounts <- function(
         (\(x) {
           dplyr::mutate(
             x,
-            Labels = purrr::map2(rownames(x), x$Count, ~ rep(.x, .y))
+            Labels = purrr::map2(rownames(x), x[["Count"]], ~ rep(.x, .y))
           )
         })() |>
         dplyr::pull(Labels) |>
@@ -175,7 +175,7 @@ table_parcounts <- function(
       sum(grepl("^F_", parlabs)),
       # F parameters initial equilibrium
       sum(grepl("^InitF_", parlabs)),
-      
+
       # Dirichlet-Multinomial parameters
       sum(grepl("DM_theta", parlabs))
     )
