@@ -53,6 +53,27 @@ table_parcounts <- function(
       NULL
     }
   }
+
+  # function to count deviation parameters
+  get_dev_count <- function(table) {
+    if (!is.null(table)) {
+      table |>
+        dplyr::filter(dev_PH > 0, dev_minyr != 0, dev_minyr <= dev_maxyr) |>
+        dplyr::mutate(Count = dev_maxyr - dev_minyr + 1) |>
+        # make list of rownames() repeated by Count
+        (\(x) {
+          dplyr::mutate(
+            x,
+            Labels = purrr::map2(rownames(x), x[["Count"]], ~ rep(.x, .y))
+          )
+        })() |>
+        dplyr::pull(Labels) |>
+        unlist()
+    } else {
+      NULL
+    }
+  }
+
   # get parameter labels from model output
   parlabs <- replist[["parameters"]] |>
     dplyr::filter(!is.na(Active_Cnt)) |>
@@ -93,13 +114,17 @@ table_parcounts <- function(
       "Retention",
       "Retention time-variation",
       "Age selectivity",
-      "Age selectivity time-variation"
+      "Age selectivity time-variation",
+      "F parameters time series",
+      "F parameters initial equilibrium",
+      "Dirichlet-Multinomial parameters"
     ),
     Count = c(
       # M
       sum(grepl("^NatM", MGparms_labs)),
       # M time-variation
-      sum(grepl("^NatM", MGparms_tv_labs)),
+      sum(grepl("^NatM", MGparms_tv_labs)) +
+        sum(grepl("^NatM", get_dev_count(ctl[["MG_parms"]]))),
       # Growth mean
       sum(grepl("^L_at_", MGparms_labs)) +
         sum(grepl("_K_", MGparms_labs)),
@@ -107,11 +132,13 @@ table_parcounts <- function(
       sum(grepl("^CV_", MGparms_labs)) +
         sum(grepl("^SD_", MGparms_labs)),
       # Growth time-variation
-      sum(!grepl("^NatM", MGparms_tv_labs)),
+      sum(!grepl("^NatM", MGparms_tv_labs)) +
+        sum(!grepl("^NatM", get_dev_count(ctl[["MG_parms"]]))),
       # Recruitment stock-recruit
       length(SRparms_labs),
       # Recruitment stock-recruit variation
-      length(SRparms_tv_labs),
+      length(SRparms_tv_labs) +
+        length(get_dev_count(ctl[["SR_parms"]])),
       # Recruitment deviations time series
       sum(grepl("^Early_RecrDev_", parlabs)) +
         sum(grepl("^Main_RecrDev_", parlabs)) +
@@ -124,22 +151,33 @@ table_parcounts <- function(
       # Index
       length(Qparms_labs),
       # Index time-variation
-      length(Qparms_tv_labs),
+      length(Qparms_tv_labs) + length(get_dev_count(ctl[["Q_parms"]])),
 
       # Size selectivity
       sum(!grepl("_PRet_", size_selex_parms_labs)),
       # Size selectivity time-variation"
-      sum(!grepl("_PRet_", size_selex_parms_tv_labs)),
+      sum(!grepl("_PRet_", size_selex_parms_tv_labs)) +
+        sum(!grepl("_PRet_", get_dev_count(ctl[["size_selex_parms"]]))),
 
       # Retention
       sum(grepl("_PRet_", size_selex_parms_labs)),
       # Retention time-variation"
-      sum(grepl("_PRet_", size_selex_parms_tv_labs)),
+      sum(grepl("_PRet_", size_selex_parms_tv_labs)) +
+        sum(grepl("_PRet_", get_dev_count(ctl[["size_selex_parms"]]))),
 
       # Age selectivity
       length(age_selex_parms_labs),
       # Age selectivity time-variation"
-      length(age_selex_parms_tv_labs)
+      length(age_selex_parms_tv_labs) +
+        length(get_dev_count(ctl[["age_selex_parms"]])),
+
+      # F parameters
+      sum(grepl("^F_", parlabs)),
+      # F parameters initial equilibrium
+      sum(grepl("^InitF_", parlabs)),
+
+      # Dirichlet-Multinomial parameters
+      sum(grepl("DM_theta", parlabs))
     )
   )
 
@@ -147,7 +185,7 @@ table_parcounts <- function(
   count2 <- length(parlabs)
 
   if (count1 != count2) {
-    warnings(
+    warning(
       "Parameter count is off by ",
       count2 - count1,
       "\nCount in table: ",
@@ -168,7 +206,7 @@ table_parcounts <- function(
   # add the table to a list along with caption
   table_parcounts <- list(
     cap = caption,
-    table = data
+    table = table
   )
   # write the table to an rda file
   if (verbose) {
