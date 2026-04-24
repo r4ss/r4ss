@@ -154,6 +154,8 @@ ss3_data_to_fims <- function(
   if (!all(years %in% catch_by_year_fleet[["year"]])) {
     cli::cli_abort("missing years in landings")
   }
+  # weight_at_age needs additional year
+  years_wtatage <- c(years, max(years) + 1)
 
   if (!is.null(dat[["CPUE"]])) {
     # convert indices to FIMSFrame format
@@ -354,6 +356,22 @@ ss3_data_to_fims <- function(
     ) |>
     dplyr::select(-year)
 
+  # if end year + 1 is not present in weight-at-age matrix, 
+  # copy ending year rows and add 1 to timing for the copy
+  if (!max(years_wtatage) %in% wtatage[["timing"]]) {
+    cli::cli_alert_warning(
+      "The weight-at-age data does not include end year + 1. Adding rows for year {max(years_wtatage)} by copying rows from year {max(wtatage[['timing']])}."
+    )
+    wtatage <- rbind(
+      wtatage,
+      wtatage |>
+        dplyr::filter(timing == max(timing)) |>
+        dplyr::mutate(
+          timing = max(timing) + 1
+        )
+    )
+  }
+
   # get age-to-length conversion matrix
   # TODO: is it correct to make this conditional on length comps existing?
   if (!is.null(lencomps)) {
@@ -365,6 +383,7 @@ ss3_data_to_fims <- function(
         )
       )
     }
+
     # initially always take the matrix for females in the middle of season 1
     ALK <- ss3_output[["ALK"]][,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
 
@@ -372,7 +391,7 @@ ss3_data_to_fims <- function(
     data_bin_widths <- sort(unique(diff(dat[["lbin_vector"]])))
     pop_bin_widths <- sort(unique(diff(dat[["lbin_vector_pop"]])))
     if (!identical(data_bin_widths, pop_bin_widths)) {
-      cli::cli_alert_danger(
+      cli::cli_alert_warning(
         "Age-to-length conversion matrix from SS3 is based on population length
          bins which have different minimum bin widths than the data length bins. 
          The function will not aggregate all the proportions, and the results may not 
