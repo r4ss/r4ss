@@ -96,17 +96,14 @@ SSMethod.Cond.TA1.8 <-
     } else {
       # if custom names input, check length
       if (length(fleetnames) != fit[["nfleets"]]) {
-        stop(
-          "fleetnames needs to be NULL or have length = nfleets = ",
-          fit[["nfleets"]]
-        )
+        cli::cli_abort("{paste(\"fleetnames needs to be NULL or have length = nfleets = \", fit[[\"nfleets\"]], sep = \"\")}")
       }
     }
 
     # Select the type of datbase
     dbase <- fit[["condbase"]]
     if (length(unique(dbase[["Bin"]])) == 1) {
-      warning("Francis weighting method doesn't work with only 1 age bin")
+      cli::cli_warn("Francis weighting method doesn't work with only 1 age bin")
       return()
     }
     sel <- is.in(dbase[["Fleet"]], fleet) & is.in(dbase[["Part"]], part)
@@ -118,7 +115,7 @@ SSMethod.Cond.TA1.8 <-
     if (is.null(seas)) {
       seas <- "comb"
       if (length(unique(dbase[["Seas"]])) > 1) {
-        message("Combining data from multiple seasons")
+        cli::cli_inform("Combining data from multiple seasons")
       }
     }
 
@@ -131,7 +128,7 @@ SSMethod.Cond.TA1.8 <-
     if (length(uindx) == 1) {
       # presumably the method is meaningless of there's only 1 point,
       # but it's good to be able to have the function play through
-      warning("Only one point to plot")
+      cli::cli_warn("Only one point to plot")
       return()
     }
 
@@ -268,7 +265,7 @@ SSMethod.Cond.TA1.8 <-
           # 0 sample sizes caused problems with ylim, override with wide range
           # plot may not make sense but will help users note that a problem exists
           # (as opposed to skipping the plot)
-          warning("NaN values in Francis calculations, plot may not make sense")
+          cli::cli_warn("NaN values in Francis calculations, plot may not make sense")
           ylim <- c(0, fit[["accuage"]])
         }
         # make empty plot (unless adding to existing plot)

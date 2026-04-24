@@ -21,12 +21,12 @@
 #' @family read/write functions
 SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
-    message("running SS_readstarter")
+    cli::cli_inform("running SS_readstarter")
   }
 
   starter <- readLines(file, warn = FALSE)
   if (length(starter) == 0) {
-    stop("The following file was empty: ", file)
+    cli::cli_abort("The following file was empty: {file}")
   }
   mylist <- list()
 
@@ -49,22 +49,12 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   }
   strings <- strings[is.na(suppressWarnings(as.numeric(strings)))]
   if (length(strings) > 2) {
-    warning(
-      "Too many strings in starter file?\n",
-      "Choosing first 2 of these as data and control file names:\n",
-      paste(strings, collapse = "\n")
-    )
+    cli::cli_warn("{paste(\"Too many strings in starter file? Choosing first 2 of these as data and control file names: \", paste(strings, collapse = \", \"), sep = \"\")}")
   }
   mylist[["datfile"]] <- strings[1]
   mylist[["ctlfile"]] <- strings[2]
   if (verbose) {
-    message(
-      "  data, control files: ",
-      mylist[["datfile"]],
-      ", ",
-      mylist[["ctlfile"]],
-      sep = ""
-    )
+    cli::cli_inform("{paste(\"  data, control files: \", mylist[[\"datfile\"]], \", \", mylist[[\"ctlfile\"]], sep = \"\")}")
   }
 
   # get numbers (could be better integrated with function above)
@@ -138,7 +128,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["converge_criterion"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("  converge_criterion = ", mylist[["converge_criterion"]])
+    cli::cli_inform("{paste(\"  converge_criterion = \", mylist[[\"converge_criterion\"]], sep = \"\")}")
   }
   mylist[["retro_yr"]] <- allnums[i]
   i <- i + 1
@@ -151,7 +141,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["SPR_basis"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("  SPR_basis = ", mylist[["SPR_basis"]])
+    cli::cli_inform("{paste(\"  SPR_basis = \", mylist[[\"SPR_basis\"]], sep = \"\")}")
   }
   mylist[["F_std_units"]] <- allnums[i]
   i <- i + 1
@@ -170,7 +160,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["F_std_basis"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("  F_std_basis = ", mylist[["F_std_basis"]])
+    cli::cli_inform("{paste(\"  F_std_basis = \", mylist[[\"F_std_basis\"]], sep = \"\")}")
   }
 
   # last value in vector of numerical values
@@ -178,15 +168,15 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (i < i.final) {
     # file is probably 3.30
     if (verbose) {
-      message("Assuming version 3.30 based on number of numeric values.")
+      cli::cli_inform("Assuming version 3.30 based on number of numeric values.")
     }
     mylist[["MCMC_output_detail"]] <- allnums[i]
     i <- i + 1
     mylist[["ALK_tolerance"]] <- allnums[i]
     i <- i + 1
     if (verbose) {
-      message("  MCMC_output_detail = ", mylist[["MCMC_output_detail"]])
-      message("  ALK_tolerance = ", mylist[["ALK_tolerance"]])
+      cli::cli_inform("{paste(\"  MCMC_output_detail = \", mylist[[\"MCMC_output_detail\"]], sep = \"\")}")
+      cli::cli_inform("{paste(\"  ALK_tolerance = \", mylist[[\"ALK_tolerance\"]], sep = \"\")}")
     }
   }
 
@@ -194,12 +184,12 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["final"]] <- final <- allnums[i]
   i <- i + 1
   if (!is.na(final) && final %in% c(3.30, 999)) {
-    if (verbose) message("Read of starter file complete. Final value: ", final)
+    if (verbose) cli::cli_inform("Read of starter file complete. Final value: {final}")
   } else {
     # read seed and check final value
     mylist[["seed"]] <- mylist[["final"]]
     if (verbose) {
-      message("Reading a random seed value:", mylist[["seed"]])
+      cli::cli_inform("{paste(\"Reading a random seed value:\", mylist[[\"seed\"]], sep = \"\")}")
     }
 
     mylist[["final"]] <- final <- allnums[i]
@@ -210,10 +200,10 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     }
     if (!is.na(final) && final %in% c(3.30, 999)) {
       if (verbose) {
-        message("Read of starter file complete. Final value: ", final)
+        cli::cli_inform("Read of starter file complete. Final value: {final}")
       }
     } else {
-      warning("Final value is ", allnums[i], " but should be 3.30 or 999")
+      cli::cli_warn("Final value is {allnums[i]} but should be 3.30 or 999")
     }
   }
   if (final == 3.30) {

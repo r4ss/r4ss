@@ -87,7 +87,7 @@ TSCplot <- function(
   ### Plots the barchart of catches and depletion trajctory for the TSC report
 
   if (!is.null(makePDF) & !is.null(makePNG)) {
-    stop("Cannot specify both makePDF and makePNG. Choose only one.\n")
+    cli::cli_abort("Cannot specify both makePDF and makePNG. Choose only one.")
   }
 
   indVirgin <- which(SSout[["timeseries"]][["Era"]] == "VIRG")
@@ -130,10 +130,7 @@ TSCplot <- function(
   }
   if (MCMC) {
     if (is.null(SSout[["mcmc"]])) {
-      stop(
-        "There is no mcmc element on the model list.\n",
-        "Set MCMC = FALSE or add in the mcmc element to the list.\n"
-      )
+      cli::cli_abort("There is no mcmc element on the model list. Set MCMC = FALSE or add in the mcmc element to the list.")
     }
     SBzero <- median(SSout[["mcmc"]][["SSB_Virgin"]])
     SB <- SSout[["mcmc"]][, substring(names(SSout[["mcmc"]]), 1, 4) == "SSB_"]
@@ -219,11 +216,11 @@ TSCplot <- function(
 
   if (!is.null(makePDF)) {
     dev.off()
-    message("The plot is in pdf file ", makePDF)
+    cli::cli_inform("The plot is in pdf file {makePDF}")
   }
   if (!is.null(makePNG)) {
     dev.off()
-    message("The plot is in png file", makePNG)
+    cli::cli_inform("The plot is in png file {makePNG}")
   }
 
   invisible(SP)

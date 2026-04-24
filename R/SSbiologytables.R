@@ -60,7 +60,7 @@ SSbiologytables <- function(
   if (is.na(plotdir.isdir) | !plotdir.isdir) {
     dir.create(plotdir)
   }
-  message("writing files to ", plotdir)
+  cli::cli_inform("writing files to {plotdir}")
 
   # set fleet-specific names, and plotting parameters
   if (fleetnames[1] == "default") {

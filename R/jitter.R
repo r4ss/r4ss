@@ -147,15 +147,11 @@ jitter <- function(
   # setwd(dir)
 
   if (verbose) {
-    message("Temporarily changing working directory to:\n", dir)
+    cli::cli_inform("Temporarily changing working directory to: {dir}")
     if (!file.exists("Report.sso")) {
-      message(
-        "Copy output files from a converged run into\n",
-        dir,
-        "\nprior to running jitter to enable easier comparisons."
-      )
+      cli::cli_inform("Copy output files from a converged run into {dir} prior to running jitter to enable easier comparisons.")
     }
-    message("Checking starter file")
+    cli::cli_inform("Checking starter file")
   }
   # read starter file to test for non-zero jitter value
   starter <- SS_readstarter(
@@ -168,11 +164,7 @@ jitter <- function(
     starter[["parmtrace"]]
   )
   if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
-    stop(
-      "Change the jitter value in the starter file to be > 0\n",
-      "or change the 'jitter_fraction' argument to be > 0.",
-      call. = FALSE
-    )
+    cli::cli_abort("Change the jitter value in the starter file to be > 0 or change the 'jitter_fraction' argument to be > 0.", call = NULL)
   }
   if (!is.null(jitter_fraction)) {
     starter[["jitter_fraction"]] <- jitter_fraction
@@ -235,7 +227,7 @@ jitter <- function(
     }
   )
   if (verbose) {
-    message("Finished running jitters, running last few clean-up steps")
+    cli::cli_inform("Finished running jitters, running last few clean-up steps")
   }
 
   # delete jitter model directory
@@ -253,7 +245,7 @@ jitter <- function(
   )
 
   if (printlikes) {
-    message("Table of likelihood values:")
+    cli::cli_inform("Table of likelihood values:")
     print(table(likesaved))
   }
   return(invisible(likesaved))
@@ -296,7 +288,7 @@ iterate_jitter <- function(
   )
 
   if (verbose) {
-    message(paste0("Starting run of jitter", i))
+    cli::cli_inform("Starting run of jitter{i}")
   }
 
   # pause briefly when running in parallel to ensure seeds differ
@@ -337,11 +329,11 @@ iterate_jitter <- function(
       ]
     }
     if (printlikes) {
-      message("Likelihood for jitter ", i, " = ", like)
+      cli::cli_inform("Likelihood for jitter {i} = {like}")
     }
     return(like)
   } else {
     unlink(jitter_dir, recursive = TRUE)
-    if (verbose) warning("No Report.sso file found from run ", i)
+    if (verbose) cli::cli_warn("No Report.sso file found from run {i}")
   }
 }

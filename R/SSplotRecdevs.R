@@ -83,7 +83,7 @@ SSplotRecdevs <-
     ]
 
     if (nrow(recdev) == 0 || max(recdev[["Value"]]) == 0) {
-      if (verbose) message("Skipped SSplotrecdevs - no rec devs estimated")
+      if (verbose) cli::cli_inform("Skipped SSplotrecdevs - no rec devs estimated")
     } else {
       if (nrow(recdev) > 0) {
         # early

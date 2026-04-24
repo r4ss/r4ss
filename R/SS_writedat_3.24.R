@@ -35,7 +35,7 @@ SS_writedat_3.24 <- function(
   )
   # function to write Stock Synthesis data files
   if (verbose) {
-    message("running SS_writedat_3.24")
+    cli::cli_inform("running SS_writedat_3.24")
   }
   if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(
@@ -47,15 +47,13 @@ SS_writedat_3.24 <- function(
   # check datlist
 
   if (datlist[["type"]] != "Stock_Synthesis_data_file") {
-    stop(
-      "input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'"
-    )
+    cli::cli_abort("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
   }
 
   # check for existing file
   if (file.exists(outfile)) {
     if (!overwrite) {
-      message("File exists and input 'overwrite'=FALSE: ", outfile)
+      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
       return()
     } else {
       file.remove(outfile)
@@ -67,7 +65,7 @@ SS_writedat_3.24 <- function(
   options(width = 5000, max.print = 9999999)
 
   if (verbose) {
-    message("opening connection to ", outfile)
+    cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   # sink(zz)
@@ -365,6 +363,6 @@ SS_writedat_3.24 <- function(
   #  sink()
   #  close(zz)
   if (verbose) {
-    message("file written to ", outfile)
+    cli::cli_inform("file written to {outfile}")
   }
 }

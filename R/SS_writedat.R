@@ -31,19 +31,17 @@ SS_writedat <- function(
     )
   }
   if (verbose) {
-    message("running SS_writedat")
+    cli::cli_inform("running SS_writedat")
   }
 
   # check datlist
   if (datlist[["type"]] != "Stock_Synthesis_data_file") {
-    stop(
-      "input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'"
-    )
+    cli::cli_abort("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
   }
 
   # check version input
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
-    stop("Input 'version' should be either '3.24' or '3.30'")
+    cli::cli_abort("Input 'version' should be either '3.24' or '3.30'")
   }
 
   # call function for SS version 3.24

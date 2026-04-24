@@ -16,11 +16,11 @@ check_inputlist <- function(inputlist) {
 
   # check for non-empty list
   if (length(inputlist) == 0) {
-    stop("inputlist is empty")
+    cli::cli_abort("inputlist is empty")
   }
 
   if (!any(elements %in% names(inputlist))) {
-    stop("input does not look like a list created by SS_read()")
+    cli::cli_abort("input does not look like a list created by SS_read()")
   }
   # check for whether wtatage is required and if so, add it to the
   # vector of elements
@@ -35,10 +35,7 @@ check_inputlist <- function(inputlist) {
 
   missingnames <- elements[!elements %in% names(inputlist)]
   if (length(missingnames) > 0) {
-    warning(
-      "The following elements are missing from the input list: ",
-      paste(missingnames, collapse = ", ")
-    )
+    cli::cli_warn("The following elements are missing from the input list: {paste(missingnames, collapse = ', ')}")
     return(FALSE)
   } else {
     return(TRUE)
