@@ -356,7 +356,7 @@ ss3_data_to_fims <- function(
     ) |>
     dplyr::select(-year)
 
-  # if end year + 1 is not present in weight-at-age matrix, 
+  # if end year + 1 is not present in weight-at-age matrix,
   # copy ending year rows and add 1 to timing for the copy
   if (!max(years_wtatage) %in% wtatage[["timing"]]) {
     cli::cli_alert_warning(
