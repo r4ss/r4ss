@@ -62,7 +62,7 @@ time-series, and numbers-at-age are created.</p>
 <span>  es_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fleetnames <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  add_text <span class="op">=</span> <span class="st">"model area"</span>,</span>
-<span>  so_units <span class="op">=</span> <span class="st">"millions of eggs"</span>,</span>
+<span>  so_units <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  tables <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  divide_by_2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  endyr <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -116,11 +116,9 @@ end of the caption if it does not already exist.</p></dd>
 
 
 <dt id="arg-so-units">so_units<a class="anchor" aria-label="anchor" href="#arg-so-units"></a></dt>
-<dd><p>A single character object specifying the unit of measurement
-that spawning output is reported in. The default is "millions of eggs".
-This text will be used in the table captions. If fecundity is equal to
-weight-at-length, then the units are hard-wired to <code>"mt"</code> regardless of
-what is used within this argument.</p></dd>
+<dd><p>Deprecated as of version 1.51.0 because the function now
+relies on the <code>SpawnOutputLabel</code> argument passed to <code><a href="SS_output.html">SS_output()</a></code> which
+is used throughout the package.</p></dd>
 
 
 <dt id="arg-tables">tables<a class="anchor" aria-label="anchor" href="#arg-tables"></a></dt>

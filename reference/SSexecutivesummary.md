@@ -19,7 +19,7 @@ SSexecutivesummary(
   es_only = FALSE,
   fleetnames = NULL,
   add_text = "model area",
-  so_units = "millions of eggs",
+  so_units = lifecycle::deprecated(),
   tables = lifecycle::deprecated(),
   divide_by_2 = FALSE,
   endyr = NULL,
@@ -75,11 +75,10 @@ SSexecutivesummary(
 
 - so_units:
 
-  A single character object specifying the unit of measurement that
-  spawning output is reported in. The default is "millions of eggs".
-  This text will be used in the table captions. If fecundity is equal to
-  weight-at-length, then the units are hard-wired to `"mt"` regardless
-  of what is used within this argument.
+  Deprecated as of version 1.51.0 because the function now relies on the
+  `SpawnOutputLabel` argument passed to
+  [`SS_output()`](https://r4ss.github.io/r4ss/reference/SS_output.md)
+  which is used throughout the package.
 
 - tables:
 
