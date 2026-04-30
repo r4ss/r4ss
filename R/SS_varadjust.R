@@ -151,7 +151,8 @@ SS_varadjust <- function(
   options(warn = old_warn)
 
   if (verbose) {
-    cli::cli_inform(paste(\"Existing table of variance adjustments:\\n\", paste(utils::capture.output(ctl), sep = \"\", collapse = \"\\n\"), sep = \"\"))
+    cli::cli_inform("Existing table of variance adjustments:
+{paste(utils::capture.output(ctl), sep = '', collapse = \"\\n\")}")
   }
 
   if (is.null(newrow) & is.null(newtable)) {
@@ -178,7 +179,8 @@ SS_varadjust <- function(
   }
 
   if (verbose) {
-    cli::cli_inform(paste(\"New table of variance adjustments:\\n\", paste(utils::capture.output(ctl), sep = \"\", collapse = \"\\n\"), sep = \"\"))
+    cli::cli_inform("New table of variance adjustments:
+{paste(utils::capture.output(ctl), sep = '', collapse = \"\\n\")}")
   }
 
   # absolute position of the rows to change

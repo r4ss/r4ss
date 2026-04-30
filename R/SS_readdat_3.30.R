@@ -72,7 +72,7 @@ SS_readdat_3.30 <-
     }
     if (is.null(section)) {
       if (Nsections > 1 & verbose) {
-        cli::cli_inform(paste(\"The supplied data file has \", Nsections, ifelse(Nsections == 1, \" section. \", \" sections. \"), \" Using section = 1.\", sep = \"\"))
+    cli::cli_inform("The supplied data file has {Nsections}{ifelse(Nsections == 1, ' section. ', ' sections. ')} Using section = 1.")
       }
       section <- 1
     }
@@ -203,7 +203,10 @@ SS_readdat_3.30 <-
           datlist[["fleetinfo"]][["need_catch_mult"]] == 1
       )
     ) {
-      cli::cli_abort(paste(\"Catch multipler can be used only for fleet_type = 1; Check fleet = \", paste(which(\n            datlist[[\"fleetinfo\"]][[\"type\"]] != 1 &\n              datlist[[\"fleetinfo\"]][[\"need_catch_mult\"]] == 1\n          ), sep = \"\", collapse = \", \"), \" in fleet info.\", sep = \"\"))
+      cli::cli_abort("Catch multipler can be used only for fleet_type = 1; Check fleet = {paste(which(
+            datlist[['fleetinfo']][['type']] != 1 &
+              datlist[['fleetinfo']][['need_catch_mult']] == 1
+          ), sep = '', collapse = ', ')} in fleet info.")
     }
     if (verbose) {
       cli::cli_inform("Read fleet information.")
@@ -446,7 +449,7 @@ SS_readdat_3.30 <-
         ) ==
           0
         if (any(zero_lencomp == TRUE)) {
-          cli::cli_warn(paste(\"Lines of all zero length comp found. SS will exit on error if\", \" a line of comps is all zeroes and year is positive. Line(s) \", paste(which(zero_lencomp), sep = \"\", collapse = \", \"), sep = \"\"))
+          cli::cli_warn("Lines of all zero length comp found. SS will exit on error if a line of comps is all zeroes and year is positive. Line(s) {paste(which(zero_lencomp), sep = '', collapse = ', ')}")
         }
       }
 
@@ -538,7 +541,7 @@ SS_readdat_3.30 <-
         ) ==
           0
         if (any(zero_agecomp == TRUE)) {
-          cli::cli_warn(paste(\"Lines of all zero age comp found. SS will exit on error if\", \" a line of comps is all zeros. Line(s) \", paste(which(zero_agecomp), sep = \"\", collapse = \", \"), sep = \"\"))
+          cli::cli_warn("Lines of all zero age comp found. SS will exit on error if a line of comps is all zeros. Line(s) {paste(which(zero_agecomp), sep = '', collapse = ', ')}")
         }
       }
 
@@ -717,7 +720,10 @@ SS_readdat_3.30 <-
         if (
           any(datlist[["sizefreq_data_list"]][[imethod]][, "method"] != imethod)
         ) {
-          cli::cli_abort(paste(\"Problem with method in size frequency data; Expecting method: \", imethod, \"; Read method(s): \", paste(\n              unique(datlist[[\"sizefreq_data_list\"]][[\"method\"]]),\n              collapse = \", \"\n            ), sep = \"\"))
+          cli::cli_abort("Problem with method in size frequency data; Expecting method: {imethod}; Read method(s): {paste(
+              unique(datlist[['sizefreq_data_list']][['method']]),
+              collapse = ', '
+            )}")
         }
       }
       if (verbose) {

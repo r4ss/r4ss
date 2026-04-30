@@ -53,10 +53,10 @@ SS_recdevs <-
     readfun <- function(string, maxlen = Inf) {
       line1 <- grep(string, ctl)
       if (length(line1) < 1) {
-        cli::cli_abort(paste(\"no line contains the phrase, '\", string, \"'\", sep = \"\"))
+        cli::cli_abort("no line contains the phrase, '{string}'")
       }
       if (length(line1) > 1) {
-        cli::cli_abort(paste(\"more than one line contains the phrase, '\", string, \"'\", sep = \"\"))
+        cli::cli_abort("more than one line contains the phrase, '{string}'")
       }
 
       # split parameter line at hash mark
@@ -67,15 +67,7 @@ SS_recdevs <-
       vec <- as.numeric(vecstrings[vecstrings != ""])
       # check for length
       if (length(vec) > maxlen) {
-        cli::cli_abort(paste(
-          "this line has more than ",
-          maxlen,
-          " value",
-          c("s", "")[1 + (maxlen == 1)],
-          ": ",
-          ctl[line1],
-          sep = ""
-        ))
+        cli::cli_abort("this line has more than {maxlen} value{c('s', '')[1 + (maxlen == 1)]}: {ctl[line1]}")
       }
       return(vec)
     } # end readfun

@@ -295,7 +295,7 @@ SS_plots <-
     check_replist(replist)
 
     if (is.null(replist[["SpawnOutputLabel"]])) {
-      cli::cli_warn("Setting replist[[\"SpawnOutputLabel\"]] <- \"Spawning output\" because the replist input is from an older version of r4ss which did not include this output")
+    cli::cli_warn("Setting replist[['SpawnOutputLabel']] <- 'Spawning output' because the replist input is from an older version of r4ss which did not include this output")
       replist[["SpawnOutputLabel"]] <- "Spawning output"
     }
 

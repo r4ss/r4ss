@@ -83,7 +83,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste(name, \",i=\", forelist$\".i\", \": \", paste(forelist[[name]], sep = \"\", collapse = \"\\n\"), sep = \"\"))
+      cli::cli_inform("{name},i={forelist[['.i']]}: {paste(forelist[[name]], sep = '', collapse = '\n')}")
     }
     return(forelist)
   }
@@ -151,7 +151,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste(name, \",i=\", forelist$\".i\", \": \", paste(forelist[[which(names(forelist) == name)]], sep = \"\", collapse = \"\\n\"), sep = \"\"))
+      cli::cli_inform("{name},i={forelist[['.i']]}: {paste(forelist[[which(names(forelist) == name)]], sep = '', collapse = '\n')}")
     }
     return(forelist)
   }
@@ -166,7 +166,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste(name, \",i=\", forelist$\".i\", \" ;\", forelist[[which(names(forelist) == name)]], sep = \"\"))
+      cli::cli_inform("{name},i={forelist[['.i']]} ;{forelist[[which(names(forelist) == name)]]}")
     }
     return(forelist)
   }
@@ -185,7 +185,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(paste(name, \",i=\", forelist$\".i\", sep = \"\"))
+      cli::cli_inform("{name},i={forelist[['.i']]}")
     }
     return(forelist)
   }
@@ -235,13 +235,13 @@ SS_readforecast <- function(
     forelist <- add_vec(forelist, length = 10, name = "Bmark_years")
   }
   if (verbose) {
-    cli::cli_inform(paste(\"Benchmark years: \", forelist[[\"Bmark_years\"]], sep = \"\"))
+    cli::cli_inform("Benchmark years: {forelist[['Bmark_years']]}")
   }
   forelist <- add_elem(forelist, "Bmark_relF_Basis")
   forelist <- add_elem(forelist, "Forecast")
   if (forelist[["Forecast"]] %in% c(0, -1) & !readAll) {
     if (verbose) {
-      cli::cli_inform(paste(\"Forecast is \", forelist[[\"Forecast\"]], \" and input readAll=FALSE so skipping remainder of file\", sep = \"\"))
+      cli::cli_inform("Forecast is {forelist[['Forecast']]} and input readAll=FALSE so skipping remainder of file")
     }
   } else if (
     forelist[["Forecast"]] %in%
@@ -253,13 +253,13 @@ SS_readforecast <- function(
     # stop reading if forecast 0 or -1 used, and no other lines present
     # (aside from 999), but readAll = TRUE.
     if (verbose) {
-      cli::cli_inform(paste(\"Forecast =\", forelist[[\"Forecast\"]], \"\", sep = \"\"))
+      cli::cli_inform("Forecast ={forelist[['Forecast']]}")
     }
     cli::cli_warn("readAll selected as TRUE, but lines beyond Forecast are not present in the forecasting file, so skipping remainder of file")
   } else {
     # continue reading forecast
     if (verbose) {
-      cli::cli_inform(paste(\"Forecast =\", forelist[[\"Forecast\"]], \"\", sep = \"\"))
+      cli::cli_inform("Forecast ={forelist[['Forecast']]}")
     }
     forelist <- add_elem(forelist, "Nforecastyrs")
     # check for compatible input with forecast option 1.
@@ -291,7 +291,7 @@ SS_readforecast <- function(
       )
     }
     if (verbose) {
-      cli::cli_inform(paste(\"Forecast years: \", forelist[[\"Fcast_years\"]], sep = \"\"))
+      cli::cli_inform("Forecast years: {forelist[['Fcast_years']]}")
     }
     # 3.30 models that don't use the new table input above read
     # additional selectivity setting
@@ -301,7 +301,7 @@ SS_readforecast <- function(
     ) {
       forelist <- add_elem(forelist, "Fcast_selex")
       if (verbose) {
-        cli::cli_inform(paste(\"Forecast selectivity option: \", forelist[[\"Fcast_selex\"]], sep = \"\"))
+        cli::cli_inform("Forecast selectivity option: {forelist[['Fcast_selex']]}")
       }
     } else {
       forelist[["Fcast_selex"]] <- NA
@@ -474,7 +474,7 @@ SS_readforecast <- function(
       }
       forelist[["eof"]] <- TRUE
     } else {
-      cli::cli_warn(paste(\"Error: final value is \", forelist$\".dat\"[forelist$\".i\"], \" but \", \"should be 999\", sep = \"\"))
+    cli::cli_warn("Error: final value is {forelist[['.dat']][forelist[['.i']]]} but should be 999")
       forelist[["eof"]] <- FALSE
     }
   }
