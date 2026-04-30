@@ -14,6 +14,7 @@ r4ss is not as regularly updated and therefore may be out of date.
 Instead, it is recommended to install from GitHub:
 
 ``` r
+
 # install.packages("pak") # if needed
 pak::pkg_install("r4ss/r4ss")
 ```
@@ -23,12 +24,14 @@ pak::pkg_install("r4ss/r4ss")
 You can then load the package with:
 
 ``` r
+
 library("r4ss")
 ```
 
 And read the help files with:
 
 ``` r
+
 ?r4ss
 help(package = "r4ss")
 ```
@@ -46,6 +49,7 @@ To install alternative versions of r4ss, provide a reference to the
 `install_github`, such as
 
 ``` r
+
 pak::pkg_install("r4ss/r4ss@1.46.1") # install r4ss version 1.46.1
 ```
 
@@ -62,6 +66,7 @@ first for reading the output from a Stock Synthesis model and the second
 for making a large set of plots illustrating that output.
 
 ``` r
+
 # it's useful to create a variable for the directory with the model output
 mydir <- file.path(
   path.package("r4ss"),
@@ -106,12 +111,14 @@ specified through the `plot` argument. For example, if only the plots of
 Catch were desired, call:
 
 ``` r
+
 SS_plots(replist = replist, plot = 7)
 ```
 
 If only plots of catch and discards were desired, the user could call:
 
 ``` r
+
 SS_plots(replist = replist, plot = c(7, 9))
 ```
 
@@ -130,6 +137,7 @@ a bug in the conditional age-at-length fits (plot set 18), exclude the
 plot:
 
 ``` r
+
 SS_plots(replist, plot = c(1:17, 19:26))
 ```
 
@@ -142,6 +150,7 @@ We’ll demonstrate this by creating a new model from a model in the
 `r4ss` package.
 
 ``` r
+
 # initial model to modify
 mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
 # create a new directory to put a new, modified version of the model
@@ -152,6 +161,7 @@ Use the r4ss utility function to copy over the model files from
 `mod_path` to `new_mod_path`:
 
 ``` r
+
 copy_SS_inputs(dir.old = mod_path, dir.new = new_mod_path)
 #> copying files from
 #>  /home/runner/work/_temp/Library/r4ss/extdata/simple_small
@@ -171,6 +181,7 @@ Stock Synthesis files can be read in as list objects in R using the
 function.
 
 ``` r
+
 inputs <- r4ss::SS_read(dir = new_mod_path)
 # can also separately run the functions called by SS_read():
 # SS_readstarter(), SS_readdat(), SS_readctl(), SS_readforecast(),
@@ -186,6 +197,7 @@ as they appear in the text file. Use
 components:
 
 ``` r
+
 names(inputs) # see the elements of the big list
 #> [1] "dir"   "path"  "dat"   "ctl"   "start" "fore"
 names(inputs$start) # see names of the list components of starter file
@@ -207,6 +219,7 @@ Or reference a specific element to see the components. For example, we
 can look at the mortality and growth parameter section (MG_parms):
 
 ``` r
+
 inputs$ctl$MG_parms
 #>                         LO        HI        INIT       PRIOR PR_SD PR_type
 #> NatM_p_1_Fem_GP_1    5e-02  0.150000  0.10000000  0.10000000   0.8       0
@@ -285,6 +298,7 @@ You could make basic or large structural changes to your model in R. For
 example, the initial value of M can be changed:
 
 ``` r
+
 # view the initial value
 inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
 #> [1] 0.1
@@ -305,6 +319,7 @@ Settings in other files can also be modified. For example, the biomass
 target can be modified in the forecast file
 
 ``` r
+
 inputs$fore$Btarget
 #> [1] 0.4
 inputs$fore$Btarget <- 0.45
@@ -319,6 +334,7 @@ function can be used to write out the modified stock synthesis input R
 objects into input files:
 
 ``` r
+
 r4ss::SS_write(inputs, dir = new_mod_path, overwrite = TRUE)
 ```
 
@@ -347,6 +363,7 @@ or other releases found by entering a character string of a version tag
 downloaded from the Stock Synthesis GitHub page using the function:
 
 ``` r
+
 # Default with no version downloads the latest release
 r4ss::get_ss3_exe()
 
@@ -371,6 +388,7 @@ will be run, [`run()`](https://r4ss.github.io/r4ss/reference/run.md) can
 be used. Assuming the stock synthesis executable is called ss.exe:
 
 ``` r
+
 r4ss::run(dir = new_mod_path, skipfinished = FALSE)
 ```
 
@@ -390,6 +408,7 @@ which gives them the names ss3.exe (for windows) and ss3 (for linux/osx)
 regardless of the version.
 
 ``` r
+
 # use the absolute exe path in the call on a Windows computer.
 run(dir = new_mod_path, exe = "c:/SS/SSv3.30.19.01_Apr15/ss.exe")
 # use the absolute exe path in the call on linux.
@@ -452,6 +471,7 @@ case there are problems with the run. For example, a five year
 retrospective could be done:
 
 ``` r
+
 # create a temporary path for the retrospective analyses to run and download the
 # ss3 exe
 old_mod_path <- system.file(file.path("extdata", "simple_small"), package = "r4ss")
@@ -462,6 +482,7 @@ get_ss3_exe(dir = new_mod_path)
 ```
 
 ``` r
+
 # run the retrospective analyses
 retro(
   dir = new_mod_path, # wherever the model files are
@@ -480,6 +501,7 @@ After the retrospective models have run, the results can be used as a
 diagnostic:
 
 ``` r
+
 # load the 6 models
 retroModels <- SSgetoutput(dirvec = file.path(
   new_mod_path, "retrospectives",
@@ -502,6 +524,7 @@ SSplotComparisons(retroSummary,
 ```
 
 ``` r
+
 knitr::include_graphics(file.path(new_mod_path, "compare2_spawnbio_uncertainty.png"))
 ```
 
@@ -513,6 +536,7 @@ Illustration of the second comparison plot created by the
 function.
 
 ``` r
+
 # calculate Mohn's rho, a diagnostic value
 rho_output <- SSmohnsrho(
   summaryoutput = retroSummary,
@@ -534,6 +558,7 @@ starting values can be run 100 times (note this could take a while as
 they will be run in sequence):
 
 ``` r
+
 # define a new directory
 jitter_dir <- file.path(mod_path, "jitter")
 # copy over the stock synthesis model files to the new directory
@@ -584,6 +609,7 @@ example Stock Synthesis model built into the r4ss package. First, we
 make a copy of the model to avoid changing the original model files
 
 ``` r
+
 # define a new directory in a temporary location
 mod_path <- file.path(tempdir(), "simple_mod")
 # Path to simple model in r4ss and copy files to mod_path
@@ -593,7 +619,7 @@ copy_SS_inputs(dir.old = example_path, dir.new = mod_path)
 #> copying files from
 #>  /home/runner/work/_temp/Library/r4ss/extdata/simple_small
 #> to
-#>  /tmp/RtmpXEvIxr/simple_mod
+#>  /tmp/RtmpD46CXX/simple_mod
 #> copying complete
 # copy over the Report file to provide information about the last run
 file.copy(
@@ -616,6 +642,7 @@ that an executable called “ss or ss.exe” is available in the mod_path
 folder.
 
 ``` r
+
 tune_info <- tune_comps(
   option = "Francis",
   niters_tuning = 1,
@@ -636,6 +663,7 @@ each fleet with composition data and for each type of composition data)
 and re-run the model.
 
 ``` r
+
 # create additional temporary directory
 mod_path_dm <- file.path(tempdir(), "simple_mod_dm")
 # copy model files
