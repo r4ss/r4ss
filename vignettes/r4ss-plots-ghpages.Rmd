@@ -75,7 +75,7 @@ data.frame(
 ```
 
 ## Add custom plots to the .csv
-```{r make-custom-plots}
+```{r add-plots-to-csv}
 SS_html(simple_small,
   filenotes = "default plots plus comparisons",
   plotdir = file.path(example_path, "simple_small/plots"),
