@@ -162,7 +162,7 @@ SSMethod.TA1.8 <-
     # if generalized size comp is used, check for mix of units
     if (type == "size") {
       if (length(unique(dbase[["units"]])) > 1) {
-        cli::cli_warn("Mix of units being compared:{unique(dbase[['units']])}")
+        cli::cli_warn("Mix of units being compared: {unique(dbase[['units']])}")
       }
     }
     # create label for partitions

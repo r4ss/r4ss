@@ -2341,7 +2341,7 @@ SSplotComparisons <-
           }
           # warn if too many columns
           if (length(mcmcColumn) > 1) {
-            cli::cli_warn("Too many columns selected from MCMC for model {imodel}:{paste(names(mcmc[[imodel]])[mcmcColumn], sep = '', collapse = ', ')}. Please specify a unique label in the mcmc dataframeor specify mcmcVec = FALSE for model {imodel} (or mcmcVec = FALSE applying to all models). ")
+            cli::cli_warn("Too many columns selected from MCMC for model {imodel}: {paste(names(mcmc[[imodel]])[mcmcColumn], sep = '', collapse = ', ')}. Please specify a unique label in the mcmc dataframe or specify mcmcVec = FALSE for model {imodel} (or mcmcVec = FALSE applying to all models).")
             good[iline] <- FALSE
           }
           # add density

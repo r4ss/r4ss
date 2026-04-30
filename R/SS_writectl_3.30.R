@@ -379,7 +379,7 @@ SS_writectl_3.30 <- function(
   }
   # Below check added so users can investigate why the ctllist can't be written.
   if (!ctllist[["GrowthModel"]] %in% c(1:5, 8)) {
-    cli::cli_abort("The GrowthModel{ctllist[['GrowthModel']]}in ctllist {ctllist} is not an option in SS3 3.30. Valid growth options are 1-5 and 8.")
+    cli::cli_abort("The GrowthModel {ctllist[['GrowthModel']]} in ctllist {ctllist} is not an option in SS3 3.30. Valid growth options are 1-5 and 8.")
   }
   writeComment("#", con = zz)
   wl(
@@ -404,7 +404,7 @@ SS_writectl_3.30 <- function(
   )
   # Below check added to help users with troubleshooting
   if (!ctllist[["maturity_option"]] %in% c(1:6)) {
-    cli::cli_abort("Invalid maturity option used. ctllist[['maturity_option']] is{ctllist[['maturity_option']]}, but must be 1, 2, 3, 4, 5, or 6.")
+    cli::cli_abort("Invalid maturity option used. ctllist[['maturity_option']] is {ctllist[['maturity_option']]}, but must be 1, 2, 3, 4, 5, or 6.")
   }
   # Below if statements are lines are conditional on the maturity option chosen
   if (ctllist[["maturity_option"]] %in% c(3, 4)) {
@@ -881,7 +881,7 @@ SS_writectl_3.30 <- function(
     printdf("TG_Report_fleet", header = FALSE)
     printdf("TG_Report_fleet_decay", header = FALSE)
   } else {
-    cli::cli_abort("ctllist[['TG_custom']] has value {ctllist[['TG_custom']]} but can onlyhave value 0 or 1.")
+    cli::cli_abort("ctllist[['TG_custom']] has value {ctllist[['TG_custom']]} but can only have value 0 or 1.")
   }
   # Time varying parameters for tagging, would go here, if implemented.
   if (verbose) {

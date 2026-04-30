@@ -227,7 +227,7 @@ SS_writectl_3.24 <- function(
   } else if (ctllist[["natM_type"]] == 0) {
     # Just to skip
   } else {
-    cli::cli_abort("natM_type :{ctllist[['natM_type']]}is not supported")
+    cli::cli_abort("natM_type: {ctllist[['natM_type']]} is not supported")
   }
   ## Growth ##
   wl(

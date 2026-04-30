@@ -233,7 +233,7 @@ PinerPlot <-
     column.max <- apply(data.frame(prof.table[, -c(1:3)]), 2, max, na.rm = TRUE)
     change.fraction <- column.max / max(prof.table[, 3], na.rm = TRUE)
     include <- change.fraction >= minfraction
-    cli::cli_inform("Fleet-specific likelihoods showing max change as fraction of total change.To change which components are included, change input 'minfraction'.{paste(utils::capture.output(print(data.frame(
+    cli::cli_inform("Fleet-specific likelihoods showing max change as fraction of total change. To change which components are included, change input 'minfraction'. {paste(utils::capture.output(print(data.frame(
           frac_change = round(change.fraction, 4),
           include = include
         ))), sep = '', collapse = \"\\n\")}")

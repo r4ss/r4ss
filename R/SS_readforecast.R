@@ -253,13 +253,13 @@ SS_readforecast <- function(
     # stop reading if forecast 0 or -1 used, and no other lines present
     # (aside from 999), but readAll = TRUE.
     if (verbose) {
-      cli::cli_inform("Forecast ={forelist[['Forecast']]}")
+      cli::cli_inform("Forecast = {forelist[['Forecast']]}")
     }
     cli::cli_warn("readAll selected as TRUE, but lines beyond Forecast are not present in the forecasting file, so skipping remainder of file")
   } else {
     # continue reading forecast
     if (verbose) {
-      cli::cli_inform("Forecast ={forelist[['Forecast']]}")
+      cli::cli_inform("Forecast = {forelist[['Forecast']]}")
     }
     forelist <- add_elem(forelist, "Nforecastyrs")
     # check for compatible input with forecast option 1.

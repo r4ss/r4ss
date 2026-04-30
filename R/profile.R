@@ -508,8 +508,7 @@ profile <- function(
           paste("# changed from", parval, "to", profilevec[i])
         )
         par <- c(par, "#", note)
-        cli::cli_inform("{note}{collapse = '
-'}")
+        cli::cli_inform("{paste(note, collapse = '\n')}")
         # write new par file
         writeLines(par, file.path(dir, paste0("ss_input_par", i, ".ss")))
         writeLines(par, file.path(profile_dir, parfile))

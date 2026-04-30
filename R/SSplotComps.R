@@ -2314,9 +2314,9 @@ SSplotComps <-
                 # scaling when displaying both input and effective
                 sampsizeline <- effNline <- max(dbase[["Bin"]]) /
                   max(dbase[["Nsamp_adj"]], dbase[["effN"]], na.rm = TRUE)
-                cli::cli_inform("  Fleet {f} {titlesex}adj. input & effective N in red & green scaled by {effNline}")
+                cli::cli_inform("  Fleet {f} {titlesex} adj. input & effective N in red & green scaled by {effNline}")
               } else {
-                cli::cli_inform("  Fleet {f} {titlesex}adj. input N in red scaled by {sampsizeline}")
+                cli::cli_inform("  Fleet {f} {titlesex} adj. input N in red scaled by {sampsizeline}")
               }
             }
             # function to make plots
