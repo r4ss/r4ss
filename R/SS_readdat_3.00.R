@@ -43,7 +43,7 @@ SS_readdat_3.00 <- function(
   }
 
   if (verbose) {
-    message("running SS_readdat_3.00")
+    cli::cli_inform("running SS_readdat_3.00")
   }
   dat <- readLines(file, warn = FALSE)
 
@@ -54,8 +54,8 @@ SS_readdat_3.00 <- function(
       24
     ))
     if (!section %in% 1:Nsections) {
-      stop(
-        "The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n"
+      cli::cli_abort(
+        "The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file."
       )
     }
     if (section == 1) {
@@ -122,7 +122,7 @@ SS_readdat_3.00 <- function(
   datlist[["type"]] <- "Stock_Synthesis_data_file"
   datlist[["ReadVersion"]] <- "3.00"
   if (verbose) {
-    message("SS_readdat_3.00 - SS version = ", datlist[["ReadVersion"]])
+    cli::cli_inform("SS_readdat_3.00 - SS version = {datlist[['ReadVersion']]}")
   }
 
   # model dimensions
@@ -172,21 +172,17 @@ SS_readdat_3.00 <- function(
   datlist[["areas"]] <- areas <- allnums[i:(i + Ntypes - 1)]
   i <- i + Ntypes
   if (verbose) {
-    message("areas:", areas)
-    message(
-      "fleet info:\n",
-      paste0(
-        utils::capture.output(
+    cli::cli_inform("areas: {areas}")
+    cli::cli_inform(
+      "fleet info: {paste(utils::capture.output(
           data.frame(
             fleet = 1:Ntypes,
             name = fleetnames,
             area = areas,
             timing = surveytiming,
-            type = c(rep("FISHERY", Nfleet), rep("SURVEY", Nsurveys))
+            type = c(rep(\"FISHERY\", Nfleet), rep(\"SURVEY\", Nsurveys))
           )
-        ),
-        collapse = "\n"
-      )
+        ), sep = '', collapse = \"\\n\")}"
     )
   }
   # fleet info
@@ -216,7 +212,7 @@ SS_readdat_3.00 <- function(
   datlist[["N_catch"]] <- N_catch <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_catch =", N_catch)
+    cli::cli_inform("N_catch ={N_catch}")
   }
   Nvals <- N_catch * (Nfleet + 2)
   catch <- data.frame(matrix(
@@ -235,7 +231,7 @@ SS_readdat_3.00 <- function(
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_cpue =", N_cpue)
+    cli::cli_inform("N_cpue ={N_cpue}")
   }
   if (N_cpue > 0) {
     CPUEinfo <- data.frame(matrix(
@@ -269,7 +265,7 @@ SS_readdat_3.00 <- function(
   i <- i + 1
 
   if (verbose) {
-    message("N_discard =", N_discard)
+    cli::cli_inform("N_discard ={N_discard}")
   }
   if (N_discard > 0) {
     # discard data
@@ -334,7 +330,7 @@ SS_readdat_3.00 <- function(
   datlist[["lbin_method"]] <- lbin_method <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("lbin_method =", lbin_method)
+    cli::cli_inform("lbin_method ={lbin_method}")
   }
   if (lbin_method == 2) {
     datlist[["binwidth"]] <- allnums[i]
@@ -353,7 +349,7 @@ SS_readdat_3.00 <- function(
     i <- i + 1
     datlist[["lbin_vector_pop"]] <- allnums[i:(i + N_lbinspop - 1)]
     i <- i + N_lbinspop
-    if (verbose) message("N_lbinspop =", N_lbinspop, "\nlbin_vector_pop:\n")
+    if (verbose) cli::cli_inform("N_lbinspop ={N_lbinspop} lbin_vector_pop:")
   } else {
     datlist[["N_lbinspop"]] <- NA
     datlist[["lbin_vector_pop"]] <- NA
@@ -415,7 +411,7 @@ SS_readdat_3.00 <- function(
   datlist[["N_agebins"]] <- N_agebins <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_agebins =", N_agebins, "\n")
+    cli::cli_inform("N_agebins ={N_agebins}")
   }
   if (N_agebins > 0) {
     agebin_vector <- allnums[i:(i + N_agebins - 1)]
@@ -452,7 +448,7 @@ SS_readdat_3.00 <- function(
 
   if (N_agecomp > 0) {
     if (N_agebins == 0) {
-      stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
+      cli::cli_abort("N_agecomp ={N_agecomp} but N_agebins = 0")
     }
     Ncols <- N_agebins * datlist[["Nsexes"]] + 9
     agecomp <- data.frame(matrix(
@@ -495,7 +491,7 @@ SS_readdat_3.00 <- function(
   datlist[["N_MeanSize_at_Age_obs"]] <- N_MeanSize_at_Age_obs <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs)
+    cli::cli_inform("N_MeanSize_at_Age_obs ={N_MeanSize_at_Age_obs}")
   }
   if (N_MeanSize_at_Age_obs > 0) {
     Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
@@ -569,7 +565,7 @@ SS_readdat_3.00 <- function(
   datlist[["N_sizefreq_methods"]] <- N_sizefreq_methods <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("N_sizefreq_methods =", N_sizefreq_methods)
+    cli::cli_inform("N_sizefreq_methods ={N_sizefreq_methods}")
   }
   if (N_sizefreq_methods > 0) {
     # get details of generalized size frequency methods
@@ -638,17 +634,12 @@ SS_readdat_3.00 <- function(
           }
         )
       if (verbose) {
-        message("Method =", imethod, "  (first two rows, ten columns):\n")
+        cli::cli_inform("Method ={imethod} (first two rows, ten columns):")
         print(sizefreq_data_tmp[1:min(Nrows, 2), 1:min(Ncols, 10)])
       }
       if (any(sizefreq_data_tmp[["Method"]] != imethod)) {
-        stop(
-          "Problem with method in size frequency data:\n",
-          "Expecting method: ",
-          imethod,
-          "\n",
-          "Read method(s): ",
-          paste(unique(sizefreq_data_tmp[["Method"]]), collapse = ", ")
+        cli::cli_abort(
+          "Problem with method in size frequency data; Expecting method: {imethod}; Read method(s): {paste(unique(sizefreq_data_tmp[['Method']]), collapse = ', ')}"
         )
       }
       sizefreq_data_list[[imethod]] <- sizefreq_data_tmp
@@ -668,7 +659,7 @@ SS_readdat_3.00 <- function(
   datlist[["do_tags"]] <- do_tags <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("do_tags =", do_tags)
+    cli::cli_inform("do_tags ={do_tags}")
   }
 
   if (do_tags != 0) {
@@ -702,7 +693,7 @@ SS_readdat_3.00 <- function(
         "Nrelease"
       )
       if (verbose) {
-        message("Head of tag release data:\n")
+        cli::cli_inform("Head of tag release data:")
         print(head(tag_releases))
       }
     } else {
@@ -722,7 +713,7 @@ SS_readdat_3.00 <- function(
       i <- i + N_recap_events * Ncols
       names(tag_recaps) <- c("TG", "Yr", "Season", "Fleet", "Nrecap")
       if (verbose) {
-        message("Head of tag recapture data:\n")
+        cli::cli_inform("Head of tag recapture data:")
         print(head(tag_recaps))
       }
     } else {
@@ -734,16 +725,16 @@ SS_readdat_3.00 <- function(
   datlist[["morphcomp_data"]] <- do_morphcomps <- allnums[i]
   i <- i + 1
   if (verbose) {
-    message("do_morphcomps =", do_morphcomps)
+    cli::cli_inform("do_morphcomps ={do_morphcomps}")
   }
 
   if (allnums[i] == 999) {
     if (verbose) {
-      message("read of data file 3.00 complete (final value = 999)\n")
+      cli::cli_inform("read of data file 3.00 complete (final value = 999)")
     }
     datlist[["eof"]] <- TRUE
   } else {
-    message("Error: final value is", allnums[i], " but should be 999\n")
+    cli::cli_inform("Error: final value is{allnums[i]} but should be 999")
     datlist[["eof"]] <- FALSE
   }
 

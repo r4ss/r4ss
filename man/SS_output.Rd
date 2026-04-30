@@ -19,7 +19,7 @@ SS_output(
   covar = TRUE,
   readwt = TRUE,
   verbose = TRUE,
-  printstats = TRUE,
+  printstats = FALSE,
   hidewarn = FALSE,
   NoCompOK = TRUE,
   aalmaxbinrange = 4,
@@ -60,7 +60,8 @@ will end up in the right place, or an absolute path.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{printstats}{Print summary statistics about the output to the R GUI?}
+\item{printstats}{Print summary statistics about the output to the R GUI?
+Defaults to FALSE.}
 
 \item{hidewarn}{Hides some warnings output from the R GUI.}
 

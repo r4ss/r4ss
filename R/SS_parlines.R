@@ -46,7 +46,7 @@ SS_parlines <- function(
   # function to read parameter lines in Stock Synthesis control files
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     # turns out 3.30 != "3.30" in R
-    stop("version must be either 3.24 or 3.30")
+    cli::cli_abort("version must be either 3.24 or 3.30")
   }
 
   # read control file

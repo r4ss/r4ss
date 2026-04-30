@@ -40,7 +40,7 @@ SSmakeMmatrix <- function(
   # check for existing file
   if (!is.null(outfile) && file.exists(outfile)) {
     if (!overwrite) {
-      message("File exists and input 'overwrite'=FALSE:", outfile)
+      cli::cli_inform("File exists and input 'overwrite'=FALSE:{outfile}")
       return()
     } else {
       file.remove(outfile)
@@ -60,7 +60,7 @@ SSmakeMmatrix <- function(
 
   # open file connection if requested
   if (!is.null(outfile)) {
-    message("opening connection to ", outfile)
+    cli::cli_inform("opening connection to {outfile}")
     zz <- file(outfile, open = "at")
     sink(zz)
   }
@@ -73,12 +73,8 @@ SSmakeMmatrix <- function(
   maxage <- nrow(mat) - 1 # maximum age (assuming first age=0)
   ages <- 0:maxage # vector of ages
 
-  message(
-    "Calculating inputs to Stock Synthesis for a matrix of natural mortality values",
-    "\n over the range of ages:",
-    min(ages),
-    "to",
-    maxage
+  cli::cli_inform(
+    "Calculating inputs to Stock Synthesis for a matrix of natural mortality values over the range of ages: {min(ages)} to {maxage}"
   )
 
   Msetup <- c(
@@ -94,7 +90,7 @@ SSmakeMmatrix <- function(
     )
   )
 
-  message(Msetup)
+  cli::cli_inform(Msetup)
 
   # create data frame of parameter lines
   HI <- ceiling(max(mat) * 10) / 10
@@ -127,9 +123,9 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  message(
-    "Mortality params to paste into the first block of parameter lines:\n",
-    paste0(utils::capture.output(Mparams), collapse = "\n")
+  cli::cli_inform(
+    "Mortality params to paste into the first block of parameter lines:
+{paste(utils::capture.output(Mparams), sep = '', collapse = \"\\n\")}"
   )
   printdf(Mparams)
 
@@ -155,10 +151,10 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  message(
-    "\n# stuff to paste below the line labeled 'CohortGrowDev'\n",
-    "1 #_custom mortality/growth environmental setup\n",
-    paste0(utils::capture.output(Mlinks), collapse = "\n")
+  cli::cli_inform(
+    "# stuff to paste below the line labeled 'CohortGrowDev'
+1 #_custom mortality/growth environmental setup
+{paste(utils::capture.output(Mlinks), sep = '', collapse = \"\\n\")}"
   )
 
   # create a data frame of environmental variables
@@ -179,13 +175,11 @@ SSmakeMmatrix <- function(
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 
-  message(
-    "Environmental variables to paste into the bottom of the data file:\n",
-    maxage + 1,
-    " # N environmental variables\n",
-    nrow(Menv),
-    " # N environmental observations\n",
-    paste0(utils::capture.output(Menv), collapse = "\n")
+  cli::cli_inform(
+    "Environmental variables to paste into the bottom of the data file:
+{maxage + 1} # N environmental variables
+{nrow(Menv)} # N environmental observations
+{paste(utils::capture.output(Menv), sep = '', collapse = \"\\n\")}"
   )
 
   # restore things to how they were
@@ -194,5 +188,5 @@ SSmakeMmatrix <- function(
     sink()
     close(zz)
   }
-  if (!is.null(outfile)) message("file written to", outfile)
+  if (!is.null(outfile)) cli::cli_inform("file written to {outfile}")
 }

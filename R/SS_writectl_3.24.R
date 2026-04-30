@@ -32,18 +32,18 @@ SS_writectl_3.24 <- function(
 
   # function to write Stock Synthesis ctl files
   if (verbose) {
-    message("running SS_writectl")
+    cli::cli_inform("running SS_writectl")
   }
 
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
-    stop(
+    cli::cli_abort(
       "input 'ctllist' should be a list with $type=='Stock_Synthesis_control_file'"
     )
   }
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      message("File exists and input 'overwrite'=FALSE: ", outfile)
+      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
       return()
     } else {
       file.remove(outfile)
@@ -55,7 +55,7 @@ SS_writectl_3.24 <- function(
   options(width = 5000, max.print = 9999999)
 
   if (verbose) {
-    message("opening connection to ", outfile)
+    cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   #  on.exit({if(sink.number()>0) sink();close(zz)})
@@ -128,9 +128,8 @@ SS_writectl_3.24 <- function(
     if (!is.null(dataframe)) {
       if (header) {
         if (isTRUE(!is.null(dataframe[["PType"]]))) {
-          warning(
-            "Please remove PType column in parameter dataframe, ",
-            "which was deprecated as of r4ss 1.45.0."
+          cli::cli_warn(
+            "Please remove PType column in parameter dataframe, which was deprecated as of r4ss 1.45.0."
           )
           dataframe[["PType"]] <- NULL
         }
@@ -171,7 +170,7 @@ SS_writectl_3.24 <- function(
   wl("N_GP", comment = "# N_Growth_Patterns") # N_Growth_Patterns
   wl("N_platoon", comment = "#_N_Morphs_Within_GrowthPattern") # number of platoons  1, 3, 5 are best values to use
   if (ctllist[["N_platoon"]] > 1) {
-    stop("currently sub morphs are not supported yet in this R code")
+    cli::cli_abort("currently sub morphs are not supported yet in this R code")
     wl("sd_ratio")
     wl("submorphdist")
   }
@@ -232,7 +231,7 @@ SS_writectl_3.24 <- function(
   } else if (ctllist[["natM_type"]] == 0) {
     # Just to skip
   } else {
-    stop("natM_type :", ctllist[["natM_type"]], "is not supported")
+    cli::cli_abort("natM_type: {ctllist[['natM_type']]} is not supported")
   }
   ## Growth ##
   wl(
@@ -477,9 +476,8 @@ SS_writectl_3.24 <- function(
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)) {
       prob_flts <-
         which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)
-      stop(
-        "must create base Q parm to use Q_power for fleet(s): ",
-        paste0(prob_flts, collapse = ", ")
+      cli::cli_abort(
+        "must create base Q parm to use Q_power for fleet(s): {paste(prob_flts, sep = '', collapse = ', ')}"
       )
     }
     printdf("Q_power", header = header)
@@ -488,9 +486,8 @@ SS_writectl_3.24 <- function(
   # Q-env
   if (sum(ctllist[["Q_setup"]][, 2]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)) {
-      stop(
-        "must create base Q parm to use Q_env for fleet: ",
-        which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)
+      cli::cli_abort(
+        "must create base Q parm to use Q_env for fleet: {which(ctllist[['Q_setup']][(ctllist[['Q_setup']][, 2] > 0), 4] < 2)}"
       )
     }
     printdf("Q_env", header = header)
@@ -663,6 +660,6 @@ SS_writectl_3.24 <- function(
   writeLines("999", con = zz)
   options(width = oldwidth, max.print = oldmax.print)
   if (verbose) {
-    message("File written to ", outfile)
+    cli::cli_inform("File written to {outfile}")
   }
 }

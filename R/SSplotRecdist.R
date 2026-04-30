@@ -123,7 +123,7 @@ SSplotRecdist <-
     # avoid crash
     for (sex in sexes) {
       if (!is.matrix(recmat[,, sex])) {
-        warning("Problem with format of recruitment distribution info")
+        cli::cli_warn("Problem with format of recruitment distribution info")
         return()
       }
     }
@@ -172,9 +172,8 @@ SSplotRecdist <-
       if (nsexes == 1) {
         message1 <- "recruitment distribution by area and season:\n"
       }
-      message(
-        message1,
-        paste0(utils::capture.output(recmat[,, sex]), collapse = "\n")
+      cli::cli_inform(
+        "{message1} {paste(utils::capture.output(recmat[, , sex]), sep = '', collapse = '\n')}"
       )
       if (plot) {
         recdistfun(sex)

@@ -100,7 +100,7 @@ SSplotSpawnrecruit <-
 
     recruit <- replist[["recruit"]]
     if (is.null(recruit)) {
-      message(
+      cli::cli_inform(
         "Skipping stock-recruit plots: no recruitment information available"
       )
       return()
@@ -381,10 +381,8 @@ SSplotSpawnrecruit <-
             }
           } # end loop over legendloc values
           if (!legend_added) {
-            warning(
-              "Legend in spawner-recruit plot overlaps at least 1 point\n",
-              "in the plot. Try running SSplotSpawnrecruit() with\n",
-              "adjustments to 'ylim' and/or 'legendloc' inputs."
+            cli::cli_warn(
+              "Legend in spawner-recruit plot overlaps at least 1 point in the plot. Try running SSplotSpawnrecruit() with adjustments to 'ylim' and/or 'legendloc' inputs."
             )
             legendloc <- "topleft"
           }

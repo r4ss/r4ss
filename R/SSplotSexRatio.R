@@ -101,7 +101,7 @@ SSplotSexRatio <-
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
     } else if (length(intersect(fleets, 1:nfleets)) != length(fleets)) {
-      stop(
+      cli::cli_abort(
         "Input 'fleets' should be 'all' or a vector of values between 1 and nfleets."
       )
     }
@@ -122,7 +122,7 @@ SSplotSexRatio <-
       filenamestart <- "sexratio_age_"
       titledata <- "Sex ratios for age comps, "
     } else {
-      stop("Only kind of LEN and AGE are currently supported")
+      cli::cli_abort("Only kind of LEN and AGE are currently supported")
     }
 
     # modify filename for data-only plots
@@ -151,9 +151,8 @@ SSplotSexRatio <-
     if (
       any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")
     ) {
-      message(
-        "Removing super-period composition values labeled 'skip'\n",
-        "     and designating super-period values with a '*'"
+      cli::cli_inform(
+        "Removing super-period composition values labeled 'skip' and designating super-period values with a '*'"
       )
       dbase_kind <- dbase_kind[
         dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip",

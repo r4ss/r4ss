@@ -85,11 +85,8 @@ get_SIS_info <- function(
     sep = "_"
   )
 
-  message(
-    "writing SIS info to CSV files:\n",
-    file.path(dir, filename_values),
-    "\n",
-    file.path(dir, filename_timeseries)
+  cli::cli_inform(
+    "writing SIS info to CSV files: {file.path(dir, filename_values)} and {file.path(dir, filename_timeseries)}"
   )
 
   # years to report for catch-related quantities
@@ -101,7 +98,7 @@ get_SIS_info <- function(
 
   # if check for unsupported model configurations
   if (model[["nseasons"]] > 1) {
-    stop("multi-season models are not yet supported")
+    cli::cli_abort("multi-season models are not yet supported")
   }
 
   # aggregate across areas if needed
@@ -160,7 +157,7 @@ get_SIS_info <- function(
     )
   }
   if (length(dead_bio_columns) == 0) {
-    stop("No columns matching 'dead(B)' in model[['timeseries'']]")
+    cli::cli_abort("No columns matching 'dead(B)' in model[['timeseries'']]")
   }
 
   # not sure why this is needed, but it is
@@ -218,14 +215,8 @@ get_SIS_info <- function(
   # merge columns from time series, catch, F, and SPR together
   tab <- merge(merge(merge(ts_tab, catch_tab), F_tab), spr_tab)
   if (nrow(tab) != length(years) || any(tab[["Year"]] != years)) {
-    stop(
-      "problem with mismatch of years:\n",
-      "range(years): ",
-      range(years),
-      "\n",
-      "range(tab[['Year']]): ",
-      range(tab[["Year"]]),
-      "\n"
+    cli::cli_abort(
+      "problem with mismatch of years; range(years): {toString(range(years))}; range(tab[['Year']]): {toString(range(tab[['Year']]))}"
     )
   }
 
@@ -287,7 +278,7 @@ get_SIS_info <- function(
   if (model[["SpawnOutputUnits"]] == "numbers") {
     header_info["Description", "SpawnBio"] <- "Spawning Output(Eggs)"
     if (is.null(SpawnOutputLabel)) {
-      warning(
+      cli::cli_warn(
         "Need to provide a label for the spawning output (e.g. 'millions of eggs')"
       )
       SpawnOutputLabel <- "XXXX eggs"
@@ -331,9 +322,8 @@ get_SIS_info <- function(
 
   # check for redundancy between F_values and Tot_Exploit columns
   if (model[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)") {
-    message(
-      "F_YYYY values are redundant with Tot_Exploit column in SPR series, ",
-      "excluding from output for SIS."
+    cli::cli_inform(
+      "F_YYYY values are redundant with Tot_Exploit column in SPR series, excluding from output for SIS."
     )
     # remove redundant F_values column
     header_info <- header_info |> dplyr::select(-F_values)
@@ -411,7 +401,7 @@ get_SIS_info <- function(
   if (model[["sprtarg"]] == -999) {
     SPRtarg_text <- "SPR_XX%"
     model[["sprtarg"]] <- NA
-    warning("No value for model[['sprtarg']]")
+    cli::cli_warn("No value for model[['sprtarg']]")
   } else {
     SPRtarg_text <- paste0("SPR", 100 * model[["sprtarg"]], "%") # e.g. SPR50%
   }
@@ -446,7 +436,7 @@ get_SIS_info <- function(
   if (model[["btarg"]] == -999) {
     Btarg_text <- "BXX%"
     model[["btarg"]] <- NA
-    warning("No value for model[['btarg']]")
+    cli::cli_warn("No value for model[['btarg']]")
   } else {
     # PFMC Settings
     if (Mgt_Council == "PFMC") {
@@ -461,7 +451,7 @@ get_SIS_info <- function(
   if (model[["minbthresh"]] == -999) {
     MinBthresh_text <- "SSBXX%"
     model[["minbthresh"]] <- NA
-    warning("No value for model[['minbthresh']]")
+    cli::cli_warn("No value for model[['minbthresh']]")
   } else {
     MinBthresh_text <- paste0("SSB", 100 * model[["minbthresh"]], "%") # e.g. B25%
     B_msy_basis <- paste0("SS", Btarg_text)

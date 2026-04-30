@@ -50,7 +50,7 @@ SS_splitdat <-
     # this is a function to split bootstrap aggregated in the data.ss_new file
     # which is output from Stock Synthesis into individual data files.
     if (MLE & inputs) {
-      stop("can't have both 'MLE' and 'inputs' = TRUE")
+      cli::cli_abort("can't have both 'MLE' and 'inputs' = TRUE")
     }
 
     if (inpath == "working_directory") {
@@ -75,10 +75,8 @@ SS_splitdat <-
     MLEend <- starts[1] - 1
 
     if (MLE & length(MLEstart) == 0) {
-      stop(
-        "no MLE values in ",
-        inname,
-        "\n  change 'N bootstrap datafiles' in starter.ss to 2 or greater"
+      cli::cli_abort(
+        "no MLE values in {inname} change 'N bootstrap datafiles' in starter.ss to 2 or greater"
       )
     }
     inputstring <- "#_observed data"
@@ -89,19 +87,15 @@ SS_splitdat <-
       inputend <- MLEstart - 1
     }
     if (length(inputstart) == 0) {
-      stop(
-        "no values in ",
-        inname,
-        "\n  change 'N bootstrap datafiles' in starter.ss to 1 or greater"
+      cli::cli_abort(
+        "no values in {inname} change 'N bootstrap datafiles' in starter.ss to 1 or greater"
       )
     }
 
     if (!MLE & !inputs) {
       if (length(starts) == 0) {
-        stop(
-          "no bootstrap values in ",
-          inname,
-          "\n  change 'N bootstrap datafiles' in starter.ss to 3 or greater"
+        cli::cli_abort(
+          "no bootstrap values in {inname} change 'N bootstrap datafiles' in starter.ss to 3 or greater"
         )
       }
       for (i in seq_along(starts)) {
@@ -115,7 +109,7 @@ SS_splitdat <-
         )
         outline <- paste("# Data file created from", infile, "to", outfile)
         if (verbose) {
-          message(outline)
+          cli::cli_inform(outline)
         }
         writeLines(c(outline, filelines[starts[i]:ends[i]]), outfile)
       }
@@ -132,7 +126,7 @@ SS_splitdat <-
           paste("#C MLE data file created from", infile, "to", outfile)
         )
         if (verbose) {
-          message("MLE data file created from", infile, "to", outfile)
+          cli::cli_inform("MLE data file created from {infile} to {outfile}")
         }
         writeLines(c(notes, filelines[MLEstart:MLEend]), outfile)
       }
@@ -148,11 +142,8 @@ SS_splitdat <-
           paste("#C data file created from", infile, "to", outfile)
         )
         if (verbose) {
-          message(
-            "file with copies of input data created from ",
-            infile,
-            " to ",
-            outfile
+          cli::cli_inform(
+            "file with copies of input data created from {infile} to {outfile}"
           )
         }
         writeLines(c(notes, filelines[inputstart:inputend]), outfile)

@@ -35,7 +35,7 @@ SS_writedat_3.30 <- function(
   }
 
   if (verbose) {
-    message("running SS_writedat_3.30")
+    cli::cli_inform("running SS_writedat_3.30")
   }
 
   # rename datlist to shorten the code
@@ -43,7 +43,7 @@ SS_writedat_3.30 <- function(
 
   # check datlist/d
   if (d[["type"]] != "Stock_Synthesis_data_file") {
-    stop(
+    cli::cli_abort(
       "input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'"
     )
   }
@@ -51,7 +51,7 @@ SS_writedat_3.30 <- function(
   # check for existing file
   if (file.exists(outfile)) {
     if (!overwrite) {
-      message("File exists and input 'overwrite'=FALSE: ", outfile)
+      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
       return()
     } else {
       file.remove(outfile)
@@ -63,7 +63,7 @@ SS_writedat_3.30 <- function(
   options(width = 5000, max.print = 9999999)
 
   if (verbose) {
-    message("opening connection to ", outfile)
+    cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   # sink(zz)
@@ -310,9 +310,8 @@ SS_writedat_3.30 <- function(
 
     # data bins
     if (length(d[["lbin_vector"]]) != d[["N_lbins"]]) {
-      warning(
-        "The length of the lbin_vector is different than N_lbins. This ",
-        "data file will likely not run with Stock Synthesis."
+      cli::cli_warn(
+        "The length of the lbin_vector is different than N_lbins. This data file will likely not run with Stock Synthesis."
       )
     }
     wl("N_lbins")
@@ -330,10 +329,8 @@ SS_writedat_3.30 <- function(
       zero_lencomp <-
         apply(d[["lencomp"]][, -seq_len(6)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_lencomp == TRUE)) {
-        warning(
-          "Lines of all zero length comp found. SS will exit on error if",
-          " a line of comps is all zeros, so removing. Line(s) ",
-          paste0(which(zero_lencomp), collapse = ", ")
+        cli::cli_warn(
+          "Lines of all zero length comp found. SS will exit on error if a line of comps is all zeros, so removing. Line(s) {paste(which(zero_lencomp), sep = '', collapse = ', ')}"
         )
         d[["lencomp"]] <- d[["lencomp"]][!zero_lencomp, ]
       }
@@ -379,10 +376,8 @@ SS_writedat_3.30 <- function(
       zero_agecomp <-
         apply(d[["agecomp"]][, -seq_len(9)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_agecomp == TRUE)) {
-        warning(
-          "Lines of all zero age comp found. SS will exit on error if",
-          " a line of comps is all zeros, so removing. Line(s) ",
-          paste0(which(zero_agecomp), collapse = ", ")
+        cli::cli_warn(
+          "Lines of all zero age comp found. SS will exit on error if a line of comps is all zeros, so removing. Line(s) {paste(which(zero_agecomp), sep = '', collapse = ', ')}"
         )
         d[["agecomp"]] <- d[["agecomp"]][!zero_agecomp, ]
       }
@@ -446,6 +441,6 @@ SS_writedat_3.30 <- function(
   writeComment("#", con = zz)
   writeLines("999", con = zz)
   if (verbose) {
-    message("file written to ", outfile)
+    cli::cli_inform("file written to {outfile}")
   }
 }
