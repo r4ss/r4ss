@@ -401,7 +401,7 @@ called by \code{SS_plots()}. These functions invisibly return a table with
 details on the plots created. This table is  manipulated in \code{SS_plots()} and
 written to a CSV file called \code{plotInfoTable_*.csv}, where * is replaced by
 the date that the plots were created. One column of info is \code{category},
-which isncludes a category for the plot (e.g., biology plots will all be
+which includes a category for the plot (e.g., biology plots will all be
 labeled as the \code{bio} category.)
 
 If \code{html = TRUE}, \code{SS_html()} is called at the end of \code{SS_plots()} to create
