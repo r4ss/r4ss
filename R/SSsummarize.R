@@ -788,7 +788,7 @@ SSsummarize <- function(
       get("verbose", envir = parent.frame()) &
         deparse(substitute(data)) == "pars"
     ) {
-      cli::cli_inform("For model(s) {paste(fix, collapse = ', ')}, values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for{paste(
+      cli::cli_inform("For model(s) {paste(fix, collapse = ', ')}, values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for {paste(
           data[oldrows, \"Label\"],
           data[newrows, \"Label\"],
           sep = \" -> \",
