@@ -9,11 +9,13 @@
 #' @author Kelli F. Johnson
 #' @export
 
-table_pars <- function(replist,
-                       dir = NULL,
-                       rows = NULL,
-                       caption = "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
-                       verbose = TRUE) {
+table_pars <- function(
+  replist,
+  dir = NULL,
+  rows = NULL,
+  caption = "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
+  verbose = TRUE
+) {
   # check the inputs
   check_replist(replist)
   # create the rda_dir
@@ -44,12 +46,13 @@ table_pars <- function(replist,
   }
   if (length(sigmasel) > 1) {
     sigmasel <- NA
-    cli::cli_alert_warning("More than one value for sigmasel found in the parameters table. Using NA for the prior on the 2DAR parameters.")
+    cli::cli_alert_warning(
+      "More than one value for sigmasel found in the parameters table. Using NA for the prior on the 2DAR parameters."
+    )
   }
   if (length(sigmasel) == 1) {
     sigmasel <- sprintf("%2.2f", sigmasel)
   }
-
 
   # default is all rows from the table
   if (is.null(rows)) {
@@ -59,10 +62,27 @@ table_pars <- function(replist,
   # make the table
   table <- replist[["parameters"]] |>
     dplyr::slice(rows) |>
-    dplyr::select(Label, Value, Phase, Min, Max, Pr_type, Prior, Parm_StDev, Pr_SD, Status) |>
+    dplyr::select(
+      Label,
+      Value,
+      Phase,
+      Min,
+      Max,
+      Pr_type,
+      Prior,
+      Parm_StDev,
+      Pr_SD,
+      Status
+    ) |>
     dplyr::mutate(
       Value = signif_string(Value, 3),
-      Bounds = paste0("(", signif_string(Min, 2), ", ", signif_string(Max, 2), ")"),
+      Bounds = paste0(
+        "(",
+        signif_string(Min, 2),
+        ", ",
+        signif_string(Max, 2),
+        ")"
+      ),
       Status = dplyr::case_when(
         is.na(Status) ~ "fixed",
         Status == "act" ~ "dev",
@@ -73,12 +93,16 @@ table_pars <- function(replist,
       pv = sprintf("%2.3f", Prior),
       psd = sprintf("%2.3f", Pr_SD),
       Prior = dplyr::case_when(
-        Pr_type == "Log_Norm" ~ paste0("lognormal(", sprintf("%2.3f", exp(Prior)), ", ", psd, ")"),
-        Pr_type == "Normal" ~ paste0("normal(", sprintf("%2.3f", Prior), ", ", psd, ")"),
+        Pr_type == "Log_Norm" ~
+          paste0("lognormal(", sprintf("%2.3f", exp(Prior)), ", ", psd, ")"),
+        Pr_type == "Normal" ~
+          paste0("normal(", sprintf("%2.3f", Prior), ", ", psd, ")"),
         Pr_type == "No_prior" ~ "none",
         Pr_type == "Full_Beta" ~ paste0("beta(", pv, ", ", psd, ")"),
-        Pr_type == "dev" & !grepl("ARDEV", Label) ~ paste0("normal(0.00, ", sigmar, ")"),
-        Pr_type == "dev" & grepl("ARDEV", Label) ~ paste0("normal(0.00, ", sigmasel, ")"),
+        Pr_type == "dev" & !grepl("ARDEV", Label) ~
+          paste0("normal(0.00, ", sigmar, ")"),
+        Pr_type == "dev" & grepl("ARDEV", Label) ~
+          paste0("normal(0.00, ", sigmasel, ")"),
         TRUE ~ Pr_type
       )
     ) |>
@@ -91,7 +115,9 @@ table_pars <- function(replist,
   )
   # write the table to an rda file
   if (verbose) {
-    cli::cli_alert_info("writing table to {file.path(rda_dir, 'table_pars.rda')}")
+    cli::cli_alert_info(
+      "writing table to {file.path(rda_dir, 'table_pars.rda')}"
+    )
   }
   save(table_pars, file = file.path(rda_dir, "table_pars.rda"))
 

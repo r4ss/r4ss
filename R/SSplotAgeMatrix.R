@@ -4,7 +4,7 @@
 #' as a histogram. Values are from the AGE_LENGTH_KEY and AGE_AGE_KEY sections
 #' of Report.sso (ALK and AAK in the list created by SS_output)
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param option Switch set to either 1 for length at true age or
 #' 2 for obs. age at true age
 #' @param slices Optional input to choose which matrix (slice of the 3D-array)
@@ -23,40 +23,40 @@
 #' the polygon up.
 #' @param shift_lo A numeric value specifying the amount to shift the bottom
 #' of the polygon up.
-#' @template plot
-#' @template print
-#' @template labels
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template mainTitle
-#' @template plotdir
 #' @author Ian G. Taylor
 #' @export
 #' @seealso [SSplotNumbers()]
 
-
-SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
-                            scale = NULL, add = FALSE,
-                            col.grid = "grey90",
-                            col.bars = grey(0, alpha = .5),
-                            shift_hi = 0, shift_lo = 0,
-                            plot = TRUE, print = FALSE,
-                            labels = c(
-                              "Age", # 1
-                              "Length", # 2
-                              "True age", # 3
-                              "Observed age", # 4
-                              "for ageing error type", # 5
-                              "Distribution of", # 6
-                              "at"
-                            ), # 7
-                            pwidth = 6.5, pheight = 5.0, punits = "in",
-                            res = 300, ptsize = 10,
-                            cex.main = 1, mainTitle = TRUE, plotdir = "default") {
+SSplotAgeMatrix <- function(
+  replist,
+  option = 1,
+  slices = NULL,
+  scale = NULL,
+  add = FALSE,
+  col.grid = "grey90",
+  col.bars = grey(0, alpha = .5),
+  shift_hi = 0,
+  shift_lo = 0,
+  plot = TRUE,
+  print = FALSE,
+  labels = c(
+    "Age", # 1
+    "Length", # 2
+    "True age", # 3
+    "Observed age", # 4
+    "for ageing error type", # 5
+    "Distribution of", # 6
+    "at"
+  ), # 7
+  pwidth = 6.5,
+  pheight = 5.0,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1,
+  mainTitle = TRUE,
+  plotdir = "default"
+) {
   # in-development function to plot matrix of length at age
 
   # table to store information on each plot
@@ -106,7 +106,10 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
     xlab <- labels[1]
     ylab <- labels[2]
     # first part of title (can have addition info appended)
-    titleStart <- paste(labels[6], tolower(paste(labels[2], labels[7], labels[1])))
+    titleStart <- paste(
+      labels[6],
+      tolower(paste(labels[2], labels[7], labels[1]))
+    )
     # first part of PNG file name (only used if print=TRUE)
     filenameStart <- "bio1B_len_at_age_matrix_"
   }
@@ -121,7 +124,9 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
       return()
     }
     # age bins
-    ybins <- agebins.tmp <- sort(unique(as.numeric(dimnames(array)[["ObsAgeBin"]])))
+    ybins <- agebins.tmp <- sort(unique(as.numeric(dimnames(array)[[
+      "ObsAgeBin"
+    ]])))
     if (is.na(ybins[1])) {
       return(NULL)
     }
@@ -134,7 +139,10 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
     xlab <- labels[3]
     ylab <- labels[4]
     # first part of title (can have addition info appended)
-    titleStart <- paste(labels[6], tolower(paste(labels[4], labels[7], labels[3])))
+    titleStart <- paste(
+      labels[6],
+      tolower(paste(labels[4], labels[7], labels[3]))
+    )
     # first part of PNG file name (only used if print=TRUE)
     filenameStart <- "numbers10_ageerror_matrix_"
   }
@@ -158,7 +166,7 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
       max.y <- max(array[, middle.ages + 1, ], na.rm = TRUE)
     }
     if (option == 2) {
-      max.y <- max(array[, , middle.ages + 1], na.rm = TRUE)
+      max.y <- max(array[,, middle.ages + 1], na.rm = TRUE)
     }
     if (max.y < 0.5 | max.y > 2.0) {
       scale <- 0.9 / max.y
@@ -175,7 +183,7 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
   AgeMatrix.fn <- function(slice = 1) {
     if (option == 1) {
       # choose which morph/sex/etc of the array
-      mat <- array[, , slice]
+      mat <- array[,, slice]
       # need to figure out which slice corresponds to which
       # morph/sex/etc. for labeling purposes
       title <- titleStart
@@ -196,11 +204,17 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
     }
 
     if (!add) {
-      plot(0,
-        type = "n", las = 1,
-        xlim = c(0, 1.1 * accuage), xaxs = "i",
-        ylim = c(0, ymax), yaxs = "i",
-        xlab = xlab, ylab = ylab, main = title
+      plot(
+        0,
+        type = "n",
+        las = 1,
+        xlim = c(0, 1.1 * accuage),
+        xaxs = "i",
+        ylim = c(0, ymax),
+        yaxs = "i",
+        xlab = xlab,
+        ylab = ylab,
+        main = title
       )
     }
     # grid lines
@@ -233,7 +247,8 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
           ybottom = ybin_lo + shift_lo,
           xright = a + scale * yvec[iybin],
           ytop = ybin_hi + shift_hi,
-          col = col.bars, border = NA
+          col = col.bars,
+          border = NA
         )
       } # end loop over bins (length or observed age)
       # lines(a+yvec*scale, ybins)
@@ -264,8 +279,14 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
         caption <- paste(titleStart, "\n", labels[5], islice)
       }
       plotinfo <- save_png(
-        plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+        plotinfo = plotinfo,
+        file = file,
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize,
         caption = caption
       )
       AgeMatrix.fn(slice = islice)

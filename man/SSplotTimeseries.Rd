@@ -49,8 +49,8 @@ Numbering of subplots is as follows, where the spawning biomass plots
 \item 6 Summary biomass (t) at beginning of season 1 with forecast
 \item 7 Spawning output with forecast with ~95\% asymptotic intervals
 \item 8 Spawning output by area (spatial models only)
-\item 9 Relative spawning output with forecast with ~95\% asymptotic intervals
-\item 10 Relative spawning output by area (spatial models only)
+\item 9 Fraction of unfished spawning output with forecast with ~95\% asymptotic intervals
+\item 10 Fraction of unfished spawning output by area (spatial models only)
 \item 11 Age-0 recruits (1,000s) with forecast with ~95\% asymptotic intervals
 \item 12 Age-0 recruits by area (spatial models only)
 \item 13 Fraction of recruits by area (spatial models only)
@@ -73,10 +73,9 @@ multiple areas. NULL value will be replaced by a default set of areas.}
 available}
 
 \item{bioscale}{scaling for spawning biomass. Default = 1.
-Previously this was set to
-0.5 for single-sex models, and 1.0 for all others, but now single-sex
-models are assumed to use the -1 option for Nsexes in the data file so the
-scaling is done automatically by SS3.}
+Previously this was set to 0.5 for single-sex models, and 1.0 for all
+others, but now single-sex models are assumed to use the -1 option for
+Nsexes in the data file so the scaling is done automatically by SS3.}
 
 \item{minyr}{optional input for minimum year to show in plots}
 
@@ -125,7 +124,10 @@ The default is \code{cex.main=1}.}
 \item{mainTitle}{Logical indicating if a title should be included at the top
 (not yet implemented for all plots).}
 
-\item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
+\item{mar}{Either NULL to allow the default (which depends on whether the
+main title is included or not) or a numerical vector of the form
+c(bottom, left, top, right) which gives the number of lines of margin to
+be specified on the four sides of the plot, which is passed to \code{par()}.}
 }
 \description{
 Plot timeseries data contained in TIME_SERIES output from Stock Synthesis

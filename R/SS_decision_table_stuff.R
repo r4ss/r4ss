@@ -3,7 +3,7 @@
 #' Values of total catch, spawning output, and fraction unfished are extracted
 #' from the forecast years of a time series table for inclusion in a decision table.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param yrs Range of years from which to extract values
 #' @param digits Vector of number of digits to round to in table for
 #' \itemize{
@@ -11,35 +11,59 @@
 #'   \item 2 spawning output
 #'   \item 3 fraction unfished (column is called "depl")
 #' }
+#' @param OFL Logical indicating whether to include the overfishing limit (OFL)
+#' instead of spawning output in the table. Defaults to `FALSE`.
+#' @export
+#' @return A tibble with columns for year, total catch (dead biomass),
+#' spawning output, and fraction unfished.
 #' @seealso [SS_ForeCatch()]
 #' @author Ian G. Taylor
 #' @export
 
-SS_decision_table_stuff <- function(replist, yrs = 2021:2032, digits = c(0, 0, 3)) {
-  # needs to be able to aggregate across areas for spatial models
-  if (replist[["nareas"]] > 1) {
-    warning("You probably need to aggregate function output across areas")
+SS_decision_table_stuff <- function(
+  replist,
+  yrs = 2025:2036,
+  digits = c(0, 0, 3),
+  OFL = FALSE
+) {
+  unfished <- replist[["derived_quants"]]["SSB_Virgin", "Value"]
+  tab <- replist[["timeseries"]] |>
+    dplyr::filter(Yr %in% yrs) |>
+    dplyr::group_by(Yr) |>
+    dplyr::summarise(
+      catch = sum(rowSums(
+        dplyr::across(dplyr::starts_with("dead(B)")),
+        na.rm = TRUE
+      )),
+      spawn_bio = sum(SpawnBio, na.rm = TRUE)
+    ) |>
+    dplyr::mutate(
+      # calculation of fraction_unfished is independent of Bratio definition
+      # which could have a different denominator
+      fraction_unfished = spawn_bio / unfished
+    ) |>
+    dplyr::mutate(
+      catch = round(catch, digits[1]),
+      spawn_bio = round(spawn_bio, digits[2]),
+      fraction_unfished = round(fraction_unfished, digits[3])
+    ) |>
+    dplyr::rename(
+      # matching names in earlier version of the function for backwards compatibility
+      yr = Yr,
+      SpawnBio = spawn_bio,
+      dep = fraction_unfished
+    )
+  # replace the SpawnBio column with OFL
+  if (OFL) {
+    OFL <- replist[["derived_quants"]][["Value"]][
+      replist[["derived_quants"]][['Label']] %in%
+        paste0("OFLCatch_", tab[["yr"]])
+    ] |>
+      round(digits[2])
+    tab <- tab |>
+      dplyr::select(-SpawnBio) |>
+      dplyr::mutate(OFL = OFL) |>
+      dplyr::relocate(OFL, .after = catch)
   }
-  # subset timeseries
-  ts <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% yrs, ]
-  # note that new $dead_B_sum quantity can be used in future versions
-  catch <- round(
-    apply(ts[, grep("dead(B)", names(ts), fixed = TRUE)],
-      MARGIN = 1, FUN = sum
-    ),
-    digits[1]
-  )
-  yr <- ts[["Yr"]]
-  # get spawning biomass
-  SpawnBio <- round(ts[["SpawnBio"]], digits[2])
-  # get depletion (this calc is independent of Bratio definition)
-  SpawnBioVirg <-
-    replist[["timeseries"]][["SpawnBio"]][replist[["timeseries"]][["Era"]] == "VIRG"]
-  dep <- round(SpawnBio / SpawnBioVirg, digits[3])
-  # get summary biomass (not currently reported)
-  Bio_smry <- ts[["Bio_smry"]]
-  # combine stuff
-  # stuff <- data.frame(yr=yr[ts[["Area"]]==1], catch, dep, SpawnBio, Bio_smry)
-  stuff <- data.frame(yr, catch, SpawnBio, dep)
-  return(stuff)
+  return(tab)
 }

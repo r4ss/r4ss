@@ -1,6 +1,6 @@
 #' Deprecated function to run a retrospective analyses, renamed to retro()
 #'
-#' @template deprecated_dots
+#' @inheritParams r4ss_params
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' SS_doRetro() has been renamed as [retro()]. See
@@ -43,8 +43,7 @@ SS_doRetro <-
 #' blocks is removed from top of control file. Blocks can cause problems for
 #' retrospective analyses, but the method for removing them is overly
 #' simplistic and probably won't work in most cases. Default=FALSE.
-#' @template exe
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
 #'
@@ -85,10 +84,19 @@ SS_doRetro <-
 #' future::plan(future::sequential)
 #' }
 #'
-retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
-                  oldsubdir = "", newsubdir = "retrospectives",
-                  subdirstart = "retro", years = 0:-5, overwrite = TRUE,
-                  RemoveBlocks = FALSE, verbose = FALSE, exe = "ss3", ...) {
+retro <- function(
+  dir = getwd(),
+  masterdir = lifecycle::deprecated(),
+  oldsubdir = "",
+  newsubdir = "retrospectives",
+  subdirstart = "retro",
+  years = 0:-5,
+  overwrite = TRUE,
+  RemoveBlocks = FALSE,
+  verbose = FALSE,
+  exe = "ss3",
+  ...
+) {
   # deprecated variable warnings -----
   # soft deprecated for now, but fully deprecate in the future.
   if (lifecycle::is_present(masterdir)) {
@@ -98,6 +106,10 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
       with = "retro(dir)"
     )
     dir <- masterdir
+  }
+
+  if (RemoveBlocks) {
+    cli::cli_abort("RemoveBlocks=TRUE is not implemented yet")
   }
 
   olddir <- file.path(dir, oldsubdir)
@@ -120,7 +132,9 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
   # loop over retrospective years
   furrr::future_walk(seq_along(years), function(iyr) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
-    if (verbose) message("Running retrospective in ", newdir_iyr)
+    if (verbose) {
+      message("Running retrospective in ", newdir_iyr)
+    }
 
     # copy original input files to retro folder
     copy_SS_inputs(
@@ -136,7 +150,8 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
     # change starter file to do retrospectives
     starter[["retro_yr"]] <- years[iyr]
     starter[["init_values_src"]] <- 0
-    SS_writestarter(starter,
+    SS_writestarter(
+      starter,
       dir = newdir_iyr,
       verbose = FALSE,
       overwrite = TRUE
@@ -157,4 +172,5 @@ retro <- function(dir = getwd(), masterdir = lifecycle::deprecated(),
       warning("The retrospective model run failed in ", newdir_iyr)
     }
   })
+  invisible(file.path(dir, newsubdir, subdirnames))
 }

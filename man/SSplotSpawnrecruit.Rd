@@ -63,10 +63,9 @@ in metric tons, y-axis label, and alternative x-axis for models with a fecundity
 relationship making spawning output not equal to spawning biomass.}
 
 \item{bioscale}{scaling for spawning biomass. Default = 1.
-Previously this was set to
-0.5 for single-sex models, and 1.0 for all others, but now single-sex
-models are assumed to use the -1 option for Nsexes in the data file so the
-scaling is done automatically by SS3.}
+Previously this was set to 0.5 for single-sex models, and 1.0 for all
+others, but now single-sex models are assumed to use the -1 option for
+Nsexes in the data file so the scaling is done automatically by SS3.}
 
 \item{plotdir}{Directory where PNG files will be written.}
 
@@ -105,8 +104,8 @@ will by replaced by a vector of colors of length equal to
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \code{help("legend")} for more info on
-the string options.}
+the x and y dimensions, respectively. See \code{help("legend")} for more info
+on the string options.}
 
 \item{minyr}{minimum year of recruitment deviation to show in plot}
 

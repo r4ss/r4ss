@@ -19,7 +19,7 @@ SSplotComparisons(
   indexQdigits = 4,
   indexSEvec = NULL,
   indexPlotEach = FALSE,
-  labels = c("Year", "Spawning biomass (t)", "Fraction of unfished",
+  labels = c("Year", "Spawning biomass (t)", "Fraction of unfished spawning biomass",
     "Age-0 recruits (1,000s)", "Recruitment deviations", "Index", "Log index",
     "SPR-related quantity", "Density", "Management target",
     "Minimum stock size threshold", "Spawning output", "Harvest rate",
@@ -42,7 +42,7 @@ SSplotComparisons(
   uncertainty = TRUE,
   shadealpha = 0.1,
   legend = TRUE,
-  legendlabels = NULL,
+  legendlabels = summaryoutput[["modelnames"]],
   legendloc = "topright",
   legendorder = NULL,
   legendncol = 1,
@@ -56,7 +56,7 @@ SSplotComparisons(
   ptsize = 10,
   plotdir = NULL,
   filenameprefix = "",
-  densitynames = c("SSB_Virgin", "R0"),
+  densitynames = c("SSB_Virgin", "SR_LN(R0)"),
   densityxlabs = NULL,
   rescale = TRUE,
   densityscalex = 1,
@@ -72,7 +72,8 @@ SSplotComparisons(
   par = list(mar = c(5, 4, 1, 1) + 0.1),
   verbose = TRUE,
   mcmcVec = FALSE,
-  show_equilibrium = TRUE
+  show_equilibrium = TRUE,
+  ...
 )
 }
 \arguments{
@@ -208,12 +209,12 @@ values (implemented as \code{adjustcolor(col=col, alpha.f=shadealpha)})}
 \item{legend}{Add a legend?}
 
 \item{legendlabels}{Optional vector of labels to include in legend. Default
-is 'model1','model2',etc.}
+is \code{summaryoutput[["modelnames"]]}.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \code{help("legend")} for more info on
-the string options.}
+the x and y dimensions, respectively. See \code{help("legend")} for more info
+on the string options.}
 
 \item{legendorder}{Optional vector of model numbers that can be used to have
 the legend display the model names in an order that is different than that
@@ -306,6 +307,9 @@ MLE}
 \item{show_equilibrium}{Whether to show the equilibrium values for
 SSB. For some model comparisons, these might not be comparable and thus
 useful to turn off. Defaults to TRUE.}
+
+\item{...}{Additional arguments passed to \code{\link[=add_legend]{add_legend()}}, which
+can include \code{legendcex}, \code{legendsp}, and \code{pt.cex}.}
 }
 \description{
 Creates a user-chosen set of plots comparing model output from a summary of
@@ -342,9 +346,12 @@ SSplotComparisons(mod.sum,
 
 }
 \seealso{
-\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SSsummarize]{SSsummarize()}},
-\code{\link[=SS_output]{SS_output()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
+Other model comparison functions: 
+\code{\link{SSgetoutput}()},
+\code{\link{SSsummarize}()},
+\code{\link{SStableComparisons}()}
 }
 \author{
 Ian G. Taylor, John R. Wallace
 }
+\concept{model comparison functions}

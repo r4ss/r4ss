@@ -6,7 +6,7 @@
 #' harvest control rule into a model representing a different state of nature.
 #' This is a common task for US west coast groundfish but might be useful elsewhere.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param yrs Range of years in which to fill in forecast catches from timeseries
 #' @param average Use average catch over a range of years for forecast
 #' (as opposed to using forecast based on control rule)
@@ -49,19 +49,34 @@
 #'
 #' @export
 
-SS_ForeCatch <- function(replist, yrs = 2021:2032,
-                         average = FALSE, avg.yrs = 2016:2020,
-                         total = NULL, digits = 2,
-                         dead = TRUE, zeros = FALSE) {
-  # function for creating table of fixed forecast catches
-  # based on values in the timeseries output
+SS_ForeCatch <- function(
+  replist,
+  yrs = 2025:2036,
+  average = FALSE,
+  avg.yrs = 2020:2024,
+  total = NULL,
+  digits = 2,
+  dead = TRUE,
+  zeros = FALSE
+) {
+  # check catch units
+  catch_units <- replist[["catch_units"]][replist[["fleet_type"]] == 1]
+  mixed_units <- FALSE
+  if (length(unique(catch_units)) > 1) {
+    mixed_units <- TRUE
+    cli::cli_alert_info(
+      "Catch units are not the same for all fleets, so units will match the settings for each fleet."
+    )
+  }
   timeseries <- replist[["timeseries"]]
 
   # create new empty object to store stuff
   forecast_catches <- NULL
 
   if (!all(yrs %in% timeseries[["Yr"]])) {
-    warning("Not all requested years are present in timeseries output.")
+    cli::cli_alert_warning(
+      "Not all requested years are present in timeseries output."
+    )
     yrs <- yrs[yrs %in% timeseries[["Yr"]]]
   }
   # if only one value for total is input, repeat for all years
@@ -107,8 +122,10 @@ SS_ForeCatch <- function(replist, yrs = 2021:2032,
           }
           # create new row for table
           newrow <- data.frame(
-            Year = y, Seas = iseas,
-            Fleet = ifleet, Catch = catch
+            Year = y,
+            Seas = iseas,
+            Fleet = ifleet,
+            Catch = catch
           )
           # add new row to previous rows
           forecast_catches_y <- rbind(forecast_catches_y, newrow)
@@ -119,17 +136,24 @@ SS_ForeCatch <- function(replist, yrs = 2021:2032,
     # if requested, scale catches to sum to input total (such as ACL)
     if (!is.null(total)) {
       forecast_catches_y[["Catch"]] <- total[iyr] *
-        forecast_catches_y[["Catch"]] / sum(forecast_catches_y[["Catch"]])
+        forecast_catches_y[["Catch"]] /
+        sum(forecast_catches_y[["Catch"]])
     }
 
     # round values
-    forecast_catches_y[["Catch"]] <- round(forecast_catches_y[["Catch"]], digits)
+    forecast_catches_y[["Catch"]] <- round(
+      forecast_catches_y[["Catch"]],
+      digits
+    )
 
     # add comment on right-hand-side
     forecast_catches_y[["comment"]] <- ""
     forecast_catches_y[["comment"]][1] <- paste0(
-      "#sum_for_", y, ": ",
-      sum(forecast_catches_y[["Catch"]])
+      "#sum_for_",
+      y,
+      ": ",
+      sum(forecast_catches_y[["Catch"]]),
+      ifelse(mixed_units, " (mixed units)", "")
     )
     # add block for this year to other blocks
     forecast_catches <- rbind(forecast_catches, forecast_catches_y)

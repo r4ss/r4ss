@@ -6,9 +6,9 @@
 \usage{
 SS_ForeCatch(
   replist,
-  yrs = 2021:2032,
+  yrs = 2025:2036,
   average = FALSE,
-  avg.yrs = 2016:2020,
+  avg.yrs = 2020:2024,
   total = NULL,
   digits = 2,
   dead = TRUE,

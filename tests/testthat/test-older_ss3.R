@@ -21,7 +21,8 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 ###############################################################################
 # testing SS_output
 ###############################################################################
-simple3.24 <- SS_output(file.path(example_path, "simple_3.24"),
+simple3.24 <- SS_output(
+  file.path(example_path, "simple_3.24"),
   verbose = FALSE,
   printstats = FALSE
 )
@@ -41,8 +42,10 @@ test_that("SS_output() list: Kobe looks right", {
 ###############################################################################
 
 test_that("SS_plots runs on simple_3.24 model", {
-  plots3.24 <- SS_plots(simple3.24,
-    dir = temp_path, printfolder = "plots_3.24",
+  plots3.24 <- SS_plots(
+    simple3.24,
+    dir = temp_path,
+    printfolder = "plots_3.24",
     verbose = FALSE
   )
   expect_equal(tail(plots3.24$file, 1), "lowcorrelationcheck.html")
@@ -54,7 +57,8 @@ test_that("SS_plots runs on simple_3.24 model", {
 
 test_that("SSsummarize and SSplotComparisons work to compare 3.24 to 3.30", {
   # first read current model (different configuration)
-  simple_small <- SS_output(file.path(example_path, "simple_small"),
+  simple_small <- SS_output(
+    file.path(example_path, "simple_small"),
     verbose = FALSE,
     printstats = FALSE
   )
@@ -63,9 +67,11 @@ test_that("SSsummarize and SSplotComparisons work to compare 3.24 to 3.30", {
   simple_summary <- SSsummarize(list(simple3.24, simple_small))
 
   # plot comparisons of results
-  comparison_plots <- SSplotComparisons(simple_summary,
+  comparison_plots <- SSplotComparisons(
+    simple_summary,
     png = TRUE,
-    plotdir = temp_path, verbose = FALSE,
+    plotdir = temp_path,
+    verbose = FALSE,
     indexUncertainty = TRUE
   )
 

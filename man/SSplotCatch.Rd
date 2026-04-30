@@ -52,8 +52,8 @@ Numbering of subplots is as follows,
 
 \emph{Basic plots for all models}
 \itemize{
-\item 1 landings
-\item 2 landings stacked
+\item 1 total catch as line plot (if no discards) or landings (if discards present)
+\item 2 total catch as stacked bars (if no discards) or landings (if discards present)
 \item 3 observed and expected landings (if different)
 \item 9 harvest rate
 }
@@ -119,8 +119,8 @@ each year}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \code{help("legend")} for more info on
-the string options.}
+the x and y dimensions, respectively. See \code{help("legend")} for more info
+on the string options.}
 
 \item{order}{Optional input to change the order of fleets in stacked plots.}
 

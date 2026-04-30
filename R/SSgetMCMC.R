@@ -4,8 +4,7 @@
 #' files) from a model.
 #'
 #'
-#' @template dir
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @param writecsv Write key parameters and certainty nuisance quantities to a
 #' CSV file.
 #' @param postname Name of file with parameter posteriors (default matches
@@ -29,28 +28,31 @@
 #' @seealso [mcmc.out()], [mcmc.nuisance()],
 #' [SSplotPars()]
 SSgetMCMC <-
-  function(dir = NULL,
-           verbose = TRUE,
-           writecsv = FALSE,
-           postname = "posteriors.sso",
-           derpostname = "derived_posteriors.sso",
-           csv1 = "keyposteriors.csv",
-           csv2 = "nuisanceposteriors.csv",
-           keystrings = c( # values that get written to csv1
-             "NatM",
-             "R0",
-             "steep",
-             "RecrDev_2008",
-             "Q_extraSD"
-           ),
-           nuisancestrings = c( # values that get written to csv2
-             "Objective_function",
-             "SSB_",
-             "InitAge",
-             "RecrDev"
-           ),
-           burnin = 0, # the number of values to discard for burnin
-           thin = 1 # the thinning interval
+  function(
+    dir = NULL,
+    verbose = TRUE,
+    writecsv = FALSE,
+    postname = "posteriors.sso",
+    derpostname = "derived_posteriors.sso",
+    csv1 = "keyposteriors.csv",
+    csv2 = "nuisanceposteriors.csv",
+    keystrings = c(
+      # values that get written to csv1
+      "NatM",
+      "R0",
+      "steep",
+      "RecrDev_2008",
+      "Q_extraSD"
+    ),
+    nuisancestrings = c(
+      # values that get written to csv2
+      "Objective_function",
+      "SSB_",
+      "InitAge",
+      "RecrDev"
+    ),
+    burnin = 0, # the number of values to discard for burnin
+    thin = 1 # the thinning interval
   ) {
     # get MCMC output
     if (verbose) {
@@ -59,12 +61,16 @@ SSgetMCMC <-
     # note: check.names = FALSE added to command below avoids
     # automatic conversion of some parameter labels such as
     # "SR_LN(R0)" to "SR_LN.R0."
-    post <- read.table(file.path(dir, postname),
-      header = TRUE, check.names = FALSE
+    post <- read.table(
+      file.path(dir, postname),
+      header = TRUE,
+      check.names = FALSE
     )
 
-    derpost <- read.table(file.path(dir, derpostname),
-      header = TRUE, check.names = FALSE
+    derpost <- read.table(
+      file.path(dir, derpostname),
+      header = TRUE,
+      check.names = FALSE
     )
     # remove redundant values
     derpost <- derpost[, !(names(derpost) %in% c("Iter", "Objective_function"))]
@@ -100,7 +106,9 @@ SSgetMCMC <-
       if (verbose) {
         message(
           "writing subset of posteriors to files:\n  ",
-          file1, "\n  ", file2
+          file1,
+          "\n  ",
+          file2
         )
       }
       write.csv(keypost, file1, row.names = FALSE)

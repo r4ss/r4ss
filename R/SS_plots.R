@@ -5,7 +5,7 @@
 #' multiple PNG files. This is now just a wrapper which calls on separate
 #' functions to make all the plots.
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param plot Plot sets to be created, see list of plots below.  Use to
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
 #' not available in the model run will automatically be skipped, whether called
@@ -56,23 +56,18 @@
 #' can be either relative (to the working directory) or absolute paths.
 #' The function will attempt to create the directory it doesn't exist, but it
 #' does not do so recursively.
-#' @template fleets
 #' @param areas Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing areas for which plots should be made in a multi-area model.
 #' By default, plots will be made for all areas (excepting cases where the
 #' function has not yet been updated for multi-area models). Default="all".
-#' @template fleetnames
 #' @param fleetcols Either the string "default", or a vector of colors to use
 #' for each fleet.  Default="default".
 #' @param fleetlty Vector of line types used for each fleet in some plots.
 #' Default=1.
 #' @param fleetpch Vector of point types used for each fleet in some plots.
 #' Default=1.
-#' @template lwd
-#' @template areacols
 #' @param areanames Optional vector of names for each area used in titles.
 #' Default="default".
-#' @template verbose
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the timeseries plots and
@@ -134,14 +129,6 @@
 #' @param effNline show line for effective sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param showlegend Display legends in various plots?
-#' @template pwidth
-#' @template pheight
-#' @template pheight_tall
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template mainTitle
-#' @template cex.main
 #' @param selexlines Vector controlling which lines should be shown on
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.
@@ -170,7 +157,6 @@
 #' Default=F.
 #' @param catchbars show catch by fleet as barplot instead of stacked polygons
 #' (default=TRUE)
-#' @template legendloc
 #' @param minyr First year to show in time-series and time-varying plots
 #' @param maxyr Last year to show in time-series and time-varying plots. This
 #' can either be an alternative to, or redundant with, the forecastplot input.
@@ -252,29 +238,94 @@
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.
 SS_plots <-
-  function(replist = NULL, plot = 1:26, pdf = FALSE, png = TRUE, html = png,
-           printfolder = "plots", dir = "default", fleets = "all", areas = "all",
-           fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
-           lwd = 1, areacols = NULL, areanames = "default",
-           verbose = TRUE, uncertainty = TRUE, forecastplot = FALSE,
-           datplot = TRUE, Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
-           comp.yupper = 0.4,
-           sprtarg = "default", btarg = "default", minbthresh = "default", pntscalar = NULL,
-           bub.scale.pearson = 1.5, bub.scale.dat = 3, pntscalar.nums = 2.6,
-           pntscalar.tags = 2.6, minnbubble = 8, aalyear = -1, aalbin = -1, aalresids = TRUE,
-           maxneff = 5000, cohortlines = c(), smooth = TRUE, showsampsize = TRUE,
-           showeffN = TRUE, sampsizeline = FALSE, effNline = FALSE,
-           showlegend = TRUE,
-           pwidth = 6.5, pheight = 4.0, pheight_tall = 6.5,
-           punits = "in", ptsize = 10, res = 300,
-           mainTitle = FALSE, cex.main = 1, selexlines = 1:6, rows = 1, cols = 1,
-           maxrows = 6, maxcols = 4, maxrows2 = 4, maxcols2 = 4, andrerows = 4,
-           tagrows = 3, tagcols = 3, parrows = 4, parcols = 2, fixdims = TRUE, new = TRUE,
-           SSplotDatMargin = 8, filenotes = NULL, catchasnumbers = NULL, catchbars = TRUE,
-           legendloc = "topleft", minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
-           scalebubbles = FALSE, tslabels = NULL, catlabels = NULL, maxsize = 1.0,
-           showmle = TRUE, showpost = TRUE, showprior = TRUE, showinit = TRUE, showdev = FALSE,
-           fitrange = FALSE, ...) {
+  function(
+    replist = NULL,
+    plot = 1:26,
+    pdf = FALSE,
+    png = TRUE,
+    html = png,
+    printfolder = "plots",
+    dir = "default",
+    fleets = "all",
+    areas = "all",
+    fleetnames = "default",
+    fleetcols = "default",
+    fleetlty = 1,
+    fleetpch = 1,
+    lwd = 1,
+    areacols = NULL,
+    areanames = "default",
+    verbose = TRUE,
+    uncertainty = TRUE,
+    forecastplot = FALSE,
+    datplot = TRUE,
+    Natageplot = TRUE,
+    samplesizeplots = TRUE,
+    compresidplots = TRUE,
+    comp.yupper = 0.4,
+    sprtarg = "default",
+    btarg = "default",
+    minbthresh = "default",
+    pntscalar = NULL,
+    bub.scale.pearson = 1.5,
+    bub.scale.dat = 3,
+    pntscalar.nums = 2.6,
+    pntscalar.tags = 2.6,
+    minnbubble = 8,
+    aalyear = -1,
+    aalbin = -1,
+    aalresids = TRUE,
+    maxneff = 5000,
+    cohortlines = c(),
+    smooth = TRUE,
+    showsampsize = TRUE,
+    showeffN = TRUE,
+    sampsizeline = FALSE,
+    effNline = FALSE,
+    showlegend = TRUE,
+    pwidth = 6.5,
+    pheight = 4.0,
+    pheight_tall = 6.5,
+    punits = "in",
+    ptsize = 10,
+    res = 300,
+    mainTitle = FALSE,
+    cex.main = 1,
+    selexlines = 1:6,
+    rows = 1,
+    cols = 1,
+    maxrows = 6,
+    maxcols = 4,
+    maxrows2 = 4,
+    maxcols2 = 4,
+    andrerows = 4,
+    tagrows = 3,
+    tagcols = 3,
+    parrows = 4,
+    parcols = 2,
+    fixdims = TRUE,
+    new = TRUE,
+    SSplotDatMargin = 8,
+    filenotes = NULL,
+    catchasnumbers = NULL,
+    catchbars = TRUE,
+    legendloc = "topleft",
+    minyr = -Inf,
+    maxyr = Inf,
+    sexes = "all",
+    scalebins = FALSE,
+    scalebubbles = FALSE,
+    tslabels = NULL,
+    catlabels = NULL,
+    maxsize = 1.0,
+    showmle = TRUE,
+    showpost = TRUE,
+    showprior = TRUE,
+    showinit = TRUE,
+    showdev = FALSE,
+    fitrange = FALSE,
+    ...
+  ) {
     flush.console()
 
     # label table is a step toward internationalization of the code
@@ -311,7 +362,9 @@ SS_plots <-
 
     # check for internal consistency
     if (pdf & png) {
-      stop("Inputs 'pdf' and 'png' are mututally exclusive. You need to set one of them to FALSE")
+      stop(
+        "Inputs 'pdf' and 'png' are mututally exclusive. You need to set one of them to FALSE"
+      )
     }
     if (html & !png) {
       stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
@@ -321,7 +374,9 @@ SS_plots <-
       uncertainty <- FALSE
     }
     if (forecastplot & max(timeseries[["Yr"]] > endyr + 1) == 0) {
-      message("Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default")
+      message(
+        "Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default"
+      )
       forecastplot <- FALSE
     }
 
@@ -330,14 +385,18 @@ SS_plots <-
       fleets <- 1:nfleets
     } else {
       if (length(intersect(fleets, 1:nfleets)) != length(fleets)) {
-        return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
+        return(
+          "Input 'fleets' should be 'all' or a vector of values between 1 and nfleets."
+        )
       }
     }
     if (areas[1] == "all") {
       areas <- 1:nareas
     } else {
       if (length(intersect(areas, 1:nareas)) != length(areas)) {
-        return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
+        return(
+          "Input 'areas' should be 'all' or a vector of values between 1 and nareas."
+        )
       }
     }
 
@@ -373,11 +432,18 @@ SS_plots <-
       ### Note: the following line has been commented out because it was identified
       ###       by Brian Ripley as "against CRAN policies".
       # if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
-      dev.new(width = pwidth, height = pheight, pointsize = ptsize, record = TRUE)
+      dev.new(
+        width = pwidth,
+        height = pheight,
+        pointsize = ptsize,
+        record = TRUE
+      )
     }
     if (nplots > 0 & !new) {
       if (verbose) {
-        message("Adding plots to existing plot window. Plot history not erased.")
+        message(
+          "Adding plots to existing plot window. Plot history not erased."
+        )
       }
     }
 
@@ -430,10 +496,14 @@ SS_plots <-
       if (length(csv.files) > 0) {
         StartTimes.old <- NULL
         for (ifile in seq_along(csv.files)) {
-          plotInfo.old <- read.csv(file.path(plotdir, csv.files[ifile]),
+          plotInfo.old <- read.csv(
+            file.path(plotdir, csv.files[ifile]),
             stringsAsFactors = FALSE
           )
-          StartTimes.old <- c(StartTimes.old, unique(plotInfo.old[["StartTime"]]))
+          StartTimes.old <- c(
+            StartTimes.old,
+            unique(plotInfo.old[["StartTime"]])
+          )
         }
         if (any(StartTimes.old != StartTime)) {
           # if there are plots that are older than those from the current model,
@@ -457,11 +527,14 @@ SS_plots <-
 
     # create PDF file if requested
     if (pdf) {
-      pdffile <- file.path(dir, paste0(
-        "SS_plots_",
-        format(Sys.time(), "%d-%m-%Y_%H.%M"),
-        ".pdf"
-      ))
+      pdffile <- file.path(
+        dir,
+        paste0(
+          "SS_plots_",
+          format(Sys.time(), "%d-%m-%Y_%H.%M"),
+          ".pdf"
+        )
+      )
       pdf(file = pdffile, width = pwidth, height = pheight)
       if (verbose) {
         message("PDF file with plots will be:", pdffile)
@@ -478,12 +551,25 @@ SS_plots <-
     if (pdf) {
       mar0 <- par()[["mar"]] # current margins
       par(mar = rep(0, 4))
-      plot(0, type = "n", xlab = "", ylab = "", axes = FALSE, xlim = c(0, 1), ylim = c(0, 1))
+      plot(
+        0,
+        type = "n",
+        xlab = "",
+        ylab = "",
+        axes = FALSE,
+        xlim = c(0, 1),
+        ylim = c(0, 1)
+      )
       y <- 0.9
       ystep <- -.05
       text(0, y, "Plots created using the 'r4ss' package in R", pos = 4)
       y <- y + ystep
-      text(0, y, paste("Stock Synthesis version:", substr(SS_version, 1, 9)), pos = 4)
+      text(
+        0,
+        y,
+        paste("Stock Synthesis version:", substr(SS_version, 1, 9)),
+        pos = 4
+      )
       y <- y + ystep
       text(0, y, StartTime, pos = 4)
       y <- y + ystep
@@ -516,12 +602,20 @@ SS_plots <-
       plotinfo <- SSplotBiology(
         replist = replist,
         areacols = areacols,
-        forecast = forecastplot, minyr = minyr, maxyr = maxyr,
-        plot = !png, print = png,
-        pwidth = pwidth, pheight = pheight, pheight_tall = pheight_tall,
+        forecast = forecastplot,
+        minyr = minyr,
+        maxyr = maxyr,
+        plot = !png,
+        print = png,
+        pwidth = pwidth,
+        pheight = pheight,
+        pheight_tall = pheight_tall,
         punits = punits,
-        ptsize = ptsize, res = res, mainTitle = mainTitle,
-        cex.main = cex.main, plotdir = plotdir
+        ptsize = ptsize,
+        res = res,
+        mainTitle = mainTitle,
+        cex.main = cex.main,
+        plotdir = plotdir
       )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
     }
@@ -536,12 +630,20 @@ SS_plots <-
       }
       selexinfo <-
         SSplotSelex(
-          replist = replist, selexlines = selexlines,
-          fleets = fleets, fleetnames = fleetnames,
-          minyr = minyr, maxyr = maxyr,
-          plot = !png, print = png,
-          pwidth = pwidth, pheight = pheight, punits = punits,
-          ptsize = ptsize, res = res, cex.main = cex.main,
+          replist = replist,
+          selexlines = selexlines,
+          fleets = fleets,
+          fleetnames = fleetnames,
+          minyr = minyr,
+          maxyr = maxyr,
+          plot = !png,
+          print = png,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
+          cex.main = cex.main,
           plotdir = plotdir,
           mainTitle = mainTitle,
         )
@@ -556,11 +658,15 @@ SS_plots <-
         plotinfo <-
           SSunavailableSpawningOutput(
             replist = replist,
-            plot = !png, print = png,
+            plot = !png,
+            print = png,
             plotdir = plotdir,
-            pwidth = pwidth, pheight = pheight,
-            punits = punits, res = res,
-            ptsize = ptsize, cex.main = cex.main
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            res = res,
+            ptsize = ptsize,
+            cex.main = cex.main
           )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       }
@@ -582,7 +688,8 @@ SS_plots <-
         for (doforecast in unique(c(FALSE, forecastplot))) {
           # subset of plots for which uncertainty might be added
           if (isubplot %in% c(7, 9, 11)) {
-            for (douncertainty in unique(c(FALSE, uncertainty))) { # add uncertainty or not
+            for (douncertainty in unique(c(FALSE, uncertainty))) {
+              # add uncertainty or not
               plotinfo <-
                 SSplotTimeseries(
                   replist = replist,
@@ -592,21 +699,29 @@ SS_plots <-
                   areanames = areanames,
                   forecastplot = doforecast,
                   uncertainty = douncertainty,
-                  plot = !png, print = png,
+                  plot = !png,
+                  print = png,
                   verbose = verbose,
                   btarg = btarg,
                   minbthresh = minbthresh,
-                  minyr = minyr, maxyr = maxyr,
-                  pwidth = pwidth, pheight = pheight, punits = punits,
-                  ptsize = ptsize, res = res,
+                  minyr = minyr,
+                  maxyr = maxyr,
+                  pwidth = pwidth,
+                  pheight = pheight,
+                  punits = punits,
+                  ptsize = ptsize,
+                  res = res,
                   mainTitle = mainTitle,
                   cex.main = cex.main,
                   labels = tslabels,
                   plotdir = plotdir
                 )
-              if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+              if (!is.null(plotinfo)) {
+                plotInfoTable <- rbind(plotInfoTable, plotinfo)
+              }
             } # end loop over uncertainty or not
-          } else { # these plots don't have the option for uncertainty
+          } else {
+            # these plots don't have the option for uncertainty
             plotinfo <-
               SSplotTimeseries(
                 replist = replist,
@@ -616,19 +731,26 @@ SS_plots <-
                 areanames = areanames,
                 forecastplot = doforecast,
                 uncertainty = FALSE,
-                plot = !png, print = png,
+                plot = !png,
+                print = png,
                 verbose = verbose,
                 btarg = btarg,
                 minbthresh = minbthresh,
-                minyr = minyr, maxyr = maxyr,
-                pwidth = pwidth, pheight = pheight, punits = punits,
-                ptsize = ptsize, res = res,
+                minyr = minyr,
+                maxyr = maxyr,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                ptsize = ptsize,
+                res = res,
                 mainTitle = mainTitle,
                 cex.main = cex.main,
                 labels = tslabels,
                 plotdir = plotdir
               )
-            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            if (!is.null(plotinfo)) {
+              plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
         }
       } # end loop over timeseries subplots
@@ -642,13 +764,19 @@ SS_plots <-
         replist = replist,
         yrs = yrs,
         uncertainty = uncertainty,
-        plot = !png, print = png,
+        plot = !png,
+        print = png,
         verbose = verbose,
-        pwidth = pwidth, pheight = pheight, punits = punits,
-        ptsize = ptsize, res = res,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        ptsize = ptsize,
+        res = res,
         plotdir = plotdir
       )
-      if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      if (!is.null(plotinfo)) {
+        plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      }
 
       ### add plot of Dynamic B0
       if (is.null(replist[["Dynamic_Bzero"]])) {
@@ -665,10 +793,14 @@ SS_plots <-
           replist = replist,
           yrs = yrs,
           uncertainty = (uncertainty & Dyn_Bzero_uncertainty),
-          plot = !png, print = png,
+          plot = !png,
+          print = png,
           verbose = verbose,
-          pwidth = pwidth, pheight = pheight, punits = punits,
-          ptsize = ptsize, res = res,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
           plotdir = plotdir
         )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
@@ -686,23 +818,35 @@ SS_plots <-
       plotinfo <-
         SSplotRecdevs(
           replist = replist,
-          plot = !png, print = png,
+          plot = !png,
+          print = png,
           forecastplot = forecastplot,
           uncertainty = uncertainty,
-          pwidth = pwidth, pheight = pheight, punits = punits,
-          ptsize = ptsize, res = res, cex.main = cex.main,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
+          cex.main = cex.main,
           plotdir = plotdir
         )
-      if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      if (!is.null(plotinfo)) {
+        plotInfoTable <- rbind(plotInfoTable, plotinfo)
+      }
 
       if (nareas > 1 & nseasons > 1) {
         plotinfo <-
           SSplotRecdist(
             replist = replist,
-            plot = !png, print = png,
+            plot = !png,
+            print = png,
             verbose = verbose,
-            pwidth = pwidth, pheight = pheight, punits = punits,
-            ptsize = ptsize, res = res, cex.main = cex.main,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
+            cex.main = cex.main,
             plotdir = plotdir
           )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
@@ -716,23 +860,36 @@ SS_plots <-
     if (igroup %in% plot) {
       if (uncertainty) {
         if (verbose) {
-          message("Starting estimation of recruitment bias adjustment and associated plots (group ", igroup, ")")
+          message(
+            "Starting estimation of recruitment bias adjustment and associated plots (group ",
+            igroup,
+            ")"
+          )
         }
         if (is.numeric(rmse_table[["RMSE"]])) {
           if (max(rmse_table[["RMSE"]]) > 0) {
             temp <-
               SS_fitbiasramp(
                 replist = replist,
-                plot = !png, print = png,
+                plot = !png,
+                print = png,
                 twoplots = FALSE,
-                pwidth = pwidth, pheight = pheight, punits = punits,
-                ptsize = ptsize, res = res, cex.main = cex.main,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                ptsize = ptsize,
+                res = res,
+                cex.main = cex.main,
                 plotdir = plotdir
               )
             plotinfo <- temp[["plotinfo"]]
-            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            if (!is.null(plotinfo)) {
+              plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           } else {
-            message("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.")
+            message(
+              "Skipping bias adjustment fit because root mean squared error of recruit devs is 0."
+            )
           }
         } else {
           message(
@@ -742,7 +899,11 @@ SS_plots <-
         }
       } else {
         if (verbose) {
-          message("Skipping estimation of recruitment bias adjustment (group ", igroup, ") because uncertainty=FALSE")
+          message(
+            "Skipping estimation of recruitment bias adjustment (group ",
+            igroup,
+            ") because uncertainty=FALSE"
+          )
         }
       }
     } # end if igroup in plot or print
@@ -758,11 +919,15 @@ SS_plots <-
       plotinfo <-
         SSplotSpawnrecruit(
           replist = replist,
-          plot = !png, print = png,
+          plot = !png,
+          print = png,
           virg = TRUE, # add point on curve at equilibrium values (B0,R0)
           init = FALSE, # add point on curve at initial values (B1,R1)
-          pwidth = pwidth, pheight = pheight_tall, punits = punits,
-          ptsize = ptsize, res = res,
+          pwidth = pwidth,
+          pheight = pheight_tall,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
           plotdir = plotdir
         )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
@@ -779,14 +944,19 @@ SS_plots <-
       temp <-
         SSplotCatch(
           replist = replist,
-          plot = !png, print = png,
+          plot = !png,
+          print = png,
           fleetnames = fleetnames,
           fleetlty = fleetlty,
           fleetpch = fleetpch,
           fleetcols = fleetcols,
-          minyr = minyr, maxyr = maxyr,
-          pwidth = pwidth, pheight = pheight, punits = punits,
-          ptsize = ptsize, res = res,
+          minyr = minyr,
+          maxyr = maxyr,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
           cex.main = cex.main,
           catchasnumbers = catchasnumbers,
           order = "default",
@@ -811,12 +981,18 @@ SS_plots <-
       plotinfo <-
         SSplotSPR(
           replist = replist,
-          plot = !png, print = png,
+          plot = !png,
+          print = png,
           uncertainty = uncertainty,
-          sprtarg = sprtarg, btarg = btarg,
-          pwidth = pwidth, pheight = pheight, pheight_tall = pheight_tall,
+          sprtarg = sprtarg,
+          btarg = btarg,
+          pwidth = pwidth,
+          pheight = pheight,
+          pheight_tall = pheight_tall,
           punits = punits,
-          ptsize = ptsize, res = res, cex.main = cex.main,
+          ptsize = ptsize,
+          res = res,
+          cex.main = cex.main,
           plotdir = plotdir
         )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
@@ -827,27 +1003,38 @@ SS_plots <-
     #
     igroup <- 9
     if (igroup %in% plot) {
-      if (!is.null(replist[["discard"]]) &&
-        !is.na(replist[["discard"]][[1]][1]) &&
-        nrow(replist[["discard"]]) > 0) {
+      if (
+        !is.null(replist[["discard"]]) &&
+          !is.na(replist[["discard"]][[1]][1]) &&
+          nrow(replist[["discard"]]) > 0
+      ) {
         if (verbose) {
           message("Starting discard plot (group ", igroup, ")")
         }
         plotinfo <-
           SSplotDiscard(
             replist = replist,
-            plot = !png, print = png,
+            plot = !png,
+            print = png,
             fleets = fleets,
             fleetnames = fleetnames,
             datplot = datplot,
-            pwidth = pwidth, pheight = pheight, punits = punits,
-            ptsize = ptsize, res = res, cex.main = cex.main,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
+            cex.main = cex.main,
             plotdir = plotdir
           )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
-          message("Skipping discard plot (group ", igroup, ") because no discard data")
+          message(
+            "Skipping discard plot (group ",
+            igroup,
+            ") because no discard data"
+          )
         }
       }
     } # end if igroup in plot or print
@@ -857,31 +1044,41 @@ SS_plots <-
     #
     igroup <- 10
     if (igroup %in% plot) {
-      if (!is.null(replist[["mnwgt"]]) &&
-        !is.na(replist[["mnwgt"]][[1]][1]) &&
-        nrow(replist[["mnwgt"]]) > 0) {
+      if (
+        !is.null(replist[["mnwgt"]]) &&
+          !is.na(replist[["mnwgt"]][[1]][1]) &&
+          nrow(replist[["mnwgt"]]) > 0
+      ) {
         if (verbose) {
           message("Starting mean body weight plot (group ", igroup, ")")
         }
         plotinfo <-
           SSplotMnwt(
             replist = replist,
-            plot = !png, print = png,
+            plot = !png,
+            print = png,
             fleets = fleets,
             fleetnames = fleetnames,
             datplot = datplot,
-            pwidth = pwidth, pheight = pheight, punits = punits,
-            ptsize = ptsize, res = res, cex.main = cex.main,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
+            cex.main = cex.main,
             plotdir = plotdir
           )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
-          message("Skipping mean weight plot (group ", igroup, ") because no mean weight data")
+          message(
+            "Skipping mean weight plot (group ",
+            igroup,
+            ") because no mean weight data"
+          )
         }
       }
     } # end if igroup in plot or print
-
 
     ##########################################
     # Index plots
@@ -897,11 +1094,16 @@ SS_plots <-
           fleets = fleets,
           fleetnames = fleetnames,
           fleetcols = fleetcols,
-          plot = !png, print = png,
+          plot = !png,
+          print = png,
           datplot = datplot,
-          pwidth = pwidth, pheight = pheight, punits = punits,
-          ptsize = ptsize, res = res,
-          mainTitle = mainTitle, cex.main = cex.main,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
+          mainTitle = mainTitle,
+          cex.main = cex.main,
           plotdir = plotdir,
           minyr = minyr,
           maxyr = maxyr
@@ -910,7 +1112,8 @@ SS_plots <-
       } else {
         if (verbose) {
           message(
-            "Skipping index plots (group ", igroup,
+            "Skipping index plots (group ",
+            igroup,
             ") because no indices in model (or are not reported)"
           )
         }
@@ -934,10 +1137,15 @@ SS_plots <-
             areacols = areacols,
             pntscalar = pntscalar.nums,
             bublegend = showlegend,
-            plot = !png, print = png,
-            pwidth = pwidth, pheight = pheight_tall, punits = punits,
-            ptsize = ptsize, res = res,
-            mainTitle = mainTitle, cex.main = cex.main,
+            plot = !png,
+            print = png,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
+            mainTitle = mainTitle,
+            cex.main = cex.main,
             plotdir = plotdir
           )
         if (!is.null(plotinfo)) {
@@ -945,7 +1153,8 @@ SS_plots <-
         }
       } else {
         message(
-          "Skipping numbers plots (group ", igroup,
+          "Skipping numbers plots (group ",
+          igroup,
           ") because numbers-at-age table not included in output"
         )
         # end check for numbers-at-age table available
@@ -963,10 +1172,13 @@ SS_plots <-
       ageCompDatGroup <- 14
       condCompDatGroup <- 15
       if (!datplot) {
-        if (length(intersect(
-          c(lenCompDatGroup, ageCompDatGroup, condCompDatGroup),
-          plot
-        )) > 0) {
+        if (
+          length(intersect(
+            c(lenCompDatGroup, ageCompDatGroup, condCompDatGroup),
+            plot
+          )) >
+            0
+        ) {
           message(
             "Skipping plot groups ",
             lenCompDatGroup,
@@ -976,117 +1188,239 @@ SS_plots <-
           )
         }
       } else {
-        if (lenCompDatGroup %in% plot) # data only aspects
-          {
-            if (verbose) {
-              message("Starting length comp data plots (group ", lenCompDatGroup, ")")
-            }
-            # length comp polygon and bubble plots
+        if (lenCompDatGroup %in% plot) {
+          # data only aspects
+          if (verbose) {
+            message(
+              "Starting length comp data plots (group ",
+              lenCompDatGroup,
+              ")"
+            )
+          }
+          # length comp polygon and bubble plots
+          plotinfo <-
+            SSplotComps(
+              replist = replist,
+              datonly = TRUE,
+              kind = "LEN",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
+              fleetnames = fleetnames,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = FALSE,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.dat,
+              bublegend = showlegend,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              plotdir = plotdir,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              yupper = comp.yupper,
+              scalebins = scalebins,
+              scalebubbles = scalebubbles,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
+              ...
+            )
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
+
+          # length comp sex ratios (data only, for 2-sex models only)
+          if (replist[["nsexes"]] == 2) {
             plotinfo <-
-              SSplotComps(
-                replist = replist, datonly = TRUE, kind = "LEN", bub = TRUE, verbose = verbose, fleets = fleets,
+              SSplotSexRatio(
+                replist = replist,
+                datonly = TRUE,
+                kind = "LEN",
+                bub = TRUE,
+                verbose = verbose,
+                fleets = fleets,
                 fleetnames = fleetnames,
-                samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = FALSE,
-                minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.dat,
+                linescol = 0, # turn off line showing expected value
+                samplesizeplots = samplesizeplots,
+                showsampsize = showsampsize,
+                showeffN = showeffN,
+                minnbubble = minnbubble,
+                pntscalar = pntscalar,
+                cexZ1 = bub.scale.pearson,
                 bublegend = showlegend,
-                maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-                plot = !png, print = png,
-                plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
-                sexes = sexes, yupper = comp.yupper,
-                scalebins = scalebins, scalebubbles = scalebubbles,
-                pwidth = pwidth, pheight = pheight_tall, punits = punits,
-                ptsize = ptsize, res = res,
+                maxrows = maxrows,
+                maxcols = maxcols,
+                fixdims = fixdims,
+                rows = rows,
+                cols = cols,
+                plot = !png,
+                print = png,
+                smooth = smooth,
+                plotdir = plotdir,
+                maxneff = maxneff,
+                mainTitle = mainTitle,
+                cex.main = cex.main,
+                cohortlines = cohortlines,
+                # sexes=sexes,
+                # yupper=comp.yupper,
+                scalebins = scalebins,
+                pwidth = pwidth,
+                pheight = pheight_tall,
+                punits = punits,
+                ptsize = ptsize,
+                res = res,
                 ...
               )
-            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
-
-            # length comp sex ratios (data only, for 2-sex models only)
-            if (replist[["nsexes"]] == 2) {
-              plotinfo <-
-                SSplotSexRatio(
-                  replist = replist,
-                  datonly = TRUE,
-                  kind = "LEN", bub = TRUE, verbose = verbose, fleets = fleets,
-                  fleetnames = fleetnames,
-                  linescol = 0, # turn off line showing expected value
-                  samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-                  minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
-                  bublegend = showlegend,
-                  maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-                  plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-                  maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-                  cohortlines = cohortlines,
-                  # sexes=sexes,
-                  # yupper=comp.yupper,
-                  scalebins = scalebins,
-                  pwidth = pwidth, pheight = pheight_tall, punits = punits,
-                  ptsize = ptsize, res = res,
-                  ...
-                )
-              if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
-            }
-
-            # size comp polygon and bubble plots (data only)
-            for (sizemethod in sort(unique(replist[["sizedbase"]][["method"]]))) {
-              plotinfo <-
-                SSplotComps(
-                  replist = replist, datonly = TRUE, kind = "SIZE", sizemethod = sizemethod,
-                  bub = TRUE, verbose = verbose, fleets = fleets, fleetnames = fleetnames,
-                  samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = FALSE,
-                  minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.dat,
-                  bublegend = showlegend,
-                  maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-                  plot = !png, print = png,
-                  plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
-                  sexes = sexes, yupper = comp.yupper,
-                  scalebins = scalebins, scalebubbles = scalebubbles,
-                  pwidth = pwidth, pheight = pheight_tall, punits = punits,
-                  ptsize = ptsize, res = res,
-                  ...
-                )
-              if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            if (!is.null(plotinfo)) {
+              plotInfoTable <- rbind(plotInfoTable, plotinfo)
             }
           }
+
+          # size comp polygon and bubble plots (data only)
+          for (sizemethod in sort(unique(replist[["sizedbase"]][["method"]]))) {
+            plotinfo <-
+              SSplotComps(
+                replist = replist,
+                datonly = TRUE,
+                kind = "SIZE",
+                sizemethod = sizemethod,
+                bub = TRUE,
+                verbose = verbose,
+                fleets = fleets,
+                fleetnames = fleetnames,
+                samplesizeplots = samplesizeplots,
+                showsampsize = showsampsize,
+                showeffN = FALSE,
+                minnbubble = minnbubble,
+                pntscalar = pntscalar,
+                cexZ1 = bub.scale.dat,
+                bublegend = showlegend,
+                maxrows = maxrows,
+                maxcols = maxcols,
+                fixdims = fixdims,
+                rows = rows,
+                cols = cols,
+                plot = !png,
+                print = png,
+                plotdir = plotdir,
+                mainTitle = mainTitle,
+                cex.main = cex.main,
+                sexes = sexes,
+                yupper = comp.yupper,
+                scalebins = scalebins,
+                scalebubbles = scalebubbles,
+                pwidth = pwidth,
+                pheight = pheight_tall,
+                punits = punits,
+                ptsize = ptsize,
+                res = res,
+                ...
+              )
+            if (!is.null(plotinfo)) {
+              plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
+          }
+        }
         if (ageCompDatGroup %in% plot) {
           if (verbose) {
-            message("Starting age comp data plots (group ", ageCompDatGroup, ")")
+            message(
+              "Starting age comp data plots (group ",
+              ageCompDatGroup,
+              ")"
+            )
           }
           # age comp polygon and bubble plots (data only)
           plotinfo <-
             SSplotComps(
-              replist = replist, datonly = TRUE, kind = "AGE", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              datonly = TRUE,
+              kind = "AGE",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = FALSE,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.dat,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = FALSE,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.dat,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png,
-              plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, yupper = comp.yupper,
-              scalebins = scalebins, scalebubbles = scalebubbles,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              plotdir = plotdir,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              yupper = comp.yupper,
+              scalebins = scalebins,
+              scalebubbles = scalebubbles,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
           # ghost age comp polygon and bubble plots (data only)
           plotinfo <-
             SSplotComps(
-              replist = replist, datonly = TRUE, kind = "GSTAGE", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              datonly = TRUE,
+              kind = "GSTAGE",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = samplesizeplots, showsampsize = FALSE, showeffN = FALSE,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.dat,
+              samplesizeplots = samplesizeplots,
+              showsampsize = FALSE,
+              showeffN = FALSE,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.dat,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png,
-              plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, yupper = comp.yupper,
-              scalebins = scalebins, scalebubbles = scalebubbles,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              plotdir = plotdir,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              yupper = comp.yupper,
+              scalebins = scalebins,
+              scalebubbles = scalebubbles,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
           flush.console()
 
           # age comp sex ratios (data only)
@@ -1095,52 +1429,104 @@ SS_plots <-
               SSplotSexRatio(
                 replist = replist,
                 datonly = TRUE,
-                kind = "AGE", bub = TRUE, verbose = verbose, fleets = fleets,
+                kind = "AGE",
+                bub = TRUE,
+                verbose = verbose,
+                fleets = fleets,
                 fleetnames = fleetnames,
-                samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-                minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+                samplesizeplots = samplesizeplots,
+                showsampsize = showsampsize,
+                showeffN = showeffN,
+                minnbubble = minnbubble,
+                pntscalar = pntscalar,
+                cexZ1 = bub.scale.pearson,
                 bublegend = showlegend,
-                maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-                plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-                maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
+                maxrows = maxrows,
+                maxcols = maxcols,
+                fixdims = fixdims,
+                rows = rows,
+                cols = cols,
+                plot = !png,
+                print = png,
+                smooth = smooth,
+                plotdir = plotdir,
+                maxneff = maxneff,
+                mainTitle = mainTitle,
+                cex.main = cex.main,
                 # sexes=sexes, yupper=comp.yupper,
                 scalebins = scalebins,
-                pwidth = pwidth, pheight = pheight_tall, punits = punits,
-                ptsize = ptsize, res = res,
+                pwidth = pwidth,
+                pheight = pheight_tall,
+                punits = punits,
+                ptsize = ptsize,
+                res = res,
                 ...
               )
-            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            if (!is.null(plotinfo)) {
+              plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
         }
         if (condCompDatGroup %in% plot) {
           if (verbose) {
-            message("Starting conditional comp data plots (group ", condCompDatGroup, ")")
+            message(
+              "Starting conditional comp data plots (group ",
+              condCompDatGroup,
+              ")"
+            )
           }
           # conditional age plot (data only)
           plotinfo <-
             SSplotComps(
-              replist = replist, datonly = TRUE, kind = "cond", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              datonly = TRUE,
+              kind = "cond",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = FALSE,
-              sampsizeline = sampsizeline, effNline = effNline,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.dat,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = FALSE,
+              sampsizeline = sampsizeline,
+              effNline = effNline,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.dat,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, maxrows2 = maxrows2, maxcols2 = maxcols2,
-              fixdims = fixdims, rows = rows, cols = cols,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              maxrows2 = maxrows2,
+              maxcols2 = maxcols2,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
               andrerows = andrerows,
-              plot = !png, print = png,
-              plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, yupper = comp.yupper,
-              scalebins = scalebins, scalebubbles = scalebubbles,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              plot = !png,
+              print = png,
+              plotdir = plotdir,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              yupper = comp.yupper,
+              scalebins = scalebins,
+              scalebubbles = scalebubbles,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         } # end conditional data plots
 
         if (!is.null(plotInfoTable)) {
-          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "CompDat"
+          plotInfoTable[["category"]][
+            plotInfoTable[["category"]] == "Comp"
+          ] <- "CompDat"
         }
 
         flush.console()
@@ -1157,68 +1543,139 @@ SS_plots <-
         # regular length comps
         plotinfo <-
           SSplotComps(
-            replist = replist, datonly = FALSE, kind = "LEN", bub = TRUE, verbose = verbose, fleets = fleets,
+            replist = replist,
+            datonly = FALSE,
+            kind = "LEN",
+            bub = TRUE,
+            verbose = verbose,
+            fleets = fleets,
             fleetnames = fleetnames,
-            samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-            minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+            samplesizeplots = samplesizeplots,
+            showsampsize = showsampsize,
+            showeffN = showeffN,
+            minnbubble = minnbubble,
+            pntscalar = pntscalar,
+            cexZ1 = bub.scale.pearson,
             bublegend = showlegend,
-            maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-            plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-            maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
+            maxrows = maxrows,
+            maxcols = maxcols,
+            fixdims = fixdims,
+            rows = rows,
+            cols = cols,
+            plot = !png,
+            print = png,
+            smooth = smooth,
+            plotdir = plotdir,
+            maxneff = maxneff,
+            mainTitle = mainTitle,
+            cex.main = cex.main,
             cohortlines = cohortlines,
-            sexes = sexes, yupper = comp.yupper,
+            sexes = sexes,
+            yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight_tall, punits = punits,
-            ptsize = ptsize, res = res,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
             ...
           )
-        if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        if (!is.null(plotinfo)) {
+          plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        }
 
         # ghost length comps
         plotinfo <-
           SSplotComps(
-            replist = replist, datonly = FALSE, kind = "GSTLEN", bub = TRUE, verbose = verbose, fleets = fleets,
+            replist = replist,
+            datonly = FALSE,
+            kind = "GSTLEN",
+            bub = TRUE,
+            verbose = verbose,
+            fleets = fleets,
             fleetnames = fleetnames,
-            samplesizeplots = FALSE, showsampsize = FALSE, showeffN = FALSE,
-            minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+            samplesizeplots = FALSE,
+            showsampsize = FALSE,
+            showeffN = FALSE,
+            minnbubble = minnbubble,
+            pntscalar = pntscalar,
+            cexZ1 = bub.scale.pearson,
             bublegend = showlegend,
-            maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-            plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-            maxneff = maxneff, cex.main = cex.main, cohortlines = cohortlines,
-            sexes = sexes, yupper = comp.yupper,
+            maxrows = maxrows,
+            maxcols = maxcols,
+            fixdims = fixdims,
+            rows = rows,
+            cols = cols,
+            plot = !png,
+            print = png,
+            smooth = smooth,
+            plotdir = plotdir,
+            maxneff = maxneff,
+            cex.main = cex.main,
+            cohortlines = cohortlines,
+            sexes = sexes,
+            yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight_tall, punits = punits,
-            ptsize = ptsize, res = res,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
             ...
           )
-        if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        if (!is.null(plotinfo)) {
+          plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        }
 
         # length comp sex ratios (for 2-sex models only)
         if (replist[["nsexes"]] == 2) {
           plotinfo <-
             SSplotSexRatio(
               replist = replist,
-              kind = "LEN", bub = TRUE, verbose = verbose, fleets = fleets,
+              kind = "LEN",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = showeffN,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.pearson,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-              maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              smooth = smooth,
+              plotdir = plotdir,
+              maxneff = maxneff,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
               cohortlines = cohortlines,
               # sexes=sexes,
               # yupper=comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # assign plots to LenComp tab in HTML view
         if (!is.null(plotInfoTable)) {
-          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "LenComp"
+          plotInfoTable[["category"]][
+            plotInfoTable[["category"]] == "Comp"
+          ] <- "LenComp"
         }
 
         # loop over size methods for generalized size comp data
@@ -1226,27 +1683,54 @@ SS_plots <-
           for (sizemethod in sort(unique(replist[["sizedbase"]][["method"]]))) {
             plotinfo <-
               SSplotComps(
-                replist = replist, datonly = FALSE, kind = "SIZE", sizemethod = sizemethod,
-                bub = TRUE, verbose = verbose, fleets = fleets, fleetnames = fleetnames,
-                samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-                minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+                replist = replist,
+                datonly = FALSE,
+                kind = "SIZE",
+                sizemethod = sizemethod,
+                bub = TRUE,
+                verbose = verbose,
+                fleets = fleets,
+                fleetnames = fleetnames,
+                samplesizeplots = samplesizeplots,
+                showsampsize = showsampsize,
+                showeffN = showeffN,
+                minnbubble = minnbubble,
+                pntscalar = pntscalar,
+                cexZ1 = bub.scale.pearson,
                 bublegend = showlegend,
-                maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-                plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-                maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
+                maxrows = maxrows,
+                maxcols = maxcols,
+                fixdims = fixdims,
+                rows = rows,
+                cols = cols,
+                plot = !png,
+                print = png,
+                smooth = smooth,
+                plotdir = plotdir,
+                maxneff = maxneff,
+                mainTitle = mainTitle,
+                cex.main = cex.main,
                 cohortlines = cohortlines,
-                sexes = sexes, yupper = comp.yupper,
+                sexes = sexes,
+                yupper = comp.yupper,
                 scalebins = scalebins,
-                pwidth = pwidth, pheight = pheight_tall, punits = punits,
-                ptsize = ptsize, res = res,
+                pwidth = pwidth,
+                pheight = pheight_tall,
+                punits = punits,
+                ptsize = ptsize,
+                res = res,
                 ...
               )
-            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            if (!is.null(plotinfo)) {
+              plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
           }
         }
         # assign plots to SizeComp tab in HTML view
         if (!is.null(plotInfoTable)) {
-          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "SizeComp"
+          plotInfoTable[["category"]][
+            plotInfoTable[["category"]] == "Comp"
+          ] <- "SizeComp"
         }
       }
 
@@ -1261,62 +1745,133 @@ SS_plots <-
         # normal marginal ages
         plotinfo <-
           SSplotComps(
-            replist = replist, datonly = FALSE, kind = "AGE", bub = TRUE, verbose = verbose, fleets = fleets,
+            replist = replist,
+            datonly = FALSE,
+            kind = "AGE",
+            bub = TRUE,
+            verbose = verbose,
+            fleets = fleets,
             fleetnames = fleetnames,
-            samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-            minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+            samplesizeplots = samplesizeplots,
+            showsampsize = showsampsize,
+            showeffN = showeffN,
+            minnbubble = minnbubble,
+            pntscalar = pntscalar,
+            cexZ1 = bub.scale.pearson,
             bublegend = showlegend,
-            maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-            plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-            maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-            sexes = sexes, yupper = comp.yupper,
+            maxrows = maxrows,
+            maxcols = maxcols,
+            fixdims = fixdims,
+            rows = rows,
+            cols = cols,
+            plot = !png,
+            print = png,
+            smooth = smooth,
+            plotdir = plotdir,
+            maxneff = maxneff,
+            mainTitle = mainTitle,
+            cex.main = cex.main,
+            sexes = sexes,
+            yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight_tall, punits = punits,
-            ptsize = ptsize, res = res,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
             ...
           )
-        if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        if (!is.null(plotinfo)) {
+          plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        }
         # ghost ages
         plotinfo <-
           SSplotComps(
-            replist = replist, datonly = FALSE, kind = "GSTAGE", bub = TRUE, verbose = verbose, fleets = fleets,
+            replist = replist,
+            datonly = FALSE,
+            kind = "GSTAGE",
+            bub = TRUE,
+            verbose = verbose,
+            fleets = fleets,
             fleetnames = fleetnames,
-            samplesizeplots = FALSE, showsampsize = FALSE, showeffN = FALSE,
-            minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+            samplesizeplots = FALSE,
+            showsampsize = FALSE,
+            showeffN = FALSE,
+            minnbubble = minnbubble,
+            pntscalar = pntscalar,
+            cexZ1 = bub.scale.pearson,
             bublegend = showlegend,
-            maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-            plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-            maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-            sexes = sexes, yupper = comp.yupper,
+            maxrows = maxrows,
+            maxcols = maxcols,
+            fixdims = fixdims,
+            rows = rows,
+            cols = cols,
+            plot = !png,
+            print = png,
+            smooth = smooth,
+            plotdir = plotdir,
+            maxneff = maxneff,
+            mainTitle = mainTitle,
+            cex.main = cex.main,
+            sexes = sexes,
+            yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight_tall, punits = punits,
-            ptsize = ptsize, res = res,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
             ...
           )
-        if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        if (!is.null(plotinfo)) {
+          plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        }
         # age comp sex ratios
         if (replist[["nsexes"]] == 2) {
           plotinfo <-
             SSplotSexRatio(
               replist = replist,
-              kind = "AGE", bub = TRUE, verbose = verbose, fleets = fleets,
+              kind = "AGE",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = showeffN,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.pearson,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-              maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              smooth = smooth,
+              plotdir = plotdir,
+              maxneff = maxneff,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
               # sexes=sexes, yupper=comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         if (!is.null(plotInfoTable)) {
-          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "AgeComp"
+          plotInfoTable[["category"]][
+            plotInfoTable[["category"]] == "Comp"
+          ] <- "AgeComp"
         }
       } # end if igroup in plot or print
 
@@ -1326,73 +1881,163 @@ SS_plots <-
       igroup <- 18
       if (igroup %in% plot) {
         if (verbose) {
-          message("Starting fit to conditional age-at-length comp plots (group ", igroup, ")")
+          message(
+            "Starting fit to conditional age-at-length comp plots (group ",
+            igroup,
+            ")"
+          )
         }
         if (aalresids) {
           plotinfo <-
             SSplotComps(
-              replist = replist, subplots = 3, datonly = FALSE, kind = "cond", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              subplots = 3,
+              datonly = FALSE,
+              kind = "cond",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-              sampsizeline = sampsizeline, effNline = effNline,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = showeffN,
+              sampsizeline = sampsizeline,
+              effNline = effNline,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.pearson,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, maxrows2 = maxrows2, maxcols2 = maxcols2, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-              maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, yupper = comp.yupper,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              maxrows2 = maxrows2,
+              maxcols2 = maxcols2,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              smooth = smooth,
+              plotdir = plotdir,
+              maxneff = maxneff,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              yupper = comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # conditional age at length for a given year
         if (length(intersect(aalyear, unique(timeseries[["Yr"]]))) > 0) {
           plotinfo <-
             SSplotComps(
-              replist = replist, subplots = 4:5, datonly = FALSE, kind = "cond", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              subplots = 4:5,
+              datonly = FALSE,
+              kind = "cond",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              aalbin = aalbin, aalyear = aalyear,
-              samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-              sampsizeline = sampsizeline, effNline = effNline,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+              aalbin = aalbin,
+              aalyear = aalyear,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = showeffN,
+              sampsizeline = sampsizeline,
+              effNline = effNline,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.pearson,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, maxrows2 = maxrows2, maxcols2 = maxcols2, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-              maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, yupper = comp.yupper,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              maxrows2 = maxrows2,
+              maxcols2 = maxcols2,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              smooth = smooth,
+              plotdir = plotdir,
+              maxneff = maxneff,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              yupper = comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # conditional age at length for a given length bin
         if (length(intersect(aalbin, unique(lbins))) > 0) {
           plotinfo <-
             SSplotComps(
-              replist = replist, subplots = 6, datonly = FALSE, kind = "cond", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              subplots = 6,
+              datonly = FALSE,
+              kind = "cond",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
               aalbin = aalbin,
-              samplesizeplots = samplesizeplots, showsampsize = showsampsize, showeffN = showeffN,
-              minnbubble = minnbubble, pntscalar = pntscalar, cexZ1 = bub.scale.pearson,
+              samplesizeplots = samplesizeplots,
+              showsampsize = showsampsize,
+              showeffN = showeffN,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              cexZ1 = bub.scale.pearson,
               bublegend = showlegend,
-              maxrows = maxrows, maxcols = maxcols, maxrows2 = maxrows2, maxcols2 = maxcols2, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-              maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, yupper = comp.yupper,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              maxrows2 = maxrows2,
+              maxcols2 = maxcols2,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              smooth = smooth,
+              plotdir = plotdir,
+              maxneff = maxneff,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              yupper = comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         if (!is.null(plotInfoTable)) {
-          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "A@LComp"
+          plotInfoTable[["category"]][
+            plotInfoTable[["category"]] == "Comp"
+          ] <- "A@LComp"
         }
       } # end if igroup in plot or print
 
@@ -1412,36 +2057,69 @@ SS_plots <-
             }
           } else {
             if (verbose) {
-              message("Starting conditional age-at-length diagnostic plots (group ", igroup, ")")
+              message(
+                "Starting conditional age-at-length diagnostic plots (group ",
+                igroup,
+                ")"
+              )
             }
             plotinfo <-
               SSplotComps(
-                replist = replist, subplots = 10:12, datonly = FALSE, kind = "cond",
-                bub = TRUE, verbose = verbose, fleets = fleets,
+                replist = replist,
+                subplots = 10:12,
+                datonly = FALSE,
+                kind = "cond",
+                bub = TRUE,
+                verbose = verbose,
+                fleets = fleets,
                 fleetnames = fleetnames,
-                aalbin = aalbin, aalyear = aalyear,
+                aalbin = aalbin,
+                aalyear = aalyear,
                 samplesizeplots = samplesizeplots,
-                showsampsize = showsampsize, showeffN = showeffN,
-                minnbubble = minnbubble, pntscalar = pntscalar,
-                maxrows = maxrows, maxcols = maxcols,
-                maxrows2 = maxrows2, maxcols2 = maxcols2,
-                fixdims = fixdims, rows = rows, cols = cols,
+                showsampsize = showsampsize,
+                showeffN = showeffN,
+                minnbubble = minnbubble,
+                pntscalar = pntscalar,
+                maxrows = maxrows,
+                maxcols = maxcols,
+                maxrows2 = maxrows2,
+                maxcols2 = maxcols2,
+                fixdims = fixdims,
+                rows = rows,
+                cols = cols,
                 andrerows = andrerows,
-                plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-                maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-                sexes = sexes, scalebins = FALSE,
-                pwidth = pwidth, pheight = pheight_tall, punits = punits,
-                ptsize = ptsize, res = res,
+                plot = !png,
+                print = png,
+                smooth = smooth,
+                plotdir = plotdir,
+                maxneff = maxneff,
+                mainTitle = mainTitle,
+                cex.main = cex.main,
+                sexes = sexes,
+                scalebins = FALSE,
+                pwidth = pwidth,
+                pheight = pheight_tall,
+                punits = punits,
+                ptsize = ptsize,
+                res = res,
                 ...
               )
-            if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            if (!is.null(plotinfo)) {
+              plotInfoTable <- rbind(plotInfoTable, plotinfo)
+            }
             if (!is.null(plotInfoTable)) {
-              plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "A@LComp"
+              plotInfoTable[["category"]][
+                plotInfoTable[["category"]] == "Comp"
+              ] <- "A@LComp"
             }
           }
         } else {
           if (verbose) {
-            message("Skipping conditional A@L plots (group ", igroup, ") because no such data in model")
+            message(
+              "Skipping conditional A@L plots (group ",
+              igroup,
+              ") because no such data in model"
+            )
           }
         }
       } # end if igroup in plot or print
@@ -1452,77 +2130,173 @@ SS_plots <-
       igroup <- 20
       if (igroup %in% plot) {
         if (verbose) {
-          message("Starting mean length-at-age and mean weight-at-age plots (group ", igroup, ")")
+          message(
+            "Starting mean length-at-age and mean weight-at-age plots (group ",
+            igroup,
+            ")"
+          )
         }
         if (datplot) {
           # data-only plot of mean length at age
           plotinfo <-
             SSplotComps(
-              replist = replist, datonly = TRUE, kind = "L@A", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              datonly = TRUE,
+              kind = "L@A",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = FALSE, showsampsize = FALSE, showeffN = FALSE,
-              minnbubble = minnbubble, pntscalar = pntscalar,
-              maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-              maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              samplesizeplots = FALSE,
+              showsampsize = FALSE,
+              showeffN = FALSE,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              smooth = smooth,
+              plotdir = plotdir,
+              maxneff = maxneff,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              scalebins = scalebins,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
           # data-only plot of mean weight at age
           plotinfo <-
             SSplotComps(
-              replist = replist, datonly = TRUE, kind = "W@A", bub = TRUE, verbose = verbose, fleets = fleets,
+              replist = replist,
+              datonly = TRUE,
+              kind = "W@A",
+              bub = TRUE,
+              verbose = verbose,
+              fleets = fleets,
               fleetnames = fleetnames,
-              samplesizeplots = FALSE, showsampsize = FALSE, showeffN = FALSE,
-              minnbubble = minnbubble, pntscalar = pntscalar,
-              maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-              plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-              maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-              sexes = sexes, scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res,
+              samplesizeplots = FALSE,
+              showsampsize = FALSE,
+              showeffN = FALSE,
+              minnbubble = minnbubble,
+              pntscalar = pntscalar,
+              maxrows = maxrows,
+              maxcols = maxcols,
+              fixdims = fixdims,
+              rows = rows,
+              cols = cols,
+              plot = !png,
+              print = png,
+              smooth = smooth,
+              plotdir = plotdir,
+              maxneff = maxneff,
+              mainTitle = mainTitle,
+              cex.main = cex.main,
+              sexes = sexes,
+              scalebins = scalebins,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
               ...
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         }
         # mean length at age with model fit
         plotinfo <-
           SSplotComps(
-            replist = replist, datonly = FALSE, kind = "L@A", bub = TRUE, verbose = verbose, fleets = fleets,
+            replist = replist,
+            datonly = FALSE,
+            kind = "L@A",
+            bub = TRUE,
+            verbose = verbose,
+            fleets = fleets,
             fleetnames = fleetnames,
-            samplesizeplots = FALSE, showsampsize = FALSE, showeffN = FALSE,
-            minnbubble = minnbubble, pntscalar = pntscalar,
-            maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-            plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-            maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-            sexes = sexes, scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight_tall, punits = punits,
-            ptsize = ptsize, res = res,
+            samplesizeplots = FALSE,
+            showsampsize = FALSE,
+            showeffN = FALSE,
+            minnbubble = minnbubble,
+            pntscalar = pntscalar,
+            maxrows = maxrows,
+            maxcols = maxcols,
+            fixdims = fixdims,
+            rows = rows,
+            cols = cols,
+            plot = !png,
+            print = png,
+            smooth = smooth,
+            plotdir = plotdir,
+            maxneff = maxneff,
+            mainTitle = mainTitle,
+            cex.main = cex.main,
+            sexes = sexes,
+            scalebins = scalebins,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
             ...
           )
-        if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        if (!is.null(plotinfo)) {
+          plotInfoTable <- rbind(plotInfoTable, plotinfo)
+        }
         # mean weight at age with model fit
         plotinfo <-
           SSplotComps(
-            replist = replist, datonly = FALSE, kind = "W@A", bub = TRUE, verbose = verbose, fleets = fleets,
+            replist = replist,
+            datonly = FALSE,
+            kind = "W@A",
+            bub = TRUE,
+            verbose = verbose,
+            fleets = fleets,
             fleetnames = fleetnames,
-            samplesizeplots = FALSE, showsampsize = FALSE, showeffN = FALSE,
-            minnbubble = minnbubble, pntscalar = pntscalar,
-            maxrows = maxrows, maxcols = maxcols, fixdims = fixdims, rows = rows, cols = cols,
-            plot = !png, print = png, smooth = smooth, plotdir = plotdir,
-            maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
-            sexes = sexes, scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight_tall, punits = punits,
-            ptsize = ptsize, res = res,
+            samplesizeplots = FALSE,
+            showsampsize = FALSE,
+            showeffN = FALSE,
+            minnbubble = minnbubble,
+            pntscalar = pntscalar,
+            maxrows = maxrows,
+            maxcols = maxcols,
+            fixdims = fixdims,
+            rows = rows,
+            cols = cols,
+            plot = !png,
+            print = png,
+            smooth = smooth,
+            plotdir = plotdir,
+            maxneff = maxneff,
+            mainTitle = mainTitle,
+            cex.main = cex.main,
+            sexes = sexes,
+            scalebins = scalebins,
+            pwidth = pwidth,
+            pheight = pheight_tall,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
             ...
           )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } # end if length-at-age and weight-at-age comps in plot or print
       if (!is.null(plotInfoTable)) {
-        plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "Mean@A"
+        plotInfoTable[["category"]][
+          plotInfoTable[["category"]] == "Comp"
+        ] <- "Mean@A"
       }
 
       # restore default single panel settings if needed
@@ -1542,9 +2316,15 @@ SS_plots <-
       #
       igroup <- 21
       if (igroup %in% plot) {
-        if (is.null(replist[["tagdbase2"]]) || nrow(replist[["tagdbase2"]]) == 0) {
+        if (
+          is.null(replist[["tagdbase2"]]) || nrow(replist[["tagdbase2"]]) == 0
+        ) {
           if (verbose) {
-            message("Skipping tag plots (group ", igroup, ") because no tag data in model")
+            message(
+              "Skipping tag plots (group ",
+              igroup,
+              ") because no tag data in model"
+            )
           }
         } else {
           if (verbose) {
@@ -1553,17 +2333,27 @@ SS_plots <-
           plotinfo <-
             SSplotTags(
               replist = replist,
-              rows = rows, cols = cols,
-              tagrows = tagrows, tagcols = tagcols,
+              rows = rows,
+              cols = cols,
+              tagrows = tagrows,
+              tagcols = tagcols,
               latency = replist[["tagfirstperiod"]],
-              pntscalar = pntscalar.tags, minnbubble = minnbubble,
-              plot = !png, print = png,
-              pwidth = pwidth, pheight = pheight_tall, punits = punits,
-              ptsize = ptsize, res = res, cex.main = cex.main,
+              pntscalar = pntscalar.tags,
+              minnbubble = minnbubble,
+              plot = !png,
+              print = png,
+              pwidth = pwidth,
+              pheight = pheight_tall,
+              punits = punits,
+              ptsize = ptsize,
+              res = res,
+              cex.main = cex.main,
               plotdir = plotdir,
               verbose = verbose
             )
-          if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          if (!is.null(plotinfo)) {
+            plotInfoTable <- rbind(plotInfoTable, plotinfo)
+          }
         } # end if data present
       } # end if igroup in plot or print
     } # end if comp data
@@ -1579,15 +2369,19 @@ SS_plots <-
       plotinfo <-
         SSplotYield(
           replist = replist,
-          plot = !png, print = png,
-          pwidth = pwidth, pheight = pheight, punits = punits,
-          ptsize = ptsize, res = res, cex.main = cex.main,
+          plot = !png,
+          print = png,
+          pwidth = pwidth,
+          pheight = pheight,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
+          cex.main = cex.main,
           plotdir = plotdir,
           verbose = verbose
         )
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
     } # end if igroup in plot or print
-
 
     ##########################################
     # Movement rate plots
@@ -1602,9 +2396,14 @@ SS_plots <-
         temp <-
           SSplotMovementRates(
             replist = replist,
-            plot = !png, print = png,
-            pwidth = pwidth, pheight = pheight, punits = punits,
-            ptsize = ptsize, res = res, cex.main = cex.main,
+            plot = !png,
+            print = png,
+            pwidth = pwidth,
+            pheight = pheight,
+            punits = punits,
+            ptsize = ptsize,
+            res = res,
+            cex.main = cex.main,
             plotdir = plotdir
           )
         plotinfo <- temp[["plotinfo"]]
@@ -1612,7 +2411,8 @@ SS_plots <-
       } else {
         if (verbose) {
           message(
-            "Skipping movement plots (group ", igroup,
+            "Skipping movement plots (group ",
+            igroup,
             ") because no movement in model\n"
           )
         }
@@ -1631,15 +2431,24 @@ SS_plots <-
       temp <-
         SSplotData(
           replist = replist,
-          plot = !png, print = png,
-          pwidth = pwidth, pheight = pheight_tall, punits = punits,
-          ptsize = ptsize, res = res, mainTitle = mainTitle, cex.main = cex.main,
-          plotdir = plotdir, margins = c(5.1, 2.1, 4.1, SSplotDatMargin),
+          plot = !png,
+          print = png,
+          pwidth = pwidth,
+          pheight = pheight_tall,
+          punits = punits,
+          ptsize = ptsize,
+          res = res,
+          mainTitle = mainTitle,
+          cex.main = cex.main,
+          plotdir = plotdir,
+          margins = c(5.1, 2.1, 4.1, SSplotDatMargin),
           fleetnames = fleetnames,
           fleetcol = fleetcols, # mismatch in names between functions
           maxsize = maxsize
         )
-      if (!is.null(temp) & length(temp) > 0) plotinfo <- temp[["plotinfo"]]
+      if (!is.null(temp) & length(temp) > 0) {
+        plotinfo <- temp[["plotinfo"]]
+      }
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
     } # end if igroup in plot or print
 
@@ -1656,9 +2465,13 @@ SS_plots <-
       }
       plotinfo <- SSplotPars(
         replist = replist,
-        plot = !png, print = png,
-        pwidth = pwidth, pheight = pheight_tall, punits = punits,
-        ptsize = ptsize, res = res,
+        plot = !png,
+        print = png,
+        pwidth = pwidth,
+        pheight = pheight_tall,
+        punits = punits,
+        ptsize = ptsize,
+        res = res,
         nrows = parrows,
         ncols = parcols,
         showmle = showmle,
@@ -1675,7 +2488,9 @@ SS_plots <-
       }
     } # end if igroup in plot or print
 
-    if (pdf) dev.off() # close PDF file if it was open
+    if (pdf) {
+      dev.off()
+    } # close PDF file if it was open
     if (verbose) {
       message("Finished all requested plots in SS_plots function")
     }
@@ -1688,14 +2503,16 @@ SS_plots <-
       if (nrow(replist[["estimated_non_dev_parameters"]]) == 0) {
         if (verbose) {
           message(
-            "Skipping diagnostic tables (group ", igroup,
+            "Skipping diagnostic tables (group ",
+            igroup,
             ") because there are no estimated non-dev parameters"
           )
         }
       } else {
         if (!png) {
           message(
-            "Skipping diagnostic tables (group ", igroup,
+            "Skipping diagnostic tables (group ",
+            igroup,
             ") because png=FALSE"
           )
         } else {
@@ -1734,7 +2551,8 @@ SS_plots <-
         plotdir,
         paste0(
           "plotInfoTable_",
-          format(png_time, "%d-%m-%Y_%H.%M.%OS4"), ".csv"
+          format(png_time, "%d-%m-%Y_%H.%M.%OS4"),
+          ".csv"
         )
       )
       if (file.exists(csvname)) {
@@ -1743,10 +2561,18 @@ SS_plots <-
         warning("Overwriting", csvname)
       }
       write.csv(plotInfoTable, csvname, row.names = FALSE)
-      if (verbose) message("Wrote table of info on PNG files to:\n   ", csvname)
+      if (verbose) {
+        message("Wrote table of info on PNG files to:\n   ", csvname)
+      }
       # write HTML files to display the images
       if (html) {
-        SS_html(replist, filenotes = filenotes, plotdir = plotdir, verbose = verbose, ...)
+        SS_html(
+          replist,
+          filenotes = filenotes,
+          plotdir = plotdir,
+          verbose = verbose,
+          ...
+        )
       }
       # make paths absolute
       # return notes on the plots

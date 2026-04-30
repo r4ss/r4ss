@@ -9,7 +9,7 @@
 #' @param outerdir.new New outer directory into which the subfolders
 #' should be created.
 #' @param create.dir Create new outer directory if it doesn't exist already?
-#' @template overwrite
+#' @inheritParams r4ss_params
 #' @param use_ss_new Use .ss_new files instead of original inputs?
 #' @param copy_par Copy any .par files found in the individual directories?
 #' @param exe.dir Where to get executable to copy to each new subfolder.
@@ -20,7 +20,6 @@
 #' * a path to a central location containing an executable to copy into
 #'   each new subfolder.
 #' @param exe.file Filename of executable to copy into all the subfolders.
-#' @template verbose
 #' @return Returns a table of results indicating which directories were
 #' successfully populated with the model input files and/or executables.
 #' @author Ian G. Taylor, Kelli F. Johnson
@@ -34,15 +33,17 @@
 #' )
 #' }
 #'
-populate_multiple_folders <- function(outerdir.old,
-                                      outerdir.new,
-                                      create.dir = TRUE,
-                                      overwrite = FALSE,
-                                      use_ss_new = FALSE,
-                                      copy_par = FALSE,
-                                      exe.dir = NULL,
-                                      exe.file = "ss3",
-                                      verbose = TRUE) {
+populate_multiple_folders <- function(
+  outerdir.old,
+  outerdir.new,
+  create.dir = TRUE,
+  overwrite = FALSE,
+  use_ss_new = FALSE,
+  copy_par = FALSE,
+  exe.dir = NULL,
+  exe.file = "ss3",
+  verbose = TRUE
+) {
   # check to make sure the first input is in the correct format
   if (!is.character(outerdir.old) | length(outerdir.old) != 1) {
     stop("Input 'outerdir.old' should be a character string")
@@ -126,11 +127,14 @@ populate_multiple_folders <- function(outerdir.old,
             warning("executable failed to copy")
           }
         }
-        dir.info <- rbind(dir.info, data.frame(
-          dir = dir,
-          results.files = results.files,
-          results.exe = results.exe
-        ))
+        dir.info <- rbind(
+          dir.info,
+          data.frame(
+            dir = dir,
+            results.files = results.files,
+            results.exe = results.exe
+          )
+        )
       }
     }
   }

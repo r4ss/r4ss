@@ -1,7 +1,6 @@
 #' Read Stock Synthesis starter file as a list
 #'
-#' @template file
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @return A list with one element for each line of input values.
 #' List elements containing the name of the control and data file are
 #' particularly helpful, i.e., `ctlfile` and `datfile`, respectively.
@@ -59,8 +58,11 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["datfile"]] <- strings[1]
   mylist[["ctlfile"]] <- strings[2]
   if (verbose) {
-    message("  data, control files: ", mylist[["datfile"]],
-      ", ", mylist[["ctlfile"]],
+    message(
+      "  data, control files: ",
+      mylist[["datfile"]],
+      ", ",
+      mylist[["ctlfile"]],
       sep = ""
     )
   }
@@ -188,15 +190,24 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     }
   }
 
-  # check final value and define random seed.
+  # check final value and define random seed and compatibility check.
   mylist[["final"]] <- final <- allnums[i]
   i <- i + 1
   if (!is.na(final) && final %in% c(3.30, 999)) {
     if (verbose) message("Read of starter file complete. Final value: ", final)
-  } else { # read seed and check final value
+  } else {
+    # read seed and check final value
     mylist[["seed"]] <- mylist[["final"]]
-    if (verbose) message("Reading a random seed value:", mylist[["seed"]])
+    if (verbose) {
+      message("Reading a random seed value:", mylist[["seed"]])
+    }
+
     mylist[["final"]] <- final <- allnums[i]
+    if (!is.na(final) && final %in% c(1, 0)) {
+      mylist[["Compatibility"]] <- mylist[["final"]]
+      i <- i + 1
+      mylist[["final"]] <- final <- allnums[i]
+    }
     if (!is.na(final) && final %in% c(3.30, 999)) {
       if (verbose) {
         message("Read of starter file complete. Final value: ", final)

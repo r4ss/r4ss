@@ -68,8 +68,8 @@ spawning biomass or output without and with fishing.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
-the x and y dimensions, respectively. See \code{help("legend")} for more info on
-the string options.}
+the x and y dimensions, respectively. See \code{help("legend")} for more info
+on the string options.}
 
 \item{col}{Optional vector of colors to be used for the two lines
 (single value will apply to both lines).}
@@ -102,7 +102,10 @@ The default is \code{res = 300}.}
 \item{mainTitle}{Logical indicating if a title should be included at the top
 (not yet implemented for all plots).}
 
-\item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
+\item{mar}{Either NULL to allow the default (which depends on whether the
+main title is included or not) or a numerical vector of the form
+c(bottom, left, top, right) which gives the number of lines of margin to
+be specified on the four sides of the plot, which is passed to \code{par()}.}
 }
 \description{
 Plots the spawning output with and without fishing mortality

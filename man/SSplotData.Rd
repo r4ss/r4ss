@@ -48,7 +48,8 @@ Currently there are only 2 subplots:
 }}
 
 \item{fleetcol}{Either the string "default", or a vector of colors to use
-for each fleet. If tagging data is included, an additional color needs to be
+for each fleet. If tagging data or environmental data are included,
+an additional color needs to be
 added for the tag releases which are not assigned to a fleet.}
 
 \item{datatypes}{Either the string "all", or a vector including some subset

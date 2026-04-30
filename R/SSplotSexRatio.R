@@ -6,32 +6,19 @@
 #' the adjusted input sample size (with a floor of 1).
 #'
 #'
-#' @template replist
+#' @inheritParams r4ss_params
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 #' "GSTAGE", "L@A", or "W@A".
 #' @param sexratio.option code to choose among (1) female:male ratio or
 #' (2) fraction females out of the total
 #' @param CI confidence interval for uncertainty
-#' @template plot
-#' @template print
-#' @template fleets
-#' @template fleetnames
 #' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
 #' @param datonly make plots of data without fits?
 #' @param linescol Color for line showing expected value (default is purple).
-#' @template lwd
 #' @param showsampsize add sample sizes to plot
 #' @param showeffN add effective sample sizes to plot
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template ptsize
-#' @template res
-#' @template plotdir
-#' @template cex.main
-#' @template labels
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
 #' plots
@@ -41,8 +28,6 @@
 #' for single plots
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of years of data
-#' @template verbose
-#' @template mainTitle
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Cole Monnahan, Ian Taylor
 #' @export
@@ -51,24 +36,45 @@
 #' Interval Estimation for a Binomial Proportion. Statistical Science.
 #' 16(2): 101-133. http://www.jstor.org/stable/2676784.
 SSplotSexRatio <-
-  function(replist, kind = "AGE", sexratio.option = 2, CI = 0.75,
-           plot = TRUE, print = FALSE, fleets = "all",
-           fleetnames = "default", yupper = 4,
-           datonly = FALSE,
-           linescol = rgb(0.6, 0, 0.9, .7), # a purple color
-           lwd = 2,
-           showsampsize = TRUE, showeffN = TRUE,
-           axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5.0, punits = "in",
-           ptsize = 10, res = 300, plotdir = "default", cex.main = 1,
-           labels = c(
-             "Length (cm)",
-             "Age (yr)",
-             "Sex ratio (females:males)",
-             "Fraction female"
-           ),
-           maxrows = 6, maxcols = 6,
-           rows = 1, cols = 1, fixdims = TRUE, verbose = TRUE,
-           mainTitle = FALSE, ...) {
+  function(
+    replist,
+    kind = "AGE",
+    sexratio.option = 2,
+    CI = 0.75,
+    plot = TRUE,
+    print = FALSE,
+    fleets = "all",
+    fleetnames = "default",
+    yupper = 4,
+    datonly = FALSE,
+    linescol = rgb(0.6, 0, 0.9, .7), # a purple color
+    lwd = 2,
+    showsampsize = TRUE,
+    showeffN = TRUE,
+    axis1 = NULL,
+    axis2 = NULL,
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    ptsize = 10,
+    res = 300,
+    plotdir = "default",
+    cex.main = 1,
+    labels = c(
+      "Length (cm)",
+      "Age (yr)",
+      "Sex ratio (females:males)",
+      "Fraction female"
+    ),
+    maxrows = 6,
+    maxcols = 6,
+    rows = 1,
+    cols = 1,
+    fixdims = TRUE,
+    verbose = TRUE,
+    mainTitle = FALSE,
+    ...
+  ) {
     # table to store information on each plot
     plotinfo <- NULL
 
@@ -95,10 +101,14 @@ SSplotSexRatio <-
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
     } else if (length(intersect(fleets, 1:nfleets)) != length(fleets)) {
-      stop("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
+      stop(
+        "Input 'fleets' should be 'all' or a vector of values between 1 and nfleets."
+      )
     }
 
-    if (fleetnames[1] == "default") fleetnames <- FleetNames
+    if (fleetnames[1] == "default") {
+      fleetnames <- FleetNames
+    }
 
     ## a few quantities related to data type and plot number
     if (kind == "LEN") {
@@ -138,13 +148,21 @@ SSplotSexRatio <-
 
     ## Add asterix to indicate super periods and then remove rows labeled "skip".
     ## It would be better to somehow show the range of years, but that seems difficult.
-    if (any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")) {
+    if (
+      any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")
+    ) {
       message(
         "Removing super-period composition values labeled 'skip'\n",
         "     and designating super-period values with a '*'"
       )
-      dbase_kind <- dbase_kind[dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip", ]
-      dbase_kind[["YrSeasName"]] <- paste(dbase_kind[["YrSeasName"]], ifelse(dbase_kind[["SuprPer"]] == "Sup", "*", ""), sep = "")
+      dbase_kind <- dbase_kind[
+        dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip",
+      ]
+      dbase_kind[["YrSeasName"]] <- paste(
+        dbase_kind[["YrSeasName"]],
+        ifelse(dbase_kind[["SuprPer"]] == "Sup", "*", ""),
+        sep = ""
+      )
     }
     ageerr_warning <- TRUE
 
@@ -160,9 +178,15 @@ SSplotSexRatio <-
           dbase <- dbasef[dbasef[["Part"]] == j, ]
           ## assemble pieces of plot title
           ## market category
-          if (j == 0) titlemkt <- "whole catch, "
-          if (j == 1) titlemkt <- "discard, "
-          if (j == 2) titlemkt <- "retained, "
+          if (j == 0) {
+            titlemkt <- "whole catch, "
+          }
+          if (j == 1) {
+            titlemkt <- "discard, "
+          }
+          if (j == 2) {
+            titlemkt <- "retained, "
+          }
 
           ## aggregating identifiers for plot titles and filenames
           title_mkt <- paste(titlemkt, sep = "")
@@ -177,23 +201,39 @@ SSplotSexRatio <-
           tempfun <- function(ipage, ...) {
             ## a function to combine a bunch of repeated commands
             make_multifig_sexratio(
-              dbase = dbase, sexratio.option = sexratio.option,
+              dbase = dbase,
+              sexratio.option = sexratio.option,
               CI = CI,
-              nlegends = 3, legtext = list("Yr", "N", "effN"), lwd = lwd,
-              showsampsize = showsampsize, showeffN = showeffN,
-              main = ptitle, cex.main = cex.main, xlab = kindlab,
+              nlegends = 3,
+              legtext = list("Yr", "N", "effN"),
+              lwd = lwd,
+              showsampsize = showsampsize,
+              showeffN = showeffN,
+              main = ptitle,
+              cex.main = cex.main,
+              xlab = kindlab,
               ylab = labels[3:4][sexratio.option],
-              maxrows = maxrows, maxcols = maxcols,
-              rows = rows, cols = cols,
-              fixdims = fixdims, ipage = ipage, scalebins = FALSE,
-              linescol = linescol, axis1 = axis1, axis2 = axis2,
-              yupper = yupper, datonly = datonly
+              maxrows = maxrows,
+              maxcols = maxcols,
+              rows = rows,
+              cols = cols,
+              fixdims = fixdims,
+              ipage = ipage,
+              scalebins = FALSE,
+              linescol = linescol,
+              axis1 = axis1,
+              axis2 = axis2,
+              yupper = yupper,
+              datonly = datonly
             )
           } # end tempfun
 
           ## Do the plotting and saving
-          if (plot) tempfun(ipage = 0, ...)
-          if (print) { # set up plotting to png file if required
+          if (plot) {
+            tempfun(ipage = 0, ...)
+          }
+          if (print) {
+            # set up plotting to png file if required
             npages <- ceiling(length(unique(dbase[["Yr"]])) / maxrows / maxcols)
             for (ipage in 1:npages) {
               pagetext <- ""
@@ -206,7 +246,8 @@ SSplotSexRatio <-
               if (ipage == 1) {
                 caption_extra <-
                   paste0(
-                    ".<br>Observed sex ratios (points) with ", 100 * CI,
+                    ".<br>Observed sex ratios (points) with ",
+                    100 * CI,
                     "% intervals (vertical lines) calculated as a ",
                     "<a href='https://www.jstor.org/stable/2676784'>",
                     "Jeffreys interval</a>",
@@ -223,8 +264,14 @@ SSplotSexRatio <-
               file <- paste0(filenamestart, filename_fltmkt, pagetext, ".png")
               caption <- paste0(caption, caption_count, caption_extra)
               plotinfo <- save_png(
-                plotinfo = plotinfo, file = file, plotdir = plotdir, pwidth = pwidth,
-                pheight = pheight, punits = punits, res = res, ptsize = ptsize,
+                plotinfo = plotinfo,
+                file = file,
+                plotdir = plotdir,
+                pwidth = pwidth,
+                pheight = pheight,
+                punits = punits,
+                res = res,
+                ptsize = ptsize,
                 caption = caption
               )
               tempfun(ipage = ipage, ...)
@@ -237,7 +284,9 @@ SSplotSexRatio <-
       } # end if data
     } # end loop over fleets
 
-    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Comp"
+    if (!is.null(plotinfo)) {
+      plotinfo[["category"]] <- "Comp"
+    }
     return(invisible(plotinfo))
   } # end embedded SSplotComps function
 ###########################

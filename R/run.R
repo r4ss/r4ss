@@ -4,8 +4,7 @@
 #' model with any additional arguments specified by `extras`.
 #'
 #' @param dir Directory containing the model input files.
-#' @template exe
-#' @template extras
+#' @inheritParams r4ss_params
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted while running iteratively.
 #' @param show_in_console Show output in the R console? If FALSE,
@@ -13,7 +12,6 @@
 #' `console_output_file`) at the end of the model run.
 #' @param console_output_file File to store console output (if
 #' show_in_console = FALSE).
-#' @template verbose
 #'
 #' @return Returns one of five messages:
 #' "ran model", "model run failed", "unknown run status", "not a
@@ -41,13 +39,15 @@
 #' r4ss::run(dir = dir)
 #' }
 #'
-run <- function(dir = getwd(),
-                exe = "ss3",
-                extras = "",
-                skipfinished = TRUE,
-                show_in_console = FALSE,
-                console_output_file = "console.output.txt",
-                verbose = TRUE) {
+run <- function(
+  dir = getwd(),
+  exe = "ss3",
+  extras = "",
+  skipfinished = TRUE,
+  show_in_console = FALSE,
+  console_output_file = "console.output.txt",
+  verbose = TRUE
+) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir)) {
     stop("Input 'dir' should be a character string")
@@ -81,7 +81,9 @@ run <- function(dir = getwd(),
     if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
       # skip directories that have results in them
       message(
-        "Skipping ", dir, " because it contains",
+        "Skipping ",
+        dir,
+        " because it contains",
         " a Report.sso file and skipfinished = TRUE"
       )
       results <- "contained Report.sso"
@@ -91,8 +93,12 @@ run <- function(dir = getwd(),
       # provide some messages
       if (verbose) {
         message(
-          "Changing working directory to ", dir,
-          " and running model using the command: ", command, " ", extras
+          "Changing working directory to ",
+          dir,
+          " and running model using the command: ",
+          command,
+          " ",
+          extras
         )
       }
       if (!show_in_console && verbose) {
@@ -107,10 +113,7 @@ run <- function(dir = getwd(),
         system2(
           command = command,
           args = extras,
-          stdout = ifelse(show_in_console,
-            "",
-            TRUE
-          ),
+          stdout = ifelse(show_in_console, "", TRUE),
           stderr = ""
         ),
         error = function(err) {
@@ -150,7 +153,8 @@ run <- function(dir = getwd(),
       # various other possible codes if the run fails
       results <- dplyr::case_when(
         any(grepl("Run has completed", tail(console_output, 5))) ~ "ran model", # 3.30.19 and earlier
-        any(grepl("Finished running model", tail(console_output, 5))) ~ "ran model", # 3.30.20 format
+        any(grepl("Finished running model", tail(console_output, 5))) ~
+          "ran model", # 3.30.20 format
         any(grepl("Fatal Error", tail(console_output, 5))) ~ "model run failed",
         console_output[1] == 0 ~ "ran model",
         console_output[1] > 0 ~ "model run failed",

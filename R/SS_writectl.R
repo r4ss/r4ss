@@ -5,21 +5,21 @@
 #' wrapper which calls SS_writectl_3.30() (previously also SS_writectl_3.24,
 #' but that function has been deprecated).
 #'
-#' @param ctllist List object created by [SS_readdat()].
+#' @param ctllist List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new control file.
-#' @template version
-#' @template overwrite
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert,
 #' Kathryn L. Doering, Nathan R. Vaughan
 #' @export
 #' @family read/write functions
 
-SS_writectl <- function(ctllist,
-                        outfile,
-                        version = "3.30",
-                        overwrite = FALSE,
-                        verbose = FALSE) {
+SS_writectl <- function(
+  ctllist,
+  outfile,
+  version = "3.30",
+  overwrite = FALSE,
+  verbose = FALSE
+) {
   # function to write Stock Synthesis data files
   if (verbose) {
     message("Running SS_writectl")
@@ -29,7 +29,9 @@ SS_writectl <- function(ctllist,
   stopifnot(is.list(ctllist))
   stopifnot("type" %in% names(ctllist))
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
-    stop("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
+    stop(
+      "Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file"
+    )
   }
   if (is.null(version)) {
     lifecycle::deprecate_stop(
@@ -41,7 +43,9 @@ SS_writectl <- function(ctllist,
   if (ifelse(version == "3.3", "3.30", version) != ctllist[["ReadVersion"]]) {
     stop(
       "Input 'version' does not match ctllist[['ReadVersion']] of ",
-      "'", ctllist[["ReadVersion"]], "'."
+      "'",
+      ctllist[["ReadVersion"]],
+      "'."
     )
   }
   if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
@@ -51,7 +55,9 @@ SS_writectl <- function(ctllist,
   if (file.exists(outfile)) {
     if (!overwrite) {
       stop(
-        "Outfile called ", outfile, " exists and input 'overwrite'= FALSE.",
+        "Outfile called ",
+        outfile,
+        " exists and input 'overwrite'= FALSE.",
         "Please set overwrite = TRUE if you wish to overwrite the file."
       )
     } else if (overwrite) {

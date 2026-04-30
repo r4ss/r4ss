@@ -1,7 +1,7 @@
 Type: Package
 Package: r4ss
 Title: R Code for Stock Synthesis
-Version: 1.52.0
+Version: 1.53.0
 Authors@R: c(
     person("Ian G.", "Taylor", , "Ian.Taylor@noaa.gov", role = c("aut", "cre")),
     person("Ian J.", "Stewart", role = "aut"),
@@ -38,8 +38,10 @@ Authors@R: c(
     person("Lee", "Qi", role = "aut"),
     person("Megumi", "Oshima", role = "aut"),
     person("Eric", "Fletcher", role = "aut"),
-    person("Elizabeth F.", "Gugliotti", role = "aut"),
-    person("Kiva L.", "Oken", role = "aut")
+    person("Elizabeth", "Perl", role = "aut"),
+    person("Kiva L.", "Oken", role = "aut"),
+    person("Arni", "Magnusson", role = "aut"),
+    person("Peter", "Kuriyama", role = "aut")
   )
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr.
@@ -48,8 +50,8 @@ Description: A collection of R functions for use with Stock Synthesis, a
     manipulating files, visualizing model parameterizations, and various
     other common stock assessment tasks.  This version of '{r4ss}' is
     compatible with Stock Synthesis versions 3.24 through 3.30
-    (specifically version 3.30.23.1, from December 2024). Support for 3.24
-    models is only through the core functions for reading output and
+    (specifically version 3.30.24.00-prerel, from July 2025). Support for
+    3.24 models is only through the core functions for reading output and
     plotting.
 License: GPL-3
 URL: https://github.com/r4ss/r4ss, https://r4ss.github.io/r4ss/
@@ -60,7 +62,7 @@ Imports:
     cli,
     coda,
     corpcor,
-    dplyr,
+    dplyr (>= 1.2.0),
     forcats,
     furrr,
     future,
@@ -92,4 +94,4 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

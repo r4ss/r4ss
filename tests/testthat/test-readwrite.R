@@ -7,7 +7,8 @@ test_that("models can be read and written", {
   dir.create(mod_path, showWarnings = FALSE)
   orig_mod_path <- system.file("extdata", "models", package = "r4ss")
   file.copy(orig_mod_path, mod_path, recursive = TRUE)
-  all_mods <- list.dirs(file.path(mod_path, "models"),
+  all_mods <- list.dirs(
+    file.path(mod_path, "models"),
     full.names = TRUE,
     recursive = FALSE
   )
@@ -37,9 +38,10 @@ test_that("models can be read and written", {
     all_mods <- c(all_mods, tag_mod_par)
   }
 
-  message("Will read and write models:\n  ", paste(basename(all_mods),
-    collapse = ",\n  "
-  ))
+  message(
+    "Will read and write models:\n  ",
+    paste(basename(all_mods), collapse = ",\n  ")
+  )
   for (m in all_mods) {
     message("Now reading model ", basename(m))
 
@@ -49,7 +51,8 @@ test_that("models can be read and written", {
     dat <- SS_readdat(file.path(m, start[["datfile"]]), verbose = FALSE)
     ctl <- SS_readctl(file.path(m, start[["ctlfile"]]), datlist = dat)
     parfile <- get_par_name(m)
-    par <- SS_readpar_3.30(file.path(m, parfile),
+    par <- SS_readpar_3.30(
+      file.path(m, parfile),
       datsource = dat,
       ctlsource = ctl,
       verbose = FALSE
@@ -73,10 +76,16 @@ test_that("models can be read and written", {
     expect_equal(length(start), length(allfiles[["start"]]))
 
     #### Checks related to SS_write* functions
-    files <- file.path(m, c(
-      "starter.ss", "forecast.ss", start[["datfile"]],
-      start[["ctlfile"]], parfile
-    ))
+    files <- file.path(
+      m,
+      c(
+        "starter.ss",
+        "forecast.ss",
+        start[["datfile"]],
+        start[["ctlfile"]],
+        parfile
+      )
+    )
     # remove files
     lapply(files, function(x) file.remove(x))
 
@@ -84,9 +93,21 @@ test_that("models can be read and written", {
     message("Now writing model ", basename(m))
     SS_writestarter(start, dir = m, verbose = FALSE)
     SS_writeforecast(fore, dir = m, verbose = FALSE)
-    SS_writedat(dat, outfile = file.path(m, start[["datfile"]]), verbose = FALSE)
-    SS_writectl(ctl, outfile = file.path(m, start[["ctlfile"]]), verbose = FALSE)
-    par2 <- SS_writepar_3.30(par, outfile = file.path(m, parfile), verbose = FALSE)
+    SS_writedat(
+      dat,
+      outfile = file.path(m, start[["datfile"]]),
+      verbose = FALSE
+    )
+    SS_writectl(
+      ctl,
+      outfile = file.path(m, start[["ctlfile"]]),
+      verbose = FALSE
+    )
+    par2 <- SS_writepar_3.30(
+      par,
+      outfile = file.path(m, parfile),
+      verbose = FALSE
+    )
 
     # confirm that they got written
     lapply(files, function(x) expect_true(file.exists(x)))
@@ -101,7 +122,9 @@ test_that("models can be read and written", {
     # write all files at once
     SS_write(inputlist = allfiles, dir = allfiles[["dir"]])
     # confirm that they got written
-    lapply(files[basename(files) != parfile], function(x) expect_true(file.exists(x)))
+    lapply(files[basename(files) != parfile], function(x) {
+      expect_true(file.exists(x))
+    })
   }
 
   # todo: run the models with no est to make sure the written files work with SS
@@ -121,11 +144,18 @@ test_that("empty files lead to NULL or error", {
 test_that("SS_read works with a raw github URL", {
   skip_if_offline(host = "github.com")
   list_objs <- SS_read(
-    dir =
-      "https://raw.githubusercontent.com/nmfs-ost/ss3-test-models/main/models/Simple"
+    dir = "https://raw.githubusercontent.com/nmfs-ost/ss3-test-models/main/models/Simple"
   )
   expect_true(is.list(list_objs))
-  expect_equal(names(list_objs), c(
-    "dir", "path", "dat", "ctl", "start", "fore"
-  ))
+  expect_equal(
+    names(list_objs),
+    c(
+      "dir",
+      "path",
+      "dat",
+      "ctl",
+      "start",
+      "fore"
+    )
+  )
 })

@@ -4,12 +4,11 @@
 #' an input argument to numerous `r4ss` functions is available in the
 #' location specified by `dir` or in the path.
 #'
-#' @template exe
+#' @inheritParams r4ss_params
 #' @param dir The directory where `exe` is located (if not in path).
 #' Defaults to `getwd()` but can be an absolute path, a path relative to
 #' the working directory or a path relative to a directory that's in the
 #' PATH. Can also be a vector of directories.
-#' @template verbose
 #' @author Kelli F. Johnson, Ian G. Taylor
 #' @return A list containing `$exe` and `$path`.
 #' `$exe` is the cleaned version of the `exe` file name input. Windows
@@ -65,10 +64,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   # exe name with extension added back on Windows
   exename <- paste0(
     exe_no_extension,
-    switch(.Platform[["OS.type"]],
-      windows = ".exe",
-      unix = ""
-    )
+    switch(.Platform[["OS.type"]], windows = ".exe", unix = "")
   )
 
   # path.expand will resolve any use of "~" in input exe
@@ -126,8 +122,10 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
     if (path_to_exe == "") {
       # if not in path or specified directory, create error
       stop(
-        exename, " not found in ",
-        ifelse(test = length(dir) == 1,
+        exename,
+        " not found in ",
+        ifelse(
+          test = length(dir) == 1,
           yes = dir, # spell out directory in error if `dir` isn't a vector
           no = "any of the input 'dir' values"
         ), # generic if it's a vector

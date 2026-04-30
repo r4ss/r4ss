@@ -7,7 +7,6 @@ Ageerr
 Ageing
 Amax
 Aquat
-Arni
 Asel
 Ashleigh
 Athol
@@ -28,6 +27,7 @@ CompReport
 DM
 DasGupta
 Edzer
+FIMS
 Ferro
 FltSvy
 GSTAGE
@@ -35,6 +35,7 @@ GSTLEN
 Gertseva
 Grandin
 Grinnell
+Gugliotti
 Gwladys
 Hilborn
 Hurtado
@@ -53,7 +54,6 @@ MGparm
 MSY
 MULTIFAN
 Maechler
-Magnusson
 McAllister
 Methot
 Mohn
@@ -222,6 +222,7 @@ ogive
 optim
 ost
 osx
+otoliths
 outfile
 overfished
 overfishing
@@ -246,6 +247,7 @@ png
 pollock
 predM
 predation
+prerel
 printfolder
 profileing
 profilevec
@@ -301,6 +303,7 @@ tagrelease
 tcl
 tgt
 th
+tibble
 tidyr
 timeseries
 tk

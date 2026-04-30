@@ -10,8 +10,7 @@
 #' https://github.com/pfmc-assessments/nwfscSurvey/blob/main/R/check_dir.R
 #' rather than adding an additional dependency on that package.
 #'
-#' @template dir
-#' @template verbose
+#' @inheritParams r4ss_params
 #'
 #' @author Chantel R. Wetzel
 #' @export

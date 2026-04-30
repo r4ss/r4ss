@@ -1,0 +1,15 @@
+# .octocov.yml. See definitions: https://github.com/k1LoW/octocov?tab=readme-ov-file#configuration
+coverage:
+  paths:
+    - coverage.xml
+codeToTestRatio:
+  code:
+    - 'R/**.R'
+  test:
+    - 'tests/testthat/test*.R'
+testExecutionTime:
+  if: true
+comment:
+  if: is_pull_request
+summary:
+  if: true

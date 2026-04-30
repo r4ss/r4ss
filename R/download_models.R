@@ -7,7 +7,7 @@
 #' [nmfs-ost/ss3-test-models repository](https://github.com/nmfs-ost/ss3-test-models#test-models)
 #' that you want to download. The default is `"main"`, which is the
 #' stable/default branch.
-#' @template overwrite
+#' @inheritParams r4ss_params
 #' @return Invisibly return a logical revealing whether the files were copied
 #'  (TRUE) or not (FALSE). This function is used for its side effects of
 #'  downloading SS3 test models.
@@ -19,9 +19,11 @@
 #' @author Kathryn Doering
 #' @references [nmfs-ost/ss3-test-models repository](https://github.com/nmfs-ost/ss3-test-models#test-models)
 #' @export
-download_models <- function(dir = file.path("inst", "extdata"),
-                            branch = "main",
-                            overwrite = FALSE) {
+download_models <- function(
+  dir = file.path("inst", "extdata"),
+  branch = "main",
+  overwrite = FALSE
+) {
   # checks
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -39,32 +41,39 @@ download_models <- function(dir = file.path("inst", "extdata"),
     error = function(e) {
       stop(
         "The test-models zip file could not be downloaded.",
-        " Does the branch (", branch, ") exist?",
+        " Does the branch (",
+        branch,
+        ") exist?",
         call. = FALSE
       )
     }
   )
   list_files <- utils::unzip(list = TRUE, zipfile = zip_file_path)
-  save_files <- list_files[grep("/models/", list_files[["Name"]], fixed = TRUE), ]
+  save_files <- list_files[
+    grep("/models/", list_files[["Name"]], fixed = TRUE),
+  ]
   utils::unzip(
-    zipfile = zip_file_path, files = save_files[["Name"]],
+    zipfile = zip_file_path,
+    files = save_files[["Name"]],
     exdir = dir
   )
   if (dir.exists(file.path(dir, "models")) & overwrite == FALSE) {
     warning(
-      "The model directory ", file.path(dir, "models"), " already exists ",
+      "The model directory ",
+      file.path(dir, "models"),
+      " already exists ",
       "\nand overwrite is FALSE. So, no new files will be written."
     )
   }
   dir.create(file.path(dir, "models"), showWarnings = FALSE)
   copy_status <- file.copy(
     from = file.path(dir, paste0("ss3-test-models-", branch), "models"),
-    to = file.path(dir), recursive = TRUE, overwrite = overwrite
+    to = file.path(dir),
+    recursive = TRUE,
+    overwrite = overwrite
   )
   # clean up
   unlink(zip_file_path)
-  unlink(file.path(dir, paste0("ss3-test-models-", branch)),
-    recursive = TRUE
-  )
+  unlink(file.path(dir, paste0("ss3-test-models-", branch)), recursive = TRUE)
   invisible(copy_status)
 }

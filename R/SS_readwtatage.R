@@ -1,7 +1,6 @@
 #' Read in a weight-at-age data file as a data frame
 #'
-#' @template file
-#' @template verbose
+#' @inheritParams r4ss_params
 #' @export
 #' @return Returns a data frame with a variable number of columns based on the
 #' number of ages that are included in the file. Though, the first columns
@@ -33,7 +32,8 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   }
 
   # read full file
-  wtatagelines <- read.table(file,
+  wtatagelines <- read.table(
+    file,
     header = FALSE,
     comment.char = "#",
     blank.lines.skip = TRUE,
@@ -65,7 +65,12 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   wtatage <- wtatagelines[-(1:skip), ]
   # problems with header so simply manually replacing column names
   wtatage_names <- c(
-    "year", "seas", "sex", "bio_pattern", "birthseas", "fleet",
+    "year",
+    "seas",
+    "sex",
+    "bio_pattern",
+    "birthseas",
+    "fleet",
     0:accuage
   )
   # new comment line in 3.30

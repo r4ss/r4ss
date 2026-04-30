@@ -9,7 +9,7 @@
 #' @param dir.new New location to which the files should be copied,
 #' either an absolute path or relative to the working directory.
 #' @param create.dir Create `dir.new` directory if it doesn't exist already?
-#' @template overwrite
+#' @inheritParams r4ss_params
 #' @param recursive A logical value passed to the `recursive` argument of
 #' [dir.create()] that specifies if elements of the path other than the last
 #' be created?
@@ -18,7 +18,6 @@
 #' dir.exe (if provided)?
 #' @param copy_par Copy any .par files found in `dir.old` to `dir.new`?
 #' @param dir.exe Path to executable to copy instead of any in `dir.old`.
-#' @template verbose
 #' @return
 #' A logical value is invisibly returned, indicating whether all input files
 #' were copied successfully.
@@ -41,16 +40,18 @@
 #' unlink(test, recursive = TRUE)
 #' }
 #'
-copy_SS_inputs <- function(dir.old = NULL,
-                           dir.new = NULL,
-                           create.dir = TRUE,
-                           overwrite = FALSE,
-                           recursive = FALSE,
-                           use_ss_new = FALSE,
-                           copy_exe = FALSE,
-                           copy_par = FALSE,
-                           dir.exe = NULL,
-                           verbose = TRUE) {
+copy_SS_inputs <- function(
+  dir.old = NULL,
+  dir.new = NULL,
+  create.dir = TRUE,
+  overwrite = FALSE,
+  recursive = FALSE,
+  use_ss_new = FALSE,
+  copy_exe = FALSE,
+  copy_par = FALSE,
+  dir.exe = NULL,
+  verbose = TRUE
+) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir.old) | length(dir.old) != 1) {
     stop("Input 'dir.old' should be a character string for a directory")
@@ -91,7 +92,8 @@ copy_SS_inputs <- function(dir.old = NULL,
   }
 
   results <- rep(NA, 6)
-  if (!use_ss_new) { # copy original input files
+  if (!use_ss_new) {
+    # copy original input files
     results[1] <- file.copy(
       from = file.path(dir.old, starter[["ctlfile"]]),
       to = file.path(dir.new, starter[["ctlfile"]]),
@@ -119,7 +121,8 @@ copy_SS_inputs <- function(dir.old = NULL,
         overwrite = overwrite
       )
     }
-  } else { # copy ss_new files
+  } else {
+    # copy ss_new files
     results[1] <- file.copy(
       from = file.path(dir.old, "control.ss_new"),
       to = file.path(dir.new, starter[["ctlfile"]]),
@@ -167,9 +170,9 @@ copy_SS_inputs <- function(dir.old = NULL,
 
       # directories are accidentally being included using line above,
       # so trying a different way to exclude them
-      exefiles <- dir(dir.exe)[!file.info(dir(dir.exe,
-        full.names = TRUE
-      ))[["isdir"]]]
+      exefiles <- dir(dir.exe)[
+        !file.info(dir(dir.exe, full.names = TRUE))[["isdir"]]
+      ]
       exefiles <- grep(pattern = "^[^.]+$", x = exefiles, value = TRUE)
       if (verbose) {
         message("Unix binaries are: ", paste0(exefiles, collapse = ", "))

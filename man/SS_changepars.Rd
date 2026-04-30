@@ -39,7 +39,10 @@ the \code{strings} argument are needed. Default=NULL.}
 parameters to be modified. This is an alternative to \code{linenums}.
 \code{strings} correspond to the commented parameter names included in
 \code{control.ss_new}, or whatever is written as comment at the end
-of the 14 number parameter lines. Default=NULL.}
+of the 14 number parameter lines. If \code{strings} is an exact match to a parameter
+name in \code{control.ss_new}, this parameter will be modified, otherwise
+the function will check for parameters that are a partial match to
+\code{strings.} Default=NULL.}
 
 \item{newvals}{Vector of new parameter values. Default=NULL.
 The vector can contain \code{NA} values, which will assign the original

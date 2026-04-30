@@ -13,8 +13,10 @@ dir.create(temp_path, showWarnings = FALSE)
 on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
 # get model output (already tested in test-basics.R)
-simple_small <- SS_output(file.path(example_path, "simple_small"),
-  verbose = FALSE, printstats = FALSE
+simple_small <- SS_output(
+  file.path(example_path, "simple_small"),
+  verbose = FALSE,
+  printstats = FALSE
 )
 
 # run table_exec_summary
@@ -41,17 +43,31 @@ table_parcounts_output <- table_parcounts(simple_small, dir = temp_path)
 test_that("table_parcounts() runs on simple_small model", {
   expect_true("table_parcounts.rda" %in% dir(file.path(temp_path, "tables")))
   expect_true(is.data.frame(table_parcounts_output$table))
-  expect_true(table_parcounts_output$table$Count[table_parcounts_output$table$Type == "Size selectivity"] == 4)
+  expect_true(
+    table_parcounts_output$table$Count[
+      table_parcounts_output$table$Type == "Size selectivity"
+    ] ==
+      4
+  )
 })
 
 # run table_parcounts with inputs
 simple_small_inputs <- SS_read(simple_small$inputs$dir, verbose = FALSE)
 file.remove(file.path(temp_path, "tables", "table_parcounts.rda"))
-table_parcounts_output <- table_parcounts(simple_small, inputs = simple_small_inputs, dir = temp_path)
+table_parcounts_output <- table_parcounts(
+  simple_small,
+  inputs = simple_small_inputs,
+  dir = temp_path
+)
 test_that("table_parcounts() runs with 'inputs' argument", {
   expect_true("table_parcounts.rda" %in% dir(file.path(temp_path, "tables")))
   expect_true(is.data.frame(table_parcounts_output$table))
-  expect_true(table_parcounts_output$table$Count[table_parcounts_output$table$Type == "Size selectivity"] == 4)
+  expect_true(
+    table_parcounts_output$table$Count[
+      table_parcounts_output$table$Type == "Size selectivity"
+    ] ==
+      4
+  )
 })
 
 # run table_ts
@@ -96,7 +112,9 @@ test_that("table_config() runs on simple_small model", {
 table_biology_output <- table_biology(simple_small, dir = temp_path)
 
 test_that("table_biology() runs on simple_small model", {
-  expect_true("table_biology_at_age.rda" %in% dir(file.path(temp_path, "tables")))
+  expect_true(
+    "table_biology_at_age.rda" %in% dir(file.path(temp_path, "tables"))
+  )
   expect_true(all(
     names(table_biology_output$table) %in%
       c(

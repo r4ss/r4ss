@@ -6,8 +6,7 @@
 #'
 #'
 #' @param summaryoutput List created by the function [SSsummarize()].
-#' @template plot
-#' @template print
+#' @inheritParams r4ss_params
 #' @param models Optional subset of the models described in
 #' `summaryoutput`. Either "all" or a vector of numbers indicating
 #' columns in summary tables.
@@ -55,15 +54,6 @@
 #' @param yaxs The style of axis interval calculation to be used for the y-axis
 #' (see ?par for more info).
 #' @param type Line type (see ?plot for more info).
-#' @template legend
-#' @template legendloc
-#' @template pwidth
-#' @template pheight
-#' @template punits
-#' @template res
-#' @template ptsize
-#' @template cex.main
-#' @template plotdir
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 #' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
 #' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
@@ -71,7 +61,6 @@
 #' @param cutoff_prob Probability associated with `add_cutoff` above.
 #' @param add_no_prior_line Add line showing total likelihood without
 #' the prior (only appears when profiled parameter that includes a prior)
-#' @template verbose
 #' @param \dots Additional arguments passed to the `plot` command.
 #' @note Someday the function [profile()] will be improved and
 #' made to work directly with this plotting function, but they don't yet work
@@ -84,79 +73,91 @@
 #' @family profile functions
 
 SSplotProfile <-
-  function(summaryoutput,
-           plot = TRUE, print = FALSE,
-           models = "all",
-           profile.string = "steep",
-           profile.label = NULL,
-           exact = FALSE,
-           ylab = "Change in -log-likelihood",
-           components =
-             c(
-               "TOTAL",
-               "Catch",
-               "Equil_catch",
-               "Survey",
-               "Discard",
-               "Mean_body_wt",
-               "Length_comp",
-               "Age_comp",
-               "Size_at_age",
-               "SizeFreq",
-               "Morphcomp",
-               "Tag_comp",
-               "Tag_negbin",
-               "Recruitment",
-               "InitEQ_Regime",
-               "Forecast_Recruitment",
-               "Parm_priors",
-               "Parm_softbounds",
-               "Parm_devs",
-               "F_Ballpark",
-               "Crash_Pen"
-             ),
-           component.labels =
-             c(
-               "Total",
-               "Catch",
-               "Equilibrium catch",
-               "Index data",
-               "Discard",
-               "Mean body weight",
-               "Length data",
-               "Age data",
-               "Size-at-age data",
-               "Generalized size data",
-               "Morph composition data",
-               "Tag recapture distribution",
-               "Tag recapture total",
-               "Recruitment",
-               "Initital equilibrium recruitment",
-               "Forecast recruitment",
-               "Priors",
-               "Soft bounds",
-               "Parameter deviations",
-               "F Ballpark",
-               "Crash penalty"
-             ),
-           minfraction = 0.01,
-           sort.by.max.change = TRUE,
-           col = "default",
-           pch = "default",
-           lty = 1, lty.total = 1,
-           lwd = 2, lwd.total = 3,
-           cex = 1, cex.total = 1.5,
-           xlim = "default",
-           ymax = "default",
-           xaxs = "r", yaxs = "r",
-           type = "o",
-           legend = TRUE, legendloc = "topright",
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-           plotdir = NULL,
-           add_cutoff = FALSE,
-           cutoff_prob = 0.95,
-           add_no_prior_line = TRUE,
-           verbose = TRUE, ...) {
+  function(
+    summaryoutput,
+    plot = TRUE,
+    print = FALSE,
+    models = "all",
+    profile.string = "steep",
+    profile.label = NULL,
+    exact = FALSE,
+    ylab = "Change in -log-likelihood",
+    components = c(
+      "TOTAL",
+      "Catch",
+      "Equil_catch",
+      "Survey",
+      "Discard",
+      "Mean_body_wt",
+      "Length_comp",
+      "Age_comp",
+      "Size_at_age",
+      "SizeFreq",
+      "Morphcomp",
+      "Tag_comp",
+      "Tag_negbin",
+      "Recruitment",
+      "InitEQ_Regime",
+      "Forecast_Recruitment",
+      "Parm_priors",
+      "Parm_softbounds",
+      "Parm_devs",
+      "F_Ballpark",
+      "Crash_Pen"
+    ),
+    component.labels = c(
+      "Total",
+      "Catch",
+      "Equilibrium catch",
+      "Index data",
+      "Discard",
+      "Mean body weight",
+      "Length data",
+      "Age data",
+      "Size-at-age data",
+      "Generalized size data",
+      "Morph composition data",
+      "Tag recapture distribution",
+      "Tag recapture total",
+      "Recruitment",
+      "Initital equilibrium recruitment",
+      "Forecast recruitment",
+      "Priors",
+      "Soft bounds",
+      "Parameter deviations",
+      "F Ballpark",
+      "Crash penalty"
+    ),
+    minfraction = 0.01,
+    sort.by.max.change = TRUE,
+    col = "default",
+    pch = "default",
+    lty = 1,
+    lty.total = 1,
+    lwd = 2,
+    lwd.total = 3,
+    cex = 1,
+    cex.total = 1.5,
+    xlim = "default",
+    ymax = "default",
+    xaxs = "r",
+    yaxs = "r",
+    type = "o",
+    legend = TRUE,
+    legendloc = "topright",
+    pwidth = 6.5,
+    pheight = 5.0,
+    punits = "in",
+    res = 300,
+    ptsize = 10,
+    cex.main = 1,
+    plotdir = NULL,
+    add_cutoff = FALSE,
+    cutoff_prob = 0.95,
+    add_no_prior_line = TRUE,
+    verbose = TRUE,
+    ...
+  ) {
     if (print) {
       if (is.null(plotdir)) {
         stop("to print PNG files, you must supply a directory as 'plotdir'")
@@ -171,7 +172,9 @@ SSplotProfile <-
     }
 
     if (length(components) != length(component.labels)) {
-      stop("Inputs 'components' and 'component.labels' should have equal length")
+      stop(
+        "Inputs 'components' and 'component.labels' should have equal length"
+      )
     }
 
     # get stuff from summary output
@@ -191,7 +194,11 @@ SSplotProfile <-
       models <- 1:n
     } else {
       if (!all(models %in% 1:n)) {
-        stop("Input 'models' should be a vector of values from 1 to n=", n, " (for your inputs).\n")
+        stop(
+          "Input 'models' should be a vector of values from 1 to n=",
+          n,
+          " (for your inputs).\n"
+        )
       }
     }
 
@@ -202,11 +209,19 @@ SSplotProfile <-
       parnumber <- grep(profile.string, pars[["Label"]])
     }
     if (length(parnumber) <= 0) {
-      stop("No parameters matching profile.string='", profile.string, "'", sep = "")
+      stop(
+        "No parameters matching profile.string='",
+        profile.string,
+        "'",
+        sep = ""
+      )
     }
     parlabel <- pars[["Label"]][parnumber]
     if (length(parlabel) > 1) {
-      stop("Multiple parameters matching profile.string='", profile.string, "':\n",
+      stop(
+        "Multiple parameters matching profile.string='",
+        profile.string,
+        "':\n",
         paste(parlabel, collapse = ", "),
         "\nYou may need to use 'exact=TRUE'.",
         sep = ""
@@ -216,7 +231,12 @@ SSplotProfile <-
     # get vector of parameter values
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
     if (verbose) {
-      message("Parameter matching profile.string=", profile.string, ": ", parlabel)
+      message(
+        "Parameter matching profile.string=",
+        profile.string,
+        ": ",
+        parlabel
+      )
       message(
         "Parameter values (after subsetting based on input 'models'): ",
         paste0(parvec, collapse = ", ")
@@ -224,7 +244,10 @@ SSplotProfile <-
     }
 
     # get vector of prior likelihoods for this parameter
-    par_prior_like_vec <- as.numeric(par_prior_likes[par_prior_likes[["Label"]] == parlabel, models])
+    par_prior_like_vec <- as.numeric(par_prior_likes[
+      par_prior_likes[["Label"]] == parlabel,
+      models
+    ])
     # turn off addition of "Total without prior" line if there is no prior
     # on the parameter being profiled over
     if (all(is.na(par_prior_like_vec))) {
@@ -243,12 +266,20 @@ SSplotProfile <-
     }
 
     # set x-axis limits
-    if (xlim[1] == "default") xlim <- range(parvec)
+    if (xlim[1] == "default") {
+      xlim <- range(parvec)
+    }
 
     # rearange likelihoods to be in columns by type
     # Fixed bug that crashes plot when only a subset of components are listed (Steve Teo)
-    prof.table <- data.frame(t(likelihoods[likelihoods[["Label"]] %in% components, models]))
-    names(prof.table) <- likelihoods[likelihoods[["Label"]] %in% components, ncol(likelihoods)]
+    prof.table <- data.frame(t(likelihoods[
+      likelihoods[["Label"]] %in% components,
+      models
+    ]))
+    names(prof.table) <- likelihoods[
+      likelihoods[["Label"]] %in% components,
+      ncol(likelihoods)
+    ]
     component.labels.good <- rep("", ncol(prof.table))
     for (icol in 1:ncol(prof.table)) {
       ilabel <- which(components == names(prof.table)[icol])
@@ -283,7 +314,11 @@ SSplotProfile <-
         "Likelihood components showing max change as fraction of total change.\n",
         "To change which components are included, change input 'minfraction'.\n"
       )
-      print(data.frame(frac_change = round(change.fraction, 4), include = include, label = component.labels.good))
+      print(data.frame(
+        frac_change = round(change.fraction, 4),
+        include = include,
+        label = component.labels.good
+      ))
     }
     # stop function if nothing left
     if (nlines == 0) {
@@ -330,18 +365,21 @@ SSplotProfile <-
 
     # make total line wider with bigger points (or whatever user chooses)
     # uses switch() instead of ifelse() because ifelse() doesn't return NULL
-    lwd <- c(lwd.total, rep(lwd, nlines - 1), switch(add_no_prior_line + 1,
-      NULL,
-      lwd
-    ))
-    cex <- c(cex.total, rep(cex, nlines - 1), switch(add_no_prior_line + 1,
-      NULL,
-      cex.total
-    ))
-    lty <- c(lty.total, rep(lty, nlines - 1), switch(add_no_prior_line + 1,
-      NULL,
-      2
-    ))
+    lwd <- c(
+      lwd.total,
+      rep(lwd, nlines - 1),
+      switch(add_no_prior_line + 1, NULL, lwd)
+    )
+    cex <- c(
+      cex.total,
+      rep(cex, nlines - 1),
+      switch(add_no_prior_line + 1, NULL, cex.total)
+    )
+    lty <- c(
+      lty.total,
+      rep(lty, nlines - 1),
+      switch(add_no_prior_line + 1, NULL, 2)
+    )
 
     # intuitive profile.label using the parameter label
     if (is.null(profile.label)) {
@@ -349,7 +387,10 @@ SSplotProfile <-
         profile.label <- "Spawner-recruit steepness (h)"
       }
       if (grepl("R0", parlabel)) {
-        profile.label <- paste0("Log of unfished equilibrium recruitment, ", expression(log(R[0])))
+        profile.label <- paste0(
+          "Log of unfished equilibrium recruitment, ",
+          expression(log(R[0]))
+        )
       }
       if (grepl("NatM", parlabel) && grepl("Fem", parlabel)) {
         profile.label <- "Female natural mortality (M)"
@@ -382,9 +423,16 @@ SSplotProfile <-
 
     # make plot
     plotprofile <- function() {
-      plot(0,
-        type = "n", xlim = xlim, ylim = ylim, xlab = profile.label, ylab = ylab,
-        yaxs = yaxs, xaxs = xaxs, ...
+      plot(
+        0,
+        type = "n",
+        xlim = xlim,
+        ylim = ylim,
+        xlab = profile.label,
+        ylab = ylab,
+        yaxs = yaxs,
+        xaxs = xaxs,
+        ...
       )
       abline(h = 0, col = "grey")
       # optionally add horizontal line at ~1.92 (or other value depending
@@ -396,26 +444,42 @@ SSplotProfile <-
         x = parvec,
         y = prof.table,
         type = type,
-        pch = pch, col = col,
-        cex = cex, lty = lty, lwd = lwd, add = T
+        pch = pch,
+        col = col,
+        cex = cex,
+        lty = lty,
+        lwd = lwd,
+        add = T
       )
 
       if (legend) {
-        legend(legendloc,
-          bty = "n", legend = component.labels.used,
-          lwd = lwd, pt.cex = cex, lty = lty, pch = pch, col = col
+        legend(
+          legendloc,
+          bty = "n",
+          legend = component.labels.used,
+          lwd = lwd,
+          pt.cex = cex,
+          lty = lty,
+          pch = pch,
+          col = col
         )
       }
       box()
     }
 
-    if (plot) plotprofile()
+    if (plot) {
+      plotprofile()
+    }
     if (print) {
       save_png(
         plotinfo = NULL,
         file = "profile_plot_likelihood.png",
-        plotdir = plotdir, pwidth = pwidth,
-        pheight = pheight, punits = punits, res = res, ptsize = ptsize
+        plotdir = plotdir,
+        pwidth = pwidth,
+        pheight = pheight,
+        punits = punits,
+        res = res,
+        ptsize = ptsize
       )
       plotprofile()
       dev.off()
