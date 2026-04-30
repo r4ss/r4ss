@@ -163,10 +163,8 @@ Use the r4ss utility function to copy over the model files from
 ``` r
 
 copy_SS_inputs(dir.old = mod_path, dir.new = new_mod_path)
-#> copying files from
-#>  /home/runner/work/_temp/Library/r4ss/extdata/simple_small
-#> to
-#>  simple_new
+#> copying files from /home/runner/work/_temp/Library/r4ss/extdata/simple_small to
+#> simple_new
 #> copying complete
 ```
 
@@ -616,10 +614,8 @@ mod_path <- file.path(tempdir(), "simple_mod")
 example_path <- system.file("extdata", "simple_small", package = "r4ss")
 # copy model input files
 copy_SS_inputs(dir.old = example_path, dir.new = mod_path)
-#> copying files from
-#>  /home/runner/work/_temp/Library/r4ss/extdata/simple_small
-#> to
-#>  /tmp/RtmpBWAmVh/simple_mod
+#> copying files from /home/runner/work/_temp/Library/r4ss/extdata/simple_small to
+#> /tmp/RtmpzPOWQa/simple_mod
 #> copying complete
 # copy over the Report file to provide information about the last run
 file.copy(

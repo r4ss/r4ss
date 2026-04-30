@@ -38,13 +38,14 @@ simple_small <- SS_output(file.path(example_path, "simple_small"),
 SS_plots(simple_small)
 #> Finished defining objects
 #> Plots will be written to PNG files in the directory:
-#>   /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots
+#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots
 #> Starting biology plots (group 1)
 #> Starting selectivity and retention plots (group 2)
 #> Starting timeseries plots (group 3)
 #> Plotting Dynamic B0
 #> Starting recruitment deviation plots (group 4)
-#> Starting estimation of recruitment bias adjustment and associated plots (group 5)
+#> Starting estimation of recruitment bias adjustment and associated plots (group
+#> 5)
 #> Starting spawner-recruit curve plot (group 6)
 #> Starting catch plots (group 7)
 #> Starting SPR plots (group 8)
@@ -70,17 +71,20 @@ SS_plots(simple_small)
 #> Excluding 22 deviation parameters because input 'showdev' = FALSE
 #> Plotting distributions for 10 estimated parameters (deviations not included).
 #> ℹ saving file to /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/parameter_distributions_page1.png
+#> 
 #> ℹ saving file to /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/parameter_distributions_page2.png
+#> 
 #> Finished all requested plots in SS_plots function
 #> Starting diagnostic tables (group 26)
 #> Wrote table of info on PNG files to:
-#>    /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_30-04-2026_23.19.35.9478.csv
-#> Running 'SS_html':
-#>   By default, this function will look in the directory where PNG files were created
-#>   for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'
-#>   HTML files are written to link to these plots and put in the same directory.
+#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_30-04-2026_23.27.22.8921.csv
+#> Running 'SS_html': By default, this function will look in the directory where
+#> PNG files were created for CSV files with the name 'plotInfoTable...' written
+#> by 'SS_plots.' HTML files are written to link to these plots and put in the
+#> same directory.
 #> Removing duplicate rows in combined plotInfoTable based on multiple CSV files
-#> Home HTML file with output will be: /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html
+#> Home HTML file with output will be:
+#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html
 #> Opening HTML file in your default web-browser.
 ```
 
@@ -102,9 +106,9 @@ SSplotComparisons(
 )
 #> Summarizing 2 models:
 #> imodel=1/2
-#>   N active pars = 32
+#> N active pars = 32
 #> imodel=2/2
-#>   N active pars = 32
+#> N active pars = 32
 #> Summary finished. To avoid printing details above, use 'verbose = FALSE'.
 #> showing uncertainty for all models
 #> subplot 1: spawning biomass
@@ -112,7 +116,8 @@ SSplotComparisons(
 #> subplot 3: biomass ratio (hopefully equal to fraction of unfished)
 #> subplot 4: biomass ratio with uncertainty
 #> subplot 18: summary biomass
-#> skipping subplot 19 summary biomass with uncertainty because no models include summary biomass as a derived quantity
+#> skipping subplot 19 summary biomass with uncertainty because no models include
+#> summary biomass as a derived quantity
 #> subplot 5: SPR ratio
 #> subplot 6: SPR ratio with uncertainty
 #> subplot 7: F value
@@ -125,10 +130,11 @@ SSplotComparisons(
 #> subplot 14: index fits on a log scale
 #> subplot 15: phase plot
 #> subplots 16 and 17: densities
-#> Parameter/quantity names matching 'densitynames' input:
-#> SSB_Virgin, SR_LN(R0)
-#> x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in units of '1000 t)
-#> x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in units of '1000 t)
+#> Parameter/quantity names matching 'densitynames' input: SSB_Virgin, SR_LN(R0)
+#> x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in
+#> units of '1000 t)
+#> x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in
+#> units of '1000 t)
 
 data.frame(
   file = dir(plotdir) |> grep(pattern = "^compare[0-9]", value = TRUE),
@@ -153,12 +159,13 @@ SS_html(simple_small,
   plotdir = file.path(example_path, "simple_small/plots"),
   verbose = TRUE
 )
-#> Running 'SS_html':
-#>   By default, this function will look in the directory where PNG files were created
-#>   for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'
-#>   HTML files are written to link to these plots and put in the same directory.
+#> Running 'SS_html': By default, this function will look in the directory where
+#> PNG files were created for CSV files with the name 'plotInfoTable...' written
+#> by 'SS_plots.' HTML files are written to link to these plots and put in the
+#> same directory.
 #> Removing duplicate rows in combined plotInfoTable based on multiple CSV files
-#> Home HTML file with output will be: /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html
+#> Home HTML file with output will be:
+#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html
 #> Opening HTML file in your default web-browser.
 ```
 

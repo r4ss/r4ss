@@ -112,13 +112,14 @@ customize the html output.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/SS_plots.html">SS_plots</a></span><span class="op">(</span><span class="va">simple_small</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Finished defining objects</span></span>
 <span><span class="co">#&gt; Plots will be written to PNG files in the directory:</span></span>
-<span><span class="co">#&gt;   /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots</span></span>
+<span><span class="co">#&gt; /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots</span></span>
 <span><span class="co">#&gt; Starting biology plots (group 1)</span></span>
 <span><span class="co">#&gt; Starting selectivity and retention plots (group 2)</span></span>
 <span><span class="co">#&gt; Starting timeseries plots (group 3)</span></span>
 <span><span class="co">#&gt; Plotting Dynamic B0</span></span>
 <span><span class="co">#&gt; Starting recruitment deviation plots (group 4)</span></span>
-<span><span class="co">#&gt; Starting estimation of recruitment bias adjustment and associated plots (group 5)</span></span>
+<span><span class="co">#&gt; Starting estimation of recruitment bias adjustment and associated plots (group</span></span>
+<span><span class="co">#&gt; 5)</span></span>
 <span><span class="co">#&gt; Starting spawner-recruit curve plot (group 6)</span></span>
 <span><span class="co">#&gt; Starting catch plots (group 7)</span></span>
 <span><span class="co">#&gt; Starting SPR plots (group 8)</span></span>
@@ -144,17 +145,20 @@ customize the html output.</p>
 <span><span class="co">#&gt; Excluding 22 deviation parameters because input 'showdev' = FALSE</span></span>
 <span><span class="co">#&gt; Plotting distributions for 10 estimated parameters (deviations not included).</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> saving file to /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/parameter_distributions_page1.png</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> saving file to /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/parameter_distributions_page2.png</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Finished all requested plots in SS_plots function</span></span>
 <span><span class="co">#&gt; Starting diagnostic tables (group 26)</span></span>
 <span><span class="co">#&gt; Wrote table of info on PNG files to:</span></span>
-<span><span class="co">#&gt;    /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_30-04-2026_23.19.35.9478.csv</span></span>
-<span><span class="co">#&gt; Running 'SS_html':</span></span>
-<span><span class="co">#&gt;   By default, this function will look in the directory where PNG files were created</span></span>
-<span><span class="co">#&gt;   for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'</span></span>
-<span><span class="co">#&gt;   HTML files are written to link to these plots and put in the same directory.</span></span>
+<span><span class="co">#&gt; /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_30-04-2026_23.27.22.8921.csv</span></span>
+<span><span class="co">#&gt; Running 'SS_html': By default, this function will look in the directory where</span></span>
+<span><span class="co">#&gt; PNG files were created for CSV files with the name 'plotInfoTable...' written</span></span>
+<span><span class="co">#&gt; by 'SS_plots.' HTML files are written to link to these plots and put in the</span></span>
+<span><span class="co">#&gt; same directory.</span></span>
 <span><span class="co">#&gt; Removing duplicate rows in combined plotInfoTable based on multiple CSV files</span></span>
-<span><span class="co">#&gt; Home HTML file with output will be: /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html</span></span>
+<span><span class="co">#&gt; Home HTML file with output will be:</span></span>
+<span><span class="co">#&gt; /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html</span></span>
 <span><span class="co">#&gt; Opening HTML file in your default web-browser.</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -173,9 +177,9 @@ organize the files.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Summarizing 2 models:</span></span>
 <span><span class="co">#&gt; imodel=1/2</span></span>
-<span><span class="co">#&gt;   N active pars = 32</span></span>
+<span><span class="co">#&gt; N active pars = 32</span></span>
 <span><span class="co">#&gt; imodel=2/2</span></span>
-<span><span class="co">#&gt;   N active pars = 32</span></span>
+<span><span class="co">#&gt; N active pars = 32</span></span>
 <span><span class="co">#&gt; Summary finished. To avoid printing details above, use 'verbose = FALSE'.</span></span>
 <span><span class="co">#&gt; showing uncertainty for all models</span></span>
 <span><span class="co">#&gt; subplot 1: spawning biomass</span></span>
@@ -183,7 +187,8 @@ organize the files.</p>
 <span><span class="co">#&gt; subplot 3: biomass ratio (hopefully equal to fraction of unfished)</span></span>
 <span><span class="co">#&gt; subplot 4: biomass ratio with uncertainty</span></span>
 <span><span class="co">#&gt; subplot 18: summary biomass</span></span>
-<span><span class="co">#&gt; skipping subplot 19 summary biomass with uncertainty because no models include summary biomass as a derived quantity</span></span>
+<span><span class="co">#&gt; skipping subplot 19 summary biomass with uncertainty because no models include</span></span>
+<span><span class="co">#&gt; summary biomass as a derived quantity</span></span>
 <span><span class="co">#&gt; subplot 5: SPR ratio</span></span>
 <span><span class="co">#&gt; subplot 6: SPR ratio with uncertainty</span></span>
 <span><span class="co">#&gt; subplot 7: F value</span></span>
@@ -196,10 +201,11 @@ organize the files.</p>
 <span><span class="co">#&gt; subplot 14: index fits on a log scale</span></span>
 <span><span class="co">#&gt; subplot 15: phase plot</span></span>
 <span><span class="co">#&gt; subplots 16 and 17: densities</span></span>
-<span><span class="co">#&gt; Parameter/quantity names matching 'densitynames' input:</span></span>
-<span><span class="co">#&gt; SSB_Virgin, SR_LN(R0)</span></span>
-<span><span class="co">#&gt; x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in units of '1000 t)</span></span>
-<span><span class="co">#&gt; x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in units of '1000 t)</span></span>
+<span><span class="co">#&gt; Parameter/quantity names matching 'densitynames' input: SSB_Virgin, SR_LN(R0)</span></span>
+<span><span class="co">#&gt; x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in</span></span>
+<span><span class="co">#&gt; units of '1000 t)</span></span>
+<span><span class="co">#&gt; x-axis for SSB_Virgin in density plot has been divided by 1000 (so may be in</span></span>
+<span><span class="co">#&gt; units of '1000 t)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="va">plotdir</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"^compare[0-9]"</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
@@ -223,12 +229,13 @@ organize the files.</p>
 <span>  plotdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">example_path</span>, <span class="st">"simple_small/plots"</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Running 'SS_html':</span></span>
-<span><span class="co">#&gt;   By default, this function will look in the directory where PNG files were created</span></span>
-<span><span class="co">#&gt;   for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'</span></span>
-<span><span class="co">#&gt;   HTML files are written to link to these plots and put in the same directory.</span></span>
+<span><span class="co">#&gt; Running 'SS_html': By default, this function will look in the directory where</span></span>
+<span><span class="co">#&gt; PNG files were created for CSV files with the name 'plotInfoTable...' written</span></span>
+<span><span class="co">#&gt; by 'SS_plots.' HTML files are written to link to these plots and put in the</span></span>
+<span><span class="co">#&gt; same directory.</span></span>
 <span><span class="co">#&gt; Removing duplicate rows in combined plotInfoTable based on multiple CSV files</span></span>
-<span><span class="co">#&gt; Home HTML file with output will be: /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html</span></span>
+<span><span class="co">#&gt; Home HTML file with output will be:</span></span>
+<span><span class="co">#&gt; /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html</span></span>
 <span><span class="co">#&gt; Opening HTML file in your default web-browser.</span></span></code></pre></div>
 </div>
 </div>

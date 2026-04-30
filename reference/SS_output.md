@@ -25,7 +25,7 @@ SS_output(
   covar = TRUE,
   readwt = TRUE,
   verbose = TRUE,
-  printstats = TRUE,
+  printstats = FALSE,
   hidewarn = FALSE,
   NoCompOK = TRUE,
   aalmaxbinrange = 4,
@@ -96,7 +96,8 @@ SS_output(
 
 - printstats:
 
-  Print summary statistics about the output to the R GUI?
+  Print summary statistics about the output to the R GUI? Defaults to
+  FALSE.
 
 - hidewarn:
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## r4ss (development version)
+
+- Replace base R [`message()`](https://rdrr.io/r/base/message.html),
+  [`warning()`](https://rdrr.io/r/base/warning.html), and
+  [`stop()`](https://rdrr.io/r/base/stop.html) calls with
+  [cli](https://cli.r-lib.org) equivalents
+  ([`cli::cli_inform()`](https://cli.r-lib.org/reference/cli_abort.html),
+  [`cli::cli_warn()`](https://cli.r-lib.org/reference/cli_abort.html),
+  and
+  [`cli::cli_abort()`](https://cli.r-lib.org/reference/cli_abort.html))
+  throughout the package for improved message formatting.
+- Change default value of `printstats` in
+  [`SS_output()`](https://r4ss.github.io/r4ss/reference/SS_output.md)
+  from `TRUE` to `FALSE` to reduce console output.
+
 ## r4ss 1.52.0 (April 2025)
 
 - Add several functions for making tables. The functions all save .rda
