@@ -486,8 +486,13 @@ SSexecutivesummary <- function(
     devs.out[, 3]
   )
   colnames(es.c) <- c(
-    "Year", paste0("Recruitment (", recruit_scale, ")"), "Lower Interval", "Upper Interval",
-    "Recruitment Deviations", "Lower Interval", "Upper Interval"
+    "Year",
+    paste0("Recruitment (", recruit_scale, ")"),
+    "Lower Interval",
+    "Upper Interval",
+    "Recruitment Deviations",
+    "Lower Interval",
+    "Upper Interval"
   )
   csv_name <- "c_Recr_ES.csv"
   write.csv(es.c, file.path(csv.dir, csv_name), row.names = FALSE)
@@ -495,8 +500,13 @@ SSexecutivesummary <- function(
   caption <- c(
     caption,
     paste0(
-      "Estimated recent trend in recruitment (", recruit_scale, ") and recruitment deviations and the ", round(100 * ci_value, 0),
-      " percent intervals for the ", add_text, "."
+      "Estimated recent trend in recruitment (",
+      recruit_scale,
+      ") and recruitment deviations and the ",
+      round(100 * ci_value, 0),
+      " percent intervals for the ",
+      add_text,
+      "."
     )
   )
   tex.label <- c(tex.label, "recrES")
