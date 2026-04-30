@@ -204,7 +204,7 @@ SSplotProfile <-
     }
     parlabel <- pars[["Label"]][parnumber]
     if (length(parlabel) > 1) {
-      cli::cli_abort("Multiple parameters matching profile.string='{profile.string}': {paste(parlabel, collapse = ', ')} You may need to use 'exact=TRUE'.")
+      cli::cli_abort("Multiple parameters matching profile.string='{profile.string}': {paste(parlabel, collapse = ', ')}. You may need to use 'exact=TRUE'.")
     }
 
     # get vector of parameter values

@@ -2704,7 +2704,7 @@ SSplotComparisons <-
     uncertaintyplots <- intersect(c(2, 4, 6, 8, 10, 12), subplots)
     if (!any(uncertainty) & length(uncertaintyplots) > 0) {
       # warn if uncertainty is off but uncertainty plots are requested
-      cli::cli_inform("skipping plots with uncertainty:{paste(uncertaintyplots, collapse = ',')}")
+      cli::cli_inform("skipping plots with uncertainty: {paste(uncertaintyplots, collapse = ',')}")
     }
     # subplot 1: spawning biomass
     if (1 %in% subplots) {
@@ -3023,7 +3023,7 @@ SSplotComparisons <-
         if (length(expandednames) == 0) {
           cli::cli_warn("No parameter/quantity names matching 'densitynames' input.")
         } else {
-          cli::cli_inform("Parameter/quantity names matching 'densitynames' input:{paste(expandednames, sep = '', collapse = ', ')}")
+          cli::cli_inform("Parameter/quantity names matching 'densitynames' input: {paste(expandednames, sep = '', collapse = ', ')}")
           ndensities <- length(expandednames)
           # make a table to store associated x-labels
           densitytable <- data.frame(
