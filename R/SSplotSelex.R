@@ -159,10 +159,14 @@ SSplotSelex <-
 
     # message about skipping plots
     if (is.null(ageselex)) {
-      cli::cli_inform("Skipping age-based selectivity plots: no output available")
+      cli::cli_inform(
+        "Skipping age-based selectivity plots: no output available"
+      )
     }
     if (is.null(sizeselex)) {
-      cli::cli_inform("Skipping length-based selectivity plots: no output available")
+      cli::cli_inform(
+        "Skipping length-based selectivity plots: no output available"
+      )
     }
 
     # table to store information on each plot
@@ -246,10 +250,14 @@ SSplotSelex <-
         ]
       }
       if (!factor %in% unique(c(sizeselex[["Factor"]], ageselex[["Factor"]]))) {
-        cli::cli_abort("Factor '{factor}' not found in age- or length-based selectivity. This may be due to having 'detailed age-structured reports' turned off in the starter file.")
+        cli::cli_abort(
+          "Factor '{factor}' not found in age- or length-based selectivity. This may be due to having 'detailed age-structured reports' turned off in the starter file."
+        )
       }
       if (nrow(allselex) == 0) {
-        cli::cli_abort("Combination of season, fleets, & sexes didn't produce any results")
+        cli::cli_abort(
+          "Combination of season, fleets, & sexes didn't produce any results"
+        )
       }
       # figure out which fleets have time-varying qunatities
       time <- rep(FALSE, nfleets)
@@ -267,7 +275,9 @@ SSplotSelex <-
       }
       if (any(time)) {
         if (length(years) > 1 & length(fleets) > 1) {
-          cli::cli_inform("plot not yet configured to work well with multiple years and multiple fleets")
+          cli::cli_inform(
+            "plot not yet configured to work well with multiple years and multiple fleets"
+          )
         }
         # do a bunch of tedious filtering to get unique year ranges
         inputyears <- years
@@ -324,7 +334,9 @@ SSplotSelex <-
       }
       allselex <- allselex2 <- allselex[allselex[["Yr"]] %in% years, ]
       if (nrow(allselex) == 0) {
-        cli::cli_abort("No values found for this combination of years and factor")
+        cli::cli_abort(
+          "No values found for this combination of years and factor"
+        )
       }
 
       # do some processing
@@ -343,7 +355,9 @@ SSplotSelex <-
         allselex <- allselex[good, ]
         allselex2 <- allselex2[good, ]
         if (nrow(infotable2) != nrow(allselex)) {
-          cli::cli_abort("Problem with input 'infotable'. Number of rows doesn't match.")
+          cli::cli_abort(
+            "Problem with input 'infotable'. Number of rows doesn't match."
+          )
         }
       } else {
         # make table of info for each row (unless it is supplied already)
@@ -548,7 +562,9 @@ SSplotSelex <-
           )
       ) {
         agefactors <- setdiff(agefactors, "Asel")
-        cli::cli_inform("Skipping plot of age-based selectivity as all values = 1.0")
+        cli::cli_inform(
+          "Skipping plot of age-based selectivity as all values = 1.0"
+        )
       }
 
       if (length(agefactors) > 0) {
@@ -1610,7 +1626,9 @@ SSplotSelex <-
       #   by info on the growth within the season when each fleet operates.
       growdat <- growdat[growdat[["Seas"]] == season, ]
       if (nseasons > 1) {
-        cli::cli_warn("Plots showing growth curve with selectivity are using season {season} growth, which may not match the timing of the fishery.")
+        cli::cli_warn(
+          "Plots showing growth curve with selectivity are using season {season} growth, which may not match the timing of the fishery."
+        )
       }
 
       # Mid year mean length at age with 95% range of lengths (by sex if applicable)

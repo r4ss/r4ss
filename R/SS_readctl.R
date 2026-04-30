@@ -115,7 +115,9 @@ SS_readctl <- function(
   # call function for SS version 3.24
   if ((nver >= 3.2) && (nver < 3.3)) {
     if (isTRUE(!is.null(Nfleets))) {
-      cli::cli_abort("SS v3.24 uses Nfleet and Nsurveys but a value has been input for Nfleets instead")
+      cli::cli_abort(
+        "SS v3.24 uses Nfleet and Nsurveys but a value has been input for Nfleets instead"
+      )
     }
     ctllist <- SS_readctl_3.24(
       file = file,
@@ -138,7 +140,9 @@ SS_readctl <- function(
   # call function for SS version 3.30
   if (nver >= 3.3) {
     if (isTRUE(!is.null(Nfleet) | !is.null(Nsurveys))) {
-      cli::cli_abort("SS v3.30 uses Nfleets but values have been input for Nfleet and/or Nsurveys")
+      cli::cli_abort(
+        "SS v3.30 uses Nfleets but values have been input for Nfleet and/or Nsurveys"
+      )
     }
     ctllist <- SS_readctl_3.30(
       file = file,

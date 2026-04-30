@@ -298,7 +298,9 @@ SSplotComparisons <-
     }
 
     if (png & is.null(plotdir)) {
-      cli::cli_abort("To print PNG files, you must supply a directory as 'plotdir'")
+      cli::cli_abort(
+        "To print PNG files, you must supply a directory as 'plotdir'"
+      )
     }
 
     # check for internal consistency
@@ -307,7 +309,9 @@ SSplotComparisons <-
     }
     if (pdf) {
       if (is.null(plotdir)) {
-        cli::cli_abort("To write to a PDF, you must supply a directory as 'plotdir'")
+        cli::cli_abort(
+          "To write to a PDF, you must supply a directory as 'plotdir'"
+        )
       }
       pdffile <- file.path(
         plotdir,
@@ -383,32 +387,42 @@ SSplotComparisons <-
     if (is.null(btarg)) {
       btarg <- unique(btargs)
       if (length(btarg) > 1) {
-        cli::cli_warn("setting btarg = -999 because models don't have matching values")
+        cli::cli_warn(
+          "setting btarg = -999 because models don't have matching values"
+        )
         btarg <- -999
       }
     }
     if (is.null(minbthresh)) {
       minbthresh <- unique(minbthreshs)
       if (length(minbthresh) > 1) {
-        cli::cli_warn("setting minbthresh = -999 because models don't have matching values")
+        cli::cli_warn(
+          "setting minbthresh = -999 because models don't have matching values"
+        )
         minbthresh <- -999
       }
     }
     if (is.null(sprtarg)) {
       sprtarg <- unique(sprtargs)
       if (length(sprtarg) > 1) {
-        cli::cli_warn("setting sprtarg = -999 because models don't have matching values")
+        cli::cli_warn(
+          "setting sprtarg = -999 because models don't have matching values"
+        )
         sprtarg <- -999
       }
     }
     SPRratioLabel <- unique(SPRratioLabels)
     if (length(SPRratioLabel) > 1) {
-      cli::cli_warn("setting label for SPR plot to 8th element of input 'labels' because the models don't have matching labels")
+      cli::cli_warn(
+        "setting label for SPR plot to 8th element of input 'labels' because the models don't have matching labels"
+      )
       SPRratioLabel <- labels[8]
     }
     SpawnOutputLabel <- unique(SpawnOutputLabels)
     if (length(SpawnOutputLabel) > 1) {
-      cli::cli_warn("setting label for Spawning Output to 12th element of input 'labels' because the models don't have matching SpawnOutputLabels")
+      cli::cli_warn(
+        "setting label for Spawning Output to 12th element of input 'labels' because the models don't have matching SpawnOutputLabels"
+      )
       SpawnOutputLabel <- labels[12]
     }
     if (
@@ -419,7 +433,9 @@ SSplotComparisons <-
     }
     FvalueLabel <- unique(FvalueLabels)
     if (length(FvalueLabel) > 1) {
-      cli::cli_warn("setting label for F plot to 13th element of input 'labels' because the models don't have matching labels")
+      cli::cli_warn(
+        "setting label for F plot to 13th element of input 'labels' because the models don't have matching labels"
+      )
       FvalueLabel <- labels[13]
     } else {
       FvalueLabel <- gsub("_", " ", FvalueLabel)
@@ -431,7 +447,9 @@ SSplotComparisons <-
     if (!is.logical(uncertainty) & is.numeric(uncertainty)) {
       if (any(!uncertainty %in% 1:n)) {
         # stop if numerical values aren't integers <= n
-        cli::cli_abort("'uncertainty' should be a subset of the integers 1-{n}, where n={n} is the number of models. Or it can be a single TRUE/FALSE value. Or a vector of TRUE/FALSE, of length n={n}")
+        cli::cli_abort(
+          "'uncertainty' should be a subset of the integers 1-{n}, where n={n} is the number of models. Or it can be a single TRUE/FALSE value. Or a vector of TRUE/FALSE, of length n={n}"
+        )
       } else {
         # convert integers to logical
         uncertainty <- 1:n %in% uncertainty
@@ -444,7 +462,9 @@ SSplotComparisons <-
     }
     # if all that hasn't yet made it length n, then stop
     if (length(uncertainty) != n) {
-      cli::cli_abort("'uncertainty' as TRUE/FALSE should have length 1 or n. length(uncertainty) = {length(uncertainty)}")
+      cli::cli_abort(
+        "'uncertainty' as TRUE/FALSE should have length 1 or n. length(uncertainty) = {length(uncertainty)}"
+      )
     }
     # some feedback about uncertainty settings
     if (all(uncertainty)) {
@@ -454,7 +474,9 @@ SSplotComparisons <-
       cli::cli_inform("not showing uncertainty for any models")
     }
     if (any(uncertainty) & !all(uncertainty)) {
-        cli::cli_inform("showing uncertainty for model{ifelse(sum(uncertainty) > 1, 's: ', ' ')}{paste(which(uncertainty), collapse = ',')}")
+      cli::cli_inform(
+        "showing uncertainty for model{ifelse(sum(uncertainty) > 1, 's: ', ' ')}{paste(which(uncertainty), collapse = ',')}"
+      )
     }
     for (i in 1:n) {
       if (all(is.na(quantsSD[, i]) | quantsSD[, i] == 0)) {
@@ -464,7 +486,9 @@ SSplotComparisons <-
     }
     #### no longer dividing by 2 for single-sex models
     if (length(unique(nsexes)) > 1) {
-      cli::cli_warn("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models to get female-only spawning biomass output by SS for a single-sex model, use the new Nsexes = -1 option in the data file.")
+      cli::cli_warn(
+        "SSplotComparisons no longer divides SpawnBio by 2 for single-sex models to get female-only spawning biomass output by SS for a single-sex model, use the new Nsexes = -1 option in the data file."
+      )
     }
     # check number of models to be plotted
     if (models[1] == "all") {
@@ -475,7 +499,9 @@ SSplotComparisons <-
     # check for mcmc
     if (any(mcmcVec) & length(mcmc) == 0) {
       mcmcVec <- FALSE
-      cli::cli_warn("Setting mcmcVec = FALSE because summaryoutput[['mcmc']] is empty")
+      cli::cli_warn(
+        "Setting mcmcVec = FALSE because summaryoutput[['mcmc']] is empty"
+      )
     }
     # check length of mcmcVec
     if (nlines > 1 & length(mcmcVec) == 1) {
@@ -503,14 +529,18 @@ SSplotComparisons <-
             indexfleets <- rep(indexfleets, n)
           }
           if (length(indexfleets) != n) {
-            cli::cli_warn("Skipping index plots: length(indexfleets) should be 1 or n = {n}.")
+            cli::cli_warn(
+              "Skipping index plots: length(indexfleets) should be 1 or n = {n}."
+            )
             indexfleets <- NULL
           }
         }
       }
       # check for mismatched lengths of list elements
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
-        cli::cli_warn("Skipping index plots; Fleets have different numbers of indices listed in 'indexfleets'.")
+        cli::cli_warn(
+          "Skipping index plots; Fleets have different numbers of indices listed in 'indexfleets'."
+        )
         indexfleets <- NULL
       }
 
@@ -697,7 +727,9 @@ SSplotComparisons <-
         mean <- apply(mcmc.tmp, 2, mean, na.rm = TRUE)
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
         if (!meanRecWarning) {
-          cli::cli_inform("note: using mean recruitment from MCMC instead of median, because it is more comparable to MLE")
+          cli::cli_inform(
+            "note: using mean recruitment from MCMC instead of median, because it is more comparable to MLE"
+          )
           meanRecWarning <- TRUE
         }
         recruits[, imodel] <- mean[match(recruits[["Label"]], mcmclabs)]
@@ -861,7 +893,9 @@ SSplotComparisons <-
 
       # set units on spawning biomass plot
       if (length(unique(SpawnOutputUnits)) != 1) {
-        cli::cli_warn("Some models may have different units for spawning output than others")
+        cli::cli_warn(
+          "Some models may have different units for spawning output than others"
+        )
       }
       if (option == 1) {
         # if either SpawnOutputUnits is unknown or in numbers,
@@ -1392,7 +1426,9 @@ SSplotComparisons <-
               cex = par()[["cex.lab"]]
             )
           } else {
-            cli::cli_inform("No line added to SPR ratio plot, as the settings used in this model have not yet been configured in SSplotComparisons.")
+            cli::cli_inform(
+              "No line added to SPR ratio plot, as the settings used in this model have not yet been configured in SSplotComparisons."
+            )
             mtext(
               side = 2,
               text = SPRratioLabel,
@@ -1840,7 +1876,9 @@ SSplotComparisons <-
       # plot recruit deviations
       # test for bad values
       if (any(is.na(recdevs[["Yr"]]))) {
-        cli::cli_warn("Recdevs associated with initial age structure may not be shown")
+        cli::cli_warn(
+          "Recdevs associated with initial age structure may not be shown"
+        )
       }
       # only show uncertainty if values are present for at least one model
       if (!any(uncertainty)) {
@@ -1865,7 +1903,9 @@ SSplotComparisons <-
         )
 
       if (any(is.infinite(ylim))) {
-        cli::cli_warn('Skipping recdev plots. Infinite ylim may indicate all values are NA in summaryoutput[["recdevs"]]')
+        cli::cli_warn(
+          'Skipping recdev plots. Infinite ylim may indicate all values are NA in summaryoutput[["recdevs"]]'
+        )
         return(ylim[2])
       }
       if (show_uncertainty) {
@@ -2223,7 +2263,9 @@ SSplotComparisons <-
           adj <- 0.2 * iline / nlines - 0.1
           imodel <- models[iline]
           if (any(is.na(indices2[["like"]]))) {
-            cli::cli_warn("NA's found in likelihood, may cause issues with index plots")
+            cli::cli_warn(
+              "NA's found in likelihood, may cause issues with index plots"
+            )
           }
           subset <- indices2[["imodel"]] == imodel & !is.na(indices2[["Like"]])
           # add uncertainty intervals if requested
@@ -2336,12 +2378,16 @@ SSplotComparisons <-
           mcmcColumn <- grep(parname, colnames(mcmc[[imodel]]), fixed = TRUE)
           # warn if it can't find the columns
           if (length(mcmcColumn) == 0) {
-            cli::cli_inform("No columns selected from MCMC for '{parname}' in model {imodel}")
+            cli::cli_inform(
+              "No columns selected from MCMC for '{parname}' in model {imodel}"
+            )
             good[iline] <- FALSE
           }
           # warn if too many columns
           if (length(mcmcColumn) > 1) {
-            cli::cli_warn("Too many columns selected from MCMC for model {imodel}: {paste(names(mcmc[[imodel]])[mcmcColumn], sep = '', collapse = ', ')}. Please specify a unique label in the mcmc dataframe or specify mcmcVec = FALSE for model {imodel} (or mcmcVec = FALSE applying to all models).")
+            cli::cli_warn(
+              "Too many columns selected from MCMC for model {imodel}: {paste(names(mcmc[[imodel]])[mcmcColumn], sep = '', collapse = ', ')}. Please specify a unique label in the mcmc dataframe or specify mcmcVec = FALSE for model {imodel} (or mcmcVec = FALSE applying to all models)."
+            )
             good[iline] <- FALSE
           }
           # add density
@@ -2422,7 +2468,9 @@ SSplotComparisons <-
       }
       # make empty plot
       if (is.null(ymax)) {
-        cli::cli_inform("  skipping plot of {parname} because it seems to not be estimated in any model")
+        cli::cli_inform(
+          "  skipping plot of {parname} because it seems to not be estimated in any model"
+        )
       } else {
         par(par)
         if (!add) {
@@ -2603,7 +2651,9 @@ SSplotComparisons <-
           # that applies to both MLE and MCMC
 
           if (densitytails & densitymiddle) {
-            cli::cli_warn("You are shading both tails and central 95% of density plots which is illogical")
+            cli::cli_warn(
+              "You are shading both tails and central 95% of density plots which is illogical"
+            )
           }
 
           doShade <- FALSE
@@ -2678,7 +2728,9 @@ SSplotComparisons <-
           box()
         }
         if (xunits != 1) {
-          cli::cli_inform("x-axis for {parname} in density plot has been divided by {xunits} (so may be in units of {xlab2})")
+          cli::cli_inform(
+            "x-axis for {parname} in density plot has been divided by {xunits} (so may be in units of {xlab2})"
+          )
         }
         # add legend
         if (legend) {
@@ -2704,7 +2756,9 @@ SSplotComparisons <-
     uncertaintyplots <- intersect(c(2, 4, 6, 8, 10, 12), subplots)
     if (!any(uncertainty) & length(uncertaintyplots) > 0) {
       # warn if uncertainty is off but uncertainty plots are requested
-      cli::cli_inform("skipping plots with uncertainty: {paste(uncertaintyplots, collapse = ',')}")
+      cli::cli_inform(
+        "skipping plots with uncertainty: {paste(uncertaintyplots, collapse = ',')}"
+      )
     }
     # subplot 1: spawning biomass
     if (1 %in% subplots) {
@@ -2725,7 +2779,9 @@ SSplotComparisons <-
     if (2 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform("subplot 2: spawning biomass with uncertainty intervals")
+          cli::cli_inform(
+            "subplot 2: spawning biomass with uncertainty intervals"
+          )
         }
         if (plot) {
           ymax_vec[2] <- plotBio(option = 1, show_uncertainty = TRUE)
@@ -2742,7 +2798,9 @@ SSplotComparisons <-
     # (hopefully equal to fraction of unfished spawning output)
     if (3 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 3: biomass ratio (hopefully equal to fraction of unfished)")
+        cli::cli_inform(
+          "subplot 3: biomass ratio (hopefully equal to fraction of unfished)"
+        )
       }
       if (plot) {
         ymax_vec[3] <- plotBratio(show_uncertainty = FALSE)
@@ -2791,11 +2849,15 @@ SSplotComparisons <-
       if (any(uncertainty)) {
         if (all(is.na(summaryoutput[["SmryBioSD"]][["Label"]]))) {
           if (verbose) {
-            cli::cli_inform("skipping subplot 19 summary biomass with uncertainty because no models include summary biomass as a derived quantity")
+            cli::cli_inform(
+              "skipping subplot 19 summary biomass with uncertainty because no models include summary biomass as a derived quantity"
+            )
           }
         } else {
           if (verbose) {
-            cli::cli_inform("subplot 19: summary biomass with uncertainty intervals")
+            cli::cli_inform(
+              "subplot 19: summary biomass with uncertainty intervals"
+            )
           }
           if (plot) {
             ymax_vec[19] <- plotBio(option = 2, show_uncertainty = TRUE)
@@ -2912,7 +2974,9 @@ SSplotComparisons <-
         cli::cli_inform("subplot 11: recruit devs")
       }
       if (is.null(recdevs)) {
-        cli::cli_inform("No recdevs present in the model summary, skipping plot.")
+        cli::cli_inform(
+          "No recdevs present in the model summary, skipping plot."
+        )
       } else {
         if (plot) {
           ymax_vec[11] <- plotRecDevs(show_uncertainty = FALSE)
@@ -3021,9 +3085,13 @@ SSplotComparisons <-
           expandednames <- c(expandednames, matchingnames)
         }
         if (length(expandednames) == 0) {
-          cli::cli_warn("No parameter/quantity names matching 'densitynames' input.")
+          cli::cli_warn(
+            "No parameter/quantity names matching 'densitynames' input."
+          )
         } else {
-          cli::cli_inform("Parameter/quantity names matching 'densitynames' input: {paste(expandednames, sep = '', collapse = ', ')}")
+          cli::cli_inform(
+            "Parameter/quantity names matching 'densitynames' input: {paste(expandednames, sep = '', collapse = ', ')}"
+          )
           ndensities <- length(expandednames)
           # make a table to store associated x-labels
           densitytable <- data.frame(
@@ -3033,11 +3101,15 @@ SSplotComparisons <-
           )
           if (!is.null(densityxlabs) && length(densityxlabs) == ndensities) {
             densitytable[["label"]] <- densityxlabs
-            cli::cli_inform("  table of parameter/quantity labels with associated x-axis label:")
+            cli::cli_inform(
+              "  table of parameter/quantity labels with associated x-axis label:"
+            )
             print(densitytable)
           } else {
             if (!is.null(densityxlabs)) {
-              cli::cli_warn("length of 'densityxlabs' doesn't match the number of values matching 'densitynames' so parameter labels will be used instead")
+              cli::cli_warn(
+                "length of 'densityxlabs' doesn't match the number of values matching 'densitynames' so parameter labels will be used instead"
+              )
             }
           }
 

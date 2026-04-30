@@ -36,7 +36,9 @@ SS_writedat <- function(
 
   # check datlist
   if (datlist[["type"]] != "Stock_Synthesis_data_file") {
-    cli::cli_abort("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
+    cli::cli_abort(
+      "input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'"
+    )
   }
 
   # check version input

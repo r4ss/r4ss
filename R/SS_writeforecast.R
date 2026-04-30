@@ -28,7 +28,9 @@ SS_writeforecast <- function(
   }
 
   if (!is.list(mylist) || mylist[["type"]] != "Stock_Synthesis_forecast_file") {
-    cli::cli_abort("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'")
+    cli::cli_abort(
+      "input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'"
+    )
   }
 
   # this command will hopefully prevent earlier issues of getting stuck with all R
@@ -109,7 +111,9 @@ SS_writeforecast <- function(
     if (mylist[["Forecast"]] <= 0 & is.null(mylist[["eof"]])) {
       # only continue beyond this point if Forecast is not 0 or writeAll==TRUE,
       # so do not do other processing.
-      cli::cli_warn("Even though writeAll == TRUE, r4ss cannot write past mylist[['Forecast']] because needed list elements past Forecast in mylist are not available. But, the saved file will still be a useable Stock Synthesis forecast file.")
+      cli::cli_warn(
+        "Even though writeAll == TRUE, r4ss cannot write past mylist[['Forecast']] because needed list elements past Forecast in mylist are not available. But, the saved file will still be a useable Stock Synthesis forecast file."
+      )
     } else {
       wl("Nforecastyrs")
       wl("F_scalar")
@@ -167,16 +171,22 @@ SS_writeforecast <- function(
 
       wl("First_forecast_loop_with_stochastic_recruitment")
       if (!is.null(mylist[["Forecast_loop_control_3"]])) {
-        cli::cli_warn("Forecast_loop_control_3 has been renamed to fcast_rec_option so only fcast_rec_option will be written to the file.")
+        cli::cli_warn(
+          "Forecast_loop_control_3 has been renamed to fcast_rec_option so only fcast_rec_option will be written to the file."
+        )
       }
       if (!is.null(mylist[["Forecast_loop_control_4"]])) {
-        cli::cli_warn("Forecast_loop_control_4 has been renamed to fcast_rec_val so only fcast_rec_val will be written to the file.")
+        cli::cli_warn(
+          "Forecast_loop_control_4 has been renamed to fcast_rec_val so only fcast_rec_val will be written to the file."
+        )
       }
       wl("fcast_rec_option")
       wl("fcast_rec_val")
       # new option added in 3.30.22 to forecast using average values
       if (!is.null(mylist[["Fcast_MGparm_averaging"]])) {
-        cli::cli_warn("Fcast_MGparm_averaging was temporarily in place to support beta versions of SS3 version 3.30.22, but has been replaced by the new Fcast_years table input format.")
+        cli::cli_warn(
+          "Fcast_MGparm_averaging was temporarily in place to support beta versions of SS3 version 3.30.22, but has been replaced by the new Fcast_years table input format."
+        )
         mylist[["Fcast_loop_control_5"]] <- 0
       }
       wl("HCR_anchor")

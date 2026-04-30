@@ -58,7 +58,9 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   # remove extension from exe (if present)
   exe_no_extension <- gsub("\\.exe$", "", exe)
   if (!is.na(file.info(exe)[["isdir"]]) && file.info(exe)[["isdir"]]) {
-    cli::cli_abort("Input 'exe' is a directory, it should include the file name as well")
+    cli::cli_abort(
+      "Input 'exe' is a directory, it should include the file name as well"
+    )
   }
 
   # exe name with extension added back on Windows
@@ -104,7 +106,9 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
       if (file.info(normalizePath(path_to_exe))[["size"]] < 1e6) {
         if (verbose) {
           exe_size <- file.info(normalizePath(path_to_exe))[["size"]]
-          cli::cli_inform("Executable found that isn't Stock Synthesis: {path_to_exe}; File size is too small: {exe_size}")
+          cli::cli_inform(
+            "Executable found that isn't Stock Synthesis: {path_to_exe}; File size is too small: {exe_size}"
+          )
         }
         path_to_exe <- ""
       } else {

@@ -75,7 +75,9 @@ mountains <- function(
 
   ny <- length(yvec)
   if (ny != nrowz) {
-    cli::cli_abort("length(yvec)={length(yvec)} and nrow(zmat)={nrow(zmat)} should be equal")
+    cli::cli_abort(
+      "length(yvec)={length(yvec)} and nrow(zmat)={nrow(zmat)} should be equal"
+    )
   }
   if (length(xvec) != ncolz) {
     cli::cli_abort("length(xvec) must equal ncol(zmat)")

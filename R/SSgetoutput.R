@@ -58,10 +58,14 @@ SSgetoutput <-
 
     if (verbose) {
       if (!is.null(keyvec)) {
-        cli::cli_inform("length(keyvec) as input to SSgetoutput: {length(keyvec)}")
+        cli::cli_inform(
+          "length(keyvec) as input to SSgetoutput: {length(keyvec)}"
+        )
       }
       if (!is.null(dirvec)) {
-        cli::cli_inform("length(dirvec) as input to SSgetoutput: {length(dirvec)}")
+        cli::cli_inform(
+          "length(dirvec) as input to SSgetoutput: {length(dirvec)}"
+        )
       }
     }
 

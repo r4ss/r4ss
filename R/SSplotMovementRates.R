@@ -83,7 +83,9 @@ SSplotMovementRates <-
 
         if (nrow(move2) == 0) {
           if (verbose) {
-            cli::cli_inform("Skipping movement rate plot: no movement in season {moveseas[iseas]}")
+            cli::cli_inform(
+              "Skipping movement rate plot: no movement in season {moveseas[iseas]}"
+            )
           }
         } else {
           move3 <- move2[, -(1:6)]
@@ -169,7 +171,9 @@ SSplotMovementRates <-
           any(x != x[1])
         }))
         if (time) {
-          cli::cli_warn("plot of time-varying movement rates not currently working")
+          cli::cli_warn(
+            "plot of time-varying movement rates not currently working"
+          )
           if (FALSE) {
             if (verbose) {
               cli::cli_inform("Running subplot 2: time-varying movement rates")
@@ -194,7 +198,9 @@ SSplotMovementRates <-
               cli::cli_inform("N movement rates: {nmoves}")
             }
             if (nareas > 2) {
-              cli::cli_warn("Time-varying movement plots not yet configured for models with N areas > 2")
+              cli::cli_warn(
+                "Time-varying movement plots not yet configured for models with N areas > 2"
+              )
             } else {
               yrvec <- replist[["startyr"]]:replist[["endyr"]]
               nyrs <- length(yrvec)
@@ -222,7 +228,9 @@ SSplotMovementRates <-
                   length(to)
                 ))
                 if (length(veclengths) != 1) {
-                  cli::cli_abort("Error! input vectors  minage, maxage, valueA, valueB, from, and to need to all have the same length.")
+                  cli::cli_abort(
+                    "Error! input vectors  minage, maxage, valueA, valueB, from, and to need to all have the same length."
+                  )
                 } else {
                   npars <- veclengths
                 }
@@ -372,7 +380,9 @@ SSplotMovementRates <-
           } # end if(FALSE) turning off section that isn't working
         } # end check for time-varying movement
       } else {
-        cli::cli_inform("Skipping time varying movement plots (subplot 2), most likely because MGparm_By_Year_after_adjustments table (report:7) is not reported in the Report.sso file.")
+        cli::cli_inform(
+          "Skipping time varying movement plots (subplot 2), most likely because MGparm_By_Year_after_adjustments table (report:7) is not reported in the Report.sso file."
+        )
       }
     } # end subplot 2
     returnlist <- list()

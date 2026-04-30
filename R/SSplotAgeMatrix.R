@@ -80,11 +80,15 @@ SSplotAgeMatrix <- function(
     # option 1 is plotting distribution of length at age
     array <- replist[["ALK"]]
     if (is.null(array)) {
-      cli::cli_warn("No distribution of length at age plots produced because replist[['ALK']] is NULL, likely because 'detailed age-structured reports' are not requested in the starter file.")
+      cli::cli_warn(
+        "No distribution of length at age plots produced because replist[['ALK']] is NULL, likely because 'detailed age-structured reports' are not requested in the starter file."
+      )
       return()
     }
     if (length(replist[["lbinspop"]]) == 1 && is.na(replist[["lbinspop"]])) {
-      cli::cli_inform("No distribution of length at age plots produced because replist[['ALK']] is NULL, likely because 'detailed age-structured reports' are not requested in the starter file.")
+      cli::cli_inform(
+        "No distribution of length at age plots produced because replist[['ALK']] is NULL, likely because 'detailed age-structured reports' are not requested in the starter file."
+      )
       return()
     }
     # vertical dimension is plotting length bins
@@ -109,7 +113,9 @@ SSplotAgeMatrix <- function(
     # option 2 is plotting distribution of observed age at true age
     array <- replist[["AAK"]]
     if (is.null(array)) {
-      cli::cli_warn('No distribution of observed age at true age plots produced because replist[["AAK"]] is NULL.')
+      cli::cli_warn(
+        'No distribution of observed age at true age plots produced because replist[["AAK"]] is NULL.'
+      )
       return()
     }
     # age bins

@@ -26,7 +26,9 @@ SS_writectl_3.30 <- function(
   }
   # input checks
   if (ctllist[["ReadVersion"]] != "3.30") {
-    cli::cli_abort("ReadVersion must be '3.30', but is {ctllist[['ReadVersion']]}. Please make sure the control file list object is created from a 3.30 SS3 model and not an earlier version.")
+    cli::cli_abort(
+      "ReadVersion must be '3.30', but is {ctllist[['ReadVersion']]}. Please make sure the control file list object is created from a 3.30 SS3 model and not an earlier version."
+    )
   }
 
   if (file.exists(outfile)) {
@@ -130,7 +132,9 @@ SS_writectl_3.30 <- function(
       }
       if (header) {
         if (isTRUE(!is.null(dataframe[["PType"]]))) {
-          cli::cli_warn("Please remove PType column in parameter dataframe, which was deprecated as of r4ss 1.45.0.")
+          cli::cli_warn(
+            "Please remove PType column in parameter dataframe, which was deprecated as of r4ss 1.45.0."
+          )
           dataframe[["PType"]] <- NULL
         }
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
@@ -379,7 +383,9 @@ SS_writectl_3.30 <- function(
   }
   # Below check added so users can investigate why the ctllist can't be written.
   if (!ctllist[["GrowthModel"]] %in% c(1:5, 8)) {
-    cli::cli_abort("The GrowthModel {ctllist[['GrowthModel']]} in ctllist {ctllist} is not an option in SS3 3.30. Valid growth options are 1-5 and 8.")
+    cli::cli_abort(
+      "The GrowthModel {ctllist[['GrowthModel']]} in ctllist {ctllist} is not an option in SS3 3.30. Valid growth options are 1-5 and 8."
+    )
   }
   writeComment("#", con = zz)
   wl(
@@ -404,7 +410,9 @@ SS_writectl_3.30 <- function(
   )
   # Below check added to help users with troubleshooting
   if (!ctllist[["maturity_option"]] %in% c(1:6)) {
-    cli::cli_abort("Invalid maturity option used. ctllist[['maturity_option']] is {ctllist[['maturity_option']]}, but must be 1, 2, 3, 4, 5, or 6.")
+    cli::cli_abort(
+      "Invalid maturity option used. ctllist[['maturity_option']] is {ctllist[['maturity_option']]}, but must be 1, 2, 3, 4, 5, or 6."
+    )
   }
   # Below if statements are lines are conditional on the maturity option chosen
   if (ctllist[["maturity_option"]] %in% c(3, 4)) {
@@ -431,7 +439,9 @@ SS_writectl_3.30 <- function(
     )
   )
   if (!ctllist[["hermaphroditism_option"]] %in% c(0, 1, -1)) {
-    cli::cli_abort("Invalid hermaphroditism_option specified in ctllist. Its value is {ctllist[['hermaphroditism_option']]}, but can only be 0, 1, or -1.")
+    cli::cli_abort(
+      "Invalid hermaphroditism_option specified in ctllist. Its value is {ctllist[['hermaphroditism_option']]}, but can only be 0, 1, or -1."
+    )
   }
   # Below if statement conditional on the hermaphroditism option chosen
   if (ctllist[["hermaphroditism_option"]] %in% c(1, -1)) {
@@ -861,7 +871,9 @@ SS_writectl_3.30 <- function(
     }
     writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
   } else {
-    cli::cli_abort("ctllist[['Use_2D_AR1_selectivity']] has value {ctllist[['Use_2D_AR1_selectivity']]}, but can only have value 0 or 1.")
+    cli::cli_abort(
+      "ctllist[['Use_2D_AR1_selectivity']] has value {ctllist[['Use_2D_AR1_selectivity']]}, but can only have value 0 or 1."
+    )
   }
   # Tag model parameters ----
   writeComment("# Tag loss and Tag reporting parameters go next", con = zz)
@@ -881,11 +893,15 @@ SS_writectl_3.30 <- function(
     printdf("TG_Report_fleet", header = FALSE)
     printdf("TG_Report_fleet_decay", header = FALSE)
   } else {
-    cli::cli_abort("ctllist[['TG_custom']] has value {ctllist[['TG_custom']]} but can only have value 0 or 1.")
+    cli::cli_abort(
+      "ctllist[['TG_custom']] has value {ctllist[['TG_custom']]} but can only have value 0 or 1."
+    )
   }
   # Time varying parameters for tagging, would go here, if implemented.
   if (verbose) {
-    cli::cli_warn("Please note that time varying parameters for tagging not yet implemented as of SS3 version 3.30.13")
+    cli::cli_warn(
+      "Please note that time varying parameters for tagging not yet implemented as of SS3 version 3.30.13"
+    )
   }
   # Var Adj ----
   writeComment("# Input variance adjustments factors: ", con = zz)
@@ -918,7 +934,9 @@ SS_writectl_3.30 <- function(
   # There are some more .ss_new comments here, but not included for now.
   if ((ctllist[["N_lambdas"]] > 0) & (!is.null(ctllist[["lambdas"]]))) {
     if (nrow(ctllist[["lambdas"]]) != ctllist[["N_lambdas"]]) {
-      cli::cli_abort("ctllist components N_lambdas and lambdas are not consistent. Please make them consistent (i.e., if ctllist[['N_lambdas']] is greater than 0, ctllist[['N_lambdas']] should equal nrow(ctllist[['lambdas']]))")
+      cli::cli_abort(
+        "ctllist components N_lambdas and lambdas are not consistent. Please make them consistent (i.e., if ctllist[['N_lambdas']] is greater than 0, ctllist[['N_lambdas']] should equal nrow(ctllist[['lambdas']]))"
+      )
     }
     printdf("lambdas", terminate = T)
   } else if ((ctllist[["N_lambdas"]] == 0) & (is.null(ctllist[["lambdas"]]))) {
@@ -926,7 +944,9 @@ SS_writectl_3.30 <- function(
     ctllist[["tmp_var"]] <- c(-9999, rep(0, times = 4))
     wl.vector("tmp_var", comment = "# terminator")
   } else {
-    cli::cli_abort("ctllist components N_lambdas and lambdas are not consistent. Please make them consistent (i.e., if ctllist[['N_lambdas']] is 0 ,then ctllist[['lambdas']] should be NULL; if ctllist[['N_lambdas']] is greater than 0, ctllist[['N_lambdas']] should equal nrow(ctllist[['lambdas']]))")
+    cli::cli_abort(
+      "ctllist components N_lambdas and lambdas are not consistent. Please make them consistent (i.e., if ctllist[['N_lambdas']] is 0 ,then ctllist[['lambdas']] should be NULL; if ctllist[['N_lambdas']] is greater than 0, ctllist[['N_lambdas']] should equal nrow(ctllist[['lambdas']]))"
+    )
   }
   writeComment("#", con = zz)
   # more sd reporting ----

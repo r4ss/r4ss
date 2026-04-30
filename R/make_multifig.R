@@ -228,7 +228,9 @@ make_multifig <-
         )
       } else {
         scalebins <- FALSE
-        cli::cli_warn("Setting scalebins=FALSE. Bins are equal length or too few.")
+        cli::cli_warn(
+          "Setting scalebins=FALSE. Bins are equal length or too few."
+        )
       }
     }
 
@@ -662,7 +664,9 @@ make_multifig <-
               # sample sizes
               vals <- unique(sampsize[sexvec == sex & yr == yr_i])
               if (length(vals) > 1) {
-                cli::cli_warn("sampsize values are not all equal --choosing the first value: {vals[1]}; yr={yr_i}, and all sampsize values: {paste(vals, collapse = ',')}")
+                cli::cli_warn(
+                  "sampsize values are not all equal --choosing the first value: {vals[1]}; yr={yr_i}, and all sampsize values: {paste(vals, collapse = ',')}"
+                )
                 vals <- vals[1]
               }
               text_i <- paste(
@@ -682,7 +686,9 @@ make_multifig <-
               # effective sample sizes
               vals <- unique(effN[sexvec == sex & yr == yr_i])
               if (length(vals) > 1) {
-                cli::cli_warn("effN values are not all equal --choosing the first value: {vals[1]}; yr={yr_i}, and all effN values: {paste(vals, collapse = ',')}")
+                cli::cli_warn(
+                  "effN values are not all equal --choosing the first value: {vals[1]}; yr={yr_i}, and all effN values: {paste(vals, collapse = ',')}"
+                )
                 vals <- vals[1]
               }
               text_i <- paste(effN_label, round(vals, sampsizeround), sep = "")

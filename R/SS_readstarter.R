@@ -49,12 +49,16 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   }
   strings <- strings[is.na(suppressWarnings(as.numeric(strings)))]
   if (length(strings) > 2) {
-    cli::cli_warn("Too many strings in starter file? Choosing first 2 of these as data and control file names: {paste(strings, collapse = ', ')}")
+    cli::cli_warn(
+      "Too many strings in starter file? Choosing first 2 of these as data and control file names: {paste(strings, collapse = ', ')}"
+    )
   }
   mylist[["datfile"]] <- strings[1]
   mylist[["ctlfile"]] <- strings[2]
   if (verbose) {
-    cli::cli_inform("  data, control files: {mylist[['datfile']]}, {mylist[['ctlfile']]}")
+    cli::cli_inform(
+      "  data, control files: {mylist[['datfile']]}, {mylist[['ctlfile']]}"
+    )
   }
 
   # get numbers (could be better integrated with function above)
@@ -168,7 +172,9 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (i < i.final) {
     # file is probably 3.30
     if (verbose) {
-      cli::cli_inform("Assuming version 3.30 based on number of numeric values.")
+      cli::cli_inform(
+        "Assuming version 3.30 based on number of numeric values."
+      )
     }
     mylist[["MCMC_output_detail"]] <- allnums[i]
     i <- i + 1
@@ -184,7 +190,9 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["final"]] <- final <- allnums[i]
   i <- i + 1
   if (!is.na(final) && final %in% c(3.30, 999)) {
-    if (verbose) cli::cli_inform("Read of starter file complete. Final value: {final}")
+    if (verbose) {
+      cli::cli_inform("Read of starter file complete. Final value: {final}")
+    }
   } else {
     # read seed and check final value
     mylist[["seed"]] <- mylist[["final"]]

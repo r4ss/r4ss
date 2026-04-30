@@ -52,7 +52,9 @@ SS_readdat_3.24 <- function(
       24
     ))
     if (!section %in% 1:Nsections) {
-      cli::cli_abort("The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.")
+      cli::cli_abort(
+        "The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file."
+      )
     }
     if (section == 1) {
       end <- grep("#_expected values with no error added", dat)
@@ -166,7 +168,8 @@ SS_readdat_3.24 <- function(
   i <- i + Ntypes
   if (verbose) {
     cli::cli_inform("areas: {areas}")
-    cli::cli_inform("fleet info: {paste(utils::capture.output(
+    cli::cli_inform(
+      "fleet info: {paste(utils::capture.output(
           data.frame(
             fleet = 1:Ntypes,
             name = fleetnames,
@@ -174,7 +177,8 @@ SS_readdat_3.24 <- function(
             timing = surveytiming,
             type = c(rep(\"FISHERY\", Nfleet), rep(\"SURVEY\", Nsurveys))
           )
-        ), sep = '', collapse = \"\\n\")}")
+        ), sep = '', collapse = \"\\n\")}"
+    )
   }
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming, areas))
@@ -636,7 +640,9 @@ SS_readdat_3.24 <- function(
         print(sizefreq_data_tmp[1:min(Nrows, 2), 1:min(Ncols, 10)])
       }
       if (any(sizefreq_data_tmp[["Method"]] != imethod)) {
-        cli::cli_abort("Problem with method in size frequency data; Expecting method: {imethod}; Read method(s): {paste(unique(sizefreq_data_tmp[['Method']]), collapse = ', ')}")
+        cli::cli_abort(
+          "Problem with method in size frequency data; Expecting method: {imethod}; Read method(s): {paste(unique(sizefreq_data_tmp[['Method']]), collapse = ', ')}"
+        )
       }
       sizefreq_data_list[[imethod]] <- sizefreq_data_tmp
       i <- i + Nrows * Ncols
@@ -725,7 +731,9 @@ SS_readdat_3.24 <- function(
   }
 
   if (allnums[i] == 999) {
-    if (verbose) cli::cli_inform("read of data file complete (final value = 999)")
+    if (verbose) {
+      cli::cli_inform("read of data file complete (final value = 999)")
+    }
   } else {
     cli::cli_abort("Final value is{allnums[i]} but should be 999")
   }

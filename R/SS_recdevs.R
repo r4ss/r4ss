@@ -67,7 +67,9 @@ SS_recdevs <-
       vec <- as.numeric(vecstrings[vecstrings != ""])
       # check for length
       if (length(vec) > maxlen) {
-        cli::cli_abort("this line has more than {maxlen} value{c('s', '')[1 + (maxlen == 1)]}: {ctl[line1]}")
+        cli::cli_abort(
+          "this line has more than {maxlen} value{c('s', '')[1 + (maxlen == 1)]}: {ctl[line1]}"
+        )
       }
       return(vec)
     } # end readfun
@@ -107,7 +109,9 @@ SS_recdevs <-
     # check for keyword at start of following section
     key2 <- grep("Fishing Mortality info", ctl)
     if (length(key2) == 0) {
-      cli::cli_warn("The phrase 'Fishing Mortality info' does not occur after the recdev section; Format of control file may be messy.")
+      cli::cli_warn(
+        "The phrase 'Fishing Mortality info' does not occur after the recdev section; Format of control file may be messy."
+      )
     } else {
       key2 == key2[1]
     }
@@ -115,7 +119,9 @@ SS_recdevs <-
     # generate new recdevs
     if (!is.null(recdevs)) {
       if (length(recdevs) != Nrecdevs) {
-        cli::cli_abort("input 'recdevs' has length={length(recdevs)} but Nrecdevs=lyr-fyr+1={Nrecdevs}")
+        cli::cli_abort(
+          "input 'recdevs' has length={length(recdevs)} but Nrecdevs=lyr-fyr+1={Nrecdevs}"
+        )
       } else {
         newdevs <- recdevs
       }
@@ -129,7 +135,9 @@ SS_recdevs <-
         scaleyrs <- yrs %in% scaleyrs
       }
       if (verbose) {
-        cli::cli_inform("Rescaling recdevs vector so yrs {min(yrs[scaleyrs])}:{max(yrs[scaleyrs])} have mean 0 and std. dev. = sigmaR = {sigmaR}")
+        cli::cli_inform(
+          "Rescaling recdevs vector so yrs {min(yrs[scaleyrs])}:{max(yrs[scaleyrs])} have mean 0 and std. dev. = sigmaR = {sigmaR}"
+        )
       }
       newdevs <- sigmaR *
         (newdevs - mean(newdevs[scaleyrs])) /

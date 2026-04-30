@@ -40,7 +40,9 @@ SS_readdat_3.30 <-
     }
     dat <- readLines(file, warn = FALSE)
     if (length(dat) < 20) {
-      cli::cli_warn("Data file appears to be empty or incomplete. If this is data.ss_new, change starter file to have nonzero value for 'Number of datafiles to produce'")
+      cli::cli_warn(
+        "Data file appears to be empty or incomplete. If this is data.ss_new, change starter file to have nonzero value for 'Number of datafiles to produce'"
+      )
       return()
     }
 
@@ -72,7 +74,9 @@ SS_readdat_3.30 <-
     }
     if (is.null(section)) {
       if (Nsections > 1 & verbose) {
-    cli::cli_inform("The supplied data file has {Nsections}{ifelse(Nsections == 1, ' section. ', ' sections. ')} Using section = 1.")
+        cli::cli_inform(
+          "The supplied data file has {Nsections}{ifelse(Nsections == 1, ' section. ', ' sections. ')} Using section = 1."
+        )
       }
       section <- 1
     }
@@ -80,7 +84,9 @@ SS_readdat_3.30 <-
       if (Nsections == 1) {
         cli::cli_abort("The 'section' input must be 1 for this data file.")
       } else {
-        cli::cli_abort("The 'section' input must be between 1 and {Nsections} for this data file.")
+        cli::cli_abort(
+          "The 'section' input must be between 1 and {Nsections} for this data file."
+        )
       }
     }
     if (!is.null(section)) {
@@ -101,7 +107,9 @@ SS_readdat_3.30 <-
         ind <- ind + 1
       }
       if (ind == length(dat)) {
-        cli::cli_abort("SS_readdat_3.30-find.index: Error - the value of {str} was not found. Check the data file and make sure all data frames are correctly formed.")
+        cli::cli_abort(
+          "SS_readdat_3.30-find.index: Error - the value of {str} was not found. Check the data file and make sure all data frames are correctly formed."
+        )
       }
       ind
     }
@@ -203,10 +211,12 @@ SS_readdat_3.30 <-
           datlist[["fleetinfo"]][["need_catch_mult"]] == 1
       )
     ) {
-      cli::cli_abort("Catch multipler can be used only for fleet_type = 1; Check fleet = {paste(which(
+      cli::cli_abort(
+        "Catch multipler can be used only for fleet_type = 1; Check fleet = {paste(which(
             datlist[['fleetinfo']][['type']] != 1 &
               datlist[['fleetinfo']][['need_catch_mult']] == 1
-          ), sep = '', collapse = ', ')} in fleet info.")
+          ), sep = '', collapse = ', ')} in fleet info."
+      )
     }
     if (verbose) {
       cli::cli_inform("Read fleet information.")
@@ -449,7 +459,9 @@ SS_readdat_3.30 <-
         ) ==
           0
         if (any(zero_lencomp == TRUE)) {
-          cli::cli_warn("Lines of all zero length comp found. SS will exit on error if a line of comps is all zeroes and year is positive. Line(s) {paste(which(zero_lencomp), sep = '', collapse = ', ')}")
+          cli::cli_warn(
+            "Lines of all zero length comp found. SS will exit on error if a line of comps is all zeroes and year is positive. Line(s) {paste(which(zero_lencomp), sep = '', collapse = ', ')}"
+          )
         }
       }
 
@@ -541,7 +553,9 @@ SS_readdat_3.30 <-
         ) ==
           0
         if (any(zero_agecomp == TRUE)) {
-          cli::cli_warn("Lines of all zero age comp found. SS will exit on error if a line of comps is all zeros. Line(s) {paste(which(zero_agecomp), sep = '', collapse = ', ')}")
+          cli::cli_warn(
+            "Lines of all zero age comp found. SS will exit on error if a line of comps is all zeros. Line(s) {paste(which(zero_agecomp), sep = '', collapse = ', ')}"
+          )
         }
       }
 
@@ -568,7 +582,9 @@ SS_readdat_3.30 <-
               datlist[["age_info"]][["ParmSelect"]]
             )
         ) {
-          cli::cli_warn("Dirichlet multinomial parameters must be sequential with no missing integers starting from 1. Missing DM parameter labeled {i}, so SS will exit on error for this model configuration. Please revise the numbering of the DM parameters in the length/age info ParmSelect column.")
+          cli::cli_warn(
+            "Dirichlet multinomial parameters must be sequential with no missing integers starting from 1. Missing DM parameter labeled {i}, so SS will exit on error for this model configuration. Please revise the numbering of the DM parameters in the length/age info ParmSelect column."
+          )
         }
       }
     }
@@ -580,7 +596,9 @@ SS_readdat_3.30 <-
       xx <- dat[ind:endmwa]
       if (length(unique(sapply(strsplit(xx, "\\s+"), length))) > 1) {
         if (verbose) {
-          cli::cli_inform("Format of MeanSize_at_Age_obs appears to have sample sizes on separate lines than other inputs.")
+          cli::cli_inform(
+            "Format of MeanSize_at_Age_obs appears to have sample sizes on separate lines than other inputs."
+          )
         }
         xx <- paste(xx[seq_along(xx) %% 2 == 1], xx[seq_along(xx) %% 2 == 0])
       }
@@ -592,7 +610,9 @@ SS_readdat_3.30 <-
       # check terminator row
       test <- get.vec(dat, ind)
       if (test[1] != -9999) {
-        cli::cli_warn("Problem with read of MeanSize_at_Age, terminator value != -9999")
+        cli::cli_warn(
+          "Problem with read of MeanSize_at_Age, terminator value != -9999"
+        )
       }
 
       colnames(datlist[["MeanSize_at_Age_obs"]]) <-
@@ -720,10 +740,12 @@ SS_readdat_3.30 <-
         if (
           any(datlist[["sizefreq_data_list"]][[imethod]][, "method"] != imethod)
         ) {
-          cli::cli_abort("Problem with method in size frequency data; Expecting method: {imethod}; Read method(s): {paste(
+          cli::cli_abort(
+            "Problem with method in size frequency data; Expecting method: {imethod}; Read method(s): {paste(
               unique(datlist[['sizefreq_data_list']][['method']]),
               collapse = ', '
-            )}")
+            )}"
+          )
         }
       }
       if (verbose) {
@@ -788,7 +810,9 @@ SS_readdat_3.30 <-
     ## Morphometrics composition data ----
     datlist[["morphcomp_data"]] <- get.val(dat, ind)
     if (datlist[["morphcomp_data"]]) {
-      cli::cli_warn("Morph comp data not yet supported by SS_readdat_3.30 Please post issue to https://github.com/r4ss/r4ss/issues or email ian.taylor@noaa.govif you want this functionality added.")
+      cli::cli_warn(
+        "Morph comp data not yet supported by SS_readdat_3.30 Please post issue to https://github.com/r4ss/r4ss/issues or email ian.taylor@noaa.govif you want this functionality added."
+      )
     }
 
     ## Selectivity priors ----
@@ -800,7 +824,9 @@ SS_readdat_3.30 <-
       if (Nsections == 1) {
         cli::cli_inform("Read of data file complete. Final value = {eof}")
       } else {
-        cli::cli_inform("Read of section {section} of data file complete. Final value = {eof}")
+        cli::cli_inform(
+          "Read of section {section} of data file complete. Final value = {eof}"
+        )
       }
     }
     datlist[["eof"]] <- FALSE

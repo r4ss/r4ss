@@ -85,7 +85,9 @@ SSplotDiscard <-
         if (!is.null(discard_spec)) {
           # check to make sure fleet is represented in the table
           if (!ifleet %in% discard_spec[["Fleet"]]) {
-            cli::cli_abort("Fleet {ifleet} not found in table of discard specifications.")
+            cli::cli_abort(
+              "Fleet {ifleet} not found in table of discard specifications."
+            )
           }
           # get degrees of freedom
           DF_discard <- discard_spec[["errtype"]][

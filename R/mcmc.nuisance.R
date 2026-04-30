@@ -90,7 +90,9 @@ mcmc.nuisance <- function(
         names(mcmcdata)[grep(labelstrings[istring], names(mcmcdata))]
       )
     }
-    cli::cli_inform("All labels matching the input 'labelstrings': {paste(labels, collapse = ', ')}")
+    cli::cli_inform(
+      "All labels matching the input 'labelstrings': {paste(labels, collapse = ', ')}"
+    )
     mcmcdata <- mcmcdata[, names(mcmcdata) %in% labels]
   } else {
     # when "all" are requested, exclude Iter and Objective_function columns

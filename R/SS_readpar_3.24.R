@@ -33,7 +33,9 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   } else if (is.list(datsource)) {
     datlist <- datsource
   } else {
-    cli::cli_abort("Reading parameter file contents requires a data file location or list object be specified")
+    cli::cli_abort(
+      "Reading parameter file contents requires a data file location or list object be specified"
+    )
   }
 
   if (is.character(ctlsource)) {
@@ -46,7 +48,9 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   } else if (is.list(ctlsource)) {
     ctllist <- ctlsource
   } else {
-    cli::cli_abort("Reading parameter file contents requires a control file location or list object be specified")
+    cli::cli_abort(
+      "Reading parameter file contents requires a control file location or list object be specified"
+    )
   }
 
   # function to read Stock Synthesis parameter files
@@ -322,7 +326,9 @@ SS_readpar_3.24 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
       colnames(temp_Frate_2) <- c("year", "seas", "fleet", "F")
       parlist[["F_rate"]] <- temp_Frate_2
     } else {
-      cli::cli_abort("The length of the catch matrix ({length(temp_Frate_1[, 1])} or {length(temp_Frate_2[, 1])} with zero catches removed) does not match the length of the F_rate parameter vector ({length(grep('F_rate', parvals))}).")
+      cli::cli_abort(
+        "The length of the catch matrix ({length(temp_Frate_1[, 1])} or {length(temp_Frate_2[, 1])} with zero catches removed) does not match the length of the F_rate parameter vector ({length(grep('F_rate', parvals))})."
+      )
     }
   }
 

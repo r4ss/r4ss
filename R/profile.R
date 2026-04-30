@@ -283,18 +283,26 @@ profile <- function(
   # figure out which line to change in control file
   # if not using par file, info still needed to set phase negative in control file
   if (is.null(linenum) & is.null(string)) {
-    cli::cli_abort("You should input either 'linenum' or 'string' (but not both)")
+    cli::cli_abort(
+      "You should input either 'linenum' or 'string' (but not both)"
+    )
   }
   if (!is.null(linenum) & !is.null(string)) {
-    cli::cli_abort("You should input either 'linenum' or 'string' (but not both)")
+    cli::cli_abort(
+      "You should input either 'linenum' or 'string' (but not both)"
+    )
   }
   if (usepar) {
     # if using par file
     if (is.null(parlinenum) & is.null(parstring)) {
-      cli::cli_abort("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
+      cli::cli_abort(
+        "Using par file. You should input either 'parlinenum' or 'parstring' (but not both)"
+      )
     }
     if (!is.null(parlinenum) & !is.null(parstring)) {
-      cli::cli_abort("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
+      cli::cli_abort(
+        "Using par file. You should input either 'parlinenum' or 'parstring' (but not both)"
+      )
     }
   }
 
@@ -315,7 +323,9 @@ profile <- function(
   }
   # not sure what would cause a bad value, but checking for it anyway
   if (is.na(npars) || npars < 1) {
-    cli::cli_abort("Problem with the number of parameters to profile over. npars = {npars}")
+    cli::cli_abort(
+      "Problem with the number of parameters to profile over. npars = {npars}"
+    )
   }
 
   # figure out length of profile vec and sort out which runs to do
@@ -329,18 +339,24 @@ profile <- function(
       (!is.data.frame(profilevec) & !is.matrix(profilevec)) ||
         ncol(profilevec) != npars
     ) {
-      cli::cli_abort("'profilevec' should be a data.frame or a matrix with {npars} columns")
+      cli::cli_abort(
+        "'profilevec' should be a data.frame or a matrix with {npars} columns"
+      )
     }
     n <- length(profilevec[[1]])
     if (any(unlist(lapply(profilevec, FUN = length)) != n)) {
-      cli::cli_abort("Each element in the 'profilevec' list should have length {n}")
+      cli::cli_abort(
+        "Each element in the 'profilevec' list should have length {n}"
+      )
     }
 
     if (verbose) {
       if (!is.null(string)) {
         profilevec_df <- data.frame(profilevec)
         names(profilevec_df) <- string
-        cli::cli_inform("Profiling over {npars} parameters:\n{paste(profilevec_df, collapse = '\n')}")
+        cli::cli_inform(
+          "Profiling over {npars} parameters:\n{paste(profilevec_df, collapse = '\n')}"
+        )
       }
     }
   }
@@ -354,7 +370,9 @@ profile <- function(
     }
   }
   if (verbose) {
-    cli::cli_inform("Doing runs: {paste(whichruns, collapse = ', ')}, out of n = {n}")
+    cli::cli_inform(
+      "Doing runs: {paste(whichruns, collapse = ', ')}, out of n = {n}"
+    )
   }
 
   # note: std file name is independent of executable name
@@ -370,23 +388,33 @@ profile <- function(
   # check for new control file
   if (starter[["ctlfile"]] != newctlfile) {
     current_ctlfile <- starter[["ctlfile"]]
-    cli::cli_abort("starter file should be changed to change '{current_ctlfile}' to '{newctlfile}'")
+    cli::cli_abort(
+      "starter file should be changed to change '{current_ctlfile}' to '{newctlfile}'"
+    )
   }
   # check for prior in likelihood
   if (prior_check & starter[["prior_like"]] == 0) {
-    cli::cli_abort("for likelihood profile, you should change the starter file value of 'Include prior likelihood for non-estimated parameters' from 0 to 1 and re-run the estimation.")
+    cli::cli_abort(
+      "for likelihood profile, you should change the starter file value of 'Include prior likelihood for non-estimated parameters' from 0 to 1 and re-run the estimation."
+    )
   }
   # check for consistency in use of par file (part 1)
   if (usepar & starter[["init_values_src"]] == 0) {
-    cli::cli_abort("With setting 'usepar=TRUE', change the starter file value for initial value source from 0 (ctl file) to 1 (par file).")
+    cli::cli_abort(
+      "With setting 'usepar=TRUE', change the starter file value for initial value source from 0 (ctl file) to 1 (par file)."
+    )
   }
   # check for consistency in use of par file (part 2)
   if (!usepar & starter[["init_values_src"]] == 1) {
-    cli::cli_abort("Change the starter file value for initial value source from 1 (par file) to 0 (par file) or change to profile(..., usepar = TRUE).")
+    cli::cli_abort(
+      "Change the starter file value for initial value source from 1 (par file) to 0 (par file) or change to profile(..., usepar = TRUE)."
+    )
   }
   # check for consistency of par settings and future settings
   if (usepar & !globalpar & !is(future::plan(), "sequential")) {
-    cli::cli_inform("usepar = TRUE and globalpar = FALSE, but you are attempting to run the profile in parallel. Changing future strategy to sequential. It will return to your original strategy upon exit.")
+    cli::cli_inform(
+      "usepar = TRUE and globalpar = FALSE, but you are attempting to run the profile in parallel. Changing future strategy to sequential. It will return to your original strategy upon exit."
+    )
     # save current strategy as oplan, and change it to sequential, all in one step!
     oplan <- future::plan(future::sequential)
     on.exit(future::plan(oplan))
@@ -418,7 +446,9 @@ profile <- function(
     if (!overwrite & any(file.exists(newrepfiles))) {
       # Cannot think of scenario where both temp directory and ReportN.sso exist
       # Even if they do, this still works, it just prints out a little weird.
-      cli::cli_inform("skipping profile i={i}/{n} because overwrite=FALSE and file exists: {newrepfiles[file.exists(newrepfiles)]}")
+      cli::cli_inform(
+        "skipping profile i={i}/{n} because overwrite=FALSE and file exists: {newrepfiles[file.exists(newrepfiles)]}"
+      )
     } else {
       cli::cli_inform("running profile i={i}/{n}")
 
@@ -459,7 +489,9 @@ profile <- function(
       if (!any(ctltable_new[["PHASE"]] == 1)) {
         phase2pars <- ctltable_new[which(ctltable_new[["PHASE"]] == 2), "Label"]
         par_to_change <- sort(phase2pars)[1]
-        cli::cli_inform("No estimated parameter in phase 1. Switching {par_to_change} from phase 2 to phase 1.")
+        cli::cli_inform(
+          "No estimated parameter in phase 1. Switching {par_to_change} from phase 2 to phase 1."
+        )
         SS_changepars(
           dir = profile_dir,
           ctlfile = newctlfile,
@@ -490,7 +522,9 @@ profile <- function(
           parline <- par[parlinenum[ipar]]
           parval <- as.numeric(parline)
           if (is.na(parval)) {
-            cli::cli_abort("Problem with parlinenum or parstring for par file. line as read: {parline}")
+            cli::cli_abort(
+              "Problem with parlinenum or parstring for par file. line as read: {parline}"
+            )
           }
           # replace value
           par[parlinenum[ipar]] <- ifelse(

@@ -96,7 +96,9 @@ SSMethod.Cond.TA1.8 <-
     } else {
       # if custom names input, check length
       if (length(fleetnames) != fit[["nfleets"]]) {
-        cli::cli_abort("fleetnames needs to be NULL or have length = nfleets = {fit[['nfleets']]}")
+        cli::cli_abort(
+          "fleetnames needs to be NULL or have length = nfleets = {fit[['nfleets']]}"
+        )
       }
     }
 
@@ -265,7 +267,9 @@ SSMethod.Cond.TA1.8 <-
           # 0 sample sizes caused problems with ylim, override with wide range
           # plot may not make sense but will help users note that a problem exists
           # (as opposed to skipping the plot)
-          cli::cli_warn("NaN values in Francis calculations, plot may not make sense")
+          cli::cli_warn(
+            "NaN values in Francis calculations, plot may not make sense"
+          )
           ylim <- c(0, fit[["accuage"]])
         }
         # make empty plot (unless adding to existing plot)

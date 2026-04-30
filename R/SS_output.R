@@ -278,10 +278,14 @@ SS_output <-
 
     # test for version compatibility with this code
     if (SS_versionNumeric < SS_versionMin | SS_versionNumeric > SS_versionMax) {
-      cli::cli_warn("This function tested on SS versions 3.24 and 3.30.  You are using {strsplit(SS_version, split = ';')[[1]][1]} which MIGHT NOT WORK with this package.")
+      cli::cli_warn(
+        "This function tested on SS versions 3.24 and 3.30.  You are using {strsplit(SS_version, split = ';')[[1]][1]} which MIGHT NOT WORK with this package."
+      )
     } else {
       if (verbose) {
-        cli::cli_inform("This function tested on SS versions 3.24 and 3.30.  You are using {strsplit(SS_version, split = ';')[[1]][1]} which SHOULD work with this package.")
+        cli::cli_inform(
+          "This function tested on SS versions 3.24 and 3.30.  You are using {strsplit(SS_version, split = ';')[[1]][1]} which SHOULD work with this package."
+        )
       }
     }
 
@@ -313,7 +317,9 @@ SS_output <-
         compskip <- grep("Composition_Database", comphead)
         if (length(compskip) == 0) {
           if (verbose) {
-            cli::cli_inform("No composition data, possibly because detailed output is turned off in the starter file.")
+            cli::cli_inform(
+              "No composition data, possibly because detailed output is turned off in the starter file."
+            )
           }
         } else {
           # compend value helps diagnose when no comp data exists in CompReport.sso file.
@@ -323,11 +329,15 @@ SS_output <-
           }
           comptime <- findtime(comphead)
           if (is.null(comptime) || is.null(repfiletime)) {
-            cli::cli_inform("problem comparing the file creation times: Report.sso:{repfiletime} CompReport.sso:{comptime}")
+            cli::cli_inform(
+              "problem comparing the file creation times: Report.sso:{repfiletime} CompReport.sso:{comptime}"
+            )
           } else {
             if (comptime != repfiletime) {
               cli::cli_inform("CompReport time:{comptime}")
-              cli::cli_abort("{shortrepfile} and {compfile} were from different model runs.")
+              cli::cli_abort(
+                "{shortrepfile} and {compfile} were from different model runs."
+              )
             }
           }
           comp <- TRUE
@@ -336,7 +346,9 @@ SS_output <-
         # non-NULL compfile input provided and file DOESN'T exist
         if (!is.null(compfile)) {
           if (!NoCompOK) {
-            cli::cli_abort("Missing {compfile}. Change the 'compfile' input, rerun model to get the file, or change input to 'NoCompOK = TRUE'")
+            cli::cli_abort(
+              "Missing {compfile}. Change the 'compfile' input, rerun model to get the file, or change input to 'NoCompOK = TRUE'"
+            )
           } else {
             cli::cli_inform("Composition file not found: {compfile}")
           }
@@ -376,7 +388,9 @@ SS_output <-
     nonblanks <- apply(rawrep, 2, emptytest) < 1
     maxnonblank <- max(0, (1:ncols)[nonblanks == TRUE])
     if (maxnonblank == ncols) {
-      cli::cli_abort("all columns are used and some data may been missed, increase 'ncols' input above current value (ncols={ncols})")
+      cli::cli_abort(
+        "all columns are used and some data may been missed, increase 'ncols' input above current value (ncols={ncols})"
+      )
     }
 
     # check for revised format to facilitate custom reporting
@@ -388,7 +402,9 @@ SS_output <-
         cli::cli_inform("Got all columns using ncols = {ncols}")
       }
       if ((maxnonblank + 1) < ncols) {
-        cli::cli_inform("Got all columns. To speed code, use ncols = {maxnonblank + 1} in the future.")
+        cli::cli_inform(
+          "Got all columns. To speed code, use ncols = {maxnonblank + 1} in the future."
+        )
       }
       cli::cli_inform("Got Report file")
     }
@@ -473,20 +489,26 @@ SS_output <-
       sprtarg <- -999
       btarg <- -999
       if (verbose) {
-        cli::cli_inform("  setting SPR target and Biomass target to -999.  Lines won't be drawn for these targets by SS_plots unless  'sprtarg' and 'btarg' are provided as inputs.")
+        cli::cli_inform(
+          "  setting SPR target and Biomass target to -999.  Lines won't be drawn for these targets by SS_plots unless  'sprtarg' and 'btarg' are provided as inputs."
+        )
       }
     }
     # set default minimum biomass thresholds based on typical west coast groundfish
     minbthresh <- -999
     if (!is.na(btarg) & btarg == 0.4) {
       if (verbose) {
-        cli::cli_inform("Setting minimum biomass threshhold to 0.25  based on US west coast assumption associated with biomass target of 0.4.  (can replace or override in SS_plots by setting 'minbthresh')")
+        cli::cli_inform(
+          "Setting minimum biomass threshhold to 0.25  based on US west coast assumption associated with biomass target of 0.4.  (can replace or override in SS_plots by setting 'minbthresh')"
+        )
       }
       minbthresh <- 0.25 # west coast assumption for non flatfish
     }
     if (!is.na(btarg) & btarg == 0.25) {
       if (verbose) {
-        cli::cli_inform("Setting minimum biomass threshhold to 0.125  based on US west coast assumption associated with flatfish target of 0.25.  (can replace or override in SS_plots by setting 'minbthresh')")
+        cli::cli_inform(
+          "Setting minimum biomass threshhold to 0.125  based on US west coast assumption associated with flatfish target of 0.25.  (can replace or override in SS_plots by setting 'minbthresh')"
+        )
       }
       minbthresh <- 0.125 # west coast assumption for flatfish
     }
@@ -499,7 +521,9 @@ SS_output <-
       filetimes <- file.info(file.path(dir, logfile_name))[["mtime"]]
       logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
-        cli::cli_inform("Multiple files in directory match pattern *.log choosing most recently modified file:{logfile_name}")
+        cli::cli_inform(
+          "Multiple files in directory match pattern *.log choosing most recently modified file:{logfile_name}"
+        )
       }
     }
     if (
@@ -509,7 +533,9 @@ SS_output <-
       logfile <- readLines(file.path(dir, logfile_name))
       logfile <- grep("^size", logfile, value = TRUE)
       if (length(logfile) == 0) {
-        cli::cli_warn("{logfile_name} does not contain information on the size of temporary files.")
+        cli::cli_warn(
+          "{logfile_name} does not contain information on the size of temporary files."
+        )
         logfile <- NA
       } else {
         logfile <- tidyr::separate(
@@ -523,7 +549,9 @@ SS_output <-
         maxtemp <- max(logfile[["Size"]])
         if (verbose) {
           if (maxtemp == 0) {
-            cli::cli_inform("Got log file. There were NO temporary files were written in this run.")
+            cli::cli_inform(
+              "Got log file. There were NO temporary files were written in this run."
+            )
           } else {
             cli::cli_inform("Temporary files were written in this run.")
           }
@@ -532,7 +560,9 @@ SS_output <-
     } else {
       logfile <- NA
       if (verbose) {
-        cli::cli_inform("No non-empty log file in directory or too many files  matching pattern *.log")
+        cli::cli_inform(
+          "No non-empty log file in directory or too many files  matching pattern *.log"
+        )
       }
     }
 
@@ -906,7 +936,9 @@ SS_output <-
         2
       ])
       if (compend == compskip + 2) {
-        cli::cli_inform("It appears that there is no composition data in CompReport.sso")
+        cli::cli_inform(
+          "It appears that there is no composition data in CompReport.sso"
+        )
         comp <- FALSE # turning off switch to function doesn't look for comp data later on
         agebins <- NA
         sizebinlist <- NA
@@ -951,7 +983,9 @@ SS_output <-
           dplyr::select(-Cum_obs, -Cum_exp) |>
           duplicated()
         if (verbose) {
-          cli::cli_inform("Removing {sum(duplicates)} out of {nrow(compdbase)} rows in CompReport.sso which are duplicates.")
+          cli::cli_inform(
+            "Removing {sum(duplicates)} out of {nrow(compdbase)} rows in CompReport.sso which are duplicates."
+          )
         }
         compdbase <- compdbase[!duplicates, ]
         # done removing duplicates
@@ -974,7 +1008,9 @@ SS_output <-
         # make correction to tag output associated with 3.24f (fixed in later versions)
         if (substr(SS_version, 1, 9) == "SS-V3.24f") {
           if (!hidewarn) {
-            cli::cli_inform("Correcting for bug in tag data output associated with SSv3.24f")
+            cli::cli_inform(
+              "Correcting for bug in tag data output associated with SSv3.24f"
+            )
           }
           tag1rows <- compdbase[["Sexes"]] == "TAG1"
           if (any(tag1rows)) {
@@ -1004,7 +1040,9 @@ SS_output <-
             compdbase[["Kind"]] != "TAG2"
         )
         if (n > 0) {
-          cli::cli_warn("{n} rows from composition database have NA sample size but are not part of a super-period. (Maybe input as N=0?)")
+          cli::cli_warn(
+            "{n} rows from composition database have NA sample size but are not part of a super-period. (Maybe input as N=0?)"
+          )
         }
         compdbase <- type.convert(compdbase, as.is = TRUE)
 
@@ -1141,7 +1179,9 @@ SS_output <-
 
           if (any(sizedbase[["units"]] %in% c("lb", "in"))) {
             if (verbose) {
-              cli::cli_inform("Note: converting bins in generalized size comp data  in sizedbase back to the original units of lbs or inches.")
+              cli::cli_inform(
+                "Note: converting bins in generalized size comp data  in sizedbase back to the original units of lbs or inches."
+              )
             }
           }
           # convert bins from kg to lbs when that was the original unit
@@ -1176,7 +1216,8 @@ SS_output <-
         tagdbase2 <- compdbase[compdbase[["Kind"]] == "TAG2", ]
         # consider range of bins for conditional age at length data
         if (verbose) {
-          cli::cli_inform("CompReport file separated by this code as follows (rows = Ncomps*Nbins):{if (nrow(lendbase) > 0) {
+          cli::cli_inform(
+            "CompReport file separated by this code as follows (rows = Ncomps*Nbins):{if (nrow(lendbase) > 0) {
               paste(\"  \", nrow(lendbase), \" rows of length comp data\", sep = '')
             }}{if (nrow(sizedbase) > 0) {
               paste(\"  \", nrow(sizedbase), \" rows of generalized size comp data\", sep = '')
@@ -1200,16 +1241,19 @@ SS_output <-
               paste(\"  \", nrow(tagdbase2), \" rows of 'TAG2' comp data\", sep = '')
             }}{if (nrow(morphcompdbase) > 0) {
               paste(\"  \", nrow(morphcompdbase), \" rows of morph comp data\", sep = '')
-            }}")
+            }}"
+          )
         }
         # convert bin indices to true lengths
         if (nrow(agedbase) > 0) {
           Lbin_ranges <- as.data.frame(table(agedbase[["Lbin_range"]]))
           names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
           if (length(unique(agedbase[["Lbin_range"]])) > 1) {
-            cli::cli_warn("different ranges of Lbin_lo to Lbin_hi found in age comps.
+            cli::cli_warn(
+              "different ranges of Lbin_lo to Lbin_hi found in age comps.
 {paste(utils::capture.output(print(Lbin_ranges)), collapse = \"\\n\")}
-consider increasing 'aalmaxbinrange' to designate some of these data as conditional age-at-length.")
+consider increasing 'aalmaxbinrange' to designate some of these data as conditional age-at-length."
+            )
           }
           agebins <- sort(unique(agedbase[["Bin"]][!is.na(agedbase[["Bin"]])]))
         } else {
@@ -1469,7 +1513,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     # fix for issue with SSv3.21f
     if (SS_versionNumeric == 3.21) {
       temp <- names(parameters)
-      cli::cli_inform("Inserting new 13th column heading in parameters sectiondue to error in Report.sso in SSv3.21f")
+      cli::cli_inform(
+        "Inserting new 13th column heading in parameters sectiondue to error in Report.sso in SSv3.21f"
+      )
       temp <- c(temp[1:12], "PR_type_code", temp[-(1:12)])
       temp <- temp[-length(temp)]
       names(parameters) <- temp
@@ -1613,7 +1659,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     } else {
       # if semi-parametric selectivity IS used
       if (any(duplicated(FleetNames))) {
-        cli::cli_warn("Duplicated fleet names will cause only the semi-parametric selectivity to be available for the first of the duplicates.")
+        cli::cli_warn(
+          "Duplicated fleet names will cause only the semi-parametric selectivity to be available for the first of the duplicates."
+        )
       }
       # parse parameter labels to get info
       # the parameter labels look like like
@@ -1731,18 +1779,24 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         covartime <- findtime(covarhead)
         # the conversion to R time class below may no longer be necessary as strings should match
         if (is.null(covartime) || is.null(repfiletime)) {
-          cli::cli_inform("problem comparing the file creation times: Report.sso:{repfiletime} covar.sso:{covartime}")
+          cli::cli_inform(
+            "problem comparing the file creation times: Report.sso:{repfiletime} covar.sso:{covartime}"
+          )
         } else {
           if (covartime != repfiletime) {
             cli::cli_inform("covar time:{covartime}")
-            cli::cli_abort("{shortrepfile} and {covarfile} were from different model runs. Change input to covar=FALSE")
+            cli::cli_abort(
+              "{shortrepfile} and {covarfile} were from different model runs. Change input to covar=FALSE"
+            )
           }
         }
 
         # covar file exists, but has problems
         nowrite <- grep("do not write", covarhead)
         if (length(nowrite) > 0) {
-          cli::cli_warn("covar file contains the warning '{covarhead[nowrite]}' input 'covar' changed to FALSE.")
+          cli::cli_warn(
+            "covar file contains the warning '{covarhead[nowrite]}' input 'covar' changed to FALSE."
+          )
           covar <- FALSE
         }
       }
@@ -1769,23 +1823,31 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         stats[["N_estimated_parameters"]] <- N_estimated_parameters2
       } else {
         if (stats[["N_estimated_parameters"]] != N_estimated_parameters2) {
-          cli::cli_warn("{stats[['N_estimated_parameters']]} estimated parameters indicated by the par file; {N_estimated_parameters2} estimated parameters shown in the covar file. Returning the par file value: {stats[['N_estimated_parameters']]}")
+          cli::cli_warn(
+            "{stats[['N_estimated_parameters']]} estimated parameters indicated by the par file; {N_estimated_parameters2} estimated parameters shown in the covar file. Returning the par file value: {stats[['N_estimated_parameters']]}"
+          )
         }
       }
       # check for NA values (see https://github.com/r4ss/r4ss/issues/830)
       if (any(is.na(stdtable[["std"]]))) {
-        cli::cli_warn("NA value for parameter uncertainty found in {sum(is.na(stdtable[['std']]))} rows of covar.sso file. First par with NA: {stdtable[['name']][is.na(stdtable[['std']])]}")
+        cli::cli_warn(
+          "NA value for parameter uncertainty found in {sum(is.na(stdtable[['std']]))} rows of covar.sso file. First par with NA: {stdtable[['name']][is.na(stdtable[['std']])]}"
+        )
       }
       Nstd <- sum(stdtable[["std"]] > 0, na.rm = TRUE)
       checkbadrun <- unique(stdtable[["std"]])
       if (length(checkbadrun) == 1) {
         if (checkbadrun %in% c(NA, "NaN", "na")) {
-          cli::cli_abort("No quantities were estimated in the covar file and allestimates of standard deviation are {checkbadrun}. Try re-runningstock synthesis.")
+          cli::cli_abort(
+            "No quantities were estimated in the covar file and allestimates of standard deviation are {checkbadrun}. Try re-runningstock synthesis."
+          )
         }
       }
 
       if (Nstd <= 1) {
-        cli::cli_abort("Too few estimated quantities in covar file (n={Nstd}). Change input to covar=FALSE.")
+        cli::cli_abort(
+          "Too few estimated quantities in covar file (n={Nstd}). Change input to covar=FALSE."
+        )
       }
     } else {
       if (verbose) {
@@ -1816,7 +1878,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
       }
       # warn if directory doesn't exist
       if (is.null(dir.mcmc.full)) {
-        cli::cli_warn("'dir.mcmc' directory not found either as an absolute path or relative to the 'dir' input")
+        cli::cli_warn(
+          "'dir.mcmc' directory not found either as an absolute path or relative to the 'dir' input"
+        )
         mcmc <- NULL
       } else {
         # check for presence of posteriors file
@@ -1827,7 +1891,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
           }
           mcmc <- SSgetMCMC(dir = dir.mcmc.full)
         } else {
-          cli::cli_warn("skipping reading MCMC output because posterior.sso file not found in {dir.mcmc.full}")
+          cli::cli_warn(
+            "skipping reading MCMC output because posterior.sso file not found in {dir.mcmc.full}"
+          )
           mcmc <- NULL
         }
       }
@@ -2750,7 +2816,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         # figure out which fleet uses which parameter,
         # currently (as of SS version 3.30.10.00), requires reading data file
         if (verbose) {
-          cli::cli_inform("Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters")
+          cli::cli_inform(
+            "Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters"
+          )
         }
         datname <- get_dat_new_name(dir)
         datfile <- SS_readdat(
@@ -2789,7 +2857,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
             !any(age_data_info[["CompError"]] > 0) &
               !any(len_data_info[["CompError"]] > 0)
           ) {
-            cli::cli_abort("Problem with Dirichlet-Multinomial parameters: Report file indicates parameters exist, but no CompError values in data.ss_new are > 0.")
+            cli::cli_abort(
+              "Problem with Dirichlet-Multinomial parameters: Report file indicates parameters exist, but no CompError values in data.ss_new are > 0."
+            )
           }
         } # end check for no Length_ or Age_comp_error_controls tables
 
@@ -2806,7 +2876,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
               beta <- DM_pars[["Theta"]][ipar]
             }
           } else {
-            cli::cli_abort("Issue with Dirichlet-Multinomial parameter:Fleet = {f}and ParmSelect = {ipar}")
+            cli::cli_abort(
+              "Issue with Dirichlet-Multinomial parameter:Fleet = {f}and ParmSelect = {ipar}"
+            )
           }
           if (CompError == 1) {
             Nsamp_DM <-
@@ -3080,7 +3152,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     # warning for 3.30 models with multiple growth patterns that have
     # repeat fecundity values, likely to be sorted out in new SS version
     if (length(returndat[["FecPar1"]]) > 1) {
-      cli::cli_warn("Plots will only show fecundity and related quantitiesfor Growth Pattern 1")
+      cli::cli_warn(
+        "Plots will only show fecundity and related quantitiesfor Growth Pattern 1"
+      )
       returndat[["FecPar1"]] <- returndat[["FecPar1"]][1]
       returndat[["FecPar2"]] <- returndat[["FecPar2"]][2]
     }
@@ -3895,7 +3969,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         wtatage_switch
     ) {
       if (verbose) {
-        cli::cli_inform("Setting minimum biomass threshhold to 0.10 because this looks like the Pacific Hake model. You can replace or override in SS_plots via the 'minbthresh' input.")
+        cli::cli_inform(
+          "Setting minimum biomass threshhold to 0.10 because this looks like the Pacific Hake model. You can replace or override in SS_plots via the 'minbthresh' input."
+        )
       }
       minbthresh <- 0.1 # treaty value for hake
     }
@@ -3918,7 +3994,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         # work around for bug in output for 3.24z (and some other versions)
         shift <- grep("MSY_basis:_Y(ea)?r", Kobe_head[, 1])
         if (length(shift) == 0) {
-          cli::cli_abort("Bug: r4ss cannot find the start of table for the Kobe plot.")
+          cli::cli_abort(
+            "Bug: r4ss cannot find the start of table for the Kobe plot."
+          )
         }
       }
       Kobe_warn <- NA
@@ -4794,7 +4872,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
 
     # print list of statistics
     if (printstats) {
-      cli::cli_inform("Statistics shown below (to turn off, change input to printstats=FALSE)")
+      cli::cli_inform(
+        "Statistics shown below (to turn off, change input to printstats=FALSE)"
+      )
 
       # remove scientific notation (only for display, not returned values,
       # which were added to returndat already)

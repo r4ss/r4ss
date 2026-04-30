@@ -253,7 +253,9 @@ tune_comps <- function(
       init_run == FALSE &
       option %in% c("Francis", "MI", "none")
   ) {
-    cli::cli_abort("Please specify replist (no report file found) or set init_run == TRUE when using option Francis, MI, or none")
+    cli::cli_abort(
+      "Please specify replist (no report file found) or set init_run == TRUE when using option Francis, MI, or none"
+    )
   }
   # read in model files
   start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
@@ -273,7 +275,9 @@ tune_comps <- function(
   } else {
     if (!all(fleets %in% seq_len(dat[["Nfleets"]]))) {
       fleets <- fleets[fleets %in% seq_len(dat[["Nfleets"]])]
-      cli::cli_warn("Not all fleets are included in the model. Changing fleets to use only ones in the model: {paste(fleets, collapse = ', ')}")
+      cli::cli_warn(
+        "Not all fleets are included in the model. Changing fleets to use only ones in the model: {paste(fleets, collapse = ', ')}"
+      )
       if (length(fleets) == 0) {
         cli::cli_abort("Please specify fleets used in the model")
       }
@@ -284,7 +288,9 @@ tune_comps <- function(
   # get the highest phase in the model
   last_phase <- get_last_phase(ctl)
   if (last_phase >= start[["last_estimation_phase"]]) {
-    cli::cli_warn("The last phase used in the control file, {last_phase}, is higher or the same as the last_estimation_phase in the starter file currently set to {start[['last_estimation_phase']]}. Changing the last_estimation_phase in the starter file to {last_phase + 1}.")
+    cli::cli_warn(
+      "The last phase used in the control file, {last_phase}, is higher or the same as the last_estimation_phase in the starter file currently set to {start[['last_estimation_phase']]}. Changing the last_estimation_phase in the starter file to {last_phase + 1}."
+    )
     start[["last_estimation_phase"]] <- last_phase + 1
     SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
   }
@@ -423,7 +429,9 @@ tune_comps <- function(
               # sanity check. If user recieving this error message, function is not
               # working as developer intended.
               if (length(tmp_row) > 1) {
-                cli::cli_abort("Multiple rows with same data type and fleet in the variance variance adjustment list, which should not be possible. Please check that the control file will work with SS3. If still having issues, please report your problem: https://github.com/r4ss/r4ss/issues")
+                cli::cli_abort(
+                  "Multiple rows with same data type and fleet in the variance variance adjustment list, which should not be possible. Please check that the control file will work with SS3. If still having issues, please report your problem: https://github.com/r4ss/r4ss/issues"
+                )
               }
             }
           }
@@ -452,7 +460,9 @@ tune_comps <- function(
   # DM ----
   if (option == "DM") {
     if (init_run) {
-      cli::cli_warn("Init run was TRUE, but option == DM, so no initial run was done. The model will only be run if niters > 0.")
+      cli::cli_warn(
+        "Init run was TRUE, but option == DM, so no initial run was done. The model will only be run if niters > 0."
+      )
     }
     # determine which fleets specified by user are included in model
     fleets_len <- fleets[fleets %in% unique(dat[["lencomp"]][, "fleet"])]
@@ -475,7 +485,9 @@ tune_comps <- function(
     # add check that last_phase is less than max_phase in starter. If not,
     # modify the max phase and send warning.
     if (last_phase >= start[["last_estimation_phase"]]) {
-      cli::cli_warn("The last phase used in the control file, {last_phase}, is higher or the same as the last_estimation_phase in the starter file currently set to {start[['last_estimation_phase']]}. Changing the last_estimation_phase in the starter file to {last_phase + 1}.")
+      cli::cli_warn(
+        "The last phase used in the control file, {last_phase}, is higher or the same as the last_estimation_phase in the starter file currently set to {start[['last_estimation_phase']]}. Changing the last_estimation_phase in the starter file to {last_phase + 1}."
+      )
       start[["last_estimation_phase"]] <- last_phase + 1
       SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
     }
@@ -622,7 +634,9 @@ get_tuning_table <- function(
         has_conditional <- FALSE
       }
       if (has_marginal & has_conditional) {
-        cli::cli_warn("fleet {fleet} has both conditional ages and marginal ages tuning will be based on conditional ages")
+        cli::cli_warn(
+          "fleet {fleet} has both conditional ages and marginal ages tuning will be based on conditional ages"
+        )
       }
       if (has_marginal | has_conditional) {
         # data is present, calculate stuff
@@ -668,7 +682,9 @@ get_tuning_table <- function(
           Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(Curr_Var_Adj)) {
-          cli::cli_abort("Model output missing required values, perhaps due to an older version of SS3")
+          cli::cli_abort(
+            "Model output missing required values, perhaps due to an older version of SS3"
+          )
         }
 
         # McAllister-Ianelli multiplier
@@ -698,7 +714,9 @@ get_tuning_table <- function(
             tunetable[["mean_Nsamp_adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
-          cli::cli_abort("Model output missing required values, perhaps due to an older version of SS3")
+          cli::cli_abort(
+            "Model output missing required values, perhaps due to an older version of SS3"
+          )
         }
 
         # make new row for table
@@ -749,7 +767,9 @@ get_tuning_table <- function(
   # stuff related to generalized size frequency data
   tunetable_size <- replist[["Size_Comp_Fit_Summary"]]
   if (!is.null(tunetable_size) && "par1" %in% names(tunetable_size)) {
-    cli::cli_warn("This function may not work for generalized size composition data in models prior to SS3 version 3.30.20.")
+    cli::cli_warn(
+      "This function may not work for generalized size composition data in models prior to SS3 version 3.30.20."
+    )
   }
 
   # return the results

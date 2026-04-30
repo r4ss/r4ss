@@ -54,7 +54,9 @@ copy_SS_inputs <- function(
 ) {
   # check to make sure the first input is in the correct format
   if (!is.character(dir.old) | length(dir.old) != 1) {
-    cli::cli_abort("Input 'dir.old' should be a character string for a directory")
+    cli::cli_abort(
+      "Input 'dir.old' should be a character string for a directory"
+    )
   }
 
   # check for presence of old directory

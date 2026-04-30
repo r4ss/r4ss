@@ -26,7 +26,9 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   )
   if (test[1] == "No file" | length(test) <= 2) {
     if (verbose) {
-      cli::cli_inform("Skipping weight-at-age file. File missing or empty: {file}")
+      cli::cli_inform(
+        "Skipping weight-at-age file. File missing or empty: {file}"
+      )
     }
     return(NULL)
   }

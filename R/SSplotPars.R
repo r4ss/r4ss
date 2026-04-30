@@ -178,7 +178,9 @@ SSplotPars <-
         Prior_Like <- rep(0., length(Pval))
       }
       if (is.null(Prior_Like)) {
-        cli::cli_warn("Problem calculating prior. The prior type doesn't match any of the options in the SSplotPars function. Ptype: {Ptype}")
+        cli::cli_warn(
+          "Problem calculating prior. The prior type doesn't match any of the options in the SSplotPars function. Ptype: {Ptype}"
+        )
       }
       return(Prior_Like)
     } # end GetPrior function
@@ -188,7 +190,9 @@ SSplotPars <-
 
     # check input
     if (!"parameters" %in% names(replist)) {
-      cli::cli_abort("'replist' input needs to be a list created by the SS_output function")
+      cli::cli_abort(
+        "'replist' input needs to be a list created by the SS_output function"
+      )
     }
     if (is.null(plotdir)) {
       plotdir <- replist[["inputs"]][["dir"]]
@@ -197,7 +201,9 @@ SSplotPars <-
       cli::cli_abort("Inputs 'print' and 'add' can't both be TRUE")
     }
     if (print & plot) {
-      cli::cli_warn("Inputs 'print' and 'plot' can't both be TRUE changing to 'plot = FALSE'")
+      cli::cli_warn(
+        "Inputs 'print' and 'plot' can't both be TRUE changing to 'plot = FALSE'"
+      )
     }
 
     parameters <- replist[["parameters"]]
@@ -239,13 +245,17 @@ SSplotPars <-
     skip <- grep("Impl_err_", goodnames)
     if (length(skip) > 0) {
       goodnames <- goodnames[-skip]
-      cli::cli_inform("Skipping 'Impl_err_' parameters which don't have bounds reported")
+      cli::cli_inform(
+        "Skipping 'Impl_err_' parameters which don't have bounds reported"
+      )
     }
     # skip F_fleet parameters
     skip <- grep("F_fleet_", goodnames)
     if (length(skip) > 0) {
       goodnames <- goodnames[-skip]
-      cli::cli_inform("Skipping 'F_fleet_' parameters which aren't yet supported by this function")
+      cli::cli_inform(
+        "Skipping 'F_fleet_' parameters which aren't yet supported by this function"
+      )
     }
 
     if (!showdev) {
@@ -276,7 +286,9 @@ SSplotPars <-
       if (length(devrows) > 0) {
         goodnames <- goodnames[-devrows]
         if (verbose) {
-          cli::cli_inform("Excluding {length(devrows)} deviation parameters because input 'showdev' = FALSE")
+          cli::cli_inform(
+            "Excluding {length(devrows)} deviation parameters because input 'showdev' = FALSE"
+          )
         }
         if (length(goodnames) == 0) {
           cli::cli_inform("no parameters to plot")
@@ -291,14 +303,18 @@ SSplotPars <-
           length(grep("DEVmult", x = goodnames)) > 0 |
           length(grep("ARDEV", x = goodnames)) > 0
       ) {
-        cli::cli_warn("Parameter deviates are not fully implemented in this function. Prior and bounds unavailable so these are skipped and fitrange is set to TRUE for those parameters.")
+        cli::cli_warn(
+          "Parameter deviates are not fully implemented in this function. Prior and bounds unavailable so these are skipped and fitrange is set to TRUE for those parameters."
+        )
       }
     }
 
     # get vector of standard deviations and test for NA or 0 values
     stds <- parameters[["Parm_StDev"]][parameters[["Label"]] %in% goodnames]
     if (showmle & (all(is.na(stds)) || min(stds, na.rm = TRUE) <= 0)) {
-      cli::cli_inform("Some parameters have std. dev. values in Report.sso equal to 0. Asymptotic uncertainty estimates will not be shown. Try re-running the model with the Hessian but no MCMC.")
+      cli::cli_inform(
+        "Some parameters have std. dev. values in Report.sso equal to 0. Asymptotic uncertainty estimates will not be shown. Try re-running the model with the Hessian but no MCMC."
+      )
     }
 
     # number of parameters
@@ -531,11 +547,15 @@ SSplotPars <-
       # get mcmc results from replist created by SS_output
       mcmc <- replist[["mcmc"]]
       if (showpost && is.null(mcmc)) {
-        cli::cli_inform("$mcmc not found in input 'replist', changing input to 'showpost=FALSE'")
+        cli::cli_inform(
+          "$mcmc not found in input 'replist', changing input to 'showpost=FALSE'"
+        )
         showpost <- FALSE
       }
       if (showpost && length(mcmc) < 20) {
-        cli::cli_inform("mcmc output has fewer than 20 rows, changing input to 'showpost=FALSE'")
+        cli::cli_inform(
+          "mcmc output has fewer than 20 rows, changing input to 'showpost=FALSE'"
+        )
         showpost <- FALSE
       }
 

@@ -114,7 +114,9 @@ SSMethod.TA1.8 <-
     # Check the type is correct and the sexes is correct
     is.in <- function(x, y) !is.na(match(x, y))
     if (!is.in(type, c("age", "len", "size", "con"))) {
-      cli::cli_abort('Illegal value for type (should be "age", "len", "size", or "con")')
+      cli::cli_abort(
+        'Illegal value for type (should be "age", "len", "size", or "con")'
+      )
     } else {
       if (sum(!is.in(sexes, c(0:3))) > 0) {
         cli::cli_abort("Unrecognised value for sexes")
@@ -128,7 +130,9 @@ SSMethod.TA1.8 <-
     } else {
       # if custom names input, check length
       if (length(fleetnames) != fit[["nfleets"]]) {
-        cli::cli_abort("fleetnames needs to be NULL or have length = nfleets = {fit[['nfleets']]}")
+        cli::cli_abort(
+          "fleetnames needs to be NULL or have length = nfleets = {fit[['nfleets']]}"
+        )
       }
     }
     # Select the type of datbase

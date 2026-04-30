@@ -163,7 +163,9 @@ SSplotTimeseries <-
       areas <- 1:nareas
     } else {
       if (length(intersect(areas, 1:nareas)) != length(areas)) {
-        cli::cli_abort("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
+        cli::cli_abort(
+          "Input 'areas' should be 'all' or a vector of values between 1 and nareas."
+        )
       }
     }
     if (nareas > 1 & areanames[1] == "default") {
@@ -393,7 +395,9 @@ SSplotTimeseries <-
       if (uncertainty & subplot %in% c(7, 9, 11)) {
         main <- paste(main, "with ~95% asymptotic intervals")
         if (!"SSB_Virgin" %in% derived_quants[["Label"]]) {
-          cli::cli_warn("Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites. Try changing 'min yr for Spbio_sdreport' in starter file to -1.")
+          cli::cli_warn(
+            "Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites. Try changing 'min yr for Spbio_sdreport' in starter file to -1."
+          )
           stdtable <- NULL
         } else {
           # get subset of DERIVED_QUANTITIES
@@ -471,7 +475,9 @@ SSplotTimeseries <-
             stdtable[["lower"]] <- pmax(v - 1.96 * std, 0) # max of value or 0
           }
           if (max(stdtable[["Yr"]]) < max(floor(ts[["YrSeas"]]))) {
-            cli::cli_warn("{max(stdtable[['Yr']])} is the last year with uncertainty in Report file, but {max(ts[['YrSeas']])} is last year of time series. Consider changing starter file input for 'max yr for sdreport outputs' to -2")
+            cli::cli_warn(
+              "{max(stdtable[['Yr']])} is the last year with uncertainty in Report file, but {max(ts[['YrSeas']])} is last year of time series. Consider changing starter file input for 'max yr for sdreport outputs' to -2"
+            )
           }
           stdtable <- stdtable[
             stdtable[["Yr"]] >= minyr & stdtable[["Yr"]] <= maxyr,

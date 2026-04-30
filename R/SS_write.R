@@ -63,7 +63,9 @@ SS_write <- function(inputlist, dir = "", overwrite = FALSE, verbose = FALSE) {
       verbose = verbose
     )
   } else {
-    cli::cli_abort("'start' element of input list not available (required to get names of data and control files)")
+    cli::cli_abort(
+      "'start' element of input list not available (required to get names of data and control files)"
+    )
   }
 
   # write data file

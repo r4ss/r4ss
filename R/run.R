@@ -80,17 +80,23 @@ run <- function(
   } else {
     if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
       # skip directories that have results in them
-      cli::cli_inform("Skipping {dir} because it contains a Report.sso file and skipfinished = TRUE")
+      cli::cli_inform(
+        "Skipping {dir} because it contains a Report.sso file and skipfinished = TRUE"
+      )
       results <- "contained Report.sso"
     } else {
       # run model
       setwd(dir) # change working directory
       # provide some messages
       if (verbose) {
-        cli::cli_inform("Changing working directory to {dir} and running model using the command: {command} {extras}")
+        cli::cli_inform(
+          "Changing working directory to {dir} and running model using the command: {command} {extras}"
+        )
       }
       if (!show_in_console && verbose) {
-        cli::cli_inform("Input 'show_in_console' = FALSE, so writing console output to {console_output_file}")
+        cli::cli_inform(
+          "Input 'show_in_console' = FALSE, so writing console output to {console_output_file}"
+        )
       }
       # call system2() to actually run the model
       console_output <- tryCatch(
@@ -102,7 +108,9 @@ run <- function(
         ),
         error = function(err) {
           if (grepl("'CreateProcess' failed to run", err)) {
-            cli::cli_abort("There is a problem with the SS3 executable, perhaps due to mismatch with the operating system. Please make sure that you have the correct executable and it is named appropriately for your operating system")
+            cli::cli_abort(
+              "There is a problem with the SS3 executable, perhaps due to mismatch with the operating system. Please make sure that you have the correct executable and it is named appropriately for your operating system"
+            )
           } else {
             err
           }

@@ -52,7 +52,9 @@
 #' @export
 SSmohnsrho <- function(summaryoutput, endyrvec, startyr, verbose = TRUE) {
   if (verbose) {
-    cli::cli_inform("The expected order of models in the summary output are the reference model followed by retro -1, retro -2, and so forth.")
+    cli::cli_inform(
+      "The expected order of models in the summary output are the reference model followed by retro -1, retro -2, and so forth."
+    )
   }
 
   N <- summaryoutput[["n"]]
@@ -132,7 +134,9 @@ SSmohnsrho <- function(summaryoutput, endyrvec, startyr, verbose = TRUE) {
       ) /
         length(ind)
     } else {
-      cli::cli_warn("Skipping Wood's Hole Mohn's rho on Bratio, as Bratio is not available for year after the first model year.")
+      cli::cli_warn(
+        "Skipping Wood's Hole Mohn's rho on Bratio, as Bratio is not available for year after the first model year."
+      )
       mohnBratio.all[i] <- NA
     }
     if (length(which(summaryoutput[["Fvalue"]][["Yr"]] == startyr)) != 0) {
@@ -146,7 +150,9 @@ SSmohnsrho <- function(summaryoutput, endyrvec, startyr, verbose = TRUE) {
       ) /
         length(ind)
     } else {
-      cli::cli_warn("Skipping Wood's Hole Mohn's rho on Fvalue, because Fvalue is not available for first model year.")
+      cli::cli_warn(
+        "Skipping Wood's Hole Mohn's rho on Fvalue, because Fvalue is not available for first model year."
+      )
       mohnF.all[i] <- NA
     }
   }

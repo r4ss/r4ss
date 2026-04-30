@@ -104,7 +104,9 @@ SSgetMCMC <-
       file1 <- file.path(dir, csv1)
       file2 <- file.path(dir, csv2)
       if (verbose) {
-        cli::cli_inform("writing subset of posteriors to files: {file1} {file2}")
+        cli::cli_inform(
+          "writing subset of posteriors to files: {file1} {file2}"
+        )
       }
       write.csv(keypost, file1, row.names = FALSE)
       write.csv(nuisancepost, file2, row.names = FALSE)

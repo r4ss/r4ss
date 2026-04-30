@@ -36,7 +36,9 @@ SS_writectl_3.24 <- function(
   }
 
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
-    cli::cli_abort("input 'ctllist' should be a list with $type=='Stock_Synthesis_control_file'")
+    cli::cli_abort(
+      "input 'ctllist' should be a list with $type=='Stock_Synthesis_control_file'"
+    )
   }
 
   if (file.exists(outfile)) {
@@ -126,7 +128,9 @@ SS_writectl_3.24 <- function(
     if (!is.null(dataframe)) {
       if (header) {
         if (isTRUE(!is.null(dataframe[["PType"]]))) {
-          cli::cli_warn("Please remove PType column in parameter dataframe, which was deprecated as of r4ss 1.45.0.")
+          cli::cli_warn(
+            "Please remove PType column in parameter dataframe, which was deprecated as of r4ss 1.45.0."
+          )
           dataframe[["PType"]] <- NULL
         }
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
@@ -472,7 +476,9 @@ SS_writectl_3.24 <- function(
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)) {
       prob_flts <-
         which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 1] > 0), 4] < 2)
-      cli::cli_abort("must create base Q parm to use Q_power for fleet(s): {paste(prob_flts, sep = '', collapse = ', ')}")
+      cli::cli_abort(
+        "must create base Q parm to use Q_power for fleet(s): {paste(prob_flts, sep = '', collapse = ', ')}"
+      )
     }
     printdf("Q_power", header = header)
     header <- FALSE
@@ -480,7 +486,9 @@ SS_writectl_3.24 <- function(
   # Q-env
   if (sum(ctllist[["Q_setup"]][, 2]) > 0) {
     if (any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][, 2] > 0), 4] < 2)) {
-      cli::cli_abort("must create base Q parm to use Q_env for fleet: {which(ctllist[['Q_setup']][(ctllist[['Q_setup']][, 2] > 0), 4] < 2)}")
+      cli::cli_abort(
+        "must create base Q parm to use Q_env for fleet: {which(ctllist[['Q_setup']][(ctllist[['Q_setup']][, 2] > 0), 4] < 2)}"
+      )
     }
     printdf("Q_env", header = header)
     header <- FALSE

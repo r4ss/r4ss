@@ -152,7 +152,9 @@ SStableComparisons <- function(
           }
         }
         if (verbose) {
-  cli::cli_inform("added {nrow(vals)} row{ifelse(nrow(vals) != 1, 's', '')}")
+          cli::cli_inform(
+            "added {nrow(vals)} row{ifelse(nrow(vals) != 1, 's', '')}"
+          )
         }
         if (!is.null(digits)) {
           if (verbose) {
@@ -194,7 +196,9 @@ SStableComparisons <- function(
           tmp <- mcmcTable[, grep(name, names(mcmcTable), fixed = TRUE)]
           if (!is.null(dim(tmp))) {
             if (ncol(tmp) > 0) {
-              cli::cli_abort("This only works with a single column from the mcmc. Use a specific name")
+              cli::cli_abort(
+                "This only works with a single column from the mcmc. Use a specific name"
+              )
             }
           }
           if (!is.null(dim(tmp)) && ncol(tmp) == 0) {
@@ -250,7 +254,9 @@ SStableComparisons <- function(
   if (nrow(tab) > 0) {
     rownames(tab) <- 1:nrow(tab)
   } else {
-    cli::cli_warn("'names' and 'likenames' didn't match any variables so output is empty")
+    cli::cli_warn(
+      "'names' and 'likenames' didn't match any variables so output is empty"
+    )
   }
 
   # write CSV if requested

@@ -59,7 +59,9 @@ populate_multiple_folders <- function(
     if (create.dir) {
       dir.create(outerdir.new)
     } else {
-      cli::cli_abort("'dir.create=FALSE' and outerdir.new doesn't exist: {outerdir.new}")
+      cli::cli_abort(
+        "'dir.create=FALSE' and outerdir.new doesn't exist: {outerdir.new}"
+      )
     }
   }
 
@@ -86,7 +88,9 @@ populate_multiple_folders <- function(
       if (!"starter.ss" %in% tolower(dir(file.path(outerdir.old, dir)))) {
         if (verbose) {
           # note that starter file is missing in a subfolder
-          cli::cli_inform("skipping {dir} which doesn't contain a starter.ss file")
+          cli::cli_inform(
+            "skipping {dir} which doesn't contain a starter.ss file"
+          )
         }
       } else {
         # if starter file is present, then copy the input files

@@ -43,7 +43,9 @@ SS_writedat_3.30 <- function(
 
   # check datlist/d
   if (d[["type"]] != "Stock_Synthesis_data_file") {
-    cli::cli_abort("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
+    cli::cli_abort(
+      "input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'"
+    )
   }
 
   # check for existing file
@@ -308,7 +310,9 @@ SS_writedat_3.30 <- function(
 
     # data bins
     if (length(d[["lbin_vector"]]) != d[["N_lbins"]]) {
-      cli::cli_warn("The length of the lbin_vector is different than N_lbins. This data file will likely not run with Stock Synthesis.")
+      cli::cli_warn(
+        "The length of the lbin_vector is different than N_lbins. This data file will likely not run with Stock Synthesis."
+      )
     }
     wl("N_lbins")
     writeComment("#_lbin_vector", con = zz)
@@ -325,7 +329,9 @@ SS_writedat_3.30 <- function(
       zero_lencomp <-
         apply(d[["lencomp"]][, -seq_len(6)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_lencomp == TRUE)) {
-        cli::cli_warn("Lines of all zero length comp found. SS will exit on error if a line of comps is all zeros, so removing. Line(s) {paste(which(zero_lencomp), sep = '', collapse = ', ')}")
+        cli::cli_warn(
+          "Lines of all zero length comp found. SS will exit on error if a line of comps is all zeros, so removing. Line(s) {paste(which(zero_lencomp), sep = '', collapse = ', ')}"
+        )
         d[["lencomp"]] <- d[["lencomp"]][!zero_lencomp, ]
       }
     }
@@ -370,7 +376,9 @@ SS_writedat_3.30 <- function(
       zero_agecomp <-
         apply(d[["agecomp"]][, -seq_len(9)], MARGIN = 1, FUN = sum) == 0
       if (any(zero_agecomp == TRUE)) {
-        cli::cli_warn("Lines of all zero age comp found. SS will exit on error if a line of comps is all zeros, so removing. Line(s) {paste(which(zero_agecomp), sep = '', collapse = ', ')}")
+        cli::cli_warn(
+          "Lines of all zero age comp found. SS will exit on error if a line of comps is all zeros, so removing. Line(s) {paste(which(zero_agecomp), sep = '', collapse = ', ')}"
+        )
         d[["agecomp"]] <- d[["agecomp"]][!zero_agecomp, ]
       }
     }

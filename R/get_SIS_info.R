@@ -85,7 +85,9 @@ get_SIS_info <- function(
     sep = "_"
   )
 
-  cli::cli_inform("writing SIS info to CSV files: {file.path(dir, filename_values)} and {file.path(dir, filename_timeseries)}")
+  cli::cli_inform(
+    "writing SIS info to CSV files: {file.path(dir, filename_values)} and {file.path(dir, filename_timeseries)}"
+  )
 
   # years to report for catch-related quantities
   startyr <- model[["startyr"]]
@@ -213,7 +215,9 @@ get_SIS_info <- function(
   # merge columns from time series, catch, F, and SPR together
   tab <- merge(merge(merge(ts_tab, catch_tab), F_tab), spr_tab)
   if (nrow(tab) != length(years) || any(tab[["Year"]] != years)) {
-    cli::cli_abort("problem with mismatch of years; range(years): {toString(range(years))}; range(tab[['Year']]): {toString(range(tab[['Year']]))}")
+    cli::cli_abort(
+      "problem with mismatch of years; range(years): {toString(range(years))}; range(tab[['Year']]): {toString(range(tab[['Year']]))}"
+    )
   }
 
   # replace NA with 0 in exploitation rate for years with 0 catch
@@ -274,7 +278,9 @@ get_SIS_info <- function(
   if (model[["SpawnOutputUnits"]] == "numbers") {
     header_info["Description", "SpawnBio"] <- "Spawning Output(Eggs)"
     if (is.null(SpawnOutputLabel)) {
-      cli::cli_warn("Need to provide a label for the spawning output (e.g. 'millions of eggs')")
+      cli::cli_warn(
+        "Need to provide a label for the spawning output (e.g. 'millions of eggs')"
+      )
       SpawnOutputLabel <- "XXXX eggs"
     }
     header_info["Unit", "SpawnBio"] <- SpawnOutputLabel
@@ -316,7 +322,9 @@ get_SIS_info <- function(
 
   # check for redundancy between F_values and Tot_Exploit columns
   if (model[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)") {
-    cli::cli_inform("F_YYYY values are redundant with Tot_Exploit column in SPR series, excluding from output for SIS.")
+    cli::cli_inform(
+      "F_YYYY values are redundant with Tot_Exploit column in SPR series, excluding from output for SIS."
+    )
     # remove redundant F_values column
     header_info <- header_info |> dplyr::select(-F_values)
     tab <- tab |> dplyr::select(-F_values)

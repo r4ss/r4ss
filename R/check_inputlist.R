@@ -35,7 +35,9 @@ check_inputlist <- function(inputlist) {
 
   missingnames <- elements[!elements %in% names(inputlist)]
   if (length(missingnames) > 0) {
-    cli::cli_warn("The following elements are missing from the input list: {paste(missingnames, collapse = ', ')}")
+    cli::cli_warn(
+      "The following elements are missing from the input list: {paste(missingnames, collapse = ', ')}"
+    )
     return(FALSE)
   } else {
     return(TRUE)

@@ -73,7 +73,9 @@ SSmakeMmatrix <- function(
   maxage <- nrow(mat) - 1 # maximum age (assuming first age=0)
   ages <- 0:maxage # vector of ages
 
-  cli::cli_inform("Calculating inputs to Stock Synthesis for a matrix of natural mortality values over the range of ages: {min(ages)} to {maxage}")
+  cli::cli_inform(
+    "Calculating inputs to Stock Synthesis for a matrix of natural mortality values over the range of ages: {min(ages)} to {maxage}"
+  )
 
   Msetup <- c(
     "# three lines to paste near top of control file:\n",
@@ -121,8 +123,10 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  cli::cli_inform("Mortality params to paste into the first block of parameter lines:
-{paste(utils::capture.output(Mparams), sep = '', collapse = \"\\n\")}")
+  cli::cli_inform(
+    "Mortality params to paste into the first block of parameter lines:
+{paste(utils::capture.output(Mparams), sep = '', collapse = \"\\n\")}"
+  )
   printdf(Mparams)
 
   # create data frame of environmental link parameters
@@ -147,9 +151,11 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  cli::cli_inform("# stuff to paste below the line labeled 'CohortGrowDev'
+  cli::cli_inform(
+    "# stuff to paste below the line labeled 'CohortGrowDev'
 1 #_custom mortality/growth environmental setup
-{paste(utils::capture.output(Mlinks), sep = '', collapse = \"\\n\")}")
+{paste(utils::capture.output(Mlinks), sep = '', collapse = \"\\n\")}"
+  )
 
   # create a data frame of environmental variables
   Menv <- NULL
@@ -169,10 +175,12 @@ SSmakeMmatrix <- function(
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 
-  cli::cli_inform("Environmental variables to paste into the bottom of the data file:
+  cli::cli_inform(
+    "Environmental variables to paste into the bottom of the data file:
 {maxage + 1} # N environmental variables
 {nrow(Menv)} # N environmental observations
-{paste(utils::capture.output(Menv), sep = '', collapse = \"\\n\")}")
+{paste(utils::capture.output(Menv), sep = '', collapse = \"\\n\")}"
+  )
 
   # restore things to how they were
   options(width = oldwidth, max.print = oldmax.print)

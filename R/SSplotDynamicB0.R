@@ -60,7 +60,9 @@ SSplotDynamicB0 <- function(
     return()
   }
   if (!"SSB_nofishing" %in% names(replist[["Dynamic_Bzero"]])) {
-    cli::cli_warn("Skipping Dynamic B0 plot (not yet working for this model configuration)")
+    cli::cli_warn(
+      "Skipping Dynamic B0 plot (not yet working for this model configuration)"
+    )
     return()
   }
 
@@ -131,7 +133,9 @@ SSplotDynamicB0 <- function(
 
   if (uncertainty & nrow(quants_SSB_nofishing) == 0) {
     uncertainty <- FALSE
-    cli::cli_warn("Dynamic B0 not found in derived quantities, changing uncertainty to FALSE. To get uncertainty, modify control file under 'read specs for more stddev reporting'.")
+    cli::cli_warn(
+      "Dynamic B0 not found in derived quantities, changing uncertainty to FALSE. To get uncertainty, modify control file under 'read specs for more stddev reporting'."
+    )
   }
 
   if (uncertainty) {

@@ -101,7 +101,9 @@ SSplotSexRatio <-
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
     } else if (length(intersect(fleets, 1:nfleets)) != length(fleets)) {
-      cli::cli_abort("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
+      cli::cli_abort(
+        "Input 'fleets' should be 'all' or a vector of values between 1 and nfleets."
+      )
     }
 
     if (fleetnames[1] == "default") {
@@ -149,7 +151,9 @@ SSplotSexRatio <-
     if (
       any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")
     ) {
-      cli::cli_inform("Removing super-period composition values labeled 'skip' and designating super-period values with a '*'")
+      cli::cli_inform(
+        "Removing super-period composition values labeled 'skip' and designating super-period values with a '*'"
+      )
       dbase_kind <- dbase_kind[
         dbase_kind[["SuprPer"]] == "No" | dbase_kind[["Used"]] != "skip",
       ]

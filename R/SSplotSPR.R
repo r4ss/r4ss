@@ -182,7 +182,9 @@ SSplotSPR <-
     # temporary disable multi-season models until code cleanup
     if (2 %in% subplots) {
       if (nseasons > 1) {
-        cli::cli_inform("Skipped 1-SPR plot because it's not yet configured for multi-season models")
+        cli::cli_inform(
+          "Skipped 1-SPR plot because it's not yet configured for multi-season models"
+        )
       }
       if (nseasons == 1) {
         minus_spr_timeseries <- function() {
@@ -397,7 +399,9 @@ SSplotSPR <-
       Bratio_vals <- Bratio[["Value"]][Bratio[["Yr"]] %in% shared_yrs]
       SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% shared_yrs]
       if (length(Bratio_vals) != length(SPRratio_vals)) {
-        cli::cli_inform("Bratio and SPRratio vectors are different in length, skipping phase plot.")
+        cli::cli_inform(
+          "Bratio and SPRratio vectors are different in length, skipping phase plot."
+        )
         return()
       }
       # put things into a data.frame to keep track of relationships

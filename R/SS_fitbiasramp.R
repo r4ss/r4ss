@@ -82,10 +82,14 @@ SS_fitbiasramp <-
     plotinfo <- NULL
 
     if (!is.list(replist) | replist[["SS_versionNumeric"]] < 3.11) {
-      cli::cli_abort("this function needs an input object created by SS_output from SS version 3.11 or greater")
+      cli::cli_abort(
+        "this function needs an input object created by SS_output from SS version 3.11 or greater"
+      )
     }
     if (replist[["inputs"]][["covar"]] == FALSE) {
-      cli::cli_abort("you need to have covar=TRUE in the input to the SS_output function")
+      cli::cli_abort(
+        "you need to have covar=TRUE in the input to the SS_output function"
+      )
     }
     parameters <- replist[["parameters"]]
     startyr <- replist[["startyr"]]
@@ -100,10 +104,14 @@ SS_fitbiasramp <-
     }
 
     if (!is.numeric(rmse_table[["RMSE"]])) {
-      cli::cli_abort("Input list element 'rmse_table' has non-numeric 'RMSE' column.")
+      cli::cli_abort(
+        "Input list element 'rmse_table' has non-numeric 'RMSE' column."
+      )
     }
     if (max(rmse_table[["RMSE"]]) == 0) {
-      cli::cli_abort("No bias adjustment needed. Root mean squared error of recruit devs is 0.")
+      cli::cli_abort(
+        "No bias adjustment needed. Root mean squared error of recruit devs is 0."
+      )
     }
 
     if (is.null(startvalues)) {
@@ -146,7 +154,9 @@ SS_fitbiasramp <-
       startvalues <- makeoffsets(startvalues)
     }
     if (verbose & transform) {
-      cli::cli_inform("transformed startvalues = {paste(startvalues, collapse = ', ')}")
+      cli::cli_inform(
+        "transformed startvalues = {paste(startvalues, collapse = ', ')}"
+      )
     }
 
     biasadjfit <- function(
@@ -215,7 +225,10 @@ SS_fitbiasramp <-
       if (altmethod == "psoptim") {
         # pso package no longer included by default since this option is rarely used
         if (!requireNamespace("pso", quietly = TRUE)) {
-          cli::cli_abort("Package {pso} is needed for this function to work with the chosen altmethod input. Please install {pso}.", call = NULL)
+          cli::cli_abort(
+            "Package {pso} is needed for this function to work with the chosen altmethod input. Please install {pso}.",
+            call = NULL
+          )
         }
 
         biasadjfit(
@@ -318,7 +331,9 @@ SS_fitbiasramp <-
 
     ylim <- range(recdev_hi, recdev_lo)
     if (verbose) {
-      cli::cli_inform("Now estimating alternative recruitment bias adjustment fraction...")
+      cli::cli_inform(
+        "Now estimating alternative recruitment bias adjustment fraction..."
+      )
     }
     newbias <- optimfun(
       yr = yr,
@@ -425,7 +440,9 @@ SS_fitbiasramp <-
         cli::cli_warn("Problem with convergence, here is output from 'optim':")
         print(newbias)
       }
-      cli::cli_inform("Estimated values: {paste(utils::capture.output(df), collapse = '\n')}")
+      cli::cli_inform(
+        "Estimated values: {paste(utils::capture.output(df), collapse = '\n')}"
+      )
     }
 
     if (plot) {
@@ -500,7 +517,9 @@ SS_fitbiasramp <-
       # write new file
       writeLines(ctlfile, newctl)
       if (verbose) {
-        cli::cli_inform("wrote new file to {newctl} with values {paste(newvals, collapse = ', ')}")
+        cli::cli_inform(
+          "wrote new file to {newctl} with values {paste(newvals, collapse = ', ')}"
+        )
       }
     }
     if (!is.null(plotinfo)) {

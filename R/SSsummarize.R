@@ -60,7 +60,9 @@ SSsummarize <- function(
       !"parameters" %in% names(biglist[[1]])
   ) {
     # or if 1st list seems wrong
-    cli::cli_abort("Input 'biglist' needs to be a list of the lists returned by SS_output(), either by grouping those lists within 'list()', or running SSgetoutput() which calls SS_output() repeatedly and returning a big list in the appropriate format.")
+    cli::cli_abort(
+      "Input 'biglist' needs to be a list of the lists returned by SS_output(), either by grouping those lists within 'list()', or running SSgetoutput() which calls SS_output() repeatedly and returning a big list in the appropriate format."
+    )
   }
 
   # loop over outputs to create list of parameters, derived quantities, and years
@@ -119,12 +121,16 @@ SSsummarize <- function(
     growth <- as.data.frame(matrix(NA, nrow = accuage + 1, ncol = n))
     names(growth) <- modelnames
   } else {
-    cli::cli_warn("problem summarizing growth due to different accumulator ages among models")
+    cli::cli_warn(
+      "problem summarizing growth due to different accumulator ages among models"
+    )
     growth <- NULL
   }
   # check summary biomass age
   if (length(unique(summary_ages)) > 1) {
-    cli::cli_warn("Age used in summary biomass calculations differs among models: {paste(summary_ages, collapse = ' ')}")
+    cli::cli_warn(
+      "Age used in summary biomass calculations differs among models: {paste(summary_ages, collapse = ' ')}"
+    )
   }
   # notes about what runs were used
   sim <- NULL
@@ -193,7 +199,9 @@ SSsummarize <- function(
         ) {
           sizesel <- rbind(sizesel, seltemp_i)
         } else {
-          cli::cli_warn("problem summarizing size selectivity due to mismatched columns (perhaps different bins)")
+          cli::cli_warn(
+            "problem summarizing size selectivity due to mismatched columns (perhaps different bins)"
+          )
         }
       }
       rownames(sizesel) <- 1:nrow(sizesel)
@@ -227,7 +235,9 @@ SSsummarize <- function(
         ) {
           agesel <- rbind(agesel, seltemp_i)
         } else {
-          cli::cli_warn("problem summarizing age selectivity due to mismatched columns (perhaps different bins)")
+          cli::cli_warn(
+            "problem summarizing age selectivity due to mismatched columns (perhaps different bins)"
+          )
         }
       }
       rownames(agesel) <- 1:nrow(agesel)
@@ -294,7 +304,9 @@ SSsummarize <- function(
       ) {
         likelihoods_by_tag_group <- rbind(likelihoods_by_tag_group, liketemp3)
       } else {
-        cli::cli_warn("problem summarizing likelihoods by fleet due to mismatched columns")
+        cli::cli_warn(
+          "problem summarizing likelihoods by fleet due to mismatched columns"
+        )
       }
     }
 
@@ -316,7 +328,9 @@ SSsummarize <- function(
       ] <- parstemp[["Pr_Like"]][ipar]
     }
     if (verbose) {
-      cli::cli_inform("  N active pars = {sum(!is.na(parstemp[['Active_Cnt']]))}")
+      cli::cli_inform(
+        "  N active pars = {sum(!is.na(parstemp[['Active_Cnt']]))}"
+      )
     }
 
     ## compile derived quantities
@@ -604,7 +618,9 @@ SSsummarize <- function(
           0
       )
     ) {
-      cli::cli_warn("years for InitAge parameters differ between models, use InitAgeYrs matrix")
+      cli::cli_warn(
+        "years for InitAge parameters differ between models, use InitAgeYrs matrix"
+      )
     } else {
       pars[["Yr"]][InitAgeRows] <- apply(InitAgeYrs, 1, max, na.rm = TRUE)
     }
@@ -744,7 +760,9 @@ SSsummarize <- function(
               good <- !is.na(x.Yr[, icol])
               if (sum(good) > 1) {
                 # warn if more than 1 value
-                cli::cli_warn("multiple recdevs values associated with year = {Yr}")
+                cli::cli_warn(
+                  "multiple recdevs values associated with year = {Yr}"
+                )
               }
               if (sum(good) == 1) {
                 # put good value into new row
@@ -788,12 +806,14 @@ SSsummarize <- function(
       get("verbose", envir = parent.frame()) &
         deparse(substitute(data)) == "pars"
     ) {
-      cli::cli_inform("For model(s) {paste(fix, collapse = ', ')}, values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for {paste(
+      cli::cli_inform(
+        "For model(s) {paste(fix, collapse = ', ')}, values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for {paste(
           data[oldrows, \"Label\"],
           data[newrows, \"Label\"],
           sep = \" -> \",
           collapse = ', '
-        )}were copied from x -> y.")
+        )}were copied from x -> y."
+      )
     }
     data[newrows, fix] <- data[oldrows, fix]
     return(data)
@@ -876,7 +896,9 @@ SSsummarize <- function(
   # mylist[["lbinspop"]]   <- as.numeric(names(stats[["sizeselex"]])[-(1:5)])
 
   if (verbose) {
-    cli::cli_inform("Summary finished. To avoid printing details above, use 'verbose = FALSE'.")
+    cli::cli_inform(
+      "Summary finished. To avoid printing details above, use 'verbose = FALSE'."
+    )
   }
 
   return(invisible(mylist))

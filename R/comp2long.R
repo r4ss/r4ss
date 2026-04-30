@@ -185,7 +185,9 @@ age2long <- function(x, expand = FALSE, zero = TRUE) {
   ]
   if (expand) {
     if (!is.integer(out[["freq"]])) {
-      cli::cli_abort("expand = TRUE requires composition frequencies to be integers")
+      cli::cli_abort(
+        "expand = TRUE requires composition frequencies to be integers"
+      )
     }
     out <- out[rep(seq_len(nrow(out)), out[["freq"]]), ]
     out[["freq"]] <- 1L
