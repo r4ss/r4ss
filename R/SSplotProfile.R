@@ -167,7 +167,7 @@ SSplotProfile <-
       # create directory if it's missing
       if (!file.exists(plotdir)) {
         if (verbose) {
-          cli::cli_inform("creating directory:{plotdir}")
+          cli::cli_inform("creating directory: {plotdir}")
         }
         dir.create(plotdir, recursive = TRUE)
       }

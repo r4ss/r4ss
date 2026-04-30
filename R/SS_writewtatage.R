@@ -47,12 +47,12 @@ SS_writewtatage <- function(
   }
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_abort("file exists:{outfile} set overwrite=TRUE to replace")
+      cli::cli_abort("file exists: {outfile} set overwrite=TRUE to replace")
     } else {
       file.remove(outfile)
     }
   } else {
-    if (verbose) cli::cli_inform("writing new file:{outfile}")
+    if (verbose) cli::cli_inform("writing new file: {outfile}")
   }
 
   # record current max characters per line and then expand in case of long lines

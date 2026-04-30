@@ -129,7 +129,7 @@ mcmc.out <- function(
   if (!is.null(colNames)) {
     if (length(colNames) != numparams) {
       cli::cli_warn(
-        "numparams argument overidden by length of colNames argument"
+        "numparams argument overridden by length of colNames argument"
       )
     }
     numparams <- length(colNames)

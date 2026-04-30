@@ -49,12 +49,12 @@ SS_writeforecast <- function(
       cli::cli_abort("file exists: {outfile} set overwrite=TRUE to replace")
     } else {
       if (verbose) {
-        cli::cli_inform("overwriting file:{outfile}")
+        cli::cli_inform("overwriting file: {outfile}")
       }
       file.remove(outfile)
     }
   } else {
-    if (verbose) cli::cli_inform("writing new file:{outfile}")
+    if (verbose) cli::cli_inform("writing new file: {outfile}")
   }
 
   # preliminary setup

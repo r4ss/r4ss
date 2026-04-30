@@ -300,7 +300,7 @@ SS_output <-
     }
     repfiletime <- findtime(rephead)
     if (verbose) {
-      cli::cli_inform("Report file time:{repfiletime}")
+      cli::cli_inform("Report file time: {repfiletime}")
     }
 
     # time check for CompReport file
@@ -330,11 +330,11 @@ SS_output <-
           comptime <- findtime(comphead)
           if (is.null(comptime) || is.null(repfiletime)) {
             cli::cli_inform(
-              "problem comparing the file creation times: Report.sso:{repfiletime} CompReport.sso:{comptime}"
+              "problem comparing the file creation times: Report.sso: {repfiletime} CompReport.sso: {comptime}"
             )
           } else {
             if (comptime != repfiletime) {
-              cli::cli_inform("CompReport time:{comptime}")
+              cli::cli_inform("CompReport time: {comptime}")
               cli::cli_abort(
                 "{shortrepfile} and {compfile} were from different model runs."
               )
@@ -522,7 +522,7 @@ SS_output <-
       logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
         cli::cli_inform(
-          "Multiple files in directory match pattern *.log choosing most recently modified file:{logfile_name}"
+          "Multiple files in directory match pattern *.log choosing most recently modified file: {logfile_name}"
         )
       }
     }
@@ -581,7 +581,7 @@ SS_output <-
         # detect empty file
         warnrows <- length(warnlines)
         if (verbose && warnrows > 0) {
-          cli::cli_inform("Got warning file. Final line:{tail(warnlines, 1)}")
+          cli::cli_inform("Got warning file. Final line: {tail(warnlines, 1)}")
         }
       }
     } else {
@@ -1217,7 +1217,7 @@ SS_output <-
         # consider range of bins for conditional age at length data
         if (verbose) {
           cli::cli_inform(
-            "CompReport file separated by this code as follows (rows = Ncomps*Nbins):{if (nrow(lendbase) > 0) {
+            "CompReport file separated by this code as follows (rows = Ncomps*Nbins): {if (nrow(lendbase) > 0) {
               paste(\"  \", nrow(lendbase), \" rows of length comp data\", sep = '')
             }}{if (nrow(sizedbase) > 0) {
               paste(\"  \", nrow(sizedbase), \" rows of generalized size comp data\", sep = '')
@@ -1780,11 +1780,11 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         # the conversion to R time class below may no longer be necessary as strings should match
         if (is.null(covartime) || is.null(repfiletime)) {
           cli::cli_inform(
-            "problem comparing the file creation times: Report.sso:{repfiletime} covar.sso:{covartime}"
+            "problem comparing the file creation times: Report.sso: {repfiletime} covar.sso: {covartime}"
           )
         } else {
           if (covartime != repfiletime) {
-            cli::cli_inform("covar time:{covartime}")
+            cli::cli_inform("covar time: {covartime}")
             cli::cli_abort(
               "{shortrepfile} and {covarfile} were from different model runs. Change input to covar=FALSE"
             )

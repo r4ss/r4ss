@@ -136,7 +136,7 @@ SS_recdevs <-
       }
       if (verbose) {
         cli::cli_inform(
-          "Rescaling recdevs vector so yrs {min(yrs[scaleyrs])}:{max(yrs[scaleyrs])} have mean 0 and std. dev. = sigmaR = {sigmaR}"
+          "Rescaling recdevs vector so yrs {min(yrs[scaleyrs])}: {max(yrs[scaleyrs])} have mean 0 and std. dev. = sigmaR = {sigmaR}"
         )
       }
       newdevs <- sigmaR *

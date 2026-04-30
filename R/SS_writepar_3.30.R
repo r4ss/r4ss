@@ -31,7 +31,7 @@ SS_writepar_3.30 <- function(
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_inform("File exists and input 'overwrite'=FALSE:{outfile}")
+      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
       return()
     } else {
       file.remove(outfile)
