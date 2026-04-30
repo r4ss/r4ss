@@ -811,7 +811,7 @@ SS_readdat_3.30 <-
     datlist[["morphcomp_data"]] <- get.val(dat, ind)
     if (datlist[["morphcomp_data"]]) {
       cli::cli_warn(
-        "Morph comp data not yet supported by SS_readdat_3.30 Please post issue to https://github.com/r4ss/r4ss/issues or email ian.taylor@noaa.govif you want this functionality added."
+        "Morph comp data not yet supported by SS_readdat_3.30 Please post issue to https://github.com/r4ss/r4ss/issues or email ian.taylor@noaa.gov if you want this functionality added."
       )
     }
 

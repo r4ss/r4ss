@@ -226,7 +226,7 @@ SS_fitbiasramp <-
         # pso package no longer included by default since this option is rarely used
         if (!requireNamespace("pso", quietly = TRUE)) {
           cli::cli_abort(
-            "Package {pso} is needed for this function to work with the chosen altmethod input. Please install {pso}.",
+            "Package \"pso\" is needed for this function to work with the chosen altmethod input. Please install \"pso\".",
             call = NULL
           )
         }
