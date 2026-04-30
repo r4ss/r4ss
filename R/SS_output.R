@@ -2312,7 +2312,7 @@ SS_output <-
         as.numeric()
       returndat[["SRRtype"]] <- SRRtype
       # could add number of SR parameters too if desired
-      # but current output labels are SR_Function and N_SRparms 
+      # but current output labels are SR_Function and N_SRparms
       # so inconsistent with "SRR" used above
 
       # Bias adjustment ramp
