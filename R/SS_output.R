@@ -398,9 +398,6 @@ SS_output <-
     custom <- !is.na(match_report_line(string = "report:1", obj = rawrep[, 2]))
 
     if (verbose) {
-      if ((maxnonblank + 1) == ncols) {
-        cli::cli_inform("Got all columns using ncols = {ncols}")
-      }
       if ((maxnonblank + 1) < ncols) {
         cli::cli_inform(
           "Got all columns. To speed code, use ncols = {maxnonblank + 1} in the future."
@@ -982,7 +979,7 @@ SS_output <-
         duplicates <- compdbase |>
           dplyr::select(-Cum_obs, -Cum_exp) |>
           duplicated()
-        if (verbose) {
+        if (verbose & sum(duplicates) > 0) {
           cli::cli_inform(
             "Removing {sum(duplicates)} out of {nrow(compdbase)} rows in CompReport.sso which are duplicates."
           )
@@ -1216,33 +1213,74 @@ SS_output <-
         tagdbase2 <- compdbase[compdbase[["Kind"]] == "TAG2", ]
         # consider range of bins for conditional age at length data
         if (verbose) {
-          cli::cli_inform(
-            "CompReport file separated by this code as follows (rows = Ncomps*Nbins): {if (nrow(lendbase) > 0) {
-              paste(\"  \", nrow(lendbase), \" rows of length comp data\", sep = '')
-            }}{if (nrow(sizedbase) > 0) {
-              paste(\"  \", nrow(sizedbase), \" rows of generalized size comp data\", sep = '')
-            }}{if (nrow(agedbase) > 0) {
-              paste(\"  \", nrow(agedbase), \" rows of age comp data\", sep = '')
-            }}{if (nrow(condbase) > 0) {
-              paste(\"  \", nrow(condbase), \" rows of conditional age-at-length data\", sep = '')
-            }}{if (nrow(ghostagedbase) > 0) {
-              paste(\"  \", nrow(ghostagedbase), \" rows of ghost fleet age comp data\", sep = '')
-            }}{if (nrow(ghostcondbase) > 0) {
-              paste(\"  \", nrow(ghostcondbase), \" rows of ghost fleet conditional age-at-length data\", sep = '')
-            }}{if (nrow(ghostlendbase) > 0) {
-              paste(\"  \", nrow(ghostlendbase), \" rows of ghost fleet length comp data\", sep = '')
-            }}{if (nrow(ladbase) > 0) {
-              paste(\"  \", nrow(ladbase), \" rows of mean length at age data\", sep = '')
-            }}{if (nrow(wadbase) > 0) {
-              paste(\"  \", nrow(wadbase), \" rows of mean weight at age data\", sep = '')
-            }}{if (nrow(tagdbase1) > 0) {
-              paste(\"  \", nrow(tagdbase1), \" rows of 'TAG1' comp data\", sep = '')
-            }}{if (nrow(tagdbase2) > 0) {
-              paste(\"  \", nrow(tagdbase2), \" rows of 'TAG2' comp data\", sep = '')
-            }}{if (nrow(morphcompdbase) > 0) {
-              paste(\"  \", nrow(morphcompdbase), \" rows of morph comp data\", sep = '')
-            }}"
-          )
+          comp_message <- c("v" = "CompReport file separated by this code as follows (rows = Ncomps*Nbins):")
+          if (nrow(lendbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(lendbase)} row{?s} of length comp data,")
+            )
+          }
+          if (nrow(sizedbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(sizedbase)} row{?s} of generalized size comp data,")
+            )
+          }
+          if (nrow(agedbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(agedbase)} row{?s} of age comp data,")
+            )
+          }
+          if (nrow(condbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(condbase)} row{?s} of conditional age-at-length data,")
+            )
+          }
+          if (nrow(ghostagedbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(ghostagedbase)} row{?s} of ghost fleet age comp data,")
+            )
+          }
+          if (nrow(ghostcondbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(ghostcondbase)} row{?s} of ghost fleet conditional age-at-length data,")
+            )
+          }
+          if (nrow(ghostlendbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(ghostlendbase)} row{?s} of ghost fleet length comp data,")
+            )
+          }
+          if (nrow(ladbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(ladbase)} row{?s} of mean length at age data,")
+            )
+          }
+          if (nrow(wadbase) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(wadbase)} row{?s} of mean weight at age data,")
+            )
+          }
+          if (nrow(tagdbase1) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(tagdbase1)} row{?s} of 'TAG1' comp data, and")
+            )
+          }
+          if (nrow(tagdbase2) > 0) {
+            comp_message <- c(
+              comp_message,
+              c("*" = "{nrow(tagdbase2)} row{?s} of 'TAG2' comp data.")
+            )
+          }
+          cli::cli_inform(comp_message)
         }
         # convert bin indices to true lengths
         if (nrow(agedbase) > 0) {
@@ -2981,9 +3019,6 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
       sd = jitter_info[["sigma"]]
     )
 
-    if (verbose) {
-      cli::cli_inform("Finished primary run statistics list")
-    }
     flush.console()
 
     # add stuff to list to return
@@ -3704,7 +3739,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
       if (file.exists(file.path(dir, "starter.ss"))) {
         starter <- SS_readstarter(
           file = file.path(dir, "starter.ss"),
-          verbose = verbose
+          verbose = FALSE
         )
         depletion_multiplier <- starter[["depl_denom_frac"]]
       } else {
