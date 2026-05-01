@@ -1,4 +1,4 @@
-# r4ss (development version)
+# r4ss 1.54.0 (April 2026)
 * Replace base R `message()`, `warning()`, and `stop()` calls with `{cli}` equivalents (`cli::cli_inform()`, `cli::cli_warn()`, and `cli::cli_abort()`) throughout the package for improved message formatting.
 * Change default value of `printstats` in `SS_output()` from `TRUE` to `FALSE` to reduce console output.
 
