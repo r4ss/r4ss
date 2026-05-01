@@ -1,6 +1,6 @@
 # Changelog
 
-## r4ss (development version)
+## r4ss 1.54.0 (April 2026)
 
 - Replace base R [`message()`](https://rdrr.io/r/base/message.html),
   [`warning()`](https://rdrr.io/r/base/warning.html), and
