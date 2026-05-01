@@ -1213,7 +1213,9 @@ SS_output <-
         tagdbase2 <- compdbase[compdbase[["Kind"]] == "TAG2", ]
         # consider range of bins for conditional age at length data
         if (verbose) {
-          comp_message <- c("v" = "CompReport file separated by this code as follows (rows = Ncomps*Nbins):")
+          comp_message <- c(
+            "v" = "CompReport file separated by this code as follows (rows = Ncomps*Nbins):"
+          )
           if (nrow(lendbase) > 0) {
             comp_message <- c(
               comp_message,
@@ -1223,7 +1225,9 @@ SS_output <-
           if (nrow(sizedbase) > 0) {
             comp_message <- c(
               comp_message,
-              c("*" = "{nrow(sizedbase)} row{?s} of generalized size comp data,")
+              c(
+                "*" = "{nrow(sizedbase)} row{?s} of generalized size comp data,"
+              )
             )
           }
           if (nrow(agedbase) > 0) {
@@ -1235,25 +1239,33 @@ SS_output <-
           if (nrow(condbase) > 0) {
             comp_message <- c(
               comp_message,
-              c("*" = "{nrow(condbase)} row{?s} of conditional age-at-length data,")
+              c(
+                "*" = "{nrow(condbase)} row{?s} of conditional age-at-length data,"
+              )
             )
           }
           if (nrow(ghostagedbase) > 0) {
             comp_message <- c(
               comp_message,
-              c("*" = "{nrow(ghostagedbase)} row{?s} of ghost fleet age comp data,")
+              c(
+                "*" = "{nrow(ghostagedbase)} row{?s} of ghost fleet age comp data,"
+              )
             )
           }
           if (nrow(ghostcondbase) > 0) {
             comp_message <- c(
               comp_message,
-              c("*" = "{nrow(ghostcondbase)} row{?s} of ghost fleet conditional age-at-length data,")
+              c(
+                "*" = "{nrow(ghostcondbase)} row{?s} of ghost fleet conditional age-at-length data,"
+              )
             )
           }
           if (nrow(ghostlendbase) > 0) {
             comp_message <- c(
               comp_message,
-              c("*" = "{nrow(ghostlendbase)} row{?s} of ghost fleet length comp data,")
+              c(
+                "*" = "{nrow(ghostlendbase)} row{?s} of ghost fleet length comp data,"
+              )
             )
           }
           if (nrow(ladbase) > 0) {
