@@ -66,6 +66,7 @@ run <- function(
     )
   }
 
+  # Reset Working directory on function exit
   wd_orig <- getwd()
   on.exit(setwd(wd_orig), add = TRUE)
 
@@ -73,83 +74,89 @@ run <- function(
   check_exe_results <- check_exe(dir = dir, exe = exe, verbose = verbose)
   command <- check_exe_results[["exe"]]
 
-  # confirm that dir exists
+  # dir validation
+  # Give a WARNING if dir does not exist, and exit function
   if (!dir.exists(dir)) {
     cli::cli_warn("not a directory: {dir}")
     results <- "not a directory"
-  } else {
-    if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
-      # skip directories that have results in them
-      cli::cli_inform(
-        "Skipping {dir} because it contains a Report.sso file and skipfinished = TRUE"
-      )
-      results <- "contained Report.sso"
-    } else {
-      # run model
-      setwd(dir) # change working directory
-      # provide some messages
-      if (verbose) {
-        cli::cli_inform(
-          "Changing working directory to {dir} and running model using the command: {command} {extras}"
-        )
-      }
-      if (!show_in_console && verbose) {
-        cli::cli_inform(
-          "Input 'show_in_console' = FALSE, so writing console output to {console_output_file}"
-        )
-      }
-      # call system2() to actually run the model
-      console_output <- tryCatch(
-        system2(
-          command = command,
-          args = extras,
-          stdout = ifelse(show_in_console, "", TRUE),
-          stderr = ""
-        ),
-        error = function(err) {
-          if (grepl("'CreateProcess' failed to run", err)) {
-            cli::cli_abort(
-              "There is a problem with the SS3 executable, perhaps due to mismatch with the operating system. Please make sure that you have the correct executable and it is named appropriately for your operating system"
-            )
-          } else {
-            err
-          }
-        }
-      )
 
-      # write console output to file if not shown in console
-      if (!show_in_console) {
-        writeLines(
-          c(
-            "###",
-            "console output",
-            as.character(Sys.time()),
-            "###",
-            " ",
-            console_output
-          ),
-          con = console_output_file
+    return(results)
+  }
+
+  # Skip directory that have report results files (if enabled), and then exit function
+  if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
+    cli::cli_inform(
+      "Skipping {dir} because it contains a Report.sso file and skipfinished = TRUE"
+    )
+    results <- "contained Report.sso"
+
+    return(results)
+  }
+
+  # run model
+  setwd(dir) # change working directory
+  # provide some messages
+  if (verbose) {
+    cli::cli_inform(
+      "Changing working directory to {dir} and running model using the command: {command} {extras}"
+    )
+  }
+  if (!show_in_console && verbose) {
+    cli::cli_inform(
+      "Input 'show_in_console' = FALSE, so writing console output to {console_output_file}"
+    )
+  }
+
+  # call system2() to actually run the model
+  console_output <- tryCatch(
+    system2(
+      command = command,
+      args = extras,
+      stdout = ifelse(show_in_console, "", TRUE),
+      stderr = ""
+    ),
+    error = function(err) {
+      if (grepl("'CreateProcess' failed to run", err)) {
+        cli::cli_abort(
+          "There is a problem with the SS3 executable, perhaps due to mismatch with the operating system. Please make sure that you have the correct executable and it is named appropriately for your operating system"
         )
-        if (verbose) {
-          cli::cli_inform("console output written to {console_output_file}")
-        }
+      } else {
+        err
       }
-      # determine if run finished
-      # console_output will either be a character vector of all the
-      # lines of output, or a code returned by system2() which will be
-      # 0 if the run completed with no issues
-      # various other possible codes if the run fails
-      results <- dplyr::case_when(
-        any(grepl("Run has completed", tail(console_output, 5))) ~ "ran model", # 3.30.19 and earlier
-        any(grepl("Finished running model", tail(console_output, 5))) ~
-          "ran model", # 3.30.20 format
-        any(grepl("Fatal Error", tail(console_output, 5))) ~ "model run failed",
-        console_output[1] == 0 ~ "ran model",
-        console_output[1] > 0 ~ "model run failed",
-        TRUE ~ "unknown run status"
-      )
-    } # end model run
-  } # end code for exe present
+    }
+  )
+
+  # write console output to file if not shown in console
+  if (!show_in_console) {
+    writeLines(
+      c(
+        "###",
+        "console output",
+        as.character(Sys.time()),
+        "###",
+        " ",
+        console_output
+      ),
+      con = console_output_file
+    )
+    if (verbose) {
+      cli::cli_inform("console output written to {console_output_file}")
+    }
+  }
+  # determine if run finished
+  # console_output will either be a character vector of all the
+  # lines of output, or a code returned by system2() which will be
+  # 0 if the run completed with no issues
+  # various other possible codes if the run fails
+  results <- dplyr::case_when(
+    any(grepl("Run has completed", tail(console_output, 5))) ~ "ran model", # 3.30.19 and earlier
+    any(grepl("Finished running model", tail(console_output, 5))) ~
+      "ran model", # 3.30.20 format
+    any(grepl("Fatal Error", tail(console_output, 5))) ~ "model run failed",
+    console_output[1] == 0 ~ "ran model",
+    console_output[1] > 0 ~ "model run failed",
+    TRUE ~ "unknown run status"
+  )
 
   return(results)
 }

@@ -6,7 +6,7 @@
 \alias{r4ss-package}
 \title{r4ss: R Code for Stock Synthesis}
 \description{
-\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
 A collection of R functions for use with Stock Synthesis, a fisheries stock assessment modeling platform written in ADMB by Dr. Richard D. Methot at the NOAA Northwest Fisheries Science Center. The functions include tools for summarizing and plotting results, manipulating files, visualizing model parameterizations, and various other common stock assessment tasks. This version of '{r4ss}' is compatible with Stock Synthesis versions 3.24 through 3.30 (specifically version 3.30.24.00-prerel, from July 2025). Support for 3.24 models is only through the core functions for reading output and plotting.
 }
@@ -44,6 +44,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Ian G. Taylor \email{Ian.Taylor@noaa.gov}
   \item Ian J. Stewart
   \item Allan C. Hicks
   \item Tommy M. Garrison

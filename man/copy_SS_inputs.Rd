@@ -72,13 +72,13 @@ unlink(test, recursive = TRUE)
 
 }
 \seealso{
-Other run functions: 
-\code{\link{jitter}()},
-\code{\link{populate_multiple_folders}()},
-\code{\link{profile}()},
-\code{\link{retro}()},
-\code{\link{run}()},
-\code{\link{tune_comps}()}
+Other run functions:
+\code{\link[=jitter]{jitter()}},
+\code{\link[=populate_multiple_folders]{populate_multiple_folders()}},
+\code{\link[=profile]{profile()}},
+\code{\link[=retro]{retro()}},
+\code{\link[=run]{run()}},
+\code{\link[=tune_comps]{tune_comps()}}
 }
 \author{
 Ian G. Taylor
