@@ -9,7 +9,9 @@ get_comments(dat, defaultComments = NULL)
 }
 \arguments{
 \item{dat}{vector of strings usually outputs of readLines(*)
-* is filename of datfile, ctlfile etc}
+\itemize{
+\item is filename of datfile, ctlfile etc
+}}
 
 \item{defaultComments}{vector of strings
 default : NULL, to read whole comments

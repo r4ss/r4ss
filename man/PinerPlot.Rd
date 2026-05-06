@@ -178,9 +178,9 @@ Kevin Piner says that he's not the originator of this idea so
 Athol Whitten is going to add a reference here.
 }
 \seealso{
-Other profile functions: 
-\code{\link{SSplotProfile}()},
-\code{\link{profile}()}
+Other profile functions:
+\code{\link[=SSplotProfile]{SSplotProfile()}},
+\code{\link[=profile]{profile()}}
 }
 \author{
 Ian G. Taylor, Kevin R. Piner, James T. Thorson

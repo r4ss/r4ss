@@ -346,10 +346,10 @@ SSplotComparisons(mod.sum,
 
 }
 \seealso{
-Other model comparison functions: 
-\code{\link{SSgetoutput}()},
-\code{\link{SSsummarize}()},
-\code{\link{SStableComparisons}()}
+Other model comparison functions:
+\code{\link[=SSgetoutput]{SSgetoutput()}},
+\code{\link[=SSsummarize]{SSsummarize()}},
+\code{\link[=SStableComparisons]{SStableComparisons()}}
 }
 \author{
 Ian G. Taylor, John R. Wallace
