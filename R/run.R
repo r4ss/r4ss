@@ -66,6 +66,7 @@ run <- function(
     )
   }
 
+  # Reset Working directory on function exit
   wd_orig <- getwd()
   on.exit(setwd(wd_orig), add = TRUE)
 
