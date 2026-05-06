@@ -26,6 +26,8 @@ Useful links:
 
 Authors:
 
+- Ian G. Taylor <Ian.Taylor@noaa.gov>
+
 - Ian J. Stewart
 
 - Allan C. Hicks

@@ -14,8 +14,9 @@ get_comments(dat, defaultComments = NULL)
 
 - dat:
 
-  vector of strings usually outputs of readLines(\*) \* is filename of
-  datfile, ctlfile etc
+  vector of strings usually outputs of readLines(\*)
+
+  - is filename of datfile, ctlfile etc
 
 - defaultComments:
 

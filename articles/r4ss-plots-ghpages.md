@@ -70,14 +70,10 @@ SS_plots(simple_small)
 #> Starting parameter distribution plots (group 25)
 #> Excluding 22 deviation parameters because input 'showdev' = FALSE
 #> Plotting distributions for 10 estimated parameters (deviations not included).
-#> ℹ saving file to /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/parameter_distributions_page1.png
-#> 
-#> ℹ saving file to /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/parameter_distributions_page2.png
-#> 
 #> Finished all requested plots in SS_plots function
 #> Starting diagnostic tables (group 26)
 #> Wrote table of info on PNG files to:
-#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_06-05-2026_16.21.14.8660.csv
+#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_06-05-2026_18.38.06.1166.csv
 #> Running 'SS_html': By default, this function will look in the directory where
 #> PNG files were created for CSV files with the name 'plotInfoTable...' written
 #> by 'SS_plots.' HTML files are written to link to these plots and put in the
