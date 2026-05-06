@@ -681,7 +681,7 @@ SSplotPars <-
         }
         # define filename
         file <- paste0("parameter_distributions", pagetext, ".png", sep = "")
-        cli::cli_alert_info("saving file to {plotdir}/{file}")
+        # cli::cli_alert_info("saving file to {plotdir}/{file}")
         # start png file and add to plotinfo
         plotinfo <- save_png(
           plotinfo = plotinfo,
