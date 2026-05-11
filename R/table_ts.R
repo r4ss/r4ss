@@ -35,7 +35,6 @@ table_ts <- function(
     ),
     "tables"
   )
-  dir.create(rda_dir, showWarnings = FALSE)
   check_dir(dir = rda_dir, verbose = verbose)
 
   table <- replist[["annual_time_series"]] |>

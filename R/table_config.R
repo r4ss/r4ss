@@ -35,7 +35,6 @@ table_config <- function(replist, dir = NULL, verbose = TRUE) {
     ),
     "tables"
   )
-  dir.create(rda_dir, showWarnings = FALSE)
   check_dir(dir = rda_dir)
 
   table <- data.frame(

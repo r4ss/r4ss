@@ -27,7 +27,6 @@ table_pars <- function(
     ),
     "tables"
   )
-  dir.create(rda_dir, showWarnings = FALSE)
   check_dir(dir = rda_dir)
 
   # Find sigma R

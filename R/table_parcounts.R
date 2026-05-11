@@ -41,7 +41,6 @@ table_parcounts <- function(
     ),
     "tables"
   )
-  dir.create(rda_dir, showWarnings = FALSE)
   check_dir(dir = rda_dir)
 
   get_labs <- function(table) {

@@ -71,7 +71,6 @@ table_exec_summary <- function(
     ),
     "tables"
   )
-  dir.create(rda_dir, showWarnings = FALSE)
   check_dir(dir = rda_dir, verbose = verbose)
   # write the table to an rda file
   if (verbose) {
