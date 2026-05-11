@@ -108,18 +108,7 @@ SS_readforecast <- function(
     ind
   }
 
-  #' Function to add data as data.frame to forelist
-  #' @param forelist list to which the data frame should be added
-  #' @param nrows number of rows in the data frame; if NULL, will be
-  #' determined by finding the next line with str in it
-  #' @param ncol number of columns in the data frame
-  #' @param col.names column names for the data frame
-  #' @param name name of the data frame to be added to forelist
-  #' @param comments optional vector of comments to be used as row names;
-  #' if NULL, row names will be generated as #_name_1, #_name_2, etc.
-  #' @param str string to be used to find the end of the data frame
-  #' if nrows is NULL; default is "-9999" with partial matching so
-  #' str = "-999" will also match "-9999".
+  # Function to add data as data.frame to forelist
   add_df <- function(
     forelist,
     nrows = NULL,
