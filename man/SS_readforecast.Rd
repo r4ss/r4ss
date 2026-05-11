@@ -34,30 +34,23 @@ The default is \code{version = "3.30"}.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
-
-\item{forelist}{list to which the data frame should be added}
-
-\item{nrows}{number of rows in the data frame; if NULL, will be
-determined by finding the next line with str in it}
-
-\item{ncol}{number of columns in the data frame}
-
-\item{col.names}{column names for the data frame}
-
-\item{name}{name of the data frame to be added to forelist}
-
-\item{comments}{optional vector of comments to be used as row names;
-if NULL, row names will be generated as #_name_1, #_name_2, etc.}
-
-\item{str}{string to be used to find the end of the data frame
-if nrows is NULL; default is "-9999" with partial matching so
-str = "-999" will also match "-9999".}
 }
 \description{
 read Stock Synthesis forecast file into list object in R
 }
+\seealso{
+Other read/write functions:
+\code{\link[=SS_read]{SS_read()}},
+\code{\link[=SS_readctl]{SS_readctl()}},
+\code{\link[=SS_readdat]{SS_readdat()}},
+\code{\link[=SS_readstarter]{SS_readstarter()}},
+\code{\link[=SS_write]{SS_write()}},
+\code{\link[=SS_writectl]{SS_writectl()}},
+\code{\link[=SS_writedat]{SS_writedat()}},
+\code{\link[=SS_writeforecast]{SS_writeforecast()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}}
+}
 \author{
 Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan
 }
-\concept{read/write functions
-Function to add data as data.frame to forelist}
+\concept{read/write functions}
