@@ -92,20 +92,39 @@ The default is <code>version = "3.30"</code>.</p></dd>
 <dd><p>A logical value specifying if output should be printed
 to the screen.</p></dd>
 
+
+<dt id="arg-forelist">forelist<a class="anchor" aria-label="anchor" href="#arg-forelist"></a></dt>
+<dd><p>list to which the data frame should be added</p></dd>
+
+
+<dt id="arg-nrows">nrows<a class="anchor" aria-label="anchor" href="#arg-nrows"></a></dt>
+<dd><p>number of rows in the data frame; if NULL, will be
+determined by finding the next line with str in it</p></dd>
+
+
+<dt id="arg-ncol">ncol<a class="anchor" aria-label="anchor" href="#arg-ncol"></a></dt>
+<dd><p>number of columns in the data frame</p></dd>
+
+
+<dt id="arg-col-names">col.names<a class="anchor" aria-label="anchor" href="#arg-col-names"></a></dt>
+<dd><p>column names for the data frame</p></dd>
+
+
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
+<dd><p>name of the data frame to be added to forelist</p></dd>
+
+
+<dt id="arg-comments">comments<a class="anchor" aria-label="anchor" href="#arg-comments"></a></dt>
+<dd><p>optional vector of comments to be used as row names;
+if NULL, row names will be generated as #_name_1, #_name_2, etc.</p></dd>
+
+
+<dt id="arg-str">str<a class="anchor" aria-label="anchor" href="#arg-str"></a></dt>
+<dd><p>string to be used to find the end of the data frame
+if nrows is NULL; default is "-9999" with partial matching so
+str = "-999" will also match "-9999".</p></dd>
+
 </dl></div>
-    <div class="section level2">
-    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Other read/write functions:
-<code><a href="SS_read.html">SS_read()</a></code>,
-<code><a href="SS_readctl.html">SS_readctl()</a></code>,
-<code><a href="SS_readdat.html">SS_readdat()</a></code>,
-<code><a href="SS_readstarter.html">SS_readstarter()</a></code>,
-<code><a href="SS_write.html">SS_write()</a></code>,
-<code><a href="SS_writectl.html">SS_writectl()</a></code>,
-<code><a href="SS_writedat.html">SS_writedat()</a></code>,
-<code><a href="SS_writeforecast.html">SS_writeforecast()</a></code>,
-<code><a href="SS_writestarter.html">SS_writestarter()</a></code></p></div>
-    </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Ian G. Taylor, Kelli F. Johnson, Kathryn L. Doering, Nathan R. Vaughan</p>

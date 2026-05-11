@@ -69,7 +69,6 @@ used to write the input files using the list created by this function.
 Other read/write functions:
 [`SS_readctl()`](https://r4ss.github.io/r4ss/reference/SS_readctl.md),
 [`SS_readdat()`](https://r4ss.github.io/r4ss/reference/SS_readdat.md),
-[`SS_readforecast()`](https://r4ss.github.io/r4ss/reference/SS_readforecast.md),
 [`SS_readstarter()`](https://r4ss.github.io/r4ss/reference/SS_readstarter.md),
 [`SS_write()`](https://r4ss.github.io/r4ss/reference/SS_write.md),
 [`SS_writectl()`](https://r4ss.github.io/r4ss/reference/SS_writectl.md),

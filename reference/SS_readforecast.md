@@ -51,18 +51,37 @@ SS_readforecast(
 
   A logical value specifying if output should be printed to the screen.
 
-## See also
+- forelist:
 
-Other read/write functions:
-[`SS_read()`](https://r4ss.github.io/r4ss/reference/SS_read.md),
-[`SS_readctl()`](https://r4ss.github.io/r4ss/reference/SS_readctl.md),
-[`SS_readdat()`](https://r4ss.github.io/r4ss/reference/SS_readdat.md),
-[`SS_readstarter()`](https://r4ss.github.io/r4ss/reference/SS_readstarter.md),
-[`SS_write()`](https://r4ss.github.io/r4ss/reference/SS_write.md),
-[`SS_writectl()`](https://r4ss.github.io/r4ss/reference/SS_writectl.md),
-[`SS_writedat()`](https://r4ss.github.io/r4ss/reference/SS_writedat.md),
-[`SS_writeforecast()`](https://r4ss.github.io/r4ss/reference/SS_writeforecast.md),
-[`SS_writestarter()`](https://r4ss.github.io/r4ss/reference/SS_writestarter.md)
+  list to which the data frame should be added
+
+- nrows:
+
+  number of rows in the data frame; if NULL, will be determined by
+  finding the next line with str in it
+
+- ncol:
+
+  number of columns in the data frame
+
+- col.names:
+
+  column names for the data frame
+
+- name:
+
+  name of the data frame to be added to forelist
+
+- comments:
+
+  optional vector of comments to be used as row names; if NULL, row
+  names will be generated as \#\_name_1, \#\_name_2, etc.
+
+- str:
+
+  string to be used to find the end of the data frame if nrows is NULL;
+  default is "-9999" with partial matching so str = "-999" will also
+  match "-9999".
 
 ## Author
 
