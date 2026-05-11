@@ -39,7 +39,6 @@ Other read/write functions:
 \code{\link[=SS_read]{SS_read()}},
 \code{\link[=SS_readctl]{SS_readctl()}},
 \code{\link[=SS_readdat]{SS_readdat()}},
-\code{\link[=SS_readforecast]{SS_readforecast()}},
 \code{\link[=SS_readstarter]{SS_readstarter()}},
 \code{\link[=SS_write]{SS_write()}},
 \code{\link[=SS_writedat]{SS_writedat()}},
