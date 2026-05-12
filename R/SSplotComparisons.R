@@ -2245,7 +2245,7 @@ SSplotComparisons <-
       if (legend) {
         # add legend if requested
         add_legend(
-          legendlabels,
+          legendlabels2,
           legendloc = legendloc,
           legendorder = legendorder,
           legendncol = legendncol,
