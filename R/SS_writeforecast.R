@@ -79,7 +79,9 @@ SS_writeforecast <- function(
     # increase max.print
     if (nrow(dataframe) > 0.5 * getOption("max.print")) {
       if (verbose) {
-        cli::cli_inform("setting `options(max.print = {100 * nrow(dataframe) + 1})` to accommodate large output")
+        cli::cli_inform(
+          "setting `options(max.print = {100 * nrow(dataframe) + 1})` to accommodate large output"
+        )
       }
       old.max.print <- getOption("max.print")
       options(max.print = 100 * nrow(dataframe) + 1)
