@@ -76,8 +76,27 @@ SS_writeforecast <- function(
     if (is.character(dataframe)) {
       dataframe <- mylist[names(mylist) == dataframe][[1]]
     }
+    # increase max.print
+    if (nrow(dataframe) > 0.5 * getOption("max.print")) {
+      if (verbose) {
+        cli::cli_inform(
+          "setting `options(max.print = {100 * nrow(dataframe) + 1})` to accommodate large output"
+        )
+      }
+      old.max.print <- getOption("max.print")
+      options(max.print = 100 * nrow(dataframe) + 1)
+    }
     names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
     print.data.frame(dataframe, row.names = FALSE, strip.white = TRUE)
+    # restore old max.print
+    if (exists("old.max.print")) {
+      if (verbose) {
+        cli::cli_inform(
+          "restoring old value `options(max.print = {old.max.print})`"
+        )
+      }
+      options(max.print = old.max.print)
+    }
   }
 
   SSversion <- mylist[["SSversion"]]
