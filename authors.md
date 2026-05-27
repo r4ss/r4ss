@@ -83,7 +83,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/r4ss/r4ss/blob/v1.54.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/r4ss/r4ss/blob/main/inst/CITATION)
 
 Taylor, I.G., Doering, K.L., Johnson, K.F., Wetzel, C.R., Stewart, I.J.,
 2021. Beyond visualizing catch-at-age models: Lessons learned from the
