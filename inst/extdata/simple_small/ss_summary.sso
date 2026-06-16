@@ -1,8 +1,8 @@
 #V3.30.24.2;_safe;_compile_date:_Mar  9 2026;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 data.ss #_DataFile 
 control.ss #_Control 
-Run_Date: Thu Apr  9 09:53:43 2026
-Final_phase: 5  N_iterations: 249
+Run_Date: Tue Jun 16 09:37:27 2026
+Final_phase: 5  N_iterations: 268
 #_LIKELIHOOD 
 Label logL*Lambda
 TOTAL_LogL 754.302
@@ -14,7 +14,7 @@ Age_comp 231.845
 Size_at_age 162.399
 Recruitment 0.244061
 InitEQ_regime 0
-Sum_recdevs 0
+Sum_recdevs 2.77556e-17
 Forecast_Recruitment 0
 Parm_priors 0
 Parm_softbounds 0.00141332
@@ -26,7 +26,7 @@ Crash_Pen 0
 #_BIOLOGY
 NatM_uniform_Fem_GP_1 0.1 0 Fix 0.499995
 L_at_Amin_Fem_GP_1 22.769 0.949944 Act 0.364828
-L_at_Amax_Fem_GP_1 71.8072 0.850217 Act 0.636144
+L_at_Amax_Fem_GP_1 70.3116 0.661479 Act 0.606232
 VonBert_K_Fem_GP_1 0.142165 0.00898892 Act 0.460822
 CV_young_Fem_GP_1 0.1 0 Fix 0.249999
 CV_old_Fem_GP_1 0.1 0 Fix 0.249999
@@ -175,7 +175,7 @@ F_2020 0.37618 0.0740767
 F_2021 0.33635 0.072379
 F_2022 0.226617 0.0516935
 F_2023 0.0405108 0.00855829
-F_2024 0.0466812 0.00714308
+F_2024 0.0466811 0.00714308
 F_2025 0.051486 0.00624393
 F_2026 0.0553062 0.00569585
 F_2027 0.0583986 0.00547826
