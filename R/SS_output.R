@@ -3299,8 +3299,6 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     Growth_Parameters <- match_report_table(
       "Growth_Parameters",
       1,
-      "Growth_Parameters",
-      1 + ngpatterns * nsexes,
       header = TRUE,
       type.convert = TRUE
     )
@@ -3418,9 +3416,35 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
           growthvaries <- TRUE
         }
       }
-      returndat[["growthseries"]] <- mean_size
       returndat[["growthvaries"]] <- growthvaries
+      returndat[["growthseries"]] <- mean_size
+      # copy the dataframe to a more intuitive name
+      # (note that this apparently doesn't increase memory use)
+      returndat[["mean_size_timeseries"]] <- mean_size
     }
+
+    # read new table of mean_size_by_cohort
+    mean_size_by_cohort <- match_report_table(
+      "mean_size_by_cohort",
+      1,
+      header = TRUE
+    )
+    returndat[["mean_size_by_cohort"]] <- mean_size_by_cohort
+
+    # mean_size_Jan_1 by sex
+    mean_size_Jan_1 <- match_report_table(
+      "mean_size_Jan_1_for_sex:",
+      1,
+      blank_lines = rep_blank_lines,
+      header = TRUE
+    )
+    if (!is.null(mean_size_Jan_1) && nsexes > 1) {
+      # filter out additional header and "#" rows in between tables for each sex
+      mean_size_Jan_1 <- mean_size_Jan_1 |> dplyr::filter(Sex %in% 1:nsexes)
+      # convert all columns to numeric
+      mean_size_Jan_1 <- type.convert(mean_size_Jan_1, as.is = TRUE)
+    }
+    returndat[["mean_size_Jan_1"]] <- mean_size
 
     # Length-based selectivity and retention
     if (!forecast) {
