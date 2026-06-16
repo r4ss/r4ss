@@ -1,5 +1,17 @@
 # Changelog
 
+## r4ss 1.55.0 (June 2026)
+
+- Adds support for tables of mean size at age:
+  - “\$mean_size_by_cohort” is new output starting with SS3 version
+    3.30.25
+  - “\$mean_size_Jan_1” was available in Report.sso previously but is
+    now parsed by
+    [`SS_output()`](https://r4ss.github.io/r4ss/reference/SS_output.md)
+  - “\$mean_size_timeseries" is identical to the table "\$growthseries”
+    which has always been available in r4ss, but the new name will make
+    it easier to keep track of along side the other tables
+
 ## r4ss 1.54.0 (April 2026)
 
 - Replace base R [`message()`](https://rdrr.io/r/base/message.html),

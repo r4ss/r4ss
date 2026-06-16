@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">r4ss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.54.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.55.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,15 @@
       <small>Source: <a href="https://github.com/r4ss/r4ss/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.55.0" id="r4ss-1550-june-2026">r4ss 1.55.0 (June 2026)<a class="anchor" aria-label="anchor" href="#r4ss-1550-june-2026"></a></h2>
+<ul><li>Adds support for tables of mean size at age:
+<ul><li>“$mean_size_by_cohort” is new output starting with SS3 version 3.30.25</li>
+<li>“$mean_size_Jan_1” was available in Report.sso previously but is now parsed by <code><a href="../reference/SS_output.html">SS_output()</a></code>
+</li>
+<li>“<span class="math inline">$mean_size_timeseries" is identical to the table "$</span>growthseries” which has always been available in r4ss, but the new name will make it easier to keep track of along side the other tables</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.54.0" id="r4ss-1540-april-2026">r4ss 1.54.0 (April 2026)<a class="anchor" aria-label="anchor" href="#r4ss-1540-april-2026"></a></h2>
 <ul><li>Replace base R <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>, <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>, and <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> calls with <a href="https://cli.r-lib.org" class="external-link">cli</a> equivalents (<code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_inform()</a></code>, <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_warn()</a></code>, and <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_abort()</a></code>) throughout the package for improved message formatting.</li>
