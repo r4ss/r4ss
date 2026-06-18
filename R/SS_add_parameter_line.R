@@ -32,7 +32,7 @@
 #'   Block_Fxn = 1
 #' )
 #'
-#' size_selex_new <- add_parameter_line(
+#' size_selex_new <- SS_add_parameter_line(
 #'   par_df = inputs[["ctl"]][["size_selex_parms"]],
 #'   row_to_copy = 1,
 #'   row_before = "P_2_FISH",
