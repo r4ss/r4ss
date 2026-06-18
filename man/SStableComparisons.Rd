@@ -56,10 +56,10 @@ reduction of the full information in various parts of the list created using
 the \code{SSsummarize} function.
 }
 \seealso{
-Other model comparison functions: 
-\code{\link{SSgetoutput}()},
-\code{\link{SSplotComparisons}()},
-\code{\link{SSsummarize}()}
+Other model comparison functions:
+\code{\link[=SSgetoutput]{SSgetoutput()}},
+\code{\link[=SSplotComparisons]{SSplotComparisons()}},
+\code{\link[=SSsummarize]{SSsummarize()}}
 }
 \author{
 Ian Taylor

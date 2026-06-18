@@ -39,14 +39,14 @@ table_parcounts[["table"]] |> dplyr::filter(Count > 0)
 }
 }
 \seealso{
-Other table functions: 
-\code{\link{table_all}()},
-\code{\link{table_biology}()},
-\code{\link{table_compweight}()},
-\code{\link{table_config}()},
-\code{\link{table_exec_summary}()},
-\code{\link{table_pars}()},
-\code{\link{table_ts}()}
+Other table functions:
+\code{\link[=table_all]{table_all()}},
+\code{\link[=table_biology]{table_biology()}},
+\code{\link[=table_compweight]{table_compweight()}},
+\code{\link[=table_config]{table_config()}},
+\code{\link[=table_exec_summary]{table_exec_summary()}},
+\code{\link[=table_pars]{table_pars()}},
+\code{\link[=table_ts]{table_ts()}}
 }
 \author{
 Ian G. Taylor

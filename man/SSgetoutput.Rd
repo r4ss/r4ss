@@ -70,10 +70,10 @@ models <- SSgetoutput(
 \seealso{
 \code{\link[=SS_output]{SS_output()}}
 
-Other model comparison functions: 
-\code{\link{SSplotComparisons}()},
-\code{\link{SSsummarize}()},
-\code{\link{SStableComparisons}()}
+Other model comparison functions:
+\code{\link[=SSplotComparisons]{SSplotComparisons()}},
+\code{\link[=SSsummarize]{SSsummarize()}},
+\code{\link[=SStableComparisons]{SStableComparisons()}}
 }
 \author{
 Ian Taylor
