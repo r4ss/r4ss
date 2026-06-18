@@ -198,12 +198,12 @@ inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
 inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"] <- 0.2
 ```
 
-You can also estimate new parameters:
+You can also add new parameters to estimate:
 ```{r, add-Q-parameter}
 inputs$ctl$Q_options["SURVEY2", "extra_se"] <- 1
 inputs$ctl$Q_parms <- SS_add_parameter_line(par_df = inputs$ctl$Q_parms, 
-                                            rownum_to_copy = 2, 
-                                            rowname_before = "base_SURVEY2",
+                                            row_to_copy = 2, 
+                                            row_before = "base_SURVEY2",
                                             newval_df = data.frame(rowname = "extraSD_survey2",
                                                                    INIT = 0.05, 
                                                                    PHASE = 4))

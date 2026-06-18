@@ -7,9 +7,10 @@
 #'
 #' @param par_df Parameter data frame from the r4ss control list that you would like to add an additional parameter line to. The parameter
 #' table can by short or long.
-#' @param rownum_to_copy Row number to copy from the existing parameter data frame
-#' @param rowname_before Name of the row you would like to place the new parameter line after. Matching is done by `grep()` so only a
-#'  uniquely identifiable string is necessary, not the full row name.
+#' @param row_to_copy Row number or row name to copy from the existing parameter data frame. Matching is done by `grep()` so only a
+#'  uniquely identifiable string is necessary, not the full row name. This can be a string or an integer.
+#' @param row_before Row number of row name you would like to place the new parameter line after. Matching is done by `grep()` so only a
+#'  uniquely identifiable string is necessary, not the full row name. This can be a string or an integer.
 #' @param newval_df A data frame of values you would like to change from the row that was copied. The only required column is "rowname".
 #'  All other column names must match existing column names in `par_df`.
 #'
@@ -33,8 +34,8 @@
 #'
 #' size_selex_new <- add_parameter_line(
 #'   par_df = inputs[["ctl"]][["size_selex_parms"]],
-#'   rownum_to_copy = 1,
-#'   rowname_before = "P_2_FISH",
+#'   row_to_copy = 1,
+#'   row_before = "P_2_FISH",
 #'   newval_df = newval_df
 #' )
 #'
@@ -42,8 +43,8 @@
 #'
 SS_add_parameter_line <- function(
   par_df,
-  rownum_to_copy = 1,
-  rowname_before,
+  row_to_copy = 1,
+  row_before,
   newval_df = data.frame(rowname = 'new_parameter')
 ) {
   if (!"rowname" %in% names(newval_df)) {
@@ -61,7 +62,7 @@ SS_add_parameter_line <- function(
   if (length(bad_cols) > 1) {
     stop(paste(
       "Input error: 'newval_df' contains columns that do not exist in 'par_df':",
-      paste(invalid_cols, collapse = ", ")
+      paste(bad_cols, collapse = ", ")
     ))
   }
 
@@ -69,18 +70,39 @@ SS_add_parameter_line <- function(
     stop("New row name must be unique")
   }
 
+  if (is.character(row_before)) {
+    rownum_before <- grep(row_before, rownames(par_df))
+    if (length(rownum_before) != 1) {
+      stop(
+        "row_before is a string that does not uniquely identify a row in par_df"
+      )
+    }
+  } else {
+    rownum_before <- row_before
+  }
+
+  if (is.character(row_to_copy)) {
+    rownum_to_copy <- grep(row_to_copy, rownames(par_df))
+    if (length(rownum_to_copy) != 1) {
+      stop(
+        "row_to_copy is a string that does not uniquely identify a row in par_df"
+      )
+    }
+  } else {
+    rownum_to_copy <- row_to_copy
+  }
   added_par_df <- par_df |>
     tibble::rownames_to_column() |>
     slice(append(
       1:n(),
       rownum_to_copy,
-      after = grep(rowname_before, rowname)
+      after = rownum_before
     )) |> # create new row in correct location
     mutate(across(
       .cols = !!names(newval_df),
       ~ ifelse(
-        row_number() == grep(rowname_before, rowname) + 1, # test if it is the new row
-        newval_df[cur_column()],
+        row_number() == rownum_before + 1, # test if it is the new row
+        newval_df[[cur_column()]][1],
         .x # if not the new row, don't change anything
       )
     ))

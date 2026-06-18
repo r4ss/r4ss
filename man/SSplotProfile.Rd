@@ -189,9 +189,9 @@ should be read using \code{\link[=SSgetoutput]{SSgetoutput()}} or by multiple ca
 \seealso{
 \code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
 
-Other profile functions:
-\code{\link[=PinerPlot]{PinerPlot()}},
-\code{\link[=profile]{profile()}}
+Other profile functions: 
+\code{\link{PinerPlot}()},
+\code{\link{profile}()}
 }
 \author{
 Ian G. Taylor, Ian J. Stewart

@@ -35,16 +35,16 @@ starter_list[["ctlfile"]] == "simple_control.ss"
 starter_list[["datfile"]] == "simple_data.ss"
 }
 \seealso{
-Other read/write functions:
-\code{\link[=SS_read]{SS_read()}},
-\code{\link[=SS_readctl]{SS_readctl()}},
-\code{\link[=SS_readdat]{SS_readdat()}},
-\code{\link[=SS_readforecast]{SS_readforecast()}},
-\code{\link[=SS_write]{SS_write()}},
-\code{\link[=SS_writectl]{SS_writectl()}},
-\code{\link[=SS_writedat]{SS_writedat()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}},
-\code{\link[=SS_writestarter]{SS_writestarter()}}
+Other read/write functions: 
+\code{\link{SS_read}()},
+\code{\link{SS_readctl}()},
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_write}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()}
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson
