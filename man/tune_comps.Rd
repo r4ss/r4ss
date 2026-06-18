@@ -251,17 +251,17 @@ Francis, R.I.C.C. (2011). Data weighting in statistical
 fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 }
 \seealso{
-Other tuning functions:
-\code{\link[=SSMethod.Cond.TA1.8]{SSMethod.Cond.TA1.8()}},
-\code{\link[=SSMethod.TA1.8]{SSMethod.TA1.8()}}
+Other tuning functions: 
+\code{\link{SSMethod.Cond.TA1.8}()},
+\code{\link{SSMethod.TA1.8}()}
 
-Other run functions:
-\code{\link[=copy_SS_inputs]{copy_SS_inputs()}},
-\code{\link[=jitter]{jitter()}},
-\code{\link[=populate_multiple_folders]{populate_multiple_folders()}},
-\code{\link[=profile]{profile()}},
-\code{\link[=retro]{retro()}},
-\code{\link[=run]{run()}}
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{jitter}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{profile}()},
+\code{\link{retro}()},
+\code{\link{run}()}
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering

@@ -33,14 +33,14 @@ table_ts(model)
 }
 }
 \seealso{
-Other table functions:
-\code{\link[=table_all]{table_all()}},
-\code{\link[=table_biology]{table_biology()}},
-\code{\link[=table_compweight]{table_compweight()}},
-\code{\link[=table_config]{table_config()}},
-\code{\link[=table_exec_summary]{table_exec_summary()}},
-\code{\link[=table_parcounts]{table_parcounts()}},
-\code{\link[=table_pars]{table_pars()}}
+Other table functions: 
+\code{\link{table_all}()},
+\code{\link{table_biology}()},
+\code{\link{table_compweight}()},
+\code{\link{table_config}()},
+\code{\link{table_exec_summary}()},
+\code{\link{table_parcounts}()},
+\code{\link{table_pars}()}
 }
 \author{
 Kelli F. Johnson, Ian G. Taylor

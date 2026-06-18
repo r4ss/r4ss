@@ -153,16 +153,16 @@ ctl <- r4ss::SS_readctl(
 )
 }
 \seealso{
-Other read/write functions:
-\code{\link[=SS_read]{SS_read()}},
-\code{\link[=SS_readdat]{SS_readdat()}},
-\code{\link[=SS_readforecast]{SS_readforecast()}},
-\code{\link[=SS_readstarter]{SS_readstarter()}},
-\code{\link[=SS_write]{SS_write()}},
-\code{\link[=SS_writectl]{SS_writectl()}},
-\code{\link[=SS_writedat]{SS_writedat()}},
-\code{\link[=SS_writeforecast]{SS_writeforecast()}},
-\code{\link[=SS_writestarter]{SS_writestarter()}}
+Other read/write functions: 
+\code{\link{SS_read}()},
+\code{\link{SS_readdat}()},
+\code{\link{SS_readforecast}()},
+\code{\link{SS_readstarter}()},
+\code{\link{SS_write}()},
+\code{\link{SS_writectl}()},
+\code{\link{SS_writedat}()},
+\code{\link{SS_writeforecast}()},
+\code{\link{SS_writestarter}()}
 }
 \author{
 Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer, Kelli F.

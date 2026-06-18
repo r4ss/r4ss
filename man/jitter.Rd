@@ -121,13 +121,13 @@ profilesummary[["pars"]]
 
 }
 \seealso{
-Other run functions:
-\code{\link[=copy_SS_inputs]{copy_SS_inputs()}},
-\code{\link[=populate_multiple_folders]{populate_multiple_folders()}},
-\code{\link[=profile]{profile()}},
-\code{\link[=retro]{retro()}},
-\code{\link[=run]{run()}},
-\code{\link[=tune_comps]{tune_comps()}}
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{profile}()},
+\code{\link{retro}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
 }
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor,
