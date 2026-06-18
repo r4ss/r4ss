@@ -61,10 +61,10 @@ If the models have incompatible dimensions, some quantities can't be
 compared via this function, such as selectivity.
 }
 \seealso{
-Other model comparison functions: 
-\code{\link{SSgetoutput}()},
-\code{\link{SSplotComparisons}()},
-\code{\link{SStableComparisons}()}
+Other model comparison functions:
+\code{\link[=SSgetoutput]{SSgetoutput()}},
+\code{\link[=SSplotComparisons]{SSplotComparisons()}},
+\code{\link[=SStableComparisons]{SStableComparisons()}}
 }
 \author{
 Ian Taylor
