@@ -73,7 +73,7 @@ SS_plots(simple_small)
 #> Finished all requested plots in SS_plots function
 #> Starting diagnostic tables (group 26)
 #> Wrote table of info on PNG files to:
-#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_16-06-2026_23.38.36.2009.csv
+#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_22-06-2026_13.33.04.6248.csv
 #> Running 'SS_html': By default, this function will look in the directory where
 #> PNG files were created for CSV files with the name 'plotInfoTable...' written
 #> by 'SS_plots.' HTML files are written to link to these plots and put in the
