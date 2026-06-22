@@ -18,8 +18,9 @@ table can by short or long.}
 \item{row_to_copy}{Row number or row name to copy from the existing parameter data frame. Matching is done by \code{grep()} so only a
 uniquely identifiable string is necessary, not the full row name. This can be a string or an integer.}
 
-\item{row_before}{Row number of row name you would like to place the new parameter line after. Matching is done by \code{grep()} so only a
-uniquely identifiable string is necessary, not the full row name. This can be a string or an integer.}
+\item{row_before}{Row number or row name you would like to place the new parameter line after. Matching is done by \code{grep()} so only a
+uniquely identifiable string is necessary, not the full row name. This can be a string or an integer. If you would like the new parameter
+to be placed in the first row, set this equal to 0.}
 
 \item{newval_df}{A data frame of values you would like to change from the row that was copied. The only required column is "rowname".
 All other column names must match existing column names in \code{par_df}.}
@@ -29,8 +30,8 @@ A parameter data frame with the new parameter line inserted in the specified loc
 }
 \description{
 Add an additional parameter line to an existing parameter data frame in a control list. The function will copy an existing line,
-change the values in columns that the user specifies (e.g., PHASE, INIT), and place the new line below an existing line. Currently the new
-parameter cannot be in the first row. The user must also name the new row. The name does not have to follow any naming conventions, but it
+change the values in columns that the user specifies (e.g., PHASE, INIT), and place the new line below an existing line.
+The user must also name the new row. The name does not have to follow any naming conventions, but it
 must be unique. Parameters can be added to either style of parameter data frame (short or long).
 }
 \examples{

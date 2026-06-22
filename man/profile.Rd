@@ -275,17 +275,17 @@ like_matrix - min(like_matrix)
 \code{\link[=SSgetoutput]{SSgetoutput()}},
 \code{\link[=SS_changepars]{SS_changepars()}}, \code{\link[=SS_parlines]{SS_parlines()}}
 
-Other run functions:
-\code{\link[=copy_SS_inputs]{copy_SS_inputs()}},
-\code{\link[=jitter]{jitter()}},
-\code{\link[=populate_multiple_folders]{populate_multiple_folders()}},
-\code{\link[=retro]{retro()}},
-\code{\link[=run]{run()}},
-\code{\link[=tune_comps]{tune_comps()}}
+Other run functions: 
+\code{\link{copy_SS_inputs}()},
+\code{\link{jitter}()},
+\code{\link{populate_multiple_folders}()},
+\code{\link{retro}()},
+\code{\link{run}()},
+\code{\link{tune_comps}()}
 
-Other profile functions:
-\code{\link[=PinerPlot]{PinerPlot()}},
-\code{\link[=SSplotProfile]{SSplotProfile()}}
+Other profile functions: 
+\code{\link{PinerPlot}()},
+\code{\link{SSplotProfile}()}
 }
 \author{
 Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson,
