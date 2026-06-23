@@ -33,7 +33,7 @@ Add an additional parameter line to an existing parameter data frame in a contro
 change the values in columns that the user specifies (e.g., PHASE, INIT), and place the new line below an existing line.
 The user must also name the new row. The name does not have to follow any naming conventions, but it
 must be unique. Parameters can be added to either style of parameter data frame (short or long). You can also use this
-function to add lines to set-up data frames (e.g., \verb{$ctl$Q_options}).
+function to add lines to set-up data frames (e.g., \verb{$ctl[["Q_options"]]}).
 }
 \examples{
 
