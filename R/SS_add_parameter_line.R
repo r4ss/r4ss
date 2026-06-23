@@ -3,7 +3,8 @@
 #' @description Add an additional parameter line to an existing parameter data frame in a control list. The function will copy an existing line,
 #' change the values in columns that the user specifies (e.g., PHASE, INIT), and place the new line below an existing line.
 #' The user must also name the new row. The name does not have to follow any naming conventions, but it
-#' must be unique. Parameters can be added to either style of parameter data frame (short or long).
+#' must be unique. Parameters can be added to either style of parameter data frame (short or long). You can also use this
+#' function to add lines to set-up data frames (e.g., `$ctl$Q_options`).
 #'
 #' @param par_df Parameter data frame from the r4ss control list that you would like to add an additional parameter line to. The parameter
 #' table can by short or long.
