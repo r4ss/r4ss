@@ -304,6 +304,19 @@ inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
 inputs$ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"] <- 0.2
 ```
 
+You can also add new parameters to estimate:
+
+``` r
+
+inputs$ctl$Q_options["SURVEY2", "extra_se"] <- 1
+inputs$ctl$Q_parms <- SS_add_parameter_line(par_df = inputs$ctl$Q_parms, 
+                                            row_to_copy = 2, 
+                                            row_before = "base_SURVEY2",
+                                            newval_df = data.frame(rowname = "extraSD_survey2",
+                                                                   INIT = 0.05, 
+                                                                   PHASE = 4))
+```
+
 When making large structural changes, additional elements may need to be
 added that were NULL before. To find out the names in the r4ss list
 object, it may be necessary to make changes directly to the input files
@@ -615,7 +628,7 @@ example_path <- system.file("extdata", "simple_small", package = "r4ss")
 # copy model input files
 copy_SS_inputs(dir.old = example_path, dir.new = mod_path)
 #> copying files from /home/runner/work/_temp/Library/r4ss/extdata/simple_small to
-#> /tmp/Rtmp6Vc5ez/simple_mod
+#> /tmp/RtmpiH9IVF/simple_mod
 #> copying complete
 # copy over the Report file to provide information about the last run
 file.copy(

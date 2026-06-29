@@ -30,6 +30,9 @@
   : Create relative sensitivity plots as described in Cope and Gertseva
   (2020)
 
+- [`SS_add_parameter_line()`](https://r4ss.github.io/r4ss/reference/SS_add_parameter_line.md)
+  : Add parameter line
+
 - [`SS_changepars()`](https://r4ss.github.io/r4ss/reference/SS_changepars.md)
   : Change parameters, bounds, or phases in the control file.
 
