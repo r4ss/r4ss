@@ -667,6 +667,17 @@ SS_output <-
       Spawn_month <- spawnmonth <- get.def("Spawn_month")
       Spawn_seas <- spawnseas <- get.def("Spawn_seas")
       Spawn_timing_in_season <- get.def("Spawn_timing_in_season")
+      # definition name changed ~ 3.30.23, so re-read if NA
+      if (is.na(Spawn_timing_in_season)) {
+        Spawn_timing_in_season <- match_report_table(
+          "spawntiming",
+          0,
+          "spawntiming",
+          0
+        ) |>
+          dplyr::pull("X6") |>
+          as.numeric()
+      }
       N_areas <- nareas <- get.def("N_areas")
       Start_year <- startyr <- get.def("Start_year")
       End_year <- endyr <- get.def("End_year")
