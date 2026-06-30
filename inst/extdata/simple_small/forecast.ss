@@ -1,4 +1,4 @@
-#V3.30.24.00;_safe;_compile_date:_Sep 10 2025;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
+#V3.30.25.00;_safe;_compile_date:_Jun 30 2026;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 #C forecast file written by R function SS_writeforecast
 #C rerun model to get more complete formatting in forecast.ss_new
 #C should work with SS version: 3.3
@@ -44,7 +44,8 @@
 1 # Control rule method (0: none; 1: ramp does catch=f(SSB), buffer on F; 2: ramp does F=f(SSB), buffer on F; 3: ramp does catch=f(SSB), buffer on catch; 4: ramp does F=f(SSB), buffer on catch) 
 # values for top, bottom and buffer required, but not used when Policy=0
 0.4 # Control rule inflection for constant F (as frac of HCR_anchor, see below); must be > control rule cutoff
-0.1 # Control rule cutoff for no F (as frac of HCR_anchor, e.g. 0.10) 
+0.1 # Control rule cutoff for no F (as frac of HCR_anchor, e.g. 0.10); negative value to also invoke read of protection level 
+ # placeholder for AK protection level:  control rule level below which F goes to 0.0001
 0.75 # Buffer:  enter Control rule target as fraction of Flimit (e.g. 0.75), negative value invokes list of [year, scalar]. -year fills from year to YrMax 
 # Also see HCR_anchor below to use virgin vs benchmark SSB or Bmsy as basis for inflection and cutoff
 #

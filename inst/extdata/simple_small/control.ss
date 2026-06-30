@@ -1,4 +1,4 @@
-#V3.30.24.00;_safe;_compile_date:_Sep 10 2025;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
+#V3.30.25.00;_safe;_compile_date:_Jun 30 2026;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 #_Stock_Synthesis_is_a_work_of_the_U.S._Government_and_is_not_subject_to_copyright_protection_in_the_United_States.
 #_Foreign_copyrights_may_apply._See_copyright.txt_for_more_information.
 #_User_support_available_at:_https://groups.google.com/g/ss3-forum_and_NMFS.Stock.Synthesis@noaa.gov
@@ -54,7 +54,12 @@
 1 # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K_incr; 4=age_specific_K_decr; 5=age_specific_K_each; 6=NA; 7=NA; 8=growth cessation
 0 #_Age(post-settlement) for L1 (aka Amin); first growth parameter is size at this age; linear growth below this
 20 #_Age(post-settlement) for L2 (aka Amax); 999 to treat as Linf
--999 #_exponential decay for growth above maxage (value should approx initial Z; -999 replicates 3.24; -998 to not allow growth above maxage)
+-999 #_exponential decay for growth within plus group and control for time-varying plus group size 
+#_only important when growth does not get near Linf by maxage
+#_value should approx initial Z; or use a code:  -999 replicates 3.24 (with Z=0.2 and numbers weighted updating in years with time-varying growth)
+#_-998 ignores growth within plus group in initial year and disables time-varying changes in plus group mean size
+#_-997 ignores growth within plus group in initial year and enables updating time-varying plus group
+#
 0  #_placeholder for future growth feature
 #
 0 #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
@@ -73,7 +78,7 @@
  0.05 0.15 0.1 0.1 0.8 0 -3 0 0 0 0 0 0 0 # NatM_uniform_Fem_GP_1
 # Sex: 1  BioPattern: 1  Growth
  10 45 22.769 36 10 0 2 0 0 0 0 0 0 0 # L_at_Amin_Fem_GP_1
- 40 90 71.8072 70 10 0 4 0 0 0 0 0 0 0 # L_at_Amax_Fem_GP_1
+ 40 90 70.3116 70 10 0 4 0 0 0 0 0 0 0 # L_at_Amax_Fem_GP_1
  0.05 0.25 0.142165 0.15 0.8 0 4 0 0 0 0 0 0 0 # VonBert_K_Fem_GP_1
  0.05 0.25 0.1 0.1 0.8 0 -3 0 0 0 0 0 0 0 # CV_young_Fem_GP_1
  0.05 0.25 0.1 0.1 0.8 0 -3 0 0 0 0 0 0 0 # CV_old_Fem_GP_1
@@ -168,7 +173,7 @@
 # F rates by fleet x season
 #_year:  2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030 2031 2032
 # seas:  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-# FISHERY 0.220229 0.239068 0.263759 0.287798 0.316758 0.350726 0.404085 0.405179 0.390484 0.37618 0.33635 0.226617 0.0405108 0.0466812 0.051486 0.0553062 0.0583986 0.0609127 0.0629524 0.0646111 0.0659699 0.067099
+# FISHERY 0.220229 0.239068 0.263759 0.287798 0.316758 0.350726 0.404085 0.405179 0.390484 0.37618 0.33635 0.226617 0.0405108 0.0466811 0.051486 0.0553062 0.0583986 0.0609127 0.0629524 0.0646111 0.0659699 0.067099
 #
 #_Q_setup for fleets with cpue or survey or deviation data
 #_1:  fleet number

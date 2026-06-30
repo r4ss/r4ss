@@ -1,7 +1,7 @@
-#V3.30.24.2;_safe;_compile_date:_
-Mar  9 2026
+#V3.30.25.00;_safe;_compile_date:_
+Jun 30 2026
 ;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
-start_time: Tue Jun 16 09:37:27 2026
+start_time: Tue Jun 30 11:14:19 2026
 
 32 225
 active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
@@ -47,11 +47,11 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 9 3 32 4 Par  Par Main_RecrDev_2015 VonBert_K_Fem_GP_1 -0.00961861
 9 4 32 23 Par  Par Main_RecrDev_2015 SR_LN(R0) -0.000842324
 9 5 32 28 Par  Par Main_RecrDev_2015 Main_RecrDev_2011 -0.028884
-9 6 32 29 Par  Par Main_RecrDev_2015 Main_RecrDev_2012 0.00302632
+9 6 32 29 Par  Par Main_RecrDev_2015 Main_RecrDev_2012 0.00302633
 9 7 32 30 Par  Par Main_RecrDev_2015 Main_RecrDev_2013 0.053027
 9 8 32 31 Par  Par Main_RecrDev_2015 Main_RecrDev_2014 -0.43496
 10 0 33 33 Par  Std Main_RecrDev_2016   _   0.294105
-10 1 33 2 Par  Par Main_RecrDev_2016 L_at_Amin_Fem_GP_1 -0.00910445
+10 1 33 2 Par  Par Main_RecrDev_2016 L_at_Amin_Fem_GP_1 -0.00910441
 10 2 33 3 Par  Par Main_RecrDev_2016 L_at_Amax_Fem_GP_1 -0.038931
 10 3 33 4 Par  Par Main_RecrDev_2016 VonBert_K_Fem_GP_1 0.0373675
 10 4 33 23 Par  Par Main_RecrDev_2016 SR_LN(R0) 0.0712907
@@ -104,7 +104,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 14 5 37 28 Par  Par Main_RecrDev_2020 Main_RecrDev_2011 -0.0695749
 14 6 37 29 Par  Par Main_RecrDev_2020 Main_RecrDev_2012 -0.0282544
 14 7 37 30 Par  Par Main_RecrDev_2020 Main_RecrDev_2013 -0.0313191
-14 8 37 31 Par  Par Main_RecrDev_2020 Main_RecrDev_2014 -0.0079746
+14 8 37 31 Par  Par Main_RecrDev_2020 Main_RecrDev_2014 -0.00797459
 14 9 37 32 Par  Par Main_RecrDev_2020 Main_RecrDev_2015 -0.0397006
 14 10 37 33 Par  Par Main_RecrDev_2020 Main_RecrDev_2016 -0.0158891
 14 11 37 34 Par  Par Main_RecrDev_2020 Main_RecrDev_2017 -0.00341756
@@ -357,7 +357,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 26 24 49 47 Par  Par ForeRecr_2032 ForeRecr_2030 0
 26 25 49 48 Par  Par ForeRecr_2032 ForeRecr_2031 0
 27 0 51 51 Par  Std LnQ_base_SURVEY1(2)   _   0.18356
-27 1 51 2 Par  Par LnQ_base_SURVEY1(2) L_at_Amin_Fem_GP_1 -8.53845e-05
+27 1 51 2 Par  Par LnQ_base_SURVEY1(2) L_at_Amin_Fem_GP_1 -8.53851e-05
 27 2 51 3 Par  Par LnQ_base_SURVEY1(2) L_at_Amax_Fem_GP_1 0.0675126
 27 3 51 4 Par  Par LnQ_base_SURVEY1(2) VonBert_K_Fem_GP_1 -0.055544
 27 4 51 23 Par  Par LnQ_base_SURVEY1(2) SR_LN(R0) -0.487996
@@ -370,7 +370,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 27 11 51 34 Par  Par LnQ_base_SURVEY1(2) Main_RecrDev_2017 -0.0338375
 27 12 51 35 Par  Par LnQ_base_SURVEY1(2) Main_RecrDev_2018 -0.0358349
 27 13 51 36 Par  Par LnQ_base_SURVEY1(2) Main_RecrDev_2019 -0.0694312
-27 14 51 37 Par  Par LnQ_base_SURVEY1(2) Main_RecrDev_2020 0.00513194
+27 14 51 37 Par  Par LnQ_base_SURVEY1(2) Main_RecrDev_2020 0.00513192
 27 15 51 38 Par  Par LnQ_base_SURVEY1(2) Main_RecrDev_2021 0.113927
 27 16 51 39 Par  Par LnQ_base_SURVEY1(2) Main_RecrDev_2022 0.123482
 27 17 51 40 Par  Par LnQ_base_SURVEY1(2) ForeRecr_2023 0
@@ -391,7 +391,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 28 5 53 28 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2011 0.0594475
 28 6 53 29 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2012 0.0138208
 28 7 53 30 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2013 0.00140576
-28 8 53 31 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2014 5.79761e-05
+28 8 53 31 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2014 5.79756e-05
 28 9 53 32 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2015 -0.00163931
 28 10 53 33 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2016 -0.0317985
 28 11 53 34 Par  Par LnQ_base_SURVEY2(3) Main_RecrDev_2017 -0.0134864
@@ -549,7 +549,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 33 13 60 36 Der  Par SSB_Virgin Main_RecrDev_2019 0.0789913
 33 14 60 37 Der  Par SSB_Virgin Main_RecrDev_2020 0.0682741
 33 15 60 38 Der  Par SSB_Virgin Main_RecrDev_2021 -0.003631
-33 16 60 39 Der  Par SSB_Virgin Main_RecrDev_2022 0.00483898
+33 16 60 39 Der  Par SSB_Virgin Main_RecrDev_2022 0.00483897
 33 17 60 40 Der  Par SSB_Virgin ForeRecr_2023 0
 33 18 60 41 Der  Par SSB_Virgin ForeRecr_2024 0
 33 19 60 42 Der  Par SSB_Virgin ForeRecr_2025 0
@@ -1241,7 +1241,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 50 8 77 31 Der  Par SSB_2026 Main_RecrDev_2014 0.0591506
 50 9 77 32 Der  Par SSB_2026 Main_RecrDev_2015 0.00605335
 50 10 77 33 Der  Par SSB_2026 Main_RecrDev_2016 0.223457
-50 11 77 34 Der  Par SSB_2026 Main_RecrDev_2017 0.0789413
+50 11 77 34 Der  Par SSB_2026 Main_RecrDev_2017 0.0789414
 50 12 77 35 Der  Par SSB_2026 Main_RecrDev_2018 0.0905458
 50 13 77 36 Der  Par SSB_2026 Main_RecrDev_2019 0.161532
 50 14 77 37 Der  Par SSB_2026 Main_RecrDev_2020 0.0278813
@@ -1385,7 +1385,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 52 51 79 78 Der  Der SSB_2028 SSB_2027 0.988772
 53 0 80 80 Der  Std SSB_2029   _   2114.29
 53 1 80 2 Der  Par SSB_2029 L_at_Amin_Fem_GP_1 -0.0940234
-53 2 80 3 Der  Par SSB_2029 L_at_Amax_Fem_GP_1 -0.000655091
+53 2 80 3 Der  Par SSB_2029 L_at_Amax_Fem_GP_1 -0.00065509
 53 3 80 4 Der  Par SSB_2029 VonBert_K_Fem_GP_1 0.100272
 53 4 80 23 Der  Par SSB_2029 SR_LN(R0) 0.884174
 53 5 80 28 Der  Par SSB_2029 Main_RecrDev_2011 -0.220175
@@ -1543,7 +1543,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 55 50 82 77 Der  Der SSB_2031 SSB_2026 0.736126
 55 51 82 78 Der  Der SSB_2031 SSB_2027 0.786224
 55 52 82 79 Der  Der SSB_2031 SSB_2028 0.858929
-55 53 82 80 Der  Der SSB_2031 SSB_2029 0.933427
+55 53 82 80 Der  Der SSB_2031 SSB_2029 0.933426
 55 54 82 81 Der  Der SSB_2031 SSB_2030 0.983817
 56 0 83 83 Der  Std SSB_2032   _   2795.36
 56 1 83 2 Der  Par SSB_2032 L_at_Amin_Fem_GP_1 -0.0738789
@@ -1616,7 +1616,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 57 12 84 35 Der  Par Recr_Virgin Main_RecrDev_2018 0.0660291
 57 13 84 36 Der  Par Recr_Virgin Main_RecrDev_2019 0.0854561
 57 14 84 37 Der  Par Recr_Virgin Main_RecrDev_2020 0.0659908
-57 15 84 38 Der  Par Recr_Virgin Main_RecrDev_2021 -0.00399456
+57 15 84 38 Der  Par Recr_Virgin Main_RecrDev_2021 -0.00399455
 57 16 84 39 Der  Par Recr_Virgin Main_RecrDev_2022 -0.0153943
 57 17 84 40 Der  Par Recr_Virgin ForeRecr_2023 0
 57 18 84 41 Der  Par Recr_Virgin ForeRecr_2024 0
@@ -1673,7 +1673,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 58 12 85 35 Der  Par Recr_Initial Main_RecrDev_2018 0.0660291
 58 13 85 36 Der  Par Recr_Initial Main_RecrDev_2019 0.0854561
 58 14 85 37 Der  Par Recr_Initial Main_RecrDev_2020 0.0659908
-58 15 85 38 Der  Par Recr_Initial Main_RecrDev_2021 -0.00399456
+58 15 85 38 Der  Par Recr_Initial Main_RecrDev_2021 -0.00399455
 58 16 85 39 Der  Par Recr_Initial Main_RecrDev_2022 -0.0153943
 58 17 85 40 Der  Par Recr_Initial ForeRecr_2023 0
 58 18 85 41 Der  Par Recr_Initial ForeRecr_2024 0
@@ -1970,7 +1970,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 63 9 90 32 Der  Par Recr_2015 Main_RecrDev_2015 0.985526
 63 10 90 33 Der  Par Recr_2015 Main_RecrDev_2016 -0.445663
 63 11 90 34 Der  Par Recr_2015 Main_RecrDev_2017 0.039734
-63 12 90 35 Der  Par Recr_2015 Main_RecrDev_2018 0.00461628
+63 12 90 35 Der  Par Recr_2015 Main_RecrDev_2018 0.00461629
 63 13 90 36 Der  Par Recr_2015 Main_RecrDev_2019 -0.0146289
 63 14 90 37 Der  Par Recr_2015 Main_RecrDev_2020 -0.0297838
 63 15 90 38 Der  Par Recr_2015 Main_RecrDev_2021 -0.0892464
@@ -2499,7 +2499,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 71 6 98 29 Der  Par Recr_2023 Main_RecrDev_2012 -0.00386814
 71 7 98 30 Der  Par Recr_2023 Main_RecrDev_2013 0.00494462
 71 8 98 31 Der  Par Recr_2023 Main_RecrDev_2014 0.00574501
-71 9 98 32 Der  Par Recr_2023 Main_RecrDev_2015 0.003266
+71 9 98 32 Der  Par Recr_2023 Main_RecrDev_2015 0.00326599
 71 10 98 33 Der  Par Recr_2023 Main_RecrDev_2016 0.0248673
 71 11 98 34 Der  Par Recr_2023 Main_RecrDev_2017 0.00948644
 71 12 98 35 Der  Par Recr_2023 Main_RecrDev_2018 0.0101372
@@ -2713,7 +2713,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 74 4 101 23 Der  Par Recr_2026 SR_LN(R0) 0.117391
 74 5 101 28 Der  Par Recr_2026 Main_RecrDev_2011 -0.0249254
 74 6 101 29 Der  Par Recr_2026 Main_RecrDev_2012 -0.00577446
-74 7 101 30 Der  Par Recr_2026 Main_RecrDev_2013 0.000597169
+74 7 101 30 Der  Par Recr_2026 Main_RecrDev_2013 0.000597168
 74 8 101 31 Der  Par Recr_2026 Main_RecrDev_2014 0.00158808
 74 9 101 32 Der  Par Recr_2026 Main_RecrDev_2015 0.000293461
 74 10 101 33 Der  Par Recr_2026 Main_RecrDev_2016 0.0168734
@@ -3102,7 +3102,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 79 13 106 36 Der  Par Recr_2031 Main_RecrDev_2019 0.00975879
 79 14 106 37 Der  Par Recr_2031 Main_RecrDev_2020 0.00576929
 79 15 106 38 Der  Par Recr_2031 Main_RecrDev_2021 -0.000868409
-79 16 106 39 Der  Par Recr_2031 Main_RecrDev_2022 -0.000357972
+79 16 106 39 Der  Par Recr_2031 Main_RecrDev_2022 -0.000357973
 79 17 106 40 Der  Par Recr_2031 ForeRecr_2023 0.0135664
 79 18 106 41 Der  Par Recr_2031 ForeRecr_2024 0.0113182
 79 19 106 42 Der  Par Recr_2031 ForeRecr_2025 0.00821849
@@ -3500,7 +3500,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 84 6 111 29 Der  Par SPRratio_2014 Main_RecrDev_2012 0.04173
 84 7 111 30 Der  Par SPRratio_2014 Main_RecrDev_2013 -0.00835304
 84 8 111 31 Der  Par SPRratio_2014 Main_RecrDev_2014 -0.0124904
-84 9 111 32 Der  Par SPRratio_2014 Main_RecrDev_2015 -0.00994598
+84 9 111 32 Der  Par SPRratio_2014 Main_RecrDev_2015 -0.00994597
 84 10 111 33 Der  Par SPRratio_2014 Main_RecrDev_2016 -0.144589
 84 11 111 34 Der  Par SPRratio_2014 Main_RecrDev_2017 -0.0524584
 84 12 111 35 Der  Par SPRratio_2014 Main_RecrDev_2018 -0.0722216
@@ -3755,7 +3755,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 87 6 114 29 Der  Par SPRratio_2017 Main_RecrDev_2012 0.00969121
 87 7 114 30 Der  Par SPRratio_2017 Main_RecrDev_2013 -0.0291646
 87 8 114 31 Der  Par SPRratio_2017 Main_RecrDev_2014 -0.0161462
-87 9 114 32 Der  Par SPRratio_2017 Main_RecrDev_2015 -8.11643e-05
+87 9 114 32 Der  Par SPRratio_2017 Main_RecrDev_2015 -8.11633e-05
 87 10 114 33 Der  Par SPRratio_2017 Main_RecrDev_2016 -0.148262
 87 11 114 34 Der  Par SPRratio_2017 Main_RecrDev_2017 -0.04827
 87 12 114 35 Der  Par SPRratio_2017 Main_RecrDev_2018 -0.061677
@@ -5032,9 +5032,9 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 100 74 127 101 Der  Der SPRratio_2030 Recr_2026 -0.207308
 100 75 127 102 Der  Der SPRratio_2030 Recr_2027 -0.0968436
 100 76 127 103 Der  Der SPRratio_2030 Recr_2028 -0.0291188
-100 77 127 104 Der  Der SPRratio_2030 Recr_2029 -0.000142976
+100 77 127 104 Der  Der SPRratio_2030 Recr_2029 -0.000142977
 100 78 127 105 Der  Der SPRratio_2030 Recr_2030 0.00622811
-100 79 127 106 Der  Der SPRratio_2030 Recr_2031 0.00461151
+100 79 127 106 Der  Der SPRratio_2030 Recr_2031 0.0046115
 100 80 127 107 Der  Der SPRratio_2030 Recr_2032 0.000965678
 100 81 127 108 Der  Der SPRratio_2030 SPRratio_2011 -0.146273
 100 82 127 109 Der  Der SPRratio_2030 SPRratio_2012 -0.169378
@@ -5044,7 +5044,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 100 86 127 113 Der  Der SPRratio_2030 SPRratio_2016 -0.219602
 100 87 127 114 Der  Der SPRratio_2030 SPRratio_2017 -0.22254
 100 88 127 115 Der  Der SPRratio_2030 SPRratio_2018 -0.223059
-100 89 127 116 Der  Der SPRratio_2030 SPRratio_2019 -0.22263
+100 89 127 116 Der  Der SPRratio_2030 SPRratio_2019 -0.222629
 100 90 127 117 Der  Der SPRratio_2030 SPRratio_2020 -0.222465
 100 91 127 118 Der  Der SPRratio_2030 SPRratio_2021 -0.222532
 100 92 127 119 Der  Der SPRratio_2030 SPRratio_2022 -0.222268
@@ -5069,7 +5069,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 101 11 128 34 Der  Par SPRratio_2031 Main_RecrDev_2017 -0.00310665
 101 12 128 35 Der  Par SPRratio_2031 Main_RecrDev_2018 -0.0157804
 101 13 128 36 Der  Par SPRratio_2031 Main_RecrDev_2019 0.0410976
-101 14 128 37 Der  Par SPRratio_2031 Main_RecrDev_2020 3.32993e-05
+101 14 128 37 Der  Par SPRratio_2031 Main_RecrDev_2020 3.32992e-05
 101 15 128 38 Der  Par SPRratio_2031 Main_RecrDev_2021 -0.0224018
 101 16 128 39 Der  Par SPRratio_2031 Main_RecrDev_2022 0.0227797
 101 17 128 40 Der  Par SPRratio_2031 ForeRecr_2023 -0.587017
@@ -5202,7 +5202,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 102 43 129 70 Der  Der SPRratio_2032 SSB_2019 0.104206
 102 44 129 71 Der  Der SPRratio_2032 SSB_2020 0.101838
 102 45 129 72 Der  Der SPRratio_2032 SSB_2021 0.1002
-102 46 129 73 Der  Der SPRratio_2032 SSB_2022 0.0990921
+102 46 129 73 Der  Der SPRratio_2032 SSB_2022 0.099092
 102 47 129 74 Der  Der SPRratio_2032 SSB_2023 0.0984103
 102 48 129 75 Der  Der SPRratio_2032 SSB_2024 0.0981355
 102 49 129 76 Der  Der SPRratio_2032 SSB_2025 0.096676
@@ -5251,7 +5251,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 102 92 129 119 Der  Der SPRratio_2032 SPRratio_2022 -0.0887058
 102 93 129 120 Der  Der SPRratio_2032 SPRratio_2023 0.0973694
 102 94 129 121 Der  Der SPRratio_2032 SPRratio_2024 0.109281
-102 95 129 122 Der  Der SPRratio_2032 SPRratio_2025 0.145827
+102 95 129 122 Der  Der SPRratio_2032 SPRratio_2025 0.145828
 102 96 129 123 Der  Der SPRratio_2032 SPRratio_2026 0.24779
 102 97 129 124 Der  Der SPRratio_2032 SPRratio_2027 0.461183
 102 98 129 125 Der  Der SPRratio_2032 SPRratio_2028 0.718175
@@ -5586,7 +5586,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 106 13 133 36 Der  Par F_2014 Main_RecrDev_2019 -0.0744001
 106 14 133 37 Der  Par F_2014 Main_RecrDev_2020 -0.0709534
 106 15 133 38 Der  Par F_2014 Main_RecrDev_2021 -0.00206487
-106 16 133 39 Der  Par F_2014 Main_RecrDev_2022 0.000426718
+106 16 133 39 Der  Par F_2014 Main_RecrDev_2022 0.00042672
 106 17 133 40 Der  Par F_2014 ForeRecr_2023 0
 106 18 133 41 Der  Par F_2014 ForeRecr_2024 0
 106 19 133 42 Der  Par F_2014 ForeRecr_2025 0
@@ -5635,7 +5635,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 106 62 133 89 Der  Der F_2014 Recr_2014 -0.139182
 106 63 133 90 Der  Der F_2014 Recr_2015 -0.142495
 106 64 133 91 Der  Der F_2014 Recr_2016 -0.226161
-106 65 133 92 Der  Der F_2014 Recr_2017 -0.20445
+106 65 133 92 Der  Der F_2014 Recr_2017 -0.204452
 106 66 133 93 Der  Der F_2014 Recr_2018 -0.236764
 106 67 133 94 Der  Der F_2014 Recr_2019 -0.260031
 106 68 133 95 Der  Der F_2014 Recr_2020 -0.26377
@@ -5885,7 +5885,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 108 99 135 126 Der  Der F_2016 SPRratio_2029 -0.301438
 108 100 135 127 Der  Der F_2016 SPRratio_2030 -0.197004
 108 101 135 128 Der  Der F_2016 SPRratio_2031 -0.13315
-108 102 135 129 Der  Der F_2016 SPRratio_2032 -0.0939759
+108 102 135 129 Der  Der F_2016 SPRratio_2032 -0.0939758
 108 103 135 130 Der  Der F_2016 F_2011 0.979377
 108 104 135 131 Der  Der F_2016 F_2012 0.984853
 108 105 135 132 Der  Der F_2016 F_2013 0.989782
@@ -5894,7 +5894,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 109 0 136 136 Der  Std F_2017   _   0.0578462
 109 1 136 2 Der  Par F_2017 L_at_Amin_Fem_GP_1 0.0925853
 109 2 136 3 Der  Par F_2017 L_at_Amax_Fem_GP_1 -0.162334
-109 3 136 4 Der  Par F_2017 VonBert_K_Fem_GP_1 -0.00473983
+109 3 136 4 Der  Par F_2017 VonBert_K_Fem_GP_1 -0.00473981
 109 4 136 23 Der  Par F_2017 SR_LN(R0) -0.947642
 109 5 136 28 Der  Par F_2017 Main_RecrDev_2011 0.120048
 109 6 136 29 Der  Par F_2017 Main_RecrDev_2012 0.0391677
@@ -6800,7 +6800,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 117 6 144 29 Der  Par F_2025 Main_RecrDev_2012 0.0407654
 117 7 144 30 Der  Par F_2025 Main_RecrDev_2013 0.107332
 117 8 144 31 Der  Par F_2025 Main_RecrDev_2014 0.113904
-117 9 144 32 Der  Par F_2025 Main_RecrDev_2015 0.0367663
+117 9 144 32 Der  Par F_2025 Main_RecrDev_2015 0.0367662
 117 10 144 33 Der  Par F_2025 Main_RecrDev_2016 0.240309
 117 11 144 34 Der  Par F_2025 Main_RecrDev_2017 0.0794165
 117 12 144 35 Der  Par F_2025 Main_RecrDev_2018 0.0470117
@@ -7086,7 +7086,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 119 57 146 84 Der  Der F_2027 Recr_Virgin -0.120106
 119 58 146 85 Der  Der F_2027 Recr_Initial -0.120106
 119 59 146 86 Der  Der F_2027 Recr_2011 0.0176787
-119 60 146 87 Der  Der F_2027 Recr_2012 0.0260356
+119 60 146 87 Der  Der F_2027 Recr_2012 0.0260355
 119 61 146 88 Der  Der F_2027 Recr_2013 0.0751951
 119 62 146 89 Der  Der F_2027 Recr_2014 0.083162
 119 63 146 90 Der  Der F_2027 Recr_2015 0.00944596
@@ -7100,7 +7100,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 119 71 146 98 Der  Der F_2027 Recr_2023 -0.182597
 119 72 146 99 Der  Der F_2027 Recr_2024 -0.0910875
 119 73 146 100 Der  Der F_2027 Recr_2025 -0.0328993
-119 74 146 101 Der  Der F_2027 Recr_2026 -0.00710307
+119 74 146 101 Der  Der F_2027 Recr_2026 -0.00710312
 119 75 146 102 Der  Der F_2027 Recr_2027 -0.00102558
 119 76 146 103 Der  Der F_2027 Recr_2028 -0.002331
 119 77 146 104 Der  Der F_2027 Recr_2029 -0.00589179
@@ -7154,7 +7154,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 120 6 147 29 Der  Par F_2028 Main_RecrDev_2012 0.02599
 120 7 147 30 Der  Par F_2028 Main_RecrDev_2013 0.0647026
 120 8 147 31 Der  Par F_2028 Main_RecrDev_2014 0.0700948
-120 9 147 32 Der  Par F_2028 Main_RecrDev_2015 0.000471943
+120 9 147 32 Der  Par F_2028 Main_RecrDev_2015 0.000471942
 120 10 147 33 Der  Par F_2028 Main_RecrDev_2016 0.137158
 120 11 147 34 Der  Par F_2028 Main_RecrDev_2017 0.022342
 120 12 147 35 Der  Par F_2028 Main_RecrDev_2018 -0.00554751
@@ -7204,13 +7204,13 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 120 56 147 83 Der  Der F_2028 SSB_2032 -0.355759
 120 57 147 84 Der  Der F_2028 Recr_Virgin -0.207397
 120 58 147 85 Der  Der F_2028 Recr_Initial -0.207397
-120 59 147 86 Der  Der F_2028 Recr_2011 0.00138298
+120 59 147 86 Der  Der F_2028 Recr_2011 0.00138297
 120 60 147 87 Der  Der F_2028 Recr_2012 0.00488754
 120 61 147 88 Der  Der F_2028 Recr_2013 0.0430075
 120 62 147 89 Der  Der F_2028 Recr_2014 0.0490039
 120 63 147 90 Der  Der F_2028 Recr_2015 -0.0160534
-120 64 147 91 Der  Der F_2028 Recr_2016 0.115438
-120 65 147 92 Der  Der F_2028 Recr_2017 0.00792352
+120 64 147 91 Der  Der F_2028 Recr_2016 0.115439
+120 65 147 92 Der  Der F_2028 Recr_2017 0.00792351
 120 66 147 93 Der  Der F_2028 Recr_2018 -0.0149207
 120 67 147 94 Der  Der F_2028 Recr_2019 0.0596421
 120 68 147 95 Der  Der F_2028 Recr_2020 -0.055449
@@ -7387,7 +7387,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 121 119 148 146 Der  Der F_2029 F_2027 0.915042
 121 120 148 147 Der  Der F_2029 F_2028 0.979614
 122 0 149 149 Der  Std F_2030   _   0.00686454
-122 1 149 2 Der  Par F_2030 L_at_Amin_Fem_GP_1 0.0939532
+122 1 149 2 Der  Par F_2030 L_at_Amin_Fem_GP_1 0.0939531
 122 2 149 3 Der  Par F_2030 L_at_Amax_Fem_GP_1 -0.387788
 122 3 149 4 Der  Par F_2030 VonBert_K_Fem_GP_1 0.127253
 122 4 149 23 Der  Par F_2030 SR_LN(R0) -0.273602
@@ -7395,9 +7395,9 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 122 6 149 29 Der  Par F_2030 Main_RecrDev_2012 0.0200062
 122 7 149 30 Der  Par F_2030 Main_RecrDev_2013 0.0414234
 122 8 149 31 Der  Par F_2030 Main_RecrDev_2014 0.0443476
-122 9 149 32 Der  Par F_2030 Main_RecrDev_2015 -0.00505222
+122 9 149 32 Der  Par F_2030 Main_RecrDev_2015 -0.00505226
 122 10 149 33 Der  Par F_2030 Main_RecrDev_2016 0.0767295
-122 11 149 34 Der  Par F_2030 Main_RecrDev_2017 0.000870107
+122 11 149 34 Der  Par F_2030 Main_RecrDev_2017 0.000870102
 122 12 149 35 Der  Par F_2030 Main_RecrDev_2018 -0.0240711
 122 13 149 36 Der  Par F_2030 Main_RecrDev_2019 0.0265023
 122 14 149 37 Der  Par F_2030 Main_RecrDev_2020 -0.0568336
@@ -7751,7 +7751,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 124 117 151 144 Der  Der F_2032 F_2025 0.472821
 124 118 151 145 Der  Der F_2032 F_2026 0.579587
 124 119 151 146 Der  Der F_2032 F_2027 0.700844
-124 120 151 147 Der  Der F_2032 F_2028 0.817149
+124 120 151 147 Der  Der F_2032 F_2028 0.817148
 124 121 151 148 Der  Der F_2032 F_2029 0.906016
 124 122 151 149 Der  Der F_2032 F_2030 0.962164
 124 123 151 150 Der  Der F_2032 F_2031 0.991361
@@ -7766,7 +7766,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 125 8 152 31 Der  Par Bratio_2011 Main_RecrDev_2014 0.0396166
 125 9 152 32 Der  Par Bratio_2011 Main_RecrDev_2015 0.0164251
 125 10 152 33 Der  Par Bratio_2011 Main_RecrDev_2016 0.0392432
-125 11 152 34 Der  Par Bratio_2011 Main_RecrDev_2017 0.000286628
+125 11 152 34 Der  Par Bratio_2011 Main_RecrDev_2017 0.000286627
 125 12 152 35 Der  Par Bratio_2011 Main_RecrDev_2018 -0.0197102
 125 13 152 36 Der  Par Bratio_2011 Main_RecrDev_2019 -0.0214838
 125 14 152 37 Der  Par Bratio_2011 Main_RecrDev_2020 -0.0765213
@@ -7814,7 +7814,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 125 56 152 83 Der  Der Bratio_2011 SSB_2032 -0.358232
 125 57 152 84 Der  Der Bratio_2011 Recr_Virgin -0.566995
 125 58 152 85 Der  Der Bratio_2011 Recr_Initial -0.566995
-125 59 152 86 Der  Der Bratio_2011 Recr_2011 0.00084253
+125 59 152 86 Der  Der Bratio_2011 Recr_2011 0.000842527
 125 60 152 87 Der  Der Bratio_2011 Recr_2012 -0.0359679
 125 61 152 88 Der  Der Bratio_2011 Recr_2013 -0.0421716
 125 62 152 89 Der  Der Bratio_2011 Recr_2014 -0.049019
@@ -8349,7 +8349,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 129 85 156 112 Der  Der Bratio_2015 SPRratio_2015 -0.809407
 129 86 156 113 Der  Der Bratio_2015 SPRratio_2016 -0.765219
 129 87 156 114 Der  Der Bratio_2015 SPRratio_2017 -0.723957
-129 88 156 115 Der  Der Bratio_2015 SPRratio_2018 -0.675374
+129 88 156 115 Der  Der Bratio_2015 SPRratio_2018 -0.675375
 129 89 156 116 Der  Der Bratio_2015 SPRratio_2019 -0.634638
 129 90 156 117 Der  Der Bratio_2015 SPRratio_2020 -0.604043
 129 91 156 118 Der  Der Bratio_2015 SPRratio_2021 -0.577975
@@ -8721,7 +8721,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 132 67 159 94 Der  Der Bratio_2018 Recr_2019 0.234118
 132 68 159 95 Der  Der Bratio_2018 Recr_2020 0.134067
 132 69 159 96 Der  Der Bratio_2018 Recr_2021 0.0310411
-132 70 159 97 Der  Der Bratio_2018 Recr_2022 -0.00727833
+132 70 159 97 Der  Der Bratio_2018 Recr_2022 -0.00727835
 132 71 159 98 Der  Der Bratio_2018 Recr_2023 0.117642
 132 72 159 99 Der  Der Bratio_2018 Recr_2024 0.104442
 132 73 159 100 Der  Der Bratio_2018 Recr_2025 0.0940542
@@ -8730,7 +8730,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 132 76 159 103 Der  Der Bratio_2018 Recr_2028 0.0736092
 132 77 159 104 Der  Der Bratio_2018 Recr_2029 0.0696295
 132 78 159 105 Der  Der Bratio_2018 Recr_2030 0.0666841
-132 79 159 106 Der  Der Bratio_2018 Recr_2031 0.0644918
+132 79 159 106 Der  Der Bratio_2018 Recr_2031 0.0644917
 132 80 159 107 Der  Der Bratio_2018 Recr_2032 0.0628167
 132 81 159 108 Der  Der Bratio_2018 SPRratio_2011 -0.851212
 132 82 159 109 Der  Der Bratio_2018 SPRratio_2012 -0.886573
@@ -9588,7 +9588,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 138 127 165 154 Der  Der Bratio_2024 Bratio_2013 0.275807
 138 128 165 155 Der  Der Bratio_2024 Bratio_2014 0.457927
 138 129 165 156 Der  Der Bratio_2024 Bratio_2015 0.630438
-138 130 165 157 Der  Der Bratio_2024 Bratio_2016 0.762032
+138 130 165 157 Der  Der Bratio_2024 Bratio_2016 0.762033
 138 131 165 158 Der  Der Bratio_2024 Bratio_2017 0.846749
 138 132 165 159 Der  Der Bratio_2024 Bratio_2018 0.900516
 138 133 165 160 Der  Der Bratio_2024 Bratio_2019 0.934091
@@ -9724,7 +9724,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 139 125 166 152 Der  Der Bratio_2025 Bratio_2011 0.00232028
 139 126 166 153 Der  Der Bratio_2025 Bratio_2012 0.123281
 139 127 166 154 Der  Der Bratio_2025 Bratio_2013 0.280151
-139 128 166 155 Der  Der Bratio_2025 Bratio_2014 0.462506
+139 128 166 155 Der  Der Bratio_2025 Bratio_2014 0.462507
 139 129 166 156 Der  Der Bratio_2025 Bratio_2015 0.633943
 139 130 166 157 Der  Der Bratio_2025 Bratio_2016 0.762557
 139 131 166 158 Der  Der Bratio_2025 Bratio_2017 0.843095
@@ -9749,7 +9749,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 140 11 167 34 Der  Par Bratio_2026 Main_RecrDev_2017 0.0902638
 140 12 167 35 Der  Par Bratio_2026 Main_RecrDev_2018 0.0941205
 140 13 167 36 Der  Par Bratio_2026 Main_RecrDev_2019 0.180119
-140 14 167 37 Der  Par Bratio_2026 Main_RecrDev_2020 -0.000143599
+140 14 167 37 Der  Par Bratio_2026 Main_RecrDev_2020 -0.000143596
 140 15 167 38 Der  Par Bratio_2026 Main_RecrDev_2021 -0.274922
 140 16 167 39 Der  Par Bratio_2026 Main_RecrDev_2022 -0.391718
 140 17 167 40 Der  Par Bratio_2026 ForeRecr_2023 0.0288503
@@ -9999,7 +9999,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 141 121 168 148 Der  Der Bratio_2027 F_2029 0.17124
 141 122 168 149 Der  Der Bratio_2027 F_2030 0.0862195
 141 123 168 150 Der  Der Bratio_2027 F_2031 0.0328752
-141 124 168 151 Der  Der Bratio_2027 F_2032 0.000930789
+141 124 168 151 Der  Der Bratio_2027 F_2032 0.000930784
 141 125 168 152 Der  Der Bratio_2027 Bratio_2011 -0.00906951
 141 126 168 153 Der  Der Bratio_2027 Bratio_2012 0.118456
 141 127 168 154 Der  Der Bratio_2027 Bratio_2013 0.283914
@@ -10278,7 +10278,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 143 117 170 144 Der  Der Bratio_2029 F_2025 0.529669
 143 118 170 145 Der  Der Bratio_2029 F_2026 0.400137
 143 119 170 146 Der  Der Bratio_2029 F_2027 0.234712
-143 120 170 147 Der  Der Bratio_2029 F_2028 0.0556414
+143 120 170 147 Der  Der Bratio_2029 F_2028 0.0556415
 143 121 170 148 Der  Der Bratio_2029 F_2029 -0.0976547
 143 122 170 149 Der  Der Bratio_2029 F_2030 -0.203464
 143 123 170 150 Der  Der Bratio_2029 F_2031 -0.264902
@@ -10752,7 +10752,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 147 13 174 36 Der  Par SSB_unfished Main_RecrDev_2019 0.0789913
 147 14 174 37 Der  Par SSB_unfished Main_RecrDev_2020 0.0682741
 147 15 174 38 Der  Par SSB_unfished Main_RecrDev_2021 -0.003631
-147 16 174 39 Der  Par SSB_unfished Main_RecrDev_2022 0.00483898
+147 16 174 39 Der  Par SSB_unfished Main_RecrDev_2022 0.00483897
 147 17 174 40 Der  Par SSB_unfished ForeRecr_2023 0
 147 18 174 41 Der  Par SSB_unfished ForeRecr_2024 0
 147 19 174 42 Der  Par SSB_unfished ForeRecr_2025 0
@@ -11047,7 +11047,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 149 13 176 36 Der  Par SmryBio_unfished Main_RecrDev_2019 0.0870804
 149 14 176 37 Der  Par SmryBio_unfished Main_RecrDev_2020 0.0662213
 149 15 176 38 Der  Par SmryBio_unfished Main_RecrDev_2021 -0.0101986
-149 16 176 39 Der  Par SmryBio_unfished Main_RecrDev_2022 0.00267762
+149 16 176 39 Der  Par SmryBio_unfished Main_RecrDev_2022 0.00267761
 149 17 176 40 Der  Par SmryBio_unfished ForeRecr_2023 0
 149 18 176 41 Der  Par SmryBio_unfished ForeRecr_2024 0
 149 19 176 42 Der  Par SmryBio_unfished ForeRecr_2025 0
@@ -11195,7 +11195,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 150 12 177 35 Der  Par Recr_unfished Main_RecrDev_2018 0.0660291
 150 13 177 36 Der  Par Recr_unfished Main_RecrDev_2019 0.0854561
 150 14 177 37 Der  Par Recr_unfished Main_RecrDev_2020 0.0659908
-150 15 177 38 Der  Par Recr_unfished Main_RecrDev_2021 -0.00399456
+150 15 177 38 Der  Par Recr_unfished Main_RecrDev_2021 -0.00399455
 150 16 177 39 Der  Par Recr_unfished Main_RecrDev_2022 -0.0153943
 150 17 177 40 Der  Par Recr_unfished ForeRecr_2023 0
 150 18 177 41 Der  Par Recr_unfished ForeRecr_2024 0
@@ -11530,7 +11530,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 152 46 179 73 Der  Der SPR_Btgt SSB_2022 -0.0310083
 152 47 179 74 Der  Der SPR_Btgt SSB_2023 -0.0294284
 152 48 179 75 Der  Der SPR_Btgt SSB_2024 -0.0165225
-152 49 179 76 Der  Der SPR_Btgt SSB_2025 -0.0016336
+152 49 179 76 Der  Der SPR_Btgt SSB_2025 -0.00163359
 152 50 179 77 Der  Der SPR_Btgt SSB_2026 0.0153417
 152 51 179 78 Der  Der SPR_Btgt SSB_2027 0.034379
 152 52 179 79 Der  Der SPR_Btgt SSB_2028 0.0539025
@@ -12574,7 +12574,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 159 5 186 28 Der  Par SPR_MSY Main_RecrDev_2011 0.0449666
 159 6 186 29 Der  Par SPR_MSY Main_RecrDev_2012 -0.00119983
 159 7 186 30 Der  Par SPR_MSY Main_RecrDev_2013 -0.00795162
-159 8 186 31 Der  Par SPR_MSY Main_RecrDev_2014 0.0210027
+159 8 186 31 Der  Par SPR_MSY Main_RecrDev_2014 0.0210026
 159 9 186 32 Der  Par SPR_MSY Main_RecrDev_2015 0.0127183
 159 10 186 33 Der  Par SPR_MSY Main_RecrDev_2016 -0.0365069
 159 11 186 34 Der  Par SPR_MSY Main_RecrDev_2017 0.003178
@@ -12599,7 +12599,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 159 30 186 55 Der  Par SPR_MSY Size_95%width_FISHERY(1) -0.136847
 159 31 186 56 Der  Par SPR_MSY Size_inflection_SURVEY1(2) 0.170932
 159 32 186 57 Der  Par SPR_MSY Size_95%width_SURVEY1(2) 0.137269
-159 33 186 60 Der  Der SPR_MSY SSB_Virgin 0.253463
+159 33 186 60 Der  Der SPR_MSY SSB_Virgin 0.253464
 159 34 186 61 Der  Der SPR_MSY SSB_Initial -0.0886129
 159 35 186 62 Der  Der SPR_MSY SSB_2011 -0.0886129
 159 36 186 63 Der  Der SPR_MSY SSB_2012 -0.0800363
@@ -12713,7 +12713,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 159 144 186 171 Der  Der SPR_MSY Bratio_2030 -0.260544
 159 145 186 172 Der  Der SPR_MSY Bratio_2031 -0.215621
 159 146 186 173 Der  Der SPR_MSY Bratio_2032 -0.178809
-159 147 186 174 Der  Der SPR_MSY SSB_unfished 0.253463
+159 147 186 174 Der  Der SPR_MSY SSB_unfished 0.253464
 159 148 186 175 Der  Der SPR_MSY Totbio_unfished 0.154036
 159 149 186 176 Der  Der SPR_MSY SmryBio_unfished 0.150295
 159 150 186 177 Der  Der SPR_MSY Recr_unfished -0.116527
@@ -12870,7 +12870,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 160 142 187 169 Der  Der annF_MSY Bratio_2028 -0.0443719
 160 143 187 170 Der  Der annF_MSY Bratio_2029 -0.0508035
 160 144 187 171 Der  Der annF_MSY Bratio_2030 -0.0479015
-160 145 187 172 Der  Der annF_MSY Bratio_2031 -0.0398622
+160 145 187 172 Der  Der annF_MSY Bratio_2031 -0.039862
 160 146 187 173 Der  Der annF_MSY Bratio_2032 -0.0314654
 160 147 187 174 Der  Der annF_MSY SSB_unfished -0.788515
 160 148 187 175 Der  Der annF_MSY Totbio_unfished -0.72579
@@ -12887,21 +12887,21 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 160 159 187 186 Der  Der annF_MSY SPR_MSY -0.389141
 161 0 188 188 Der  Std Dead_Catch_MSY   _   239.602
 161 1 188 2 Der  Par Dead_Catch_MSY L_at_Amin_Fem_GP_1 -0.12535
-161 2 188 3 Der  Par Dead_Catch_MSY L_at_Amax_Fem_GP_1 -0.047662
+161 2 188 3 Der  Par Dead_Catch_MSY L_at_Amax_Fem_GP_1 -0.0476619
 161 3 188 4 Der  Par Dead_Catch_MSY VonBert_K_Fem_GP_1 0.107083
 161 4 188 23 Der  Par Dead_Catch_MSY SR_LN(R0) 0.985277
 161 5 188 28 Der  Par Dead_Catch_MSY Main_RecrDev_2011 -0.249916
 161 6 188 29 Der  Par Dead_Catch_MSY Main_RecrDev_2012 -0.0666161
 161 7 188 30 Der  Par Dead_Catch_MSY Main_RecrDev_2013 -0.026344
 161 8 188 31 Der  Par Dead_Catch_MSY Main_RecrDev_2014 -0.0203332
-161 9 188 32 Der  Par Dead_Catch_MSY Main_RecrDev_2015 -0.000939843
+161 9 188 32 Der  Par Dead_Catch_MSY Main_RecrDev_2015 -0.000939844
 161 10 188 33 Der  Par Dead_Catch_MSY Main_RecrDev_2016 0.0892538
 161 11 188 34 Der  Par Dead_Catch_MSY Main_RecrDev_2017 0.045326
 161 12 188 35 Der  Par Dead_Catch_MSY Main_RecrDev_2018 0.0788055
 161 13 188 36 Der  Par Dead_Catch_MSY Main_RecrDev_2019 0.095275
 161 14 188 37 Der  Par Dead_Catch_MSY Main_RecrDev_2020 0.0677104
 161 15 188 38 Der  Par Dead_Catch_MSY Main_RecrDev_2021 -0.0145376
-161 16 188 39 Der  Par Dead_Catch_MSY Main_RecrDev_2022 -0.0349876
+161 16 188 39 Der  Par Dead_Catch_MSY Main_RecrDev_2022 -0.0349877
 161 17 188 40 Der  Par Dead_Catch_MSY ForeRecr_2023 0
 161 18 188 41 Der  Par Dead_Catch_MSY ForeRecr_2024 0
 161 19 188 42 Der  Par Dead_Catch_MSY ForeRecr_2025 0
@@ -13048,21 +13048,21 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 161 160 188 187 Der  Der Dead_Catch_MSY annF_MSY -0.510832
 162 0 189 189 Der  Std Ret_Catch_MSY   _   239.602
 162 1 189 2 Der  Par Ret_Catch_MSY L_at_Amin_Fem_GP_1 -0.12535
-162 2 189 3 Der  Par Ret_Catch_MSY L_at_Amax_Fem_GP_1 -0.047662
+162 2 189 3 Der  Par Ret_Catch_MSY L_at_Amax_Fem_GP_1 -0.0476619
 162 3 189 4 Der  Par Ret_Catch_MSY VonBert_K_Fem_GP_1 0.107083
 162 4 189 23 Der  Par Ret_Catch_MSY SR_LN(R0) 0.985277
 162 5 189 28 Der  Par Ret_Catch_MSY Main_RecrDev_2011 -0.249916
 162 6 189 29 Der  Par Ret_Catch_MSY Main_RecrDev_2012 -0.0666161
 162 7 189 30 Der  Par Ret_Catch_MSY Main_RecrDev_2013 -0.026344
 162 8 189 31 Der  Par Ret_Catch_MSY Main_RecrDev_2014 -0.0203332
-162 9 189 32 Der  Par Ret_Catch_MSY Main_RecrDev_2015 -0.000939843
+162 9 189 32 Der  Par Ret_Catch_MSY Main_RecrDev_2015 -0.000939844
 162 10 189 33 Der  Par Ret_Catch_MSY Main_RecrDev_2016 0.0892538
 162 11 189 34 Der  Par Ret_Catch_MSY Main_RecrDev_2017 0.045326
 162 12 189 35 Der  Par Ret_Catch_MSY Main_RecrDev_2018 0.0788055
 162 13 189 36 Der  Par Ret_Catch_MSY Main_RecrDev_2019 0.095275
 162 14 189 37 Der  Par Ret_Catch_MSY Main_RecrDev_2020 0.0677104
 162 15 189 38 Der  Par Ret_Catch_MSY Main_RecrDev_2021 -0.0145376
-162 16 189 39 Der  Par Ret_Catch_MSY Main_RecrDev_2022 -0.0349876
+162 16 189 39 Der  Par Ret_Catch_MSY Main_RecrDev_2022 -0.0349877
 162 17 189 40 Der  Par Ret_Catch_MSY ForeRecr_2023 0
 162 18 189 41 Der  Par Ret_Catch_MSY ForeRecr_2024 0
 162 19 189 42 Der  Par Ret_Catch_MSY ForeRecr_2025 0
@@ -13380,10 +13380,10 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 164 6 191 29 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2012 -0.0612985
 164 7 191 30 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2013 -0.0295882
 164 8 191 31 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2014 -0.0181576
-164 9 191 32 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2015 0.000845982
+164 9 191 32 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2015 0.000845981
 164 10 191 33 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2016 0.071696
 164 11 191 34 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2017 0.0397877
-164 12 191 35 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2018 0.0630291
+164 12 191 35 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2018 0.063029
 164 13 191 36 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2019 0.0861731
 164 14 191 37 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2020 0.0643427
 164 15 191 38 Der  Par Recr_MSY_bmarkbio Main_RecrDev_2021 -0.00646429
@@ -13551,7 +13551,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 165 13 192 36 Der  Par Depletion_denom Main_RecrDev_2019 0.0789913
 165 14 192 37 Der  Par Depletion_denom Main_RecrDev_2020 0.0682741
 165 15 192 38 Der  Par Depletion_denom Main_RecrDev_2021 -0.003631
-165 16 192 39 Der  Par Depletion_denom Main_RecrDev_2022 0.00483898
+165 16 192 39 Der  Par Depletion_denom Main_RecrDev_2022 0.00483897
 165 17 192 40 Der  Par Depletion_denom ForeRecr_2023 0
 165 18 192 41 Der  Par Depletion_denom ForeRecr_2024 0
 165 19 192 42 Der  Par Depletion_denom ForeRecr_2025 0
@@ -13694,7 +13694,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 165 156 192 183 Der  Der Depletion_denom annF_SPR -0.775935
 165 157 192 184 Der  Der Depletion_denom Dead_Catch_SPR 0.944204
 165 158 192 185 Der  Der Depletion_denom SSB_MSY 0.947961
-165 159 192 186 Der  Der Depletion_denom SPR_MSY 0.253463
+165 159 192 186 Der  Der Depletion_denom SPR_MSY 0.253464
 165 160 192 187 Der  Der Depletion_denom annF_MSY -0.788515
 165 161 192 188 Der  Der Depletion_denom Dead_Catch_MSY 0.895059
 165 162 192 189 Der  Der Depletion_denom Ret_Catch_MSY 0.895059
@@ -13881,7 +13881,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 167 12 194 35 Der  Par R0_for_SRR_bench Main_RecrDev_2018 0.0660291
 167 13 194 36 Der  Par R0_for_SRR_bench Main_RecrDev_2019 0.0854561
 167 14 194 37 Der  Par R0_for_SRR_bench Main_RecrDev_2020 0.0659908
-167 15 194 38 Der  Par R0_for_SRR_bench Main_RecrDev_2021 -0.00399456
+167 15 194 38 Der  Par R0_for_SRR_bench Main_RecrDev_2021 -0.00399455
 167 16 194 39 Der  Par R0_for_SRR_bench Main_RecrDev_2022 -0.0153943
 167 17 194 40 Der  Par R0_for_SRR_bench ForeRecr_2023 0
 167 18 194 41 Der  Par R0_for_SRR_bench ForeRecr_2024 0
@@ -14049,7 +14049,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 168 13 195 36 Der  Par SSB_for_SRR_bench Main_RecrDev_2019 0.0789913
 168 14 195 37 Der  Par SSB_for_SRR_bench Main_RecrDev_2020 0.0682741
 168 15 195 38 Der  Par SSB_for_SRR_bench Main_RecrDev_2021 -0.003631
-168 16 195 39 Der  Par SSB_for_SRR_bench Main_RecrDev_2022 0.00483898
+168 16 195 39 Der  Par SSB_for_SRR_bench Main_RecrDev_2022 0.00483897
 168 17 195 40 Der  Par SSB_for_SRR_bench ForeRecr_2023 0
 168 18 195 41 Der  Par SSB_for_SRR_bench ForeRecr_2024 0
 168 19 195 42 Der  Par SSB_for_SRR_bench ForeRecr_2025 0
@@ -14192,7 +14192,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 168 156 195 183 Der  Der SSB_for_SRR_bench annF_SPR -0.775935
 168 157 195 184 Der  Der SSB_for_SRR_bench Dead_Catch_SPR 0.944204
 168 158 195 185 Der  Der SSB_for_SRR_bench SSB_MSY 0.947961
-168 159 195 186 Der  Der SSB_for_SRR_bench SPR_MSY 0.253463
+168 159 195 186 Der  Der SSB_for_SRR_bench SPR_MSY 0.253464
 168 160 195 187 Der  Der SSB_for_SRR_bench annF_MSY -0.788515
 168 161 195 188 Der  Der SSB_for_SRR_bench Dead_Catch_MSY 0.895059
 168 162 195 189 Der  Der SSB_for_SRR_bench Ret_Catch_MSY 0.895059
@@ -14387,8 +14387,8 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 170 14 197 37 Der  Par ForeCatch_2024 Main_RecrDev_2020 -0.0154245
 170 15 197 38 Der  Par ForeCatch_2024 Main_RecrDev_2021 -0.250087
 170 16 197 39 Der  Par ForeCatch_2024 Main_RecrDev_2022 -0.324783
-170 17 197 40 Der  Par ForeCatch_2024 ForeRecr_2023 7.30397e-08
-170 18 197 41 Der  Par ForeCatch_2024 ForeRecr_2024 1.58384e-08
+170 17 197 40 Der  Par ForeCatch_2024 ForeRecr_2023 7.2943e-08
+170 18 197 41 Der  Par ForeCatch_2024 ForeRecr_2024 1.58174e-08
 170 19 197 42 Der  Par ForeCatch_2024 ForeRecr_2025 0
 170 20 197 43 Der  Par ForeCatch_2024 ForeRecr_2026 0
 170 21 197 44 Der  Par ForeCatch_2024 ForeRecr_2027 0
@@ -14472,7 +14472,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 170 99 197 126 Der  Der ForeCatch_2024 SPRratio_2029 0.387302
 170 100 197 127 Der  Der ForeCatch_2024 SPRratio_2030 0.232785
 170 101 197 128 Der  Der ForeCatch_2024 SPRratio_2031 0.14557
-170 102 197 129 Der  Der ForeCatch_2024 SPRratio_2032 0.0956756
+170 102 197 129 Der  Der ForeCatch_2024 SPRratio_2032 0.0956755
 170 103 197 130 Der  Der ForeCatch_2024 F_2011 -0.613306
 170 104 197 131 Der  Der ForeCatch_2024 F_2012 -0.635204
 170 105 197 132 Der  Der ForeCatch_2024 F_2013 -0.657533
@@ -14557,9 +14557,9 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 171 14 198 37 Der  Par ForeCatch_2025 Main_RecrDev_2020 0.00429927
 171 15 198 38 Der  Par ForeCatch_2025 Main_RecrDev_2021 -0.239036
 171 16 198 39 Der  Par ForeCatch_2025 Main_RecrDev_2022 -0.322208
-171 17 198 40 Der  Par ForeCatch_2025 ForeRecr_2023 2.4214e-07
-171 18 198 41 Der  Par ForeCatch_2025 ForeRecr_2024 7.51194e-08
-171 19 198 42 Der  Par ForeCatch_2025 ForeRecr_2025 1.61711e-08
+171 17 198 40 Der  Par ForeCatch_2025 ForeRecr_2023 2.41941e-07
+171 18 198 41 Der  Par ForeCatch_2025 ForeRecr_2024 7.50573e-08
+171 19 198 42 Der  Par ForeCatch_2025 ForeRecr_2025 1.61578e-08
 171 20 198 43 Der  Par ForeCatch_2025 ForeRecr_2026 0
 171 21 198 44 Der  Par ForeCatch_2025 ForeRecr_2027 0
 171 22 198 45 Der  Par ForeCatch_2025 ForeRecr_2028 0
@@ -14720,7 +14720,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 172 6 199 29 Der  Par ForeCatch_2026 Main_RecrDev_2012 -0.0243154
 172 7 199 30 Der  Par ForeCatch_2026 Main_RecrDev_2013 0.0610005
 172 8 199 31 Der  Par ForeCatch_2026 Main_RecrDev_2014 0.0680742
-172 9 199 32 Der  Par ForeCatch_2026 Main_RecrDev_2015 0.000445386
+172 9 199 32 Der  Par ForeCatch_2026 Main_RecrDev_2015 0.000445385
 172 10 199 33 Der  Par ForeCatch_2026 Main_RecrDev_2016 0.240832
 172 11 199 34 Der  Par ForeCatch_2026 Main_RecrDev_2017 0.0767403
 172 12 199 35 Der  Par ForeCatch_2026 Main_RecrDev_2018 0.0845724
@@ -14728,10 +14728,10 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 172 14 199 37 Der  Par ForeCatch_2026 Main_RecrDev_2020 0.0222376
 172 15 199 38 Der  Par ForeCatch_2026 Main_RecrDev_2021 -0.210475
 172 16 199 39 Der  Par ForeCatch_2026 Main_RecrDev_2022 -0.291755
-172 17 199 40 Der  Par ForeCatch_2026 ForeRecr_2023 6.0616e-07
-172 18 199 41 Der  Par ForeCatch_2026 ForeRecr_2024 2.50307e-07
-172 19 199 42 Der  Par ForeCatch_2026 ForeRecr_2025 7.71216e-08
-172 20 199 43 Der  Par ForeCatch_2026 ForeRecr_2026 1.6511e-08
+172 17 199 40 Der  Par ForeCatch_2026 ForeRecr_2023 6.04997e-07
+172 18 199 41 Der  Par ForeCatch_2026 ForeRecr_2024 2.49827e-07
+172 19 199 42 Der  Par ForeCatch_2026 ForeRecr_2025 7.69742e-08
+172 20 199 43 Der  Par ForeCatch_2026 ForeRecr_2026 1.64793e-08
 172 21 199 44 Der  Par ForeCatch_2026 ForeRecr_2027 0
 172 22 199 45 Der  Par ForeCatch_2026 ForeRecr_2028 0
 172 23 199 46 Der  Par ForeCatch_2026 ForeRecr_2029 0
@@ -14900,11 +14900,11 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 173 14 200 37 Der  Par ForeCatch_2027 Main_RecrDev_2020 0.0321347
 173 15 200 38 Der  Par ForeCatch_2027 Main_RecrDev_2021 -0.169382
 173 16 200 39 Der  Par ForeCatch_2027 Main_RecrDev_2022 -0.230024
-173 17 200 40 Der  Par ForeCatch_2027 ForeRecr_2023 1.20665e-06
-173 18 200 41 Der  Par ForeCatch_2027 ForeRecr_2024 6.31957e-07
-173 19 200 42 Der  Par ForeCatch_2027 ForeRecr_2025 2.59219e-07
-173 20 200 43 Der  Par ForeCatch_2027 ForeRecr_2026 7.94543e-08
-173 21 200 44 Der  Par ForeCatch_2027 ForeRecr_2027 1.69382e-08
+173 17 200 40 Der  Par ForeCatch_2027 ForeRecr_2023 1.20526e-06
+173 18 200 41 Der  Par ForeCatch_2027 ForeRecr_2024 6.31225e-07
+173 19 200 42 Der  Par ForeCatch_2027 ForeRecr_2025 2.58919e-07
+173 20 200 43 Der  Par ForeCatch_2027 ForeRecr_2026 7.93626e-08
+173 21 200 44 Der  Par ForeCatch_2027 ForeRecr_2027 1.69186e-08
 173 22 200 45 Der  Par ForeCatch_2027 ForeRecr_2028 0
 173 23 200 46 Der  Par ForeCatch_2027 ForeRecr_2029 0
 173 24 200 47 Der  Par ForeCatch_2027 ForeRecr_2030 0
@@ -15073,12 +15073,12 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 174 14 201 37 Der  Par ForeCatch_2028 Main_RecrDev_2020 0.0336448
 174 15 201 38 Der  Par ForeCatch_2028 Main_RecrDev_2021 -0.124994
 174 16 201 39 Der  Par ForeCatch_2028 Main_RecrDev_2022 -0.149225
-174 17 201 40 Der  Par ForeCatch_2028 ForeRecr_2023 1.97065e-06
-174 18 201 41 Der  Par ForeCatch_2028 ForeRecr_2024 1.24946e-06
-174 19 201 42 Der  Par ForeCatch_2028 ForeRecr_2025 6.50102e-07
-174 20 201 43 Der  Par ForeCatch_2028 ForeRecr_2026 2.6532e-07
-174 21 201 44 Der  Par ForeCatch_2028 ForeRecr_2027 8.10016e-08
-174 22 201 45 Der  Par ForeCatch_2028 ForeRecr_2028 1.72076e-08
+174 17 201 40 Der  Par ForeCatch_2028 ForeRecr_2023 1.97289e-06
+174 18 201 41 Der  Par ForeCatch_2028 ForeRecr_2024 1.25089e-06
+174 19 201 42 Der  Par ForeCatch_2028 ForeRecr_2025 6.50846e-07
+174 20 201 43 Der  Par ForeCatch_2028 ForeRecr_2026 2.65623e-07
+174 21 201 44 Der  Par ForeCatch_2028 ForeRecr_2027 8.10939e-08
+174 22 201 45 Der  Par ForeCatch_2028 ForeRecr_2028 1.72272e-08
 174 23 201 46 Der  Par ForeCatch_2028 ForeRecr_2029 0
 174 24 201 47 Der  Par ForeCatch_2028 ForeRecr_2030 0
 174 25 201 48 Der  Par ForeCatch_2028 ForeRecr_2031 0
@@ -15389,7 +15389,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 175 156 202 183 Der  Der ForeCatch_2029 annF_SPR -0.373473
 175 157 202 184 Der  Der ForeCatch_2029 Dead_Catch_SPR 0.946016
 175 158 202 185 Der  Der ForeCatch_2029 SSB_MSY 0.867893
-175 159 202 186 Der  Der ForeCatch_2029 SPR_MSY -0.144629
+175 159 202 186 Der  Der ForeCatch_2029 SPR_MSY -0.14463
 175 160 202 187 Der  Der ForeCatch_2029 annF_MSY -0.331461
 175 161 202 188 Der  Der ForeCatch_2029 Dead_Catch_MSY 0.960046
 175 162 202 189 Der  Der ForeCatch_2029 Ret_Catch_MSY 0.960046
@@ -15422,14 +15422,14 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 176 14 203 37 Der  Par ForeCatch_2030 Main_RecrDev_2020 0.0248571
 176 15 203 38 Der  Par ForeCatch_2030 Main_RecrDev_2021 -0.0552306
 176 16 203 39 Der  Par ForeCatch_2030 Main_RecrDev_2022 -0.00249862
-176 17 203 40 Der  Par ForeCatch_2030 ForeRecr_2023 3.46746e-06
-176 18 203 41 Der  Par ForeCatch_2030 ForeRecr_2024 2.83661e-06
-176 19 203 42 Der  Par ForeCatch_2030 ForeRecr_2025 2.06922e-06
-176 20 203 43 Der  Par ForeCatch_2030 ForeRecr_2026 1.29731e-06
-176 21 203 44 Der  Par ForeCatch_2030 ForeRecr_2027 6.69135e-07
-176 22 203 45 Der  Par ForeCatch_2030 ForeRecr_2028 2.71165e-07
-176 23 203 46 Der  Par ForeCatch_2030 ForeRecr_2029 8.22862e-08
-176 24 203 47 Der  Par ForeCatch_2030 ForeRecr_2030 1.73862e-08
+176 17 203 40 Der  Par ForeCatch_2030 ForeRecr_2023 3.45891e-06
+176 18 203 41 Der  Par ForeCatch_2030 ForeRecr_2024 2.82961e-06
+176 19 203 42 Der  Par ForeCatch_2030 ForeRecr_2025 2.06412e-06
+176 20 203 43 Der  Par ForeCatch_2030 ForeRecr_2026 1.29411e-06
+176 21 203 44 Der  Par ForeCatch_2030 ForeRecr_2027 6.67487e-07
+176 22 203 45 Der  Par ForeCatch_2030 ForeRecr_2028 2.70495e-07
+176 23 203 46 Der  Par ForeCatch_2030 ForeRecr_2029 8.20828e-08
+176 24 203 47 Der  Par ForeCatch_2030 ForeRecr_2030 1.73433e-08
 176 25 203 48 Der  Par ForeCatch_2030 ForeRecr_2031 0
 176 26 203 49 Der  Par ForeCatch_2030 ForeRecr_2032 0
 176 27 203 51 Der  Par ForeCatch_2030 LnQ_base_SURVEY1(2) -0.535621
@@ -15478,7 +15478,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 176 70 203 97 Der  Der ForeCatch_2030 Recr_2022 0.239183
 176 71 203 98 Der  Der ForeCatch_2030 Recr_2023 0.143159
 176 72 203 99 Der  Der ForeCatch_2030 Recr_2024 0.131608
-176 73 203 100 Der  Der ForeCatch_2030 Recr_2025 0.122835
+176 73 203 100 Der  Der ForeCatch_2030 Recr_2025 0.122834
 176 74 203 101 Der  Der ForeCatch_2030 Recr_2026 0.116019
 176 75 203 102 Der  Der ForeCatch_2030 Recr_2027 0.110671
 176 76 203 103 Der  Der ForeCatch_2030 Recr_2028 0.106484
@@ -15766,25 +15766,25 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 178 5 205 28 Der  Par ForeCatch_2032 Main_RecrDev_2011 -0.264949
 178 6 205 29 Der  Par ForeCatch_2032 Main_RecrDev_2012 -0.0806254
 178 7 205 30 Der  Par ForeCatch_2032 Main_RecrDev_2013 -0.00168202
-178 8 205 31 Der  Par ForeCatch_2032 Main_RecrDev_2014 0.000695296
+178 8 205 31 Der  Par ForeCatch_2032 Main_RecrDev_2014 0.000695298
 178 9 205 32 Der  Par ForeCatch_2032 Main_RecrDev_2015 -0.0667976
 178 10 205 33 Der  Par ForeCatch_2032 Main_RecrDev_2016 0.159273
-178 11 205 34 Der  Par ForeCatch_2032 Main_RecrDev_2017 -0.000289204
+178 11 205 34 Der  Par ForeCatch_2032 Main_RecrDev_2017 -0.000289201
 178 12 205 35 Der  Par ForeCatch_2032 Main_RecrDev_2018 0.0219419
 178 13 205 36 Der  Par ForeCatch_2032 Main_RecrDev_2019 0.122766
 178 14 205 37 Der  Par ForeCatch_2032 Main_RecrDev_2020 0.0171957
 178 15 205 38 Der  Par ForeCatch_2032 Main_RecrDev_2021 -0.0214351
 178 16 205 39 Der  Par ForeCatch_2032 Main_RecrDev_2022 0.0748926
-178 17 205 40 Der  Par ForeCatch_2032 ForeRecr_2023 4.40502e-06
-178 18 205 41 Der  Par ForeCatch_2032 ForeRecr_2024 4.1244e-06
-178 19 205 42 Der  Par ForeCatch_2032 ForeRecr_2025 3.62821e-06
-178 20 205 43 Der  Par ForeCatch_2032 ForeRecr_2026 2.93652e-06
-178 21 205 44 Der  Par ForeCatch_2032 ForeRecr_2027 2.12441e-06
-178 22 205 45 Der  Par ForeCatch_2032 ForeRecr_2028 1.32298e-06
-178 23 205 46 Der  Par ForeCatch_2032 ForeRecr_2029 6.78466e-07
-178 24 205 47 Der  Par ForeCatch_2032 ForeRecr_2030 2.73594e-07
-178 25 205 48 Der  Par ForeCatch_2032 ForeRecr_2031 8.2682e-08
-178 26 205 49 Der  Par ForeCatch_2032 ForeRecr_2032 1.74086e-08
+178 17 205 40 Der  Par ForeCatch_2032 ForeRecr_2023 4.39086e-06
+178 18 205 41 Der  Par ForeCatch_2032 ForeRecr_2024 4.11115e-06
+178 19 205 42 Der  Par ForeCatch_2032 ForeRecr_2025 3.61655e-06
+178 20 205 43 Der  Par ForeCatch_2032 ForeRecr_2026 2.9271e-06
+178 21 205 44 Der  Par ForeCatch_2032 ForeRecr_2027 2.11759e-06
+178 22 205 45 Der  Par ForeCatch_2032 ForeRecr_2028 1.31873e-06
+178 23 205 46 Der  Par ForeCatch_2032 ForeRecr_2029 6.76287e-07
+178 24 205 47 Der  Par ForeCatch_2032 ForeRecr_2030 2.72715e-07
+178 25 205 48 Der  Par ForeCatch_2032 ForeRecr_2031 8.24163e-08
+178 26 205 49 Der  Par ForeCatch_2032 ForeRecr_2032 1.73527e-08
 178 27 205 51 Der  Par ForeCatch_2032 LnQ_base_SURVEY1(2) -0.518644
 178 28 205 53 Der  Par ForeCatch_2032 LnQ_base_SURVEY2(3) -0.292797
 178 29 205 54 Der  Par ForeCatch_2032 Size_inflection_FISHERY(1) -0.436261
@@ -16129,7 +16129,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 180 11 207 34 Der  Par OFLCatch_2024 Main_RecrDev_2017 0.0819471
 180 12 207 35 Der  Par OFLCatch_2024 Main_RecrDev_2018 0.0797292
 180 13 207 36 Der  Par OFLCatch_2024 Main_RecrDev_2019 0.139829
-180 14 207 37 Der  Par OFLCatch_2024 Main_RecrDev_2020 0.00737401
+180 14 207 37 Der  Par OFLCatch_2024 Main_RecrDev_2020 0.00737402
 180 15 207 38 Der  Par OFLCatch_2024 Main_RecrDev_2021 -0.215698
 180 16 207 39 Der  Par OFLCatch_2024 Main_RecrDev_2022 -0.283333
 180 17 207 40 Der  Par OFLCatch_2024 ForeRecr_2023 0
@@ -17356,7 +17356,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 186 143 213 170 Der  Der OFLCatch_2030 Bratio_2029 0.771885
 186 144 213 171 Der  Der OFLCatch_2030 Bratio_2030 0.639721
 186 145 213 172 Der  Der OFLCatch_2030 Bratio_2031 0.505755
-186 146 213 173 Der  Der OFLCatch_2030 Bratio_2032 0.40003
+186 146 213 173 Der  Der OFLCatch_2030 Bratio_2032 0.400029
 186 147 213 174 Der  Der OFLCatch_2030 SSB_unfished 0.872356
 186 148 213 175 Der  Der OFLCatch_2030 Totbio_unfished 0.91529
 186 149 213 176 Der  Der OFLCatch_2030 SmryBio_unfished 0.915595
@@ -17591,7 +17591,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 188 5 215 28 Der  Par OFLCatch_2032 Main_RecrDev_2011 -0.261872
 188 6 215 29 Der  Par OFLCatch_2032 Main_RecrDev_2012 -0.0797107
 188 7 215 30 Der  Par OFLCatch_2032 Main_RecrDev_2013 -0.00670026
-188 8 215 31 Der  Par OFLCatch_2032 Main_RecrDev_2014 -0.00145995
+188 8 215 31 Der  Par OFLCatch_2032 Main_RecrDev_2014 -0.00145994
 188 9 215 32 Der  Par OFLCatch_2032 Main_RecrDev_2015 -0.0562689
 188 10 215 33 Der  Par OFLCatch_2032 Main_RecrDev_2016 0.1463
 188 11 215 34 Der  Par OFLCatch_2032 Main_RecrDev_2017 0.00712665
@@ -18161,7 +18161,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 191 8 218 31 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2014 -0.048325
 191 9 218 32 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2015 -0.0207344
 191 10 218 33 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2016 -0.0330321
-191 11 218 34 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2017 -0.000813688
+191 11 218 34 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2017 -0.000813683
 191 12 218 35 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2018 0.0362054
 191 13 218 36 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2019 0.0193192
 191 14 218 37 Der  Par LenSelex_std_1_Fem_L_58 Main_RecrDev_2020 0.0827985
@@ -18352,7 +18352,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 192 8 219 31 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2014 -0.0451996
 192 9 219 32 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2015 -0.0223421
 192 10 219 33 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2016 -0.0326339
-192 11 219 34 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2017 0.00277039
+192 11 219 34 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2017 0.00277041
 192 12 219 35 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2018 0.033851
 192 13 219 36 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2019 0.0343718
 192 14 219 37 Der  Par LenSelex_std_1_Fem_L_78 Main_RecrDev_2020 0.0890503
@@ -18579,7 +18579,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 193 43 220 70 Der  Der LenSelex_std_1_Fem_L_94 SSB_2019 0.137297
 193 44 220 71 Der  Der LenSelex_std_1_Fem_L_94 SSB_2020 0.13454
 193 45 220 72 Der  Der LenSelex_std_1_Fem_L_94 SSB_2021 0.134421
-193 46 220 73 Der  Der LenSelex_std_1_Fem_L_94 SSB_2022 0.138501
+193 46 220 73 Der  Der LenSelex_std_1_Fem_L_94 SSB_2022 0.138502
 193 47 220 74 Der  Der LenSelex_std_1_Fem_L_94 SSB_2023 0.147962
 193 48 220 75 Der  Der LenSelex_std_1_Fem_L_94 SSB_2024 0.168668
 193 49 220 76 Der  Der LenSelex_std_1_Fem_L_94 SSB_2025 0.19521
@@ -19126,7 +19126,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 196 8 223 31 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2014 -0.048325
 196 9 223 32 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2015 -0.0207344
 196 10 223 33 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2016 -0.0330321
-196 11 223 34 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2017 -0.000813688
+196 11 223 34 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2017 -0.000813683
 196 12 223 35 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2018 0.0362054
 196 13 223 36 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2019 0.0193192
 196 14 223 37 Der  Par LenSelex_std_1_Mal_L_58 Main_RecrDev_2020 0.0827985
@@ -19322,7 +19322,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 197 8 224 31 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2014 -0.0451996
 197 9 224 32 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2015 -0.0223421
 197 10 224 33 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2016 -0.0326339
-197 11 224 34 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2017 0.00277039
+197 11 224 34 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2017 0.00277041
 197 12 224 35 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2018 0.033851
 197 13 224 36 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2019 0.0343718
 197 14 224 37 Der  Par LenSelex_std_1_Mal_L_78 Main_RecrDev_2020 0.0890503
@@ -19554,7 +19554,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 198 43 225 70 Der  Der LenSelex_std_1_Mal_L_94 SSB_2019 0.137297
 198 44 225 71 Der  Der LenSelex_std_1_Mal_L_94 SSB_2020 0.13454
 198 45 225 72 Der  Der LenSelex_std_1_Mal_L_94 SSB_2021 0.134421
-198 46 225 73 Der  Der LenSelex_std_1_Mal_L_94 SSB_2022 0.138501
+198 46 225 73 Der  Der LenSelex_std_1_Mal_L_94 SSB_2022 0.138502
 198 47 225 74 Der  Der LenSelex_std_1_Mal_L_94 SSB_2023 0.147962
 198 48 225 75 Der  Der LenSelex_std_1_Mal_L_94 SSB_2024 0.168668
 198 49 225 76 Der  Der LenSelex_std_1_Mal_L_94 SSB_2025 0.19521
@@ -19717,7 +19717,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 199 8 226 31 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2014 0.0439375
 199 9 226 32 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2015 -0.00901926
 199 10 226 33 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2016 0.00892864
-199 11 226 34 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2017 0.000170162
+199 11 226 34 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2017 0.000170161
 199 12 226 35 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2018 -0.0939349
 199 13 226 36 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2019 0.112712
 199 14 226 37 Der  Par Grow_std_GP:_1_Fem_A_1 Main_RecrDev_2020 -0.0794341
@@ -19773,7 +19773,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 199 64 226 91 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2016 -0.00415544
 199 65 226 92 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2017 -0.0114515
 199 66 226 93 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2018 -0.1011
-199 67 226 94 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2019 0.0983062
+199 67 226 94 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2019 0.0983063
 199 68 226 95 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2020 -0.0856897
 199 69 226 96 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2021 -0.180206
 199 70 226 97 Der  Der Grow_std_GP:_1_Fem_A_1 Recr_2022 0.101722
@@ -19790,7 +19790,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 199 81 226 108 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2011 -0.0493856
 199 82 226 109 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2012 -0.0387959
 199 83 226 110 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2013 -0.0302389
-199 84 226 111 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2014 -0.0240231
+199 84 226 111 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2014 -0.024023
 199 85 226 112 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2015 -0.0219009
 199 86 226 113 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2016 -0.0227034
 199 87 226 114 Der  Der Grow_std_GP:_1_Fem_A_1 SPRratio_2017 -0.0252548
@@ -20004,7 +20004,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 200 96 227 123 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2026 0.0573113
 200 97 227 124 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2027 0.0356146
 200 98 227 125 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2028 0.0141835
-200 99 227 126 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2029 0.000417604
+200 99 227 126 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2029 0.000417605
 200 100 227 127 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2030 -0.00587886
 200 101 227 128 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2031 -0.0085562
 200 102 227 129 Der  Der Grow_std_GP:_1_Fem_A_2 SPRratio_2032 -0.00994027
@@ -20116,7 +20116,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 201 8 228 31 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2014 -0.0109724
 201 9 228 32 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2015 -0.00284789
 201 10 228 33 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2016 -0.0283628
-201 11 228 34 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2017 -0.00159989
+201 11 228 34 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2017 -0.00159988
 201 12 228 35 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2018 -0.00182344
 201 13 228 36 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2019 -0.00852972
 201 14 228 37 Der  Par Grow_std_GP:_1_Fem_A_14 Main_RecrDev_2020 0.0286805
@@ -20149,7 +20149,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 201 41 228 68 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2017 -0.0138246
 201 42 228 69 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2018 -0.0203957
 201 43 228 70 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2019 -0.0273889
-201 44 228 71 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2020 -0.0330923
+201 44 228 71 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2020 -0.0330921
 201 45 228 72 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2021 -0.0371184
 201 46 228 73 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2022 -0.0386525
 201 47 228 74 Der  Der Grow_std_GP:_1_Fem_A_14 SSB_2023 -0.0361917
@@ -20175,7 +20175,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 201 67 228 94 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2019 -0.0324265
 201 68 228 95 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2020 0.00180971
 201 69 228 96 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2021 -0.011821
-201 70 228 97 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2022 0.00337837
+201 70 228 97 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2022 0.00337836
 201 71 228 98 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2023 -0.0161684
 201 72 228 99 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2024 -0.0135778
 201 73 228 100 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2025 -0.0114863
@@ -20184,7 +20184,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 201 76 228 103 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2028 -0.00735596
 201 77 228 104 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2029 -0.00652288
 201 78 228 105 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2030 -0.00588322
-201 79 228 106 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2031 -0.00538839
+201 79 228 106 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2031 -0.00538838
 201 80 228 107 Der  Der Grow_std_GP:_1_Fem_A_14 Recr_2032 -0.0049928
 201 81 228 108 Der  Der Grow_std_GP:_1_Fem_A_14 SPRratio_2011 0.557717
 201 82 228 109 Der  Der Grow_std_GP:_1_Fem_A_14 SPRratio_2012 0.508976
@@ -20368,7 +20368,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 202 59 229 86 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2011 0.00751167
 202 60 229 87 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2012 -0.0359075
 202 61 229 88 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2013 -0.0364806
-202 62 229 89 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2014 -0.008939
+202 62 229 89 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2014 -0.00893906
 202 63 229 90 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2015 -0.0140374
 202 64 229 91 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2016 -0.0613242
 202 65 229 92 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2017 -0.0191149
@@ -20570,7 +20570,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 203 59 230 86 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2011 0.00751167
 203 60 230 87 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2012 -0.0359075
 203 61 230 88 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2013 -0.0364806
-203 62 230 89 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2014 -0.008939
+203 62 230 89 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2014 -0.00893906
 203 63 230 90 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2015 -0.0140374
 203 64 230 91 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2016 -0.0613242
 203 65 230 92 Der  Der Grow_std_GP:_1_Fem_A_20 Recr_2017 -0.0191149
@@ -20722,7 +20722,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 204 8 231 31 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2014 0.0439375
 204 9 231 32 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2015 -0.00901926
 204 10 231 33 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2016 0.00892864
-204 11 231 34 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2017 0.000170162
+204 11 231 34 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2017 0.000170161
 204 12 231 35 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2018 -0.0939349
 204 13 231 36 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2019 0.112712
 204 14 231 37 Der  Par Grow_std_GP:_1_Mal_A_1 Main_RecrDev_2020 -0.0794341
@@ -20778,7 +20778,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 204 64 231 91 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2016 -0.00415544
 204 65 231 92 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2017 -0.0114515
 204 66 231 93 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2018 -0.1011
-204 67 231 94 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2019 0.0983062
+204 67 231 94 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2019 0.0983063
 204 68 231 95 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2020 -0.0856897
 204 69 231 96 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2021 -0.180206
 204 70 231 97 Der  Der Grow_std_GP:_1_Mal_A_1 Recr_2022 0.101722
@@ -20795,7 +20795,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 204 81 231 108 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2011 -0.0493856
 204 82 231 109 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2012 -0.0387959
 204 83 231 110 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2013 -0.0302389
-204 84 231 111 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2014 -0.0240231
+204 84 231 111 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2014 -0.024023
 204 85 231 112 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2015 -0.0219009
 204 86 231 113 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2016 -0.0227034
 204 87 231 114 Der  Der Grow_std_GP:_1_Mal_A_1 SPRratio_2017 -0.0252548
@@ -21014,7 +21014,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 205 96 232 123 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2026 0.0573113
 205 97 232 124 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2027 0.0356146
 205 98 232 125 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2028 0.0141835
-205 99 232 126 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2029 0.000417604
+205 99 232 126 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2029 0.000417605
 205 100 232 127 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2030 -0.00587886
 205 101 232 128 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2031 -0.0085562
 205 102 232 129 Der  Der Grow_std_GP:_1_Mal_A_2 SPRratio_2032 -0.00994027
@@ -21131,7 +21131,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 206 8 233 31 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2014 -0.0109724
 206 9 233 32 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2015 -0.00284789
 206 10 233 33 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2016 -0.0283628
-206 11 233 34 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2017 -0.00159989
+206 11 233 34 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2017 -0.00159988
 206 12 233 35 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2018 -0.00182344
 206 13 233 36 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2019 -0.00852972
 206 14 233 37 Der  Par Grow_std_GP:_1_Mal_A_14 Main_RecrDev_2020 0.0286805
@@ -21164,7 +21164,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 206 41 233 68 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2017 -0.0138246
 206 42 233 69 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2018 -0.0203957
 206 43 233 70 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2019 -0.0273889
-206 44 233 71 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2020 -0.0330923
+206 44 233 71 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2020 -0.0330921
 206 45 233 72 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2021 -0.0371184
 206 46 233 73 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2022 -0.0386525
 206 47 233 74 Der  Der Grow_std_GP:_1_Mal_A_14 SSB_2023 -0.0361917
@@ -21190,7 +21190,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 206 67 233 94 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2019 -0.0324265
 206 68 233 95 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2020 0.00180971
 206 69 233 96 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2021 -0.011821
-206 70 233 97 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2022 0.00337837
+206 70 233 97 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2022 0.00337836
 206 71 233 98 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2023 -0.0161684
 206 72 233 99 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2024 -0.0135778
 206 73 233 100 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2025 -0.0114863
@@ -21199,7 +21199,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 206 76 233 103 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2028 -0.00735596
 206 77 233 104 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2029 -0.00652288
 206 78 233 105 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2030 -0.00588322
-206 79 233 106 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2031 -0.00538839
+206 79 233 106 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2031 -0.00538838
 206 80 233 107 Der  Der Grow_std_GP:_1_Mal_A_14 Recr_2032 -0.0049928
 206 81 233 108 Der  Der Grow_std_GP:_1_Mal_A_14 SPRratio_2011 0.557717
 206 82 233 109 Der  Der Grow_std_GP:_1_Mal_A_14 SPRratio_2012 0.508976
@@ -21388,7 +21388,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 207 59 234 86 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2011 0.00751167
 207 60 234 87 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2012 -0.0359075
 207 61 234 88 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2013 -0.0364806
-207 62 234 89 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2014 -0.008939
+207 62 234 89 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2014 -0.00893906
 207 63 234 90 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2015 -0.0140374
 207 64 234 91 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2016 -0.0613242
 207 65 234 92 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2017 -0.0191149
@@ -21595,7 +21595,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 208 59 235 86 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2011 0.00751167
 208 60 235 87 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2012 -0.0359075
 208 61 235 88 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2013 -0.0364806
-208 62 235 89 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2014 -0.008939
+208 62 235 89 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2014 -0.00893906
 208 63 235 90 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2015 -0.0140374
 208 64 235 91 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2016 -0.0613242
 208 65 235 92 Der  Der Grow_std_GP:_1_Mal_A_20 Recr_2017 -0.0191149
@@ -21876,7 +21876,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 209 132 236 159 Der  Der NatAge_std_1_Fem_A_1 Bratio_2018 -0.00663081
 209 133 236 160 Der  Der NatAge_std_1_Fem_A_1 Bratio_2019 -0.024934
 209 134 236 161 Der  Der NatAge_std_1_Fem_A_1 Bratio_2020 -0.0466347
-209 135 236 162 Der  Der NatAge_std_1_Fem_A_1 Bratio_2021 -0.0681753
+209 135 236 162 Der  Der NatAge_std_1_Fem_A_1 Bratio_2021 -0.0681756
 209 136 236 163 Der  Der NatAge_std_1_Fem_A_1 Bratio_2022 -0.0897794
 209 137 236 164 Der  Der NatAge_std_1_Fem_A_1 Bratio_2023 -0.113696
 209 138 236 165 Der  Der NatAge_std_1_Fem_A_1 Bratio_2024 -0.146739
@@ -22282,7 +22282,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 211 119 238 146 Der  Der NatAge_std_1_Fem_A_14 F_2027 0.26816
 211 120 238 147 Der  Der NatAge_std_1_Fem_A_14 F_2028 0.147886
 211 121 238 148 Der  Der NatAge_std_1_Fem_A_14 F_2029 0.0580913
-211 122 238 149 Der  Der NatAge_std_1_Fem_A_14 F_2030 8.34006e-05
+211 122 238 149 Der  Der NatAge_std_1_Fem_A_14 F_2030 8.34002e-05
 211 123 238 150 Der  Der NatAge_std_1_Fem_A_14 F_2031 -0.0347597
 211 124 238 151 Der  Der NatAge_std_1_Fem_A_14 F_2032 -0.0553243
 211 125 238 152 Der  Der NatAge_std_1_Fem_A_14 Bratio_2011 -0.244341
@@ -22931,7 +22931,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 214 132 241 159 Der  Der NatAge_std_1_Mal_A_1 Bratio_2018 -0.00663081
 214 133 241 160 Der  Der NatAge_std_1_Mal_A_1 Bratio_2019 -0.024934
 214 134 241 161 Der  Der NatAge_std_1_Mal_A_1 Bratio_2020 -0.0466347
-214 135 241 162 Der  Der NatAge_std_1_Mal_A_1 Bratio_2021 -0.0681753
+214 135 241 162 Der  Der NatAge_std_1_Mal_A_1 Bratio_2021 -0.0681756
 214 136 241 163 Der  Der NatAge_std_1_Mal_A_1 Bratio_2022 -0.0897794
 214 137 241 164 Der  Der NatAge_std_1_Mal_A_1 Bratio_2023 -0.113696
 214 138 241 165 Der  Der NatAge_std_1_Mal_A_1 Bratio_2024 -0.146739
@@ -23347,7 +23347,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 216 119 243 146 Der  Der NatAge_std_1_Mal_A_14 F_2027 0.26816
 216 120 243 147 Der  Der NatAge_std_1_Mal_A_14 F_2028 0.147886
 216 121 243 148 Der  Der NatAge_std_1_Mal_A_14 F_2029 0.0580913
-216 122 243 149 Der  Der NatAge_std_1_Mal_A_14 F_2030 8.34006e-05
+216 122 243 149 Der  Der NatAge_std_1_Mal_A_14 F_2030 8.34002e-05
 216 123 243 150 Der  Der NatAge_std_1_Mal_A_14 F_2031 -0.0347597
 216 124 243 151 Der  Der NatAge_std_1_Mal_A_14 F_2032 -0.0553243
 216 125 243 152 Der  Der NatAge_std_1_Mal_A_14 Bratio_2011 -0.244341
@@ -24103,7 +24103,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 220 5 247 28 Der  Par ln(SSB)_2016 Main_RecrDev_2011 -0.140249
 220 6 247 29 Der  Par ln(SSB)_2016 Main_RecrDev_2012 -0.057903
 220 7 247 30 Der  Par ln(SSB)_2016 Main_RecrDev_2013 -0.0156006
-220 8 247 31 Der  Par ln(SSB)_2016 Main_RecrDev_2014 -0.000531003
+220 8 247 31 Der  Par ln(SSB)_2016 Main_RecrDev_2014 -0.000530999
 220 9 247 32 Der  Par ln(SSB)_2016 Main_RecrDev_2015 0.00394959
 220 10 247 33 Der  Par ln(SSB)_2016 Main_RecrDev_2016 0.122646
 220 11 247 34 Der  Par ln(SSB)_2016 Main_RecrDev_2017 0.0496063
@@ -24446,7 +24446,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 221 128 248 155 Der  Der ln(SSB)_2022 Bratio_2014 0.264497
 221 129 248 156 Der  Der ln(SSB)_2022 Bratio_2015 0.476921
 221 130 248 157 Der  Der ln(SSB)_2022 Bratio_2016 0.651723
-221 131 248 158 Der  Der ln(SSB)_2022 Bratio_2017 0.773273
+221 131 248 158 Der  Der ln(SSB)_2022 Bratio_2017 0.773274
 221 132 248 159 Der  Der ln(SSB)_2022 Bratio_2018 0.854515
 221 133 248 160 Der  Der ln(SSB)_2022 Bratio_2019 0.902477
 221 134 248 161 Der  Der ln(SSB)_2022 Bratio_2020 0.932547
@@ -24880,7 +24880,7 @@ active-i active-j all-i all-j Par?-i Par?-j label-i label-j corr
 223 119 250 146 Der  Der SURVEY1_2016 F_2027 -0.0580294
 223 120 250 147 Der  Der SURVEY1_2016 F_2028 -0.0317269
 223 121 250 148 Der  Der SURVEY1_2016 F_2029 -0.0122133
-223 122 250 149 Der  Der SURVEY1_2016 F_2030 -3.25225e-05
+223 122 250 149 Der  Der SURVEY1_2016 F_2030 -3.25223e-05
 223 123 250 150 Der  Der SURVEY1_2016 F_2031 0.00687725
 223 124 250 151 Der  Der SURVEY1_2016 F_2032 0.010638
 223 125 250 152 Der  Der SURVEY1_2016 Bratio_2011 0.0379577

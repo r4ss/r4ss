@@ -1,4 +1,4 @@
-#V3.30.24.00;_safe;_compile_date:_Sep 10 2025;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
+#V3.30.25.00;_safe;_compile_date:_Jun 30 2026;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 #_Stock_Synthesis_is_a_work_of_the_U.S._Government_and_is_not_subject_to_copyright_protection_in_the_United_States.
 #_Foreign_copyrights_may_apply._See_copyright.txt_for_more_information.
 #_User_support_available_at:_https://groups.google.com/g/ss3-forum_and_NMFS.Stock.Synthesis@noaa.gov
@@ -44,6 +44,6 @@ control.ss #_ctlfile
 0 # F_std_basis: 0=no scaling; 1 (F/Fspr); 2 (F/Fmsy); 3 (F/Fbtgt); where F means annual F_std, Fmsy means F_std@msy; values >=11 invoke N multiyr using 10s and 100s digit; append .1 to invoke log(ratio)
 0 #_MCMC_output_detail: integer part (0=default; 1=adds obj func components; 2= +write_report_for_each_mceval); and decimal part (added to SR_LN(R0) on first call to mcmc)
 0 #_deprecated:  ALK tolerance ***disabled in code
--1 #_seed:  random number seed for bootstrap data (-1 to use long(time) as seed): # 1757545233
+-1 #_seed:  random number seed for bootstrap data (-1 to use long(time) as seed): # 1782843266
 0 #_Compatibility:  flag for legacy (0) vs improved (1) impact of timevary biology on benchmark SRR calcs >=3.30.24
 3.30 #_final:  check value for end of file and for version control
