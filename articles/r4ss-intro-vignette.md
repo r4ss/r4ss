@@ -222,7 +222,7 @@ inputs$ctl$MG_parms
 #>                         LO        HI        INIT       PRIOR PR_SD PR_type
 #> NatM_p_1_Fem_GP_1    5e-02  0.150000  0.10000000  0.10000000   0.8       0
 #> L_at_Amin_Fem_GP_1   1e+01 45.000000 22.76900000 36.00000000  10.0       0
-#> L_at_Amax_Fem_GP_1   4e+01 90.000000 71.80720000 70.00000000  10.0       0
+#> L_at_Amax_Fem_GP_1   4e+01 90.000000 70.31160000 70.00000000  10.0       0
 #> VonBert_K_Fem_GP_1   5e-02  0.250000  0.14216500  0.15000000   0.8       0
 #> CV_young_Fem_GP_1    5e-02  0.250000  0.10000000  0.10000000   0.8       0
 #> CV_old_Fem_GP_1      5e-02  0.250000  0.10000000  0.10000000   0.8       0
@@ -628,7 +628,7 @@ example_path <- system.file("extdata", "simple_small", package = "r4ss")
 # copy model input files
 copy_SS_inputs(dir.old = example_path, dir.new = mod_path)
 #> copying files from /home/runner/work/_temp/Library/r4ss/extdata/simple_small to
-#> /tmp/RtmpiH9IVF/simple_mod
+#> /tmp/RtmpPo86Av/simple_mod
 #> copying complete
 # copy over the Report file to provide information about the last run
 file.copy(
