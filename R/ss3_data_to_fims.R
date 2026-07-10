@@ -101,7 +101,7 @@ ss3_data_to_fims <- function(
   # create empty data frame
   res <- data.frame(
     type = character(),
-    name = character(),
+    fleet = character(),
     age = integer(),
     length = integer(),
     timing = integer(),
@@ -140,7 +140,7 @@ ss3_data_to_fims <- function(
   # convert landings to FIMSFrame format
   landings <- data.frame(
     type = "landings",
-    name = dat[["fleetnames"]][catch_by_year_fleet[["fleet"]]],
+    fleet = dat[["fleetnames"]][catch_by_year_fleet[["fleet"]]],
     age = NA,
     length = NA,
     timing = catch_by_year_fleet[["year"]],
@@ -175,7 +175,7 @@ ss3_data_to_fims <- function(
 
     indices <- data.frame(
       type = "index",
-      name = dat[["fleetnames"]][index_info[["index"]]],
+      fleet = dat[["fleetnames"]][index_info[["index"]]],
       age = NA,
       length = NA,
       timing = index_info[["year"]],
@@ -263,7 +263,7 @@ ss3_data_to_fims <- function(
     # finish converting age comps to FIMSFrame format
     agecomps <- data.frame(
       type = "age_comp",
-      name = dat[["fleetnames"]][abs(age_info[["fleet"]])], # abs to include negative fleet numbers which may contain marginal ages
+      fleet = dat[["fleetnames"]][abs(age_info[["fleet"]])], # abs to include negative fleet numbers which may contain marginal ages
       age = age_info[["age"]],
       length = NA,
       timing = age_info[["year"]],
@@ -323,7 +323,7 @@ ss3_data_to_fims <- function(
     # finish converting age comps to FIMSFrame format
     lencomps <- data.frame(
       type = "length_comp", # will likely need to change name
-      name = dat[["fleetnames"]][abs(len_info[["fleet"]])], # abs to include fleet == -4
+      fleet = dat[["fleetnames"]][abs(len_info[["fleet"]])], # abs to include fleet == -4
       age = NA,
       length = len_info[["length"]],
       timing = len_info[["year"]],
@@ -347,7 +347,7 @@ ss3_data_to_fims <- function(
     dplyr::filter(age <= max(ages)) |>
     dplyr::mutate(
       type = "weight_at_age",
-      name = dat[["fleetnames"]][1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
+      fleet = dat[["fleetnames"]][1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
       length = NA,
       timing = year,
       value = value / 1000, # convert to metric tons (SS3)
@@ -446,7 +446,7 @@ ss3_data_to_fims <- function(
     # create empty data frame to store the age to length conversions
     age_to_length <- data.frame(
       type = character(),
-      name = character(),
+      fleet = character(),
       age = integer(),
       length = integer(),
       timing = character()
@@ -460,7 +460,7 @@ ss3_data_to_fims <- function(
       rowwise() |>
       mutate(value = length_at_age_lookup(age, length)) |>
       mutate(
-        name = NA,
+        fleet = NA,
         timing = NA,
         type = "age_to_length_conversion",
         unit = "proportion",
