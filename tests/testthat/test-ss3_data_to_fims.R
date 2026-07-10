@@ -11,7 +11,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
     fims_data,
     c(
       "type",
-      "name",
+      "fleet",
       "age",
       "length",
       "timing",
