@@ -137,6 +137,239 @@ retro <- function(
   # check for executable
   check_exe(exe = exe, dir = olddir, verbose = verbose)
 
+  # Shift one or more scalar ctl fields by the same retrospective offset.
+  shift_ctl_fields <- function(inputs, fields, delta, verbose) {
+    for (field in fields) {
+      if (verbose) {
+        cli::cli_alert_info(
+          "Adjusting {field} from {inputs[['ctl']][[field]]} to {inputs[['ctl']][[field]] + delta}"
+        )
+      }
+      inputs[["ctl"]][[field]] <- inputs[["ctl"]][[field]] + delta
+    }
+    inputs
+  }
+
+  # Apply the shared interval-shift rule used for vector year pairs:
+  # shift only end year for early intervals, otherwise shift start and end.
+  shift_interval_pairs <- function(
+    year_values,
+    pair_starts,
+    names,
+    endyr,
+    mean_year,
+    delta,
+    verbose,
+    section_name
+  ) {
+    for (i in pair_starts) {
+      # Interpret non-positive values as years relative to endyr.
+      val <- year_values[i]
+      if (val <= 0) {
+        val <- val + endyr
+      }
+      if (val < mean_year) {
+        if (verbose && delta != 0) {
+          cli::cli_li(
+            "{section_name} {names[[i + 1]]} from {year_values[i + 1]} to {year_values[i + 1] + delta}"
+          )
+        }
+        year_values[i + 1] <- year_values[i + 1] + delta
+      } else {
+        if (verbose && delta != 0) {
+          for (j in 0:1) {
+            cli::cli_li(
+              "{section_name} {names[[i + j]]} from {year_values[i + j]} to {year_values[i + j] + delta}"
+            )
+          }
+        }
+        year_values[i + 0:1] <- year_values[i + 0:1] + delta
+      }
+    }
+    year_values
+  }
+
+  # Handle data-frame Fcast_years format where each row stores st_year/end_year.
+  shift_fcast_years_df <- function(
+    fcast_years,
+    endyr,
+    mean_year,
+    delta,
+    verbose
+  ) {
+    for (i in seq_len(nrow(fcast_years))) {
+      val <- fcast_years[i, "st_year"]
+      if (val <= 0) {
+        val <- val + endyr
+      }
+      if (val > mean_year) {
+        if (verbose && delta != 0) {
+          cli::cli_li(
+            "Fcast_years [{i}, 'st_year'] from {fcast_years[i, 'st_year']} to {fcast_years[i, 'st_year'] + delta}"
+          )
+        }
+        fcast_years[i, "st_year"] <- fcast_years[i, "st_year"] + delta
+      }
+      if (verbose && delta != 0) {
+        cli::cli_li(
+          "Fcast_years [{i}, 'end_year'] from {fcast_years[i, 'end_year']} to {fcast_years[i, 'end_year'] + delta}"
+        )
+      }
+      fcast_years[i, "end_year"] <- fcast_years[i, "end_year"] + delta
+    }
+    fcast_years
+  }
+
+  # Reset to 0 all parameter-table Block columns that reference a removed block design
+  reset_block_columns <- function(ctl, block_design) {
+    parm_tables <- c(
+      "MG_parms",
+      "SR_parms",
+      "Q_parms",
+      "size_selex_parms",
+      "age_selex_parms"
+    )
+    for (table_name in parm_tables) {
+      ctl[[table_name]]$Block[ctl[[table_name]]$Block == block_design] <- 0
+    }
+    ctl
+  }
+
+  # Remove short time-varying parameter rows for removed block years.
+  remove_block_tv_rows <- function(ctl, block_design, removed_start_years, verbose) {
+    tv_tables <- c(
+      "MG_parms_tv",
+      "SR_parms_tv",
+      "Q_parms_tv",
+      "size_selex_parms_tv",
+      "age_selex_parms_tv"
+    )
+    if (length(removed_start_years) == 0) {
+      return(ctl)
+    }
+
+    year_pattern <- paste0(removed_start_years, collapse = "|")
+    row_pattern <- paste0("_BLK", block_design, ".*_((", year_pattern, "))$")
+
+    for (table_name in tv_tables) {
+      if (is.null(ctl[[table_name]]) || nrow(ctl[[table_name]]) == 0) {
+        next
+      }
+      keep_rows <- !grepl(row_pattern, rownames(ctl[[table_name]]))
+      n_removed <- sum(!keep_rows)
+      if (n_removed > 0) {
+        ctl[[table_name]] <- ctl[[table_name]][keep_rows, , drop = FALSE]
+        if (verbose) {
+          cli::cli_alert_info(
+            "Removed {n_removed} time-varying row{?s} from {table_name} for Block_Design {block_design} start year{?s} {toString(removed_start_years)}."
+          )
+        }
+      }
+    }
+    ctl
+  }
+
+  # Remove block periods that start after the modeled end year and keep ctl consistent.
+  adjust_blocks_for_retro <- function(inputs, retro_endyr, verbose) {
+    if (inputs[["ctl"]][["N_Block_Designs"]] <= 0) {
+      return(inputs)
+    }
+    if (verbose) {
+      cli::cli_alert_info("Adjusting blocks for retrospective:")
+    }
+    block_designs_used <- c(
+      inputs$ctl$MG_parms$Block,
+      inputs$ctl$SR_parms$Block,
+      inputs$ctl$Q_parms$Block,
+      inputs$ctl$size_selex_parms$Block,
+      inputs$ctl$age_selex_parms$Block
+    ) |>
+      unique() |>
+      sort() |>
+      setdiff(0)
+
+    if (verbose) {
+      cli::cli_alert_info(
+        "Block designs referenced by parameter lines in control file: {toString(block_designs_used)}"
+      )
+    }
+
+    for (block_design in block_designs_used) {
+      # Guard against stale references to block designs outside N_Block_Designs.
+      if (block_design > inputs$ctl$N_Block_Designs) {
+        next
+      }
+
+      design <- inputs$ctl$Block_Design[[block_design]]
+      # Block_Design alternates start/end years, so take odd positions as starts.
+      start_years <- design[seq(1, length(design), by = 2)]
+      remove_blocks <- which(start_years > retro_endyr)
+      removed_start_years <- start_years[remove_blocks]
+
+      if (length(remove_blocks) == 0) {
+        if (verbose) {
+          cli::cli_alert_info(
+            "Block_Design {block_design} with {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}: no change needed for retro end year {retro_endyr}."
+          )
+        }
+        next
+      }
+
+      if (verbose) {
+        cli::cli_alert_info(
+          "Block_Design {block_design} with {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}, retro end year {retro_endyr}"
+        )
+      }
+
+      for (block in rev(remove_blocks)) {
+        if (verbose) {
+          cli::cli_alert_warning(
+            "Removing block {block} from Block_Design {block_design} because start year {start_years[block]} is beyond retro end year {retro_endyr}."
+          )
+        }
+        # Remove from highest index first so earlier indices remain valid.
+        design <- design[-c((block * 2 - 1):(block * 2))]
+      }
+
+      inputs$ctl <- remove_block_tv_rows(
+        ctl = inputs$ctl,
+        block_design = block_design,
+        removed_start_years = removed_start_years,
+        verbose = verbose
+      )
+
+      inputs$ctl$Block_Design[[block_design]] <- design
+      inputs$ctl$blocks_per_pattern[block_design] <- length(design) / 2
+
+      if (verbose) {
+        cli::cli_alert_info(
+          "Block_Design {block_design} now has {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}"
+        )
+      }
+
+      if (inputs$ctl$blocks_per_pattern[block_design] == 0) {
+        if (verbose) {
+          cli::cli_alert_info(
+            "No blocks remain in Block_Design {block_design}; resetting associated parameter Block values to 0."
+          )
+        }
+        inputs$ctl <- reset_block_columns(inputs$ctl, block_design)
+        inputs$ctl$Block_Design[[block_design]] <- c(
+          inputs$dat$styr,
+          inputs$dat$styr
+        )
+        inputs$ctl$blocks_per_pattern[block_design] <- 1
+        if (verbose) {
+          cli::cli_alert_info(
+            "Inserted placeholder Block_Design years ({inputs$dat$styr}, {inputs$dat$styr}) for Block_Design {block_design}."
+          )
+        }
+      }
+    }
+
+    inputs
+  }
+
   # loop over retrospective years
   furrr::future_walk(seq_along(years), function(iyr) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
@@ -158,167 +391,48 @@ retro <- function(
     )
 
     # change starter file to do retrospectives
-    inputs[["starter"]][["retro_yr"]] <- years[iyr]
-    inputs[["starter"]][["init_values_src"]] <- 0
+    inputs[["start"]][["retro_yr"]] <- years[iyr]
+    inputs[["start"]][["init_values_src"]] <- 0
 
     # change settings based on the retrospective year
-    inputs[["ctl"]]
+    year_shift <- years[iyr]
+    retro_endyr <- inputs[["dat"]][["endyr"]] + year_shift
+    mean_year <- mean(c(
+      inputs[["dat"]][["styr"]],
+      inputs[["dat"]][["endyr"]]
+    ))
+
     # adjust recdevs settings if requested
     if ("recdevs" %in% adjustments) {
-      cli::cli_alert_info(
-        "Adjusting the last year of main recdevs from {inputs[['ctl']][['MainRdevYrLast']]} to {inputs[['ctl']][['MainRdevYrLast']] + years[iyr]}"
+      inputs <- shift_ctl_fields(
+        inputs = inputs,
+        fields = "MainRdevYrLast",
+        delta = year_shift,
+        verbose = verbose
       )
-      inputs[["ctl"]][["MainRdevYrLast"]] <-
-        inputs[["ctl"]][["MainRdevYrLast"]] + years[iyr]
     }
 
     # adjust biasadj settings if requested
     if ("biasadj" %in% adjustments) {
-      cli::cli_alert_info(
-        "Adjusting last_yr_fullbias_adj from {inputs[['ctl']][['last_yr_fullbias_adj']]} to {inputs[['ctl']][['last_yr_fullbias_adj']] + years[iyr]}"
+      inputs <- shift_ctl_fields(
+        inputs = inputs,
+        fields = c("last_yr_fullbias_adj", "first_recent_yr_nobias_adj"),
+        delta = year_shift,
+        verbose = verbose
       )
-      cli::cli_alert_info(
-        "Adjusting first_recent_yr_nobias_adj from {inputs[['ctl']][['first_recent_yr_nobias_adj']]} to {inputs[['ctl']][['first_recent_yr_nobias_adj']] + years[iyr]}"
-      )
-      inputs[["ctl"]][["last_yr_fullbias_adj"]] <-
-        inputs[["ctl"]][["last_yr_fullbias_adj"]] + years[iyr]
-      inputs[["ctl"]][["first_recent_yr_nobias_adj"]] <-
-        inputs[["ctl"]][["first_recent_yr_nobias_adj"]] + years[iyr]
     }
 
     # adjust blocks if requested
-    if ("blocks" %in% adjustments & inputs[["ctl"]][["N_Block_Designs"]] > 0) {
-      if (verbose) {
-        cli::cli_alert_info("Adjusting blocks for retrospective:")
-      }
-      # figure out which block patterns are actually used within a parameter line
-      # check which blocks are actually used
-      block_designs_used <- c(
-        inputs$ctl$MG_parms$Block,
-        inputs$ctl$SR_parms$Block,
-        inputs$ctl$Q_parms$Block,
-        inputs$ctl$size_selex_parms$Block,
-        inputs$ctl$age_selex_parms$Block
-      ) |>
-        unique() |>
-        sort() |>
-        setdiff(0)
-      if (verbose) {
-        cli::cli_alert_info(
-          "Block designs referenced by parameter lines in control file: {toString(block_designs_used)}"
-        )
-      }
-
-      # check if the used blocks are still within the modeled period
-      for (block_design in 1:inputs$ctl$N_Block_Designs) {
-        if (
-          block_design %in%
-            block_designs_used
-        ) {
-          if (verbose) {
-            cli::cli_alert_info(
-              "Evaluating Block_Design {block_design} with {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}..."
-            )
-          }
-          for (block in seq_along(inputs$ctl$blocks_per_pattern[
-            block_design
-          ])) {
-            # if start year of block is greater than the start year of the model, remove final block from block design
-            # note block design is a vector of length 2 * number of blocks, with start and end years alternating
-            if (
-              inputs$ctl$Block_Design[[block_design]][block * 2 - 1] >
-                inputs$dat$endyr
-            ) {
-              if (verbose) {
-                cli::cli_alert_info(
-                  "Removing block {block} from Block_Design {block_design} because start year {inputs$ctl$Block_Design[[block_design]][block * 2 - 1]} is beyond model end year {inputs$dat$endyr}."
-                )
-              }
-              # remove block from design
-              inputs$ctl$Block_Design[[
-                block_design
-              ]] <- inputs$ctl$Block_Design[[block_design]][
-                -c((block * 2 - 1):(block * 2))
-              ]
-              # reduce number of blocks per design
-              inputs$ctl$blocks_per_pattern[
-                block_design
-              ] <- inputs$ctl$blocks_per_pattern[block_design] - 1
-              if (verbose) {
-                cli::cli_alert_info(
-                  "Block_Design {block_design} now has {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}."
-                )
-              }
-              # check if there are no more blocks left in the design in which case
-              # any parameter lines associated with this block design should be updated
-              if (inputs$ctl$blocks_per_pattern[block_design] == 0) {
-                if (verbose) {
-                  cli::cli_alert_info(
-                    "No blocks remain in Block_Design {block_design}; resetting associated parameter Block values to 0."
-                  )
-                }
-                # update any parameter lines associated with this block design
-                # change any value in the Block column matching `block_design` to 0
-                # and apply it to the following dataframes:
-                inputs$ctl$MG_parms$Block <- ifelse(
-                  inputs$ctl$MG_parms$Block == block_design,
-                  0,
-                  inputs$ctl$MG_parms$Block
-                )
-                inputs$ctl$SR_parms$Block <- ifelse(
-                  inputs$ctl$SR_parms$Block == block_design,
-                  0,
-                  inputs$ctl$SR_parms$Block
-                )
-                inputs$ctl$Q_parms$Block <- ifelse(
-                  inputs$ctl$Q_parms$Block == block_design,
-                  0,
-                  inputs$ctl$Q_parms$Block
-                )
-                inputs$ctl$size_selex_parms$Block <- ifelse(
-                  inputs$ctl$size_selex_parms$Block == block_design,
-                  0,
-                  inputs$ctl$size_selex_parms$Block
-                )
-                inputs$ctl$age_selex_parms$Block <- ifelse(
-                  inputs$ctl$age_selex_parms$Block == block_design,
-                  0,
-                  inputs$ctl$age_selex_parms$Block
-                )
-                # add back placeholder block values to avoid having to renumber blocks in other parameter lines
-                inputs$ctl$Block_Design[[block_design]] <- c(
-                  inputs$dat$styr,
-                  inputs$dat$styr
-                )
-                inputs$ctl$blocks_per_pattern[block_design] <- 1
-                if (verbose) {
-                  cli::cli_alert_info(
-                    "Inserted placeholder Block_Design years ({inputs$dat$styr}, {inputs$dat$styr}) for Block_Design {block_design}."
-                  )
-                }
-              }
-            } else {
-              cli::cli_alert_info(
-                "No change needed for Block_Design {block_design}"
-              )
-            }
-          }
-          # } else {
-          # if (verbose) {
-          #   cli::cli_alert_info(
-          #     "Skipping Block_Design {block_design} because it is not referenced by active parameter lines."
-          #   )
-          # }
-        }
-      }
+    if ("blocks" %in% adjustments) {
+      inputs <- adjust_blocks_for_retro(
+        inputs = inputs,
+        retro_endyr = retro_endyr,
+        verbose = verbose
+      )
     }
 
     # adjust forecast values if requested
     if ("forecast" %in% adjustments) {
-      mean_year <- mean(c(
-        inputs[["dat"]][["styr"]],
-        inputs[["dat"]][["endyr"]]
-      ))
       #_Fcast_years for averaging:  beg_selex, end_selex, beg_relF, end_relF, beg_mean recruits, end_recruits  (enter actual year, or values of 0 or -integer to be rel. endyr)
       Fcast_years_names <- c(
         "beg_selex",
@@ -334,77 +448,30 @@ retro <- function(
         )
         cli::cli_alert_info("Adjusting Fcast_years for retrospective:")
       }
-      if (is.data.frame(inputs[["fore"]][["Fcast_years"]])) {
-        # if Fcast_years is a data frame, loop over rows
-        for (i in seq_len(nrow(inputs[["fore"]][["Fcast_years"]]))) {
-          # dataframe has format like:
-          #                MG_type method st_year end_year
-          # #_Fcast_years1      10      1      -4        0
-          # #_Fcast_years2      11      1      -4        0
-          # #_Fcast_years3      12      1      -4        0
 
-          # compute input year as either absolute or relative year
-          val <- inputs[["fore"]][["Fcast_years"]][i, "st_year"]
-          if (val <= 0) {
-            val <- val + inputs[["dat"]][["endyr"]]
-          }
-          # check for whether the beginning year of the interval is closer to the start year of the model
-          if (val > mean_year) {
-            # adjust start end year of the period
-            if (verbose & years[iyr] != 0) {
-              cli::cli_li(
-                "Adjusting Fcast_years [{i}, 'st_year'] from {inputs[['fore']][['Fcast_years']][i, 'st_year']} to {inputs[['fore']][['Fcast_years']][i, 'st_year'] + years[iyr]}"
-              )
-            }
-            inputs[["fore"]][["Fcast_years"]][i, "st_year"] <- inputs[[
-              "fore"
-            ]][["Fcast_years"]][i, "st_year"] +
-              years[iyr]
-          }
-          # always adjust the ending year of the interval
-          if (verbose & years[iyr] != 0) {
-            cli::cli_li(
-              "Adjusting Fcast_years [{i}, 'end_year'] from {inputs[['fore']][['Fcast_years']][i, 'end_year']} to {inputs[['fore']][['Fcast_years']][i, 'end_year'] + years[iyr]}"
-            )
-          }
-          inputs[["fore"]][["Fcast_years"]][i, "end_year"] <- inputs[["fore"]][[
-            "Fcast_years"
-          ]][i, "end_year"] +
-            years[iyr]
-        }
+      if (is.data.frame(inputs[["fore"]][["Fcast_years"]])) {
+        # Newer forecast format: each row is an interval.
+        inputs[["fore"]][["Fcast_years"]] <- shift_fcast_years_df(
+          fcast_years = inputs[["fore"]][["Fcast_years"]],
+          endyr = inputs[["dat"]][["endyr"]],
+          mean_year = mean_year,
+          delta = year_shift,
+          verbose = verbose
+        )
       } else {
-        # vector format for Fcast_years, where intervals are stored sequentially
-        for (i in c(1, 3, 5)) {
-          # compute input year as either absolute or relative year
-          val <- inputs[["fore"]][["Fcast_years"]][i]
-          if (val <= 0) {
-            val <- val + inputs[["dat"]][["endyr"]]
-          }
-          if (
-            # check for whether the beginning year of the interval is closer to the start year of the model
-            val < mean_year
-          ) {
-            if (verbose & years[iyr] != 0) {
-              # adjust only the ending value
-              cli::cli_li(
-                "{Fcast_years_names[[i + 1]]} from {inputs[['fore']][['Fcast_years']][i + 1]} to {inputs[['fore']][['Fcast_years']][i + 1] + years[iyr]}"
-              )
-            }
-            inputs[["fore"]][["Fcast_years"]][i + 1] <-
-              inputs[["fore"]][["Fcast_years"]][i + 1] + years[iyr]
-          } else {
-            if (verbose & years[iyr] != 0) {
-              for (j in 0:1) {
-                cli::cli_li(
-                  "Shifting Fcast_years {Fcast_years_names[[i + j]]} from {inputs[['fore']][['Fcast_years']][i + j]} to {inputs[['fore']][['Fcast_years']][i + j] + years[iyr]}"
-                )
-              }
-            }
-            # adjust both values
-            inputs[["fore"]][["Fcast_years"]][i + 0:1] <-
-              inputs[["fore"]][["Fcast_years"]][i + 0:1] + years[iyr]
-          }
-        }
+        # Legacy forecast format: interval years stored in alternating vector positions.
+        inputs[["fore"]][["Fcast_years"]] <- shift_interval_pairs(
+          year_values = inputs[["fore"]][["Fcast_years"]],
+          pair_starts = c(1, 3, 5),
+          names = Fcast_years_names,
+          endyr = inputs[["dat"]][["endyr"]],
+          mean_year = mean_year,
+          delta = year_shift,
+          verbose = verbose,
+          section_name = "Fcast_years"
+        )
+      }
+      if (verbose) {
         cli::cli_end(id = "Fcast_years")
       }
     }
@@ -429,39 +496,20 @@ retro <- function(
         )
         cli::cli_alert_info("Adjusting Bmark_years for retrospective:")
       }
-      for (i in c(1, 3, 5, 7, 9)) {
-        # compute input year as either absolute or relative year
-        val <- inputs[["fore"]][["Bmark_years"]][i]
-        if (val <= 0) {
-          val <- val + inputs[["dat"]][["endyr"]]
-        }
-        if (
-          # check for whether the beginning year of the interval is closer to the start year of the model
-          val < mean_year
-        ) {
-          if (verbose & years[iyr] != 0) {
-            # adjust only the ending value
-            cli::cli_li(
-              "{Bmark_years_names[[i + 1]]} from {inputs[['fore']][['Bmark_years']][i + 1]} to {inputs[['fore']][['Bmark_years']][i + 1] + years[iyr]}"
-            )
-          }
-          # adjust only the ending year
-          inputs[["fore"]][["Bmark_years"]][i + 1] <-
-            inputs[["fore"]][["Bmark_years"]][i + 1] + years[iyr]
-        } else {
-          if (verbose & years[iyr] != 0) {
-            for (j in 0:1) {
-              cli::cli_li(
-                "Shifting Bmark_years {Bmark_years_names[[i + j]]} from {inputs[['fore']][['Bmark_years']][i + j]} to {inputs[['fore']][['Bmark_years']][i + j] + years[iyr]}"
-              )
-            }
-          }
-          # adjust both start and end year
-          inputs[["fore"]][["Bmark_years"]][i + 0:1] <-
-            inputs[["fore"]][["Bmark_years"]][i + 0:1] + years[iyr]
-        }
+      # Benchmark years currently use the same alternating vector format as legacy forecast.
+      inputs[["fore"]][["Bmark_years"]] <- shift_interval_pairs(
+        year_values = inputs[["fore"]][["Bmark_years"]],
+        pair_starts = c(1, 3, 5, 7, 9),
+        names = Bmark_years_names,
+        endyr = inputs[["dat"]][["endyr"]],
+        mean_year = mean_year,
+        delta = year_shift,
+        verbose = verbose,
+        section_name = "Bmark_years"
+      )
+      if (verbose) {
+        cli::cli_end(id = "Bmark_years")
       }
-      cli::cli_end(id = "Bmark_years")
     }
 
     # overwrite the input files
