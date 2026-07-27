@@ -39,10 +39,10 @@ SS_doRetro <-
 #' retrospective year. Should be zero or negative values.
 #' @param overwrite Overwrite any input files with matching names in the
 #' subdirectories where models will be run.
-#' @param RemoveBlocks Logical switch determining whether specifications of
-#' blocks is removed from top of control file. Blocks can cause problems for
-#' retrospective analyses, but the method for removing them is overly
-#' simplistic and probably won't work in most cases. Default=FALSE.
+#' @param adjustments Character vector of settings to shift for each
+#' retrospective year. Allowed values are `"recdevs"`, `"biasadj"`,
+#' `"blocks"`, `"forecast"`, and `"benchmarks"`. NULL will result in
+#' no adjustments being applied.
 #' @inheritParams r4ss_params
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
@@ -93,7 +93,7 @@ retro <- function(
   years = 0:-5,
   overwrite = TRUE,
   adjustments = c("recdevs", "biasadj", "blocks", "forecast", "benchmarks"),
-  verbose = FALSE,
+  verbose = TRUE,
   exe = "ss3",
   ...
 ) {

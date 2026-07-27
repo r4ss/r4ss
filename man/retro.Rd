@@ -12,8 +12,8 @@ retro(
   subdirstart = "retro",
   years = 0:-5,
   overwrite = TRUE,
-  RemoveBlocks = FALSE,
-  verbose = FALSE,
+  adjustments = c("recdevs", "biasadj", "blocks", "forecast", "benchmarks"),
+  verbose = TRUE,
   exe = "ss3",
   ...
 )
@@ -38,10 +38,10 @@ retrospective year. Should be zero or negative values.}
 \item{overwrite}{Overwrite any input files with matching names in the
 subdirectories where models will be run.}
 
-\item{RemoveBlocks}{Logical switch determining whether specifications of
-blocks is removed from top of control file. Blocks can cause problems for
-retrospective analyses, but the method for removing them is overly
-simplistic and probably won't work in most cases. Default=FALSE.}
+\item{adjustments}{Character vector of settings to shift for each
+retrospective year. Allowed values are \code{"recdevs"}, \code{"biasadj"},
+\code{"blocks"}, \code{"forecast"}, and \code{"benchmarks"}. NULL will result in
+no adjustments being applied.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
@@ -69,7 +69,7 @@ before running \code{retro()}.
 \dontrun{
 # note: don't run this in your main directory--make a copy in case something
 # goes wrong
-mydir <- "C:/Simple"
+mydir <- system.file("extdata", "simple_small", package = "r4ss")
 
 ## retrospective analyses
 retro(
