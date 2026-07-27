@@ -115,11 +115,15 @@ retro <- function(
     "benchmarks",
     "blocks"
   )
-  adjustments <- match.arg(
-    adjustments,
-    choices = allowed_adjustments,
-    several.ok = TRUE
-  )
+  if (is.null(adjustments)) {
+    adjustments <- character(0)
+  } else {
+    adjustments <- match.arg(
+      adjustments,
+      choices = allowed_adjustments,
+      several.ok = TRUE
+    )
+  }
 
   olddir <- file.path(dir, oldsubdir)
   newdir <- file.path(dir, newsubdir)
@@ -202,7 +206,7 @@ retro <- function(
       if (val <= 0) {
         val <- val + endyr
       }
-      if (val > mean_year) {
+      if (val >= mean_year) {
         if (verbose && delta != 0) {
           cli::cli_li(
             "Fcast_years [{i}, 'st_year'] from {fcast_years[i, 'st_year']} to {fcast_years[i, 'st_year'] + delta}"
@@ -230,13 +234,20 @@ retro <- function(
       "age_selex_parms"
     )
     for (table_name in parm_tables) {
-      ctl[[table_name]]$Block[ctl[[table_name]]$Block == block_design] <- 0
+      ctl[[table_name]][["Block"]][
+        ctl[[table_name]][["Block"]] == block_design
+      ] <- 0
     }
     ctl
   }
 
   # Remove short time-varying parameter rows for removed block years.
-  remove_block_tv_rows <- function(ctl, block_design, removed_start_years, verbose) {
+  remove_block_tv_rows <- function(
+    ctl,
+    block_design,
+    removed_start_years,
+    verbose
+  ) {
     tv_tables <- c(
       "MG_parms_tv",
       "SR_parms_tv",
@@ -278,11 +289,11 @@ retro <- function(
       cli::cli_alert_info("Adjusting blocks for retrospective:")
     }
     block_designs_used <- c(
-      inputs$ctl$MG_parms$Block,
-      inputs$ctl$SR_parms$Block,
-      inputs$ctl$Q_parms$Block,
-      inputs$ctl$size_selex_parms$Block,
-      inputs$ctl$age_selex_parms$Block
+      inputs[["ctl"]][["MG_parms"]][["Block"]],
+      inputs[["ctl"]][["SR_parms"]][["Block"]],
+      inputs[["ctl"]][["Q_parms"]][["Block"]],
+      inputs[["ctl"]][["size_selex_parms"]][["Block"]],
+      inputs[["ctl"]][["age_selex_parms"]][["Block"]]
     ) |>
       unique() |>
       sort() |>
@@ -296,11 +307,11 @@ retro <- function(
 
     for (block_design in block_designs_used) {
       # Guard against stale references to block designs outside N_Block_Designs.
-      if (block_design > inputs$ctl$N_Block_Designs) {
+      if (block_design > inputs[["ctl"]][["N_Block_Designs"]]) {
         next
       }
 
-      design <- inputs$ctl$Block_Design[[block_design]]
+      design <- inputs[["ctl"]][["Block_Design"]][[block_design]]
       # Block_Design alternates start/end years, so take odd positions as starts.
       start_years <- design[seq(1, length(design), by = 2)]
       remove_blocks <- which(start_years > retro_endyr)
@@ -309,7 +320,7 @@ retro <- function(
       if (length(remove_blocks) == 0) {
         if (verbose) {
           cli::cli_alert_info(
-            "Block_Design {block_design} with {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}: no change needed for retro end year {retro_endyr}."
+            "Block_Design {block_design} with {cli::pluralize('{inputs[['ctl']][['blocks_per_pattern']][block_design]} block{?s}')}: no change needed for retro end year {retro_endyr}."
           )
         }
         next
@@ -317,7 +328,7 @@ retro <- function(
 
       if (verbose) {
         cli::cli_alert_info(
-          "Block_Design {block_design} with {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}, retro end year {retro_endyr}"
+          "Block_Design {block_design} with {cli::pluralize('{inputs[['ctl']][['blocks_per_pattern']][block_design]} block{?s}')}, retro end year {retro_endyr}"
         )
       }
 
@@ -331,37 +342,38 @@ retro <- function(
         design <- design[-c((block * 2 - 1):(block * 2))]
       }
 
-      inputs$ctl <- remove_block_tv_rows(
-        ctl = inputs$ctl,
+      inputs[["ctl"]] <- remove_block_tv_rows(
+        ctl = inputs[["ctl"]],
         block_design = block_design,
         removed_start_years = removed_start_years,
         verbose = verbose
       )
 
-      inputs$ctl$Block_Design[[block_design]] <- design
-      inputs$ctl$blocks_per_pattern[block_design] <- length(design) / 2
+      inputs[["ctl"]][["Block_Design"]][[block_design]] <- design
+      inputs[["ctl"]][["blocks_per_pattern"]][block_design] <- length(design) /
+        2
 
       if (verbose) {
         cli::cli_alert_info(
-          "Block_Design {block_design} now has {cli::pluralize('{inputs$ctl$blocks_per_pattern[block_design]} block{?s}')}"
+          "Block_Design {block_design} now has {cli::pluralize('{inputs[['ctl']][['blocks_per_pattern']][block_design]} block{?s}')}"
         )
       }
 
-      if (inputs$ctl$blocks_per_pattern[block_design] == 0) {
+      if (inputs[["ctl"]][["blocks_per_pattern"]][block_design] == 0) {
         if (verbose) {
           cli::cli_alert_info(
             "No blocks remain in Block_Design {block_design}; resetting associated parameter Block values to 0."
           )
         }
-        inputs$ctl <- reset_block_columns(inputs$ctl, block_design)
-        inputs$ctl$Block_Design[[block_design]] <- c(
-          inputs$dat$styr,
-          inputs$dat$styr
+        inputs[["ctl"]] <- reset_block_columns(inputs[["ctl"]], block_design)
+        inputs[["ctl"]][["Block_Design"]][[block_design]] <- c(
+          inputs[["dat"]][["styr"]],
+          inputs[["dat"]][["styr"]]
         )
-        inputs$ctl$blocks_per_pattern[block_design] <- 1
+        inputs[["ctl"]][["blocks_per_pattern"]][block_design] <- 1
         if (verbose) {
           cli::cli_alert_info(
-            "Inserted placeholder Block_Design years ({inputs$dat$styr}, {inputs$dat$styr}) for Block_Design {block_design}."
+            "Inserted placeholder Block_Design years ({inputs[['dat']][['styr']]}, {inputs[['dat']][['styr']]}) for Block_Design {block_design}."
           )
         }
       }
