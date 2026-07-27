@@ -131,7 +131,7 @@ retro <- function(
   }
 
   # read original input files (later written to each folder)
-  inputs <- SS_read(olddir, verbose = FALSE)
+  base_inputs <- SS_read(olddir, verbose = FALSE)
   subdirnames <- paste0(subdirstart, years)
 
   # check for executable
@@ -372,6 +372,9 @@ retro <- function(
 
   # loop over retrospective years
   furrr::future_walk(seq_along(years), function(iyr) {
+    # start from unchanged inputs each iteration to avoid cumulative shifts
+    inputs <- base_inputs
+
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
     if (verbose) {
       cli::cli_alert_info("Running retrospective in {newdir_iyr}")
