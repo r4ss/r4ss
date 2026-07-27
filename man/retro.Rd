@@ -45,6 +45,8 @@ no adjustments being applied.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
+
+\item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can
 also include the absolute path or a path relative to the specified
 directory. Needs to be a single character string, not a vector.
@@ -54,11 +56,6 @@ included.}
 
 \item{...}{Additional arguments passed to \code{\link[=run]{run()}}, such as
 \code{extras}, \code{show_in_console}, and \code{skipfinished}.}
-
-\item{RemoveBlocks}{Logical switch determining whether specifications of
-blocks is removed from top of control file. Blocks can cause problems for
-retrospective analyses, but the method for removing them is overly
-simplistic and probably won't work in most cases. Default=FALSE.}
 }
 \description{
 Do retrospective analyses by creating new directories, copying model files,
