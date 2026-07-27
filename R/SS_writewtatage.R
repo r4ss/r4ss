@@ -66,10 +66,15 @@ SS_writewtatage <- function(
     cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
-  on.exit({
-    if (sink.number(type = "output") > 0) sink(type = "output")
-    close(zz)
-  }, add = TRUE)
+  on.exit(
+    {
+      if (sink.number(type = "output") > 0) {
+        sink(type = "output")
+      }
+      close(zz)
+    },
+    add = TRUE
+  )
   sink(zz, split = verbose)
 
   writeLines(paste(NCOL(mylist) - 7, "# maxage"))
