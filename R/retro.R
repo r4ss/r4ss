@@ -115,11 +115,15 @@ retro <- function(
     "benchmarks",
     "blocks"
   )
-  adjustments <- match.arg(
-    adjustments,
-    choices = allowed_adjustments,
-    several.ok = TRUE
-  )
+  if (is.null(adjustments)) {
+    adjustments <- character(0)
+  } else {
+    adjustments <- match.arg(
+      adjustments,
+      choices = allowed_adjustments,
+      several.ok = TRUE
+    )
+  }
 
   olddir <- file.path(dir, oldsubdir)
   newdir <- file.path(dir, newsubdir)
@@ -202,7 +206,7 @@ retro <- function(
       if (val <= 0) {
         val <- val + endyr
       }
-      if (val > mean_year) {
+      if (val >= mean_year) {
         if (verbose && delta != 0) {
           cli::cli_li(
             "Fcast_years [{i}, 'st_year'] from {fcast_years[i, 'st_year']} to {fcast_years[i, 'st_year'] + delta}"
