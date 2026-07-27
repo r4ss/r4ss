@@ -38,8 +38,8 @@ SS_writestarter <- function(
   # output written to the file after the function crashes before closing connection
   ## on.exit({if(sink.number()>0) sink(); close(zz)})
   on.exit({
-    if (sink.number() > 0) sink()
-  })
+    if (sink.number(type = "output") > 0) sink(type = "output")
+  }, add = TRUE)
 
   if (is.null(dir)) {
     dir <- getwd()
@@ -167,7 +167,7 @@ SS_writestarter <- function(
 
   # restore printing width to whatever the user had before
   options(width = oldwidth)
-  sink()
+  if (sink.number(type = "output") > 0) sink(type = "output")
   close(zz)
   if (verbose) {
     cli::cli_inform("file written to {outfile}")

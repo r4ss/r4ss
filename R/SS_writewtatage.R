@@ -34,8 +34,8 @@ SS_writewtatage <- function(
   # Prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
   on.exit({
-    if (sink.number() > 0) sink()
-  })
+    if (sink.number(type = "output") > 0) sink(type = "output")
+  }, add = TRUE)
 
   if (is.null(dir)) {
     dir <- getwd()
@@ -63,7 +63,7 @@ SS_writewtatage <- function(
     cli::cli_inform("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
-  on.exit(close(zz))
+  on.exit(close(zz), add = TRUE)
   sink(zz, split = verbose)
 
   writeLines(paste(NCOL(mylist) - 7, "# maxage"))
@@ -103,6 +103,6 @@ SS_writewtatage <- function(
 
   # restore printing width to whatever the user had before
   options(width = oldwidth)
-  sink()
+  if (sink.number(type = "output") > 0) sink(type = "output")
   if (verbose) cli::cli_inform("file written to {outfile}")
 }
