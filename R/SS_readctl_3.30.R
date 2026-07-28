@@ -2232,6 +2232,11 @@ get_tv_parlabs <- function(full_parms, block_design) {
       } else {
         parlab <- c(parlab, paste0(tmp_parname, "_ENV_add"))
       }
+      # additional suffix for density dependent parameters
+      if (full_parms[["env_var&link"]][i] < 0) {
+        # append "_DD" to the final element of parlab that was added above
+        parlab[length(parlab)] <- paste0(parlab[length(parlab)], "_DD")
+      }
     }
 
     if (i %in% par_num[["dev"]]) {
