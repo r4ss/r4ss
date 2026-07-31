@@ -508,7 +508,7 @@ SS_output <-
     if (!is.na(btarg) & btarg == 0.25) {
       if (verbose) {
         cli::cli_alert_info(
-          "Setting minimum biomass threshhold to 0.125 based on US west coast assumption associated with flatfish target of 0.25 (can replace or override in SS_plots by setting 'minbthresh')"
+          "Setting minimum biomass threshold to 0.125 based on US west coast assumption associated with flatfish target of 0.25 (can replace or override in SS_plots by setting 'minbthresh')"
         )
       }
       minbthresh <- 0.125 # west coast assumption for flatfish
@@ -4070,7 +4070,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     ) {
       if (verbose) {
         cli::cli_alert_info(
-          "Setting minimum biomass threshhold to 0.10 because this looks like the Pacific Hake model. You can replace or override in SS_plots via the 'minbthresh' input."
+          "Setting minimum biomass threshold to 0.10 because this looks like the Pacific Hake model. You can replace or override in SS_plots via the 'minbthresh' input."
         )
       }
       minbthresh <- 0.1 # treaty value for hake
