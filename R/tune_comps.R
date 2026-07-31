@@ -514,7 +514,7 @@ tune_comps <- function(
         "removing composition variance adjustments from model"
       )
       # filter out just data types 4, 5, and 7 for length, age, and size comps
-      if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
+      if (nrow(ctl[["Variance_adjustment_list"]]) > 0) {
         ctl[["Variance_adjustment_list"]] <-
           ctl[["Variance_adjustment_list"]][
             !ctl[["Variance_adjustment_list"]][["factor"]] %in%

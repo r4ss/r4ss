@@ -183,7 +183,7 @@ SSgetoutput <-
         }
         output[["key"]] <- as.character(key)
       } else {
-        cli::cli_alert_warning("!repfile doesn't exists or is empty")
+        cli::cli_alert_warning("!repfile doesn't exist or is empty")
       }
       if (verbose) {
         cli::cli_alert_info("added element '{newobject}' to list")

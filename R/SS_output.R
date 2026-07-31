@@ -500,7 +500,7 @@ SS_output <-
     if (!is.na(btarg) & btarg == 0.4) {
       if (verbose) {
         cli::cli_alert_info(
-          "Setting minimum biomass threshhold to 0.25 based on US west coast assumption associated with biomass target of 0.4 (can replace or override in SS_plots by setting 'minbthresh')"
+          "Setting minimum biomass threshold to 0.25 based on US west coast assumption associated with biomass target of 0.4 (can replace or override in SS_plots by setting 'minbthresh')"
         )
       }
       minbthresh <- 0.25 # west coast assumption for non flatfish
