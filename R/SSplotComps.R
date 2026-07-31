@@ -1675,7 +1675,9 @@ SSplotComps <-
       ## } # end loop over sexes
       ## } # end loop over sex combinations
       # restore default single panel settings
-      par(mfcol = c(rows, cols), mar = c(5, 4, 4, 2) + .1, oma = rep(0, 4))
+      if (plot) {
+        par(mfcol = c(rows, cols), mar = c(5, 4, 4, 2) + .1, oma = rep(0, 4))
+      }
     } # end subplot 24
 
     # loop over fleets
