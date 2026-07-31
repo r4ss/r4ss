@@ -65,6 +65,30 @@ the user should update their model to a newer version of Stock Synthesis to
 run retrospectives. To run retrospective models in parallel, use \code{\link[future:plan]{future::plan()}}
 before running \code{retro()}.
 }
+\details{
+The \code{adjustments} argument controls optional updates to selected year-based
+settings so that each peeled model remains internally consistent.
+
+\code{"recdevs"} shifts \code{MainRdevYrLast} by the same retrospective offset.
+
+\code{"biasadj"} shifts \code{last_yr_fullbias_adj} and
+\code{first_recent_yr_nobias_adj} by the same retrospective offset.
+
+\code{"blocks"} removes block periods that begin after the retrospective end
+year and updates associated control-file objects accordingly (removes
+time-varying parameter lines associated with the block and if all blocks
+within a block pattern are removed, it changes to Block = 0 for the base
+parameter).
+
+\code{"forecast"} and \code{"benchmarks"} adjust interval year pairs using a shared
+rule based on whether an interval starts closer to the beginning or end of
+the modeled time series. The code checks whether the start year of the
+interval is closer to the model start or model end. If it is closer to the
+start (for example 1916 to 2025), only the recent value (the interval end)
+is shifted. If the interval represents recent years (for example entered as
+-4 to 0), both start and end values are shifted so the interval continues to
+represent the same recent window after peeling years from the end.
+}
 \examples{
 \dontrun{
 # note: don't run this in your main directory--make a copy in case something

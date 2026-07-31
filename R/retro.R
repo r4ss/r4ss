@@ -43,6 +43,30 @@ SS_doRetro <-
 #' retrospective year. Allowed values are `"recdevs"`, `"biasadj"`,
 #' `"blocks"`, `"forecast"`, and `"benchmarks"`. NULL will result in
 #' no adjustments being applied.
+#' 
+#' @details
+#' The `adjustments` argument controls optional updates to selected year-based
+#' settings so that each peeled model remains internally consistent.
+#'
+#' `"recdevs"` shifts `MainRdevYrLast` by the same retrospective offset.
+#'
+#' `"biasadj"` shifts `last_yr_fullbias_adj` and
+#' `first_recent_yr_nobias_adj` by the same retrospective offset.
+#'
+#' `"blocks"` removes block periods that begin after the retrospective end
+#' year and updates associated control-file objects accordingly (removes
+#' time-varying parameter lines associated with the block and if all blocks 
+#' within a block pattern are removed, it changes to Block = 0 for the base 
+#' parameter).
+#'
+#' `"forecast"` and `"benchmarks"` adjust interval year pairs using a shared
+#' rule based on whether an interval starts closer to the beginning or end of
+#' the modeled time series. The code checks whether the start year of the
+#' interval is closer to the model start or model end. If it is closer to the
+#' start (for example 1916 to 2025), only the recent value (the interval end)
+#' is shifted. If the interval represents recent years (for example entered as
+#' -4 to 0), both start and end values are shifted so the interval continues to
+#' represent the same recent window after peeling years from the end.
 #' @inheritParams r4ss_params
 #' @param ... Additional arguments passed to [r4ss::run()], such as
 #' `extras`, `show_in_console`, and `skipfinished`.
@@ -121,7 +145,7 @@ retro <- function(
     adjustments <- match.arg(
       adjustments,
       choices = allowed_adjustments,
-      several.ok = TRUE
+      several.ok = "all"
     )
   }
 
@@ -260,6 +284,9 @@ retro <- function(
     }
 
     year_pattern <- paste0(removed_start_years, collapse = "|")
+    # Match tv row names tied to this block design and ending in one of the
+    # removed block start years 
+    # (e.g., the "BLK4..._1916" part of "Size_DblN_peak_BottomTrawl(1)_BLK4repl_1916").
     row_pattern <- paste0("_BLK", block_design, ".*_((", year_pattern, "))$")
 
     for (table_name in tv_tables) {
@@ -320,7 +347,8 @@ retro <- function(
       if (length(remove_blocks) == 0) {
         if (verbose) {
           cli::cli_alert_info(
-            "Block_Design {block_design} with {cli::pluralize('{inputs[['ctl']][['blocks_per_pattern']][block_design]} block{?s}')}: no change needed for retro end year {retro_endyr}."
+            # note: cli::pluralize() resulted in too many nested quotations
+            "Block_Design {block_design} with {inputs$ctl$blocks_per_pattern[block_design]} {ifelse(inputs$ctl$blocks_per_pattern[block_design] == 1, 'block', 'blocks')}: no change needed for retro end year {retro_endyr}."
           )
         }
         next
@@ -328,7 +356,7 @@ retro <- function(
 
       if (verbose) {
         cli::cli_alert_info(
-          "Block_Design {block_design} with {cli::pluralize('{inputs[['ctl']][['blocks_per_pattern']][block_design]} block{?s}')}, retro end year {retro_endyr}"
+          "Block_Design {block_design} with {inputs$ctl$blocks_per_pattern[block_design]} {ifelse(inputs$ctl$blocks_per_pattern[block_design] == 1, 'block', 'blocks')}, retro end year {retro_endyr}"
         )
       }
 
@@ -355,7 +383,7 @@ retro <- function(
 
       if (verbose) {
         cli::cli_alert_info(
-          "Block_Design {block_design} now has {cli::pluralize('{inputs[['ctl']][['blocks_per_pattern']][block_design]} block{?s}')}"
+          "Block_Design {block_design} now has {inputs$ctl$blocks_per_pattern[block_design]} {ifelse(inputs$ctl$blocks_per_pattern[block_design] == 1, 'block', 'blocks')}"
         )
       }
 
