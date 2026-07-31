@@ -43,7 +43,7 @@ SS_doRetro <-
 #' retrospective year. Allowed values are `"recdevs"`, `"biasadj"`,
 #' `"blocks"`, `"forecast"`, and `"benchmarks"`. NULL will result in
 #' no adjustments being applied.
-#' 
+#'
 #' @details
 #' The `adjustments` argument controls optional updates to selected year-based
 #' settings so that each peeled model remains internally consistent.
@@ -55,8 +55,8 @@ SS_doRetro <-
 #'
 #' `"blocks"` removes block periods that begin after the retrospective end
 #' year and updates associated control-file objects accordingly (removes
-#' time-varying parameter lines associated with the block and if all blocks 
-#' within a block pattern are removed, it changes to Block = 0 for the base 
+#' time-varying parameter lines associated with the block and if all blocks
+#' within a block pattern are removed, it changes to Block = 0 for the base
 #' parameter).
 #'
 #' `"forecast"` and `"benchmarks"` adjust interval year pairs using a shared
@@ -285,7 +285,7 @@ retro <- function(
 
     year_pattern <- paste0(removed_start_years, collapse = "|")
     # Match tv row names tied to this block design and ending in one of the
-    # removed block start years 
+    # removed block start years
     # (e.g., the "BLK4..._1916" part of "Size_DblN_peak_BottomTrawl(1)_BLK4repl_1916").
     row_pattern <- paste0("_BLK", block_design, ".*_((", year_pattern, "))$")
 
@@ -348,7 +348,7 @@ retro <- function(
         if (verbose) {
           cli::cli_alert_info(
             # note: cli::pluralize() resulted in too many nested quotations
-            "Block_Design {block_design} with {inputs$ctl$blocks_per_pattern[block_design]} {ifelse(inputs$ctl$blocks_per_pattern[block_design] == 1, 'block', 'blocks')}: no change needed for retro end year {retro_endyr}."
+            "Block_Design {block_design} with {inputs[['ctl']][['blocks_per_pattern']][block_design]} {ifelse(inputs[['ctl']][['blocks_per_pattern']][block_design] == 1, 'block', 'blocks')}: no change needed for retro end year {retro_endyr}."
           )
         }
         next
@@ -356,7 +356,7 @@ retro <- function(
 
       if (verbose) {
         cli::cli_alert_info(
-          "Block_Design {block_design} with {inputs$ctl$blocks_per_pattern[block_design]} {ifelse(inputs$ctl$blocks_per_pattern[block_design] == 1, 'block', 'blocks')}, retro end year {retro_endyr}"
+          "Block_Design {block_design} with {inputs[['ctl']][['blocks_per_pattern']][block_design]} {ifelse(inputs[['ctl']][['blocks_per_pattern']][block_design] == 1, 'block', 'blocks')}, retro end year {retro_endyr}"
         )
       }
 
@@ -383,7 +383,7 @@ retro <- function(
 
       if (verbose) {
         cli::cli_alert_info(
-          "Block_Design {block_design} now has {inputs$ctl$blocks_per_pattern[block_design]} {ifelse(inputs$ctl$blocks_per_pattern[block_design] == 1, 'block', 'blocks')}"
+          "Block_Design {block_design} now has {inputs[['ctl']][['blocks_per_pattern']][block_design]} {ifelse(inputs[['ctl']][['blocks_per_pattern']][block_design] == 1, 'block', 'blocks')}"
         )
       }
 
