@@ -118,7 +118,9 @@ SS_readdat_3.24 <- function(
   datlist[["type"]] <- "Stock_Synthesis_data_file"
   datlist[["SSversion"]] <- "3.24"
   if (verbose) {
-    cli::cli_alert_info("SS_readdat_3.24 - SS version = {datlist[['SSversion']]}")
+    cli::cli_alert_info(
+      "SS_readdat_3.24 - SS version = {datlist[['SSversion']]}"
+    )
   }
 
   # model dimensions

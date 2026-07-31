@@ -492,7 +492,9 @@ SS_readforecast <- function(
     }
     if (forelist$".dat"[forelist$".i"] == 999) {
       if (verbose) {
-        cli::cli_alert_info("read of forecast file complete (final value = 999)")
+        cli::cli_alert_info(
+          "read of forecast file complete (final value = 999)"
+        )
       }
       forelist[["eof"]] <- TRUE
     } else {

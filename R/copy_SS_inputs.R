@@ -177,7 +177,9 @@ copy_SS_inputs <- function(
       ]
       exefiles <- grep(pattern = "^[^.]+$", x = exefiles, value = TRUE)
       if (verbose) {
-        cli::cli_alert_info("Unix binaries are: {paste(exefiles, collapse = ', ')}")
+        cli::cli_alert_info(
+          "Unix binaries are: {paste(exefiles, collapse = ', ')}"
+        )
       }
     }
     if (length(exefiles) == 0) {

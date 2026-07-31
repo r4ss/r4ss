@@ -822,7 +822,9 @@ SS_readdat_3.30 <-
     eof <- get.val(dat, ind)
     if (verbose) {
       if (Nsections == 1) {
-        cli::cli_alert_success("Read of data file complete. Final value = {eof}")
+        cli::cli_alert_success(
+          "Read of data file complete. Final value = {eof}"
+        )
       } else {
         cli::cli_alert_success(
           "Read of section {section} of data file complete. Final value = {eof}"

@@ -232,7 +232,9 @@ jitter <- function(
     }
   )
   if (verbose) {
-    cli::cli_alert_success("Finished running jitters, running last few clean-up steps")
+    cli::cli_alert_success(
+      "Finished running jitters, running last few clean-up steps"
+    )
   }
 
   # delete jitter model directory

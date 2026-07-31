@@ -40,7 +40,9 @@ SSmakeMmatrix <- function(
   # check for existing file
   if (!is.null(outfile) && file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_alert_warning("File exists and input 'overwrite'=FALSE: {outfile}")
+      cli::cli_alert_warning(
+        "File exists and input 'overwrite'=FALSE: {outfile}"
+      )
       return()
     } else {
       file.remove(outfile)

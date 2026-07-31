@@ -461,7 +461,9 @@ SS_plots <-
       dir.isdir <- file.info(dir)[["isdir"]]
       # create directory
       if (is.na(dir.isdir) | !dir.isdir) {
-        cli::cli_alert_warning("Directory doesn't exist, attempting to create: {dir}")
+        cli::cli_alert_warning(
+          "Directory doesn't exist, attempting to create: {dir}"
+        )
         dir.create(dir)
       }
       # test again (even though failure to create dir should have already caused error)
@@ -780,7 +782,9 @@ SS_plots <-
 
       ### add plot of Dynamic B0
       if (is.null(replist[["Dynamic_Bzero"]])) {
-        cli::cli_alert_warning("Skipping dynamic B0 plot because output not available")
+        cli::cli_alert_warning(
+          "Skipping dynamic B0 plot because output not available"
+        )
       } else {
         # first get vector of years
         yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
@@ -813,7 +817,9 @@ SS_plots <-
     igroup <- 4
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_alert_info("Starting recruitment deviation plots (group {igroup})")
+        cli::cli_alert_info(
+          "Starting recruitment deviation plots (group {igroup})"
+        )
       }
       plotinfo <-
         SSplotRecdevs(
@@ -909,7 +915,9 @@ SS_plots <-
     igroup <- 6
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_alert_info("Starting spawner-recruit curve plot (group {igroup})")
+        cli::cli_alert_info(
+          "Starting spawner-recruit curve plot (group {igroup})"
+        )
       }
       plotinfo <-
         SSplotSpawnrecruit(
@@ -1153,7 +1161,9 @@ SS_plots <-
     #
     # use of SSplotcomps function to make composition plots
     if (is.null(comp_data_exists) || !comp_data_exists) {
-      cli::cli_alert_warning("No composition data, skipping all composition plots")
+      cli::cli_alert_warning(
+        "No composition data, skipping all composition plots"
+      )
     } else {
       lenCompDatGroup <- 13
       ageCompDatGroup <- 14
@@ -1515,7 +1525,9 @@ SS_plots <-
       igroup <- 16
       if (igroup %in% plot) {
         if (verbose) {
-          cli::cli_alert_info("Starting fit to length comp plots (group {igroup})")
+          cli::cli_alert_info(
+            "Starting fit to length comp plots (group {igroup})"
+          )
         }
         # regular length comps
         plotinfo <-
@@ -2457,7 +2469,9 @@ SS_plots <-
       dev.off()
     } # close PDF file if it was open
     if (verbose) {
-      cli::cli_alert_success("Finished all requested plots in SS_plots function")
+      cli::cli_alert_success(
+        "Finished all requested plots in SS_plots function"
+      )
     }
 
     ##########################################

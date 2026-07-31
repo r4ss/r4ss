@@ -244,7 +244,9 @@ SS_output <-
 
     if (is.na(parfile)) {
       if (!hidewarn) {
-        cli::cli_alert_warning("Some stats skipped because the .par file not found.")
+        cli::cli_alert_warning(
+          "Some stats skipped because the .par file not found."
+        )
       }
     }
 
@@ -414,7 +416,9 @@ SS_output <-
       forecastname <- file.path(dir, forefile)
       if (file_is_empty(forecastname)) {
         if (verbose) {
-          cli::cli_alert_warning("Forecast-report.sso file is missing or empty.")
+          cli::cli_alert_warning(
+            "Forecast-report.sso file is missing or empty."
+          )
         }
       } else {
         # read the file
@@ -578,7 +582,9 @@ SS_output <-
         # detect empty file
         warnrows <- length(warnlines)
         if (verbose && warnrows > 0) {
-          cli::cli_alert_success("Got warning file. Final line: {tail(warnlines, 1)}")
+          cli::cli_alert_success(
+            "Got warning file. Final line: {tail(warnlines, 1)}"
+          )
         }
       }
     } else {
@@ -1831,7 +1837,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     if (covar) {
       covarfile <- file.path(dir, covarfile)
       if (!file.exists(covarfile)) {
-        cli::cli_alert_warning("covar file not found, input 'covar' changed to FALSE")
+        cli::cli_alert_warning(
+          "covar file not found, input 'covar' changed to FALSE"
+        )
         covar <- FALSE
       } else {
         # time check for CoVar file

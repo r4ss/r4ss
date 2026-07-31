@@ -125,7 +125,9 @@ SSplotIndices <-
 
     # confirm that some CPUE values are present
     if (is.null(dim(cpue))) {
-      cli::cli_alert_warning("skipping index plots: no index data in this model")
+      cli::cli_alert_warning(
+        "skipping index plots: no index data in this model"
+      )
       return()
     }
 

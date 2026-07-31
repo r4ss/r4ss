@@ -76,7 +76,9 @@ SSplotTags <-
     tagdbase2 <- replist[["tagdbase2"]]
     if (is.null(tagdbase2) || nrow(tagdbase2) == 0) {
       if (verbose) {
-        cli::cli_alert_warning("skipping tag plots because there's no tagging data")
+        cli::cli_alert_warning(
+          "skipping tag plots because there's no tagging data"
+        )
       }
     } else {
       # filter tag groups if requested

@@ -226,7 +226,9 @@ SSplotPars <-
       }
       goodnames <- unique(goodnames)
       if (verbose) {
-        cli::cli_alert_info("Active parameters matching input vector 'strings':")
+        cli::cli_alert_info(
+          "Active parameters matching input vector 'strings':"
+        )
         print(goodnames)
       }
       if (length(goodnames) == 0) {

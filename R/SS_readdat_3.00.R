@@ -122,7 +122,9 @@ SS_readdat_3.00 <- function(
   datlist[["type"]] <- "Stock_Synthesis_data_file"
   datlist[["ReadVersion"]] <- "3.00"
   if (verbose) {
-    cli::cli_alert_info("SS_readdat_3.00 - SS version = {datlist[['ReadVersion']]}")
+    cli::cli_alert_info(
+      "SS_readdat_3.00 - SS version = {datlist[['ReadVersion']]}"
+    )
   }
 
   # model dimensions
@@ -349,7 +351,9 @@ SS_readdat_3.00 <- function(
     i <- i + 1
     datlist[["lbin_vector_pop"]] <- allnums[i:(i + N_lbinspop - 1)]
     i <- i + N_lbinspop
-    if (verbose) cli::cli_alert_info("N_lbinspop ={N_lbinspop} lbin_vector_pop:")
+    if (verbose) {
+      cli::cli_alert_info("N_lbinspop ={N_lbinspop} lbin_vector_pop:")
+    }
   } else {
     datlist[["N_lbinspop"]] <- NA
     datlist[["lbin_vector_pop"]] <- NA

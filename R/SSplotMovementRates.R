@@ -176,7 +176,9 @@ SSplotMovementRates <-
           )
           if (FALSE) {
             if (verbose) {
-              cli::cli_alert_info("Running subplot 2: time-varying movement rates")
+              cli::cli_alert_info(
+                "Running subplot 2: time-varying movement rates"
+              )
             }
             moveinfo <- move[, 1:6]
             moveinfo[["LabelBase2"]] <- paste(

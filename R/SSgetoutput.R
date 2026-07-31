@@ -74,7 +74,9 @@ SSgetoutput <-
     n1 <- length(keyvec)
     n2 <- length(dirvec)
     if (n1 > 1 & n2 > 1 & n1 != n2) {
-      cli::cli_alert_info("inputs 'keyvec' and 'dirvec' have unmatched lengths > 1")
+      cli::cli_alert_info(
+        "inputs 'keyvec' and 'dirvec' have unmatched lengths > 1"
+      )
     } else {
       n <- max(1, n1, n2) # n=1 or n=length of either optional input vector
     }

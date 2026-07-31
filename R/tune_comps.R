@@ -510,7 +510,9 @@ tune_comps <- function(
 
     # remove weights specified through variance adjustment for comps, if any
     if (!is.null(ctl[["Variance_adjustment_list"]])) {
-      cli::cli_alert_info("removing composition variance adjustments from model")
+      cli::cli_alert_info(
+        "removing composition variance adjustments from model"
+      )
       # filter out just data types 4, 5, and 7 for length, age, and size comps
       if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
         ctl[["Variance_adjustment_list"]] <-
