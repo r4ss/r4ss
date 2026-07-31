@@ -52,7 +52,7 @@
 #' @export
 SSmohnsrho <- function(summaryoutput, endyrvec, startyr, verbose = TRUE) {
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "The expected order of models in the summary output are the reference model followed by retro -1, retro -2, and so forth."
     )
   }

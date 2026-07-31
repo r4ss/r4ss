@@ -85,7 +85,7 @@ get_SIS_info <- function(
     sep = "_"
   )
 
-  cli::cli_inform(
+  cli::cli_alert_info(
     "writing SIS info to CSV files: {file.path(dir, filename_values)} and {file.path(dir, filename_timeseries)}"
   )
 
@@ -322,7 +322,7 @@ get_SIS_info <- function(
 
   # check for redundancy between F_values and Tot_Exploit columns
   if (model[["F_std_basis"]] == "_abs_F;_with_F=Exploit(bio)") {
-    cli::cli_inform(
+    cli::cli_alert_warning(
       "F_YYYY values are redundant with Tot_Exploit column in SPR series, excluding from output for SIS."
     )
     # remove redundant F_values column

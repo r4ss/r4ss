@@ -126,7 +126,7 @@ SS_fitbiasramp <-
       )
     }
     if (verbose) {
-      cli::cli_inform("startvalues = {paste(startvalues, collapse = ', ')}")
+      cli::cli_alert_info("startvalues = {paste(startvalues, collapse = ', ')}")
     }
 
     makeoffsets <- function(values) {
@@ -154,7 +154,7 @@ SS_fitbiasramp <-
       startvalues <- makeoffsets(startvalues)
     }
     if (verbose & transform) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "transformed startvalues = {paste(startvalues, collapse = ', ')}"
       )
     }
@@ -321,7 +321,7 @@ SS_fitbiasramp <-
     # test for presence of estimated recruitment deviations
     if (max(val) == 0 | length(val) == 0) {
       if (verbose) {
-        cli::cli_inform("No rec devs estimated in this model")
+        cli::cli_alert_warning("No rec devs estimated in this model")
       }
       return()
     }
@@ -331,7 +331,7 @@ SS_fitbiasramp <-
 
     ylim <- range(recdev_hi, recdev_lo)
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Now estimating alternative recruitment bias adjustment fraction..."
       )
     }
@@ -440,7 +440,7 @@ SS_fitbiasramp <-
         cli::cli_warn("Problem with convergence, here is output from 'optim':")
         print(newbias)
       }
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Estimated values: {paste(utils::capture.output(df), collapse = '\n')}"
       )
     }
@@ -517,7 +517,7 @@ SS_fitbiasramp <-
       # write new file
       writeLines(ctlfile, newctl)
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_success(
           "wrote new file to {newctl} with values {paste(newvals, collapse = ', ')}"
         )
       }

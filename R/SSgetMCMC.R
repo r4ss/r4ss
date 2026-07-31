@@ -56,7 +56,7 @@ SSgetMCMC <-
   ) {
     # get MCMC output
     if (verbose) {
-      cli::cli_inform("reading MCMC output in {dir}")
+      cli::cli_alert_info("reading MCMC output in {dir}")
     }
     # note: check.names = FALSE added to command below avoids
     # automatic conversion of some parameter labels such as
@@ -104,7 +104,7 @@ SSgetMCMC <-
       file1 <- file.path(dir, csv1)
       file2 <- file.path(dir, csv2)
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "writing subset of posteriors to files: {file1} {file2}"
         )
       }

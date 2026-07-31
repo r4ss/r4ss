@@ -57,7 +57,7 @@ SStableComparisons <- function(
   mcmc = FALSE
 ) {
   if (verbose) {
-    cli::cli_inform("running SStableComparisons")
+    cli::cli_alert_info("running SStableComparisons")
   }
 
   # get stuff from summary output
@@ -98,11 +98,11 @@ SStableComparisons <- function(
         digit <- digits[iname]
       }
       if (verbose) {
-        cli::cli_inform("name={name};")
+        cli::cli_alert_info("name={name};")
       }
       if (name == "BLANK") {
         if (verbose) {
-          cli::cli_inform("added a blank row to the table")
+          cli::cli_alert_info("added a blank row to the table")
         }
         # add to table
         tab <- rbind(tab, " ")
@@ -152,13 +152,13 @@ SStableComparisons <- function(
           }
         }
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "added {nrow(vals)} row{ifelse(nrow(vals) != 1, 's', '')}"
           )
         }
         if (!is.null(digits)) {
           if (verbose) {
-            cli::cli_inform("rounded to {digit} digits")
+            cli::cli_alert_info("rounded to {digit} digits")
           }
           vals[, -1] <- round(vals[, -1], digit)
         }
@@ -177,11 +177,11 @@ SStableComparisons <- function(
         digit <- digits[iname]
       }
       if (verbose) {
-        cli::cli_inform("name={name}; ")
+        cli::cli_alert_info("name={name}; ")
       }
       if (name == "BLANK") {
         if (verbose) {
-          cli::cli_inform("added a blank row to the table")
+          cli::cli_alert_info("added a blank row to the table")
         }
         # add to table
         tab <- rbind(tab, " ")
@@ -235,13 +235,13 @@ SStableComparisons <- function(
         }
         if (!is.null(digits)) {
           if (verbose) {
-            cli::cli_inform("rounded to {digit} digits")
+            cli::cli_alert_info("rounded to {digit} digits")
           }
           vals[, -1] <- round(vals[, -1], digit)
         }
 
         if (verbose) {
-          cli::cli_inform("added an mcmc row")
+          cli::cli_alert_info("added an mcmc row")
         }
         # add to table
         tab <- rbind(tab, vals)
@@ -265,7 +265,7 @@ SStableComparisons <- function(
       csvdir <- getwd()
     }
     fullpath <- paste(csvdir, csvfile, sep = "/")
-    cli::cli_inform("writing table to: {fullpath}")
+    cli::cli_alert_info("writing table to: {fullpath}")
     write.csv(tab, fullpath, row.names = FALSE)
   }
   # return table

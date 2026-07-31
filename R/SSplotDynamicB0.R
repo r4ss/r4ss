@@ -347,7 +347,7 @@ SSplotDynamicB0 <- function(
     }
   }
   if (verbose) {
-    cli::cli_inform("Plotting Dynamic B0")
+    cli::cli_alert_info("Plotting Dynamic B0")
   }
   return(invisible(plotinfo))
 }

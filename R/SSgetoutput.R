@@ -58,12 +58,12 @@ SSgetoutput <-
 
     if (verbose) {
       if (!is.null(keyvec)) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "length(keyvec) as input to SSgetoutput: {length(keyvec)}"
         )
       }
       if (!is.null(dirvec)) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "length(dirvec) as input to SSgetoutput: {length(dirvec)}"
         )
       }
@@ -74,7 +74,7 @@ SSgetoutput <-
     n1 <- length(keyvec)
     n2 <- length(dirvec)
     if (n1 > 1 & n2 > 1 & n1 != n2) {
-      cli::cli_inform("inputs 'keyvec' and 'dirvec' have unmatched lengths > 1")
+      cli::cli_alert_info("inputs 'keyvec' and 'dirvec' have unmatched lengths > 1")
     } else {
       n <- max(1, n1, n2) # n=1 or n=length of either optional input vector
     }
@@ -124,7 +124,7 @@ SSgetoutput <-
       newobject <- objectnames[i]
 
       if (verbose & !is.null(key)) {
-        cli::cli_inform("getting files with key = {key}")
+        cli::cli_alert_info("getting files with key = {key}")
       }
 
       repFileName <- paste("Report", key2, ".sso", sep = "")
@@ -143,7 +143,7 @@ SSgetoutput <-
 
       fullfile <- paste(mydir, repFileName, sep = "")
       if (verbose) {
-        cli::cli_inform("reading output from {fullfile}")
+        cli::cli_alert_info("reading output from {fullfile}")
       }
       repfilesize <- file.info(fullfile)[["size"]]
 
@@ -165,7 +165,7 @@ SSgetoutput <-
         )
         if (is.null(output)) {
           # for some reason covarfile exists, but is old so SS_output rejects
-          cli::cli_inform("output==NULL so trying again with covar=FALSE")
+          cli::cli_alert_info("output==NULL so trying again with covar=FALSE")
           output <- SS_output(
             dir = mydir,
             repfile = repFileName,
@@ -181,10 +181,10 @@ SSgetoutput <-
         }
         output[["key"]] <- as.character(key)
       } else {
-        cli::cli_inform("!repfile doesn't exists or is empty")
+        cli::cli_alert_warning("!repfile doesn't exists or is empty")
       }
       if (verbose) {
-        cli::cli_inform("added element '{newobject}' to list")
+        cli::cli_alert_info("added element '{newobject}' to list")
       }
       biglist[[newobject]] <- output
 

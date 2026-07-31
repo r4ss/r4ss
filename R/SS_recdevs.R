@@ -97,7 +97,7 @@ SS_recdevs <-
     if (phase > 0) {
       newphase <- -abs(phase)
       if (verbose) {
-        cli::cli_inform("Changing recdev phase to negative: {newphase}")
+        cli::cli_alert_info("Changing recdev phase to negative: {newphase}")
       }
       ctl[grep("recdev phase", ctl)] <- paste(newphase, "#_recdev phase")
     }
@@ -135,7 +135,7 @@ SS_recdevs <-
         scaleyrs <- yrs %in% scaleyrs
       }
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Rescaling recdevs vector so yrs {min(yrs[scaleyrs])}: {max(yrs[scaleyrs])} have mean 0 and std. dev. = sigmaR = {sigmaR}"
         )
       }
@@ -176,7 +176,7 @@ SS_recdevs <-
     if (writectl) {
       writeLines(ctl, newctlfile)
       if (verbose) {
-        cli::cli_inform("Wrote new file: {newctlfile}")
+        cli::cli_alert_success("Wrote new file: {newctlfile}")
       }
     }
     # reset working directory

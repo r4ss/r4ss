@@ -35,7 +35,7 @@ SS_writedat_3.24 <- function(
   )
   # function to write Stock Synthesis data files
   if (verbose) {
-    cli::cli_inform("running SS_writedat_3.24")
+    cli::cli_alert_info("running SS_writedat_3.24")
   }
   if (lifecycle::is_present(faster)) {
     lifecycle::deprecate_warn(
@@ -55,7 +55,7 @@ SS_writedat_3.24 <- function(
   # check for existing file
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
+      cli::cli_alert_warning("File exists and input 'overwrite'=FALSE: {outfile}")
       return()
     } else {
       file.remove(outfile)
@@ -67,7 +67,7 @@ SS_writedat_3.24 <- function(
   options(width = 5000, max.print = 9999999)
 
   if (verbose) {
-    cli::cli_inform("opening connection to {outfile}")
+    cli::cli_alert_info("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   # sink(zz)
@@ -365,6 +365,6 @@ SS_writedat_3.24 <- function(
   #  sink()
   #  close(zz)
   if (verbose) {
-    cli::cli_inform("file written to {outfile}")
+    cli::cli_alert_info("file written to {outfile}")
   }
 }

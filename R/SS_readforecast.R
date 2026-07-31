@@ -37,7 +37,7 @@ SS_readforecast <- function(
   }
 
   if (verbose) {
-    cli::cli_inform("running SS_readforecast")
+    cli::cli_alert_info("running SS_readforecast")
   }
   dat <- readLines(file, warn = FALSE)
 
@@ -85,7 +85,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{name},i={forelist[['.i']]}: {paste(forelist[[name]], sep = '', collapse = '\n')}"
       )
     }
@@ -158,7 +158,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{name},i={forelist[['.i']]}: {paste(forelist[[which(names(forelist) == name)]], sep = '', collapse = '\n')}"
       )
     }
@@ -175,7 +175,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{name},i={forelist[['.i']]} ;{forelist[[which(names(forelist) == name)]]}"
       )
     }
@@ -196,7 +196,7 @@ SS_readforecast <- function(
       names(forelist)[names(forelist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform("{name},i={forelist[['.i']]}")
+      cli::cli_alert_info("{name},i={forelist[['.i']]}")
     }
     return(forelist)
   }
@@ -246,13 +246,13 @@ SS_readforecast <- function(
     forelist <- add_vec(forelist, length = 10, name = "Bmark_years")
   }
   if (verbose) {
-    cli::cli_inform("Benchmark years: {forelist[['Bmark_years']]}")
+    cli::cli_alert_info("Benchmark years: {forelist[['Bmark_years']]}")
   }
   forelist <- add_elem(forelist, "Bmark_relF_Basis")
   forelist <- add_elem(forelist, "Forecast")
   if (forelist[["Forecast"]] %in% c(0, -1) & !readAll) {
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "Forecast is {forelist[['Forecast']]} and input readAll=FALSE so skipping remainder of file"
       )
     }
@@ -266,7 +266,7 @@ SS_readforecast <- function(
     # stop reading if forecast 0 or -1 used, and no other lines present
     # (aside from 999), but readAll = TRUE.
     if (verbose) {
-      cli::cli_inform("Forecast = {forelist[['Forecast']]}")
+      cli::cli_alert_info("Forecast = {forelist[['Forecast']]}")
     }
     cli::cli_warn(
       "readAll selected as TRUE, but lines beyond Forecast are not present in the forecasting file, so skipping remainder of file"
@@ -274,7 +274,7 @@ SS_readforecast <- function(
   } else {
     # continue reading forecast
     if (verbose) {
-      cli::cli_inform("Forecast = {forelist[['Forecast']]}")
+      cli::cli_alert_info("Forecast = {forelist[['Forecast']]}")
     }
     forelist <- add_elem(forelist, "Nforecastyrs")
     # check for compatible input with forecast option 1.
@@ -308,7 +308,7 @@ SS_readforecast <- function(
       )
     }
     if (verbose) {
-      cli::cli_inform("Forecast years: {forelist[['Fcast_years']]}")
+      cli::cli_alert_info("Forecast years: {forelist[['Fcast_years']]}")
     }
     # 3.30 models that don't use the new table input above read
     # additional selectivity setting
@@ -318,7 +318,7 @@ SS_readforecast <- function(
     ) {
       forelist <- add_elem(forelist, "Fcast_selex")
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Forecast selectivity option: {forelist[['Fcast_selex']]}"
         )
       }
@@ -492,7 +492,7 @@ SS_readforecast <- function(
     }
     if (forelist$".dat"[forelist$".i"] == 999) {
       if (verbose) {
-        cli::cli_inform("read of forecast file complete (final value = 999)")
+        cli::cli_alert_info("read of forecast file complete (final value = 999)")
       }
       forelist[["eof"]] <- TRUE
     } else {

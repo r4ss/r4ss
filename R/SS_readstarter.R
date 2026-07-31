@@ -21,7 +21,7 @@
 #' @family read/write functions
 SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
-    cli::cli_inform("running SS_readstarter")
+    cli::cli_alert_info("running SS_readstarter")
   }
 
   starter <- readLines(file, warn = FALSE)
@@ -56,7 +56,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["datfile"]] <- strings[1]
   mylist[["ctlfile"]] <- strings[2]
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "  data, control files: {mylist[['datfile']]}, {mylist[['ctlfile']]}"
     )
   }
@@ -132,7 +132,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["converge_criterion"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    cli::cli_inform("  converge_criterion = {mylist[['converge_criterion']]}")
+    cli::cli_alert_info("  converge_criterion = {mylist[['converge_criterion']]}")
   }
   mylist[["retro_yr"]] <- allnums[i]
   i <- i + 1
@@ -145,7 +145,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["SPR_basis"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    cli::cli_inform("  SPR_basis = {mylist[['SPR_basis']]}")
+    cli::cli_alert_info("  SPR_basis = {mylist[['SPR_basis']]}")
   }
   mylist[["F_std_units"]] <- allnums[i]
   i <- i + 1
@@ -164,7 +164,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   mylist[["F_std_basis"]] <- allnums[i]
   i <- i + 1
   if (verbose) {
-    cli::cli_inform("  F_std_basis = {mylist[['F_std_basis']]}")
+    cli::cli_alert_info("  F_std_basis = {mylist[['F_std_basis']]}")
   }
 
   # last value in vector of numerical values
@@ -172,7 +172,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (i < i.final) {
     # file is probably 3.30
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Assuming version 3.30 based on number of numeric values."
       )
     }
@@ -181,8 +181,8 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     mylist[["ALK_tolerance"]] <- allnums[i]
     i <- i + 1
     if (verbose) {
-      cli::cli_inform("  MCMC_output_detail = {mylist[['MCMC_output_detail']]}")
-      cli::cli_inform("  ALK_tolerance = {mylist[['ALK_tolerance']]}")
+      cli::cli_alert_info("  MCMC_output_detail = {mylist[['MCMC_output_detail']]}")
+      cli::cli_alert_info("  ALK_tolerance = {mylist[['ALK_tolerance']]}")
     }
   }
 
@@ -191,13 +191,13 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   i <- i + 1
   if (!is.na(final) && final %in% c(3.30, 999)) {
     if (verbose) {
-      cli::cli_inform("Read of starter file complete. Final value: {final}")
+      cli::cli_alert_success("Read of starter file complete. Final value: {final}")
     }
   } else {
     # read seed and check final value
     mylist[["seed"]] <- mylist[["final"]]
     if (verbose) {
-      cli::cli_inform("Reading a random seed value: {mylist[['seed']]}")
+      cli::cli_alert_info("Reading a random seed value: {mylist[['seed']]}")
     }
 
     mylist[["final"]] <- final <- allnums[i]
@@ -208,7 +208,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     }
     if (!is.na(final) && final %in% c(3.30, 999)) {
       if (verbose) {
-        cli::cli_inform("Read of starter file complete. Final value: {final}")
+        cli::cli_alert_success("Read of starter file complete. Final value: {final}")
       }
     } else {
       cli::cli_warn("Final value is {allnums[i]} but should be 3.30 or 999")

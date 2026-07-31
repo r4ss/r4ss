@@ -370,13 +370,13 @@ SS_plots <-
       )
     }
     if (uncertainty & !inputs[["covar"]]) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "covar information unavailable, changing 'uncertainty' to FALSE"
       )
       uncertainty <- FALSE
     }
     if (forecastplot & max(timeseries[["Yr"]] > endyr + 1) == 0) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default"
       )
       forecastplot <- FALSE
@@ -387,7 +387,7 @@ SS_plots <-
       fleets <- 1:nfleets
     } else {
       if (length(intersect(fleets, 1:nfleets)) != length(fleets)) {
-        return(
+        cli::cli_abort(
           "Input 'fleets' should be 'all' or a vector of values between 1 and nfleets."
         )
       }
@@ -396,14 +396,14 @@ SS_plots <-
       areas <- 1:nareas
     } else {
       if (length(intersect(areas, 1:nareas)) != length(areas)) {
-        return(
+        cli::cli_abort(
           "Input 'areas' should be 'all' or a vector of values between 1 and nareas."
         )
       }
     }
 
     if (verbose) {
-      cli::cli_inform("Finished defining objects")
+      cli::cli_alert_success("Finished defining objects")
     }
 
     # set fleet-specific names, and plotting parameters
@@ -443,7 +443,7 @@ SS_plots <-
     }
     if (nplots > 0 & !new) {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Adding plots to existing plot window. Plot history not erased."
         )
       }
@@ -461,7 +461,7 @@ SS_plots <-
       dir.isdir <- file.info(dir)[["isdir"]]
       # create directory
       if (is.na(dir.isdir) | !dir.isdir) {
-        cli::cli_inform("Directory doesn't exist, attempting to create: {dir}")
+        cli::cli_alert_warning("Directory doesn't exist, attempting to create: {dir}")
         dir.create(dir)
       }
       # test again (even though failure to create dir should have already caused error)
@@ -488,7 +488,7 @@ SS_plots <-
         dir.create(plotdir)
       }
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Plots will be written to PNG files in the directory: {plotdir}"
         )
       }
@@ -513,7 +513,7 @@ SS_plots <-
           StartTimeName <- gsub(" ", "_", StartTimeName, fixed = TRUE)
           StartTimeName <- gsub("._", "_", StartTimeName, fixed = TRUE)
           plotdir.old <- file.path(dir, paste0("plots_", StartTimeName))
-          cli::cli_inform(
+          cli::cli_alert_info(
             "NOTE: the directory {plotdir} contains plots from a previous model run, renaming to {plotdir.old}"
           )
           file.rename(plotdir, plotdir.old)
@@ -535,7 +535,7 @@ SS_plots <-
       )
       pdf(file = pdffile, width = pwidth, height = pheight)
       if (verbose) {
-        cli::cli_inform("PDF file with plots will be: {pdffile}")
+        cli::cli_alert_info("PDF file with plots will be: {pdffile}")
       }
     }
 
@@ -595,7 +595,7 @@ SS_plots <-
     igroup <- 1
     if (igroup %in% plot | length(cohortlines) > 0) {
       if (verbose) {
-        cli::cli_inform("Starting biology plots (group {igroup})")
+        cli::cli_alert_info("Starting biology plots (group {igroup})")
       }
       plotinfo <- SSplotBiology(
         replist = replist,
@@ -624,7 +624,7 @@ SS_plots <-
     igroup <- 2
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Starting selectivity and retention plots (group {igroup})"
         )
       }
@@ -678,7 +678,7 @@ SS_plots <-
     igroup <- 3
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform("Starting timeseries plots (group {igroup})")
+        cli::cli_alert_info("Starting timeseries plots (group {igroup})")
       }
       # which subplots to make (those for spawn bio first)
       subplot_list <- c(7:10, 1:6, 11:15)
@@ -780,7 +780,7 @@ SS_plots <-
 
       ### add plot of Dynamic B0
       if (is.null(replist[["Dynamic_Bzero"]])) {
-        cli::cli_inform("Skipping dynamic B0 plot because output not available")
+        cli::cli_alert_warning("Skipping dynamic B0 plot because output not available")
       } else {
         # first get vector of years
         yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)
@@ -813,7 +813,7 @@ SS_plots <-
     igroup <- 4
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform("Starting recruitment deviation plots (group {igroup})")
+        cli::cli_alert_info("Starting recruitment deviation plots (group {igroup})")
       }
       plotinfo <-
         SSplotRecdevs(
@@ -860,7 +860,7 @@ SS_plots <-
     if (igroup %in% plot) {
       if (uncertainty) {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Starting estimation of recruitment bias adjustment and associated plots (group {igroup})"
           )
         }
@@ -885,18 +885,18 @@ SS_plots <-
               plotInfoTable <- rbind(plotInfoTable, plotinfo)
             }
           } else {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "Skipping bias adjustment fit because root mean squared error of recruit devs is 0."
             )
           }
         } else {
-          cli::cli_inform(
-            "skipping bias adjustment fit because input list element 'rmse_table' has non-numeric 'RMSE' column"
+          cli::cli_alert_warning(
+            "Skipping bias adjustment fit because input list element 'rmse_table' has non-numeric 'RMSE' column"
           )
         }
       } else {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping estimation of recruitment bias adjustment (group {igroup}) because uncertainty=FALSE"
           )
         }
@@ -909,7 +909,7 @@ SS_plots <-
     igroup <- 6
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform("Starting spawner-recruit curve plot (group {igroup})")
+        cli::cli_alert_info("Starting spawner-recruit curve plot (group {igroup})")
       }
       plotinfo <-
         SSplotSpawnrecruit(
@@ -934,7 +934,7 @@ SS_plots <-
     igroup <- 7
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform("Starting catch plots (group {igroup})")
+        cli::cli_alert_info("Starting catch plots (group {igroup})")
       }
       temp <-
         SSplotCatch(
@@ -971,7 +971,7 @@ SS_plots <-
     igroup <- 8
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform("Starting SPR plots (group {igroup})")
+        cli::cli_alert_info("Starting SPR plots (group {igroup})")
       }
       plotinfo <-
         SSplotSPR(
@@ -1004,7 +1004,7 @@ SS_plots <-
           nrow(replist[["discard"]]) > 0
       ) {
         if (verbose) {
-          cli::cli_inform("Starting discard plot (group {igroup})")
+          cli::cli_alert_info("Starting discard plot (group {igroup})")
         }
         plotinfo <-
           SSplotDiscard(
@@ -1025,7 +1025,7 @@ SS_plots <-
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping discard plot (group {igroup}) because no discard data"
           )
         }
@@ -1043,7 +1043,7 @@ SS_plots <-
           nrow(replist[["mnwgt"]]) > 0
       ) {
         if (verbose) {
-          cli::cli_inform("Starting mean body weight plot (group {igroup})")
+          cli::cli_alert_info("Starting mean body weight plot (group {igroup})")
         }
         plotinfo <-
           SSplotMnwt(
@@ -1064,7 +1064,7 @@ SS_plots <-
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping mean weight plot (group {igroup}) because no mean weight data"
           )
         }
@@ -1078,7 +1078,7 @@ SS_plots <-
     if (igroup %in% plot) {
       if (!is.null(dim(replist[["cpue"]]))) {
         if (verbose) {
-          cli::cli_inform("Starting index plots (group {igroup})")
+          cli::cli_alert_info("Starting index plots (group {igroup})")
         }
         plotinfo <- SSplotIndices(
           replist = replist,
@@ -1102,7 +1102,7 @@ SS_plots <-
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping index plots (group {igroup}) because no indices in model (or are not reported)"
           )
         }
@@ -1116,7 +1116,7 @@ SS_plots <-
     if (igroup %in% plot) {
       if (!is.null(replist[["natage"]])) {
         if (verbose) {
-          cli::cli_inform("Starting numbers at age plots (group {igroup})")
+          cli::cli_alert_info("Starting numbers at age plots (group {igroup})")
         }
         plotinfo <-
           SSplotNumbers(
@@ -1141,7 +1141,7 @@ SS_plots <-
           plotInfoTable <- rbind(plotInfoTable, plotinfo)
         }
       } else {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Skipping numbers plots (group {igroup}) because numbers-at-age table not included in output"
         )
         # end check for numbers-at-age table available
@@ -1153,7 +1153,7 @@ SS_plots <-
     #
     # use of SSplotcomps function to make composition plots
     if (is.null(comp_data_exists) || !comp_data_exists) {
-      cli::cli_inform("No composition data, skipping all composition plots")
+      cli::cli_alert_warning("No composition data, skipping all composition plots")
     } else {
       lenCompDatGroup <- 13
       ageCompDatGroup <- 14
@@ -1166,7 +1166,7 @@ SS_plots <-
           )) >
             0
         ) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping plot groups {lenCompDatGroup}-{condCompDatGroup} (comp data without fit) because input 'datplot=FALSE'"
           )
         }
@@ -1174,7 +1174,7 @@ SS_plots <-
         if (lenCompDatGroup %in% plot) {
           # data only aspects
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_info(
               "Starting length comp data plots (group {lenCompDatGroup})"
             )
           }
@@ -1314,7 +1314,7 @@ SS_plots <-
         }
         if (ageCompDatGroup %in% plot) {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_info(
               "Starting age comp data plots (group {ageCompDatGroup})"
             )
           }
@@ -1448,7 +1448,7 @@ SS_plots <-
         }
         if (condCompDatGroup %in% plot) {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_info(
               "Starting conditional comp data plots (group {condCompDatGroup})"
             )
           }
@@ -1515,7 +1515,7 @@ SS_plots <-
       igroup <- 16
       if (igroup %in% plot) {
         if (verbose) {
-          cli::cli_inform("Starting fit to length comp plots (group {igroup})")
+          cli::cli_alert_info("Starting fit to length comp plots (group {igroup})")
         }
         # regular length comps
         plotinfo <-
@@ -1717,7 +1717,7 @@ SS_plots <-
       igroup <- 17
       if (igroup %in% plot) {
         if (verbose) {
-          cli::cli_inform("Starting fit to age comp plots (group {igroup})")
+          cli::cli_alert_info("Starting fit to age comp plots (group {igroup})")
         }
         # normal marginal ages
         plotinfo <-
@@ -1858,7 +1858,7 @@ SS_plots <-
       igroup <- 18
       if (igroup %in% plot) {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Starting fit to conditional age-at-length comp plots (group {igroup})"
           )
         }
@@ -2024,13 +2024,13 @@ SS_plots <-
         if (nrow(replist[["condbase"]]) > 0) {
           if (replist[["nagebins"]] == 1) {
             if (verbose) {
-              cli::cli_inform(
+              cli::cli_alert_warning(
                 "Skipping conditional age-at-length diagnostic plots (group {igroup}) due to only 1 age bin"
               )
             }
           } else {
             if (verbose) {
-              cli::cli_inform(
+              cli::cli_alert_info(
                 "Starting conditional age-at-length diagnostic plots (group {igroup})"
               )
             }
@@ -2086,7 +2086,7 @@ SS_plots <-
           }
         } else {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "Skipping conditional A@L plots (group {igroup}) because no such data in model"
             )
           }
@@ -2099,7 +2099,7 @@ SS_plots <-
       igroup <- 20
       if (igroup %in% plot) {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Starting mean length-at-age and mean weight-at-age plots (group {igroup})"
           )
         }
@@ -2287,13 +2287,13 @@ SS_plots <-
           is.null(replist[["tagdbase2"]]) || nrow(replist[["tagdbase2"]]) == 0
         ) {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "Skipping tag plots (group {igroup}) because no tag data in model"
             )
           }
         } else {
           if (verbose) {
-            cli::cli_inform("Starting tag plots (group {igroup})")
+            cli::cli_alert_info("Starting tag plots (group {igroup})")
           }
           plotinfo <-
             SSplotTags(
@@ -2329,7 +2329,7 @@ SS_plots <-
     igroup <- 22
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform("Starting yield plots (group {igroup})")
+        cli::cli_alert_info("Starting yield plots (group {igroup})")
       }
       plotinfo <-
         SSplotYield(
@@ -2355,7 +2355,7 @@ SS_plots <-
     if (igroup %in% plot) {
       if (!is.null(replist[["movement"]]) && nrow(replist[["movement"]]) > 0) {
         if (verbose) {
-          cli::cli_inform("Starting movement rate plots (group {igroup})")
+          cli::cli_alert_info("Starting movement rate plots (group {igroup})")
         }
         plotinfo <- NULL
         temp <-
@@ -2375,7 +2375,7 @@ SS_plots <-
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping movement plots (group {igroup}) because no movement in model"
           )
         }
@@ -2388,7 +2388,7 @@ SS_plots <-
     igroup <- 24
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform("Starting data range plots (group {igroup})")
+        cli::cli_alert_info("Starting data range plots (group {igroup})")
       }
       plotinfo <- NULL
       temp <-
@@ -2421,7 +2421,7 @@ SS_plots <-
     igroup <- 25
     if (igroup %in% plot) {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Starting parameter distribution plots (group {igroup})"
         )
       }
@@ -2457,7 +2457,7 @@ SS_plots <-
       dev.off()
     } # close PDF file if it was open
     if (verbose) {
-      cli::cli_inform("Finished all requested plots in SS_plots function")
+      cli::cli_alert_success("Finished all requested plots in SS_plots function")
     }
 
     ##########################################
@@ -2467,18 +2467,18 @@ SS_plots <-
     if (igroup %in% plot) {
       if (nrow(replist[["estimated_non_dev_parameters"]]) == 0) {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping diagnostic tables (group {igroup}) because there are no estimated non-dev parameters"
           )
         }
       } else {
         if (!png) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Skipping diagnostic tables (group {igroup}) because png=FALSE"
           )
         } else {
           if (verbose) {
-            cli::cli_inform("Starting diagnostic tables (group {igroup})")
+            cli::cli_alert_info("Starting diagnostic tables (group {igroup})")
           }
 
           plotinfo <- NULL
@@ -2523,7 +2523,7 @@ SS_plots <-
       }
       write.csv(plotInfoTable, csvname, row.names = FALSE)
       if (verbose) {
-        cli::cli_inform("Wrote table of info on PNG files to: {csvname}")
+        cli::cli_alert_success("Wrote table of info on PNG files to: {csvname}")
       }
       # write HTML files to display the images
       if (html) {

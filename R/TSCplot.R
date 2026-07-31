@@ -218,11 +218,11 @@ TSCplot <- function(
 
   if (!is.null(makePDF)) {
     dev.off()
-    cli::cli_inform("The plot is in pdf file {makePDF}")
+    cli::cli_alert_info("The plot is in pdf file {makePDF}")
   }
   if (!is.null(makePNG)) {
     dev.off()
-    cli::cli_inform("The plot is in png file {makePNG}")
+    cli::cli_alert_info("The plot is in png file {makePNG}")
   }
 
   invisible(SP)

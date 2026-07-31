@@ -36,7 +36,7 @@ SS_readdat_3.30 <-
     }
 
     if (verbose) {
-      cli::cli_inform("Running SS_readdat_3.30")
+      cli::cli_alert_info("Running SS_readdat_3.30")
     }
     dat <- readLines(file, warn = FALSE)
     if (length(dat) < 20) {
@@ -74,7 +74,7 @@ SS_readdat_3.30 <-
     }
     if (is.null(section)) {
       if (Nsections > 1 & verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "The supplied data file has {Nsections}{ifelse(Nsections == 1, ' section. ', ' sections. ')} Using section = 1."
         )
       }
@@ -191,7 +191,7 @@ SS_readdat_3.30 <-
     datlist[["N_areas"]] <- get.val(dat, ind)
     datlist[["Nfleets"]] <- get.val(dat, ind)
     if (verbose) {
-      cli::cli_inform("Read general model dimensions.")
+      cli::cli_alert_info("Read general model dimensions.")
     }
     ## Fleet data ----
     datlist[["fleetinfo"]] <- get.df(dat, ind, datlist[["Nfleets"]])
@@ -219,7 +219,7 @@ SS_readdat_3.30 <-
       )
     }
     if (verbose) {
-      cli::cli_inform("Read fleet information.")
+      cli::cli_alert_info("Read fleet information.")
     }
 
     datlist[["fleetnames"]] <- datlist[["fleetinfo"]][["fleetname"]]
@@ -254,7 +254,7 @@ SS_readdat_3.30 <-
         ]
       )
       if (verbose) {
-        cli::cli_inform("Read bycatch data.")
+        cli::cli_alert_info("Read bycatch data.")
       }
     }
 
@@ -268,7 +268,7 @@ SS_readdat_3.30 <-
       "catch_se"
     )
     if (verbose) {
-      cli::cli_inform("Read catches.")
+      cli::cli_alert_info("Read catches.")
     }
     ## CPUE data  ----
     datlist[["CPUEinfo"]] <- get.df(dat, ind, datlist[["Nfleets"]])
@@ -280,7 +280,7 @@ SS_readdat_3.30 <-
     rownames(datlist[["CPUEinfo"]]) <- datlist[["fleetnames"]]
 
     if (verbose) {
-      cli::cli_inform("Read CPUE data.")
+      cli::cli_alert_info("Read CPUE data.")
     }
 
     ## CPUE data matrix
@@ -328,7 +328,7 @@ SS_readdat_3.30 <-
         "stderr"
       )
       if (verbose) {
-        cli::cli_inform("Read discards.")
+        cli::cli_alert_info("Read discards.")
       }
     } else {
       datlist[["discard_fleet_info"]] <- NULL
@@ -352,7 +352,7 @@ SS_readdat_3.30 <-
         )
       }
       if (verbose) {
-        cli::cli_inform("Read mean body weight.")
+        cli::cli_alert_info("Read mean body weight.")
       }
     } else {
       datlist[["DF_for_meanbodywt"]] <- NULL
@@ -466,7 +466,7 @@ SS_readdat_3.30 <-
       }
 
       if (verbose) {
-        cli::cli_inform("Read Length composition data.")
+        cli::cli_alert_info("Read Length composition data.")
       }
     }
 
@@ -560,7 +560,7 @@ SS_readdat_3.30 <-
       }
 
       if (verbose) {
-        cli::cli_inform("Read age composition data.")
+        cli::cli_alert_info("Read age composition data.")
       }
     }
     # check DM pars ----)
@@ -596,7 +596,7 @@ SS_readdat_3.30 <-
       xx <- dat[ind:endmwa]
       if (length(unique(sapply(strsplit(xx, "\\s+"), length))) > 1) {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Format of MeanSize_at_Age_obs appears to have sample sizes on separate lines than other inputs."
           )
         }
@@ -675,7 +675,7 @@ SS_readdat_3.30 <-
       colnames(datlist[["envdat"]]) <- c("year", "variable", "value")
 
       if (verbose) {
-        cli::cli_inform("Read environmental variable data.")
+        cli::cli_alert_info("Read environmental variable data.")
       }
     } else {
       datlist[["envdat"]] <- NULL
@@ -749,7 +749,7 @@ SS_readdat_3.30 <-
         }
       }
       if (verbose) {
-        cli::cli_inform("Read size frequency data.")
+        cli::cli_alert_info("Read size frequency data.")
       }
     } else {
       datlist[["nbins_per_method"]] <- NULL
@@ -800,7 +800,7 @@ SS_readdat_3.30 <-
           "Nrecap"
         )
         if (verbose) {
-          cli::cli_inform("Read tag recapture data.")
+          cli::cli_alert_info("Read tag recapture data.")
         }
       } else {
         datlist[["tag_recaps"]] <- NULL
@@ -822,9 +822,9 @@ SS_readdat_3.30 <-
     eof <- get.val(dat, ind)
     if (verbose) {
       if (Nsections == 1) {
-        cli::cli_inform("Read of data file complete. Final value = {eof}")
+        cli::cli_alert_success("Read of data file complete. Final value = {eof}")
       } else {
-        cli::cli_inform(
+        cli::cli_alert_success(
           "Read of section {section} of data file complete. Final value = {eof}"
         )
       }

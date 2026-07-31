@@ -24,7 +24,7 @@ file_increment <- function(
   pattern = "^[CcPRw][a-zA-Z]+\\.sso|summary\\.sso|\\.par$"
 ) {
   if (verbose) {
-    cli::cli_inform("Renaming output files to have names like Report{i}.sso")
+    cli::cli_alert_info("Renaming output files to have names like Report{i}.sso")
   }
 
   ignore <- file.copy(

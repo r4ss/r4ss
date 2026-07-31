@@ -36,7 +36,7 @@ SS_html <- function(
   verbose = TRUE
 ) {
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Running 'SS_html': By default, this function will look in the directory where PNG files were created for CSV files with the name 'plotInfoTable...' written by 'SS_plots.' HTML files are written to link to these plots and put in the same directory."
     )
   }
@@ -92,7 +92,7 @@ SS_html <- function(
       # loop over duplicates and remove rows for older instance
       if (length(duplicates) > 0) {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Removing duplicate rows in combined plotInfoTable based on multiple CSV files"
           )
         }
@@ -136,7 +136,7 @@ SS_html <- function(
       htmlfile <- file.path(plotdir, "_SS_output.html")
       htmlhome <- htmlfile
       if (verbose) {
-        cli::cli_inform("Home HTML file with output will be: {htmlhome}")
+        cli::cli_alert_info("Home HTML file with output will be: {htmlhome}")
       }
     } else {
       category <- categories[icat]
@@ -475,7 +475,7 @@ SS_html <- function(
   # thanks John Wallace for finding the browseURL command
   if (openfile) {
     if (verbose) {
-      cli::cli_inform("Opening HTML file in your default web-browser.")
+      cli::cli_alert_info("Opening HTML file in your default web-browser.")
     }
     # check for presence of file
     # alternative location for file in the path is relative to the working directory

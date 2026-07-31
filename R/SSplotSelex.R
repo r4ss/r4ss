@@ -159,12 +159,12 @@ SSplotSelex <-
 
     # message about skipping plots
     if (is.null(ageselex)) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "Skipping age-based selectivity plots: no output available"
       )
     }
     if (is.null(sizeselex)) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "Skipping length-based selectivity plots: no output available"
       )
     }
@@ -275,7 +275,7 @@ SSplotSelex <-
       }
       if (any(time)) {
         if (length(years) > 1 & length(fleets) > 1) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "plot not yet configured to work well with multiple years and multiple fleets"
           )
         }
@@ -562,7 +562,7 @@ SSplotSelex <-
           )
       ) {
         agefactors <- setdiff(agefactors, "Asel")
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Skipping plot of age-based selectivity as all values = 1.0"
         )
       }

@@ -147,13 +147,13 @@ jitter <- function(
   # setwd(dir)
 
   if (verbose) {
-    cli::cli_inform("Temporarily changing working directory to: {dir}")
+    cli::cli_alert_info("Temporarily changing working directory to: {dir}")
     if (!file.exists("Report.sso")) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Copy output files from a converged run into {dir} prior to running jitter to enable easier comparisons."
       )
     }
-    cli::cli_inform("Checking starter file")
+    cli::cli_alert_info("Checking starter file")
   }
   # read starter file to test for non-zero jitter value
   starter <- SS_readstarter(
@@ -232,7 +232,7 @@ jitter <- function(
     }
   )
   if (verbose) {
-    cli::cli_inform("Finished running jitters, running last few clean-up steps")
+    cli::cli_alert_success("Finished running jitters, running last few clean-up steps")
   }
 
   # delete jitter model directory
@@ -250,7 +250,7 @@ jitter <- function(
   )
 
   if (printlikes) {
-    cli::cli_inform("Table of likelihood values:")
+    cli::cli_alert_info("Table of likelihood values:")
     print(table(likesaved))
   }
   return(invisible(likesaved))
@@ -293,7 +293,7 @@ iterate_jitter <- function(
   )
 
   if (verbose) {
-    cli::cli_inform("Starting run of jitter{i}")
+    cli::cli_alert_info("Starting run of jitter{i}")
   }
 
   # pause briefly when running in parallel to ensure seeds differ
@@ -334,7 +334,7 @@ iterate_jitter <- function(
       ]
     }
     if (printlikes) {
-      cli::cli_inform("Likelihood for jitter {i} = {like}")
+      cli::cli_alert_info("Likelihood for jitter {i} = {like}")
     }
     return(like)
   } else {

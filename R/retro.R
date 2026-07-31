@@ -133,7 +133,7 @@ retro <- function(
   furrr::future_walk(seq_along(years), function(iyr) {
     newdir_iyr <- file.path(newdir, subdirnames[iyr])
     if (verbose) {
-      cli::cli_inform("Running retrospective in {newdir_iyr}")
+      cli::cli_alert_info("Running retrospective in {newdir_iyr}")
     }
 
     # copy original input files to retro folder

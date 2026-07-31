@@ -109,7 +109,7 @@ SS_splitdat <-
         )
         outline <- paste("# Data file created from", infile, "to", outfile)
         if (verbose) {
-          cli::cli_inform(outline)
+          cli::cli_alert_info(outline)
         }
         writeLines(c(outline, filelines[starts[i]:ends[i]]), outfile)
       }
@@ -126,7 +126,7 @@ SS_splitdat <-
           paste("#C MLE data file created from", infile, "to", outfile)
         )
         if (verbose) {
-          cli::cli_inform("MLE data file created from {infile} to {outfile}")
+          cli::cli_alert_info("MLE data file created from {infile} to {outfile}")
         }
         writeLines(c(notes, filelines[MLEstart:MLEend]), outfile)
       }
@@ -142,7 +142,7 @@ SS_splitdat <-
           paste("#C data file created from", infile, "to", outfile)
         )
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "file with copies of input data created from {infile} to {outfile}"
           )
         }

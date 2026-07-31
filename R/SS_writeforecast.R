@@ -24,7 +24,7 @@ SS_writeforecast <- function(
 ) {
   # function to write Stock Synthesis forecast files
   if (verbose) {
-    cli::cli_inform("running SS_writeforecast")
+    cli::cli_alert_info("running SS_writeforecast")
   }
 
   if (!is.list(mylist) || mylist[["type"]] != "Stock_Synthesis_forecast_file") {
@@ -49,12 +49,12 @@ SS_writeforecast <- function(
       cli::cli_abort("file exists: {outfile} set overwrite=TRUE to replace")
     } else {
       if (verbose) {
-        cli::cli_inform("overwriting file: {outfile}")
+        cli::cli_alert_warning("overwriting file: {outfile}")
       }
       file.remove(outfile)
     }
   } else {
-    if (verbose) cli::cli_inform("writing new file: {outfile}")
+    if (verbose) cli::cli_alert_info("writing new file: {outfile}")
   }
 
   # preliminary setup
@@ -62,7 +62,7 @@ SS_writeforecast <- function(
   options(width = 1000)
 
   if (verbose) {
-    cli::cli_inform("opening connection to {outfile}")
+    cli::cli_alert_info("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   sink(zz)
@@ -79,7 +79,7 @@ SS_writeforecast <- function(
     # increase max.print
     if (nrow(dataframe) > 0.5 * getOption("max.print")) {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "setting `options(max.print = {100 * nrow(dataframe) + 1})` to accommodate large output"
         )
       }
@@ -91,7 +91,7 @@ SS_writeforecast <- function(
     # restore old max.print
     if (exists("old.max.print")) {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "restoring old value `options(max.print = {old.max.print})`"
         )
       }
@@ -311,5 +311,5 @@ SS_writeforecast <- function(
   options(width = oldwidth)
   sink()
   close(zz)
-  if (verbose) cli::cli_inform("file written to {outfile}")
+  if (verbose) cli::cli_alert_success("file written to {outfile}")
 }

@@ -90,7 +90,7 @@ copy_SS_inputs <- function(
   }
 
   if (verbose) {
-    cli::cli_inform("copying files from {dir.old} to {dir.new}")
+    cli::cli_alert_info("copying files from {dir.old} to {dir.new}")
   }
 
   results <- rep(NA, 6)
@@ -177,7 +177,7 @@ copy_SS_inputs <- function(
       ]
       exefiles <- grep(pattern = "^[^.]+$", x = exefiles, value = TRUE)
       if (verbose) {
-        cli::cli_inform("Unix binaries are: {paste(exefiles, collapse = ', ')}")
+        cli::cli_alert_info("Unix binaries are: {paste(exefiles, collapse = ', ')}")
       }
     }
     if (length(exefiles) == 0) {
@@ -212,7 +212,7 @@ copy_SS_inputs <- function(
   # check for successful copying
   if (all(results, na.rm = TRUE)) {
     if (verbose) {
-      cli::cli_inform("copying complete")
+      cli::cli_alert_success("copying complete")
     }
     return(invisible(TRUE))
   } else {

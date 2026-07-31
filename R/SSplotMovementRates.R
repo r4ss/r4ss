@@ -69,7 +69,7 @@ SSplotMovementRates <-
     # subplot 1: movement in end year
     if (1 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("Running subplot 1: movement rates in final year")
+        cli::cli_alert_info("Running subplot 1: movement rates in final year")
       }
 
       if (moveseas[1] == "all") {
@@ -83,7 +83,7 @@ SSplotMovementRates <-
 
         if (nrow(move2) == 0) {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "Skipping movement rate plot: no movement in season {moveseas[iseas]}"
             )
           }
@@ -176,7 +176,7 @@ SSplotMovementRates <-
           )
           if (FALSE) {
             if (verbose) {
-              cli::cli_inform("Running subplot 2: time-varying movement rates")
+              cli::cli_alert_info("Running subplot 2: time-varying movement rates")
             }
             moveinfo <- move[, 1:6]
             moveinfo[["LabelBase2"]] <- paste(
@@ -195,7 +195,7 @@ SSplotMovementRates <-
             ]
             nmoves <- nrow(moveinfo)
             if (verbose) {
-              cli::cli_inform("N movement rates: {nmoves}")
+              cli::cli_alert_info("N movement rates: {nmoves}")
             }
             if (nareas > 2) {
               cli::cli_warn(
@@ -380,7 +380,7 @@ SSplotMovementRates <-
           } # end if(FALSE) turning off section that isn't working
         } # end check for time-varying movement
       } else {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Skipping time varying movement plots (subplot 2), most likely because MGparm_By_Year_after_adjustments table (report:7) is not reported in the Report.sso file."
         )
       }

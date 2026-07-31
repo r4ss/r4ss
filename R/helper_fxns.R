@@ -63,7 +63,7 @@ get_par_name <- function(dir, verbose = TRUE) {
     )
 
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "Multiple files in directory match pattern *.par, choosing based on the preferences described in the help for get_par_name(): {parfile}"
       )
     }
