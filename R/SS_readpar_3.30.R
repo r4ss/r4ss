@@ -51,7 +51,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
 
   # function to read Stock Synthesis parameter files
   if (verbose) {
-    cli::cli_inform("running SS_readpar_3.30")
+    cli::cli_alert_info("running SS_readpar_3.30")
   }
   parvals <- readLines(parfile, warn = FALSE)
 

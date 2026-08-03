@@ -80,7 +80,7 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
   if (file.exists(file.path(dir, exename))) {
     path_to_exe <- path.expand(dir)
     if (verbose) {
-      cli::cli_inform("Executable found in directory {path_to_exe}")
+      cli::cli_alert_success("Executable found in directory {path_to_exe}")
     }
     # add ./ to exename so it knows to run in the current directory
     # but only if the exename doesn't include additional directory
@@ -106,14 +106,14 @@ check_exe <- function(exe = "ss3", dir = getwd(), verbose = FALSE) {
       if (file.info(normalizePath(path_to_exe))[["size"]] < 1e6) {
         if (verbose) {
           exe_size <- file.info(normalizePath(path_to_exe))[["size"]]
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Executable found that isn't Stock Synthesis: {path_to_exe}; File size is too small: {exe_size}"
           )
         }
         path_to_exe <- ""
       } else {
         if (verbose) {
-          cli::cli_inform("Executable found at {path_to_exe}")
+          cli::cli_alert_success("Executable found at {path_to_exe}")
         }
         # remove filename to just get path
         path_to_exe <- dirname(path_to_exe)

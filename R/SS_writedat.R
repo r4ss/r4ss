@@ -31,7 +31,7 @@ SS_writedat <- function(
     )
   }
   if (verbose) {
-    cli::cli_inform("running SS_writedat")
+    cli::cli_alert_info("running SS_writedat")
   }
 
   # check datlist

@@ -150,7 +150,7 @@ SSsummarize <- function(
   warn <- FALSE # flag for whether filter warning has been printed or not
 
   if (verbose) {
-    cli::cli_inform("Summarizing {n} models:")
+    cli::cli_alert_info("Summarizing {n} models:")
   }
 
   # loop over models within biglist
@@ -158,7 +158,7 @@ SSsummarize <- function(
     stats <- biglist[[imodel]]
     listname <- names(biglist)[imodel]
     if (verbose) {
-      cli::cli_inform("imodel={imodel}/{n}")
+      cli::cli_alert_info("imodel={imodel}/{n}")
     }
 
     # gradient
@@ -176,7 +176,7 @@ SSsummarize <- function(
     # check for non-NULL selectivity table
     if (is.null(sizeseltemp)) {
       if (verbose) {
-        cli::cli_inform("  no selectivity-at-length output")
+        cli::cli_alert_warning("no selectivity-at-length output")
       }
     } else {
       # if factor(s) not input, get all unique values from table
@@ -212,7 +212,7 @@ SSsummarize <- function(
     # check for NULL selectivity table
     if (is.null(ageseltemp)) {
       if (verbose) {
-        cli::cli_inform("  no selectivity-at-age output")
+        cli::cli_alert_warning("no selectivity-at-age output")
       }
     } else {
       # if factor(s) not input, get all unique values from table
@@ -328,8 +328,8 @@ SSsummarize <- function(
       ] <- parstemp[["Pr_Like"]][ipar]
     }
     if (verbose) {
-      cli::cli_inform(
-        "  N active pars = {sum(!is.na(parstemp[['Active_Cnt']]))}"
+      cli::cli_alert_info(
+        "N active pars = {sum(!is.na(parstemp[['Active_Cnt']]))}"
       )
     }
 
@@ -357,7 +357,7 @@ SSsummarize <- function(
     indextemp <- stats[["cpue"]]
     if (is.null(indextemp) || is.na(indextemp[[1]][1])) {
       if (verbose) {
-        cli::cli_inform("  no index data")
+        cli::cli_alert_warning("no index data")
       }
     } else {
       # temporarily remove columns added in SS version 3.30.13 (March 2019)
@@ -806,7 +806,7 @@ SSsummarize <- function(
       get("verbose", envir = parent.frame()) &
         deparse(substitute(data)) == "pars"
     ) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "For model(s) {paste(fix, collapse = ', ')}, values in 'pars', 'parsSD', 'parphases', and 'par_prior_likes' for {paste(
           data[oldrows, \"Label\"],
           data[newrows, \"Label\"],
@@ -896,7 +896,7 @@ SSsummarize <- function(
   # mylist[["lbinspop"]]   <- as.numeric(names(stats[["sizeselex"]])[-(1:5)])
 
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_success(
       "Summary finished. To avoid printing details above, use 'verbose = FALSE'."
     )
   }

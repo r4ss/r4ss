@@ -86,7 +86,7 @@ SSplotAgeMatrix <- function(
       return()
     }
     if (length(replist[["lbinspop"]]) == 1 && is.na(replist[["lbinspop"]])) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "No distribution of length at age plots produced because replist[['ALK']] is NULL, likely because 'detailed age-structured reports' are not requested in the starter file."
       )
       return()

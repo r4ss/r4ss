@@ -80,7 +80,7 @@ SSplotSPR <-
 
     # message about skipping plots
     if (is.null(sprseries)) {
-      cli::cli_inform("Skipping SPR plots: no output available")
+      cli::cli_alert_warning("Skipping SPR plots: no output available")
       return()
     }
     # at least one non-converged model had NaN values for all years
@@ -182,7 +182,7 @@ SSplotSPR <-
     # temporary disable multi-season models until code cleanup
     if (2 %in% subplots) {
       if (nseasons > 1) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Skipped 1-SPR plot because it's not yet configured for multi-season models"
         )
       }
@@ -399,7 +399,7 @@ SSplotSPR <-
       Bratio_vals <- Bratio[["Value"]][Bratio[["Yr"]] %in% shared_yrs]
       SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% shared_yrs]
       if (length(Bratio_vals) != length(SPRratio_vals)) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Bratio and SPRratio vectors are different in length, skipping phase plot."
         )
         return()

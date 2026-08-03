@@ -40,7 +40,9 @@ SSmakeMmatrix <- function(
   # check for existing file
   if (!is.null(outfile) && file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
+      cli::cli_alert_warning(
+        "File exists and input 'overwrite'=FALSE: {outfile}"
+      )
       return()
     } else {
       file.remove(outfile)
@@ -60,7 +62,7 @@ SSmakeMmatrix <- function(
 
   # open file connection if requested
   if (!is.null(outfile)) {
-    cli::cli_inform("opening connection to {outfile}")
+    cli::cli_alert_info("opening connection to {outfile}")
     zz <- file(outfile, open = "at")
     sink(zz)
   }
@@ -73,7 +75,7 @@ SSmakeMmatrix <- function(
   maxage <- nrow(mat) - 1 # maximum age (assuming first age=0)
   ages <- 0:maxage # vector of ages
 
-  cli::cli_inform(
+  cli::cli_alert_info(
     "Calculating inputs to Stock Synthesis for a matrix of natural mortality values over the range of ages: {min(ages)} to {maxage}"
   )
 
@@ -90,7 +92,7 @@ SSmakeMmatrix <- function(
     )
   )
 
-  cli::cli_inform(Msetup)
+  cli::cli_alert_info(Msetup)
 
   # create data frame of parameter lines
   HI <- ceiling(max(mat) * 10) / 10
@@ -123,7 +125,7 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  cli::cli_inform(
+  cli::cli_alert_info(
     "Mortality params to paste into the first block of parameter lines:
 {paste(utils::capture.output(Mparams), sep = '', collapse = \"\\n\")}"
   )
@@ -151,7 +153,7 @@ SSmakeMmatrix <- function(
     sep = ""
   )
 
-  cli::cli_inform(
+  cli::cli_alert_info(
     "# stuff to paste below the line labeled 'CohortGrowDev'
 1 #_custom mortality/growth environmental setup
 {paste(utils::capture.output(Mlinks), sep = '', collapse = \"\\n\")}"
@@ -175,7 +177,7 @@ SSmakeMmatrix <- function(
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 
-  cli::cli_inform(
+  cli::cli_alert_info(
     "Environmental variables to paste into the bottom of the data file:
 {maxage + 1} # N environmental variables
 {nrow(Menv)} # N environmental observations
@@ -188,5 +190,5 @@ SSmakeMmatrix <- function(
     sink()
     close(zz)
   }
-  if (!is.null(outfile)) cli::cli_inform("file written to {outfile}")
+  if (!is.null(outfile)) cli::cli_alert_info("file written to {outfile}")
 }

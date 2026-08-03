@@ -172,7 +172,7 @@ SSplotRecdist <-
       if (nsexes == 1) {
         message1 <- "recruitment distribution by area and season:\n"
       }
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{message1} {paste(utils::capture.output(recmat[, , sex]), sep = '', collapse = '\n')}"
       )
       if (plot) {

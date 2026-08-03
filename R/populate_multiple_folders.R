@@ -67,7 +67,7 @@ populate_multiple_folders <- function(
 
   # note source and destination directories
   if (verbose) {
-    cli::cli_inform("copying files from {outerdir.old} to {outerdir.new}")
+    cli::cli_alert_info("copying files from {outerdir.old} to {outerdir.new}")
   }
 
   # empty data frame to attach things to
@@ -82,13 +82,13 @@ populate_multiple_folders <- function(
     # check to make sure it's a directory
     if (dir.exists(file.path(outerdir.old, dir))) {
       if (verbose) {
-        cli::cli_inform("copying {dir}")
+        cli::cli_alert_info("copying {dir}")
       }
       # check for presence of starter file
       if (!"starter.ss" %in% tolower(dir(file.path(outerdir.old, dir)))) {
         if (verbose) {
           # note that starter file is missing in a subfolder
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "skipping {dir} which doesn't contain a starter.ss file"
           )
         }

@@ -100,7 +100,7 @@ SSplotSpawnrecruit <-
 
     recruit <- replist[["recruit"]]
     if (is.null(recruit)) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "Skipping stock-recruit plots: no recruitment information available"
       )
       return()

@@ -789,7 +789,7 @@ table_exec_summary <- function(
   # ES Table g  Predicted forecast values
   # ======================================================================
   if (verbose & is.null(fore)) {
-    cli::cli_alert_info(
+    cli::cli_alert_warning(
       "Skipping table of forecast values: no forecast available."
     )
   } else {

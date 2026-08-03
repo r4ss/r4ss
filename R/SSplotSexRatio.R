@@ -151,7 +151,7 @@ SSplotSexRatio <-
     if (
       any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")
     ) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Removing super-period composition values labeled 'skip' and designating super-period values with a '*'"
       )
       dbase_kind <- dbase_kind[

@@ -324,7 +324,7 @@ SSplotComparisons <-
       )
       pdf(file = pdffile, width = pwidth, height = pheight)
       if (verbose) {
-        cli::cli_inform("PDF file with plots will be: {pdffile}")
+        cli::cli_alert_info("PDF file with plots will be: {pdffile}")
       }
       par(par)
     }
@@ -468,19 +468,19 @@ SSplotComparisons <-
     }
     # some feedback about uncertainty settings
     if (all(uncertainty)) {
-      cli::cli_inform("showing uncertainty for all models")
+      cli::cli_alert_info("showing uncertainty for all models")
     }
     if (!any(uncertainty)) {
-      cli::cli_inform("not showing uncertainty for any models")
+      cli::cli_alert_info("not showing uncertainty for any models")
     }
     if (any(uncertainty) & !all(uncertainty)) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "showing uncertainty for model{ifelse(sum(uncertainty) > 1, 's: ', ' ')}{paste(which(uncertainty), collapse = ',')}"
       )
     }
     for (i in 1:n) {
       if (all(is.na(quantsSD[, i]) | quantsSD[, i] == 0)) {
-        cli::cli_inform("No uncertainty available for model {i}")
+        cli::cli_alert_warning("No uncertainty available for model {i}")
         uncertainty[i] <- FALSE
       }
     }
@@ -727,7 +727,7 @@ SSplotComparisons <-
         mean <- apply(mcmc.tmp, 2, mean, na.rm = TRUE)
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
         if (!meanRecWarning) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "note: using mean recruitment from MCMC instead of median, because it is more comparable to MLE"
           )
           meanRecWarning <- TRUE
@@ -1426,7 +1426,7 @@ SSplotComparisons <-
               cex = par()[["cex.lab"]]
             )
           } else {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "No line added to SPR ratio plot, as the settings used in this model have not yet been configured in SSplotComparisons."
             )
             mtext(
@@ -2378,7 +2378,7 @@ SSplotComparisons <-
           mcmcColumn <- grep(parname, colnames(mcmc[[imodel]]), fixed = TRUE)
           # warn if it can't find the columns
           if (length(mcmcColumn) == 0) {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "No columns selected from MCMC for '{parname}' in model {imodel}"
             )
             good[iline] <- FALSE
@@ -2468,7 +2468,7 @@ SSplotComparisons <-
       }
       # make empty plot
       if (is.null(ymax)) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "  skipping plot of {parname} because it seems to not be estimated in any model"
         )
       } else {
@@ -2728,7 +2728,7 @@ SSplotComparisons <-
           box()
         }
         if (xunits != 1) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "x-axis for {parname} in density plot has been divided by {xunits} (so may be in units of {xlab2})"
           )
         }
@@ -2756,14 +2756,14 @@ SSplotComparisons <-
     uncertaintyplots <- intersect(c(2, 4, 6, 8, 10, 12), subplots)
     if (!any(uncertainty) & length(uncertaintyplots) > 0) {
       # warn if uncertainty is off but uncertainty plots are requested
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "skipping plots with uncertainty: {paste(uncertaintyplots, collapse = ',')}"
       )
     }
     # subplot 1: spawning biomass
     if (1 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 1: spawning biomass")
+        cli::cli_alert_info("subplot 1: spawning biomass")
       }
       if (plot) {
         ymax_vec[1] <- plotBio(option = 1, show_uncertainty = FALSE)
@@ -2779,7 +2779,7 @@ SSplotComparisons <-
     if (2 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "subplot 2: spawning biomass with uncertainty intervals"
           )
         }
@@ -2798,7 +2798,7 @@ SSplotComparisons <-
     # (hopefully equal to fraction of unfished spawning output)
     if (3 %in% subplots) {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "subplot 3: biomass ratio (hopefully equal to fraction of unfished)"
         )
       }
@@ -2816,7 +2816,7 @@ SSplotComparisons <-
     if (4 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform("subplot 4: biomass ratio with uncertainty")
+          cli::cli_alert_info("subplot 4: biomass ratio with uncertainty")
         }
         if (plot) {
           ymax_vec[4] <- plotBratio(show_uncertainty = TRUE)
@@ -2832,7 +2832,7 @@ SSplotComparisons <-
     # subplot 18: summary biomass
     if (18 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 18: summary biomass")
+        cli::cli_alert_info("subplot 18: summary biomass")
       }
       if (plot) {
         ymax_vec[18] <- plotBio(option = 2, show_uncertainty = FALSE)
@@ -2849,13 +2849,13 @@ SSplotComparisons <-
       if (any(uncertainty)) {
         if (all(is.na(summaryoutput[["SmryBioSD"]][["Label"]]))) {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "skipping subplot 19 summary biomass with uncertainty because no models include summary biomass as a derived quantity"
             )
           }
         } else {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_info(
               "subplot 19: summary biomass with uncertainty intervals"
             )
           }
@@ -2874,7 +2874,7 @@ SSplotComparisons <-
     # subplot 5: SPR ratio
     if (5 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 5: SPR ratio")
+        cli::cli_alert_info("subplot 5: SPR ratio")
       }
       if (plot) {
         ymax_vec[5] <- plotSPRratio(show_uncertainty = FALSE)
@@ -2890,7 +2890,7 @@ SSplotComparisons <-
     if (6 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform("subplot 6: SPR ratio with uncertainty")
+          cli::cli_alert_info("subplot 6: SPR ratio with uncertainty")
         }
         if (plot) {
           ymax_vec[6] <- plotSPRratio(show_uncertainty = TRUE)
@@ -2906,7 +2906,7 @@ SSplotComparisons <-
     # subplot 7: F (harvest rate or fishing mortality, however defined)
     if (7 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 7: F value")
+        cli::cli_alert_info("subplot 7: F value")
       }
       if (plot) {
         ymax_vec[7] <- plotF(show_uncertainty = FALSE)
@@ -2923,7 +2923,7 @@ SSplotComparisons <-
     if (8 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform("subplot 8: F value with uncertainty")
+          cli::cli_alert_info("subplot 8: F value with uncertainty")
         }
         if (plot) {
           ymax_vec[8] <- plotF(show_uncertainty = TRUE)
@@ -2939,7 +2939,7 @@ SSplotComparisons <-
     # subplot 9: recruits
     if (9 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 9: recruits")
+        cli::cli_alert_info("subplot 9: recruits")
       }
       if (plot) {
         ymax_vec[9] <- plotRecruits(show_uncertainty = FALSE)
@@ -2955,7 +2955,7 @@ SSplotComparisons <-
     if (10 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform("subplot 10: recruits with uncertainty")
+          cli::cli_alert_info("subplot 10: recruits with uncertainty")
         }
         if (plot) {
           ymax_vec[10] <- plotRecruits()
@@ -2971,10 +2971,10 @@ SSplotComparisons <-
     # subplot 11: recruit devs
     if (11 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 11: recruit devs")
+        cli::cli_alert_info("subplot 11: recruit devs")
       }
       if (is.null(recdevs)) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "No recdevs present in the model summary, skipping plot."
         )
       } else {
@@ -2993,7 +2993,7 @@ SSplotComparisons <-
     if (12 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform("subplot 12: recruit devs with uncertainty")
+          cli::cli_alert_info("subplot 12: recruit devs with uncertainty")
         }
         if (plot) {
           ymax_vec[12] <- plotRecDevs()
@@ -3009,7 +3009,7 @@ SSplotComparisons <-
     # subplot 13: index fits
     if (13 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
       if (verbose) {
-        cli::cli_inform("subplot 13: index fits")
+        cli::cli_alert_info("subplot 13: index fits")
       }
       for (iindex in seq_along(indexfleets[[1]])) {
         if (plot) {
@@ -3030,7 +3030,7 @@ SSplotComparisons <-
     # subplot 14: index fits on a log scale
     if (14 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
       if (verbose) {
-        cli::cli_inform("subplot 14: index fits on a log scale")
+        cli::cli_alert_info("subplot 14: index fits on a log scale")
       }
       for (iindex in seq_along(indexfleets[[1]])) {
         if (plot) {
@@ -3052,7 +3052,7 @@ SSplotComparisons <-
     ## # subplot 15: phase plot
     if (15 %in% subplots) {
       if (verbose) {
-        cli::cli_inform("subplot 15: phase plot")
+        cli::cli_alert_info("subplot 15: phase plot")
       }
       if (plot) {
         ymax_vec[15] <- plotPhase()
@@ -3068,7 +3068,7 @@ SSplotComparisons <-
     if (16 %in% subplots | 17 %in% subplots) {
       if (any(uncertainty)) {
         if (verbose) {
-          cli::cli_inform("subplots 16 and 17: densities")
+          cli::cli_alert_info("subplots 16 and 17: densities")
         }
         # look for all parameters or derived quantities matching
         # the input list of names
@@ -3089,7 +3089,7 @@ SSplotComparisons <-
             "No parameter/quantity names matching 'densitynames' input."
           )
         } else {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Parameter/quantity names matching 'densitynames' input: {paste(expandednames, sep = '', collapse = ', ')}"
           )
           ndensities <- length(expandednames)
@@ -3101,7 +3101,7 @@ SSplotComparisons <-
           )
           if (!is.null(densityxlabs) && length(densityxlabs) == ndensities) {
             densitytable[["label"]] <- densityxlabs
-            cli::cli_inform(
+            cli::cli_alert_info(
               "  table of parameter/quantity labels with associated x-axis label:"
             )
             print(densitytable)

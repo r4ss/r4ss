@@ -93,7 +93,7 @@ SSplotNumbers <-
 
     natage <- replist[["natage"]]
     if (is.null(natage)) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "Skipped some plots because NUMBERS_AT_AGE unavailable in the report file. The starter file may be set to produce limited report detail."
       )
     } else {
@@ -156,7 +156,7 @@ SSplotNumbers <-
       if ("Settlement" %in% names(natage)) {
         settlement <- unique(natage[["Settlement"]])
         if (length(settlement) > 1) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Numbers at age plots only show first settlement event"
           )
         }
@@ -164,17 +164,17 @@ SSplotNumbers <-
       birth_seas_name <- grep("^BirthSeas", colnames(natage), value = TRUE)
       bseas <- unique(natage[[birth_seas_name]])
       if (length(bseas) > 1) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Numbers at age plots are for only the first birth season"
         )
       }
       if (ngpatterns > 1) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Numbers at age plots may not deal correctly with growth patterns: no guarantees!"
         )
       }
       if (nseasons > 1) {
-        cli::cli_inform("Numbers at age plots are for season 1 only")
+        cli::cli_alert_info("Numbers at age plots are for season 1 only")
         # change plot labels for seasonal models
         labels[16] <- gsub(
           pattern = "of year",
@@ -532,7 +532,7 @@ SSplotNumbers <-
             }
           } else {
             if (verbose) {
-              cli::cli_inform(
+              cli::cli_alert_info(
                 "skipped sex ratio contour plot because females=males for all ages and years"
               )
             }
@@ -891,7 +891,7 @@ SSplotNumbers <-
               }
             } else {
               if (verbose) {
-                cli::cli_inform(
+                cli::cli_alert_info(
                   "skipped sex ratio contour plot because females=males for all lengths and years"
                 )
               }
@@ -913,7 +913,7 @@ SSplotNumbers <-
           BirthSeas <- min(bseas)
         }
         if (length(bseas) > 1) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "showing equilibrium age for first birth season {BirthSeas}"
           )
         }
@@ -977,7 +977,7 @@ SSplotNumbers <-
                 col = areacols[iarea],
                 add = TRUE
               )
-              cli::cli_inform(
+              cli::cli_alert_info(
                 "Multiple matching lines in equilibrium plot indicate multiple morphs or platoons within each area/sex combination."
               )
             }

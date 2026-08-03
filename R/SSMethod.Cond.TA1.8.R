@@ -117,7 +117,7 @@ SSMethod.Cond.TA1.8 <-
     if (is.null(seas)) {
       seas <- "comb"
       if (length(unique(dbase[["Seas"]])) > 1) {
-        cli::cli_inform("Combining data from multiple seasons")
+        cli::cli_alert_info("Combining data from multiple seasons")
       }
     }
 

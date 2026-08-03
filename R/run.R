@@ -85,7 +85,7 @@ run <- function(
 
   # Skip directory that have report results files (if enabled), and then exit function
   if (file.exists(file.path(dir, "Report.sso")) && skipfinished) {
-    cli::cli_inform(
+    cli::cli_alert_warning(
       "Skipping {dir} because it contains a Report.sso file and skipfinished = TRUE"
     )
     results <- "contained Report.sso"
@@ -97,12 +97,12 @@ run <- function(
   setwd(dir) # change working directory
   # provide some messages
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Changing working directory to {dir} and running model using the command: {command} {extras}"
     )
   }
   if (!show_in_console && verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Input 'show_in_console' = FALSE, so writing console output to {console_output_file}"
     )
   }
@@ -140,7 +140,7 @@ run <- function(
       con = console_output_file
     )
     if (verbose) {
-      cli::cli_inform("console output written to {console_output_file}")
+      cli::cli_alert_info("console output written to {console_output_file}")
     }
   }
   # determine if run finished
