@@ -100,11 +100,9 @@ models <- SSgetoutput(
   dirvec = c(mydir, mydir),
   modelnames = c("simple_small", "simple_small_again")
 )
-#> length(dirvec) as input to SSgetoutput: 2
-#> reading output from
-#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/Report.sso
-#> added element 'simple_small' to list
-#> reading output from
-#> /home/runner/work/_temp/Library/r4ss/extdata/simple_small/Report.sso
-#> added element 'simple_small_again' to list
+#> ℹ length(dirvec) as input to SSgetoutput: 2
+#> ℹ reading output from /home/runner/work/_temp/Library/r4ss/extdata/simple_small/Report.sso
+#> ℹ added element 'simple_small' to list
+#> ℹ reading output from /home/runner/work/_temp/Library/r4ss/extdata/simple_small/Report.sso
+#> ℹ added element 'simple_small_again' to list
 ```
