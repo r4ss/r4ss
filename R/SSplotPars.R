@@ -376,7 +376,7 @@ SSplotPars <-
       # MLE
       if (showmle) {
         # full normal distribution if uncertainty is present
-        if (!is.na(parsd) && parsd > 0) {
+        if (isTRUE(parsd > 0)) {
           lines(x, mle, col = colvec[1], lwd = 1, lty = ltyvec[1])
           lines(
             rep(finalval, 2),
@@ -533,7 +533,7 @@ SSplotPars <-
       # get normal distribution associated with ADMB's estimate
       # of the parameter's asymptotic std. dev.
       if (showmle) {
-        if (!is.na(parsd) && parsd > 0) {
+        if (isTRUE(parsd > 0)) {
           mle <- dnorm(x, finalval, parsd)
           mlescale <- 1 / (sum(mle) * mean(diff(x)))
           mle <- mle * mlescale

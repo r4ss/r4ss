@@ -464,7 +464,7 @@ SSplotComparisons <-
     # Build the Bratio axis label:
     # - B/B_0 keeps the standard fraction-of-unfished wording.
     # - Alternative denominators show "Relative spawning biomass/output: <label>".
-    if (isTRUE(!is.na(BratioLabel) && BratioLabel != "B/B_0")) {
+    if (isTRUE(BratioLabel != "B/B_0")) {
       BratioAxisLabel <- "Relative spawning biomass"
       if (
         all(is.na(SpawnOutputUnits)) ||
@@ -1343,9 +1343,8 @@ SSplotComparisons <-
       if (!add) {
         if (
           isTRUE(
-            !is.na(SPRratioLabel) &&
-              SPRratioLabel ==
-                paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)")
+            SPRratioLabel ==
+              paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)")
           )
         ) {
           # add to right-hand outer margin to make space
@@ -1445,13 +1444,12 @@ SSplotComparisons <-
           yticks <- pretty(ylim)
           if (
             isTRUE(
-              !is.na(SPRratioLabel) &&
-                SPRratioLabel ==
-                  paste0(
-                    "(1-SPR)/(1-SPR_",
-                    floor(100 * sprtarg),
-                    "%)"
-                  )
+              SPRratioLabel ==
+                paste0(
+                  "(1-SPR)/(1-SPR_",
+                  floor(100 * sprtarg),
+                  "%)"
+                )
             )
           ) {
             # add right-hand vertical axis showing 1-SPR
@@ -2465,7 +2463,7 @@ SSplotComparisons <-
           if (!is.numeric(parval)) {
             parval <- -1
           } # do this in case models added without the parameter
-          if (!is.na(parSD) && parSD > 0) {
+          if (isTRUE(parSD > 0)) {
             # if non-zero SD available
             # update x range
             xmin <- min(xmin, qnorm(0.005, parval, parSD))
@@ -2642,7 +2640,7 @@ SSplotComparisons <-
             # make normal density for MLE
             parval <- vals[1, imodel]
             parSD <- valSDs[1, imodel]
-            if (!is.na(parSD) && parSD > 0) {
+            if (isTRUE(parSD > 0)) {
               xmin <- min(xmin, qnorm(0.005, parval, parSD))
               if (limit0) {
                 xmin <- max(0, xmin) # by default no plot can go below 0
@@ -2710,7 +2708,7 @@ SSplotComparisons <-
           if (mcmcVec[iline]) {
             doShade <- TRUE
           } else {
-            if (!is.na(parSD) && parSD > 0) {
+            if (isTRUE(parSD > 0)) {
               doShade <- TRUE
             }
           }

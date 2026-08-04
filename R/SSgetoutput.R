@@ -150,7 +150,7 @@ SSgetoutput <-
       repfilesize <- file.info(fullfile)[["size"]]
 
       output <- NA
-      if (!is.na(repfilesize) && repfilesize > 0) {
+      if (isTRUE(repfilesize > 0)) {
         # if there's a non-empty file
         output <- SS_output(
           dir = mydir,
