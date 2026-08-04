@@ -32,7 +32,7 @@ SS_writectl_3.24 <- function(
 
   # function to write Stock Synthesis ctl files
   if (verbose) {
-    cli::cli_inform("running SS_writectl")
+    cli::cli_alert_info("running SS_writectl")
   }
 
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
@@ -43,7 +43,9 @@ SS_writectl_3.24 <- function(
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
+      cli::cli_alert_warning(
+        "File exists and input 'overwrite'=FALSE: {outfile}"
+      )
       return()
     } else {
       file.remove(outfile)
@@ -55,7 +57,7 @@ SS_writectl_3.24 <- function(
   options(width = 5000, max.print = 9999999)
 
   if (verbose) {
-    cli::cli_inform("opening connection to {outfile}")
+    cli::cli_alert_info("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   #  on.exit({if(sink.number()>0) sink();close(zz)})
@@ -660,6 +662,6 @@ SS_writectl_3.24 <- function(
   writeLines("999", con = zz)
   options(width = oldwidth, max.print = oldmax.print)
   if (verbose) {
-    cli::cli_inform("File written to {outfile}")
+    cli::cli_alert_info("File written to {outfile}")
   }
 }

@@ -485,7 +485,7 @@ SSplotComps <-
     if (
       any(dbase_kind[["SuprPer"]] == "Sup" & dbase_kind[["Used"]] == "skip")
     ) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Removing super-period composition values labeled 'skip' and designating super-period values with a '*'"
       )
       dbase_kind <- dbase_kind[
@@ -921,7 +921,7 @@ SSplotComps <-
               )
               agg <- agg[agg[["f"]] %in% fleets, ]
               if (any(agg[["s"]] <= 0)) {
-                cli::cli_inform(
+                cli::cli_alert_info(
                   "super-periods may not work correctly in plots of aggregated comps"
                 )
                 agg <- agg[agg[["s"]] > 0, ]
@@ -1456,7 +1456,7 @@ SSplotComps <-
 
             if (max_n_ageerr > 1) {
               if (ageerr_warning) {
-                cli::cli_inform(
+                cli::cli_alert_info(
                   "Multiple samples with different ageing error types within fleet/year. Plots label '2005a3' indicates ageing error type 3 for 2005 sample. Bubble plots may be misleading with overlapping bubbles."
                 )
                 ageerr_warning <- FALSE
@@ -1556,7 +1556,7 @@ SSplotComps <-
             # add lines for growth of individual cohorts if requested
             if (length(cohortlines) > 0) {
               for (icohort in seq_along(cohortlines)) {
-                cli::cli_inform(
+                cli::cli_alert_info(
                   " Adding line for {cohortlines[icohort]} cohort"
                 )
                 if (kind == "LEN") {
@@ -1675,7 +1675,9 @@ SSplotComps <-
       ## } # end loop over sexes
       ## } # end loop over sex combinations
       # restore default single panel settings
-      par(mfcol = c(rows, cols), mar = c(5, 4, 4, 2) + .1, oma = rep(0, 4))
+      if (plot) {
+        par(mfcol = c(rows, cols), mar = c(5, 4, 4, 2) + .1, oma = rep(0, 4))
+      }
     } # end subplot 24
 
     # loop over fleets
@@ -1734,7 +1736,7 @@ SSplotComps <-
 
           if (max_n_ageerr > 1) {
             if (ageerr_warning) {
-              cli::cli_inform(
+              cli::cli_alert_info(
                 "Note: multiple samples with different ageing error types within fleet/year. Plots label '2005a3' indicates ageing error type 3 for 2005 sample. Bubble plots may be misleading with overlapping bubbles."
               )
               ageerr_warning <- FALSE
@@ -2224,7 +2226,7 @@ SSplotComps <-
               # add lines for growth of individual cohorts if requested
               if (length(cohortlines) > 0) {
                 for (icohort in seq_along(cohortlines)) {
-                  cli::cli_inform(
+                  cli::cli_alert_info(
                     " Adding line for {cohortlines[icohort]} cohort"
                   )
                   if (kind == "LEN") {
@@ -2338,11 +2340,11 @@ SSplotComps <-
                 # scaling when displaying both input and effective
                 sampsizeline <- effNline <- max(dbase[["Bin"]]) /
                   max(dbase[["Nsamp_adj"]], dbase[["effN"]], na.rm = TRUE)
-                cli::cli_inform(
+                cli::cli_alert_info(
                   "  Fleet {f} {titlesex} adj. input & effective N in red & green scaled by {effNline}"
                 )
               } else {
-                cli::cli_inform(
+                cli::cli_alert_info(
                   "  Fleet {f} {titlesex} adj. input N in red scaled by {sampsizeline}"
                 )
               }
@@ -2676,7 +2678,7 @@ SSplotComps <-
             goodbins <- intersect(aalbin, dbase[["Lbin_hi"]])
             if (length(goodbins) > 0) {
               if (length(badbins) > 0) {
-                cli::cli_inform(
+                cli::cli_alert_info(
                   "Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data: {badbins} the following inputs for 'aalbin' are fine: {goodbins}"
                 )
               }

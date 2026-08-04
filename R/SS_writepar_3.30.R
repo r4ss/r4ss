@@ -26,12 +26,14 @@ SS_writepar_3.30 <- function(
 ) {
   # function to write Stock Synthesis parameter files
   if (verbose) {
-    cli::cli_inform("running SS_writepar_3.30")
+    cli::cli_alert_info("running SS_writepar_3.30")
   }
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
+      cli::cli_alert_warning(
+        "File exists and input 'overwrite'=FALSE: {outfile}"
+      )
       return()
     } else {
       file.remove(outfile)
@@ -39,7 +41,7 @@ SS_writepar_3.30 <- function(
   }
 
   if (verbose) {
-    cli::cli_inform("Opening connection to {outfile}")
+    cli::cli_alert_info("Opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at") # open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.

@@ -22,7 +22,7 @@ SS_writectl <- function(
 ) {
   # function to write Stock Synthesis data files
   if (verbose) {
-    cli::cli_inform("Running SS_writectl")
+    cli::cli_alert_info("Running SS_writectl")
   }
   # Check user inputs are valid to avoid issues with functions.
   # check ctllist

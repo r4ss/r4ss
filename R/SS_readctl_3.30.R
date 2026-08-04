@@ -58,7 +58,7 @@ SS_readctl_3.30 <- function(
 
   # function to read Stock Synthesis data files
   if (verbose) {
-    cli::cli_inform("running SS_readctl_3.30")
+    cli::cli_alert_info("running SS_readctl_3.30")
   }
   dat <- readLines(file, warn = FALSE)
   ctl_with_cmts <- dat # save original read in file with commemts
@@ -109,7 +109,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform("{name}, i={ctllist[['.i']]}")
+      cli::cli_alert_info("{name}, i={ctllist[['.i']]}")
     }
     return(ctllist)
   }
@@ -179,7 +179,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform("{name},i={ctllist[['.i']]}")
+      cli::cli_alert_info("{name},i={ctllist[['.i']]}")
     }
     return(ctllist)
   }
@@ -194,7 +194,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{name},i={ctllist[['.i']]} ;{ctllist[[which(names(ctllist) == name)]]}"
       )
     }
@@ -215,7 +215,7 @@ SS_readctl_3.30 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform("{name},i={ctllist[['.i']]}")
+      cli::cli_alert_info("{name},i={ctllist[['.i']]}")
     }
     return(ctllist)
   }
@@ -327,7 +327,7 @@ SS_readctl_3.30 <- function(
   ctllist[["eof"]] <- FALSE
 
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "SS_readctl_3.30 - read version = {ctllist[['ReadVersion']]}"
     )
   }
@@ -451,7 +451,7 @@ SS_readctl_3.30 <- function(
     )
   }
   if (verbose) {
-    cli::cli_inform("N_natMparms ={N_natMparms}")
+    cli::cli_alert_info("N_natMparms ={N_natMparms}")
   }
 
   # growth setup ----
@@ -793,7 +793,7 @@ SS_readctl_3.30 <- function(
           flt
         })
         pred_indices <- unlist(tmp_pred_flts)
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Based on control file parameter names, assuming there are {length(pred_indices)} predation mortality parameters in MGparms."
         )
       } else {
@@ -938,7 +938,7 @@ SS_readctl_3.30 <- function(
       "SR_autocorr"
     )
   } else {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "SR_function = {ctllist[['SR_function']]} is not supported yet."
     )
     return(ctllist)
@@ -1689,7 +1689,7 @@ SS_readctl_3.30 <- function(
     }
   }
   if (verbose) {
-    cli::cli_inform("Read size and age selectivity setup.")
+    cli::cli_alert_info("Read size and age selectivity setup.")
   }
   # Selex parameters
   if (sum(length(unlist(size_selex_label))) > 0) {
@@ -2146,7 +2146,7 @@ SS_readctl_3.30 <- function(
   }
   if (ctllist$".dat"[ctllist$".i"] == 999) {
     if (verbose) {
-      cli::cli_inform("read of control file complete (final value = 999)")
+      cli::cli_alert_info("read of control file complete (final value = 999)")
     }
     ctllist[["eof"]] <- TRUE
   } else {
@@ -2231,6 +2231,11 @@ get_tv_parlabs <- function(full_parms, block_design) {
         )
       } else {
         parlab <- c(parlab, paste0(tmp_parname, "_ENV_add"))
+      }
+      # additional suffix for density dependent parameters
+      if (full_parms[["env_var&link"]][i] < 0) {
+        # append "_DD" to the final element of parlab that was added above
+        parlab[length(parlab)] <- paste0(parlab[length(parlab)], "_DD")
       }
     }
 
@@ -2355,7 +2360,7 @@ translate_3.30_to_3.24_Q_setup <- function(
       }
     }
   } else {
-    cli::cli_inform("Q_options was NULL, so could not determine Q_setup.")
+    cli::cli_alert_info("Q_options was NULL, so could not determine Q_setup.")
     Q_setup <- NULL
   }
   Q_setup

@@ -244,7 +244,9 @@ SS_output <-
 
     if (is.na(parfile)) {
       if (!hidewarn) {
-        cli::cli_inform("Some stats skipped because the .par file not found.")
+        cli::cli_alert_warning(
+          "Some stats skipped because the .par file not found."
+        )
       }
     }
 
@@ -283,7 +285,7 @@ SS_output <-
       )
     } else {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "This function tested on SS versions 3.24 and 3.30.  You are using {strsplit(SS_version, split = ';')[[1]][1]} which SHOULD work with this package."
         )
       }
@@ -300,14 +302,14 @@ SS_output <-
     }
     repfiletime <- findtime(rephead)
     if (verbose) {
-      cli::cli_inform("Report file time: {repfiletime}")
+      cli::cli_alert_info("Report file time: {repfiletime}")
     }
 
     # time check for CompReport file
     comp <- FALSE
     if (is.null(compfile)) {
       if (verbose) {
-        cli::cli_inform("Skipping CompReport because 'compfile = NULL'")
+        cli::cli_alert_warning("Skipping CompReport because 'compfile = NULL'")
       }
     } else {
       compfile <- file.path(dir, compfile)
@@ -317,7 +319,7 @@ SS_output <-
         compskip <- grep("Composition_Database", comphead)
         if (length(compskip) == 0) {
           if (verbose) {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "No composition data, possibly because detailed output is turned off in the starter file."
             )
           }
@@ -329,12 +331,12 @@ SS_output <-
           }
           comptime <- findtime(comphead)
           if (is.null(comptime) || is.null(repfiletime)) {
-            cli::cli_inform(
+            cli::cli_alert_warning(
               "problem comparing the file creation times: Report.sso: {repfiletime} CompReport.sso: {comptime}"
             )
           } else {
             if (comptime != repfiletime) {
-              cli::cli_inform("CompReport time: {comptime}")
+              cli::cli_alert_info("CompReport time: {comptime}")
               cli::cli_abort(
                 "{shortrepfile} and {compfile} were from different model runs."
               )
@@ -350,7 +352,7 @@ SS_output <-
               "Missing {compfile}. Change the 'compfile' input, rerun model to get the file, or change input to 'NoCompOK = TRUE'"
             )
           } else {
-            cli::cli_inform("Composition file not found: {compfile}")
+            cli::cli_alert_info("Composition file not found: {compfile}")
           }
         }
       }
@@ -358,7 +360,7 @@ SS_output <-
 
     # read report file
     if (verbose) {
-      cli::cli_inform("Reading full report file")
+      cli::cli_alert_info("Reading full report file")
     }
     flush.console()
 
@@ -399,11 +401,11 @@ SS_output <-
 
     if (verbose) {
       if ((maxnonblank + 1) < ncols) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Got all columns. To speed code, use ncols = {maxnonblank + 1} in the future."
         )
       }
-      cli::cli_inform("Got Report file")
+      cli::cli_alert_success("Got Report file")
     }
     flush.console()
 
@@ -414,7 +416,9 @@ SS_output <-
       forecastname <- file.path(dir, forefile)
       if (file_is_empty(forecastname)) {
         if (verbose) {
-          cli::cli_inform("Forecast-report.sso file is missing or empty.")
+          cli::cli_alert_warning(
+            "Forecast-report.sso file is missing or empty."
+          )
         }
       } else {
         # read the file
@@ -478,7 +482,7 @@ SS_output <-
       }
     } else {
       if (verbose) {
-        cli::cli_inform("You skipped the forecast file.")
+        cli::cli_alert_warning("You skipped the forecast file.")
       }
     }
     if (!exists("btarg")) {
@@ -486,8 +490,8 @@ SS_output <-
       sprtarg <- -999
       btarg <- -999
       if (verbose) {
-        cli::cli_inform(
-          "  setting SPR target and Biomass target to -999.  Lines won't be drawn for these targets by SS_plots unless  'sprtarg' and 'btarg' are provided as inputs."
+        cli::cli_alert_info(
+          "  setting SPR target and Biomass target to -999. Lines won't be drawn for these targets by SS_plots unless 'sprtarg' and 'btarg' are provided as inputs."
         )
       }
     }
@@ -495,16 +499,16 @@ SS_output <-
     minbthresh <- -999
     if (!is.na(btarg) & btarg == 0.4) {
       if (verbose) {
-        cli::cli_inform(
-          "Setting minimum biomass threshhold to 0.25  based on US west coast assumption associated with biomass target of 0.4.  (can replace or override in SS_plots by setting 'minbthresh')"
+        cli::cli_alert_info(
+          "Setting minimum biomass threshold to 0.25 based on US west coast assumption associated with biomass target of 0.4 (can replace or override in SS_plots by setting 'minbthresh')"
         )
       }
       minbthresh <- 0.25 # west coast assumption for non flatfish
     }
     if (!is.na(btarg) & btarg == 0.25) {
       if (verbose) {
-        cli::cli_inform(
-          "Setting minimum biomass threshhold to 0.125  based on US west coast assumption associated with flatfish target of 0.25.  (can replace or override in SS_plots by setting 'minbthresh')"
+        cli::cli_alert_info(
+          "Setting minimum biomass threshold to 0.125 based on US west coast assumption associated with flatfish target of 0.25 (can replace or override in SS_plots by setting 'minbthresh')"
         )
       }
       minbthresh <- 0.125 # west coast assumption for flatfish
@@ -518,7 +522,7 @@ SS_output <-
       filetimes <- file.info(file.path(dir, logfile_name))[["mtime"]]
       logfile_name <- logfile_name[filetimes == max(filetimes)]
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Multiple files in directory match pattern *.log choosing most recently modified file: {logfile_name}"
         )
       }
@@ -546,18 +550,18 @@ SS_output <-
         maxtemp <- max(logfile[["Size"]])
         if (verbose) {
           if (maxtemp == 0) {
-            cli::cli_inform(
+            cli::cli_alert_success(
               "Got log file. There were NO temporary files were written in this run."
             )
           } else {
-            cli::cli_inform("Temporary files were written in this run.")
+            cli::cli_alert_warning("Temporary files were written in this run.")
           }
         }
       }
     } else {
       logfile <- NA
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "No non-empty log file in directory or too many files  matching pattern *.log"
         )
       }
@@ -568,7 +572,7 @@ SS_output <-
       warnname <- file.path(dir, warnfile)
       if (file_is_empty(warnname)) {
         # no warnings.sso file
-        cli::cli_inform("{warnfile} file not found")
+        cli::cli_alert_warning("{warnfile} file not found")
         warnrows <- NA
         warnlines <- NA
       } else {
@@ -578,19 +582,21 @@ SS_output <-
         # detect empty file
         warnrows <- length(warnlines)
         if (verbose && warnrows > 0) {
-          cli::cli_inform("Got warning file. Final line: {tail(warnlines, 1)}")
+          cli::cli_alert_success(
+            "Got warning file. Final line: {tail(warnlines, 1)}"
+          )
         }
       }
     } else {
       # chose not to read warning.sso file
       if (verbose) {
-        cli::cli_inform("You skipped the warnings file")
+        cli::cli_alert_warning("You skipped the warnings file")
       }
       warnrows <- NA
       warnlines <- NA
     }
     if (verbose) {
-      cli::cli_inform("Finished reading files")
+      cli::cli_alert_success("Finished reading files")
     }
     flush.console()
 
@@ -944,7 +950,7 @@ SS_output <-
         2
       ])
       if (compend == compskip + 2) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "It appears that there is no composition data in CompReport.sso"
         )
         comp <- FALSE # turning off switch to function doesn't look for comp data later on
@@ -991,7 +997,7 @@ SS_output <-
           dplyr::select(-Cum_obs, -Cum_exp) |>
           duplicated()
         if (verbose & sum(duplicates) > 0) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "Removing {sum(duplicates)} out of {nrow(compdbase)} rows in CompReport.sso which are duplicates."
           )
         }
@@ -1016,7 +1022,7 @@ SS_output <-
         # make correction to tag output associated with 3.24f (fixed in later versions)
         if (substr(SS_version, 1, 9) == "SS-V3.24f") {
           if (!hidewarn) {
-            cli::cli_inform(
+            cli::cli_alert_info(
               "Correcting for bug in tag data output associated with SSv3.24f"
             )
           }
@@ -1187,8 +1193,8 @@ SS_output <-
 
           if (any(sizedbase[["units"]] %in% c("lb", "in"))) {
             if (verbose) {
-              cli::cli_inform(
-                "Note: converting bins in generalized size comp data  in sizedbase back to the original units of lbs or inches."
+              cli::cli_alert_info(
+                "Note: converting bins in generalized size comp data in sizedbase back to the original units of lbs or inches."
               )
             }
           }
@@ -1369,7 +1375,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     }
 
     if (verbose) {
-      cli::cli_inform("Finished dimensioning")
+      cli::cli_alert_success("Finished dimensioning")
     }
     flush.console()
 
@@ -1574,7 +1580,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     # fix for issue with SSv3.21f
     if (SS_versionNumeric == 3.21) {
       temp <- names(parameters)
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Inserting new 13th column heading in parameters sectiondue to error in Report.sso in SSv3.21f"
       )
       temp <- c(temp[1:12], "PR_type_code", temp[-(1:12)])
@@ -1831,7 +1837,9 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     if (covar) {
       covarfile <- file.path(dir, covarfile)
       if (!file.exists(covarfile)) {
-        cli::cli_inform("covar file not found, input 'covar' changed to FALSE")
+        cli::cli_alert_warning(
+          "covar file not found, input 'covar' changed to FALSE"
+        )
         covar <- FALSE
       } else {
         # time check for CoVar file
@@ -1840,12 +1848,12 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         covartime <- findtime(covarhead)
         # the conversion to R time class below may no longer be necessary as strings should match
         if (is.null(covartime) || is.null(repfiletime)) {
-          cli::cli_inform(
+          cli::cli_alert_warning(
             "problem comparing the file creation times: Report.sso: {repfiletime} covar.sso: {covartime}"
           )
         } else {
           if (covartime != repfiletime) {
-            cli::cli_inform("covar time: {covartime}")
+            cli::cli_alert_info("covar time: {covartime}")
             cli::cli_abort(
               "{shortrepfile} and {covarfile} were from different model runs. Change input to covar=FALSE"
             )
@@ -1872,7 +1880,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         skip = covarskip
       )
       if (verbose) {
-        cli::cli_inform("Got covar file.")
+        cli::cli_alert_success("Got covar file.")
       }
       stdtable <- CoVar[CoVar[["Par..j"]] == "Std", c(7, 9, 5)]
       names(stdtable) <- c("name", "std", "type")
@@ -1912,7 +1920,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
       }
     } else {
       if (verbose) {
-        cli::cli_inform("You skipped the covar file")
+        cli::cli_alert_warning("You skipped the covar file")
       }
     }
     flush.console()
@@ -1948,12 +1956,12 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         if ("posteriors.sso" %in% dir(dir.mcmc.full)) {
           # run function to read posteriors.sso and derived_posteriors.sso
           if (verbose) {
-            cli::cli_inform("Running 'SSgetMCMC' to get MCMC output")
+            cli::cli_alert_info("Running 'SSgetMCMC' to get MCMC output")
           }
           mcmc <- SSgetMCMC(dir = dir.mcmc.full)
         } else {
           cli::cli_warn(
-            "skipping reading MCMC output because posterior.sso file not found in {dir.mcmc.full}"
+            "skipping reading MCMC output because posteriors.sso file not found in {dir.mcmc.full}"
           )
           mcmc <- NULL
         }
@@ -2887,7 +2895,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         # figure out which fleet uses which parameter,
         # currently (as of SS version 3.30.10.00), requires reading data file
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Reading data.ss_new (or data_echo.ss_new) for info on Dirichlet-Multinomial parameters"
           )
         }
@@ -4061,8 +4069,8 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         wtatage_switch
     ) {
       if (verbose) {
-        cli::cli_inform(
-          "Setting minimum biomass threshhold to 0.10 because this looks like the Pacific Hake model. You can replace or override in SS_plots via the 'minbthresh' input."
+        cli::cli_alert_info(
+          "Setting minimum biomass threshold to 0.10 because this looks like the Pacific Hake model. You can replace or override in SS_plots via the 'minbthresh' input."
         )
       }
       minbthresh <- 0.1 # treaty value for hake
@@ -4966,7 +4974,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
 
     # print list of statistics
     if (printstats) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Statistics shown below (to turn off, change input to printstats=FALSE)"
       )
 
@@ -4999,7 +5007,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     returndat[["inputs"]] <- inputs
 
     if (verbose) {
-      cli::cli_inform("completed SS_output")
+      cli::cli_alert_success("completed SS_output")
     }
     invisible(returndat)
   } # end function

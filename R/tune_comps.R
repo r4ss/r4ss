@@ -299,7 +299,7 @@ tune_comps <- function(
   if (option %in% c("none", "Francis", "MI")) {
     if (!is.null(ctl[["dirichlet_parms"]])) {
       if (verbose) {
-        cli::cli_inform("Removing DM parameters from model")
+        cli::cli_alert_info("Removing DM parameters from model")
       }
       # take DM specifications out of data file
       if (!is.null(dat[["len_info"]])) {
@@ -510,9 +510,11 @@ tune_comps <- function(
 
     # remove weights specified through variance adjustment for comps, if any
     if (!is.null(ctl[["Variance_adjustment_list"]])) {
-      cli::cli_inform("removing composition variance adjustments from model")
+      cli::cli_alert_info(
+        "removing composition variance adjustments from model"
+      )
       # filter out just data types 4, 5, and 7 for length, age, and size comps
-      if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
+      if (nrow(ctl[["Variance_adjustment_list"]]) > 0) {
         ctl[["Variance_adjustment_list"]] <-
           ctl[["Variance_adjustment_list"]][
             !ctl[["Variance_adjustment_list"]][["factor"]] %in%
@@ -610,7 +612,7 @@ get_tuning_table <- function(
   for (type in c("len", "age", "size")) {
     for (fleet in fleets) {
       if (verbose) {
-        cli::cli_inform("calculating {type} tunings for fleet {fleet}")
+        cli::cli_alert_info("calculating {type} tunings for fleet {fleet}")
       }
       if (type == "len") {
         # table of info from SS3
@@ -776,7 +778,7 @@ get_tuning_table <- function(
   if (write) {
     file <- file.path(replist[["inputs"]][["dir"]], "suggested_tuning.ss")
     if (verbose) {
-      cli::cli_inform("writing to file {file}")
+      cli::cli_alert_info("writing to file {file}")
     }
     write.table(tuning_table, file = file, quote = FALSE, row.names = FALSE)
   }

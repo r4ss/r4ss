@@ -35,7 +35,7 @@ SS_writedat_3.30 <- function(
   }
 
   if (verbose) {
-    cli::cli_inform("running SS_writedat_3.30")
+    cli::cli_alert_info("running SS_writedat_3.30")
   }
 
   # rename datlist to shorten the code
@@ -51,7 +51,9 @@ SS_writedat_3.30 <- function(
   # check for existing file
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
+      cli::cli_alert_warning(
+        "File exists and input 'overwrite'=FALSE: {outfile}"
+      )
       return()
     } else {
       file.remove(outfile)
@@ -63,7 +65,7 @@ SS_writedat_3.30 <- function(
   options(width = 5000, max.print = 9999999)
 
   if (verbose) {
-    cli::cli_inform("opening connection to {outfile}")
+    cli::cli_alert_info("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   # sink(zz)
@@ -441,6 +443,6 @@ SS_writedat_3.30 <- function(
   writeComment("#", con = zz)
   writeLines("999", con = zz)
   if (verbose) {
-    cli::cli_inform("file written to {outfile}")
+    cli::cli_alert_success("file written to {outfile}")
   }
 }

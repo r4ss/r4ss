@@ -167,7 +167,7 @@ SSplotProfile <-
       # create directory if it's missing
       if (!file.exists(plotdir)) {
         if (verbose) {
-          cli::cli_inform("creating directory: {plotdir}")
+          cli::cli_alert_info("creating directory: {plotdir}")
         }
         dir.create(plotdir, recursive = TRUE)
       }
@@ -220,10 +220,10 @@ SSplotProfile <-
     # get vector of parameter values
     parvec <- as.numeric(pars[pars[["Label"]] == parlabel, models])
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Parameter matching profile.string={profile.string}: {parlabel}"
       )
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Parameter values (after subsetting based on input 'models'): {paste(parvec, sep = '', collapse = ', ')}"
       )
     }
@@ -244,7 +244,7 @@ SSplotProfile <-
     }
 
     if (verbose & add_no_prior_line) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Parameter prior likelihoods: {paste(par_prior_like_vec, sep = '', collapse = ', ')}"
       )
     }
@@ -294,7 +294,7 @@ SSplotProfile <-
 
     nlines <- sum(include)
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Likelihood components showing max change as fraction of total change. To change which components are included, change input 'minfraction'."
       )
       print(data.frame(
@@ -396,7 +396,7 @@ SSplotProfile <-
       if (is.null(profile.label)) {
         # use parameter label for x-axis label
         profile.label <- parlabel
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "The input profile.label = NULL and the parameter label doesn't correspond to an automatically generated label. Setting profile.label equal to the parameter label."
         )
       }

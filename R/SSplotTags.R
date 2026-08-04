@@ -76,13 +76,15 @@ SSplotTags <-
     tagdbase2 <- replist[["tagdbase2"]]
     if (is.null(tagdbase2) || nrow(tagdbase2) == 0) {
       if (verbose) {
-        cli::cli_inform("skipping tag plots because there's no tagging data")
+        cli::cli_alert_warning(
+          "skipping tag plots because there's no tagging data"
+        )
       }
     } else {
       # filter tag groups if requested
       if (!is.null(taggroups)) {
         tagdbase2 <- tagdbase2[tagdbase2[["Repl."]] %in% taggroups, ]
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Filtered tag groups for plotting based on input vector taggroups. Plots will show {length(unique(tagdbase2[['Repl.']]))} out of {length(unique(replist[['tagdbase2']][['Repl.']]))} total included in the model."
         )
       }

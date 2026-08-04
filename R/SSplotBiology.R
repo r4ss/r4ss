@@ -141,12 +141,12 @@ SSplotBiology <-
     # test for presence of wtatage_switch
     wtatage_switch <- replist[["wtatage_switch"]]
     if (wtatage_switch) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "Note: this model uses the empirical weight-at-age input. Plots of many quantities related to growth are skipped."
       )
     } else {
       if (is.null(replist[["endgrowth"]])) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Skipping biology plots because model output doesn't include biology-at-age information (endgrowth), likely because brief output was specified in starter.ss."
         )
         return()
@@ -408,7 +408,7 @@ SSplotBiology <-
       ## quick function to check for valid wtatage matrix and remove first
       ## redundant row if it's there. Used in weight_plot and maturity_plot.
       if (nrow(x) < 2) {
-        cli::cli_inform("Not enough rows in weight-at-age matrix to plot")
+        cli::cli_alert_info("Not enough rows in weight-at-age matrix to plot")
         return(NULL)
       }
       if (all(x[1, ] == x[2, ])) {
@@ -1251,7 +1251,7 @@ SSplotBiology <-
         plotinfo.tmp <- plotinfo.tmp[, c("file", "caption", "alt_text")]
         plotinfo <- rbind(plotinfo, plotinfo.tmp)
       } else {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Skipped some plots because AGE_LENGTH_KEY unavailable in report file because starter file set to produce limited report detail."
         )
       }
@@ -1261,7 +1261,7 @@ SSplotBiology <-
     growth_curve_labeled_fn <- function(option = 1) {
       # growth
       if (is.null(Growth_Parameters)) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Need updated SS_output function to get Growth_Parameters output"
         )
         return()
@@ -1434,7 +1434,7 @@ SSplotBiology <-
     CV_values_labeled_fn <- function(option = 1) {
       # growth
       if (is.null(Growth_Parameters)) {
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Need updated SS_output function to get Growth_Parameters output"
         )
         return()
@@ -2011,7 +2011,7 @@ SSplotBiology <-
     # Time-varying growth
     if (is.null(growthvaries)) {
       if (verbose) {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "No check for time-varying growth because starter file set to produce limited report detail."
         )
       }
@@ -2234,7 +2234,7 @@ SSplotBiology <-
           }
         }
       } else {
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "Skipping timevarying quantity plots (subplot 24), most likely because the MGparm_By_Year_after_adjustments table (report:7) is not reported in the Report.sso file."
         )
       }

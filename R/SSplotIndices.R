@@ -125,7 +125,9 @@ SSplotIndices <-
 
     # confirm that some CPUE values are present
     if (is.null(dim(cpue))) {
-      cli::cli_inform("skipping index plots: no index data in this model")
+      cli::cli_alert_warning(
+        "skipping index plots: no index data in this model"
+      )
       return()
     }
 
@@ -791,7 +793,7 @@ SSplotIndices <-
             allcpue <- rbind(allcpue, tempcpue)
           } else {
             if (verbose & 9 %in% subplots & datplot) {
-              cli::cli_inform(
+              cli::cli_alert_info(
                 "Excluding fleet {ifleet} from index comparison figure because it has negative values"
               )
             }

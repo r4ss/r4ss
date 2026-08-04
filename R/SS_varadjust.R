@@ -157,7 +157,7 @@ SS_varadjust <- function(
   options(warn = old_warn)
 
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Existing table of variance adjustments:
 {paste(utils::capture.output(ctl), sep = '', collapse = \"\\n\")}"
     )
@@ -165,7 +165,7 @@ SS_varadjust <- function(
 
   if (is.null(newrow) & is.null(newtable)) {
     if (verbose) {
-      cli::cli_inform("No new adjustments provided, so no file written.")
+      cli::cli_alert_warning("No new adjustments provided, so no file written.")
     }
     return(invisible(ctl))
   }
@@ -187,7 +187,7 @@ SS_varadjust <- function(
   }
 
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "New table of variance adjustments:
 {paste(utils::capture.output(ctl), sep = '', collapse = \"\\n\")}"
     )
@@ -213,7 +213,7 @@ SS_varadjust <- function(
 
   # open connection to file
   if (verbose) {
-    cli::cli_inform("opening connection to {newctlfile}")
+    cli::cli_alert_info("opening connection to {newctlfile}")
   }
   zz <- file(newctlfile, open = "at")
   sink(zz)
@@ -247,7 +247,7 @@ SS_varadjust <- function(
   sink()
   close(zz)
   if (verbose) {
-    cli::cli_inform("file written to {newctlfile}")
+    cli::cli_alert_info("file written to {newctlfile}")
   }
   # return table of values
   return(invisible(ctl))

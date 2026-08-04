@@ -160,7 +160,7 @@ SSMethod.TA1.8 <-
     if (is.null(seas)) {
       seas <- "comb"
       if (length(unique(dbase[["Seas"]])) > 1) {
-        cli::cli_inform("Combining data from multiple seasons")
+        cli::cli_alert_info("Combining data from multiple seasons")
       }
     }
     # if generalized size comp is used, check for mix of units
@@ -210,7 +210,7 @@ SSMethod.TA1.8 <-
     if (length(uindx) == 1) {
       # presumably the method is meaningless of there's only 1 point,
       # but it's good to be able to have the function play through
-      cli::cli_inform("Only one point to plot")
+      cli::cli_alert_info("Only one point to plot")
       return()
     }
 

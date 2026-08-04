@@ -354,7 +354,7 @@ profile <- function(
       if (!is.null(string)) {
         profilevec_df <- data.frame(profilevec)
         names(profilevec_df) <- string
-        cli::cli_inform(
+        cli::cli_alert_info(
           "Profiling over {npars} parameters:\n{paste(profilevec_df, collapse = '\n')}"
         )
       }
@@ -370,7 +370,7 @@ profile <- function(
     }
   }
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Doing runs: {paste(whichruns, collapse = ', ')}, out of n = {n}"
     )
   }
@@ -412,7 +412,7 @@ profile <- function(
   }
   # check for consistency of par settings and future settings
   if (usepar & !globalpar & !is(future::plan(), "sequential")) {
-    cli::cli_inform(
+    cli::cli_warn(
       "usepar = TRUE and globalpar = FALSE, but you are attempting to run the profile in parallel. Changing future strategy to sequential. It will return to your original strategy upon exit."
     )
     # save current strategy as oplan, and change it to sequential, all in one step!
@@ -446,11 +446,11 @@ profile <- function(
     if (!overwrite & any(file.exists(newrepfiles))) {
       # Cannot think of scenario where both temp directory and ReportN.sso exist
       # Even if they do, this still works, it just prints out a little weird.
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "skipping profile i={i}/{n} because overwrite=FALSE and file exists: {newrepfiles[file.exists(newrepfiles)]}"
       )
     } else {
-      cli::cli_inform("running profile i={i}/{n}")
+      cli::cli_alert_info("running profile i={i}/{n}")
 
       # change initial values in the control file
       # this also sets phase negative which is needed even when par file is used
@@ -489,7 +489,7 @@ profile <- function(
       if (!any(ctltable_new[["PHASE"]] == 1)) {
         phase2pars <- ctltable_new[which(ctltable_new[["PHASE"]] == 2), "Label"]
         par_to_change <- sort(phase2pars)[1]
-        cli::cli_inform(
+        cli::cli_alert_warning(
           "No estimated parameter in phase 1. Switching {par_to_change} from phase 2 to phase 1."
         )
         SS_changepars(
@@ -542,7 +542,7 @@ profile <- function(
           paste("# changed from", parval, "to", profilevec[i])
         )
         par <- c(par, "#", note)
-        cli::cli_inform("{paste(note, collapse = '\n')}")
+        cli::cli_alert_info("{paste(note, collapse = '\n')}")
         # write new par file
         writeLines(par, file.path(dir, paste0("ss_input_par", i, ".ss")))
         writeLines(par, file.path(profile_dir, parfile))

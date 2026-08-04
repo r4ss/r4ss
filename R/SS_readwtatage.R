@@ -26,7 +26,7 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   )
   if (test[1] == "No file" | length(test) <= 2) {
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_warning(
         "Skipping weight-at-age file. File missing or empty: {file}"
       )
     }
@@ -47,7 +47,7 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose = TRUE) {
   # if file only has one line, it may have been created during an MCMC run
   if (nrow(wtatagelines) == 1) {
     if (verbose) {
-      cli::cli_inform("wtatage file only contains one line: {file}")
+      cli::cli_alert_info("wtatage file only contains one line: {file}")
     }
     return(NULL)
   }

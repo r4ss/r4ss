@@ -66,7 +66,7 @@ SS_readctl_3.24 <- function(
   # function to read Stock Synthesis data files
 
   if (verbose) {
-    cli::cli_inform("running SS_readctl_3.24")
+    cli::cli_alert_info("running SS_readctl_3.24")
   }
   dat <- readLines(file, warn = FALSE)
 
@@ -118,7 +118,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{name}, i = {ctllist[['.i']]}: {paste(ctllist[name], sep = '', collapse = '\n')}"
       )
     }
@@ -148,7 +148,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{name}, i = {ctllist[['.i']]}: {paste(ctllist[[which(names(ctllist) == name)]], sep = '', collapse = '\n')}"
       )
     }
@@ -164,7 +164,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "{name}, i = {ctllist[['.i']]} ;{ctllist[[which(names(ctllist) == name)]]}"
       )
     }
@@ -185,7 +185,7 @@ SS_readctl_3.24 <- function(
       names(ctllist)[names(ctllist) == "temp"] <- name
     }
     if (verbose) {
-      cli::cli_inform("{name}, i = {ctllist[['.i']]}")
+      cli::cli_alert_info("{name}, i = {ctllist[['.i']]}")
     }
     return(ctllist)
   }
@@ -277,7 +277,7 @@ SS_readctl_3.24 <- function(
   )
   srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE")
   if (verbose) {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "SS_readctl_3.24 - read version = {ctllist[['ReadVersion']]}"
     )
   }
@@ -391,7 +391,7 @@ SS_readctl_3.24 <- function(
     )
   }
   if (verbose) {
-    cli::cli_inform("N_natMparms = {N_natMparms}")
+    cli::cli_alert_info("N_natMparms = {N_natMparms}")
   }
   # growth setup ----
   ctllist <- add_elem(ctllist, name = "GrowthModel")
@@ -1452,7 +1452,7 @@ SS_readctl_3.24 <- function(
     }
   }
   if (verbose) {
-    cli::cli_inform("Read size and age selectivity setup")
+    cli::cli_alert_info("Read size and age selectivity setup")
   }
   # Selex parlines ----
   # _LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn
@@ -1830,11 +1830,11 @@ SS_readctl_3.24 <- function(
   }
   if (ctllist$".dat"[ctllist$".i"] == 999) {
     if (verbose) {
-      cli::cli_inform("read of control file complete (final value = 999)")
+      cli::cli_alert_info("read of control file complete (final value = 999)")
     }
     ctllist[["eof"]] <- TRUE
   } else {
-    cli::cli_inform(
+    cli::cli_alert_info(
       "Error: final value is {ctllist[['.dat']][ctllist[['.i']]]}, but should be 999"
     )
     ctllist[["eof"]] <- FALSE

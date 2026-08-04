@@ -27,7 +27,7 @@ SS_writestarter <- function(
     )
   }
   if (verbose) {
-    cli::cli_inform("running SS_writestarter")
+    cli::cli_alert_info("running SS_writestarter")
   }
   if (mylist[["type"]] != "Stock_Synthesis_starter_file") {
     cli::cli_abort(
@@ -59,7 +59,7 @@ SS_writestarter <- function(
       file.remove(outfile)
     }
   } else {
-    if (verbose) cli::cli_inform("writing new file: {outfile}")
+    if (verbose) cli::cli_alert_info("writing new file: {outfile}")
   }
 
   # record current max characters per line and then expand in case of long lines
@@ -67,7 +67,7 @@ SS_writestarter <- function(
   options(width = 1000)
 
   if (verbose) {
-    cli::cli_inform("opening connection to {outfile}")
+    cli::cli_alert_info("opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at")
   sink(zz)
@@ -175,6 +175,6 @@ SS_writestarter <- function(
   }
   close(zz)
   if (verbose) {
-    cli::cli_inform("file written to {outfile}")
+    cli::cli_alert_info("file written to {outfile}")
   }
 }

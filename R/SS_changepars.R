@@ -167,7 +167,7 @@ SS_changepars <-
         }
         goodnames <- unique(unlist(goodnames))
         if (verbose) {
-          cli::cli_inform(
+          cli::cli_alert_info(
             "Parameter names in control file matching input vector 'strings' (n={length(goodnames)}): {paste(goodnames, collapse = ', ')}"
           )
         }
@@ -188,7 +188,7 @@ SS_changepars <-
     }
     ctlsubset <- ctl[linenums]
     if (verbose) {
-      cli::cli_inform(
+      cli::cli_alert_info(
         "line numbers in control file (n={length(linenums)}): {paste(linenums, collapse = ', ')}"
       )
     }
@@ -365,7 +365,7 @@ SS_changepars <-
     }
     if (verbose) {
       results_text <- paste(utils::capture.output(results), collapse = "\n")
-      cli::cli_inform(
+      cli::cli_alert_success(
         "Wrote new file to {newctlfile} with the following changes:\n{results_text}"
       )
     }

@@ -22,7 +22,7 @@ SS_writectl_3.30 <- function(
   verbose = FALSE
 ) {
   if (verbose) {
-    cli::cli_inform("Running SS_writectl_3.30")
+    cli::cli_alert_info("Running SS_writectl_3.30")
   }
   # input checks
   if (ctllist[["ReadVersion"]] != "3.30") {
@@ -33,14 +33,16 @@ SS_writectl_3.30 <- function(
 
   if (file.exists(outfile)) {
     if (!overwrite) {
-      cli::cli_inform("File exists and input 'overwrite'=FALSE: {outfile}")
+      cli::cli_alert_warning(
+        "File exists and input 'overwrite'=FALSE: {outfile}"
+      )
       return()
     } else {
       file.remove(outfile)
     }
   }
   if (verbose) {
-    cli::cli_inform("Opening connection to {outfile}")
+    cli::cli_alert_info("Opening connection to {outfile}")
   }
   zz <- file(outfile, open = "at") # open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
@@ -577,7 +579,7 @@ SS_writectl_3.30 <- function(
 
   if (ctllist[["recdev_adv"]] == 1) {
     if (verbose) {
-      cli::cli_inform("Writing 13 advanced SRR options")
+      cli::cli_alert_info("Writing 13 advanced SRR options")
     }
     wl(
       "recdev_early_start",
@@ -1056,5 +1058,5 @@ SS_writectl_3.30 <- function(
 
   # cleanup -----
   # options(width=oldwidth,max.print=oldmax.print)
-  if (verbose) cli::cli_inform("File written to {outfile}")
+  if (verbose) cli::cli_alert_info("File written to {outfile}")
 }

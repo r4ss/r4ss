@@ -48,7 +48,7 @@ SS_write <- function(inputlist, dir = "", overwrite = FALSE, verbose = FALSE) {
   if (dir != "") {
     if (!dir.exists(dir)) {
       if (verbose) {
-        cli::cli_inform("Creating new directory: {dir}")
+        cli::cli_alert_info("Creating new directory: {dir}")
       }
       dir.create(dir, recursive = TRUE)
     }
@@ -136,6 +136,6 @@ SS_write <- function(inputlist, dir = "", overwrite = FALSE, verbose = FALSE) {
 
   # message noting that all files have been written
   if (verbose) {
-    cli::cli_inform("Wrote all input files to {dir}")
+    cli::cli_alert_success("Wrote all input files to {dir}")
   }
 }
