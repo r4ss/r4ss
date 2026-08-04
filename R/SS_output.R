@@ -4753,7 +4753,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     # type of stock recruit relationship (if not read above)
     if (is.null(returndat[["SRRtype"]])) {
       SRRtype <- rawrep[match_report_line("SPAWN_RECRUIT"), 3]
-      if (!is.na(SRRtype) && SRRtype == "Function:") {
+      if (isTRUE(SRRtype == "Function:")) {
         SRRtype <- as.numeric(rawrep[match_report_line("SPAWN_RECRUIT"), 4])
       }
       returndat[["SRRtype"]] <- SRRtype

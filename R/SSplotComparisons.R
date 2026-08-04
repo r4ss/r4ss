@@ -377,6 +377,7 @@ SSplotComparisons <-
     upperCI <- summaryoutput[["upperCI"]]
     SpawnOutputUnits <- summaryoutput[["SpawnOutputUnits"]]
     SpawnOutputLabels <- summaryoutput[["SpawnOutputLabels"]]
+    BratioLabels <- summaryoutput[["BratioLabels"]]
     btargs <- summaryoutput[["btargs"]]
     minbthreshs <- summaryoutput[["minbthreshs"]]
     sprtargs <- summaryoutput[["sprtargs"]]
@@ -411,31 +412,80 @@ SSplotComparisons <-
         sprtarg <- -999
       }
     }
+    # Derive one Bratio denominator label across models.
+    # If models disagree, set NA so downstream logic falls back safely.
+    BratioLabel <- unique(BratioLabels)
+    BratioLabel <- BratioLabel[!is.na(BratioLabel) & BratioLabel != ""]
+    if (length(BratioLabel) > 1) {
+      cli::cli_warn(
+        "setting Bratio label to default because models don't have matching BratioLabels"
+      )
+      BratioLabel <- NA_character_
+    }
+    if (length(BratioLabel) == 0) {
+      BratioLabel <- NA_character_
+    }
+
+    # Resolve SPR ratio label for axis text, falling back to labels[8]
+    # when model labels are missing or inconsistent.
     SPRratioLabel <- unique(SPRratioLabels)
+    SPRratioLabel <- SPRratioLabel[!is.na(SPRratioLabel) & SPRratioLabel != ""]
     if (length(SPRratioLabel) > 1) {
       cli::cli_warn(
         "setting label for SPR plot to 8th element of input 'labels' because the models don't have matching labels"
       )
       SPRratioLabel <- labels[8]
     }
+    if (length(SPRratioLabel) == 0) {
+      SPRratioLabel <- labels[8]
+    }
+    # SpawnOutputLabel controls units wording (biomass vs output) used in
+    # spawning-output related labels.
     SpawnOutputLabel <- unique(SpawnOutputLabels)
+    SpawnOutputLabel <- SpawnOutputLabel[
+      !is.na(SpawnOutputLabel) & SpawnOutputLabel != ""
+    ]
     if (length(SpawnOutputLabel) > 1) {
       cli::cli_warn(
         "setting label for Spawning Output to 12th element of input 'labels' because the models don't have matching SpawnOutputLabels"
       )
       SpawnOutputLabel <- labels[12]
     }
+    if (length(SpawnOutputLabel) == 0) {
+      SpawnOutputLabel <- labels[12]
+    }
     if (
       all(is.na(SpawnOutputUnits)) ||
         any(SpawnOutputUnits == "numbers", na.rm = TRUE)
     ) {
+      # If units are numeric output (not biomass), update default Bratio text.
       labels[3] <- gsub("spawning biomass", "spawning output", labels[3])
     }
+    # Build the Bratio axis label:
+    # - B/B_0 keeps the standard fraction-of-unfished wording.
+    # - Alternative denominators show "Relative spawning biomass/output: <label>".
+    if (isTRUE(BratioLabel != "B/B_0")) {
+      BratioAxisLabel <- "Relative spawning biomass"
+      if (
+        all(is.na(SpawnOutputUnits)) ||
+          any(SpawnOutputUnits == "numbers", na.rm = TRUE)
+      ) {
+        BratioAxisLabel <- gsub("biomass", "output", BratioAxisLabel)
+      }
+      BratioAxisLabel <- paste0(BratioAxisLabel, ": ", BratioLabel)
+    } else {
+      BratioAxisLabel <- labels[3]
+    }
+    # Resolve F_std basis label for the F comparison plot; clean underscores
+    # for readability when a single consistent label is available.
     FvalueLabel <- unique(FvalueLabels)
+    FvalueLabel <- FvalueLabel[!is.na(FvalueLabel) & FvalueLabel != ""]
     if (length(FvalueLabel) > 1) {
       cli::cli_warn(
         "setting label for F plot to 13th element of input 'labels' because the models don't have matching labels"
       )
+      FvalueLabel <- labels[13]
+    } else if (length(FvalueLabel) == 0) {
       FvalueLabel <- labels[13]
     } else {
       FvalueLabel <- gsub("_", " ", FvalueLabel)
@@ -1131,7 +1181,7 @@ SSplotComparisons <-
           xlim = xlim,
           ylim = ylim,
           xlab = labels[1],
-          ylab = labels[3],
+          ylab = BratioAxisLabel,
           xaxs = xaxs,
           yaxs = yaxs,
           axes = FALSE
@@ -1193,12 +1243,12 @@ SSplotComparisons <-
       }
 
       yticks <- pretty(par()[["yaxp"]][1:2])
-      if (btarg > 0) {
+      if (isTRUE(BratioLabel == "B/B_0") && btarg > 0) {
         abline(h = btarg, col = "red", lty = 2)
         text(min(Bratio[["Yr"]]) + 4, btarg + 0.03, labels[10], adj = 0)
         yticks <- sort(c(btarg, yticks))
       }
-      if (minbthresh > 0) {
+      if (isTRUE(BratioLabel == "B/B_0") && minbthresh > 0) {
         abline(h = minbthresh, col = "red", lty = 2)
         text(min(Bratio[["Yr"]]) + 4, minbthresh + 0.03, labels[11], adj = 0)
         yticks <- sort(c(minbthresh, yticks))
@@ -1293,9 +1343,8 @@ SSplotComparisons <-
       if (!add) {
         if (
           isTRUE(
-            !is.na(SPRratioLabel) &&
-              SPRratioLabel ==
-                paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)")
+            SPRratioLabel ==
+              paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)")
           )
         ) {
           # add to right-hand outer margin to make space
@@ -1395,13 +1444,12 @@ SSplotComparisons <-
           yticks <- pretty(ylim)
           if (
             isTRUE(
-              !is.na(SPRratioLabel) &&
-                SPRratioLabel ==
-                  paste0(
-                    "(1-SPR)/(1-SPR_",
-                    floor(100 * sprtarg),
-                    "%)"
-                  )
+              SPRratioLabel ==
+                paste0(
+                  "(1-SPR)/(1-SPR_",
+                  floor(100 * sprtarg),
+                  "%)"
+                )
             )
           ) {
             # add right-hand vertical axis showing 1-SPR
@@ -2054,7 +2102,7 @@ SSplotComparisons <-
           type = "n",
           xlim = xlim,
           ylim = ylim,
-          xlab = labels[3],
+          xlab = BratioAxisLabel,
           ylab = SPRratioLabel,
           xaxs = xaxs,
           yaxs = yaxs,
@@ -2090,7 +2138,7 @@ SSplotComparisons <-
 
       abline(h = 1, v = 1, col = "grey", lty = 2)
 
-      if (btarg > 0) {
+      if (isTRUE(BratioLabel == "B/B_0") && btarg > 0) {
         abline(v = btarg, col = "red", lty = 2)
       }
       if (sprtarg > 0) {
@@ -2415,7 +2463,7 @@ SSplotComparisons <-
           if (!is.numeric(parval)) {
             parval <- -1
           } # do this in case models added without the parameter
-          if (!is.na(parSD) && parSD > 0) {
+          if (isTRUE(parSD > 0)) {
             # if non-zero SD available
             # update x range
             xmin <- min(xmin, qnorm(0.005, parval, parSD))
@@ -2502,7 +2550,7 @@ SSplotComparisons <-
         }
         # add vertical lines for target and threshold
         # fraction of unfished spawning output values
-        if (grepl("Bratio", parname)) {
+        if (grepl("Bratio", parname) && isTRUE(BratioLabel == "B/B_0")) {
           if (btarg > 0) {
             abline(v = btarg, col = "red", lty = 2)
             text(
@@ -2592,7 +2640,7 @@ SSplotComparisons <-
             # make normal density for MLE
             parval <- vals[1, imodel]
             parSD <- valSDs[1, imodel]
-            if (!is.na(parSD) && parSD > 0) {
+            if (isTRUE(parSD > 0)) {
               xmin <- min(xmin, qnorm(0.005, parval, parSD))
               if (limit0) {
                 xmin <- max(0, xmin) # by default no plot can go below 0
@@ -2660,7 +2708,7 @@ SSplotComparisons <-
           if (mcmcVec[iline]) {
             doShade <- TRUE
           } else {
-            if (!is.na(parSD) && parSD > 0) {
+            if (isTRUE(parSD > 0)) {
               doShade <- TRUE
             }
           }

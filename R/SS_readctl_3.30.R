@@ -67,7 +67,7 @@ SS_readctl_3.30 <- function(
   nver <- 3.30
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
-  if (!is.na(temp) && temp == "Start_time:") {
+  if (isTRUE(temp == "Start_time:")) {
     dat <- dat[-(1:2)]
   }
 
