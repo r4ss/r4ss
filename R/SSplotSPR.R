@@ -45,9 +45,9 @@ SSplotSPR <-
     col2 = "blue",
     col3 = "green3",
     col4 = "red",
-    sprtarg = "default",
-    btarg = "default",
-    minbthresh = "default",
+    sprtarg = replist[["sprtarg"]],
+    btarg = replist[["btarg"]],
+    minbthresh = replist[["minbthresh"]],
     labels = c(
       "Year", # 1
       "SPR", # 2
@@ -62,15 +62,11 @@ SSplotSPR <-
     res = 300,
     ptsize = 10,
     cex.main = 1,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     verbose = TRUE
   ) {
     # table to store information on each plot
     plotinfo <- NULL
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     sprseries <- replist[["sprseries"]]
     derived_quants <- replist[["derived_quants"]]
@@ -92,8 +88,7 @@ SSplotSPR <-
     # get SPR target and associated label based on forecast specified SPR target or
     # the denominator of the SPR ratio as specified in the starter file
     sprtarg_label <- "SPR target"
-    if (sprtarg == "default") {
-      sprtarg <- replist[["sprtarg"]]
+    if (identical(sprtarg, replist[["sprtarg"]])) {
       if (grepl("SPR_MSY", SPRratioLabel)) {
         sprtarg <- replist[["derived_quants"]]["SPR_MSY", "Value"]
         sprtarg_label <- "SPR at MSY"
@@ -106,12 +101,6 @@ SSplotSPR <-
           last = nchar("(1-SPR)/(1-SPR_at_B48%")
         )
       }
-    }
-    if (btarg == "default") {
-      btarg <- replist[["btarg"]]
-    }
-    if (minbthresh == "default") {
-      minbthresh <- replist[["minbthresh"]]
     }
 
     # choose which points to plot

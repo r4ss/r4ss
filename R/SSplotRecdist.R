@@ -32,7 +32,7 @@ SSplotRecdist <-
     main = "distribution of recruitment by area and season",
     period = c("Initial", "Benchmark", "End year"),
     sexes = 1:2,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     pwidth = 6.5,
     pheight = 5.0,
     punits = "in",
@@ -48,10 +48,6 @@ SSplotRecdist <-
 
     # table to store information on each plot
     plotinfo <- NULL
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     nareas <- replist[["nareas"]]
     nseasons <- replist[["nseasons"]]

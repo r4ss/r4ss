@@ -29,7 +29,7 @@ SSplotMovementRates <-
     plot = TRUE,
     print = FALSE,
     subplots = 1:2,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     colvec = "default",
     ylim = "default",
     legend = TRUE,
@@ -46,10 +46,6 @@ SSplotMovementRates <-
   ) {
     # table to store information on each plot
     plotinfo <- NULL
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     # get values from replist
     accuage <- replist[["accuage"]]

@@ -36,7 +36,7 @@ SSplotDynamicB0 <- function(
   yrs = "all",
   plot = TRUE,
   print = FALSE,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE,
   uncertainty = TRUE,
   legend = TRUE,
@@ -101,11 +101,6 @@ SSplotDynamicB0 <- function(
   }
 
   plotinfo <- NULL
-  # set plot directory
-  if (plotdir == "default") {
-    plotdir <- replist[["inputs"]][["dir"]]
-  }
-
   # set default range of years
   if (yrs[1] == "all") {
     yrs <- replist[["startyr"]]:(replist[["endyr"]] + 1)

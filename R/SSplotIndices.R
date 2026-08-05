@@ -72,7 +72,7 @@ SSplotIndices <-
     plot = TRUE,
     print = FALSE,
     fleets = "all",
-    fleetnames = "default",
+    fleetnames = replist[["FleetNames"]],
     smooth = TRUE,
     add = FALSE,
     datplot = TRUE,
@@ -111,7 +111,7 @@ SSplotIndices <-
     ptsize = 10,
     cex.main = 1,
     mainTitle = FALSE,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     minyr = NULL,
     maxyr = NULL,
     maximum_ymax_ratio = Inf,
@@ -608,7 +608,6 @@ SSplotIndices <-
       cpue <- cpue[!is.na(cpue[["Dev"]]), ]
     }
 
-    FleetNames <- replist[["FleetNames"]]
     nfleets <- replist[["nfleets"]]
     nseasons <- replist[["nseasons"]]
 
@@ -645,13 +644,6 @@ SSplotIndices <-
     } else {
       # if no seasons, put at integer year value
       cpue[["YrSeas"]] <- cpue[["Yr"]]
-    }
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
     }
     if (fleets[1] == "all") {
       fleets <- 1:nfleets

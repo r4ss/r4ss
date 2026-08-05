@@ -58,7 +58,7 @@ SSplotSpawnrecruit <-
       "Log recruitment deviation"
     ),
     bioscale = 1,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     pwidth = 6.5,
     pheight = 6.5,
     punits = "in",
@@ -129,9 +129,6 @@ SSplotSpawnrecruit <-
       ylab <- labels[5]
     }
 
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
     if (minyr == "default") {
       minyr <- min(recruit[["Yr"]])
     }

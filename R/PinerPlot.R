@@ -71,7 +71,7 @@ PinerPlot <-
     main = "Changes in length-composition likelihoods by fleet",
     models = "all",
     fleets = "all",
-    fleetnames = "default",
+    fleetnames = summaryoutput[["FleetNames"]][[1]],
     profile.string = "R0",
     profile.label = expression(log(italic(R)[0])),
     exact = FALSE,
@@ -128,11 +128,10 @@ PinerPlot <-
     nfleets <- ncol(lbf) - 3
     pars <- summaryoutput[["pars"]]
     # names of fleets
-    FleetNames <- summaryoutput[["FleetNames"]][[1]]
     # stop if lengths don't match
-    if (length(FleetNames) != nfleets) {
+    if (length(fleetnames) != nfleets) {
       cli::cli_abort(
-        "problem with FleetNames: length!= {nfleets}; fleet names: {paste(FleetNames, collapse = ', ')}"
+        "problem with fleetnames: length!= {nfleets}; fleet names: {paste(fleetnames, collapse = ', ')}"
       )
     }
     # stop if component input isn't found in table
@@ -145,10 +144,6 @@ PinerPlot <-
         "input 'component' needs to be one of the following: {paste(component_options, collapse = ', ')}"
       )
     }
-
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    } # note lower-case value is the one used below (either equal to vector from replist, or input by user)
 
     # check number of models to be plotted
     if (models[1] == "all") {

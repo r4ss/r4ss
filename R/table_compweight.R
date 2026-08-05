@@ -18,7 +18,7 @@
 #'
 table_compweight <- function(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   caption = paste(
     "Data weightings applied to compositions",
     "according to the `Francis` method. `Obs.` refers to the number of unique",
@@ -33,11 +33,7 @@ table_compweight <- function(
   check_replist(replist)
   # create the rda_dir
   rda_dir <- file.path(
-    ifelse(
-      is.null(dir),
-      yes = replist[["inputs"]][["dir"]],
-      no = dir
-    ),
+    dir,
     "tables"
   )
   check_dir(dir = rda_dir, verbose = verbose)

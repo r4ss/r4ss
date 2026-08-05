@@ -40,12 +40,12 @@ SSplotData <- function(
   replist,
   plot = TRUE,
   print = FALSE,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   subplots = 1:2,
   fleetcol = "default",
   datatypes = "all",
   fleets = "all",
-  fleetnames = "default",
+  fleetnames = replist[["FleetNames"]],
   ghost = FALSE,
   pwidth = 6.5,
   pheight = 5.0,
@@ -80,13 +80,6 @@ SSplotData <- function(
   startyr <- replist[["startyr"]]
   endyr <- replist[["endyr"]]
   nfleets <- replist[["nfleets"]]
-
-  if (fleetnames[1] == "default") {
-    fleetnames <- replist[["FleetNames"]]
-  }
-  if (plotdir == "default") {
-    plotdir <- replist[["inputs"]][["dir"]]
-  }
 
   # catch
   catch <- replist[["catch"]]

@@ -22,7 +22,7 @@
 table_parcounts <- function(
   replist,
   inputs = NULL,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   caption = "Estimated parameters in the model.",
   verbose = TRUE
 ) {
@@ -34,11 +34,7 @@ table_parcounts <- function(
 
   # create the rda_dir
   rda_dir <- file.path(
-    ifelse(
-      is.null(dir),
-      yes = replist[["inputs"]][["dir"]],
-      no = dir
-    ),
+    dir,
     "tables"
   )
   check_dir(dir = rda_dir)

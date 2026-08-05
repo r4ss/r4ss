@@ -17,9 +17,9 @@
 #'
 table_biology <- function(
   replist,
-  dir = NULL,
-  fleetnames = NULL,
-  selexyr = NULL,
+  dir = replist[["inputs"]][["dir"]],
+  fleetnames = replist[["FleetNames"]],
+  selexyr = replist[["endyr"]],
   verbose = TRUE
 ) {
   # check the input
@@ -27,11 +27,7 @@ table_biology <- function(
 
   # create the rda_dir
   rda_dir <- file.path(
-    ifelse(
-      is.null(dir),
-      yes = replist[["inputs"]][["dir"]],
-      no = dir
-    ),
+    dir,
     "tables"
   )
   check_dir(dir = rda_dir, verbose = verbose)
@@ -49,16 +45,6 @@ table_biology <- function(
   ageselex <- replist[["ageselex"]]
   accuage <- replist[["accuage"]] # max age
   FleetNames <- replist[["FleetNames"]]
-
-  # set fleet-specific names, and plotting parameters
-  if (is.null(fleetnames)) {
-    fleetnames <- FleetNames
-  }
-
-  # determine the year to summarize
-  if (is.null(selexyr)) {
-    selexyr <- replist[["endyr"]]
-  }
 
   # empty list to store output
   tables <- list()

@@ -43,18 +43,21 @@
 #' @examples
 #' \dontrun{
 #' # read model output
-#' myreplist <- SS_output(dir = "c:/SS/Simple/")
+#' myreplist <- SS_output(dir = system.file("extdata", "simple_small", package = "r4ss"))
 #' # make a bunch of plots
 #' SS_plots(myreplist)
 #'
 #' # read model output and also read MCMC results (if run), which in
-#' # this case would be stored in c:/SS/Simple/mcmc/
-#' myreplist <- SS_output(dir = "c:/SS/Simple/", dir.mcmc = "mcmc")
+#' # this case would be stored in a subdirectory named "mcmc"
+#' myreplist <- SS_output(
+#'   dir = system.file("extdata", "simple_small_mcmc", package = "r4ss"),
+#'   dir.mcmc = "mcmc"
+#' )
 #' }
 #'
 SS_output <-
   function(
-    dir = "C:/myfiles/mymodels/myrun/",
+    dir = getwd(),
     dir.mcmc = NULL,
     repfile = "Report.sso",
     compfile = "CompReport.sso",

@@ -10,7 +10,7 @@
 #'
 table_all <- function(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   fleetnames = NULL,
   selexyr = NULL,
   verbose = TRUE

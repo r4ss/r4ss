@@ -74,7 +74,7 @@ SSplotCatch <-
     fleetlty = 1,
     fleetpch = 1,
     fleetcols = "default",
-    fleetnames = "default",
+    fleetnames = replist[["FleetNames"]],
     lwd = 3,
     areacols = NULL,
     areanames = "default",
@@ -82,7 +82,7 @@ SSplotCatch <-
     maxyr = Inf,
     annualcatch = TRUE,
     forecastplot = FALSE,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     showlegend = TRUE,
     legendloc = "topleft",
     order = "default",
@@ -186,13 +186,6 @@ SSplotCatch <-
           )
         }
       }
-    }
-
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
     }
 
     if (catchasnumbers) {

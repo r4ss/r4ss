@@ -245,10 +245,10 @@ SS_plots <-
     png = TRUE,
     html = png,
     printfolder = "plots",
-    dir = "default",
+    dir = replist[["inputs"]][["dir"]],
     fleets = "all",
     areas = "all",
-    fleetnames = "default",
+    fleetnames = replist[["FleetNames"]],
     fleetcols = "default",
     fleetlty = 1,
     fleetpch = 1,
@@ -263,9 +263,9 @@ SS_plots <-
     samplesizeplots = TRUE,
     compresidplots = TRUE,
     comp.yupper = 0.4,
-    sprtarg = "default",
-    btarg = "default",
-    minbthresh = "default",
+    sprtarg = replist[["sprtarg"]],
+    btarg = replist[["btarg"]],
+    minbthresh = replist[["minbthresh"]],
     pntscalar = NULL,
     bub.scale.pearson = 1.5,
     bub.scale.dat = 3,
@@ -406,10 +406,7 @@ SS_plots <-
       cli::cli_alert_success("Finished defining objects")
     }
 
-    # set fleet-specific names, and plotting parameters
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
+    # set fleet-specific names and plotting parameters
     if (fleetcols[1] == "default") {
       fleetcols <- rich.colors.short(nfishfleets)
       if (nfishfleets > 2) fleetcols <- rich.colors.short(nfishfleets + 1)[-1]
@@ -450,11 +447,6 @@ SS_plots <-
     }
 
     ### deal with directories in which to create PNG or PDF files
-    if (dir == "default") {
-      # directory within which printfolder will be created
-      # by default it is assumed to be the location of the model files
-      dir <- inputs[["dir"]]
-    }
     if (png | pdf) {
       # get info on directory where subfolder will go
       # (typically folder with model output files)
@@ -476,7 +468,7 @@ SS_plots <-
       }
     }
 
-    plotdir <- "default" # dummy value passed to functions that ignore it if png=FALSE
+    plotdir <- NULL # dummy value passed to functions that ignore it if png=FALSE
     if (png) {
       # add subdirectory for PNG and HTML files if that option is chosen
 

@@ -44,7 +44,7 @@ SSplotSexRatio <-
     plot = TRUE,
     print = FALSE,
     fleets = "all",
-    fleetnames = "default",
+    fleetnames = replist[["FleetNames"]],
     yupper = 4,
     datonly = FALSE,
     linescol = rgb(0.6, 0, 0.9, .7), # a purple color
@@ -58,7 +58,7 @@ SSplotSexRatio <-
     punits = "in",
     ptsize = 10,
     res = 300,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     cex.main = 1,
     labels = c(
       "Length (cm)",
@@ -87,16 +87,11 @@ SSplotSexRatio <-
     nfleets <- replist[["nfleets"]]
     nseasons <- replist[["nseasons"]]
     seasfracs <- replist[["seasfracs"]]
-    FleetNames <- replist[["FleetNames"]]
     nsexes <- replist[["nsexes"]]
 
     ## define a variety of titles and labels
     titles <- NULL
     titlemkt <- ""
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-
     ## sort out which fleets will be included
     if (fleets[1] == "all") {
       fleets <- 1:nfleets

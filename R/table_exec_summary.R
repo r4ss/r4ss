@@ -54,7 +54,7 @@
 #' }
 table_exec_summary <- function(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   ci_value = 0.95,
   fleetnames = NULL,
   so_units = "biomass (mt)",
@@ -64,11 +64,7 @@ table_exec_summary <- function(
   check_replist(replist)
 
   rda_dir <- file.path(
-    ifelse(
-      is.null(dir),
-      yes = replist[["inputs"]][["dir"]],
-      no = dir
-    ),
+    dir,
     "tables"
   )
   check_dir(dir = rda_dir, verbose = verbose)

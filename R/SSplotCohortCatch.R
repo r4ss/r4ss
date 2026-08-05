@@ -38,7 +38,7 @@ SSplotCohortCatch <-
     cohortlabfrac = 0.1,
     cohortlabvec = NULL,
     lwd = 3,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     xlab = "Year",
     labels = c(
       "Age",
@@ -84,10 +84,6 @@ SSplotCohortCatch <-
           "Plots of catch by cohort might not work for seasonal models."
         )
       }
-    }
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
     }
 
     # vector of cohort birth years

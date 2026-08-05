@@ -25,7 +25,8 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' parlines <- SS_parlines(ctlfile = "c:/ss/Simple/Control.SS_New")
+#' ctlfile <- file.path(system.file("extdata", "simple_small", package = "r4ss"), "control.ss_new")
+#' parlines <- SS_parlines(ctlfile = ctlfile)
 #' head(parlines)
 #' #       LO    HI     INIT PRIOR PR_type   SD PHASE              Label Line_num
 #' # 42  0.05  0.15  0.10000  0.10       0  0.8    -3  NatM_p_1_Fem_GP_1       42

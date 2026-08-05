@@ -46,17 +46,13 @@ SSplotRecdevs <-
     res = 300,
     ptsize = 10,
     cex.main = 1,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     verbose = TRUE
   ) {
     # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment
 
     # table to store information on each plot
     plotinfo <- NULL
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-
     parameters <- replist[["parameters"]]
     recruit <- replist[["recruit"]]
     startyr <- replist[["startyr"]]

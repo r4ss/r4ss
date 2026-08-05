@@ -84,7 +84,7 @@ SSplotNumbers <-
     res = 300,
     ptsize = 10,
     cex.main = 1,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     mainTitle = FALSE,
     verbose = TRUE
   ) {
@@ -116,10 +116,6 @@ SSplotNumbers <-
       nlbinspop <- replist[["nlbinspop"]]
       mainmorphs <- replist[["mainmorphs"]]
       SS_versionNumeric <- replist[["SS_versionNumeric"]]
-
-      if (plotdir == "default") {
-        plotdir <- replist[["inputs"]][["dir"]]
-      }
 
       if (areas[1] == "all") {
         areas <- 1:nareas

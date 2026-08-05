@@ -21,7 +21,7 @@
 #' @examples
 #' \dontrun{
 #' # load model output into R
-#' replist <- SS_output(dir = "c:/model/")
+#' replist <- SS_output(dir = system.file("extdata", "simple_small", package = "r4ss"))
 #'
 #' # get new variance adjustments (
 #' varadjust <- tune_comps(replist, option = "Francis")
@@ -35,7 +35,7 @@
 #' }
 #'
 SS_varadjust <- function(
-  dir = "C:/myfiles/mymodels/myrun/",
+  dir = getwd(),
   ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   keyword = "variance adjustments",

@@ -55,16 +55,12 @@ SSplotAgeMatrix <- function(
   ptsize = 10,
   cex.main = 1,
   mainTitle = TRUE,
-  plotdir = "default"
+  plotdir = replist[["inputs"]][["dir"]]
 ) {
   # in-development function to plot matrix of length at age
 
   # table to store information on each plot
   plotinfo <- NULL
-  if (plotdir == "default") {
-    plotdir <- replist[["inputs"]][["dir"]]
-  }
-
   # get stuff form replist created by SS_output
   # matrix of length at age (not really an age-length-key as the name implies, as
   # that would be a matrix used to convert length to age rather than age to length)

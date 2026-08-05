@@ -57,10 +57,10 @@ SSplotTimeseries <-
     maxyr = Inf,
     plot = TRUE,
     print = FALSE,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     verbose = TRUE,
-    btarg = "default",
-    minbthresh = "default",
+    btarg = replist[["btarg"]],
+    minbthresh = replist[["minbthresh"]],
     xlab = "Year",
     labels = NULL,
     pwidth = 6.5,
@@ -125,13 +125,6 @@ SSplotTimeseries <-
     depletion_basis <- replist[["depletion_basis"]]
     depletion_multiplier <- replist[["depletion_multiplier"]]
 
-    if (btarg == "default") {
-      btarg <- replist[["btarg"]]
-    }
-    if (minbthresh == "default") {
-      minbthresh <- replist[["minbthresh"]]
-    }
-
     # set default colors if not specified
     areacols <- get_areacols(areacols, nareas)
 
@@ -139,11 +132,6 @@ SSplotTimeseries <-
       nbirthseas <- length(birthseas)
       seascols <- rich.colors.short(nbirthseas)
       if (nbirthseas > 2) seascols <- rich.colors.short(nbirthseas + 1)[-1]
-    }
-
-    # directory where PNG files will go
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
     }
 
     # check if spawning output rather than spawning biomass is plotted

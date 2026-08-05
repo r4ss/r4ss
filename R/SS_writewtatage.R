@@ -15,7 +15,7 @@
 #'
 SS_writewtatage <- function(
   mylist,
-  dir = NULL,
+  dir = getwd(),
   file = "wtatage.ss",
   overwrite = FALSE,
   verbose = TRUE,
@@ -37,9 +37,6 @@ SS_writewtatage <- function(
     if (sink.number() > 0) sink()
   })
 
-  if (is.null(dir)) {
-    dir <- getwd()
-  } # set to working directory if no input provided
   if (grepl("/$", dir)) {
     outfile <- paste0(dir, file) # bc trailing backslash
   } else {
