@@ -126,6 +126,7 @@ PinerPlot <-
     }
     # count of fleets
     nfleets <- ncol(lbf) - 3
+    lbf_fleetnames <- colnames(lbf)[-c(1:3)]
     pars <- summaryoutput[["pars"]]
     # names of fleets
     # stop if lengths don't match
@@ -212,7 +213,7 @@ PinerPlot <-
           "fleetgroups, if specified, must have length equal to the number of declared fleets"
         )
       }
-      FleetNames <- unique(fleetgroups)
+      fleetnames <- unique(fleetgroups)
       prof.table_new <- data.frame(matrix(
         nrow = nrow(prof.table),
         ncol = 3 + length(unique(fleetgroups)),
@@ -270,14 +271,14 @@ PinerPlot <-
     # replace column names with fleetnames unless "fleetgroup" is used
     if (is.null(fleetgroups)) {
       for (icol in 4:ncol(prof.table)) {
-        if (names(prof.table)[icol] %in% FleetNames) {
+        if (names(prof.table)[icol] %in% lbf_fleetnames) {
           names(prof.table)[icol] <- fleetnames[which(
-            FleetNames == names(prof.table)[icol]
+            lbf_fleetnames == names(prof.table)[icol]
           )]
         }
-        if (names(prof.table)[icol] %in% paste("X", FleetNames, sep = "")) {
+        if (names(prof.table)[icol] %in% paste0("X", lbf_fleetnames)) {
           names(prof.table)[icol] <- fleetnames[which(
-            paste("X", FleetNames, sep = "") == names(prof.table)[icol]
+            paste0("X", lbf_fleetnames) == names(prof.table)[icol]
           )]
         }
       }

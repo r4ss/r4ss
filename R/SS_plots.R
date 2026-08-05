@@ -354,7 +354,6 @@ SS_plots <-
     SS_versionNumeric <- replist[["SS_versionNumeric"]]
     StartTime <- replist[["StartTime"]]
     Files_used <- replist[["Files_used"]]
-    FleetNames <- replist[["FleetNames"]]
     rmse_table <- replist[["rmse_table"]]
     comp_data_exists <- replist[["comp_data_exists"]]
 
