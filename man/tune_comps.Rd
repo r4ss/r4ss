@@ -48,8 +48,8 @@ Defaults to \code{FALSE}. This run is not counted as an iteration for
 \code{niters_tuning} and will not be used if \code{option = "DM"}.}
 
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{exe}{Executable name. Can be just the name of the executable
 file if it is in the specified directory or in the user's PATH. Can

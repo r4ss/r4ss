@@ -5,7 +5,7 @@
 \title{Change parameters, bounds, or phases in the control file.}
 \usage{
 SS_changepars(
-  dir = NULL,
+  dir = getwd(),
   ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   linenums = NULL,
@@ -24,8 +24,8 @@ SS_changepars(
 }
 \arguments{
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{ctlfile}{Control file name. Default="control.ss_new".}
 
@@ -115,7 +115,7 @@ Used by \code{\link[=profile]{profile()}} and the \pkg{ss3sim} package.
 \examples{
 \dontrun{
 SS_changepars(
-  dir = "C:/ss/SSv3.30.03.05_May11/Simple - Copy",
+  dir = system.file("extdata", "simple_small", package = "r4ss"),
   strings = c("steep", "sigmaR"), newvals = c(.4, .6)
 )
 ## parameter names in control file matching input vector 'strings' (n=2):

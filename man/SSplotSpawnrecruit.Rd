@@ -17,7 +17,7 @@ SSplotSpawnrecruit(
     italic(B)[0], ")")), expression(paste("Recruitment (relative to  ", italic(R)[0],
     ")")), "Log recruitment deviation"),
   bioscale = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   pwidth = 6.5,
   pheight = 6.5,
   punits = "in",

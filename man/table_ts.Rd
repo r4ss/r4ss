@@ -6,7 +6,7 @@
 \usage{
 table_ts(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   caption = "Time series of population estimates for the base model.",
   verbose = TRUE
 )

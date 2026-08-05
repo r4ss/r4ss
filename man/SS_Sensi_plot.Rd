@@ -30,8 +30,8 @@ SS_Sensi_plot(
 summarizing results of models to be included}
 
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{current.year}{Year to report output}
 

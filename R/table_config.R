@@ -23,7 +23,11 @@
 #' )
 #' names(table_compare) <- c("Section", "New model", "Old model")
 #' }
-table_config <- function(replist, dir = replist[["inputs"]][["dir"]], verbose = TRUE) {
+table_config <- function(
+  replist,
+  dir = replist[["inputs"]][["dir"]],
+  verbose = TRUE
+) {
   # check the input
   check_replist(replist)
   # create the rda_dir

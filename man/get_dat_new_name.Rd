@@ -8,8 +8,8 @@ get_dat_new_name(dir)
 }
 \arguments{
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 }
 \value{
 A string with the name of the data .ss_new file. If not found, will

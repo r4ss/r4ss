@@ -5,7 +5,7 @@
 \title{Modify variance and sample size adjustments in the control file}
 \usage{
 SS_varadjust(
-  dir = "C:/myfiles/mymodels/myrun/",
+  dir = getwd(),
   ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   keyword = "variance adjustments",
@@ -21,8 +21,8 @@ SS_varadjust(
 }
 \arguments{
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{ctlfile}{Control file name. Default="control.ss_new".}
 
@@ -61,7 +61,7 @@ Function has not been fully tested yet
 \examples{
 \dontrun{
 # load model output into R
-replist <- SS_output(dir = "c:/model/")
+replist <- SS_output(dir = system.file("extdata", "simple_small", package = "r4ss"))
 
 # get new variance adjustments (
 varadjust <- tune_comps(replist, option = "Francis")

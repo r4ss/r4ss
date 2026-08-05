@@ -7,9 +7,9 @@ length, weight, \% mature, fecundity, and selectivity}
 \usage{
 table_biology(
   replist,
-  dir = NULL,
-  fleetnames = NULL,
-  selexyr = NULL,
+  dir = replist[["inputs"]][["dir"]],
+  fleetnames = replist[["FleetNames"]],
+  selexyr = replist[["endyr"]],
   verbose = TRUE
 )
 }
