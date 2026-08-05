@@ -10,8 +10,8 @@ SS_write(inputlist, dir = "", overwrite = FALSE, verbose = FALSE)
 \item{inputlist}{list created by \code{\link[=SS_read]{SS_read()}}}
 
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{overwrite}{A logical value specifying if the existing file(s)
 should be overwritten. The default value is \code{overwrite = FALSE}.}

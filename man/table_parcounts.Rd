@@ -7,7 +7,7 @@
 table_parcounts(
   replist,
   inputs = NULL,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   caption = "Estimated parameters in the model.",
   verbose = TRUE
 )

@@ -12,7 +12,7 @@ PinerPlot(
   main = "Changes in length-composition likelihoods by fleet",
   models = "all",
   fleets = "all",
-  fleetnames = "default",
+  fleetnames = summaryoutput[["FleetNames"]][[1]],
   profile.string = "R0",
   profile.label = expression(log(italic(R)[0])),
   exact = FALSE,

@@ -38,8 +38,8 @@ deviation = sigmaR? Default=TRUE.}
 occur.}
 
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{ctlfile}{Name of control file to modify.  Default="control.ss_new".}
 

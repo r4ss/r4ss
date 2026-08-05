@@ -23,7 +23,6 @@
 #' https://github.com/nmfs-ost/ss3-source-code/tags
 
 get_ss3_exe <- function(dir = getwd(), version = NULL) {
-
   if (!dir.exists(dir)) {
     stop("Directory doesn't exist: ", dir)
   }

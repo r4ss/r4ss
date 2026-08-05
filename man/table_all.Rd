@@ -6,7 +6,7 @@
 \usage{
 table_all(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   fleetnames = NULL,
   selexyr = NULL,
   verbose = TRUE

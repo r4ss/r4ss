@@ -16,9 +16,9 @@ SSplotSPR(
   col2 = "blue",
   col3 = "green3",
   col4 = "red",
-  sprtarg = "default",
-  btarg = "default",
-  minbthresh = "default",
+  sprtarg = replist[["sprtarg"]],
+  btarg = replist[["btarg"]],
+  minbthresh = replist[["minbthresh"]],
   labels = c("Year", "SPR", "1-SPR", "Relative fishing intensity",
     "Fraction of unfished spawning output"),
   pwidth = 6.5,
@@ -28,7 +28,7 @@ SSplotSPR(
   res = 300,
   ptsize = 10,
   cex.main = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE
 )
 }

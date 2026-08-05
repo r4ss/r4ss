@@ -5,7 +5,7 @@
 \title{Iteratively run Stock Synthesis with jittered starting values}
 \usage{
 jitter(
-  dir = NULL,
+  dir = getwd(),
   mydir = lifecycle::deprecated(),
   Intern = lifecycle::deprecated(),
   Njitter,

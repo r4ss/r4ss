@@ -16,8 +16,8 @@ SS_parlines(
 \item{ctlfile}{File name of control file including path.}
 
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{version}{SS version number. Currently "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30 = 3.3).
@@ -48,7 +48,8 @@ break down under certain circumstances
 }
 \examples{
 \dontrun{
-parlines <- SS_parlines(ctlfile = "c:/ss/Simple/Control.SS_New")
+ctlfile <- file.path(system.file("extdata", "simple_small", package = "r4ss"), "control.ss_new")
+parlines <- SS_parlines(ctlfile = ctlfile)
 head(parlines)
 #       LO    HI     INIT PRIOR PR_type   SD PHASE              Label Line_num
 # 42  0.05  0.15  0.10000  0.10       0  0.8    -3  NatM_p_1_Fem_GP_1       42

@@ -7,7 +7,7 @@
 \usage{
 table_compweight(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   caption = paste("Data weightings applied to compositions",
     "according to the `Francis` method. `Obs.` refers to the number of unique",
     "composition vectors included in the likelihood. `N input` and `N adj.`",
