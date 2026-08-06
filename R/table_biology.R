@@ -7,8 +7,8 @@
 #'
 #' @inheritParams table_exec_summary
 #' @inheritParams r4ss_params
-#' @param selexyr The year to summarize selectivity, the default is the final
-#' model year.
+#' @param selexyr The year to summarize selectivity, NULL will use the most 
+#' recent year with selectivity reported in the model output.
 #'
 #' @family table functions
 #' @return Individual .rda files containing a list of table and caption
@@ -19,11 +19,30 @@ table_biology <- function(
   replist,
   dir = replist[["inputs"]][["dir"]],
   fleetnames = replist[["FleetNames"]],
-  selexyr = replist[["endyr"]],
+  selexyr = NULL,
   verbose = TRUE
 ) {
   # check the input
   check_replist(replist)
+
+  selexyrs_age <- unique(replist[["ageselex"]][["Yr"]])
+  selexyrs_size <- unique(replist[["sizeselex"]][["Yr"]])
+  
+  if (is.null(selexyr)) {
+    # filter out years beyond the final year of the model
+    selexyrs_age <- selexyrs_age[selexyrs_age <= replist[["endyr"]]]
+    selexyrs_size <- selexyrs_size[selexyrs_size <= replist[["endyr"]]]
+    selexyr <- max(c(selexyrs_age, selexyrs_size))
+    cap_selexyr <- "final model year"
+  } else {
+    if (!selexyr %in% c(selexyrs_age, selexyrs_size)) {
+      cli::cli_abort(
+        "selexyr {selexyr} is not in the model output. ",
+        "Available years are {c(selexyrs_age, selexyrs_size)}"
+      )
+    }
+    cap_selexyr <- selexyr
+  }
 
   # create the rda_dir
   rda_dir <- file.path(
@@ -39,12 +58,110 @@ table_biology <- function(
   biology <- replist[["endgrowth"]] # biology at length final model year
   nsexes <- replist[["nsexes"]]
   nfleets <- replist[["nfleets"]]
-  lbinspop <- replist[["lbinspop"]]
-  nlbinspop <- replist[["nlbinspop"]]
   sizeselex <- replist[["sizeselex"]]
   ageselex <- replist[["ageselex"]]
   accuage <- replist[["accuage"]] # max age
-  FleetNames <- replist[["FleetNames"]]
+
+  sex_labels <- c("_f", "_m")
+
+  # Build output column names from fleet ids and sex ids.
+  make_curve_names <- function(fleet_ids, sex_ids) {
+    if (length(fleet_ids) == 0) {
+      return(character())
+    }
+    if (nsexes == 1) {
+      return(fleetnames[fleet_ids])
+    }
+    paste0(fleetnames[fleet_ids], sex_labels[sex_ids])
+  }
+
+  # Extract one selectivity or retention table for the requested year and factor.
+  build_curve_table <- function(data, value_cols, factor_name, x_name, x_values,
+                                fleet_ids = seq_len(nfleets)) {
+    factor_rows <- data[
+      data[["Yr"]] == selexyr & data[["Factor"]] == factor_name,
+      ,
+      drop = FALSE
+    ]
+    if (nrow(factor_rows) == 0 || length(fleet_ids) == 0) {
+      out <- data.frame(x_values)
+      names(out) <- x_name
+      return(out)
+    }
+
+    combos <- expand.grid(
+      Fleet = fleet_ids,
+      Sex = seq_len(nsexes),
+      KEEP.OUT.ATTRS = FALSE
+    )
+    curve_cols <- purrr::map(seq_len(nrow(combos)), function(i) {
+      match_row <- factor_rows[
+        factor_rows[["Fleet"]] == combos[["Fleet"]][i] &
+          factor_rows[["Sex"]] == combos[["Sex"]][i],
+        value_cols,
+        drop = FALSE
+      ]
+      if (nrow(match_row) == 0) {
+        return(NULL)
+      }
+      data.frame(value = round(as.numeric(match_row[1, , drop = TRUE]), digits = 2))
+    })
+    keep_cols <- !purrr::map_lgl(curve_cols, is.null)
+    out <- data.frame(x_values)
+    names(out) <- x_name
+    if (!any(keep_cols)) {
+      return(out)
+    }
+
+    curve_names <- make_curve_names(
+      fleet_ids = combos[["Fleet"]][keep_cols],
+      sex_ids = combos[["Sex"]][keep_cols]
+    )
+    curve_cols <- purrr::map2(
+      curve_cols[keep_cols],
+      curve_names,
+      function(curve_col, curve_name) {
+        names(curve_col) <- curve_name
+        curve_col
+      }
+    )
+
+    out <- dplyr::bind_cols(
+      out,
+      dplyr::bind_cols(curve_cols)
+    )
+    out
+  }
+
+  # Assemble the biology-at-age table, with sex-specific columns when needed.
+  build_biology_table <- function() {
+    if (nsexes == 1) {
+      return(data.frame(
+        Age = biology[, "Age_Beg"],
+        Ave_Length = round(biology[, "Len_Beg"], digits = 1),
+        Ave_Wght = round(biology[, "Wt_Beg"], digits = 2),
+        Mature = round(biology[, "Len_Mat"], digits = 2),
+        Fecund = round(biology[, "Mat*Fecund"], digits = 2)
+      ))
+    }
+
+    female <- biology[biology[["Sex"]] == 1, , drop = FALSE]
+    male <- biology[biology[["Sex"]] == 2, , drop = FALSE]
+    dplyr::bind_cols(
+      data.frame(
+        Age = female[, "Age_Beg"],
+        Ave_Length_f = round(female[, "Len_Beg"], digits = 1),
+        Ave_Wght_f = round(female[, "Wt_Beg"], digits = 2),
+        Mature_f = round(female[, "Len_Mat"], digits = 2),
+        Fecund_f = round(female[, "Mat*Fecund"], digits = 2)
+      ),
+      data.frame(
+        Ave_Length_m = round(male[, "Len_Beg"], digits = 1),
+        Ave_Wght_m = round(male[, "Wt_Beg"], digits = 2),
+        Mature_m = round(male[, "Len_Mat"], digits = 2)
+      )
+    )
+  }
 
   # empty list to store output
   tables <- list()
@@ -63,45 +180,9 @@ table_biology <- function(
     bio_table <- FALSE
   }
   if (bio_table) {
-    if (nsexes == 1) {
-      # Table
-      # Age: Ave Len - Ave Wgt - % mature (by sex)
-      # "Mat*Fecund" is = biology[["Fec"]] %*% alk (mat = 1, fecundity = fecundity_l * ALK)
-      bio <- data.frame(
-        Age = biology[, "Age_Beg"],
-        Ave_Length = round(biology[, "Len_Beg"], digits = 1),
-        Ave_Wght = round(biology[, "Wt_Beg"], digits = 2),
-        Mature = round(biology[, "Len_Mat"], digits = 2),
-        Fecund = round(biology[, "Mat*Fecund"], digits = 2)
-      )
-    }
-    if (nsexes == 2) {
-      bio <- data.frame(
-        Age = biology[biology[["Sex"]] == 1, "Age_Beg"],
-        Ave_Length_f = round(
-          biology[biology[["Sex"]] == 1, "Len_Beg"],
-          digits = 1
-        ),
-        Ave_Wght_f = round(
-          biology[biology[["Sex"]] == 1, "Wt_Beg"],
-          digits = 2
-        ),
-        Mature_f = round(biology[biology[["Sex"]] == 1, "Len_Mat"], digits = 2),
-        Fecund_f = round(
-          biology[biology[["Sex"]] == 1, "Mat*Fecund"],
-          digits = 2
-        ),
-        Ave_Length_m = round(
-          biology[biology[["Sex"]] == 2, "Len_Beg"],
-          digits = 1
-        ),
-        Ave_Wght_m = round(
-          biology[biology[["Sex"]] == 2, "Wt_Beg"],
-          digits = 2
-        ),
-        Mature_m = round(biology[biology[["Sex"]] == 2, "Len_Mat"], digits = 2)
-      )
-    }
+    # Age: Ave Len - Ave Wgt - % mature (by sex)
+    # "Mat*Fecund" is = biology[["Fec"]] %*% alk (mat = 1, fecundity = fecundity_l * ALK)
+    bio <- build_biology_table()
 
     table_biology_at_age <- list(
       cap = "Biology at age.",
@@ -114,61 +195,31 @@ table_biology <- function(
     )
   }
   # Selectivity by age
-  retnames <- NULL
-  selex.age <- selex.age.ret <- data.frame(Age = 0:accuage)
-  for (j in 1:nsexes) {
-    for (i in 1:nfleets) {
-      ind <- ageselex[!is.na(ageselex[["Fleet"]]), "Fleet"] == i
-      find <- which(
-        ageselex[ind, "Sex"] == j &
-          ageselex[ind, "Yr"] == selexyr &
-          ageselex[ind, "Factor"] == "Asel"
-      )
-      selex.age <- data.frame(
-        selex.age,
-        round(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2)
-      )
-    }
-
-    for (i in 1:nfleets) {
-      find <- which(
-        ageselex[["Fleet"]] == i &
-          ageselex[["Sex"]] == j &
-          ageselex[["Yr"]] == selexyr &
-          ageselex[["Factor"]] == "Aret"
-      )
-      if (length(find) != 0) {
-        if (j == 1) {
-          retnames <- c(retnames, FleetNames[i])
-        }
-        selex.age.ret <- data.frame(
-          selex.age.ret,
-          round(as.numeric(ageselex[find, 8:dim(ageselex)[2]]), digits = 2)
-        )
-      }
-    }
-  }
-  if (nsexes == 1) {
-    colnames(selex.age) <- c("Age", FleetNames)
-    if (!is.null(retnames)) {
-      colnames(selex.age.ret) <- c("Age", retnames)
-    }
-  } else {
-    colnames(selex.age) <- c(
-      "Age",
-      paste0(FleetNames, "_f"),
-      paste0(FleetNames, "_m")
-    )
-    if (!is.null(retnames)) {
-      colnames(selex.age.ret) <- c(
-        "Age",
-        paste0(retnames, "_f"),
-        paste0(retnames, "_m")
-      )
-    }
-  }
+  ageselex_clean <- ageselex[!is.na(ageselex[["Fleet"]]), , drop = FALSE]
+  age_value_cols <- names(ageselex_clean)[8:ncol(ageselex_clean)]
+  age_ret_fleets <- sort(unique(ageselex_clean[
+    ageselex_clean[["Yr"]] == selexyr &
+      ageselex_clean[["Factor"]] == "Aret" &
+      ageselex_clean[["Sex"]] == 1,
+    "Fleet"
+  ]))
+  selex.age <- build_curve_table(
+    data = ageselex_clean,
+    value_cols = age_value_cols,
+    factor_name = "Asel",
+    x_name = "Age",
+    x_values = 0:accuage
+  )
+  selex.age.ret <- build_curve_table(
+    data = ageselex_clean,
+    value_cols = age_value_cols,
+    factor_name = "Aret",
+    x_name = "Age",
+    x_values = 0:accuage,
+    fleet_ids = age_ret_fleets
+  )
   table_selectivity_at_age <- list(
-    cap = "Selectivity at age for each fleet.",
+    cap = glue::glue("Selectivity at age for each fleet in {cap_selexyr}."),
     table = selex.age
   )
   tables[["table_selectivity_at_age"]] <- table_selectivity_at_age
@@ -178,7 +229,7 @@ table_biology <- function(
   )
 
   table_retention_at_age <- list(
-    cap = "Retention at age for each fleet.",
+    cap = glue::glue("Retention at age for each fleet in {cap_selexyr}."),
     table = selex.age.ret
   )
   tables[["table_retention_at_age"]] <- table_retention_at_age
@@ -187,61 +238,32 @@ table_biology <- function(
     file = file.path(rda_dir, "table_retention_at_age.rda")
   )
 
-  # selecitivity and retention by length
+  # selectivity and retention by length
   if (!is.null(sizeselex)) {
-    retnames <- NULL
-    selex.size <- selex.size.ret <- data.frame(
-      Length = as.numeric(names(sizeselex[6:dim(sizeselex)[2]]))
+    size_value_cols <- names(sizeselex)[6:ncol(sizeselex)]
+    size_ret_fleets <- sort(unique(sizeselex[
+      sizeselex[["Yr"]] == selexyr &
+        sizeselex[["Factor"]] == "Keep" &
+        sizeselex[["Sex"]] == 1,
+      "Fleet"
+    ]))
+    selex.size <- build_curve_table(
+      data = sizeselex,
+      value_cols = size_value_cols,
+      factor_name = "Lsel",
+      x_name = "Length",
+      x_values = as.numeric(size_value_cols)
     )
-    for (j in 1:nsexes) {
-      for (i in 1:nfleets) {
-        find <- which(
-          sizeselex[["Fleet"]] == i &
-            sizeselex[["Sex"]] == j &
-            sizeselex[["Yr"]] == selexyr &
-            sizeselex[["Factor"]] == "Lsel"
-        )
-        selex.size <- data.frame(
-          selex.size,
-          round(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2)
-        )
-
-        find <- which(
-          sizeselex[["Fleet"]] == i &
-            sizeselex[["Sex"]] == j &
-            sizeselex[["Yr"]] == selexyr &
-            sizeselex[["Factor"]] == "Keep"
-        )
-        if (length(find) != 0) {
-          if (j == 1) {
-            retnames <- c(retnames, FleetNames[i])
-          }
-          selex.size.ret <- data.frame(
-            selex.size.ret,
-            round(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2)
-          )
-        }
-      }
-    }
-    if (nsexes == 1) {
-      colnames(selex.size) <- c(
-        "Length",
-        FleetNames
-      )
-    } else {
-      colnames(selex.size) <- c(
-        "Length",
-        paste0(FleetNames, "_f"),
-        paste0(FleetNames, "_m")
-      )
-      colnames(selex.size.ret) <- c(
-        "Length",
-        paste0(retnames, "_f"),
-        paste0(retnames, "_m")
-      )
-    }
+    selex.size.ret <- build_curve_table(
+      data = sizeselex,
+      value_cols = size_value_cols,
+      factor_name = "Keep",
+      x_name = "Length",
+      x_values = as.numeric(size_value_cols),
+      fleet_ids = size_ret_fleets
+    )
     table_selectivity_at_length <- list(
-      cap = "Selectivity at length for each fleet.",
+      cap = glue::glue("Selectivity at length for each fleet in {cap_selexyr}."),
       table = selex.size
     )
     tables[["table_selectivity_at_length"]] <- table_selectivity_at_length
@@ -251,7 +273,7 @@ table_biology <- function(
     )
 
     table_retention_at_length <- list(
-      cap = "Retention at length for each fleet.",
+      cap = glue::glue("Retention at length for each fleet in {cap_selexyr}."),
       table = selex.size.ret
     )
     tables[["table_retention_at_length"]] <- table_retention_at_length
