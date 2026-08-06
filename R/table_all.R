@@ -11,7 +11,7 @@
 table_all <- function(
   replist,
   dir = replist[["inputs"]][["dir"]],
-  fleetnames = NULL,
+  fleetnames = replist[["FleetNames"]],
   selexyr = NULL,
   verbose = TRUE
 ) {
@@ -51,8 +51,8 @@ table_all <- function(
     tables[["table_biology"]] <- table_biology(
       replist = replist,
       dir = dir,
-      fleetnames,
-      selexyr,
+      fleetnames = fleetnames,
+      selexyr = selexyr,
       verbose = verbose
     )
   }

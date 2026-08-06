@@ -164,7 +164,6 @@ SSplotCatch <-
     catch_units <- replist[["catch_units"]]
     fleet_types <- replist[["definitions"]][["fleet_type"]]
     endyr <- replist[["endyr"]]
-    FleetNames <- replist[["FleetNames"]]
     IsFishFleet <- replist[["IsFishFleet"]]
     SS_versionshort <- toupper(substr(replist[["SS_version"]], 1, 8))
     SS_versionNumeric <- replist[["SS_versionNumeric"]]

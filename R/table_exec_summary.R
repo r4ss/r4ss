@@ -56,7 +56,7 @@ table_exec_summary <- function(
   replist,
   dir = replist[["inputs"]][["dir"]],
   ci_value = 0.95,
-  fleetnames = NULL,
+  fleetnames = replist[["FleetNames"]],
   so_units = "biomass (mt)",
   endyr = NULL,
   verbose = TRUE

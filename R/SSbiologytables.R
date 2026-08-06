@@ -44,7 +44,6 @@ SSbiologytables <- function(
   sizeselex <- replist[["sizeselex"]]
   ageselex <- replist[["ageselex"]]
   accuage <- replist[["accuage"]] # max age
-  FleetNames <- replist[["FleetNames"]]
 
   # figure out path to where PNG files will go
   plotdir <- file.path(dir, printfolder)
@@ -97,8 +96,8 @@ SSbiologytables <- function(
   }
   colnames(selex.age) <- c(
     "Age",
-    paste0(FleetNames, "_f"),
-    paste0(FleetNames, "_m")
+    paste0(fleetnames, "_f"),
+    paste0(fleetnames, "_m")
   )
   write.csv(
     selex.age,
@@ -132,7 +131,7 @@ SSbiologytables <- function(
       )
       if (length(find) != 0) {
         if (j == 1) {
-          retnames <- c(retnames, FleetNames[i])
+          retnames <- c(retnames, fleetnames[i])
         }
         selex.size.ret <- data.frame(
           selex.size.ret,
@@ -143,8 +142,8 @@ SSbiologytables <- function(
   }
   colnames(selex.size) <- c(
     "Length",
-    paste0(FleetNames, "_f"),
-    paste0(FleetNames, "_m")
+    paste0(fleetnames, "_f"),
+    paste0(fleetnames, "_m")
   )
   colnames(selex.size.ret) <- c(
     "Length",

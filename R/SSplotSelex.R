@@ -195,10 +195,6 @@ SSplotSelex <-
         )
       }
     }
-    # note lower-case value is the one used below (either equal to vector from replist, or input by user)
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
 
     if (sexes[1] == "all") {
       sexes <- 1:nsexes
