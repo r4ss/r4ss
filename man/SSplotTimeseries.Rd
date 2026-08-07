@@ -10,7 +10,7 @@ SSplotTimeseries(
   add = FALSE,
   areas = "all",
   areacols = NULL,
-  areanames = "default",
+  areanames = NULL,
   forecastplot = TRUE,
   uncertainty = TRUE,
   bioscale = 1,
@@ -91,10 +91,10 @@ Nsexes in the data file so the scaling is done automatically by SS3.}
 to the screen.}
 
 \item{btarg}{Target depletion to be used in plots showing depletion. May be
-omitted by setting to 0. "default" chooses value based on modeloutput.}
+omitted by setting to 0. NULL chooses value based on model output.}
 
 \item{minbthresh}{Threshold depletion to be used in plots showing depletion.
-May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
+May be omitted by setting to 0. NULL assumes 0.25 unless btarg in model
 output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).}
 
 \item{xlab}{x axis label for all plots}

@@ -10,7 +10,7 @@ SSplotCohortCatch(
   add = FALSE,
   plot = TRUE,
   print = FALSE,
-  cohortcols = "default",
+  cohortcols = NULL,
   cohortfrac = 1,
   cohortvec = NULL,
   cohortlabfrac = 0.1,

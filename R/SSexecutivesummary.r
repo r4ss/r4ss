@@ -64,7 +64,7 @@
 #'
 SSexecutivesummary <- function(
   replist,
-  plotfolder = "default",
+  plotfolder = NULL,
   ci_value = 0.95,
   es_only = FALSE,
   fleetnames = replist[["FleetNames"]],
@@ -114,11 +114,7 @@ SSexecutivesummary <- function(
     )
   }
   csv.dir <- file.path(
-    ifelse(
-      plotfolder == "default",
-      yes = replist[["inputs"]][["dir"]],
-      no = plotfolder
-    ),
+    ifelse(is.null(plotfolder), replist[["inputs"]][["dir"]], plotfolder),
     "tables"
   )
 
@@ -218,7 +214,7 @@ SSexecutivesummary <- function(
   # ======================================================================
   # Determine the fleet name fisheries with catch
   # ======================================================================
-  fleetnames <- if (is.null(fleetnames) || fleetnames[1] == "default") {
+  fleetnames <- if (is.null(fleetnames)) {
     replist[["FleetNames"]]
   } else {
     fleetnames

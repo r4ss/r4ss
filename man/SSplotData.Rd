@@ -10,7 +10,7 @@ SSplotData(
   print = FALSE,
   plotdir = replist[["inputs"]][["dir"]],
   subplots = 1:2,
-  fleetcol = "default",
+  fleetcol = NULL,
   datatypes = "all",
   fleets = "all",
   fleetnames = replist[["FleetNames"]],
@@ -47,7 +47,7 @@ Currently there are only 2 subplots:
 \item 2 points scaled to indicate quantity or precision of data
 }}
 
-\item{fleetcol}{Either the string "default", or a vector of colors to use
+\item{fleetcol}{Optional vector of colors to use
 for each fleet. If tagging data or environmental data are included,
 an additional color needs to be
 added for the tag releases which are not assigned to a fleet.}

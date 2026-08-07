@@ -13,7 +13,7 @@
 #'   \item 2 points scaled to indicate quantity or precision of data
 #' }
 #' @param subplot Deprecated. Use subplots instead.
-#' @param fleetcol Either the string "default", or a vector of colors to use
+#' @param fleetcol Optional vector of colors to use
 #' for each fleet. If tagging data or environmental data are included,
 #' an additional color needs to be
 #' added for the tag releases which are not assigned to a fleet.
@@ -42,7 +42,7 @@ SSplotData <- function(
   print = FALSE,
   plotdir = replist[["inputs"]][["dir"]],
   subplots = 1:2,
-  fleetcol = "default",
+  fleetcol = NULL,
   datatypes = "all",
   fleets = "all",
   fleetnames = replist[["FleetNames"]],
@@ -406,7 +406,7 @@ SSplotData <- function(
   }
 
   # define colors
-  if (fleetcol[1] == "default") {
+  if (is.null(fleetcol)) {
     if (nfleets2 > 3) {
       fleetcol <- rich.colors.short(nfleets2 + 1)[-1]
     }

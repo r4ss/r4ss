@@ -118,7 +118,7 @@ table_exec_summary <- function(
   # ======================================================================
   # Determine the fleet name fisheries with catch
   # ======================================================================
-  fleetnames <- if (is.null(fleetnames) || fleetnames[1] == "default") {
+  fleetnames <- if (is.null(fleetnames)) {
     replist[["FleetNames"]]
   } else {
     fleetnames

@@ -48,7 +48,7 @@ SSplotNumbers <-
     print = FALSE,
     numbers.unit = 1000,
     areas = "all",
-    areanames = "default",
+    areanames = NULL,
     areacols = NULL,
     pntscalar = 2.6,
     bub.bg = gray(0.5, alpha = 0.5),
@@ -126,7 +126,7 @@ SSplotNumbers <-
           )
         }
       }
-      if (areanames[1] == "default") {
+      if (is.null(areanames)) {
         areanames <- paste0("area", 1:nareas)
       }
 

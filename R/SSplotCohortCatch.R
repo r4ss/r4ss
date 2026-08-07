@@ -32,7 +32,7 @@ SSplotCohortCatch <-
     add = FALSE,
     plot = TRUE,
     print = FALSE,
-    cohortcols = "default",
+    cohortcols = NULL,
     cohortfrac = 1,
     cohortvec = NULL,
     cohortlabfrac = 0.1,
@@ -205,7 +205,7 @@ SSplotCohortCatch <-
     maxvecB <- cohortmaxB[cohorts %in% bigcohortsB]
 
     # set colors
-    if (cohortcols[1] == "default") {
+    if (is.null(cohortcols)) {
       cohortcolsN <- rich.colors.short(length(cohortvecN), alpha = .7)
       cohortcolsB <- rich.colors.short(length(cohortvecB), alpha = .7)
     } else {

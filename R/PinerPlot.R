@@ -76,16 +76,16 @@ PinerPlot <-
     profile.label = expression(log(italic(R)[0])),
     exact = FALSE,
     ylab = "Change in -log-likelihood",
-    col = "default",
-    pch = "default",
+    col = NULL,
+    pch = NULL,
     lty = 1,
     lty.total = 1,
     lwd = 2,
     lwd.total = 3,
     cex = 1,
     cex.total = 1.5,
-    xlim = "default",
-    ymax = "default",
+    xlim = NULL,
+    ymax = NULL,
     xaxs = "r",
     yaxs = "r",
     type = "o",
@@ -186,7 +186,7 @@ PinerPlot <-
     cli::cli_alert_info(
       "Parameter matching profile.string = '{profile.string}': '{parlabel}'. Parameter values (after subsetting based on input 'models'): {paste(parvec, collapse = ', ')}"
     )
-    if (xlim[1] == "default") {
+    if (is.null(xlim)) {
       xlim <- range(parvec)
     }
 
@@ -285,7 +285,7 @@ PinerPlot <-
     }
 
     # set default y-limits
-    if (ymax == "default") {
+    if (is.null(ymax)) {
       ymax <- 1.1 * max(prof.table[subset, -(1:2)], na.rm = TRUE)
     }
     ylim <- c(0, ymax)
@@ -294,10 +294,10 @@ PinerPlot <-
 
     # default colors and plot characters
     nlines <- ncol(prof.table) - 2
-    if (col[1] == "default") {
+    if (is.null(col)) {
       col <- rich.colors.short(nlines)
     }
-    if (pch[1] == "default") {
+    if (is.null(pch)) {
       pch <- 1:nlines
     }
     lwd <- c(lwd.total, rep(lwd, nlines - 1))

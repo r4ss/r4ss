@@ -23,11 +23,11 @@
 #' @param xlab x-axis label
 #' @param ylab y-axis label
 #' @param horiz_lab axis labels set horizontal all the time (TRUE), never
-#' (FALSE) or only when relatively short ("default")
+#' (FALSE) or, if NULL, only when relatively short
 #' @param xbuffer extra space around points on the left and right as fraction
 #' of total width of plot
 #' @param ybuffer extra space around points on the bottom and top as fraction
-#' of total height of plot. "default" will cause c(0,.15) for sexratio.option=1
+#' of total height of plot. NULL will cause c(0,.15) for sexratio.option=1
 #' and c(.15, .3) for sexratio.option=2.
 #' @param yupper upper limit on ymax (applied before addition of ybuffer)
 #' @param datonly make plots of data without fits?
@@ -85,9 +85,9 @@ make_multifig_sexratio <-
     cex.main = 1,
     xlab = "",
     ylab = "Fraction female",
-    horiz_lab = "default",
+    horiz_lab = NULL,
     xbuffer = c(.1, .1),
-    ybuffer = "default",
+    ybuffer = NULL,
     yupper = NULL,
     datonly = FALSE,
     showsampsize = TRUE,
@@ -101,10 +101,10 @@ make_multifig_sexratio <-
     lwd = 2,
     nlegends = 3,
     legtext = list("yr", "sampsize", "effN"),
-    legx = "default",
-    legy = "default",
-    legadjx = "default",
-    legadjy = "default",
+    legx = NULL,
+    legy = NULL,
+    legadjx = NULL,
+    legadjy = NULL,
     legsize = c(1.2, 1.0),
     legfont = c(2, 1),
     ipage = 0,
@@ -283,7 +283,7 @@ make_multifig_sexratio <-
       # females:total
       yrange <- c(0, 1)
     }
-    if (ybuffer[1] == "default") {
+    if (is.null(ybuffer)) {
       if (sexratio.option == 1) {
         ybuffer <- c(0, 0.15)
       }
@@ -314,7 +314,7 @@ make_multifig_sexratio <-
     yaxs_lab <- pretty(yrange)
     maxchar <- max(nchar(yaxs_lab))
     ## should y-axis label be horizontal?
-    if (horiz_lab == "default") {
+    if (is.null(horiz_lab)) {
       horiz_lab <- maxchar < 6
     }
     if (is.null(axis1)) {
@@ -409,26 +409,26 @@ make_multifig_sexratio <-
           text_i <- ""
         }
         ## location of legend
-        if (legx[1] == "default") {
+        if (is.null(legx)) {
           ## default is left side for first plot, right thereafter
           textx <- ifelse(i == 1, usr[1], usr[2])
         } else {
           textx <- legx[i]
         }
-        if (legy[1] == "default") {
+        if (is.null(legy)) {
           texty <- usr[4] # default is top for all plots
           texty2 <- usr[3] # default is bottom legends associated with males
         } else {
           texty <- legy[i]
           texty2 <- -legy[i] # this setting probably won't work too well
         }
-        if (legadjx[1] == "default") {
+        if (is.null(legadjx)) {
           ## default x-value is left side for first legend, right thereafter
           adjx <- ifelse(i == 1, -.1, 1.0)
         } else {
           adjx <- legadjx[i]
         }
-        if (legadjy[1] == "default") {
+        if (is.null(legadjy)) {
           ## default y-value is top for first 2 legends, below thereafter
           adjy <- ifelse(i < 3, 1.3, 1.3 + 1.3 * (i - 2))
         } else {

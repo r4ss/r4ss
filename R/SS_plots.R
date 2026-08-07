@@ -60,14 +60,14 @@
 #' c(1,3), listing areas for which plots should be made in a multi-area model.
 #' By default, plots will be made for all areas (excepting cases where the
 #' function has not yet been updated for multi-area models). Default="all".
-#' @param fleetcols Either the string "default", or a vector of colors to use
-#' for each fleet.  Default="default".
+#' @param fleetcols Optional vector of colors to use for each fleet. If NULL,
+#' colors are generated automatically.
 #' @param fleetlty Vector of line types used for each fleet in some plots.
 #' Default=1.
 #' @param fleetpch Vector of point types used for each fleet in some plots.
 #' Default=1.
 #' @param areanames Optional vector of names for each area used in titles.
-#' Default="default".
+#' If NULL, names are generated automatically where needed.
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the timeseries plots and
@@ -249,12 +249,12 @@ SS_plots <-
     fleets = "all",
     areas = "all",
     fleetnames = replist[["FleetNames"]],
-    fleetcols = "default",
+    fleetcols = NULL,
     fleetlty = 1,
     fleetpch = 1,
     lwd = 1,
     areacols = NULL,
-    areanames = "default",
+    areanames = NULL,
     verbose = TRUE,
     uncertainty = TRUE,
     forecastplot = FALSE,
@@ -406,7 +406,7 @@ SS_plots <-
     }
 
     # set fleet-specific names and plotting parameters
-    if (fleetcols[1] == "default") {
+    if (is.null(fleetcols)) {
       fleetcols <- rich.colors.short(nfishfleets)
       if (nfishfleets > 2) fleetcols <- rich.colors.short(nfishfleets + 1)[-1]
     }
@@ -957,7 +957,7 @@ SS_plots <-
           res = res,
           cex.main = cex.main,
           catchasnumbers = catchasnumbers,
-          order = "default",
+          order = NULL,
           catchbars = catchbars,
           labels = catlabels,
           legendloc = legendloc,

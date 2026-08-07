@@ -25,13 +25,28 @@ table_biology <- function(
   # check the input
   check_replist(replist)
 
-  selexyrs_age <- unique(replist[["ageselex"]][["Yr"]])
-  selexyrs_size <- unique(replist[["sizeselex"]][["Yr"]])
+  # get vectors of reported years for age and size selectivity
+  if (!is.null(replist[["ageselex"]])) {
+    selexyrs_age <- unique(replist[["ageselex"]][["Yr"]])
+  } else {
+    selexyrs_age <- NULL
+  }
+  if (!is.null(replist[["sizeselex"]])) {
+    selexyrs_size <- unique(replist[["sizeselex"]][["Yr"]])
+  } else {
+    selexyrs_size <- NULL
+  }
 
   if (is.null(selexyr)) {
     # filter out years beyond the final year of the model
     selexyrs_age <- selexyrs_age[selexyrs_age <= replist[["endyr"]]]
     selexyrs_size <- selexyrs_size[selexyrs_size <= replist[["endyr"]]]
+    if (length(selexyrs_age) == 0 && length(selexyrs_size) == 0) {
+      cli::cli_abort(
+        "No selectivity years found in the model output. ",
+        "Check that the model output includes age and/or size selectivity."
+      )
+    }
     selexyr <- max(c(selexyrs_age, selexyrs_size))
     cap_selexyr <- "final model year"
   } else {

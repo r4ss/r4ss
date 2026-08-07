@@ -6,7 +6,7 @@
 \usage{
 SSexecutivesummary(
   replist,
-  plotfolder = "default",
+  plotfolder = NULL,
   ci_value = 0.95,
   es_only = FALSE,
   fleetnames = replist[["FleetNames"]],

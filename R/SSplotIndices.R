@@ -93,8 +93,8 @@ SSplotIndices <-
       "Deviation"
     ), # 14
     fleetcols = NULL,
-    col1 = "default",
-    col2 = "default",
+    col1 = NULL,
+    col2 = NULL,
     col3 = "blue",
     col4 = "red",
     pch1 = 21,
@@ -676,7 +676,7 @@ SSplotIndices <-
         legend <- FALSE
       }
 
-      if (col1[1] == "default") {
+      if (is.null(col1)) {
         colvec1 <- "black"
         if (usecol & nseasons == 4) {
           colvec1 <- c("blue4", "green3", "orange2", "red3")
@@ -692,7 +692,7 @@ SSplotIndices <-
           colvec1 <- rep(col1, nseasons)
         }
       }
-      if (col2[1] == "default") {
+      if (is.null(col2)) {
         colvec2 <- "blue"
         if (usecol & nseasons == 4) {
           colvec2 <- c("blue4", "green3", "orange2", "red3")

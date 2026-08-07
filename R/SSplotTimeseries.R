@@ -34,9 +34,9 @@
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
 #' @param btarg Target depletion to be used in plots showing depletion. May be
-#' omitted by setting to 0. "default" chooses value based on modeloutput.
+#' omitted by setting to 0. NULL chooses value based on model output.
 #' @param minbthresh Threshold depletion to be used in plots showing depletion.
-#' May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
+#' May be omitted by setting to 0. NULL assumes 0.25 unless btarg in model
 #' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
 #' @param xlab x axis label for all plots
 #' @author Ian Taylor, Ian Stewart
@@ -49,7 +49,7 @@ SSplotTimeseries <-
     add = FALSE,
     areas = "all",
     areacols = NULL,
-    areanames = "default",
+    areanames = NULL,
     forecastplot = TRUE,
     uncertainty = TRUE,
     bioscale = 1,
@@ -156,7 +156,7 @@ SSplotTimeseries <-
         )
       }
     }
-    if (nareas > 1 & areanames[1] == "default") {
+    if (nareas > 1 & is.null(areanames)) {
       areanames <- paste("area", 1:nareas)
     }
 

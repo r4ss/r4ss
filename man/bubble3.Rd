@@ -15,7 +15,7 @@ bubble3(
   bg.open = gray(0.95, 0.3),
   legend = TRUE,
   legendloc = "top",
-  legend.z = "default",
+  legend.z = NULL,
   legend.yadj = 1.1,
   main = "",
   cex.main = 1,

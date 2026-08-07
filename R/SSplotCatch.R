@@ -73,11 +73,11 @@ SSplotCatch <-
     type = "l",
     fleetlty = 1,
     fleetpch = 1,
-    fleetcols = "default",
+    fleetcols = NULL,
     fleetnames = replist[["FleetNames"]],
     lwd = 3,
     areacols = NULL,
-    areanames = "default",
+    areanames = NULL,
     minyr = -Inf,
     maxyr = Inf,
     annualcatch = TRUE,
@@ -85,7 +85,7 @@ SSplotCatch <-
     plotdir = replist[["inputs"]][["dir"]],
     showlegend = TRUE,
     legendloc = "topleft",
-    order = "default",
+    order = NULL,
     xlab = "Year",
     labels = c(
       "Harvest rate/Year", # 1
@@ -369,7 +369,7 @@ SSplotCatch <-
     fleetnames <- fleetnames[fleetnums]
 
     # sort out order of fleets in plot
-    if (order[1] == "default") {
+    if (is.null(order)) {
       order <- nfleets_with_catch:1
     }
 
@@ -387,7 +387,7 @@ SSplotCatch <-
       fleetpch <- rep(fleetpch, nfleets_with_catch)
     }
 
-    if (fleetcols[1] == "default") {
+    if (is.null(fleetcols)) {
       fleetcols <- rich.colors.short(nfleets_with_catch)
       if (nfleets_with_catch > 2) {
         fleetcols <- rich.colors.short(nfleets_with_catch + 1)[-1]

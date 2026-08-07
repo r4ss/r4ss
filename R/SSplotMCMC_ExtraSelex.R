@@ -22,7 +22,7 @@ SSplotMCMC_ExtraSelex <- function(
   add = FALSE,
   nsexes = 1,
   shift = 0,
-  fleetname = "default",
+  fleetname = NULL,
   col = "blue"
 ) {
   # post is a data.frame containing either derived_posteriors.sso or a good subset of it
@@ -52,7 +52,7 @@ SSplotMCMC_ExtraSelex <- function(
     quants <- apply(sel, 2, quantile, probs = c(0.025, 0.5, 0.975))
 
     xlab <- "Age (years)"
-    if (fleetname == "default") {
+    if (is.null(fleetname)) {
       fleetname <- paste("Fleet", i)
     }
 

@@ -101,10 +101,6 @@ SSplotSexRatio <-
       )
     }
 
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
-
     ## a few quantities related to data type and plot number
     if (kind == "LEN") {
       dbase_kind <- lendbase
