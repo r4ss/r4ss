@@ -21,6 +21,7 @@
 #' @param save.lists Save each list of parsed output as a .Rdata file (with default
 #' filenaming convention based on iteration and date stamp.
 #' @inheritParams SS_output
+#' @inheritParams SStableComparisons
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()]

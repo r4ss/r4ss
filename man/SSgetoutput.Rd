@@ -51,6 +51,9 @@ relationship. This provides an option to provide the units, e.g.
 \code{SpawnOutputLabel = "Spawning output (trillions of eggs)"}.
 This needs to be a user input because the units depend on the choice of
 fecundity parameters which are calculated outside of the SS3 model.}
+
+\item{modelnames}{optional vector of labels to use as column names. Default
+is \code{summaryoutput[["modelnames"]]}.}
 }
 \description{
 Apply the function \code{\link[=SS_output]{SS_output()}} multiple times and save output as

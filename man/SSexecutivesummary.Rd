@@ -9,7 +9,7 @@ SSexecutivesummary(
   plotfolder = "default",
   ci_value = 0.95,
   es_only = FALSE,
-  fleetnames = NULL,
+  fleetnames = replist[["FleetNames"]],
   add_text = "model area",
   so_units = lifecycle::deprecated(),
   tables = lifecycle::deprecated(),
