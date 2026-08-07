@@ -56,7 +56,7 @@ SSplotYield <-
     punits = "in",
     res = 300,
     ptsize = 10,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     verbose = TRUE
   ) {
     # table to store information on each plot

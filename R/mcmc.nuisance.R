@@ -32,8 +32,8 @@
 #' @export
 #' @seealso [mcmc.out()], [SSgetMCMC()]
 mcmc.nuisance <- function(
-  directory = "c:/mydirectory/", # directory to use
-  run = "mymodel/", # folder with ADMB run files
+  directory = getwd(), # directory to use
+  run = "", # folder with ADMB run files
   file = "posteriors.sso", # the file name of the posteriors
   file2 = "derived_posteriors.sso", # the file name of the posteriors
   bothfiles = FALSE, # read and combine both file and file2

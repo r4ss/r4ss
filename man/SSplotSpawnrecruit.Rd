@@ -17,7 +17,7 @@ SSplotSpawnrecruit(
     italic(B)[0], ")")), expression(paste("Recruitment (relative to  ", italic(R)[0],
     ")")), "Log recruitment deviation"),
   bioscale = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   pwidth = 6.5,
   pheight = 6.5,
   punits = "in",
@@ -26,10 +26,10 @@ SSplotSpawnrecruit(
   verbose = TRUE,
   colvec = c("blue", "black", "black", gray(0, 0.7)),
   ltyvec = c(1, 2, 1, NA),
-  ptcol = "default",
+  ptcol = NULL,
   legend = TRUE,
   legendloc = NULL,
-  minyr = "default",
+  minyr = NULL,
   textmindev = 0.5,
   relative = FALSE,
   expected = TRUE,
@@ -96,8 +96,8 @@ background color provided by \code{ptcol}}
 \item{ltyvec}{vector of length 4 with line types for the 3 lines and 1 set
 of points, where the points are disconnected (lty=NA) by default}
 
-\item{ptcol}{vector or single value for the color of the points, "default"
-will by replaced by a vector of colors of length equal to
+\item{ptcol}{vector or single value for the color of the points. If NULL,
+it will be replaced by a vector of colors of length equal to
 \code{nrow(replist[["recruit"]])}}
 
 \item{legend}{Add a legend?}

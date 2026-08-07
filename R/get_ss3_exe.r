@@ -18,19 +18,11 @@
 #' }
 #' @description The `get_ss3_exe()` function uses the {gh} package to get either
 #' the latest release (if version = NULL) or the specified version of the Stock
-#' Synthesis executable for the appropriate operating system to the directory `dir`
-#' (if dir = NULL, then the executable is downloaded to the working directory).
+#' Synthesis executable for the appropriate operating system to the directory `dir`.
 #' To view the version tags available go to
 #' https://github.com/nmfs-ost/ss3-source-code/tags
 
-get_ss3_exe <- function(dir = NULL, version = NULL) {
-  if (is.null(dir)) {
-    dir <- getwd()
-    message(
-      "No directory provided, the executable will be downloaded to the working directory"
-    )
-  }
-
+get_ss3_exe <- function(dir = getwd(), version = NULL) {
   if (!dir.exists(dir)) {
     stop("Directory doesn't exist: ", dir)
   }

@@ -11,16 +11,16 @@ SS_plots(
   png = TRUE,
   html = png,
   printfolder = "plots",
-  dir = "default",
+  dir = replist[["inputs"]][["dir"]],
   fleets = "all",
   areas = "all",
-  fleetnames = "default",
-  fleetcols = "default",
+  fleetnames = replist[["FleetNames"]],
+  fleetcols = NULL,
   fleetlty = 1,
   fleetpch = 1,
   lwd = 1,
   areacols = NULL,
-  areanames = "default",
+  areanames = NULL,
   verbose = TRUE,
   uncertainty = TRUE,
   forecastplot = FALSE,
@@ -29,9 +29,9 @@ SS_plots(
   samplesizeplots = TRUE,
   compresidplots = TRUE,
   comp.yupper = 0.4,
-  sprtarg = "default",
-  btarg = "default",
-  minbthresh = "default",
+  sprtarg = replist[["sprtarg"]],
+  btarg = replist[["btarg"]],
+  minbthresh = replist[["minbthresh"]],
   pntscalar = NULL,
   bub.scale.pearson = 1.5,
   bub.scale.dat = 3,
@@ -161,8 +161,8 @@ function has not yet been updated for multi-area models). Default="all".}
 
 \item{fleetnames}{Optional replacement for fleetnames used in data file.}
 
-\item{fleetcols}{Either the string "default", or a vector of colors to use
-for each fleet.  Default="default".}
+\item{fleetcols}{Optional vector of colors to use for each fleet. If NULL,
+colors are generated automatically.}
 
 \item{fleetlty}{Vector of line types used for each fleet in some plots.
 Default=1.}
@@ -176,7 +176,7 @@ Default=1.}
 multiple areas. NULL value will be replaced by a default set of areas.}
 
 \item{areanames}{Optional vector of names for each area used in titles.
-Default="default".}
+If NULL, names are generated automatically where needed.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

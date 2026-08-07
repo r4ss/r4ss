@@ -59,8 +59,8 @@ and wtatage.ss (if present) to a new directory, as specified.
 # A theoretical example if "old_model" was present
 # but expect an error
 copy_SS_inputs(
-  dir.old = "c:/SS/old_model",
-  dir.new = "c:/SS/new_model"
+  dir.old = file.path(tempdir(), "old_model"),
+  dir.new = file.path(tempdir(), "new_model")
 )
 # A working example using files stored in {r4ss}
 copy_SS_inputs(

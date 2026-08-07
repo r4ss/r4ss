@@ -13,7 +13,7 @@ SSunavailableSpawningOutput <-
     replist,
     plot = TRUE,
     print = FALSE,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     pwidth = 6.5,
     pheight = 5.0,
     punits = "in",
@@ -47,10 +47,6 @@ SSunavailableSpawningOutput <-
         rep(1, replist[["nfishfleets"]]),
         rep(3, replist[["nfleets"]] - replist[["nfishfleets"]])
       )
-    }
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
     }
 
     # Run the code for each area

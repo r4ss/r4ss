@@ -29,9 +29,9 @@ SSplotMovementRates <-
     plot = TRUE,
     print = FALSE,
     subplots = 1:2,
-    plotdir = "default",
-    colvec = "default",
-    ylim = "default",
+    plotdir = replist[["inputs"]][["dir"]],
+    colvec = NULL,
+    ylim = NULL,
     legend = TRUE,
     legendloc = "topleft",
     moveseas = "all",
@@ -46,10 +46,6 @@ SSplotMovementRates <-
   ) {
     # table to store information on each plot
     plotinfo <- NULL
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     # get values from replist
     accuage <- replist[["accuage"]]
@@ -90,10 +86,10 @@ SSplotMovementRates <-
         } else {
           move3 <- move2[, -(1:6)]
 
-          if (colvec[1] == "default") {
+          if (is.null(colvec)) {
             colvec <- rich.colors.short(nrow(move2))
           }
-          if (ylim[1] == "default") {
+          if (is.null(ylim)) {
             ylim <- c(0, 1.1 * max(move))
           }
           main <- paste(

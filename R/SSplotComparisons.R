@@ -158,8 +158,8 @@
 #' @examples
 #' \dontrun{
 #' # directories where models were run need to be defined
-#' dir1 <- "c:/SS/mod1"
-#' dir2 <- "c:/SS/mod2"
+#' dir1 <- system.file("extdata", "simple_small", package = "r4ss")
+#' dir2 <- system.file("extdata", "simple_small_nohess", package = "r4ss")
 #'
 #' # read two models
 #' mod1 <- SS_output(dir = dir1)
@@ -172,8 +172,11 @@
 #' SSplotComparisons(mod.sum, legendlabels = c("First model", "Second model"))
 #'
 #' # Example showing comparison of MLE to MCMC results where the mcmc would have
-#' # been run in the subdirectory 'c:/SS/mod1/mcmc'
-#' mod1 <- SS_output(dir = "c:/SS/mod1", dir.mcmc = "mcmc")
+#' # been run in the subdirectory "mcmc"
+#' mod1 <- SS_output(
+#'   dir = system.file("extdata", "simple_small_mcmc", package = "r4ss"),
+#'   dir.mcmc = "mcmc"
+#' )
 #' # pass the same model twice to SSsummarize in order to plot it twice
 #' mod.sum <- SSsummarize(list(mod1, mod1))
 #' # compare MLE to MCMC

@@ -54,9 +54,9 @@
 #' }
 table_exec_summary <- function(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   ci_value = 0.95,
-  fleetnames = NULL,
+  fleetnames = replist[["FleetNames"]],
   so_units = "biomass (mt)",
   endyr = NULL,
   verbose = TRUE
@@ -64,11 +64,7 @@ table_exec_summary <- function(
   check_replist(replist)
 
   rda_dir <- file.path(
-    ifelse(
-      is.null(dir),
-      yes = replist[["inputs"]][["dir"]],
-      no = dir
-    ),
+    dir,
     "tables"
   )
   check_dir(dir = rda_dir, verbose = verbose)
@@ -122,7 +118,7 @@ table_exec_summary <- function(
   # ======================================================================
   # Determine the fleet name fisheries with catch
   # ======================================================================
-  fleetnames <- if (is.null(fleetnames) || fleetnames[1] == "default") {
+  fleetnames <- if (is.null(fleetnames)) {
     replist[["FleetNames"]]
   } else {
     fleetnames

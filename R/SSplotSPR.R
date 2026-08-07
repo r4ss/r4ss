@@ -17,7 +17,7 @@
 #' @param col2 second color used
 #' @param col3 third color used
 #' @param col4 fourth color used
-#' @param sprtarg F/SPR proxy target. "default" chooses based on model output,
+#' @param sprtarg F/SPR proxy target. NULL chooses based on model output,
 #' where models which have SPR_std_basis = 0 or 1 specified in the starter
 #' file will use the SPR target specified in the forecast file. Models which
 #' have SPR_std_basis = 2 will use SPR at MSY for the SPR target
@@ -25,9 +25,9 @@
 #' SPR at Btarget for the SPR target in these plots. Zero or negative values of
 #' sprtarg input here will cause no horizontal line to be plotted.
 #' @param btarg target depletion to be used in plots showing depletion. May be
-#' omitted by setting to NA. "default" chooses based on model output.
+#' omitted by setting to NA. NULL chooses based on model output.
 #' @param minbthresh minimum biomass threshold to be used in plots
-#' showing depletion. May be omitted by setting to NA. "default" chooses
+#' showing depletion. May be omitted by setting to NA. NULL chooses
 #' based on model output.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -45,9 +45,9 @@ SSplotSPR <-
     col2 = "blue",
     col3 = "green3",
     col4 = "red",
-    sprtarg = "default",
-    btarg = "default",
-    minbthresh = "default",
+    sprtarg = NULL,
+    btarg = replist[["btarg"]],
+    minbthresh = replist[["minbthresh"]],
     labels = c(
       "Year", # 1
       "SPR", # 2
@@ -62,15 +62,11 @@ SSplotSPR <-
     res = 300,
     ptsize = 10,
     cex.main = 1,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     verbose = TRUE
   ) {
     # table to store information on each plot
     plotinfo <- NULL
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     sprseries <- replist[["sprseries"]]
     derived_quants <- replist[["derived_quants"]]
@@ -92,8 +88,10 @@ SSplotSPR <-
     # get SPR target and associated label based on forecast specified SPR target or
     # the denominator of the SPR ratio as specified in the starter file
     sprtarg_label <- "SPR target"
-    if (sprtarg == "default") {
+    if (is.null(sprtarg)) {
+      # default
       sprtarg <- replist[["sprtarg"]]
+      # adapt base on the ratio specified in the starter file
       if (grepl("SPR_MSY", SPRratioLabel)) {
         sprtarg <- replist[["derived_quants"]]["SPR_MSY", "Value"]
         sprtarg_label <- "SPR at MSY"
@@ -106,12 +104,6 @@ SSplotSPR <-
           last = nchar("(1-SPR)/(1-SPR_at_B48%")
         )
       }
-    }
-    if (btarg == "default") {
-      btarg <- replist[["btarg"]]
-    }
-    if (minbthresh == "default") {
-      minbthresh <- replist[["minbthresh"]]
     }
 
     # choose which points to plot

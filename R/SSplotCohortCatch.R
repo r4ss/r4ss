@@ -32,13 +32,13 @@ SSplotCohortCatch <-
     add = FALSE,
     plot = TRUE,
     print = FALSE,
-    cohortcols = "default",
+    cohortcols = NULL,
     cohortfrac = 1,
     cohortvec = NULL,
     cohortlabfrac = 0.1,
     cohortlabvec = NULL,
     lwd = 3,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     xlab = "Year",
     labels = c(
       "Age",
@@ -84,10 +84,6 @@ SSplotCohortCatch <-
           "Plots of catch by cohort might not work for seasonal models."
         )
       }
-    }
-
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
     }
 
     # vector of cohort birth years
@@ -209,7 +205,7 @@ SSplotCohortCatch <-
     maxvecB <- cohortmaxB[cohorts %in% bigcohortsB]
 
     # set colors
-    if (cohortcols[1] == "default") {
+    if (is.null(cohortcols)) {
       cohortcolsN <- rich.colors.short(length(cohortvecN), alpha = .7)
       cohortcolsB <- rich.colors.short(length(cohortvecB), alpha = .7)
     } else {

@@ -138,7 +138,7 @@ SSplotComps <-
     plot = TRUE,
     print = FALSE,
     fleets = "all",
-    fleetnames = "default",
+    fleetnames = replist[["FleetNames"]],
     sexes = "all",
     yupper = 0.4,
     datonly = FALSE,
@@ -171,7 +171,7 @@ SSplotComps <-
     punits = "in",
     ptsize = 10,
     res = 300,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     cex.main = 1,
     linepos = 1,
     fitbar = FALSE,
@@ -237,7 +237,6 @@ SSplotComps <-
     nfleets <- replist[["nfleets"]]
     nseasons <- replist[["nseasons"]]
     seasfracs <- replist[["seasfracs"]]
-    FleetNames <- replist[["FleetNames"]]
     nsexes <- replist[["nsexes"]]
     accuage <- replist[["accuage"]]
 
@@ -246,10 +245,6 @@ SSplotComps <-
     # define a variety of titles and labels
     titles <- NULL
     titlemkt <- ""
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-
     # sort out which fleets will be included
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
@@ -260,10 +255,6 @@ SSplotComps <-
         )
       }
     }
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
-
     # sort out which sexes will be included, and associated labels
     if (sexes[1] == "all") {
       sexes <- 0:nsexes # this can be used to subset stuff below

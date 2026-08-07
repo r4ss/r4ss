@@ -12,7 +12,7 @@
 #' If 'printfolder' is set to "", it is ignored and the PNG files will
 #' be located in the directory specified by 'dir'.
 #' @param selexyr The year to summarize selectivity, the default is the final
-#' model yr strings to use for each fleet name. Default="default".
+#' model year.
 #'
 #'
 #' @return A csv files containing biology and selectivity tables
@@ -22,9 +22,9 @@
 SSbiologytables <- function(
   replist = NULL,
   printfolder = "tables",
-  dir = "default",
-  fleetnames = "default",
-  selexyr = "default"
+  dir = replist[["inputs"]][["dir"]],
+  fleetnames = replist[["FleetNames"]],
+  selexyr = replist[["endyr"]]
 ) {
   lifecycle::deprecate_warn(
     when = "1.52.0",
@@ -36,7 +36,6 @@ SSbiologytables <- function(
     formatC(x, digits = digits, format = "f")
   }
 
-  inputs <- replist[["inputs"]]
   biology <- replist[["endgrowth"]] # biology at length final model year
   nsexes <- replist[["nsexes"]]
   nfleets <- replist[["nfleets"]]
@@ -45,14 +44,6 @@ SSbiologytables <- function(
   sizeselex <- replist[["sizeselex"]]
   ageselex <- replist[["ageselex"]]
   accuage <- replist[["accuage"]] # max age
-  FleetNames <- replist[["FleetNames"]]
-
-  ### deal with directories in which to create PNG or PDF files
-  if (dir == "default") {
-    # directory within which printfolder will be created
-    # by default it is assumed to be the location of the model files
-    dir <- inputs[["dir"]]
-  }
 
   # figure out path to where PNG files will go
   plotdir <- file.path(dir, printfolder)
@@ -61,16 +52,6 @@ SSbiologytables <- function(
     dir.create(plotdir)
   }
   cli::cli_alert_info("writing files to {plotdir}")
-
-  # set fleet-specific names, and plotting parameters
-  if (fleetnames[1] == "default") {
-    fleetnames <- FleetNames
-  }
-
-  # determine the year to summarize
-  if (selexyr[1] == "default") {
-    selexyr <- replist[["endyr"]]
-  }
 
   # Table
   # Age: Ave Len - Ave Wgt - % mature (by sex)
@@ -115,8 +96,8 @@ SSbiologytables <- function(
   }
   colnames(selex.age) <- c(
     "Age",
-    paste0(FleetNames, "_f"),
-    paste0(FleetNames, "_m")
+    paste0(fleetnames, "_f"),
+    paste0(fleetnames, "_m")
   )
   write.csv(
     selex.age,
@@ -150,7 +131,7 @@ SSbiologytables <- function(
       )
       if (length(find) != 0) {
         if (j == 1) {
-          retnames <- c(retnames, FleetNames[i])
+          retnames <- c(retnames, fleetnames[i])
         }
         selex.size.ret <- data.frame(
           selex.size.ret,
@@ -161,8 +142,8 @@ SSbiologytables <- function(
   }
   colnames(selex.size) <- c(
     "Length",
-    paste0(FleetNames, "_f"),
-    paste0(FleetNames, "_m")
+    paste0(fleetnames, "_f"),
+    paste0(fleetnames, "_m")
   )
   colnames(selex.size.ret) <- c(
     "Length",

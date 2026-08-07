@@ -6,9 +6,9 @@
 \usage{
 table_exec_summary(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   ci_value = 0.95,
-  fleetnames = NULL,
+  fleetnames = replist[["FleetNames"]],
   so_units = "biomass (mt)",
   endyr = NULL,
   verbose = TRUE

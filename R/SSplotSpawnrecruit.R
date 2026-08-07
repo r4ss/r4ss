@@ -18,8 +18,8 @@
 #' background color provided by `ptcol`
 #' @param ltyvec vector of length 4 with line types for the 3 lines and 1 set
 #' of points, where the points are disconnected (lty=NA) by default
-#' @param ptcol vector or single value for the color of the points, "default"
-#' will by replaced by a vector of colors of length equal to
+#' @param ptcol vector or single value for the color of the points. If NULL,
+#' it will be replaced by a vector of colors of length equal to
 #' `nrow(replist[["recruit"]])`
 #' @param minyr minimum year of recruitment deviation to show in plot
 #' @param textmindev minimum recruitment deviation for label to be added so
@@ -58,7 +58,7 @@ SSplotSpawnrecruit <-
       "Log recruitment deviation"
     ),
     bioscale = 1,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     pwidth = 6.5,
     pheight = 6.5,
     punits = "in",
@@ -67,11 +67,11 @@ SSplotSpawnrecruit <-
     verbose = TRUE,
     colvec = c("blue", "black", "black", gray(0, 0.7)),
     ltyvec = c(1, 2, 1, NA),
-    ptcol = "default",
+    ptcol = NULL,
     legend = TRUE,
     legendloc = NULL,
     # line1="blue",line2="green3",line3="black",ptcol="red",
-    minyr = "default",
+    minyr = NULL,
     textmindev = 0.5,
     relative = FALSE,
     expected = TRUE,
@@ -129,10 +129,7 @@ SSplotSpawnrecruit <-
       ylab <- labels[5]
     }
 
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-    if (minyr == "default") {
+    if (is.null(minyr)) {
       minyr <- min(recruit[["Yr"]])
     }
 
@@ -213,7 +210,7 @@ SSplotSpawnrecruit <-
     }
 
     # color for points
-    if (ptcol[1] == "default") {
+    if (is.null(ptcol)) {
       ptcol <- rev(rich.colors.short(nrow(recruit) + 10, alpha = 0.8))[-(1:10)]
       color.caption <- paste(
         " Point colors indicate year, with warmer",

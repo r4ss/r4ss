@@ -5,8 +5,8 @@
 \title{Summarize, analyze and plot key MCMC output.}
 \usage{
 mcmc.out(
-  directory = "c:/mydirectory/",
-  run = "mymodel/",
+  directory = getwd(),
+  run = "",
   file = "keyposteriors.csv",
   namefile = "postplotnames.sso",
   names = FALSE,

@@ -151,7 +151,7 @@ make_multifig <-
     type = "o",
     polygons = TRUE,
     bars = FALSE,
-    barwidth = "default",
+    barwidth = NULL,
     ptscex = 1,
     ptscol = 1,
     ptscol2 = 1,
@@ -162,10 +162,10 @@ make_multifig <-
     pch = 1,
     nlegends = 3,
     legtext = list("yr", "sampsize", "effN"),
-    legx = "default",
-    legy = "default",
-    legadjx = "default",
-    legadjy = "default",
+    legx = NULL,
+    legy = NULL,
+    legadjx = NULL,
+    legadjy = NULL,
     legsize = c(1.2, 1.0),
     legfont = c(2, 1),
     venusmars = TRUE,
@@ -253,7 +253,7 @@ make_multifig <-
 
     # quick and dirty formula to get width of bars (if used) based on
     # 	  number of columns and maximum number of bars within a in panel
-    if (bars & barwidth == "default") {
+    if (bars & is.null(barwidth)) {
       barwidth <- 400 / max(table(yr) + 2) / ncols
     }
 
@@ -653,7 +653,7 @@ make_multifig <-
         text_i <- ""
         text_i2 <- ""
         legtext_i <- legtext[[i]] # grab element of list
-        # elements of list can be "default" to make equal to yr
+        # elements of list can be "yr" to make equal to yr
         # or vector of length 1, npanels, or the full length of the input vectors
         if (length(legtext_i) == 1) {
           if (legtext_i == "yr") {
@@ -712,26 +712,26 @@ make_multifig <-
           text_i <- text_i # yr, sampsize, or effN
         }
         # location of legend
-        if (legx[1] == "default") {
+        if (is.null(legx)) {
           # default is left side for first plot, right thereafter
           textx <- ifelse(i == 1, usr[1], usr[2])
         } else {
           textx <- legx[i]
         }
-        if (legy[1] == "default") {
+        if (is.null(legy)) {
           texty <- usr[4] # default is top for all plots
           texty2 <- usr[3] # default is bottom legends associated with males
         } else {
           texty <- legy[i]
           texty2 <- -legy[i] # this setting probably won't work too well
         }
-        if (legadjx[1] == "default") {
+        if (is.null(legadjx)) {
           # default x-value is left side for first legend, right thereafter
           adjx <- ifelse(i == 1, -.1, 1.0)
         } else {
           adjx <- legadjx[i]
         }
-        if (legadjy[1] == "default") {
+        if (is.null(legadjy)) {
           # default y-value is top for first 2 legends, below thereafter
           adjy <- ifelse(i < 3, 1.3, 1.3 + 1.3 * (i - 2))
         } else {

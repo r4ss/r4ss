@@ -48,7 +48,7 @@ bubble3 <- function(
   bg.open = gray(0.95, 0.3),
   legend = TRUE,
   legendloc = "top",
-  legend.z = "default",
+  legend.z = NULL,
   legend.yadj = 1.1,
   main = "",
   cex.main = 1,
@@ -84,7 +84,7 @@ bubble3 <- function(
   }
 
   az <- abs(z)
-  if (legend.z[1] == "default") {
+  if (is.null(legend.z)) {
     # set sequence of points to use in legend
     maxaz <- max(az, na.rm = TRUE)
     if (maxaz > 1) {

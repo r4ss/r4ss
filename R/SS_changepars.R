@@ -76,7 +76,7 @@
 #' @examples
 #' \dontrun{
 #' SS_changepars(
-#'   dir = "C:/ss/SSv3.30.03.05_May11/Simple - Copy",
+#'   dir = system.file("extdata", "simple_small", package = "r4ss"),
 #'   strings = c("steep", "sigmaR"), newvals = c(.4, .6)
 #' )
 #' ## parameter names in control file matching input vector 'strings' (n=2):
@@ -98,7 +98,7 @@
 #' }
 SS_changepars <-
   function(
-    dir = NULL,
+    dir = getwd(),
     ctlfile = "control.ss_new",
     newctlfile = "control_modified.ss",
     linenums = NULL,
@@ -114,10 +114,6 @@ SS_changepars <-
     verbose = TRUE,
     newphs = NULL
   ) {
-    # set directory to working directory if not provided
-    if (is.null(dir)) {
-      dir <- getwd()
-    }
     # read control file
     fullctlfile <- file.path(dir, ctlfile)
     ctl <- readLines(fullctlfile)

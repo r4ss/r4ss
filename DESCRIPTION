@@ -68,6 +68,7 @@ Imports:
     future,
     ggplot2,
     gh,
+    glue,
     kableExtra,
     lifecycle,
     purrr,

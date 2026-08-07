@@ -8,7 +8,7 @@ SSplotSelex(
   replist,
   infotable = NULL,
   fleets = "all",
-  fleetnames = "default",
+  fleetnames = replist[["FleetNames"]],
   sizefactors = c("Lsel"),
   agefactors = c("Asel", "Asel2"),
   years = "endyr",
@@ -38,7 +38,7 @@ SSplotSelex(
   cex.main = 1,
   mainTitle = TRUE,
   mar = NULL,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE,
   subplot = lifecycle::deprecated()
 )

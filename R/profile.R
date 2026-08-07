@@ -273,10 +273,6 @@ profile <- function(
     )
   }
 
-  if (is.null(dir)) {
-    dir <- getwd()
-  }
-
   # check for executable
   exe_path <- check_exe(exe = exe, dir = dir, verbose = verbose)
 

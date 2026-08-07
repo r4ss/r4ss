@@ -16,7 +16,7 @@
 
 SS_writeforecast <- function(
   mylist,
-  dir = NULL,
+  dir = getwd(),
   file = "forecast.ss",
   writeAll = FALSE,
   overwrite = FALSE,
@@ -40,9 +40,6 @@ SS_writeforecast <- function(
     if (sink.number() > 0) sink()
   })
 
-  if (is.null(dir)) {
-    dir <- getwd()
-  } # set to working directory if no input provided
   outfile <- paste(dir, file, sep = "/")
   if (file.exists(outfile)) {
     if (!overwrite) {

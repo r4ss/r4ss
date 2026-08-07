@@ -11,7 +11,7 @@
 
 table_pars <- function(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   rows = NULL,
   caption = "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",
   verbose = TRUE
@@ -20,11 +20,7 @@ table_pars <- function(
   check_replist(replist)
   # create the rda_dir
   rda_dir <- file.path(
-    ifelse(
-      is.null(dir),
-      yes = replist[["inputs"]][["dir"]],
-      no = dir
-    ),
+    dir,
     "tables"
   )
   check_dir(dir = rda_dir)

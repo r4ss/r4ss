@@ -32,9 +32,9 @@ SSplotDiscard <-
     subplots = 1:4,
     plot = TRUE,
     print = FALSE,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     fleets = "all",
-    fleetnames = "default",
+    fleetnames = replist[["FleetNames"]],
     datplot = FALSE,
     labels = c(
       "Year",
@@ -60,16 +60,9 @@ SSplotDiscard <-
     # get stuff from replist
     nfishfleets <- replist[["nfishfleets"]]
     discard <- replist[["discard"]]
-    FleetNames <- replist[["FleetNames"]]
     DF_discard <- replist[["DF_discard"]] # used in SSv3.11
     discard_type <- replist[["discard_type"]] # used in SSv3.11
     discard_spec <- replist[["discard_spec"]] # used in SSv3.20
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
 
     # if discards exist
     if (
