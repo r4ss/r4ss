@@ -14,7 +14,7 @@
 #' }
 table_ts <- function(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   caption = "Time series of population estimates for the base model.",
   verbose = TRUE
 ) {
@@ -28,11 +28,7 @@ table_ts <- function(
   }
   # create the rda_dir
   rda_dir <- file.path(
-    ifelse(
-      is.null(dir),
-      yes = replist[["inputs"]][["dir"]],
-      no = dir
-    ),
+    dir,
     "tables"
   )
   check_dir(dir = rda_dir, verbose = verbose)

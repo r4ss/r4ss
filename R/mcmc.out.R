@@ -59,8 +59,8 @@
 #' mtext("M (natural mortality)", side = 2, outer = T, line = 1.5, cex = 1.1)
 #' }
 mcmc.out <- function(
-  directory = "c:/mydirectory/",
-  run = "mymodel/",
+  directory = getwd(),
+  run = "",
   file = "keyposteriors.csv",
   namefile = "postplotnames.sso",
   names = FALSE,

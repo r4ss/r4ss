@@ -6,8 +6,8 @@
 \usage{
 table_all(
   replist,
-  dir = NULL,
-  fleetnames = NULL,
+  dir = replist[["inputs"]][["dir"]],
+  fleetnames = replist[["FleetNames"]],
   selexyr = NULL,
   verbose = TRUE
 )
@@ -22,8 +22,8 @@ located associated with \code{replist}.}
 \item{fleetnames}{String of fleet names. Default is NULL which will use the
 the model fleet names.}
 
-\item{selexyr}{The year to summarize selectivity, the default is the final
-model year.}
+\item{selexyr}{The year to summarize selectivity, NULL will use the most
+recent year with selectivity reported in the model output.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}

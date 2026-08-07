@@ -29,7 +29,7 @@
 #' [SSplotPars()]
 SSgetMCMC <-
   function(
-    dir = NULL,
+    dir = getwd(),
     verbose = TRUE,
     writecsv = FALSE,
     postname = "posteriors.sso",

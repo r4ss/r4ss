@@ -34,7 +34,7 @@ SSplotTags(
     "Observed and expected post-latency tag recaptures by year and tag group",
     "Summarized observed and expected numbers of recaptures by fleet",
     "Pearson residuals by tag group"),
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE
 )
 }

@@ -71,21 +71,21 @@ PinerPlot <-
     main = "Changes in length-composition likelihoods by fleet",
     models = "all",
     fleets = "all",
-    fleetnames = "default",
+    fleetnames = summaryoutput[["FleetNames"]][[1]],
     profile.string = "R0",
     profile.label = expression(log(italic(R)[0])),
     exact = FALSE,
     ylab = "Change in -log-likelihood",
-    col = "default",
-    pch = "default",
+    col = NULL,
+    pch = NULL,
     lty = 1,
     lty.total = 1,
     lwd = 2,
     lwd.total = 3,
     cex = 1,
     cex.total = 1.5,
-    xlim = "default",
-    ymax = "default",
+    xlim = NULL,
+    ymax = NULL,
     xaxs = "r",
     yaxs = "r",
     type = "o",
@@ -126,13 +126,13 @@ PinerPlot <-
     }
     # count of fleets
     nfleets <- ncol(lbf) - 3
+    lbf_fleetnames <- colnames(lbf)[-c(1:3)]
     pars <- summaryoutput[["pars"]]
     # names of fleets
-    FleetNames <- summaryoutput[["FleetNames"]][[1]]
     # stop if lengths don't match
-    if (length(FleetNames) != nfleets) {
+    if (length(fleetnames) != nfleets) {
       cli::cli_abort(
-        "problem with FleetNames: length!= {nfleets}; fleet names: {paste(FleetNames, collapse = ', ')}"
+        "problem with fleetnames: length!= {nfleets}; fleet names: {paste(fleetnames, collapse = ', ')}"
       )
     }
     # stop if component input isn't found in table
@@ -145,10 +145,6 @@ PinerPlot <-
         "input 'component' needs to be one of the following: {paste(component_options, collapse = ', ')}"
       )
     }
-
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    } # note lower-case value is the one used below (either equal to vector from replist, or input by user)
 
     # check number of models to be plotted
     if (models[1] == "all") {
@@ -190,7 +186,7 @@ PinerPlot <-
     cli::cli_alert_info(
       "Parameter matching profile.string = '{profile.string}': '{parlabel}'. Parameter values (after subsetting based on input 'models'): {paste(parvec, collapse = ', ')}"
     )
-    if (xlim[1] == "default") {
+    if (is.null(xlim)) {
       xlim <- range(parvec)
     }
 
@@ -217,7 +213,7 @@ PinerPlot <-
           "fleetgroups, if specified, must have length equal to the number of declared fleets"
         )
       }
-      FleetNames <- unique(fleetgroups)
+      fleetnames <- unique(fleetgroups)
       prof.table_new <- data.frame(matrix(
         nrow = nrow(prof.table),
         ncol = 3 + length(unique(fleetgroups)),
@@ -275,21 +271,21 @@ PinerPlot <-
     # replace column names with fleetnames unless "fleetgroup" is used
     if (is.null(fleetgroups)) {
       for (icol in 4:ncol(prof.table)) {
-        if (names(prof.table)[icol] %in% FleetNames) {
+        if (names(prof.table)[icol] %in% lbf_fleetnames) {
           names(prof.table)[icol] <- fleetnames[which(
-            FleetNames == names(prof.table)[icol]
+            lbf_fleetnames == names(prof.table)[icol]
           )]
         }
-        if (names(prof.table)[icol] %in% paste("X", FleetNames, sep = "")) {
+        if (names(prof.table)[icol] %in% paste0("X", lbf_fleetnames)) {
           names(prof.table)[icol] <- fleetnames[which(
-            paste("X", FleetNames, sep = "") == names(prof.table)[icol]
+            paste0("X", lbf_fleetnames) == names(prof.table)[icol]
           )]
         }
       }
     }
 
     # set default y-limits
-    if (ymax == "default") {
+    if (is.null(ymax)) {
       ymax <- 1.1 * max(prof.table[subset, -(1:2)], na.rm = TRUE)
     }
     ylim <- c(0, ymax)
@@ -298,10 +294,10 @@ PinerPlot <-
 
     # default colors and plot characters
     nlines <- ncol(prof.table) - 2
-    if (col[1] == "default") {
+    if (is.null(col)) {
       col <- rich.colors.short(nlines)
     }
-    if (pch[1] == "default") {
+    if (is.null(pch)) {
       pch <- 1:nlines
     }
     lwd <- c(lwd.total, rep(lwd, nlines - 1))

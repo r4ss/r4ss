@@ -115,8 +115,8 @@ Nsexes in the data file so the scaling is done automatically by SS3.}
 should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{dir}{A file path to the directory of interest.
-The default value is \code{dir = NULL}, which leads to using
-the current working directory.}
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
 
 \item{version}{SS version number. Currently "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30 = 3.3).

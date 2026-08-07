@@ -65,8 +65,8 @@
 #'
 TSCplot <- function(
   SSout,
-  yrs = "default",
-  ylimBar = "default",
+  yrs = NULL,
+  ylimBar = NULL,
   ylimDepl = c(0, 1.025),
   colBar = "yellow",
   cexBarLabels = 1.1,
@@ -93,7 +93,7 @@ TSCplot <- function(
   indVirgin <- which(SSout[["timeseries"]][["Era"]] == "VIRG")
   ind <- which(SSout[["timeseries"]][["Era"]] == "TIME")
   ind <- c(ind, max(ind) + 1)
-  if (yrs[1] == "default") {
+  if (is.null(yrs)) {
     yrs <- unique(sort(SSout[["timeseries"]][["Yr"]][ind]))
   }
 
@@ -156,7 +156,7 @@ TSCplot <- function(
     )
   }
 
-  if (ylimBar == "default") {
+  if (is.null(ylimBar)) {
     ylimBar <- c(0, max(SP[["Dead_Catch"]], na.rm = TRUE) * 1.05)
   }
   ind <- seq(1, nrow(SP), pchSpace)

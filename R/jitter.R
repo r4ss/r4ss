@@ -103,7 +103,7 @@ SS_RunJitter <-
 #' }
 #'
 jitter <- function(
-  dir = NULL,
+  dir = getwd(),
   mydir = lifecycle::deprecated(),
   Intern = lifecycle::deprecated(),
   Njitter,
@@ -131,10 +131,6 @@ jitter <- function(
       with = "jitter(dir)"
     )
     dir <- mydir
-  }
-
-  if (is.null(dir)) {
-    dir <- getwd()
   }
 
   # check for executable and keep cleaned name of executable file

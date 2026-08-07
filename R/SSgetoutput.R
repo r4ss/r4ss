@@ -21,6 +21,7 @@
 #' @param save.lists Save each list of parsed output as a .Rdata file (with default
 #' filenaming convention based on iteration and date stamp.
 #' @inheritParams SS_output
+#' @inheritParams SStableComparisons
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()]
@@ -150,7 +151,7 @@ SSgetoutput <-
       repfilesize <- file.info(fullfile)[["size"]]
 
       output <- NA
-      if (!is.na(repfilesize) && repfilesize > 0) {
+      if (isTRUE(repfilesize > 0)) {
         # if there's a non-empty file
         output <- SS_output(
           dir = mydir,

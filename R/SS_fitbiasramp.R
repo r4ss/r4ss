@@ -62,7 +62,7 @@ SS_fitbiasramp <-
     transform = FALSE,
     plot = TRUE,
     print = FALSE,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     shownew = TRUE,
     oldctl = NULL,
     newctl = NULL,
@@ -96,9 +96,6 @@ SS_fitbiasramp <-
     recruit <- replist[["recruit"]]
     sigma_R_in <- replist[["sigma_R_in"]]
     rmse_table <- replist[["rmse_table"]]
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
     if (print && !dir.exists(plotdir)) {
       dir.create(plotdir, recursive = TRUE)
     }

@@ -25,7 +25,7 @@ SSplotAgeMatrix(
   ptsize = 10,
   cex.main = 1,
   mainTitle = TRUE,
-  plotdir = "default"
+  plotdir = replist[["inputs"]][["dir"]]
 )
 }
 \arguments{

@@ -43,18 +43,21 @@
 #' @examples
 #' \dontrun{
 #' # read model output
-#' myreplist <- SS_output(dir = "c:/SS/Simple/")
+#' myreplist <- SS_output(dir = system.file("extdata", "simple_small", package = "r4ss"))
 #' # make a bunch of plots
 #' SS_plots(myreplist)
 #'
 #' # read model output and also read MCMC results (if run), which in
-#' # this case would be stored in c:/SS/Simple/mcmc/
-#' myreplist <- SS_output(dir = "c:/SS/Simple/", dir.mcmc = "mcmc")
+#' # this case would be stored in a subdirectory named "mcmc"
+#' myreplist <- SS_output(
+#'   dir = system.file("extdata", "simple_small_mcmc", package = "r4ss"),
+#'   dir.mcmc = "mcmc"
+#' )
 #' }
 #'
 SS_output <-
   function(
-    dir = "C:/myfiles/mymodels/myrun/",
+    dir = getwd(),
     dir.mcmc = NULL,
     repfile = "Report.sso",
     compfile = "CompReport.sso",
@@ -4753,7 +4756,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     # type of stock recruit relationship (if not read above)
     if (is.null(returndat[["SRRtype"]])) {
       SRRtype <- rawrep[match_report_line("SPAWN_RECRUIT"), 3]
-      if (!is.na(SRRtype) && SRRtype == "Function:") {
+      if (isTRUE(SRRtype == "Function:")) {
         SRRtype <- as.numeric(rawrep[match_report_line("SPAWN_RECRUIT"), 4])
       }
       returndat[["SRRtype"]] <- SRRtype

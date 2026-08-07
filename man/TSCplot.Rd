@@ -6,8 +6,8 @@
 \usage{
 TSCplot(
   SSout,
-  yrs = "default",
-  ylimBar = "default",
+  yrs = NULL,
+  ylimBar = NULL,
   ylimDepl = c(0, 1.025),
   colBar = "yellow",
   cexBarLabels = 1.1,

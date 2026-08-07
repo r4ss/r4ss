@@ -130,16 +130,16 @@ SSplotProfile <-
     ),
     minfraction = 0.01,
     sort.by.max.change = TRUE,
-    col = "default",
-    pch = "default",
+    col = NULL,
+    pch = NULL,
     lty = 1,
     lty.total = 1,
     lwd = 2,
     lwd.total = 3,
     cex = 1,
     cex.total = 1.5,
-    xlim = "default",
-    ymax = "default",
+    xlim = NULL,
+    ymax = NULL,
     xaxs = "r",
     yaxs = "r",
     type = "o",
@@ -250,7 +250,7 @@ SSplotProfile <-
     }
 
     # set x-axis limits
-    if (xlim[1] == "default") {
+    if (is.null(xlim)) {
       xlim <- range(parvec)
     }
 
@@ -282,7 +282,7 @@ SSplotProfile <-
       prof.table[, icol] <- prof.table[, icol] - min(prof.table[subset, icol])
     }
     TOTAL_no_prior <- TOTAL_no_prior - min(TOTAL_no_prior)
-    if (ymax == "default") {
+    if (is.null(ymax)) {
       ymax <- 1.1 * max(prof.table[subset, ])
     }
     ylim <- c(0, ymax)
@@ -334,10 +334,10 @@ SSplotProfile <-
     }
 
     # define colors and line types
-    if (col[1] == "default") {
+    if (is.null(col)) {
       col <- rich.colors.short(nlines)
     }
-    if (pch[1] == "default") {
+    if (is.null(pch)) {
       pch <- 1:nlines
     }
     # total without prior matches total (first value)

@@ -78,7 +78,7 @@ SSplotBiology <-
     imageplot_text = FALSE,
     imageplot_text_round = 0,
     legendloc = "topleft",
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     labels = c(
       "Length (cm)", # 1
       "Age (yr)", # 2
@@ -303,9 +303,6 @@ SSplotBiology <-
       )
     }
 
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
     # check dimensions
     if (length(morphs) > nsexes) {
       cli::cli_warn(

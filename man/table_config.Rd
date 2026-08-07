@@ -4,7 +4,7 @@
 \alias{table_config}
 \title{Create a table to summarize the configuration of the SS3 model}
 \usage{
-table_config(replist, dir = NULL, verbose = TRUE)
+table_config(replist, dir = replist[["inputs"]][["dir"]], verbose = TRUE)
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}

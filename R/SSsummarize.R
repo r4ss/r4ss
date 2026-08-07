@@ -344,7 +344,7 @@ SSsummarize <- function(
         imodel
       ] <- quantstemp[["StdDev"]][iquant]
     }
-    BratioLabels <- c(BratioLabels, stats[["BratioLabels"]])
+    BratioLabels <- c(BratioLabels, stats[["Bratio_label"]])
     SPRratioLabels <- c(SPRratioLabels, stats[["SPRratioLabel"]])
     FvalueLabels <- c(FvalueLabels, stats[["F_std_basis"]])
     SpawnOutputLabels <- c(SpawnOutputLabels, stats[["SpawnOutputLabel"]])

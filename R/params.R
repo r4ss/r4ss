@@ -49,8 +49,8 @@
 #' @param overwrite A logical value specifying if the existing file(s)
 #'   should be overwritten. The default value is \code{overwrite = FALSE}.
 #' @param dir A file path to the directory of interest.
-#'   The default value is \code{dir = NULL}, which leads to using
-#'   the current working directory.
+#'   When omitted, functions typically default to the current working
+#'   directory or the model directory stored in `replist`.
 #' @param version SS version number. Currently "3.24" or "3.30" are supported,
 #'   either as character or numeric values (noting that numeric 3.30 = 3.3).
 #'   `version = NULL` is no longer the default or an allowed entry.

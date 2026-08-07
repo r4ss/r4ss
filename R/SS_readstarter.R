@@ -193,7 +193,7 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   # check final value and define random seed and compatibility check.
   mylist[["final"]] <- final <- allnums[i]
   i <- i + 1
-  if (!is.na(final) && final %in% c(3.30, 999)) {
+  if (isTRUE(final %in% c(3.30, 999))) {
     if (verbose) {
       cli::cli_alert_success(
         "Read of starter file complete. Final value: {final}"
@@ -207,12 +207,12 @@ SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
     }
 
     mylist[["final"]] <- final <- allnums[i]
-    if (!is.na(final) && final %in% c(1, 0)) {
+    if (isTRUE(final %in% c(1, 0))) {
       mylist[["Compatibility"]] <- mylist[["final"]]
       i <- i + 1
       mylist[["final"]] <- final <- allnums[i]
     }
-    if (!is.na(final) && final %in% c(3.30, 999)) {
+    if (isTRUE(final %in% c(3.30, 999))) {
       if (verbose) {
         cli::cli_alert_success(
           "Read of starter file complete. Final value: {final}"

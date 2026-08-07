@@ -24,7 +24,7 @@ SSplotMnwt <-
     plot = TRUE,
     print = FALSE,
     fleets = "all",
-    fleetnames = "default",
+    fleetnames = replist[["FleetNames"]],
     datplot = FALSE,
     labels = c(
       "Year", # 1
@@ -43,7 +43,7 @@ SSplotMnwt <-
     res = 300,
     ptsize = 10,
     cex.main = 1,
-    plotdir = "default",
+    plotdir = replist[["inputs"]][["dir"]],
     verbose = TRUE
   ) {
     # table to store information on each plot
@@ -51,7 +51,6 @@ SSplotMnwt <-
 
     # get stuff from replist
     mnwgt <- replist[["mnwgt"]]
-    FleetNames <- replist[["FleetNames"]]
     DF_mnwgt <- replist[["DF_mnwgt"]]
     nfleets <- replist[["nfleets"]]
     SS_versionshort <- replist[["SS_versionshort"]]
@@ -59,13 +58,6 @@ SSplotMnwt <-
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
     }
-    if (fleetnames[1] == "default") {
-      fleetnames <- FleetNames
-    }
-    if (plotdir == "default") {
-      plotdir <- replist[["inputs"]][["dir"]]
-    }
-
     # mean body weight observations ###
     if (!is.na(mnwgt)[[1]][1]) {
       for (ifleet in intersect(fleets, unique(mnwgt[["Fleet"]]))) {

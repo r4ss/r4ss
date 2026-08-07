@@ -4,7 +4,7 @@
 \alias{get_ss3_exe}
 \title{Download the Stock Synthesis (SS3) executable}
 \usage{
-get_ss3_exe(dir = NULL, version = NULL)
+get_ss3_exe(dir = getwd(), version = NULL)
 }
 \arguments{
 \item{dir}{The directory that you would like the executable downloaded to.}
@@ -19,8 +19,7 @@ A string of the file path to the downloaded executable
 \description{
 The \code{get_ss3_exe()} function uses the {gh} package to get either
 the latest release (if version = NULL) or the specified version of the Stock
-Synthesis executable for the appropriate operating system to the directory \code{dir}
-(if dir = NULL, then the executable is downloaded to the working directory).
+Synthesis executable for the appropriate operating system to the directory \code{dir}.
 To view the version tags available go to
 https://github.com/nmfs-ost/ss3-source-code/tags
 }
