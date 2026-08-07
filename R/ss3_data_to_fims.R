@@ -94,7 +94,7 @@ ss3_data_to_fims <- function(
     }
   }
   ages <- 0:maxage
-  
+
   cli::cli_alert_info(
     "Using age bins: {paste(ages, collapse = ', ')}"
   )
