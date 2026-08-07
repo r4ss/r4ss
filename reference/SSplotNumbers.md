@@ -14,7 +14,7 @@ SSplotNumbers(
   print = FALSE,
   numbers.unit = 1000,
   areas = "all",
-  areanames = "default",
+  areanames = NULL,
   areacols = NULL,
   pntscalar = 2.6,
   bub.bg = gray(0.5, alpha = 0.5),
@@ -35,7 +35,7 @@ SSplotNumbers(
   res = 300,
   ptsize = 10,
   cex.main = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   mainTitle = FALSE,
   verbose = TRUE
 )

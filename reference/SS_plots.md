@@ -15,16 +15,16 @@ SS_plots(
   png = TRUE,
   html = png,
   printfolder = "plots",
-  dir = "default",
+  dir = replist[["inputs"]][["dir"]],
   fleets = "all",
   areas = "all",
-  fleetnames = "default",
-  fleetcols = "default",
+  fleetnames = replist[["FleetNames"]],
+  fleetcols = NULL,
   fleetlty = 1,
   fleetpch = 1,
   lwd = 1,
   areacols = NULL,
-  areanames = "default",
+  areanames = NULL,
   verbose = TRUE,
   uncertainty = TRUE,
   forecastplot = FALSE,
@@ -33,9 +33,9 @@ SS_plots(
   samplesizeplots = TRUE,
   compresidplots = TRUE,
   comp.yupper = 0.4,
-  sprtarg = "default",
-  btarg = "default",
-  minbthresh = "default",
+  sprtarg = replist[["sprtarg"]],
+  btarg = replist[["btarg"]],
+  minbthresh = replist[["minbthresh"]],
   pntscalar = NULL,
   bub.scale.pearson = 1.5,
   bub.scale.dat = 3,
@@ -214,8 +214,8 @@ SS_plots(
 
 - fleetcols:
 
-  Either the string "default", or a vector of colors to use for each
-  fleet. Default="default".
+  Optional vector of colors to use for each fleet. If NULL, colors are
+  generated automatically.
 
 - fleetlty:
 
@@ -236,8 +236,8 @@ SS_plots(
 
 - areanames:
 
-  Optional vector of names for each area used in titles.
-  Default="default".
+  Optional vector of names for each area used in titles. If NULL, names
+  are generated automatically where needed.
 
 - verbose:
 

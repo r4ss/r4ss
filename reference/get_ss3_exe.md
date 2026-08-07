@@ -3,14 +3,13 @@
 The `get_ss3_exe()` function uses the gh package to get either the
 latest release (if version = NULL) or the specified version of the Stock
 Synthesis executable for the appropriate operating system to the
-directory `dir` (if dir = NULL, then the executable is downloaded to the
-working directory). To view the version tags available go to
+directory `dir`. To view the version tags available go to
 https://github.com/nmfs-ost/ss3-source-code/tags
 
 ## Usage
 
 ``` r
-get_ss3_exe(dir = NULL, version = NULL)
+get_ss3_exe(dir = getwd(), version = NULL)
 ```
 
 ## Arguments

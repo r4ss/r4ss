@@ -195,7 +195,7 @@ Ian G. Taylor, Cole C. Monnahan
 ``` r
 if (FALSE) { # \dontrun{
 # read model results
-model <- SS_output(dir = "c:/SS/Simple/")
+model <- SS_output(dir = system.file("extdata", "simple_small", package = "r4ss"))
 # make default plots where parameter distribution plots will appear
 # in the "pars" tab
 SS_plots(model)

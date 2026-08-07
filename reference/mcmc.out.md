@@ -7,8 +7,8 @@ autocorrelations, and densities for chosen parameters from MCMC output.
 
 ``` r
 mcmc.out(
-  directory = "c:/mydirectory/",
-  run = "mymodel/",
+  directory = getwd(),
+  run = "",
   file = "keyposteriors.csv",
   namefile = "postplotnames.sso",
   names = FALSE,

@@ -54,12 +54,12 @@ model, not the input data file.</p>
 <span>  <span class="va">replist</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  plotdir <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  plotdir <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"inputs"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"dir"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  subplots <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span>  fleetcol <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  fleetcol <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datatypes <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  fleets <span class="op">=</span> <span class="st">"all"</span>,</span>
-<span>  fleetnames <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  fleetnames <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"FleetNames"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  ghost <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  pwidth <span class="op">=</span> <span class="fl">6.5</span>,</span>
 <span>  pheight <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -106,7 +106,7 @@ Currently there are only 2 subplots:</p><ul><li><p>1 equal size points showing p
 
 
 <dt id="arg-fleetcol">fleetcol<a class="anchor" aria-label="anchor" href="#arg-fleetcol"></a></dt>
-<dd><p>Either the string "default", or a vector of colors to use
+<dd><p>Optional vector of colors to use
 for each fleet. If tagging data or environmental data are included,
 an additional color needs to be
 added for the tag releases which are not assigned to a fleet.</p></dd>

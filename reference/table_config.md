@@ -5,7 +5,7 @@ Create a table to summarize the configuration of the SS3 model
 ## Usage
 
 ``` r
-table_config(replist, dir = NULL, verbose = TRUE)
+table_config(replist, dir = replist[["inputs"]][["dir"]], verbose = TRUE)
 ```
 
 ## Arguments

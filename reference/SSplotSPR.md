@@ -17,9 +17,9 @@ SSplotSPR(
   col2 = "blue",
   col3 = "green3",
   col4 = "red",
-  sprtarg = "default",
-  btarg = "default",
-  minbthresh = "default",
+  sprtarg = NULL,
+  btarg = replist[["btarg"]],
+  minbthresh = replist[["minbthresh"]],
   labels = c("Year", "SPR", "1-SPR", "Relative fishing intensity",
     "Fraction of unfished spawning output"),
   pwidth = 6.5,
@@ -29,7 +29,7 @@ SSplotSPR(
   res = 300,
   ptsize = 10,
   cex.main = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE
 )
 ```
@@ -93,23 +93,23 @@ SSplotSPR(
 
 - sprtarg:
 
-  F/SPR proxy target. "default" chooses based on model output, where
-  models which have SPR_std_basis = 0 or 1 specified in the starter file
-  will use the SPR target specified in the forecast file. Models which
-  have SPR_std_basis = 2 will use SPR at MSY for the SPR target and
-  models which have the SPR_std_basis = 3 will use SPR at Btarget for
-  the SPR target in these plots. Zero or negative values of sprtarg
-  input here will cause no horizontal line to be plotted.
+  F/SPR proxy target. NULL chooses based on model output, where models
+  which have SPR_std_basis = 0 or 1 specified in the starter file will
+  use the SPR target specified in the forecast file. Models which have
+  SPR_std_basis = 2 will use SPR at MSY for the SPR target and models
+  which have the SPR_std_basis = 3 will use SPR at Btarget for the SPR
+  target in these plots. Zero or negative values of sprtarg input here
+  will cause no horizontal line to be plotted.
 
 - btarg:
 
   target depletion to be used in plots showing depletion. May be omitted
-  by setting to NA. "default" chooses based on model output.
+  by setting to NA. NULL chooses based on model output.
 
 - minbthresh:
 
   minimum biomass threshold to be used in plots showing depletion. May
-  be omitted by setting to NA. "default" chooses based on model output.
+  be omitted by setting to NA. NULL chooses based on model output.
 
 - labels:
 

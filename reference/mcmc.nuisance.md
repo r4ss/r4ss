@@ -8,8 +8,8 @@ key parameters).
 
 ``` r
 mcmc.nuisance(
-  directory = "c:/mydirectory/",
-  run = "mymodel/",
+  directory = getwd(),
+  run = "",
   file = "posteriors.sso",
   file2 = "derived_posteriors.sso",
   bothfiles = FALSE,

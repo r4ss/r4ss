@@ -9,7 +9,7 @@ probably created using
 ``` r
 SS_writeforecast(
   mylist,
-  dir = NULL,
+  dir = getwd(),
   file = "forecast.ss",
   writeAll = FALSE,
   overwrite = FALSE,
@@ -26,8 +26,9 @@ SS_writeforecast(
 
 - dir:
 
-  A file path to the directory of interest. The default value is
-  `dir = NULL`, which leads to using the current working directory.
+  A file path to the directory of interest. When omitted, functions
+  typically default to the current working directory or the model
+  directory stored in `replist`.
 
 - file:
 

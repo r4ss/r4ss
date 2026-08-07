@@ -10,8 +10,8 @@ known as `SStablebiology()` but that older version is now deprecated.
 ``` r
 table_biology(
   replist,
-  dir = NULL,
-  fleetnames = NULL,
+  dir = replist[["inputs"]][["dir"]],
+  fleetnames = replist[["FleetNames"]],
   selexyr = NULL,
   verbose = TRUE
 )
@@ -37,8 +37,8 @@ table_biology(
 
 - selexyr:
 
-  The year to summarize selectivity, the default is the final model
-  year.
+  The year to summarize selectivity, NULL will use the most recent year
+  with selectivity reported in the model output.
 
 - verbose:
 

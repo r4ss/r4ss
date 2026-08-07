@@ -13,7 +13,7 @@ SSplotSummaryF(
   ylab = "Summary Fishing Mortality",
   plot = TRUE,
   print = FALSE,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE,
   uncertainty = TRUE,
   add = FALSE,

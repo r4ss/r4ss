@@ -7,7 +7,7 @@ files) from a model.
 
 ``` r
 SSgetMCMC(
-  dir = NULL,
+  dir = getwd(),
   verbose = TRUE,
   writecsv = FALSE,
   postname = "posteriors.sso",
@@ -25,8 +25,9 @@ SSgetMCMC(
 
 - dir:
 
-  A file path to the directory of interest. The default value is
-  `dir = NULL`, which leads to using the current working directory.
+  A file path to the directory of interest. When omitted, functions
+  typically default to the current working directory or the model
+  directory stored in `replist`.
 
 - verbose:
 

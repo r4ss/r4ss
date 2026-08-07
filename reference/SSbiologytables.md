@@ -12,9 +12,9 @@ later.
 SSbiologytables(
   replist = NULL,
   printfolder = "tables",
-  dir = "default",
-  fleetnames = "default",
-  selexyr = "default"
+  dir = replist[["inputs"]][["dir"]],
+  fleetnames = replist[["FleetNames"]],
+  selexyr = replist[["endyr"]]
 )
 ```
 
@@ -35,8 +35,9 @@ SSbiologytables(
 
 - dir:
 
-  A file path to the directory of interest. The default value is
-  `dir = NULL`, which leads to using the current working directory.
+  A file path to the directory of interest. When omitted, functions
+  typically default to the current working directory or the model
+  directory stored in `replist`.
 
 - fleetnames:
 
@@ -44,8 +45,8 @@ SSbiologytables(
 
 - selexyr:
 
-  The year to summarize selectivity, the default is the final model yr
-  strings to use for each fleet name. Default="default".
+  The year to summarize selectivity, the default is the final model
+  year.
 
 ## Value
 

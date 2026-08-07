@@ -11,7 +11,7 @@ and the ss3sim package.
 
 ``` r
 SS_changepars(
-  dir = NULL,
+  dir = getwd(),
   ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   linenums = NULL,
@@ -33,8 +33,9 @@ SS_changepars(
 
 - dir:
 
-  A file path to the directory of interest. The default value is
-  `dir = NULL`, which leads to using the current working directory.
+  A file path to the directory of interest. When omitted, functions
+  typically default to the current working directory or the model
+  directory stored in `replist`.
 
 - ctlfile:
 
@@ -146,7 +147,7 @@ Ian Taylor, Christine Stawitz, Chantel Wetzel, Kiva L. Oken
 ``` r
 if (FALSE) { # \dontrun{
 SS_changepars(
-  dir = "C:/ss/SSv3.30.03.05_May11/Simple - Copy",
+  dir = system.file("extdata", "simple_small", package = "r4ss"),
   strings = c("steep", "sigmaR"), newvals = c(.4, .6)
 )
 ## parameter names in control file matching input vector 'strings' (n=2):

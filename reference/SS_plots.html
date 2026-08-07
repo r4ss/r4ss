@@ -60,16 +60,16 @@ functions to make all the plots.</p>
 <span>  png <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  html <span class="op">=</span> <span class="va">png</span>,</span>
 <span>  printfolder <span class="op">=</span> <span class="st">"plots"</span>,</span>
-<span>  dir <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  dir <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"inputs"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"dir"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  fleets <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  areas <span class="op">=</span> <span class="st">"all"</span>,</span>
-<span>  fleetnames <span class="op">=</span> <span class="st">"default"</span>,</span>
-<span>  fleetcols <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  fleetnames <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"FleetNames"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  fleetcols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fleetlty <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  fleetpch <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  lwd <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  areacols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  areanames <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  areanames <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  uncertainty <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  forecastplot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -78,9 +78,9 @@ functions to make all the plots.</p>
 <span>  samplesizeplots <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  compresidplots <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  comp.yupper <span class="op">=</span> <span class="fl">0.4</span>,</span>
-<span>  sprtarg <span class="op">=</span> <span class="st">"default"</span>,</span>
-<span>  btarg <span class="op">=</span> <span class="st">"default"</span>,</span>
-<span>  minbthresh <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  sprtarg <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"sprtarg"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  btarg <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"btarg"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  minbthresh <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"minbthresh"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  pntscalar <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bub.scale.pearson <span class="op">=</span> <span class="fl">1.5</span>,</span>
 <span>  bub.scale.dat <span class="op">=</span> <span class="fl">3</span>,</span>
@@ -233,8 +233,8 @@ function has not yet been updated for multi-area models). Default="all".</p></dd
 
 
 <dt id="arg-fleetcols">fleetcols<a class="anchor" aria-label="anchor" href="#arg-fleetcols"></a></dt>
-<dd><p>Either the string "default", or a vector of colors to use
-for each fleet.  Default="default".</p></dd>
+<dd><p>Optional vector of colors to use for each fleet. If NULL,
+colors are generated automatically.</p></dd>
 
 
 <dt id="arg-fleetlty">fleetlty<a class="anchor" aria-label="anchor" href="#arg-fleetlty"></a></dt>
@@ -258,7 +258,7 @@ multiple areas. NULL value will be replaced by a default set of areas.</p></dd>
 
 <dt id="arg-areanames">areanames<a class="anchor" aria-label="anchor" href="#arg-areanames"></a></dt>
 <dd><p>Optional vector of names for each area used in titles.
-Default="default".</p></dd>
+If NULL, names are generated automatically where needed.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

@@ -13,7 +13,7 @@ SSplotDynamicB0(
   yrs = "all",
   plot = TRUE,
   print = FALSE,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE,
   uncertainty = TRUE,
   legend = TRUE,

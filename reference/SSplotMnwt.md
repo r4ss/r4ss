@@ -13,7 +13,7 @@ SSplotMnwt(
   plot = TRUE,
   print = FALSE,
   fleets = "all",
-  fleetnames = "default",
+  fleetnames = replist[["FleetNames"]],
   datplot = FALSE,
   labels = c("Year", "discard", "retained catch", "whole catch",
     "Mean individual body weight (kg)", "Mean weight in", "for"),
@@ -25,7 +25,7 @@ SSplotMnwt(
   res = 300,
   ptsize = 10,
   cex.main = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE
 )
 ```

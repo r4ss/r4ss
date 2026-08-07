@@ -18,7 +18,7 @@ SSplotSpawnrecruit(
     italic(B)[0], ")")), expression(paste("Recruitment (relative to  ", italic(R)[0],
     ")")), "Log recruitment deviation"),
   bioscale = 1,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   pwidth = 6.5,
   pheight = 6.5,
   punits = "in",
@@ -27,10 +27,10 @@ SSplotSpawnrecruit(
   verbose = TRUE,
   colvec = c("blue", "black", "black", gray(0, 0.7)),
   ltyvec = c(1, 2, 1, NA),
-  ptcol = "default",
+  ptcol = NULL,
   legend = TRUE,
   legendloc = NULL,
-  minyr = "default",
+  minyr = NULL,
   textmindev = 0.5,
   relative = FALSE,
   expected = TRUE,
@@ -137,8 +137,8 @@ SSplotSpawnrecruit(
 
 - ptcol:
 
-  vector or single value for the color of the points, "default" will by
-  replaced by a vector of colors of length equal to
+  vector or single value for the color of the points. If NULL, it will
+  be replaced by a vector of colors of length equal to
   `nrow(replist[["recruit"]])`
 
 - legend:

@@ -9,7 +9,7 @@ created using
 ``` r
 SS_writewtatage(
   mylist,
-  dir = NULL,
+  dir = getwd(),
   file = "wtatage.ss",
   overwrite = FALSE,
   verbose = TRUE,
@@ -26,8 +26,9 @@ SS_writewtatage(
 
 - dir:
 
-  A file path to the directory of interest. The default value is
-  `dir = NULL`, which leads to using the current working directory.
+  A file path to the directory of interest. When omitted, functions
+  typically default to the current working directory or the model
+  directory stored in `replist`.
 
 - file:
 

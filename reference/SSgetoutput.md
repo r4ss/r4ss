@@ -75,6 +75,11 @@ SSgetoutput(
   to be a user input because the units depend on the choice of fecundity
   parameters which are calculated outside of the SS3 model.
 
+- modelnames:
+
+  optional vector of labels to use as column names. Default is
+  `summaryoutput[["modelnames"]]`.
+
 ## See also
 
 [`SS_output()`](https://r4ss.github.io/r4ss/reference/SS_output.md)

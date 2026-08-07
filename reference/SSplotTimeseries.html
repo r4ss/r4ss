@@ -53,7 +53,7 @@ report file. Some values have optional uncertainty intervals.</p>
 <span>  add <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  areas <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  areacols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  areanames <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  areanames <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  forecastplot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  uncertainty <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  bioscale <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -61,10 +61,10 @@ report file. Some values have optional uncertainty intervals.</p>
 <span>  maxyr <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  plotdir <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  plotdir <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"inputs"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"dir"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  btarg <span class="op">=</span> <span class="st">"default"</span>,</span>
-<span>  minbthresh <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  btarg <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"btarg"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  minbthresh <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"minbthresh"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"Year"</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pwidth <span class="op">=</span> <span class="fl">6.5</span>,</span>
@@ -167,12 +167,12 @@ to the screen.</p></dd>
 
 <dt id="arg-btarg">btarg<a class="anchor" aria-label="anchor" href="#arg-btarg"></a></dt>
 <dd><p>Target depletion to be used in plots showing depletion. May be
-omitted by setting to 0. "default" chooses value based on modeloutput.</p></dd>
+omitted by setting to 0. NULL chooses value based on model output.</p></dd>
 
 
 <dt id="arg-minbthresh">minbthresh<a class="anchor" aria-label="anchor" href="#arg-minbthresh"></a></dt>
 <dd><p>Threshold depletion to be used in plots showing depletion.
-May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
+May be omitted by setting to 0. NULL assumes 0.25 unless btarg in model
 output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).</p></dd>
 
 

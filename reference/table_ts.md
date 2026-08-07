@@ -8,7 +8,7 @@ https://github.com/pfmc-assessments/lingcod/blob/main/R/table_ts.R
 ``` r
 table_ts(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   caption = "Time series of population estimates for the base model.",
   verbose = TRUE
 )

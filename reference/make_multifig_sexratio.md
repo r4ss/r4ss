@@ -22,9 +22,9 @@ make_multifig_sexratio(
   cex.main = 1,
   xlab = "",
   ylab = "Fraction female",
-  horiz_lab = "default",
+  horiz_lab = NULL,
   xbuffer = c(0.1, 0.1),
-  ybuffer = "default",
+  ybuffer = NULL,
   yupper = NULL,
   datonly = FALSE,
   showsampsize = TRUE,
@@ -38,10 +38,10 @@ make_multifig_sexratio(
   lwd = 2,
   nlegends = 3,
   legtext = list("yr", "sampsize", "effN"),
-  legx = "default",
-  legy = "default",
-  legadjx = "default",
-  legadjy = "default",
+  legx = NULL,
+  legy = NULL,
+  legadjx = NULL,
+  legadjy = NULL,
   legsize = c(1.2, 1),
   legfont = c(2, 1),
   ipage = 0,
@@ -113,8 +113,8 @@ make_multifig_sexratio(
 
 - horiz_lab:
 
-  axis labels set horizontal all the time (TRUE), never (FALSE) or only
-  when relatively short ("default")
+  axis labels set horizontal all the time (TRUE), never (FALSE) or, if
+  NULL, only when relatively short
 
 - xbuffer:
 
@@ -124,8 +124,8 @@ make_multifig_sexratio(
 - ybuffer:
 
   extra space around points on the bottom and top as fraction of total
-  height of plot. "default" will cause c(0,.15) for sexratio.option=1
-  and c(.15, .3) for sexratio.option=2.
+  height of plot. NULL will cause c(0,.15) for sexratio.option=1 and
+  c(.15, .3) for sexratio.option=2.
 
 - yupper:
 

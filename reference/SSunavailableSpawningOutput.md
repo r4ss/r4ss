@@ -11,7 +11,7 @@ SSunavailableSpawningOutput(
   replist,
   plot = TRUE,
   print = FALSE,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   pwidth = 6.5,
   pheight = 5,
   punits = "in",

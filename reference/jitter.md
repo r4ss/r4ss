@@ -8,7 +8,7 @@ in the format Report1.sso, Report2.sso, etc.
 
 ``` r
 jitter(
-  dir = NULL,
+  dir = getwd(),
   mydir = lifecycle::deprecated(),
   Intern = lifecycle::deprecated(),
   Njitter,

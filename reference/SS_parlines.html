@@ -72,8 +72,8 @@ what the user thinks the inputs are.</p>
 
 <dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
 <dd><p>A file path to the directory of interest.
-The default value is <code>dir = NULL</code>, which leads to using
-the current working directory.</p></dd>
+When omitted, functions typically default to the current working
+directory or the model directory stored in <code>replist</code>.</p></dd>
 
 
 <dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
@@ -116,7 +116,8 @@ break down under certain circumstances</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">parlines</span> <span class="op">&lt;-</span> <span class="fu">SS_parlines</span><span class="op">(</span>ctlfile <span class="op">=</span> <span class="st">"c:/ss/Simple/Control.SS_New"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ctlfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span>, <span class="st">"control.ss_new"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">parlines</span> <span class="op">&lt;-</span> <span class="fu">SS_parlines</span><span class="op">(</span>ctlfile <span class="op">=</span> <span class="va">ctlfile</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">parlines</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#       LO    HI     INIT PRIOR PR_type   SD PHASE              Label Line_num</span></span></span>
 <span class="r-in"><span><span class="co"># 42  0.05  0.15  0.10000  0.10       0  0.8    -3  NatM_p_1_Fem_GP_1       42</span></span></span>

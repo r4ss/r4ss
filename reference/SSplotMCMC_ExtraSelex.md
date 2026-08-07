@@ -11,7 +11,7 @@ SSplotMCMC_ExtraSelex(
   add = FALSE,
   nsexes = 1,
   shift = 0,
-  fleetname = "default",
+  fleetname = NULL,
   col = "blue"
 )
 ```

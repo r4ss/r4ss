@@ -7,7 +7,7 @@ Table of parameters
 ``` r
 table_pars(
   replist,
-  dir = NULL,
+  dir = replist[["inputs"]][["dir"]],
   rows = NULL,
   caption =
     "Parameter estimates, estimation phase, parameter bounds, estimation status, estimated standard deviation (SD), prior information [distribution(mean, SD)] used in the base model.",

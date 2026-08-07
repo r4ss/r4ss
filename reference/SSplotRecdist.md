@@ -18,7 +18,7 @@ SSplotRecdist(
   main = "distribution of recruitment by area and season",
   period = c("Initial", "Benchmark", "End year"),
   sexes = 1:2,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   pwidth = 6.5,
   pheight = 5,
   punits = "in",

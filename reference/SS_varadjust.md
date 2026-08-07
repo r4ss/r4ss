@@ -6,7 +6,7 @@ Function has not been fully tested yet
 
 ``` r
 SS_varadjust(
-  dir = "C:/myfiles/mymodels/myrun/",
+  dir = getwd(),
   ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss",
   keyword = "variance adjustments",
@@ -25,8 +25,9 @@ SS_varadjust(
 
 - dir:
 
-  A file path to the directory of interest. The default value is
-  `dir = NULL`, which leads to using the current working directory.
+  A file path to the directory of interest. When omitted, functions
+  typically default to the current working directory or the model
+  directory stored in `replist`.
 
 - ctlfile:
 
@@ -94,7 +95,7 @@ Ian G. Taylor, Gwladys I. Lambert
 ``` r
 if (FALSE) { # \dontrun{
 # load model output into R
-replist <- SS_output(dir = "c:/model/")
+replist <- SS_output(dir = system.file("extdata", "simple_small", package = "r4ss"))
 
 # get new variance adjustments (
 varadjust <- tune_comps(replist, option = "Francis")

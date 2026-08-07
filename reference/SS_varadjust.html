@@ -45,7 +45,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SS_varadjust</span><span class="op">(</span></span>
-<span>  dir <span class="op">=</span> <span class="st">"C:/myfiles/mymodels/myrun/"</span>,</span>
+<span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ctlfile <span class="op">=</span> <span class="st">"control.ss_new"</span>,</span>
 <span>  newctlfile <span class="op">=</span> <span class="st">"control_modified.ss"</span>,</span>
 <span>  keyword <span class="op">=</span> <span class="st">"variance adjustments"</span>,</span>
@@ -66,8 +66,8 @@
 
 <dl><dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
 <dd><p>A file path to the directory of interest.
-The default value is <code>dir = NULL</code>, which leads to using
-the current working directory.</p></dd>
+When omitted, functions typically default to the current working
+directory or the model directory stored in <code>replist</code>.</p></dd>
 
 
 <dt id="arg-ctlfile">ctlfile<a class="anchor" aria-label="anchor" href="#arg-ctlfile"></a></dt>
@@ -136,7 +136,7 @@ to the screen.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># load model output into R</span></span></span>
-<span class="r-in"><span><span class="va">replist</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_output.html">SS_output</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="st">"c:/model/"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">replist</span> <span class="op">&lt;-</span> <span class="fu"><a href="SS_output.html">SS_output</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get new variance adjustments (</span></span></span>
 <span class="r-in"><span><span class="va">varadjust</span> <span class="op">&lt;-</span> <span class="fu"><a href="tune_comps.html">tune_comps</a></span><span class="op">(</span><span class="va">replist</span>, option <span class="op">=</span> <span class="st">"Francis"</span><span class="op">)</span></span></span>

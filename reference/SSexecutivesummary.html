@@ -58,10 +58,10 @@ time-series, and numbers-at-age are created.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SSexecutivesummary</span><span class="op">(</span></span>
 <span>  <span class="va">replist</span>,</span>
-<span>  plotfolder <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  plotfolder <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ci_value <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  es_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  fleetnames <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fleetnames <span class="op">=</span> <span class="va">replist</span><span class="op">[[</span><span class="st">"FleetNames"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  add_text <span class="op">=</span> <span class="st">"model area"</span>,</span>
 <span>  so_units <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  tables <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>

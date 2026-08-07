@@ -12,7 +12,7 @@ SSplotTimeseries(
   add = FALSE,
   areas = "all",
   areacols = NULL,
-  areanames = "default",
+  areanames = NULL,
   forecastplot = TRUE,
   uncertainty = TRUE,
   bioscale = 1,
@@ -20,10 +20,10 @@ SSplotTimeseries(
   maxyr = Inf,
   plot = TRUE,
   print = FALSE,
-  plotdir = "default",
+  plotdir = replist[["inputs"]][["dir"]],
   verbose = TRUE,
-  btarg = "default",
-  minbthresh = "default",
+  btarg = replist[["btarg"]],
+  minbthresh = replist[["minbthresh"]],
   xlab = "Year",
   labels = NULL,
   pwidth = 6.5,
@@ -143,12 +143,12 @@ SSplotTimeseries(
 - btarg:
 
   Target depletion to be used in plots showing depletion. May be omitted
-  by setting to 0. "default" chooses value based on modeloutput.
+  by setting to 0. NULL chooses value based on model output.
 
 - minbthresh:
 
   Threshold depletion to be used in plots showing depletion. May be
-  omitted by setting to 0. "default" assumes 0.25 unless btarg in model
+  omitted by setting to 0. NULL assumes 0.25 unless btarg in model
   output is 0.25 in which case minbthresh = 0.125 (U.S. west coast
   flatfish).
 
