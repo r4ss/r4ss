@@ -114,7 +114,7 @@ ss3_data_to_fims <- function(
     timing = integer(),
     value = double(),
     unit = character(),
-    uncertainty = double()
+    uncertainty = character()
   )
 
   # get landings data and filter by fleet and year
@@ -153,7 +153,9 @@ ss3_data_to_fims <- function(
     timing = catch_by_year_fleet[["year"]],
     value = catch_by_year_fleet[["catch"]],
     unit = "mt",
-    uncertainty = catch_by_year_fleet[["catch_se"]]
+    uncertainty = glue::glue(
+      "~dlnorm(meanlog = log_landings_expected, sdlog = {catch_by_year_fleet[['catch_se']]})"
+    )
   )
 
   # check for any gaps in landings time series
@@ -178,8 +180,26 @@ ss3_data_to_fims <- function(
     }
     index_info <- cpue_filtered |>
       dplyr::select(year, index, obs, se_log) |>
-      dplyr::arrange(index, year)
-
+      dplyr::arrange(index, year) |>
+      dplyr::left_join(
+        y = dat[["CPUEinfo"]][, c("fleet", "errtype")],
+        by = c("index" = "fleet")
+      ) |>
+      dplyr::mutate(
+        distribution = dplyr::case_when(
+          errtype == -1 ~ "dnorm(mean = index_expected, sd =",
+          errtype == 0 ~ "dlnorm(meanlog = log_index_expected, sdlog =",
+          FALSE ~ "unknown"
+        ),
+        uncertainty = glue::glue("~{distribution} {se_log})")
+      )
+    if (any(index_info[["distribution"]] == "uknown")) {
+      cli::cli_abort(c(
+        x = "FIMS cannot accommodate Student's t-distributions in index data.",
+        i = "Check the distribution in the CPUEinfo section of your dat file
+        for errtype greater than zero and change to lognormal or normal."
+      ))
+    }
     indices <- data.frame(
       type = "index",
       fleet = dat[["fleetnames"]][index_info[["index"]]],
@@ -188,7 +208,7 @@ ss3_data_to_fims <- function(
       timing = index_info[["year"]],
       value = index_info[["obs"]],
       unit = "mt",
-      uncertainty = index_info[["se_log"]]
+      uncertainty = index_info[["uncertainty"]]
     )
   } else {
     indices <- NULL
@@ -275,11 +295,26 @@ ss3_data_to_fims <- function(
       length = NA,
       timing = age_info[["year"]],
       value = age_info[["value"]], # + 0.001, # add constant to avoid 0 values
-      unit = "proportion", #"number",
+      unit = "proportion",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
-      # uncertainty = round(age_info[["Nsamp"]] * age_info[["value"]])
-      uncertainty = round(age_info[["Nsamp"]])
+      uncertainty = glue::glue(
+        "~dmultinom(prob = agecomp_proportion, size = {round(age_info[['Nsamp']])})"
+      )
     )
+    if (any(dat[["age_info"]][["CompError"]] != 0)) {
+      bad_age_fleet <- dplyr::filter(
+        dat[["age_info"]],
+        .data[["CompError"]] != 0
+      )
+      cli::cli_alert_info(
+        "FIMS can currently only accommodate the multinomial distribution
+        for age-composition data."
+      )
+      cli::cli_alert_warning(
+        "The following fleets use the Dirichlet-multinomial distribution and
+        will be changed to use the multinomial: {row.names(bad_age_fleet)}."
+      )
+    }
   } else {
     # if no age comps present
     agecomps <- NULL
@@ -335,11 +370,26 @@ ss3_data_to_fims <- function(
       length = len_info[["length"]],
       timing = len_info[["year"]],
       value = len_info[["value"]], # + 0.001, # add constant to avoid 0 values
-      unit = "proportion", #"number",
+      unit = "proportion",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
-      # uncertainty = round(len_info[["Nsamp"]] * len_info[["value"]])
-      uncertainty = round(len_info[["Nsamp"]])
+      uncertainty = glue::glue(
+        "~dmultinom(prob = lengthcomp_proportion, size = {round(len_info[['Nsamp']])})"
+      )
     )
+    if (any(dat[["len_info"]][["CompError"]] != 0)) {
+      bad_length_fleet <- dplyr::filter(
+        dat[["len_info"]],
+        .data[["CompError"]] != 0
+      )
+      cli::cli_alert_info(
+        "FIMS can currently only accommodate the multinomial distribution
+        for length-composition data."
+      )
+      cli::cli_alert_warning(
+        "The following fleets use the Dirichlet-multinomial distribution and
+        will be changed to use the multinomial: {row.names(bad_length_fleet)}."
+      )
+    }
   } else {
     # if no length comps present
     lencomps <- NULL # not sure if we need this but wanting to avoid an error if missing age or length comps
@@ -359,7 +409,7 @@ ss3_data_to_fims <- function(
       timing = year,
       value = value / 1000, # convert to metric tons (SS3)
       unit = "mt",
-      uncertainty = NA
+      uncertainty = NA_character_
     ) |>
     dplyr::select(-year)
 
@@ -471,7 +521,7 @@ ss3_data_to_fims <- function(
         timing = NA,
         type = "age_to_length_conversion",
         unit = "proportion",
-        uncertainty = NA
+        uncertainty = NA_character_
       ) |>
       dplyr::select(dplyr::all_of(names(res)))
   } else {
