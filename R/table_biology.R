@@ -7,7 +7,7 @@
 #'
 #' @inheritParams table_exec_summary
 #' @inheritParams r4ss_params
-#' @param selexyr The year to summarize selectivity, NULL will use the most 
+#' @param selexyr The year to summarize selectivity, NULL will use the most
 #' recent year with selectivity reported in the model output.
 #'
 #' @family table functions
@@ -27,7 +27,7 @@ table_biology <- function(
 
   selexyrs_age <- unique(replist[["ageselex"]][["Yr"]])
   selexyrs_size <- unique(replist[["sizeselex"]][["Yr"]])
-  
+
   if (is.null(selexyr)) {
     # filter out years beyond the final year of the model
     selexyrs_age <- selexyrs_age[selexyrs_age <= replist[["endyr"]]]
@@ -76,8 +76,14 @@ table_biology <- function(
   }
 
   # Extract one selectivity or retention table for the requested year and factor.
-  build_curve_table <- function(data, value_cols, factor_name, x_name, x_values,
-                                fleet_ids = seq_len(nfleets)) {
+  build_curve_table <- function(
+    data,
+    value_cols,
+    factor_name,
+    x_name,
+    x_values,
+    fleet_ids = seq_len(nfleets)
+  ) {
     factor_rows <- data[
       data[["Yr"]] == selexyr & data[["Factor"]] == factor_name,
       ,
@@ -104,7 +110,9 @@ table_biology <- function(
       if (nrow(match_row) == 0) {
         return(NULL)
       }
-      data.frame(value = round(as.numeric(match_row[1, , drop = TRUE]), digits = 2))
+      data.frame(
+        value = round(as.numeric(match_row[1, , drop = TRUE]), digits = 2)
+      )
     })
     keep_cols <- !purrr::map_lgl(curve_cols, is.null)
     out <- data.frame(x_values)
@@ -263,7 +271,9 @@ table_biology <- function(
       fleet_ids = size_ret_fleets
     )
     table_selectivity_at_length <- list(
-      cap = glue::glue("Selectivity at length for each fleet in {cap_selexyr}."),
+      cap = glue::glue(
+        "Selectivity at length for each fleet in {cap_selexyr}."
+      ),
       table = selex.size
     )
     tables[["table_selectivity_at_length"]] <- table_selectivity_at_length
