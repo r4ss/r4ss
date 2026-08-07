@@ -17,7 +17,7 @@ SSMethod.TA1.8(
   datonly = FALSE,
   plotadj = !datonly,
   maxpanel = 1000,
-  fleetnames = replist[["FleetNames"]],
+  fleetnames = fit[["FleetNames"]],
   label.part = TRUE,
   label.sex = TRUE,
   set.pars = TRUE,
