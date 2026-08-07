@@ -1,3 +1,10 @@
+# r4ss 1.56.0 (August 2026)
+* Improve `retro()`: adjust several quantities by default: end year of main recruitment deviations, bias adjustment settings, blocks, and year ranges in forecast file for forecast and benchmark calculations https://github.com/r4ss/r4ss/pull/1087
+* Make axis labels smarter in comparison plots of biomass ratio https://github.com/r4ss/r4ss/pull/1092
+* Improve formatting of console comments (via use of `cli::cli_alert_*` functions instead of `cli::cli_inform()` as implemented in 1.54.0) https://github.com/r4ss/r4ss/pull/1088
+* Replace default function inputs like `"default"` with more informative values like `replist[["FleetNames"]]` https://github.com/r4ss/r4ss/pull/1093
+* Avoid creating distracting empty plot window when running `SS_plots()`
+
 # r4ss 1.55.0 (June 2026)
 * Adds support for tables of mean size at age:
   * "$mean_size_by_cohort" is new output starting with SS3 version 3.30.25
