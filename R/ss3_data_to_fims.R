@@ -83,11 +83,18 @@ ss3_data_to_fims <- function(
   if (is.null(fleets)) {
     fleets <- seq_along(dat[["fleetnames"]])
   }
+  # if maxage not provided, use values from the model
   if (is.null(maxage)) {
-    ages <- 0:max(dat[["agebin_vector"]])
-  } else {
-    ages <- 0:maxage
+    # first look to the agebin vector in the data file
+    if (!is.null(dat[["agebin_vector"]])) {
+      maxage <- max(dat[["agebin_vector"]])
+    } else {
+      # if not present, just use maximum age in the population
+      maxage <- ss3_inputs[["dat"]][["Nages"]]
+    }
   }
+  ages <- 0:maxage
+  
   cli::cli_alert_info(
     "Using age bins: {paste(ages, collapse = ', ')}"
   )
