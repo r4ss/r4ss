@@ -119,7 +119,9 @@ SSplotSexRatio <-
     # remove combined-sex samples and check to make sure samples remain
     dbase_kind <- dbase_kind |> dplyr::filter(Sexes != 0)
     if (nrow(dbase_kind) == 0) {
-      cli::cli_alert_info("No sex-specific samples remain after removing combined-sex samples")
+      cli::cli_alert_info(
+        "No sex-specific samples remain after removing combined-sex samples"
+      )
     }
 
     # modify filename for data-only plots
