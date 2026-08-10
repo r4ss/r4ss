@@ -1,5 +1,40 @@
 # Changelog
 
+## r4ss 1.56.0 (August 2026)
+
+- Improve [`retro()`](https://r4ss.github.io/r4ss/reference/retro.md):
+  several quantities now automatically adjusted, including the end year
+  of main recruitment deviations, the bias adjustment settings, removing
+  blocks which occur after the retro year, and year ranges in forecast
+  file for forecast and benchmark calculations. See
+  [\#1087](https://github.com/r4ss/r4ss/issues/1087) for details.
+
+- Improve formatting of console comments (via use of `cli::cli_alert_*`
+  functions instead of
+  [`cli::cli_inform()`](https://cli.r-lib.org/reference/cli_abort.html)
+  as implemented in 1.54.0)
+  [\#1088](https://github.com/r4ss/r4ss/issues/1088)
+
+- Replace default function inputs like `"default"` with more informative
+  values like `replist[["FleetNames"]]`
+  [\#1093](https://github.com/r4ss/r4ss/issues/1093)
+
+- Add a new
+  [`SS_add_parameter_line()`](https://r4ss.github.io/r4ss/reference/SS_add_parameter_line.md)
+  function to help with R-based workflows which will copy a parameter
+  line, edit user-selected columns, and then put it in a location
+  selected by the user
+  [\#1081](https://github.com/r4ss/r4ss/issues/1081)
+
+- Make axis labels smarter in comparison plots of biomass ratio
+  [\#1092](https://github.com/r4ss/r4ss/issues/1092)
+
+- Fix a bug causing sex ratio plots to be absent when there’s a mix of
+  sexed and unsexed composition data
+
+- Avoid creating distracting empty plot window when running
+  [`SS_plots()`](https://r4ss.github.io/r4ss/reference/SS_plots.md)
+
 ## r4ss 1.55.0 (June 2026)
 
 - Adds support for tables of mean size at age:

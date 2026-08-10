@@ -20,8 +20,8 @@ retro(
   subdirstart = "retro",
   years = 0:-5,
   overwrite = TRUE,
-  RemoveBlocks = FALSE,
-  verbose = FALSE,
+  adjustments = c("recdevs", "biasadj", "blocks", "forecast", "benchmarks"),
+  verbose = TRUE,
   exe = "ss3",
   ...
 )
@@ -61,12 +61,11 @@ retro(
   Overwrite any input files with matching names in the subdirectories
   where models will be run.
 
-- RemoveBlocks:
+- adjustments:
 
-  Logical switch determining whether specifications of blocks is removed
-  from top of control file. Blocks can cause problems for retrospective
-  analyses, but the method for removing them is overly simplistic and
-  probably won't work in most cases. Default=FALSE.
+  Character vector of settings to shift for each retrospective year.
+  Allowed values are `"recdevs"`, `"biasadj"`, `"blocks"`, `"forecast"`,
+  and `"benchmarks"`. NULL will result in no adjustments being applied.
 
 - verbose:
 
@@ -86,6 +85,33 @@ retro(
   Additional arguments passed to
   [`run()`](https://r4ss.github.io/r4ss/reference/run.md), such as
   `extras`, `show_in_console`, and `skipfinished`.
+
+## Details
+
+The `adjustments` argument controls optional updates to selected
+year-based settings so that each peeled model remains internally
+consistent.
+
+`"recdevs"` shifts `MainRdevYrLast` by the same retrospective offset.
+
+`"biasadj"` shifts `last_yr_fullbias_adj` and
+`first_recent_yr_nobias_adj` by the same retrospective offset.
+
+`"blocks"` removes block periods that begin after the retrospective end
+year and updates associated control-file objects accordingly (removes
+time-varying parameter lines associated with the block and if all blocks
+within a block pattern are removed, it changes to Block = 0 for the base
+parameter).
+
+`"forecast"` and `"benchmarks"` adjust interval year pairs using a
+shared rule based on whether an interval starts closer to the beginning
+or end of the modeled time series. The code checks whether the start
+year of the interval is closer to the model start or model end. If it is
+closer to the start (for example 1916 to 2025), only the recent value
+(the interval end) is shifted. If the interval represents recent years
+(for example entered as -4 to 0), both start and end values are shifted
+so the interval continues to represent the same recent window after
+peeling years from the end.
 
 ## See also
 
@@ -109,7 +135,7 @@ Ian G. Taylor, James T. Thorson, Kathryn L. Doering, Kiva L. Oken
 if (FALSE) { # \dontrun{
 # note: don't run this in your main directory--make a copy in case something
 # goes wrong
-mydir <- "C:/Simple"
+mydir <- system.file("extdata", "simple_small", package = "r4ss")
 
 ## retrospective analyses
 retro(

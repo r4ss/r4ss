@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">r4ss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.55.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.56.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,16 @@
       <small>Source: <a href="https://github.com/r4ss/r4ss/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.56.0" id="r4ss-1560-august-2026">r4ss 1.56.0 (August 2026)<a class="anchor" aria-label="anchor" href="#r4ss-1560-august-2026"></a></h2>
+<ul><li><p>Improve <code><a href="../reference/retro.html">retro()</a></code>: several quantities now automatically adjusted, including the end year of main recruitment deviations, the bias adjustment settings, removing blocks which occur after the retro year, and year ranges in forecast file for forecast and benchmark calculations. See <a href="https://github.com/r4ss/r4ss/issues/1087" class="external-link">#1087</a> for details.</p></li>
+<li><p>Improve formatting of console comments (via use of <code>cli::cli_alert_*</code> functions instead of <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_inform()</a></code> as implemented in 1.54.0) <a href="https://github.com/r4ss/r4ss/issues/1088" class="external-link">#1088</a></p></li>
+<li><p>Replace default function inputs like <code>"default"</code> with more informative values like <code>replist[["FleetNames"]]</code> <a href="https://github.com/r4ss/r4ss/issues/1093" class="external-link">#1093</a></p></li>
+<li><p>Add a new <code><a href="../reference/SS_add_parameter_line.html">SS_add_parameter_line()</a></code> function to help with R-based workflows which will copy a parameter line, edit user-selected columns, and then put it in a location selected by the user <a href="https://github.com/r4ss/r4ss/issues/1081" class="external-link">#1081</a></p></li>
+<li><p>Make axis labels smarter in comparison plots of biomass ratio <a href="https://github.com/r4ss/r4ss/issues/1092" class="external-link">#1092</a></p></li>
+<li><p>Fix a bug causing sex ratio plots to be absent when there’s a mix of sexed and unsexed composition data</p></li>
+<li><p>Avoid creating distracting empty plot window when running <code><a href="../reference/SS_plots.html">SS_plots()</a></code></p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.55.0" id="r4ss-1550-june-2026">r4ss 1.55.0 (June 2026)<a class="anchor" aria-label="anchor" href="#r4ss-1550-june-2026"></a></h2>
 <ul><li>Adds support for tables of mean size at age:

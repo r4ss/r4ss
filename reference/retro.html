@@ -17,7 +17,7 @@ before running retro()."><meta property="og:image" content="https://r4ss.github.
 
     <a class="navbar-brand me-2" href="../index.html">r4ss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.55.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.56.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,8 +67,8 @@ before running <code>retro()</code>.</p>
 <span>  subdirstart <span class="op">=</span> <span class="st">"retro"</span>,</span>
 <span>  years <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="op">-</span><span class="fl">5</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  RemoveBlocks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  adjustments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recdevs"</span>, <span class="st">"biasadj"</span>, <span class="st">"blocks"</span>, <span class="st">"forecast"</span>, <span class="st">"benchmarks"</span><span class="op">)</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  exe <span class="op">=</span> <span class="st">"ss3"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -111,11 +111,11 @@ retrospective year. Should be zero or negative values.</p></dd>
 subdirectories where models will be run.</p></dd>
 
 
-<dt id="arg-removeblocks">RemoveBlocks<a class="anchor" aria-label="anchor" href="#arg-removeblocks"></a></dt>
-<dd><p>Logical switch determining whether specifications of
-blocks is removed from top of control file. Blocks can cause problems for
-retrospective analyses, but the method for removing them is overly
-simplistic and probably won't work in most cases. Default=FALSE.</p></dd>
+<dt id="arg-adjustments">adjustments<a class="anchor" aria-label="anchor" href="#arg-adjustments"></a></dt>
+<dd><p>Character vector of settings to shift for each
+retrospective year. Allowed values are <code>"recdevs"</code>, <code>"biasadj"</code>,
+<code>"blocks"</code>, <code>"forecast"</code>, and <code>"benchmarks"</code>. NULL will result in
+no adjustments being applied.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -139,6 +139,27 @@ included.</p></dd>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The <code>adjustments</code> argument controls optional updates to selected year-based
+settings so that each peeled model remains internally consistent.</p>
+<p><code>"recdevs"</code> shifts <code>MainRdevYrLast</code> by the same retrospective offset.</p>
+<p><code>"biasadj"</code> shifts <code>last_yr_fullbias_adj</code> and
+<code>first_recent_yr_nobias_adj</code> by the same retrospective offset.</p>
+<p><code>"blocks"</code> removes block periods that begin after the retrospective end
+year and updates associated control-file objects accordingly (removes
+time-varying parameter lines associated with the block and if all blocks
+within a block pattern are removed, it changes to Block = 0 for the base
+parameter).</p>
+<p><code>"forecast"</code> and <code>"benchmarks"</code> adjust interval year pairs using a shared
+rule based on whether an interval starts closer to the beginning or end of
+the modeled time series. The code checks whether the start year of the
+interval is closer to the model start or model end. If it is closer to the
+start (for example 1916 to 2025), only the recent value (the interval end)
+is shifted. If the interval represents recent years (for example entered as
+-4 to 0), both start and end values are shifted so the interval continues to
+represent the same recent window after peeling years from the end.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="SSgetoutput.html">SSgetoutput()</a></code></p>
 <p>Other run functions:
@@ -159,7 +180,7 @@ included.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># note: don't run this in your main directory--make a copy in case something</span></span></span>
 <span class="r-in"><span><span class="co"># goes wrong</span></span></span>
-<span class="r-in"><span><span class="va">mydir</span> <span class="op">&lt;-</span> <span class="st">"C:/Simple"</span></span></span>
+<span class="r-in"><span><span class="va">mydir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simple_small"</span>, package <span class="op">=</span> <span class="st">"r4ss"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## retrospective analyses</span></span></span>
 <span class="r-in"><span><span class="fu">retro</span><span class="op">(</span></span></span>
