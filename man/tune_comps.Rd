@@ -7,7 +7,7 @@
 tune_comps(
   replist = NULL,
   fleets = "all",
-  option = c("Francis", "MI", "none", "DM"),
+  option = c("Francis", "MI", "none", "DM", "Francis_via_DM"),
   digits = 6,
   write = TRUE,
   niters_tuning = 0,
@@ -27,9 +27,9 @@ tune_comps(
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}
 
-\item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
-The first option, \code{none}, will only return information about the
-Francis and MI weights that are suggested.}
+\item{option}{Which type of tuning: 'none', 'Francis', 'MI', 'DM', or
+'Francis_via_DM'. The first option, \code{none}, will only return information
+about the Francis and MI weights that are suggested.}
 
 \item{digits}{Number of digits to round numbers to.}
 
@@ -41,7 +41,8 @@ be saved in \code{dir}.}
 where only the tunings should be calculated and the model is not rerun. Note
 that for DM, it will be assumed that 0 means not to run the model and
 specifying 1 or greater will only run the model once (because DM is not an
-iterative retuning method).}
+iterative retuning method). For \code{Francis_via_DM}, 0 means the tuned DM
+parameters will be written but the model will not be rerun.}
 
 \item{init_run}{Should the model be run before calculating the tunings?
 Defaults to \code{FALSE}. This run is not counted as an iteration for
@@ -112,6 +113,14 @@ Note that for \code{option = "DM"} a table of tunings is
 not created as the DM is not an iterative reweighting option. Instead, each
 of the fleets with length- and age-composition data will be assigned a DM
 parameter and the model will be rerun.
+}
+
+\subsection{Francis via Dirichlet-Multinomial (\code{Francis_via_DM})}{
+
+This option applies the Francis (2011) tuning method through fixed linear
+Dirichlet-Multinomial parameters. The approximate sample-size multiplier from
+Francis tuning is converted to the linear DM scale, where the multiplier is
+approximately \code{Theta / (1 + Theta)} and \code{Theta = exp(logTheta)}.
 }
 }
 

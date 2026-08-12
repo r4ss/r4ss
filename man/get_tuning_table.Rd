@@ -18,7 +18,8 @@ get_tuning_table(
 
 \item{fleets}{A vector of fleet numbers}
 
-\item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'}
+\item{option}{Which type of tuning: 'none', 'Francis', 'MI', 'DM', or
+'Francis_via_DM'}
 
 \item{digits}{Number of digits to round numbers to}
 
