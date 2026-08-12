@@ -4,7 +4,13 @@
 \alias{SS_read}
 \title{Read all Stock Synthesis input files for a model}
 \usage{
-SS_read(dir = getwd(), ss_new = FALSE, read_wtatage = FALSE, verbose = FALSE)
+SS_read(
+  dir = getwd(),
+  ss_new = FALSE,
+  read_wtatage = FALSE,
+  read_par = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{dir}{A file path to the directory of interest or a raw github URL (see
@@ -18,6 +24,9 @@ The default is to read the original files.}
 for models that use parametric growth. For such models, it will read the
 wtatage.ss_new file regardless of the setting of \code{ss_new} = TRUE/FALSE
 because wtatage.ss typically doesn't exist for these models.}
+
+\item{read_par}{A logical that controls if the .par file is read in for models that
+don't require a .par file. The default is FALSE.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
