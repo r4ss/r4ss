@@ -11,7 +11,7 @@
 #' @seealso [profile()]
 SS_profile <- function(...) {
   lifecycle::deprecate_stop(
-    when = "4.6.1",
+    when = "1.46.1",
     what = "SS_profile()",
     with = "profile()"
   )

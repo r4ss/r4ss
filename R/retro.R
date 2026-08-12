@@ -12,7 +12,7 @@
 SS_doRetro <-
   function(...) {
     lifecycle::deprecate_stop(
-      when = "4.6.1",
+      when = "1.46.1",
       what = "SS_doRetro()",
       with = "retro()"
     )
@@ -475,7 +475,7 @@ retro <- function(
     }
 
     # adjust forecast values if requested
-    if ("forecast" %in% adjustments) {
+    if ("forecast" %in% adjustments && inputs[["fore"]][["Forecast"]] > 0) {
       #_Fcast_years for averaging:  beg_selex, end_selex, beg_relF, end_relF, beg_mean recruits, end_recruits  (enter actual year, or values of 0 or -integer to be rel. endyr)
       Fcast_years_names <- c(
         "beg_selex",
@@ -491,7 +491,6 @@ retro <- function(
         )
         cli::cli_alert_info("Adjusting Fcast_years for retrospective:")
       }
-
       if (is.data.frame(inputs[["fore"]][["Fcast_years"]])) {
         # Newer forecast format: each row is an interval.
         inputs[["fore"]][["Fcast_years"]] <- shift_fcast_years_df(

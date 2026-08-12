@@ -12,7 +12,7 @@
 SS_tune_comps <-
   function(...) {
     lifecycle::deprecate_stop(
-      when = "4.6.1",
+      when = "1.46.1",
       what = "SS_tune_comps()",
       with = "tune_comps()"
     )
