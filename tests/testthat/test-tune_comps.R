@@ -148,6 +148,49 @@ test_that("tune_comps() works with DM", {
   expect_null(ctl[["Variance_adjustment_list"]])
 })
 
+test_that("tune_comps() works with Francis_via_DM without running model", {
+  local_path <- file.path(tempdir(check = TRUE), "test-runs-francis-via-dm")
+  dir.create(local_path, showWarnings = FALSE)
+  file.copy(example_path, local_path, recursive = TRUE)
+  local_runs_path <- file.path(local_path, "extdata")
+  on.exit(unlink(local_path, recursive = TRUE), add = TRUE)
+
+  replist <- suppressWarnings(SS_output(
+    dir = file.path(local_runs_path, "simple_small"),
+    verbose = FALSE,
+    hidewarn = TRUE,
+    printstats = FALSE
+  ))
+
+  test <- tune_comps(
+    replist = replist,
+    fleets = "all",
+    option = "Francis_via_DM",
+    niters_tuning = 0,
+    init_run = FALSE,
+    dir = file.path(local_runs_path, "simple_small"),
+    verbose = FALSE
+  )
+  expect_length(test, 2)
+  expect_true(is.data.frame(test$weights))
+  expect_true("target_log_theta" %in% names(test$weights))
+
+  dat <- SS_readdat(
+    file.path(local_runs_path, "simple_small", "data.ss"),
+    verbose = FALSE
+  )
+  ctl <- SS_readctl(
+    file.path(local_runs_path, "simple_small", "control.ss"),
+    use_datlist = TRUE,
+    datlist = dat,
+    verbose = FALSE
+  )
+  expect_true(!is.null(ctl[["dirichlet_parms"]]))
+  expect_true(all(ctl[["dirichlet_parms"]][, "PHASE"] < 0))
+  expect_true(all(dat[["len_info"]][, "CompError"][dat[["len_info"]][, "ParmSelect"] > 0] == 1))
+  expect_true(all(dat[["age_info"]][, "CompError"][dat[["age_info"]][, "ParmSelect"] > 0] == 1))
+})
+
 test_that("tune_comps() works with none", {
   skip_if(
     (!file.exists(file.path(runs_path, "simple_small", "ss3"))) &

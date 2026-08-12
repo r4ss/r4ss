@@ -50,6 +50,12 @@ SS_tune_comps <-
 #' of the fleets with length- and age-composition data will be assigned a DM
 #' parameter and the model will be rerun.
 #'
+#' ## Francis via Dirichlet-Multinomial (`Francis_via_DM`)
+#' This option applies the Francis (2011) tuning method through fixed linear
+#' Dirichlet-Multinomial parameters. The approximate sample-size multiplier from
+#' Francis tuning is converted to the linear DM scale, where the multiplier is
+#' approximately `Theta / (1 + Theta)` and `Theta = exp(logTheta)`.
+#'
 #' # SS3 versions
 #' ## 3.30.00-3.30.11
 #' Recommended_var_adj and other columns were named differently in these
@@ -76,9 +82,9 @@ SS_tune_comps <-
 #' future addition of the Multivariate-Tweedie likelihood.
 #'
 #' @inheritParams r4ss_params
-#' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
-#'  The first option, `none`, will only return information about the
-#'  Francis and MI weights that are suggested.
+#' @param option Which type of tuning: 'none', 'Francis', 'MI', 'DM', or
+#'  'Francis_via_DM'. The first option, `none`, will only return information
+#'  about the Francis and MI weights that are suggested.
 #' @param digits Number of digits to round numbers to.
 #' @param write Write suggested tunings to a file saved to the disk called
 #'  `suggested_tunings.ss`. This file name is currently hard coded and will
@@ -87,7 +93,8 @@ SS_tune_comps <-
 #'  where only the tunings should be calculated and the model is not rerun. Note
 #'  that for DM, it will be assumed that 0 means not to run the model and
 #'  specifying 1 or greater will only run the model once (because DM is not an
-#'  iterative retuning method).
+#'  iterative retuning method). For `Francis_via_DM`, 0 means the tuned DM
+#'  parameters will be written but the model will not be rerun.
 #' @param init_run Should the model be run before calculating the tunings?
 #'  Defaults to `FALSE`. This run is not counted as an iteration for
 #'  `niters_tuning` and will not be used if `option = "DM"`.
@@ -209,7 +216,7 @@ SS_tune_comps <-
 tune_comps <- function(
   replist = NULL,
   fleets = "all",
-  option = c("Francis", "MI", "none", "DM"),
+  option = c("Francis", "MI", "none", "DM", "Francis_via_DM"),
   digits = 6,
   write = TRUE,
   niters_tuning = 0,
@@ -251,10 +258,10 @@ tune_comps <- function(
   if (
     is.null(replist) &
       init_run == FALSE &
-      option %in% c("Francis", "MI", "none")
+      option %in% c("Francis", "MI", "none", "Francis_via_DM")
   ) {
     cli::cli_abort(
-      "Please specify replist (no report file found) or set init_run == TRUE when using option Francis, MI, or none"
+      "Please specify replist (no report file found) or set init_run == TRUE when using option Francis, MI, none, or Francis_via_DM"
     )
   }
   # read in model files
@@ -457,6 +464,92 @@ tune_comps <- function(
       }
     }
   }
+  # Francis via DM ----
+  if (option == "Francis_via_DM") {
+    if (init_run) {
+      run(
+        dir = dir,
+        exe = exe,
+        extras = extras,
+        skipfinished = FALSE,
+        verbose = verbose,
+        ...
+      )
+      suppressWarnings(
+        replist <- SS_output(
+          dir = dir,
+          verbose = FALSE,
+          printstats = FALSE,
+          covar = !grepl("nohess", extras),
+          hidewarn = TRUE
+        )
+      )
+    }
+
+    n_iterations <- max(1, niters_tuning)
+    weights <- vector("list", length = n_iterations)
+    tuning_table_list <- vector("list", length = n_iterations)
+    for (it in seq_len(n_iterations)) {
+      tuning_table <- get_tuning_table(
+        replist = replist,
+        fleets = fleets,
+        option = "Francis",
+        digits = digits,
+        write = write,
+        verbose = verbose
+      )
+      dm_tuning <- make_francis_via_dm_tuning(
+        dat = dat,
+        ctl = ctl,
+        tuning_table = tuning_table,
+        replist = replist,
+        fleets = fleets,
+        allow_up_tuning = allow_up_tuning,
+        verbose = verbose
+      )
+      dat <- dm_tuning[["dat"]]
+      ctl <- dm_tuning[["ctl"]]
+      tuning_table_list[[it]] <- tuning_table
+      weights[[it]] <- dm_tuning[["weights"]]
+
+      SS_writedat(
+        dat,
+        file.path(dir, start[["datfile"]]),
+        verbose = FALSE,
+        overwrite = TRUE
+      )
+      SS_writectl(
+        ctl,
+        file.path(dir, start[["ctlfile"]]),
+        verbose = FALSE,
+        overwrite = TRUE
+      )
+
+      if (niters_tuning > 0) {
+        run(
+          dir = dir,
+          exe = exe,
+          extras = extras,
+          skipfinished = FALSE,
+          verbose = verbose,
+          ...
+        )
+        suppressWarnings(
+          replist <- SS_output(
+            dir,
+            verbose = FALSE,
+            printstats = FALSE,
+            covar = !grepl("nohess", extras),
+            hidewarn = TRUE
+          )
+        )
+      }
+    }
+    if (niters_tuning == 0) {
+      weights <- weights[[1]]
+      tuning_table_list <- tuning_table_list[[1]]
+    }
+  }
   # DM ----
   if (option == "DM") {
     if (init_run) {
@@ -464,69 +557,16 @@ tune_comps <- function(
         "Init run was TRUE, but option == DM, so no initial run was done. The model will only be run if niters > 0."
       )
     }
-    # determine which fleets specified by user are included in model
-    fleets_len <- fleets[fleets %in% unique(dat[["lencomp"]][, "fleet"])]
-    fleets_age <- fleets[fleets %in% unique(dat[["agecomp"]][, "fleet"])]
-
-    # 1. specify the parameters in the data file need to do dirichlet MN
-    if (!is.null(dat[["lencomp"]])) {
-      dat[["len_info"]][fleets_len, "CompError"] <- 1
-      # TODO: make this more general so can share params across fleets?
-      dat[["len_info"]][fleets_len, "ParmSelect"] <- seq_len(length(fleets_len))
-    }
-    if (!is.null(dat[["agecomp"]])) {
-      dat[["age_info"]][fleets_age, "CompError"] <- 1
-      dat[["age_info"]][fleets_age, "ParmSelect"] <-
-        (length(fleets_len) + 1):(length(fleets_len) + length(fleets_age))
-    }
-    npars <- length(fleets_len) + length(fleets_age)
-    # get the highest phase in the model
-    last_phase <- get_last_phase(ctl)
-    # add check that last_phase is less than max_phase in starter. If not,
-    # modify the max phase and send warning.
-    if (last_phase >= start[["last_estimation_phase"]]) {
-      cli::cli_warn(
-        "The last phase used in the control file, {last_phase}, is higher or the same as the last_estimation_phase in the starter file currently set to {start[['last_estimation_phase']]}. Changing the last_estimation_phase in the starter file to {last_phase + 1}."
-      )
-      start[["last_estimation_phase"]] <- last_phase + 1
-      SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
-    }
-    ctl[["dirichlet_parms"]] <- data.frame(
-      "LO" = rep(-5, times = npars),
-      "HI" = 20,
-      "INIT" = 0.5,
-      "PRIOR" = 0,
-      "PR_SD" = 1.813,
-      "PR_type" = 6,
-      "PHASE" = last_phase + 1,
-      "env_var&link" = 0,
-      "dev_link" = 0,
-      "dev_minyr" = 0,
-      "dev_maxyr" = 0,
-      "dev_PH" = 0,
-      "Block" = 0,
-      "Block_Fxn" = 0
+    dm_setup <- add_dm_parms_for_fleets(
+      dat = dat,
+      ctl = ctl,
+      fleets = fleets,
+      fixed = FALSE,
+      verbose = verbose
     )
+    dat <- dm_setup[["dat"]]
+    ctl <- dm_setup[["ctl"]]
 
-    # remove weights specified through variance adjustment for comps, if any
-    if (!is.null(ctl[["Variance_adjustment_list"]])) {
-      cli::cli_alert_info(
-        "removing composition variance adjustments from model"
-      )
-      # filter out just data types 4, 5, and 7 for length, age, and size comps
-      if (nrow(ctl[["Variance_adjustment_list"]]) > 0) {
-        ctl[["Variance_adjustment_list"]] <-
-          ctl[["Variance_adjustment_list"]][
-            !ctl[["Variance_adjustment_list"]][["factor"]] %in%
-              c(4, 5, 7),
-          ]
-      }
-      # remove the list if there's nothing left
-      if (nrow(ctl[["Variance_adjustment_list"]]) == 0) {
-        ctl[["Variance_adjustment_list"]] <- NULL
-        ctl[["DoVar_adjust"]] <- 0
-      }
-    }
     # Run the model once - look for convergence
     SS_writedat(
       dat,
@@ -571,6 +611,188 @@ tune_comps <- function(
     tuning_table_list = tuning_table_list,
     weights = weights
   )
+  return(return_list)
+}
+
+make_francis_via_dm_tuning <- function(
+  dat,
+  ctl,
+  tuning_table,
+  replist,
+  fleets,
+  allow_up_tuning = FALSE,
+  verbose = TRUE
+) {
+  # Convert Francis target multipliers into fixed linear-DM log(theta) values.
+  dm_setup <- add_dm_parms_for_fleets(
+    dat = dat,
+    ctl = ctl,
+    fleets = fleets,
+    fixed = TRUE,
+    verbose = verbose
+  )
+  dat <- dm_setup[["dat"]]
+  ctl <- dm_setup[["ctl"]]
+
+  current_multipliers <- get_current_dm_multipliers(dat = dat, replist = replist)
+  tuning_rows <- tuning_table[tuning_table[["Type"]] %in% c("len", "age"), ]
+  tuning_rows[["current_dm_multiplier"]] <- 1
+  for (i in seq_len(nrow(tuning_rows))) {
+    mult_row <- current_multipliers[
+      current_multipliers[["Type"]] == tuning_rows[["Type"]][i] &
+        current_multipliers[["fleet"]] == tuning_rows[["fleet"]][i],
+    ]
+    if (nrow(mult_row) == 1) {
+      tuning_rows[["current_dm_multiplier"]][i] <- mult_row[["DM_multiplier"]]
+    }
+  }
+  tuning_rows[["target_multiplier"]] <-
+    tuning_rows[["New_Var_adj"]] * tuning_rows[["current_dm_multiplier"]]
+
+  max_multiplier <- exp(20) / (1 + exp(20))
+  min_multiplier <- exp(-5) / (1 + exp(-5))
+  if (allow_up_tuning && any(tuning_rows[["target_multiplier"]] > 1, na.rm = TRUE)) {
+    cli::cli_warn(
+      "Francis_via_DM uses fixed linear DM parameters, which cannot upweight above the input sample size. Values above 1 are being capped at the maximum supported DM multiplier."
+    )
+  }
+  tuning_rows[["target_multiplier"]] <- pmin(
+    tuning_rows[["target_multiplier"]],
+    max_multiplier
+  )
+  low_rows <- tuning_rows[["target_multiplier"]] < min_multiplier
+  if (any(low_rows, na.rm = TRUE)) {
+    cli::cli_warn(
+      "Some Francis_via_DM multipliers were below the supported linear DM range and were raised to the lower bound implied by log(Theta) = -5."
+    )
+    tuning_rows[["target_multiplier"]][low_rows] <- min_multiplier
+  }
+  tuning_rows[["target_log_theta"]] <- log(
+    tuning_rows[["target_multiplier"]] / (1 - tuning_rows[["target_multiplier"]])
+  )
+
+  for (i in seq_len(nrow(tuning_rows))) {
+    info_name <- paste0(tuning_rows[["Type"]][i], "_info")
+    parm_select <- dat[[info_name]][tuning_rows[["fleet"]][i], "ParmSelect"]
+    ctl[["dirichlet_parms"]][parm_select, "INIT"] <- tuning_rows[["target_log_theta"]][i]
+  }
+
+  weights <- tuning_rows[, c(
+    "Type",
+    "fleet",
+    "Name",
+    "Old_Var_adj",
+    "New_Var_adj",
+    "current_dm_multiplier",
+    "target_multiplier",
+    "target_log_theta",
+    "Note"
+  )]
+  list(dat = dat, ctl = ctl, weights = weights)
+}
+
+add_dm_parms_for_fleets <- function(dat, ctl, fleets, fixed = FALSE, verbose = TRUE) {
+  # Add DM settings for selected fleets and create the matching control parameters.
+  fleets_len <- integer()
+  fleets_age <- integer()
+  if (!is.null(dat[["lencomp"]])) {
+    fleets_len <- fleets[fleets %in% unique(dat[["lencomp"]][, "fleet"])]
+  }
+  if (!is.null(dat[["agecomp"]])) {
+    fleets_age <- fleets[fleets %in% unique(dat[["agecomp"]][, "fleet"])]
+  }
+
+  if (length(fleets_len) > 0) {
+    dat[["len_info"]][fleets_len, "CompError"] <- 1
+    dat[["len_info"]][fleets_len, "ParmSelect"] <- seq_along(fleets_len)
+  }
+  if (length(fleets_age) > 0) {
+    dat[["age_info"]][fleets_age, "CompError"] <- 1
+    dat[["age_info"]][fleets_age, "ParmSelect"] <-
+      seq_along(fleets_age) + length(fleets_len)
+  }
+  npars <- length(fleets_len) + length(fleets_age)
+  dm_phase <- get_last_phase(ctl) + 1
+  if (fixed) {
+    dm_phase <- -dm_phase
+  }
+  ctl[["dirichlet_parms"]] <- data.frame(
+    "LO" = rep(-5, times = npars),
+    "HI" = 20,
+    "INIT" = 0.5,
+    "PRIOR" = 0,
+    "PR_SD" = 1.813,
+    "PR_type" = 6,
+    "PHASE" = dm_phase,
+    "env_var&link" = 0,
+    "dev_link" = 0,
+    "dev_minyr" = 0,
+    "dev_maxyr" = 0,
+    "dev_PH" = 0,
+    "Block" = 0,
+    "Block_Fxn" = 0
+  )
+  ctl <- remove_comp_var_adjustments(ctl = ctl, verbose = verbose)
+  list(dat = dat, ctl = ctl)
+}
+
+remove_comp_var_adjustments <- function(ctl, verbose = TRUE) {
+  # Remove composition factors from variance adjustment when DM is used instead.
+  if (!is.null(ctl[["Variance_adjustment_list"]])) {
+    if (verbose) {
+      cli::cli_alert_info("removing composition variance adjustments from model")
+    }
+    if (nrow(ctl[["Variance_adjustment_list"]]) > 0) {
+      ctl[["Variance_adjustment_list"]] <-
+        ctl[["Variance_adjustment_list"]][
+          !ctl[["Variance_adjustment_list"]][["factor"]] %in% c(4, 5, 7),
+        ]
+    }
+    if (nrow(ctl[["Variance_adjustment_list"]]) == 0) {
+      ctl[["Variance_adjustment_list"]] <- NULL
+      ctl[["DoVar_adjust"]] <- 0
+    }
+  }
+  ctl
+}
+
+get_current_dm_multipliers <- function(dat, replist) {
+  # Read current fleet-level linear DM multipliers from output and map to data rows.
+  dm_pars <- replist[["Dirichlet_Multinomial_pars"]]
+  if (is.null(dm_pars) || nrow(dm_pars) == 0) {
+    return(data.frame(
+      Type = character(),
+      fleet = integer(),
+      DM_multiplier = double(),
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  out <- data.frame(
+    Type = character(),
+    fleet = integer(),
+    DM_multiplier = double(),
+    stringsAsFactors = FALSE
+  )
+  for (type in c("len", "age")) {
+    info_name <- paste0(type, "_info")
+    if (is.null(dat[[info_name]])) {
+      next
+    }
+    info <- dat[[info_name]]
+    active_rows <- which(info[, "CompError"] == 1 & info[, "ParmSelect"] > 0)
+    if (length(active_rows) == 0) {
+      next
+    }
+    type_out <- data.frame(
+      Type = rep(type, times = length(active_rows)),
+      fleet = active_rows,
+      DM_multiplier = dm_pars[["Theta/(1+Theta)"]][info[active_rows, "ParmSelect"]],
+      stringsAsFactors = FALSE
+    )
+    out <- rbind(out, type_out)
+  }
+  out
 }
 
 
@@ -578,7 +800,8 @@ tune_comps <- function(
 #'
 #' @inheritParams r4ss_params
 #' @param fleets A vector of fleet numbers
-#' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'
+#' @param option Which type of tuning: 'none', 'Francis', 'MI', 'DM', or
+#'  'Francis_via_DM'
 #' @param digits Number of digits to round numbers to
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
 get_tuning_table <- function(
@@ -589,6 +812,7 @@ get_tuning_table <- function(
   write = TRUE,
   verbose = TRUE
 ) {
+  # Build Francis/MI tuning recommendations by fleet and composition data type.
   # check inputs
   # place to store info on data weighting
   tuning_table <- data.frame(
@@ -791,6 +1015,7 @@ get_tuning_table <- function(
 #' @param ctl A control file list read in using `r4ss::SS_readctl`.
 #' @author Kathryn L. Doering
 get_last_phase <- function(ctl) {
+  # Find the highest estimation phase across all phase-bearing control sections.
   # read all phases in ctl
   df_vec <- c(
     "MG_parms",
