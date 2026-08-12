@@ -18,6 +18,8 @@
 #'   for models that use parametric growth. For such models, it will read the
 #'   wtatage.ss_new file regardless of the setting of `ss_new` = TRUE/FALSE
 #'   because wtatage.ss typically doesn't exist for these models.
+#' @param read_par A logical that controls if the .par file is read in for models that
+#'   don't require a .par file. The default is FALSE.
 #' @inheritParams r4ss_params
 #' @author Ian G. Taylor, Kelli F. Johnson
 #' @return An invisible list is returned.
@@ -62,6 +64,7 @@ SS_read <- function(
   dir = getwd(),
   ss_new = FALSE,
   read_wtatage = FALSE,
+  read_par = FALSE,
   verbose = FALSE
 ) {
   # Read in starter first to find the names of the input files
@@ -126,7 +129,7 @@ SS_read <- function(
   }
 
   # only read .par file if required by the model
-  if (start[["init_values_src"]] == 1) {
+  if (start[["init_values_src"]] == 1 || isTRUE(read_par)) {
     par <- NULL
     # figure out name of par file
     parfile <- get_par_name(dir)
@@ -156,7 +159,11 @@ SS_read <- function(
         silent = !verbose
       )
     } else {
-      cli::cli_warn("Model set to use .par file but no file found.")
+      if (start[["init_values_src"]] == 1) {
+        cli::cli_warn("Model set to use .par file but no file found.")
+      } else {
+        cli::cli_warn("read_par = TRUE but no .par file found.")
+      }
     }
     return_list[["par"]] <- par
   }
