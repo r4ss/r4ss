@@ -15,7 +15,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
       "age",
       "length",
       "timing",
-      "value",
+      "observed",
       "unit",
       "uncertainty"
     )
@@ -23,7 +23,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
 
   expect_true(all(
     c(
-      "landings",
+      "catch",
       "index",
       "age_comp",
       "length_comp",
