@@ -70,7 +70,7 @@ SS_plots(simple_small)
 #> ℹ Plotting distributions for 10 estimated parameters (deviations not included).
 #> ✔ Finished all requested plots in SS_plots function
 #> ℹ Starting diagnostic tables (group 26)
-#> ✔ Wrote table of info on PNG files to: /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_13-08-2026_17.08.08.0504.csv
+#> ✔ Wrote table of info on PNG files to: /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/plotInfoTable_13-08-2026_17.18.59.4064.csv
 #> ℹ Running 'SS_html': By default, this function will look in the directory where PNG files were created for CSV files with the name 'plotInfoTable...' written by 'SS_plots.' HTML files are written to link to these plots and put in the same directory.
 #> ℹ Removing duplicate rows in combined plotInfoTable based on multiple CSV files
 #> ℹ Home HTML file with output will be: /home/runner/work/_temp/Library/r4ss/extdata/simple_small/plots/_SS_output.html
