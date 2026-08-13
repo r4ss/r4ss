@@ -2,6 +2,7 @@
 #' @import coda
 #' @import dplyr
 #' @import viridis
+#' @import glue
 #' @importFrom corpcor pseudoinverse
 #' @importFrom grDevices adjustcolor col2rgb colorRampPalette dev.new dev.off graphics.off gray grey pdf png rainbow rgb topo.colors
 #' @importFrom graphics abline arrows axis barplot box contour curve grid hist image layout legend lines matplot mtext pairs par persp plot points polygon rect segments symbols text title
