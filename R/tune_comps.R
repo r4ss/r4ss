@@ -609,7 +609,7 @@ tune_comps <- function(
   }
 
   # make a plot showing time series of weights
-  if (option %in% c("Francis", "MI") & niters_tuning > 1) {
+  if (option %in% c("Francis", "MI", "Francis_via_DM") & niters_tuning > 1) {
     plot_tunings(weights, dir)
   }
 
@@ -640,7 +640,10 @@ make_francis_via_dm_tuning <- function(
   dat <- dm_setup[["dat"]]
   ctl <- dm_setup[["ctl"]]
 
-  current_multipliers <- get_current_dm_multipliers(dat = dat, replist = replist)
+  current_multipliers <- get_current_dm_multipliers(
+    dat = dat,
+    replist = replist
+  )
   tuning_rows <- tuning_table[tuning_table[["Type"]] %in% c("len", "age"), ]
   tuning_rows[["current_dm_multiplier"]] <- 1
   for (i in seq_len(nrow(tuning_rows))) {
@@ -657,7 +660,9 @@ make_francis_via_dm_tuning <- function(
 
   max_multiplier <- exp(20) / (1 + exp(20))
   min_multiplier <- exp(-5) / (1 + exp(-5))
-  if (allow_up_tuning && any(tuning_rows[["target_multiplier"]] > 1, na.rm = TRUE)) {
+  if (
+    allow_up_tuning && any(tuning_rows[["target_multiplier"]] > 1, na.rm = TRUE)
+  ) {
     cli::cli_warn(
       "Francis_via_DM uses fixed linear DM parameters, which cannot upweight above the input sample size. Values above 1 are being capped at the maximum supported DM multiplier."
     )
@@ -672,23 +677,26 @@ make_francis_via_dm_tuning <- function(
       "Some Francis_via_DM multipliers were below the supported linear DM range and were raised to the lower bound implied by log(Theta) = -5."
     )
     tuning_rows[["target_multiplier"]][low_rows] <- min_multiplier
+    tuning_rows[["Note"]][low_rows] <- "target_multiplier raised to lower bound implied by log(Theta) = -5"
   }
   tuning_rows[["target_log_theta"]] <- log(
-    tuning_rows[["target_multiplier"]] / (1 - tuning_rows[["target_multiplier"]])
+    tuning_rows[["target_multiplier"]] /
+      (1 - tuning_rows[["target_multiplier"]])
   )
 
   for (i in seq_len(nrow(tuning_rows))) {
     info_name <- paste0(tuning_rows[["Type"]][i], "_info")
     parm_select <- dat[[info_name]][tuning_rows[["fleet"]][i], "ParmSelect"]
-    ctl[["dirichlet_parms"]][parm_select, "INIT"] <- tuning_rows[["target_log_theta"]][i]
+    ctl[["dirichlet_parms"]][parm_select, "INIT"] <- tuning_rows[[
+      "target_log_theta"
+    ]][i]
   }
 
   weights <- tuning_rows[, c(
+    "factor",
     "Type",
     "fleet",
     "Name",
-    "Old_Var_adj",
-    "New_Var_adj",
     "current_dm_multiplier",
     "target_multiplier",
     "target_log_theta",
@@ -697,7 +705,13 @@ make_francis_via_dm_tuning <- function(
   list(dat = dat, ctl = ctl, weights = weights)
 }
 
-add_dm_parms_for_fleets <- function(dat, ctl, fleets, fixed = FALSE, verbose = TRUE) {
+add_dm_parms_for_fleets <- function(
+  dat,
+  ctl,
+  fleets,
+  fixed = FALSE,
+  verbose = TRUE
+) {
   # Add DM settings for selected fleets and create the matching control parameters.
   fleets_len <- integer()
   fleets_age <- integer()
@@ -746,7 +760,9 @@ remove_comp_var_adjustments <- function(ctl, verbose = TRUE) {
   # Remove composition factors from variance adjustment when DM is used instead.
   if (!is.null(ctl[["Variance_adjustment_list"]])) {
     if (verbose) {
-      cli::cli_alert_info("removing composition variance adjustments from model")
+      cli::cli_alert_info(
+        "removing composition variance adjustments from model"
+      )
     }
     if (nrow(ctl[["Variance_adjustment_list"]]) > 0) {
       ctl[["Variance_adjustment_list"]] <-
@@ -793,7 +809,10 @@ get_current_dm_multipliers <- function(dat, replist) {
     type_out <- data.frame(
       Type = rep(type, times = length(active_rows)),
       fleet = active_rows,
-      DM_multiplier = dm_pars[["Theta/(1+Theta)"]][info[active_rows, "ParmSelect"]],
+      DM_multiplier = dm_pars[["Theta/(1+Theta)"]][info[
+        active_rows,
+        "ParmSelect"
+      ]],
       stringsAsFactors = FALSE
     )
     out <- rbind(out, type_out)
@@ -993,7 +1012,7 @@ get_tuning_table <- function(
   if (option == "MI") {
     tuning_table[["New_Var_adj"]] <- tuning_table[["New_MI"]]
   }
-  names(tuning_table)[1] <- "#factor" # add hash to facilitate pasting into Control
+  # names(tuning_table)[1] <- "#factor" # add hash to facilitate pasting into Control
   rownames(tuning_table) <- 1:nrow(tuning_table)
 
   # stuff related to generalized size frequency data
@@ -1072,9 +1091,6 @@ get_last_phase <- function(ctl) {
 #' graphics device.
 #'
 plot_tunings <- function(weights, dir = NULL) {
-  # Declare global variables to avoid "no visible binding" errors
-  utils::globalVariables(c("iteration", "value", "fleet", "data_type"))
-
   # if the function is called outside of tune_comps() using the
   # output from that function, then extract weights
   if ("tuning_table_list" %in% names(weights)) {
@@ -1104,6 +1120,8 @@ plot_tunings <- function(weights, dir = NULL) {
         )
       )
     )
+  # rename columns for plotting
+  weights_df <- weights_df |> dplyr::rename(value = target_multiplier)
 
   ylab <- "Sample size multiplier"
   if (any(weights[[1]]$Data_type %in% 1:3)) {
@@ -1119,13 +1137,14 @@ plot_tunings <- function(weights, dir = NULL) {
       shape = data_type
     )
   ) +
-    geom_line(size = 1.2) +
+    geom_line(linewidth = 1.2) +
     geom_point(size = 2) +
     labs(x = "Iteration", y = ylab, color = "Fleet", shape = "Data Type") +
     theme_minimal(base_size = 14) +
     expand_limits(y = 0)
 
   if (!is.null(dir)) {
+    cli::cli_alert_info("Saving plot to {file.path(dir, 'tuning_values.png')}")
     ggsave(
       filename = file.path(dir, "tuning_values.png"),
       plot = p,
@@ -1135,4 +1154,6 @@ plot_tunings <- function(weights, dir = NULL) {
       dpi = 300
     )
   }
+
+  return(invisible(p))
 }
