@@ -142,10 +142,25 @@ retro <- function(
   if (is.null(adjustments)) {
     adjustments <- character(0)
   } else {
+    # `several.ok = "all"` is unavailable before R 4.6.1. Validate every
+    # value first so older R versions have the same all-values-must-match
+    # behavior while retaining `match.arg()`'s unique abbreviation rules.
+    adjustment_matches <- pmatch(
+      adjustments,
+      allowed_adjustments,
+      nomatch = 0L,
+      duplicates.ok = TRUE
+    )
+    if (any(adjustment_matches == 0L)) {
+      cli::cli_abort(
+        "`adjustments` must contain only valid adjustment names: {toString(allowed_adjustments)}"
+      )
+    }
+    # Multiple validated adjustment names are returned in their matched form.
     adjustments <- match.arg(
       adjustments,
       choices = allowed_adjustments,
-      several.ok = "all"
+      several.ok = TRUE
     )
   }
 
