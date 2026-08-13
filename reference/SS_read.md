@@ -12,7 +12,13 @@ files.
 ## Usage
 
 ``` r
-SS_read(dir = getwd(), ss_new = FALSE, read_wtatage = FALSE, verbose = FALSE)
+SS_read(
+  dir = getwd(),
+  ss_new = FALSE,
+  read_wtatage = FALSE,
+  read_par = FALSE,
+  verbose = FALSE
+)
 ```
 
 ## Arguments
@@ -34,6 +40,11 @@ SS_read(dir = getwd(), ss_new = FALSE, read_wtatage = FALSE, verbose = FALSE)
   models that use parametric growth. For such models, it will read the
   wtatage.ss_new file regardless of the setting of `ss_new` = TRUE/FALSE
   because wtatage.ss typically doesn't exist for these models.
+
+- read_par:
+
+  A logical that controls if the .par file is read in for models that
+  don't require a .par file. The default is FALSE.
 
 - verbose:
 

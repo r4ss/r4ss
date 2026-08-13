@@ -65,7 +65,13 @@ the control and data files.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SS_read</span><span class="op">(</span>dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, ss_new <span class="op">=</span> <span class="cn">FALSE</span>, read_wtatage <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SS_read</span><span class="op">(</span></span>
+<span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ss_new <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  read_wtatage <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  read_par <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -88,6 +94,11 @@ The default is to read the original files.</p></dd>
 for models that use parametric growth. For such models, it will read the
 wtatage.ss_new file regardless of the setting of <code>ss_new</code> = TRUE/FALSE
 because wtatage.ss typically doesn't exist for these models.</p></dd>
+
+
+<dt id="arg-read-par">read_par<a class="anchor" aria-label="anchor" href="#arg-read-par"></a></dt>
+<dd><p>A logical that controls if the .par file is read in for models that
+don't require a .par file. The default is FALSE.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
