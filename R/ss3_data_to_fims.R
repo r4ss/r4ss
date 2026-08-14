@@ -112,12 +112,12 @@ ss3_data_to_fims <- function(
     age = integer(),
     length = integer(),
     timing = integer(),
-    value = double(),
+    observed = double(),
     unit = character(),
-    uncertainty = double()
+    uncertainty = character()
   )
 
-  # get landings data and filter by fleet and year
+  # get catch data and filter by fleet and year
   n_catch_before <- nrow(dat[["catch"]])
   # remove initial equilibrium catch rows (year = -999)
   catch_filtered <- dat[["catch"]] |>
@@ -144,22 +144,24 @@ ss3_data_to_fims <- function(
       dplyr::mutate(catch = ifelse(catch == 0, 0.1, catch))
   }
 
-  # convert landings to FIMSFrame format
-  landings <- data.frame(
-    type = "landings",
+  # convert catch to FIMSFrame format
+  catch <- data.frame(
+    type = "catch",
     fleet = dat[["fleetnames"]][catch_by_year_fleet[["fleet"]]],
     age = NA,
     length = NA,
     timing = catch_by_year_fleet[["year"]],
-    value = catch_by_year_fleet[["catch"]],
+    observed = catch_by_year_fleet[["catch"]],
     unit = "mt",
-    uncertainty = catch_by_year_fleet[["catch_se"]]
+    uncertainty = glue::glue(
+      "~dlnorm(meanlog = log_catch_expected, sdlog = {catch_by_year_fleet[['catch_se']]})"
+    )
   )
 
-  # check for any gaps in landings time series
+  # check for any gaps in catch time series
   years <- min(catch_by_year_fleet[["year"]]):max(catch_by_year_fleet[["year"]])
   if (!all(years %in% catch_by_year_fleet[["year"]])) {
-    cli::cli_abort("missing years in landings")
+    cli::cli_abort("missing years in catch")
   }
   # weight_at_age needs additional year
   years_wtatage <- c(years, max(years) + 1)
@@ -178,17 +180,35 @@ ss3_data_to_fims <- function(
     }
     index_info <- cpue_filtered |>
       dplyr::select(year, index, obs, se_log) |>
-      dplyr::arrange(index, year)
-
+      dplyr::arrange(index, year) |>
+      dplyr::left_join(
+        y = dat[["CPUEinfo"]][, c("fleet", "errtype")],
+        by = c("index" = "fleet")
+      ) |>
+      dplyr::mutate(
+        distribution = dplyr::case_when(
+          errtype == -1 ~ "dnorm(mean = index_expected, sd =",
+          errtype == 0 ~ "dlnorm(meanlog = log_index_expected, sdlog =",
+          FALSE ~ "unknown"
+        ),
+        uncertainty = glue::glue("~{distribution} {se_log})")
+      )
+    if (any(index_info[["distribution"]] == "uknown")) {
+      cli::cli_abort(c(
+        x = "FIMS cannot accommodate Student's t-distributions in index data.",
+        i = "Check the distribution in the CPUEinfo section of your dat file
+        for errtype greater than zero and change to lognormal or normal."
+      ))
+    }
     indices <- data.frame(
       type = "index",
       fleet = dat[["fleetnames"]][index_info[["index"]]],
       age = NA,
       length = NA,
       timing = index_info[["year"]],
-      value = index_info[["obs"]],
+      observed = index_info[["obs"]],
       unit = "mt",
-      uncertainty = index_info[["se_log"]]
+      uncertainty = index_info[["uncertainty"]]
     )
   } else {
     indices <- NULL
@@ -253,19 +273,19 @@ ss3_data_to_fims <- function(
         # convert columns f1...f17 to values in a new "age" colum of a longer table
         cols = dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses a1, a2, ...
         names_to = "age",
-        values_to = "value"
+        values_to = "observed"
       ) |>
       dplyr::mutate(age = as.numeric(substring(age, first = 2))) |> # convert "f17" to 17
-      dplyr::select(year, fleet, Nsamp, age, value) |>
+      dplyr::select(year, fleet, Nsamp, age, observed) |>
       # Find missing age in composition data and fill in for each fleet
       dplyr::group_by(fleet, year) |>
       tidyr::complete(age = ages) |>
       tidyr::fill(Nsamp, .direction = "updown") |>
-      dplyr::mutate(value = ifelse(is.na(value), 0, value)) |>
+      dplyr::mutate(observed = ifelse(is.na(observed), 0, observed)) |>
       dplyr::ungroup() |>
       dplyr::arrange(fleet, year, age) #|>
     # Change from proportion to number
-    #dplyr::mutate(value = (value * Nsamp) |> round(0))
+    #dplyr::mutate(observed = (observed * Nsamp) |> round(0))
 
     # finish converting age comps to FIMSFrame format
     agecomps <- data.frame(
@@ -274,12 +294,27 @@ ss3_data_to_fims <- function(
       age = age_info[["age"]],
       length = NA,
       timing = age_info[["year"]],
-      value = age_info[["value"]], # + 0.001, # add constant to avoid 0 values
-      unit = "proportion", #"number",
+      observed = age_info[["observed"]], # + 0.001, # add constant to avoid 0 values
+      unit = "proportion",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
-      # uncertainty = round(age_info[["Nsamp"]] * age_info[["value"]])
-      uncertainty = round(age_info[["Nsamp"]])
+      uncertainty = glue::glue(
+        "~dmultinom(prob = agecomp_proportion, size = {round(age_info[['Nsamp']])})"
+      )
     )
+    if (any(dat[["age_info"]][["CompError"]] != 0)) {
+      bad_age_fleet <- dplyr::filter(
+        dat[["age_info"]],
+        .data[["CompError"]] != 0
+      )
+      cli::cli_alert_info(
+        "FIMS can currently only accommodate the multinomial distribution
+        for age-composition data."
+      )
+      cli::cli_alert_warning(
+        "The following fleets use the Dirichlet-multinomial distribution and
+        will be changed to use the multinomial: {row.names(bad_age_fleet)}."
+      )
+    }
   } else {
     # if no age comps present
     agecomps <- NULL
@@ -319,13 +354,13 @@ ss3_data_to_fims <- function(
         # convert columns f1...f17 to values in a new "length" colum of a longer table
         cols = dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses l1, l2, ...
         names_to = "length",
-        values_to = "value"
+        values_to = "observed"
       ) |>
       dplyr::mutate(length = as.numeric(substring(length, first = 2))) |> # convert "l17" to 17
-      dplyr::select(year, fleet, Nsamp, length, value) |>
+      dplyr::select(year, fleet, Nsamp, length, observed) |>
       dplyr::arrange(fleet, year, length) # |>
     # Change from proportion to number
-    #dplyr::mutate(value = (value * Nsamp) |> round(0))
+    #dplyr::mutate(observed = (observed * Nsamp) |> round(0))
 
     # finish converting age comps to FIMSFrame format
     lencomps <- data.frame(
@@ -334,12 +369,27 @@ ss3_data_to_fims <- function(
       age = NA,
       length = len_info[["length"]],
       timing = len_info[["year"]],
-      value = len_info[["value"]], # + 0.001, # add constant to avoid 0 values
-      unit = "proportion", #"number",
+      observed = len_info[["observed"]], # + 0.001, # add constant to avoid 0 values
+      unit = "proportion",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
-      # uncertainty = round(len_info[["Nsamp"]] * len_info[["value"]])
-      uncertainty = round(len_info[["Nsamp"]])
+      uncertainty = glue::glue(
+        "~dmultinom(prob = lengthcomp_proportion, size = {round(len_info[['Nsamp']])})"
+      )
     )
+    if (any(dat[["len_info"]][["CompError"]] != 0)) {
+      bad_length_fleet <- dplyr::filter(
+        dat[["len_info"]],
+        .data[["CompError"]] != 0
+      )
+      cli::cli_alert_info(
+        "FIMS can currently only accommodate the multinomial distribution
+        for length-composition data."
+      )
+      cli::cli_alert_warning(
+        "The following fleets use the Dirichlet-multinomial distribution and
+        will be changed to use the multinomial: {row.names(bad_length_fleet)}."
+      )
+    }
   } else {
     # if no length comps present
     lencomps <- NULL # not sure if we need this but wanting to avoid an error if missing age or length comps
@@ -357,11 +407,11 @@ ss3_data_to_fims <- function(
       fleet = dat[["fleetnames"]][1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
       length = NA,
       timing = year,
-      value = value / 1000, # convert to metric tons (SS3)
+      observed = value / 1000, # convert to metric tons (SS3)
       unit = "mt",
-      uncertainty = NA
+      uncertainty = NA_character_
     ) |>
-    dplyr::select(-year)
+    dplyr::select(-year, -value)
 
   # if end year + 1 is not present in weight-at-age matrix,
   # copy ending year rows and add 1 to timing for the copy
@@ -465,13 +515,13 @@ ss3_data_to_fims <- function(
         length = lengths
       ) |>
       rowwise() |>
-      mutate(value = length_at_age_lookup(age, length)) |>
+      mutate(observed = length_at_age_lookup(age, length)) |>
       mutate(
         fleet = NA,
         timing = NA,
         type = "age_to_length_conversion",
         unit = "proportion",
-        uncertainty = NA
+        uncertainty = NA_character_
       ) |>
       dplyr::select(dplyr::all_of(names(res)))
   } else {
@@ -482,7 +532,7 @@ ss3_data_to_fims <- function(
   # combine all data sources
   res <- rbind(
     res,
-    landings,
+    catch,
     indices,
     agecomps,
     lencomps,
