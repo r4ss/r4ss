@@ -67,7 +67,7 @@ ss3_data_to_fims <- function(
   }
   if (!"wtatage" %in% names(ss3_inputs)) {
     cli::cli_abort(
-      "'ss3_inputs' is missing element 'wtatage'. You may have to add it by running 'r4ss::SS_readwtatage()'. If the wtatage.ss_new file is empty, change the starter file setting `inputs$start$detailed_age_structure` to 1."
+      "'ss3_inputs' is missing element 'wtatage'. You may have to add it by running 'r4ss::SS_readwtatage()'. If the wtatage.ss_new file is empty, change the starter file setting `inputs[['start']][['detailed_age_structure']]` to 1."
     )
   }
   if (any(ss3_inputs[["wtatage"]][["year"]] < 0)) {
@@ -546,17 +546,21 @@ ss3_data_to_fims <- function(
     dplyr::filter_out(type != "weight_at_age" & timing > dat[["endyr"]])
 
   # remove negative year values
-  if (any(res$timing < 0, na.rm = TRUE)) {
+  if (any(res[["timing"]] < 0, na.rm = TRUE)) {
     res_filtered_out <- res |>
       dplyr::filter(timing < 0)
-    cli::cli_alert_warning("Negative year values found and removed (count by type):")
+    cli::cli_alert_warning(
+      "Negative year values found and removed (count by type):"
+    )
     print(res_filtered_out |> dplyr::count(type))
     res <- res |>
       dplyr::filter(timing >= 0)
   }
 
   if (nrow(res) > 0) {
-    cli::cli_alert_success("Data processing completed successfully. N rows by type (count by type):")
+    cli::cli_alert_success(
+      "Data processing completed successfully. N rows by type (count by type):"
+    )
     print(res |> dplyr::count(type))
   } else {
     cli::cli_alert_warning("No data rows found after processing.")
