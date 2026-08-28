@@ -215,7 +215,7 @@ SS_tune_comps <-
 #' }
 tune_comps <- function(
   replist = NULL,
-  fleets = "all",
+  fleets = NULL,
   option = c("Francis", "MI", "none", "DM", "Francis_via_DM"),
   digits = 6,
   write = TRUE,
@@ -244,12 +244,15 @@ tune_comps <- function(
   option <- match.arg(option, several.ok = FALSE)
   # try to read in rep list, if it is null.
   if (is.null(replist)) {
-    replist <- try(SS_output(
-      dir = dir,
-      verbose = FALSE,
-      hidewarn = TRUE,
-      printstats = FALSE
-    ))
+    replist <- try(
+      SS_output(
+        dir = dir,
+        verbose = FALSE,
+        hidewarn = TRUE,
+        printstats = FALSE
+      ),
+      silent = TRUE
+    )
     if ("try-error" %in% class(replist)) {
       replist <- NULL
     }
@@ -265,31 +268,35 @@ tune_comps <- function(
     )
   }
   # read in model files
-  start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-  dat <- SS_readdat(
-    file.path(dir, start[["datfile"]]),
-    verbose = FALSE,
-    section = 1
-  )
-  ctl <- SS_readctl(
-    file.path(dir, start[["ctlfile"]]),
-    use_datlist = TRUE,
-    datlist = dat,
-    verbose = FALSE
-  )
-  if (fleets[1] == "all") {
-    fleets <- seq_len(dat[["Nfleets"]])
-  } else {
-    if (!all(fleets %in% seq_len(dat[["Nfleets"]]))) {
-      fleets <- fleets[fleets %in% seq_len(dat[["Nfleets"]])]
-      cli::cli_warn(
-        "Not all fleets are included in the model. Changing fleets to use only ones in the model: {paste(fleets, collapse = ', ')}"
-      )
-      if (length(fleets) == 0) {
-        cli::cli_abort("Please specify fleets used in the model")
-      }
+  inputs <- SS_read(dir = dir, verbose = FALSE)
+  start <- inputs[["start"]]
+  dat <- inputs[["dat"]]
+  ctl <- inputs[["ctl"]]
+  if (start[["detailed_age_structure"]] != 1) {
+    cli::cli_alert_warning("Changing starter file setting to provide more detailed output")
+    start[["detailed_age_structure"]] <- 1
+    SS_writestarter(start, dir = dir, verbose = FALSE, overwrite = TRUE)
+    if (
+      niters_tuning > 0 &&
+        option %in% c("Francis", "MI", "none", "Francis_via_DM")
+    ) {
+      init_run <- TRUE
     }
   }
+  # get default fleet vector
+  if (is.null(fleets) || fleets[1] == "all") { # "all" was old default
+    fleets <- seq_len(dat[["Nfleets"]])
+  }
+  if (!all(fleets %in% seq_len(dat[["Nfleets"]]))) {
+    fleets <- fleets[fleets %in% seq_len(dat[["Nfleets"]])]
+    cli::cli_warn(
+      "Not all fleets are included in the model. Changing fleets to use only ones in the model: {paste(fleets, collapse = ', ')}"
+    )
+    if (length(fleets) == 0) {
+      cli::cli_abort("Please specify fleets used in the model")
+    }
+  }
+
   # add check that last_phase is less than max_phase in starter. If not,
   # modify the max phase and send warning.
   # get the highest phase in the model
@@ -398,18 +405,11 @@ tune_comps <- function(
           )
         }
         var_adj <- var_adj[var_adj[["fleet"]] %in% fleets, ]
-        start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-        dat <- SS_readdat(
-          file.path(dir, start[["datfile"]]),
-          verbose = FALSE,
-          section = 1
-        )
-        ctl <- SS_readctl(
-          file.path(dir, start[["ctlfile"]]),
-          use_datlist = TRUE,
-          datlist = dat,
-          verbose = FALSE
-        )
+        inputs <- SS_read(dir = dir, verbose = FALSE)
+        start <- inputs[["start"]]
+        dat <- inputs[["dat"]]
+        ctl <- inputs[["ctl"]]
+
         if ((nrow(var_adj)) > 0) {
           ctl[["DoVar_adjust"]] <- 1
           if (is.null(ctl[["Variance_adjustment_list"]])) {
@@ -610,13 +610,25 @@ tune_comps <- function(
 
   # make a plot showing time series of weights
   if (option %in% c("Francis", "MI", "Francis_via_DM") & niters_tuning > 1) {
-    plot_tunings(weights, dir)
+    if (verbose) {
+      cli::cli_alert_info("Plotting tuning results for {option}")
+    }
+    plot_tunings(weights, dir, verbose = verbose)
   }
 
   return_list <- list(
     tuning_table_list = tuning_table_list,
     weights = weights
   )
+
+  if (write) {
+    if (verbose) {
+      cli::cli_alert_info(
+        "Saving tuning results to {file.path(dir, 'tune_comps_results.rds')}"
+      )
+    }
+    saveRDS(return_list, file = file.path(dir, "tune_comps_results.rds"))
+  }
   return(return_list)
 }
 
@@ -677,7 +689,9 @@ make_francis_via_dm_tuning <- function(
       "Some Francis_via_DM multipliers were below the supported linear DM range and were raised to the lower bound implied by log(Theta) = -5."
     )
     tuning_rows[["target_multiplier"]][low_rows] <- min_multiplier
-    tuning_rows[["Note"]][low_rows] <- "target_multiplier raised to lower bound implied by log(Theta) = -5"
+    tuning_rows[["Note"]][
+      low_rows
+    ] <- "target_multiplier raised to lower bound implied by log(Theta) = -5"
   }
   tuning_rows[["target_log_theta"]] <- log(
     tuning_rows[["target_multiplier"]] /
@@ -1089,15 +1103,16 @@ get_last_phase <- function(ctl) {
 #' @param dir Directory in which to save the plot as a png file.
 #' If `dir == NULL` then the plot will be created in the default
 #' graphics device.
+#' @param verbose Logical indicating whether to print messages about saving the plot.
 #'
-plot_tunings <- function(weights, dir = NULL) {
+plot_tunings <- function(weights, dir = NULL, verbose = TRUE) {
   # if the function is called outside of tune_comps() using the
   # output from that function, then extract weights
   if ("tuning_table_list" %in% names(weights)) {
     weights <- weights$weights
   }
   if (length(weights) == 1) {
-    stop("tune_comps needs more than one iteration to make a plot")
+    cli::cli_abort("tune_comps needs more than one iteration to make a plot")
   }
 
   # Combine list of dataframes into one long dataframe with iteration column using tidyverse
@@ -1121,10 +1136,12 @@ plot_tunings <- function(weights, dir = NULL) {
       )
     )
   # rename columns for plotting
-  weights_df <- weights_df |> dplyr::rename(value = target_multiplier)
+  if ("target_multiplier" %in% colnames(weights_df)) {
+    weights_df <- weights_df |> dplyr::rename(value = target_multiplier)
+  }
 
   ylab <- "Sample size multiplier"
-  if (any(weights[[1]]$Data_type %in% 1:3)) {
+  if (any(weights[[1]]$data_type %in% 1:3)) {
     ylab <- "Variance adjustment"
   }
   p <- ggplot(
@@ -1144,7 +1161,11 @@ plot_tunings <- function(weights, dir = NULL) {
     expand_limits(y = 0)
 
   if (!is.null(dir)) {
-    cli::cli_alert_info("Saving plot to {file.path(dir, 'tuning_values.png')}")
+    if (verbose) {
+      cli::cli_alert_info(
+        "Saving plot to {file.path(dir, 'tuning_values.png')}"
+      )
+    }
     ggsave(
       filename = file.path(dir, "tuning_values.png"),
       plot = p,

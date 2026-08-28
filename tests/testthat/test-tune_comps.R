@@ -187,8 +187,12 @@ test_that("tune_comps() works with Francis_via_DM without running model", {
   )
   expect_true(!is.null(ctl[["dirichlet_parms"]]))
   expect_true(all(ctl[["dirichlet_parms"]][, "PHASE"] < 0))
-  expect_true(all(dat[["len_info"]][, "CompError"][dat[["len_info"]][, "ParmSelect"] > 0] == 1))
-  expect_true(all(dat[["age_info"]][, "CompError"][dat[["age_info"]][, "ParmSelect"] > 0] == 1))
+  expect_true(all(
+    dat[["len_info"]][, "CompError"][dat[["len_info"]][, "ParmSelect"] > 0] == 1
+  ))
+  expect_true(all(
+    dat[["age_info"]][, "CompError"][dat[["age_info"]][, "ParmSelect"] > 0] == 1
+  ))
 })
 
 test_that("tune_comps() works with none", {
@@ -226,4 +230,92 @@ test_that("tune_comps() works with multiple iterations", {
   expect_length(test, 2)
   expect_length(test$tuning_table_list, 2)
   expect_length(test$weights, 2)
+})
+
+# # run locally to allow this test to run:
+# download_models(dir = runs_path)
+test_that("tune_comps() options 'Francis' and 'Francis_via_DM' produce similar results", {
+  skip_if(
+    (!dir.exists(file.path(runs_path, "models"))),
+    message = "skipping test that requires models directory"
+  )
+
+  # get vector of models (if dir exists)
+  models <- dir(file.path(runs_path, "models"), full.names = TRUE)
+  models <- models[!grepl("DM", models)] # exclude DM model because it has no iterative variance adjustment
+  ncores <- min(parallelly::availableCores(omit = 1), length(models))
+  # run in parallel
+  future::plan(future::multisession, workers = ncores)
+  on.exit(future::plan(future::sequential), add = TRUE)
+
+  results <- future.apply::future_lapply(models, function(model) {
+    test1 <- tune_comps(
+      replist = NULL,
+      fleets = "all",
+      option = "Francis",
+      niters_tuning = 3,
+      init_run = TRUE,
+      dir = model,
+      allow_up_tuning = FALSE,
+      verbose = FALSE
+    )
+
+    model2 <- paste(model, "Francis_via_DM", sep = "_")
+    copy_SS_inputs(
+      dir.old = model,
+      dir.new = model2,
+      copy_par = TRUE,
+      copy_exe = TRUE
+    )
+    # run tuning again in same directory using the Francis_via_DM option and compare results
+    test2 <- tune_comps(
+      replist = NULL,
+      fleets = "all",
+      option = "Francis_via_DM",
+      niters_tuning = 3,
+      init_run = TRUE,
+      dir = model2,
+      allow_up_tuning = FALSE,
+      verbose = FALSE
+    )
+
+    # compare the final fraction unfished from the two models
+    mod1 <- r4ss::SS_output(dir = model, verbose = FALSE)
+    mod2 <- r4ss::SS_output(dir = model2, verbose = FALSE)
+
+    list(
+      test1_len = length(test1),
+      test1_tuning_table_len = length(test1$tuning_table_list),
+      test1_weights_len = length(test1$weights),
+      test2_len = length(test2),
+      test2_tuning_table_len = length(test2$tuning_table_list),
+      test2_weights_len = length(test2$weights),
+      francis_weights = test1$weights[[3]],
+      francis_via_dm_weights = test2$target_multiplier[[3]],
+      depletion1 = mod1$current_depletion,
+      depletion2 = mod2$current_depletion
+    )
+  }, future.seed = TRUE)
+
+  for (result in results) {
+    expect_equal(result$test1_len, 2)
+    expect_equal(result$test1_tuning_table_len, 2)
+    expect_equal(result$test1_weights_len, 2)
+    expect_equal(result$test2_len, 2)
+    expect_equal(result$test2_tuning_table_len, 2)
+    expect_equal(result$test2_weights_len, 2)
+
+    # compare the weights from the two methods
+    expect_equal(
+      result$francis_weights,
+      result$francis_via_dm_weights,
+      tolerance = 0.01
+    )
+
+    expect_equal(
+      result$depletion1,
+      result$depletion2,
+      tolerance = 0.01
+    )
+  }
 })
