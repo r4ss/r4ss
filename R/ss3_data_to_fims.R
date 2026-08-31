@@ -65,7 +65,7 @@ ss3_data_to_fims <- function(
       "`ss3_inputs` should be a list containing both 'dat' and 'wtatage'"
     )
   }
-  if (!"wtatage" %in% names(ss3_inputs)) {
+  if (is.null(ss3_inputs[["wtatage"]]) || !"wtatage" %in% names(ss3_inputs)) {
     cli::cli_abort(
       "'ss3_inputs' is missing element 'wtatage'. You may have to add it by running 'r4ss::SS_readwtatage()'. If the wtatage.ss_new file is empty, change the starter file setting `inputs[['start']][['detailed_age_structure']]` to 1."
     )
