@@ -126,7 +126,7 @@ SS_read <- function(
       )
       if (is.null(wtatage)) {
         cli::cli_alert_warning(
-          "Model does not require weight-at-age file and no wtatage.ss_new file found."
+          "Model does not require weight-at-age file and wtatage.ss_new is missing or empty. Skipping reading weight-at-age file."
         )
       }
       return_list[["wtatage"]] <- wtatage

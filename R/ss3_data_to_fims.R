@@ -554,7 +554,7 @@ ss3_data_to_fims <- function(
     )
     print(res_filtered_out |> dplyr::count(type))
     res <- res |>
-      dplyr::filter(timing >= 0)
+      dplyr::filter(is.na(timing) | timing >= 0)
   }
 
   if (nrow(res) > 0) {
