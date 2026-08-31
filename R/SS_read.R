@@ -114,7 +114,23 @@ SS_read <- function(
     )
     return_list[["wtatage"]] <- wtatage
   } else if (read_wtatage) {
-    if (!file.exists(file.path(dir, "wtatage.ss_new"))) {
+    # request read of weight-at-age file even if not required by the model
+    # but need to check if the file exists first
+    # which is different for URL vs local file path
+    is_url <- grepl("^https?://", dir)
+    if (is_url) {
+      # read the URL, which will be NULL if not found
+      wtatage <- r4ss::SS_readwtatage(
+        file = file.path(dir, "wtatage.ss_new"),
+        verbose = verbose
+      )
+      if (is.null(wtatage)) {
+        cli::cli_alert_warning(
+          "Model does not require weight-at-age file and wtatage.ss_new is missing or empty. Skipping reading weight-at-age file."
+        )
+      }
+      return_list[["wtatage"]] <- wtatage
+    } else if (!file.exists(file.path(dir, "wtatage.ss_new"))) {
       cli::cli_alert_warning(
         "Model does not require weight-at-age file and no wtatage.ss_new file found. Skipping reading weight-at-age file."
       )
