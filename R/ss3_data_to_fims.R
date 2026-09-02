@@ -117,6 +117,27 @@ ss3_data_to_fims <- function(
     uncertainty = character()
   )
 
+  filter_repeated_rows <- function(data) {
+    n_rows_before <- nrow(data)
+    data_type <- unique(data[["type"]])
+    identifying_columns <- c("type", "fleet", "age", "length", "timing")
+    data <- data |>
+      dplyr::distinct(
+        dplyr::across(dplyr::all_of(identifying_columns)),
+        .keep_all = TRUE
+      )
+    n_rows_removed <- n_rows_before - nrow(data)
+
+    if (n_rows_removed > 0) {
+      percent_removed <- round(100 * n_rows_removed / n_rows_before, digits = 1)
+      cli::cli_alert_warning(
+        "Removed {n_rows_removed} repeated rows ({percent_removed}%) out of {n_rows_before} total rows for type {.val {data_type}}."
+      )
+    }
+
+    return(data)
+  }
+
   # get catch data and filter by fleet and year
   n_catch_before <- nrow(dat[["catch"]])
   # remove initial equilibrium catch rows (year = -999)
@@ -555,6 +576,14 @@ ss3_data_to_fims <- function(
     print(res_filtered_out |> dplyr::count(type))
     res <- res |>
       dplyr::filter(is.na(timing) | timing >= 0)
+  }
+
+  if (nrow(res) > 0) {
+    # filter repeated rows separately for each data type
+    res <- res |>
+      split(factor(res[["type"]], levels = unique(res[["type"]]))) |>
+      lapply(filter_repeated_rows) |>
+      dplyr::bind_rows()
   }
 
   if (nrow(res) > 0) {

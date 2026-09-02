@@ -54,7 +54,48 @@ test_that("ss3_data_to_fims() runs on simple_small", {
     expected = age_bins
   )
 
+  identifying_columns <- c("type", "fleet", "age", "length", "timing")
+  expect_equal(
+    nrow(fims_data),
+    nrow(dplyr::distinct(fims_data, dplyr::across(dplyr::all_of(identifying_columns))))
+  )
+
   # tests for converted weight-at-age data
   weight_at_age <- subset(fims_data, type == "weight_at_age")
   expect_equal(nrow(weight_at_age), length(age_bins) * (1 + length(years)))
+})
+
+test_that("ss3_data_to_fims() filters and reports repeated rows by type", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(
+    dir = path,
+    ss_new = FALSE,
+    read_wtatage = TRUE
+  )
+  ss3_output <- SS_output(
+    dir = path,
+    verbose = FALSE,
+    printstats = FALSE
+  )
+  catch_to_repeat <- ss3_inputs[["dat"]][["catch"]] |>
+    dplyr::filter(year != -999) |>
+    dplyr::slice(1)
+  ss3_inputs[["dat"]][["catch"]] <- rbind(
+    ss3_inputs[["dat"]][["catch"]],
+    catch_to_repeat
+  )
+
+  expect_message(
+    fims_data <- ss3_data_to_fims(
+      ss3_inputs = ss3_inputs,
+      ss3_output = ss3_output
+    ),
+    "Removed 1 repeated rows \\(7.7%\\) out of 13 total rows for type.*catch"
+  )
+
+  catch <- dplyr::filter(fims_data, type == "catch")
+  expect_equal(
+    nrow(catch),
+    nrow(dplyr::distinct(catch, type, fleet, age, length, timing))
+  )
 })
