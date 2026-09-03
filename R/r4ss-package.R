@@ -19,9 +19,11 @@ r4ss_repository <- function() {
 }
 
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage(
-    "The CRAN release of r4ss is a compatibility package and does not ",
-    "contain the Stock Synthesis analysis functions.\n",
-    "Install the current release from https://github.com/r4ss/r4ss"
-  )
+  if (interactive()) {
+    packageStartupMessage(
+      "The CRAN release of r4ss is a compatibility package and does not ",
+      "contain the Stock Synthesis analysis functions.\n",
+      "Install the current release from https://github.com/r4ss/r4ss"
+    )
+  }
 }
