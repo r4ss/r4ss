@@ -80,9 +80,14 @@ ss3_data_to_fims <- function(
     EWAA <- as.logical(ss3_inputs[["ctl"]][["EmpiricalWAA"]])
   }
   if (!is.logical(EWAA) || length(EWAA) != 1 || is.na(EWAA)) {
-    cli::cli_abort("{.code EWAA} must be {.code TRUE}, {.code FALSE}, or {.code NULL}.")
+    cli::cli_abort(
+      "{.code EWAA} must be {.code TRUE}, {.code FALSE}, or {.code NULL}."
+    )
   }
-  if (EWAA && (is.null(ss3_inputs[["wtatage"]]) || !"wtatage" %in% names(ss3_inputs))) {
+  if (
+    EWAA &&
+      (is.null(ss3_inputs[["wtatage"]]) || !"wtatage" %in% names(ss3_inputs))
+  ) {
     cli::cli_abort(
       "'ss3_inputs' is missing element 'wtatage'. You may have to add it by running 'r4ss::SS_readwtatage()'. If the wtatage.ss_new file is empty, change the starter file setting `inputs[['start']][['detailed_age_structure']]` to 1."
     )

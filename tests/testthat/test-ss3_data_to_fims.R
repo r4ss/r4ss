@@ -83,10 +83,13 @@ test_that("ss3_data_to_fims() skips empirical growth data when EWAA is false", {
     EWAA = FALSE
   )
 
-  expect_false(any(c(
-    "weight_at_age",
-    "age_to_length_conversion"
-  ) %in% fims_data[["type"]]))
+  expect_false(any(
+    c(
+      "weight_at_age",
+      "age_to_length_conversion"
+    ) %in%
+      fims_data[["type"]]
+  ))
 })
 
 test_that("ss3_data_to_fims() inherits EWAA from the control file", {
@@ -100,10 +103,13 @@ test_that("ss3_data_to_fims() inherits EWAA from the control file", {
     EWAA = NULL
   )
 
-  expect_false(any(c(
-    "weight_at_age",
-    "age_to_length_conversion"
-  ) %in% fims_data[["type"]]))
+  expect_false(any(
+    c(
+      "weight_at_age",
+      "age_to_length_conversion"
+    ) %in%
+      fims_data[["type"]]
+  ))
 })
 
 test_that("ss3_data_to_fims() filters and reports repeated rows by type", {
