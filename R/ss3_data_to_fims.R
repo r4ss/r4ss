@@ -10,10 +10,15 @@
 #' instead of the original input files. Beneficial for dealing with
 #' negative years in the wtatage file which can't yet be processed by
 #' this function.
-#' @param ss3_inputs A list containing `dat` and `wtatage` such as that
-#' created by `r4ss::SS_read()`. Only required if `ss3_dir` is not provided.
+#' @param ss3_inputs A list containing `dat` such as that created by
+#' `r4ss::SS_read()`. When `EWAA` is `TRUE`, the list must also contain
+#' `wtatage`. Only required if `ss3_dir` is not provided.
 #' @param ss3_output A list created by `r4ss::SS_output()`. Only required if
 #' `ss3_dir` is not provided.
+#' @param EWAA Logical indicating whether to use empirical weight-at-age
+#' and age_to_length conversion tables from the SS3 model or to rely on
+#' the FIMS growth model. If NULL then it will follow the setting in the
+#' SS3 control file (`ctl[['EmpiricalWAA']]`)
 #' @param fleets Which fleets to include in the processed output.
 #' Note that the only start year population weight-at-age is read from the
 #' `wtatage` element (fleet = 0). NULL will default to including all fleets
@@ -33,6 +38,7 @@ ss3_data_to_fims <- function(
   ss_new = TRUE,
   ss3_inputs = NULL,
   ss3_output = NULL,
+  EWAA = NULL,
   fleets = NULL,
   maxage = NULL,
   lengths = NULL
@@ -62,15 +68,26 @@ ss3_data_to_fims <- function(
   # check inputs for necessary elements
   if (!is.list(ss3_inputs) || !"dat" %in% names(ss3_inputs)) {
     cli::cli_abort(
-      "`ss3_inputs` should be a list containing both 'dat' and 'wtatage'"
+      "`ss3_inputs` should be a list containing 'dat'"
     )
   }
-  if (is.null(ss3_inputs[["wtatage"]]) || !"wtatage" %in% names(ss3_inputs)) {
+  if (is.null(EWAA)) {
+    if (is.null(ss3_inputs[["ctl"]][["EmpiricalWAA"]])) {
+      cli::cli_abort(
+        "{.code EWAA} is {.code NULL}, but {.code ss3_inputs[['ctl']][['EmpiricalWAA']]} is unavailable."
+      )
+    }
+    EWAA <- as.logical(ss3_inputs[["ctl"]][["EmpiricalWAA"]])
+  }
+  if (!is.logical(EWAA) || length(EWAA) != 1 || is.na(EWAA)) {
+    cli::cli_abort("{.code EWAA} must be {.code TRUE}, {.code FALSE}, or {.code NULL}.")
+  }
+  if (EWAA && (is.null(ss3_inputs[["wtatage"]]) || !"wtatage" %in% names(ss3_inputs))) {
     cli::cli_abort(
       "'ss3_inputs' is missing element 'wtatage'. You may have to add it by running 'r4ss::SS_readwtatage()'. If the wtatage.ss_new file is empty, change the starter file setting `inputs[['start']][['detailed_age_structure']]` to 1."
     )
   }
-  if (any(ss3_inputs[["wtatage"]][["year"]] < 0)) {
+  if (EWAA && any(ss3_inputs[["wtatage"]][["year"]] < 0)) {
     cli::cli_abort(
       "The 'wtatage' element includes negative years which can't yet be processed by this function, please use the wtatage.ss_new file"
     )
@@ -416,43 +433,47 @@ ss3_data_to_fims <- function(
     lencomps <- NULL # not sure if we need this but wanting to avoid an error if missing age or length comps
   }
 
-  # weight_at_age data
-  wtatage <- ss3_inputs[["wtatage"]] |>
-    dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |> # TODO make this more flexible
-    dplyr::select("year", dplyr::matches("[0-9]+")) |>
-    tidyr::pivot_longer(cols = -year, names_to = "age") |>
-    dplyr::mutate(age = as.numeric(age)) |>
-    dplyr::filter(age <= max(ages)) |>
-    dplyr::mutate(
-      type = "weight_at_age",
-      fleet = dat[["fleetnames"]][1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
-      length = NA,
-      timing = year,
-      observed = value / 1000, # convert to metric tons (SS3)
-      unit = "mt",
-      uncertainty = NA_character_
-    ) |>
-    dplyr::select(-year, -value)
+  if (EWAA) {
+    # weight_at_age data
+    wtatage <- ss3_inputs[["wtatage"]] |>
+      dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |> # TODO make this more flexible
+      dplyr::select("year", dplyr::matches("[0-9]+")) |>
+      tidyr::pivot_longer(cols = -year, names_to = "age") |>
+      dplyr::mutate(age = as.numeric(age)) |>
+      dplyr::filter(age <= max(ages)) |>
+      dplyr::mutate(
+        type = "weight_at_age",
+        fleet = dat[["fleetnames"]][1], # weight-at-age is only needed for one fleet, so arbitrarily assigning to fleet 1
+        length = NA,
+        timing = year,
+        observed = value / 1000, # convert to metric tons (SS3)
+        unit = "mt",
+        uncertainty = NA_character_
+      ) |>
+      dplyr::select(-year, -value)
 
-  # if end year + 1 is not present in weight-at-age matrix,
-  # copy ending year rows and add 1 to timing for the copy
-  if (!max(years_wtatage) %in% wtatage[["timing"]]) {
-    cli::cli_alert_warning(
-      "The weight-at-age data does not include end year + 1. Adding rows for year {max(years_wtatage)} by copying rows from year {max(wtatage[['timing']])}."
-    )
-    wtatage <- rbind(
-      wtatage,
-      wtatage |>
-        dplyr::filter(timing == max(timing)) |>
-        dplyr::mutate(
-          timing = max(timing) + 1
-        )
-    )
+    # if end year + 1 is not present in weight-at-age matrix,
+    # copy ending year rows and add 1 to timing for the copy
+    if (!max(years_wtatage) %in% wtatage[["timing"]]) {
+      cli::cli_alert_warning(
+        "The weight-at-age data does not include end year + 1. Adding rows for year {max(years_wtatage)} by copying rows from year {max(wtatage[['timing']])}."
+      )
+      wtatage <- rbind(
+        wtatage,
+        wtatage |>
+          dplyr::filter(timing == max(timing)) |>
+          dplyr::mutate(
+            timing = max(timing) + 1
+          )
+      )
+    }
+  } else {
+    wtatage <- NULL
   }
 
   # get age-to-length conversion matrix
   # TODO: is it correct to make this conditional on length comps existing?
-  if (!is.null(lencomps)) {
+  if (EWAA && !is.null(lencomps)) {
     if (!is.list(ss3_output) || is.null(ss3_output[["ALK"]])) {
       cli::cli_abort(
         c(
@@ -461,7 +482,6 @@ ss3_data_to_fims <- function(
         )
       )
     }
-
     # initially always take the matrix for females in the middle of season 1
     ALK <- ss3_output[["ALK"]][,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
 

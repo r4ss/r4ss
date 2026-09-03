@@ -9,6 +9,7 @@ ss3_data_to_fims(
   ss_new = TRUE,
   ss3_inputs = NULL,
   ss3_output = NULL,
+  EWAA = NULL,
   fleets = NULL,
   maxage = NULL,
   lengths = NULL
@@ -24,11 +25,17 @@ instead of the original input files. Beneficial for dealing with
 negative years in the wtatage file which can't yet be processed by
 this function.}
 
-\item{ss3_inputs}{A list containing \code{dat} and \code{wtatage} such as that
-created by \code{r4ss::SS_read()}. Only required if \code{ss3_dir} is not provided.}
+\item{ss3_inputs}{A list containing \code{dat} such as that created by
+\code{r4ss::SS_read()}. When \code{EWAA} is \code{TRUE}, the list must also contain
+\code{wtatage}. Only required if \code{ss3_dir} is not provided.}
 
 \item{ss3_output}{A list created by \code{r4ss::SS_output()}. Only required if
 \code{ss3_dir} is not provided.}
+
+\item{EWAA}{Logical indicating whether to use empirical weight-at-age
+and age_to_length conversion tables from the SS3 model or to rely on
+the FIMS growth model. If NULL then it will follow the setting in the
+SS3 control file (\code{ctl[['EmpiricalWAA']]})}
 
 \item{fleets}{Which fleets to include in the processed output.
 Note that the only start year population weight-at-age is read from the

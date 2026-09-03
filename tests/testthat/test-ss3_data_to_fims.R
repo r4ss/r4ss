@@ -4,7 +4,11 @@ test_that("ss3_data_to_fims() runs on simple_small", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
 
   expect_no_error(
-    fims_data <- ss3_data_to_fims(ss3_dir = path, ss_new = FALSE)
+    fims_data <- ss3_data_to_fims(
+      ss3_dir = path,
+      ss_new = FALSE,
+      EWAA = TRUE
+    )
   )
 
   expect_named(
@@ -66,6 +70,40 @@ test_that("ss3_data_to_fims() runs on simple_small", {
   # tests for converted weight-at-age data
   weight_at_age <- subset(fims_data, type == "weight_at_age")
   expect_equal(nrow(weight_at_age), length(age_bins) * (1 + length(years)))
+})
+
+test_that("ss3_data_to_fims() skips empirical growth data when EWAA is false", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+  ss3_inputs[["wtatage"]] <- NULL
+
+  fims_data <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    ss3_output = NULL,
+    EWAA = FALSE
+  )
+
+  expect_false(any(c(
+    "weight_at_age",
+    "age_to_length_conversion"
+  ) %in% fims_data[["type"]]))
+})
+
+test_that("ss3_data_to_fims() inherits EWAA from the control file", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+
+  expect_identical(ss3_inputs[["ctl"]][["EmpiricalWAA"]], 0)
+  fims_data <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    ss3_output = NULL,
+    EWAA = NULL
+  )
+
+  expect_false(any(c(
+    "weight_at_age",
+    "age_to_length_conversion"
+  ) %in% fims_data[["type"]]))
 })
 
 test_that("ss3_data_to_fims() filters and reports repeated rows by type", {
