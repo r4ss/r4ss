@@ -15,9 +15,11 @@ r4ss release from GitHub.
 
 ## R CMD check results
 
-The package was checked on Ubuntu 24.04.3 LTS with R 4.5.1:
+The package was checked on Ubuntu 24.04.3 LTS with R 4.5.1 and with R 4.6.1 
+on Windows 11 using `R CMD check --as-cran --no-manual` on the built source 
+package. In both cases the results were clean:
 
-* `R CMD check --as-cran`: 0 errors | 0 warnings | 0 notes.
+0 errors | 0 warnings | 0 notes
 
 ## Reverse dependencies
 
