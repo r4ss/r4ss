@@ -1,27 +1,20 @@
 ^\.git$
-cran-comments.md
-.*\.yml$
-man-roxygen
-ignored
-revdep
-^CRAN-RELEASE$
-^.*\.Rproj$
-^\.Rproj\.user$
-^jenkins
-^\.github/
 ^\.github$
 ^\.covrignore$
-^\.vscode/
-^CRAN-SUBMISSION$
-^inst/extdata/simple_3.30.01/
-^inst/extdata/simple_3.30.12/
-^inst/extdata/simple_3.30.13/
 ^\.devcontainer$
-# # temporary additions for CRAN submission
-# ^tests/
-# ^inst/extdata/models/
-# ^inst/extdata/simple_3.24/
-# ^vignettes/
-^_pkgdown\.yml$
+^\.octocov\.yml$
+^\.Rhistory$
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.vscode$
+^cran-comments\.md$
 ^docs$
-^pkgdown$
+^ignored$
+^inst$
+^plots$
+^revdep$
+^R/\.Rhistory$
+^simple_small_neg_year$
+^tests/testthat$
+^vignettes$
+^.*\.log$

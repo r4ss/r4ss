@@ -1,26 +1,26 @@
 ## Release summary
 
-This is a resubmission. In this version I have:
+The r4ss package on CRAN (1.44.0, published in 2022) is no longer maintained
+there. Active development has continued at <https://github.com/r4ss/r4ss>,
+where the current package is substantially newer.
 
-* Added single quotes around the package name in the Description section
-  of DESCRIPTION to avoid a false positive spell check error.
+This submission replaces the outdated CRAN implementation with a minimal
+compatibility package. On attachment it directs users to the maintained GitHub
+repository, and `r4ss_repository()` returns the canonical repository URL. The
+CRAN package has no third-party dependencies.
 
-* Removed the VignetteBuilder field from DESCRIPTION
-
-* Removed the URLs which caused a NOTE about "(possibly) invalid URLs".
-  The URLs worked fine for me, so I'm not sure the source of the error.
-
-* Removed the URLs which caused a NOTE about "should use \doi" because I
-  can't get \doi to work and don't see it documented anywhere.
-
-Checking with winbuilder, I get "Status: OK"
+This intentionally removes the historical API from the CRAN distribution.
+Reverse dependencies that require the analysis API should install the current
+r4ss release from GitHub.
 
 ## R CMD check results
-0 errors | 0 warnings | 0 notes
 
-## revdepcheck results
+To be completed after checking the source package.
 
-We checked 2 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+## Reverse dependencies
 
- * We saw 0 new problems
- * We failed to check 0 packages
+CRAN currently lists ss3sim as a reverse import and MSEtool as a reverse
+suggestion. The actively maintained GitHub version of ss3sim already
+points to the GitHub version of this package in the `Remotes` field the
+DESCRIPTION file. An issue has been posted to MSEtool to suggest a 
+similar change there.
