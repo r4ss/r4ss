@@ -1,7 +1,7 @@
 Type: Package
 Package: r4ss
-Title: R Code for Stock Synthesis
-Version: 1.56.0
+Title: Compatibility Notice for Stock Synthesis Tools
+Version: 1.44.1
 Authors@R: c(
     person("Ian G.", "Taylor", , "Ian.Taylor@noaa.gov", role = c("aut", "cre")),
     person("Ian J.", "Stewart", role = "aut"),
@@ -43,56 +43,15 @@ Authors@R: c(
     person("Arni", "Magnusson", role = "aut"),
     person("Peter", "Kuriyama", role = "aut")
   )
-Description: A collection of R functions for use with Stock Synthesis, a
-    fisheries stock assessment modeling platform written in ADMB by Dr.
-    Richard D. Methot at the NOAA Northwest Fisheries Science Center. The
-    functions include tools for summarizing and plotting results,
-    manipulating files, visualizing model parameterizations, and various
-    other common stock assessment tasks.  This version of 'r4ss' is
-    compatible with Stock Synthesis versions 3.24 through 3.30
-    (specifically version 3.30.25, from June 2026). Support for 3.24
-    models is only through the core functions for reading output and
-    plotting.
+Description: Provides a compatibility notice for users of the 'r4ss' Stock
+    Synthesis tools. Active development and current releases are available
+    from GitHub <https://github.com/r4ss/r4ss>. This package supplies the
+    canonical repository location and migration guidance.
 License: GPL-3
 URL: https://github.com/r4ss/r4ss, https://r4ss.github.io/r4ss/
 BugReports: https://github.com/r4ss/r4ss/issues
 Depends:
-    R (>= 4.1.0)
-Imports:
-    cli,
-    coda,
-    corpcor,
-    dplyr (>= 1.2.0),
-    forcats,
-    furrr,
-    future,
-    ggplot2,
-    gh,
-    glue,
-    kableExtra,
-    lifecycle,
-    purrr,
-    stringr,
-    tidyr,
-    viridis
-Suggests: 
-    flextable,
-    ggpubr,
-    gplots,
-    gtools,
-    knitr,
-    maps,
-    parallelly,
-    pso,
-    reshape2,
-    rmarkdown,
-    shiny,
-    testthat,
-    truncnorm
-VignetteBuilder: 
-    knitr
+    R (>= 3.5.0)
 Config/roxygen2/version: 8.1.0
 Encoding: UTF-8
 Language: en-US
-LazyLoad: yes
-Roxygen: list(markdown = TRUE)
