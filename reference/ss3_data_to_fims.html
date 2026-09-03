@@ -52,6 +52,7 @@ filtering, simplifying, and reformatting.</p>
 <span>  ss_new <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ss3_inputs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ss3_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  EWAA <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fleets <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  maxage <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lengths <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -76,13 +77,21 @@ this function.</p></dd>
 
 
 <dt id="arg-ss-inputs">ss3_inputs<a class="anchor" aria-label="anchor" href="#arg-ss-inputs"></a></dt>
-<dd><p>A list containing <code>dat</code> and <code>wtatage</code> such as that
-created by <code><a href="SS_read.html">r4ss::SS_read()</a></code>. Only required if <code>ss3_dir</code> is not provided.</p></dd>
+<dd><p>A list containing <code>dat</code> such as that created by
+<code><a href="SS_read.html">r4ss::SS_read()</a></code>. When <code>EWAA</code> is <code>TRUE</code>, the list must also contain
+<code>wtatage</code>. Only required if <code>ss3_dir</code> is not provided.</p></dd>
 
 
 <dt id="arg-ss-output">ss3_output<a class="anchor" aria-label="anchor" href="#arg-ss-output"></a></dt>
 <dd><p>A list created by <code><a href="SS_output.html">r4ss::SS_output()</a></code>. Only required if
 <code>ss3_dir</code> is not provided.</p></dd>
+
+
+<dt id="arg-ewaa">EWAA<a class="anchor" aria-label="anchor" href="#arg-ewaa"></a></dt>
+<dd><p>Logical indicating whether to use empirical weight-at-age
+and age_to_length conversion tables from the SS3 model or to rely on
+the FIMS growth model. If NULL then it will follow the setting in the
+SS3 control file (<code>ctl[['EmpiricalWAA']]</code>)</p></dd>
 
 
 <dt id="arg-fleets">fleets<a class="anchor" aria-label="anchor" href="#arg-fleets"></a></dt>

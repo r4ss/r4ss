@@ -12,6 +12,7 @@ ss3_data_to_fims(
   ss_new = TRUE,
   ss3_inputs = NULL,
   ss3_output = NULL,
+  EWAA = NULL,
   fleets = NULL,
   maxage = NULL,
   lengths = NULL
@@ -34,15 +35,23 @@ ss3_data_to_fims(
 
 - ss3_inputs:
 
-  A list containing `dat` and `wtatage` such as that created by
+  A list containing `dat` such as that created by
   [`r4ss::SS_read()`](https://r4ss.github.io/r4ss/reference/SS_read.md).
-  Only required if `ss3_dir` is not provided.
+  When `EWAA` is `TRUE`, the list must also contain `wtatage`. Only
+  required if `ss3_dir` is not provided.
 
 - ss3_output:
 
   A list created by
   [`r4ss::SS_output()`](https://r4ss.github.io/r4ss/reference/SS_output.md).
   Only required if `ss3_dir` is not provided.
+
+- EWAA:
+
+  Logical indicating whether to use empirical weight-at-age and
+  age_to_length conversion tables from the SS3 model or to rely on the
+  FIMS growth model. If NULL then it will follow the setting in the SS3
+  control file (`ctl[['EmpiricalWAA']]`)
 
 - fleets:
 
