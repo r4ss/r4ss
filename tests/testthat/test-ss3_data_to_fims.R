@@ -57,7 +57,10 @@ test_that("ss3_data_to_fims() runs on simple_small", {
   identifying_columns <- c("type", "fleet", "age", "length", "timing")
   expect_equal(
     nrow(fims_data),
-    nrow(dplyr::distinct(fims_data, dplyr::across(dplyr::all_of(identifying_columns))))
+    nrow(dplyr::distinct(
+      fims_data,
+      dplyr::across(dplyr::all_of(identifying_columns))
+    ))
   )
 
   # tests for converted weight-at-age data
