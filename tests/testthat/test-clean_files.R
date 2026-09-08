@@ -45,6 +45,22 @@ test_that("clean_files deletes matching files by default", {
   expect_true(file.exists(file.path(model_dir, retained)))
 })
 
+test_that("clean_files supports delete-only action", {
+  model_dir <- tempfile("clean_files_")
+  dir.create(model_dir)
+  on.exit(unlink(model_dir, recursive = TRUE), add = TRUE)
+  matching <- c("admodel.log", "gradient.1")
+  file.create(file.path(model_dir, matching))
+
+  expect_message(
+    expect_invisible(deleted <- clean_files(model_dir, action = "delete")),
+    "Successfully deleted 2 matching files"
+  )
+
+  expect_setequal(deleted, matching)
+  expect_false(any(file.exists(file.path(model_dir, matching))))
+})
+
 test_that("clean_files preserves MCMC files when posteriors are populated", {
   model_dir <- tempfile("clean_files_")
   dir.create(model_dir)

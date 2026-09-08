@@ -109,16 +109,23 @@ clean_files <- function(dir, action = c("list", "delete")) {
     cli::cli_alert_info("No matching files found to delete.")
   }
 
+  # provide message
+  if ("list" %in% action & length(files) > 0L) {
+    cli::cli_alert_info("Found {length(files)} matching file{?s}.")
+  }
+
   # Perform the requested action: delete
   if ("delete" %in% action && length(files) > 0L) {
     deleted <- file.remove(files)
     if (any(!deleted)) {
       cli::cli_abort("Failed to delete {sum(!deleted)} matching file{?s}.")
+    } else {
+      cli::cli_alert_success(
+        "Successfully deleted {sum(deleted)} matching file{?s}."
+      )
     }
   }
-  cli::cli_alert_success(
-    "Successfully deleted {length(files)} matching file{?s}."
-  )
+
   # Return the list of files (invisibly if not requested via "list")
   if ("list" %in% action & length(files) > 0L) {
     basename(files)
