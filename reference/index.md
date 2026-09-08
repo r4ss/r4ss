@@ -304,6 +304,9 @@
   : Check if the replist input is something that was created by
   SS_output()
 
+- [`clean_files()`](https://r4ss.github.io/r4ss/reference/clean_files.md)
+  : Clean unnecessary Stock Synthesis output files
+
 - [`comp2long()`](https://r4ss.github.io/r4ss/reference/comp2long.md)
   [`age2long()`](https://r4ss.github.io/r4ss/reference/comp2long.md)
   [`size2long()`](https://r4ss.github.io/r4ss/reference/comp2long.md) :

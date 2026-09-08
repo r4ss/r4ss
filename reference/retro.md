@@ -118,6 +118,7 @@ peeling years from the end.
 [`SSgetoutput()`](https://r4ss.github.io/r4ss/reference/SSgetoutput.md)
 
 Other run functions:
+[`clean_files()`](https://r4ss.github.io/r4ss/reference/clean_files.md),
 [`copy_SS_inputs()`](https://r4ss.github.io/r4ss/reference/copy_SS_inputs.md),
 [`jitter()`](https://r4ss.github.io/r4ss/reference/jitter.md),
 [`populate_multiple_folders()`](https://r4ss.github.io/r4ss/reference/populate_multiple_folders.md),

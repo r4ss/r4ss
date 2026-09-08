@@ -76,6 +76,7 @@ successfully populated with the model input files and/or executables.
 ## See also
 
 Other run functions:
+[`clean_files()`](https://r4ss.github.io/r4ss/reference/clean_files.md),
 [`copy_SS_inputs()`](https://r4ss.github.io/r4ss/reference/copy_SS_inputs.md),
 [`jitter()`](https://r4ss.github.io/r4ss/reference/jitter.md),
 [`profile()`](https://r4ss.github.io/r4ss/reference/profile.md),

@@ -117,6 +117,7 @@ Covariance files are especially expensive to transfer, so the option
 ## See also
 
 Other run functions:
+[`clean_files()`](https://r4ss.github.io/r4ss/reference/clean_files.md),
 [`copy_SS_inputs()`](https://r4ss.github.io/r4ss/reference/copy_SS_inputs.md),
 [`populate_multiple_folders()`](https://r4ss.github.io/r4ss/reference/populate_multiple_folders.md),
 [`profile()`](https://r4ss.github.io/r4ss/reference/profile.md),
