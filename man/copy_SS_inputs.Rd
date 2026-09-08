@@ -73,6 +73,7 @@ unlink(test, recursive = TRUE)
 }
 \seealso{
 Other run functions:
+\code{\link[=clean_files]{clean_files()}},
 \code{\link[=jitter]{jitter()}},
 \code{\link[=populate_multiple_folders]{populate_multiple_folders()}},
 \code{\link[=profile]{profile()}},

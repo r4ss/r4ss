@@ -72,6 +72,7 @@ r4ss::run(dir = dir)
 }
 \seealso{
 Other run functions:
+\code{\link[=clean_files]{clean_files()}},
 \code{\link[=copy_SS_inputs]{copy_SS_inputs()}},
 \code{\link[=jitter]{jitter()}},
 \code{\link[=populate_multiple_folders]{populate_multiple_folders()}},
