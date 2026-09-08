@@ -13,8 +13,8 @@
 #' @param ss3_inputs A list containing `dat` such as that created by
 #' `r4ss::SS_read()`. When `EWAA` is `TRUE`, the list must also contain
 #' `wtatage`. Only required if `ss3_dir` is not provided.
-#' @param ss3_output A list created by `r4ss::SS_output()`. Only required if
-#' `ss3_dir` is not provided.
+#' @param ss3_output A list created by `r4ss::SS_output()`. Only required for
+#' age-to-length conversion if `ss3_dir` is not provided.
 #' @param EWAA Logical indicating whether to use empirical weight-at-age
 #' and age_to_length conversion tables from the SS3 model or to rely on
 #' the FIMS growth model. If NULL then it will follow the setting in the
@@ -55,14 +55,6 @@ ss3_data_to_fims <- function(
       dir = ss3_dir,
       ss_new = ss_new,
       read_wtatage = TRUE
-    )
-    cli::cli_alert_info(
-      "Reading in output from {.code {ss3_dir}} using {.code r4ss::SS_output()}"
-    )
-    ss3_output <- r4ss::SS_output(
-      dir = ss3_dir,
-      verbose = FALSE,
-      printstats = FALSE
     )
   }
   # check inputs for necessary elements
@@ -479,6 +471,16 @@ ss3_data_to_fims <- function(
   # get age-to-length conversion matrix
   # TODO: is it correct to make this conditional on length comps existing?
   if (EWAA && !is.null(lencomps)) {
+    if (!is.null(ss3_dir)) {
+      cli::cli_alert_info(
+        "Reading in output from {.code {ss3_dir}} using {.code r4ss::SS_output()}"
+      )
+      ss3_output <- r4ss::SS_output(
+        dir = ss3_dir,
+        verbose = FALSE,
+        printstats = FALSE
+      )
+    }
     if (!is.list(ss3_output) || is.null(ss3_output[["ALK"]])) {
       cli::cli_abort(
         c(

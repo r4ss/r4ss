@@ -74,13 +74,20 @@ test_that("ss3_data_to_fims() runs on simple_small", {
 
 test_that("ss3_data_to_fims() skips empirical growth data when EWAA is false", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
-  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
-  ss3_inputs[["wtatage"]] <- NULL
+  input_only_dir <- tempfile("ss3_inputs_")
+  dir.create(input_only_dir)
+  on.exit(unlink(input_only_dir, recursive = TRUE), add = TRUE)
+  file.copy(
+    file.path(path, c("starter.ss", "control.ss", "data.ss", "forecast.ss")),
+    input_only_dir
+  )
 
-  fims_data <- ss3_data_to_fims(
-    ss3_inputs = ss3_inputs,
-    ss3_output = NULL,
-    EWAA = FALSE
+  expect_no_error(
+    fims_data <- ss3_data_to_fims(
+      ss3_dir = input_only_dir,
+      ss_new = FALSE,
+      EWAA = FALSE
+    )
   )
 
   expect_false(any(
