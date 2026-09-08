@@ -10,11 +10,11 @@ clean_files(dir, action = c("list", "delete"))
 \item{dir}{Directory containing the Stock Synthesis output files.}
 
 \item{action}{One or both of \code{"list"} and \code{"delete"}. If \code{"list"} is
-included, matching files are printed and returned. If \code{"delete"} is
-included, matching files are deleted.}
+included, matching file names are returned. If \code{"delete"} is included,
+matching files are deleted.}
 }
 \value{
-A character vector containing the paths of matching files. The
+A character vector containing the names of matching files. The
 result is returned invisibly when \code{action} does not include \code{"list"}.
 }
 \description{
