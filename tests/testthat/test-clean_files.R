@@ -3,8 +3,14 @@ test_that("clean_files lists only matching top-level files", {
   dir.create(model_dir)
   on.exit(unlink(model_dir, recursive = TRUE), add = TRUE)
   matching <- c(
-    "admodel.p01", "admodel.b01", "admodel.r01", "admodel.std",
-    "gradient.1", "SIS_table.sso", "ParmTrace.sso", "runnumber.ss"
+    "admodel.p01",
+    "admodel.b01",
+    "admodel.r01",
+    "admodel.std",
+    "gradient.1",
+    "SIS_table.sso",
+    "ParmTrace.sso",
+    "runnumber.ss"
   )
   retained <- c("starter.ss", "Report.sso", "admodel.par", "gradient")
   file.create(file.path(model_dir, c(matching, retained)))
@@ -43,9 +49,14 @@ test_that("clean_files preserves MCMC files when posteriors are populated", {
   model_dir <- tempfile("clean_files_")
   dir.create(model_dir)
   on.exit(unlink(model_dir, recursive = TRUE), add = TRUE)
-  writeLines(rep("posterior sample", 101), file.path(model_dir, "posteriors.sso"))
+  writeLines(
+    rep("posterior sample", 101),
+    file.path(model_dir, "posteriors.sso")
+  )
   protected <- c(
-    "posteriors.sso", "posterior_obj_func.sso", "posterior_vectors.sso",
+    "posteriors.sso",
+    "posterior_obj_func.sso",
+    "posterior_vectors.sso",
     "admodel.psv"
   )
   file.create(file.path(model_dir, protected[-1]))
