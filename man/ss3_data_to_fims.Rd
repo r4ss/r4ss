@@ -29,8 +29,8 @@ this function.}
 \code{r4ss::SS_read()}. When \code{EWAA} is \code{TRUE}, the list must also contain
 \code{wtatage}. Only required if \code{ss3_dir} is not provided.}
 
-\item{ss3_output}{A list created by \code{r4ss::SS_output()}. Only required if
-\code{ss3_dir} is not provided.}
+\item{ss3_output}{A list created by \code{r4ss::SS_output()}. Only required for
+age-to-length conversion if \code{ss3_dir} is not provided.}
 
 \item{EWAA}{Logical indicating whether to use empirical weight-at-age
 and age_to_length conversion tables from the SS3 model or to rely on
