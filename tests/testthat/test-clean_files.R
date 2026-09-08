@@ -19,7 +19,7 @@ test_that("clean_files lists only matching top-level files", {
 
   expect_message(
     listed <- clean_files(model_dir, action = "list"),
-    "Successfully deleted 8 matching files"
+    "Found 8 matching files"
   )
 
   expect_setequal(listed, matching)

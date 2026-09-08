@@ -6,10 +6,10 @@
 #'
 #' @param dir Directory containing the Stock Synthesis output files.
 #' @param action One or both of `"list"` and `"delete"`. If `"list"` is
-#'   included, matching files are printed and returned. If `"delete"` is
-#'   included, matching files are deleted.
+#'   included, matching file names are returned. If `"delete"` is included,
+#'   matching files are deleted.
 #'
-#' @return A character vector containing the paths of matching files. The
+#' @return A character vector containing the names of matching files. The
 #'   result is returned invisibly when `action` does not include `"list"`.
 #' @export
 #' @family run functions
@@ -76,10 +76,10 @@ clean_files <- function(dir, action = c("list", "delete")) {
   # don't delete any of the MCMC-related files
   posteriors_file <- file.path(dir, "posteriors.sso")
   if (file.exists(posteriors_file)) {
-    num_lines <- length(readLines(posteriors_file, warn = FALSE))
+    num_lines <- length(readLines(posteriors_file, warn = FALSE, n = 101))
     if (num_lines > 100) {
-      patterns <- patterns[!grepl("posterior.*", patterns)]
-      patterns <- patterns[!grepl("*.psv", patterns)]
+      patterns <- patterns[!grepl("^posterior", patterns)]
+      patterns <- patterns[patterns != "*.psv"]
       cli::cli_alert_info(
         "Found more than 100 lines in posteriors.sso, skipping deletion of MCMC-related files"
       )
