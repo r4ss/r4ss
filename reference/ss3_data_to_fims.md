@@ -44,7 +44,8 @@ ss3_data_to_fims(
 
   A list created by
   [`r4ss::SS_output()`](https://r4ss.github.io/r4ss/reference/SS_output.md).
-  Only required if `ss3_dir` is not provided.
+  Only required for age-to-length conversion if `ss3_dir` is not
+  provided.
 
 - EWAA:
 
