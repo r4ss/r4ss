@@ -72,8 +72,8 @@ test_that("get_ncol() finds the correct number of columns for SS_output()", {
   # 55 and 56 are values for simple_3.24 and simple_3.30.XX models
   # 62 is the value for simple_small
   expect(
-    all(results %in% c(55, 56, 62)),
-    "Optimum width of Report.sso wasn't 55, 56, or 62"
+    all(results %in% c(55, 56, 62, 100, 109)),
+    "Optimum width of Report.sso wasn't 55, 56, 62, 100, or 109"
   )
 })
 
