@@ -61,8 +61,10 @@ PinerPlot(
 \item{main}{Title for plot. Should match component.}
 
 \item{models}{Optional subset of the models described in
-\code{summaryoutput}.  Either "all" or a vector of numbers indicating
-columns in summary tables.}
+\code{summaryoutput}. Can be "all", "converged", or a vector of numbers indicating
+columns in summary tables. The default "all" will include all models.
+The "converged" option will include only models with a maximum gradient less
+than or equal to the specified convergence criterion \code{conv_criteria}.}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}

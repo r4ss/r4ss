@@ -65,9 +65,8 @@ SSplotProfile(
 \item{models}{Optional subset of the models described in
 \code{summaryoutput}. Can be "all", "converged", or a vector of numbers indicating
 columns in summary tables. The default "all" will include all models.
-The "converged" option will include only models that have converged
-a maximum gradient less than the specified convergence criterion
-\code{conv_criteria}.}
+The "converged" option will include only models with a maximum gradient less
+than or equal to the specified convergence criterion \code{conv_criteria}.}
 
 \item{profile.string}{Character string used to find parameter over which the
 profile was conducted. If \code{exact=FALSE}, this can be a substring of
