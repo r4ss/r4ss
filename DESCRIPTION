@@ -43,6 +43,7 @@ Authors@R: c(
     person("Arni", "Magnusson", role = "aut"),
     person("Peter", "Kuriyama", role = "aut")
   )
+Maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 Description: Provides a compatibility notice for users of the 'r4ss' Stock
     Synthesis tools. Active development and current releases are available
     from GitHub <https://github.com/r4ss/r4ss>. This package supplies the
