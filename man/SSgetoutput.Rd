@@ -52,7 +52,7 @@ relationship. This provides an option to provide the units, e.g.
 This needs to be a user input because the units depend on the choice of
 fecundity parameters which are calculated outside of the SS3 model.}
 
-\item{modelnames}{Optional vector of model names which will can be passed to
+\item{modelnames}{Optional vector of model names that can be passed to
 downstream functions like \code{SSsummarize()}, \code{SSplotComparisons()} (where it is used
 in the default legend), and \code{SStableComparisons()} (where it is used in the
 default column names).}
