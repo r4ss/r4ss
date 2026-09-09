@@ -33,7 +33,7 @@ for (i in seq_along(mods)) {
         mod_path,
         exe = file.path(dir_exe, "ss3"),
         extras = "-stopph 0 -nohess",
-        skipfinished = TRUE
+        skipfinished = FALSE
       )
 
       if (!"Report.sso" %in% dir(mod_path)) {
