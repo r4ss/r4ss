@@ -10,9 +10,8 @@
 #' @param models Optional subset of the models described in
 #' `summaryoutput`. Can be "all", "converged", or a vector of numbers indicating
 #' columns in summary tables. The default "all" will include all models.
-#' The "converged" option will include only models that have converged
-#' a maximum gradient less than the specified convergence criterion
-#' `conv_criteria`.
+#' The "converged" option will include only models with a maximum gradient less
+#' than or equal to the specified convergence criterion `conv_criteria`.
 #' @param profile.string Character string used to find parameter over which the
 #' profile was conducted. If `exact=FALSE`, this can be a substring of
 #' one of the SS3 parameter labels found in the Report.sso file.
@@ -205,7 +204,12 @@ SSplotProfile <-
       models <- 1:n
     } else if (models[1] == "converged") {
       # relatively weak threshold for convergence based on max gradient
-      models <- which(summaryoutput[["maxgrad"]] < conv_criteria)
+      models <- which(summaryoutput[["maxgrad"]] <= conv_criteria)
+      if (length(models) == 0) {
+        cli::cli_abort(
+          "No models met the convergence criterion conv_criteria={conv_criteria}."
+        )
+      }
     } else {
       if (!all(models %in% 1:n)) {
         cli::cli_abort(
