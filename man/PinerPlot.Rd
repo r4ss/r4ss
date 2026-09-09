@@ -44,7 +44,8 @@ PinerPlot(
   verbose = TRUE,
   fleetgroups = NULL,
   likelihood_type = "raw_times_lambda",
-  minfraction = 0.01
+  minfraction = 0.01,
+  conv_criteria = 0.01
 )
 }
 \arguments{
@@ -165,6 +166,9 @@ determines whether or not likelihoods plotted are adjusted by lambdas
 \item{minfraction}{Minimum change in likelihood (over range considered) as a
 fraction of change in total likelihood for a component to be included in the
 figure.}
+
+\item{conv_criteria}{Maximum gradient for a model to be considered converged,
+used when \code{models = "converged"}.}
 }
 \description{
 This style of plot was officially named a "Piner Plot" at the
