@@ -10,8 +10,8 @@
 #' @param models Optional subset of the models described in
 #' `summaryoutput`. Can be "all", "converged", or a vector of numbers indicating
 #' columns in summary tables. The default "all" will include all models.
-#' The "converged" option will include only models that have converged 
-#' a maximum gradient less than the specified convergence criterion 
+#' The "converged" option will include only models that have converged
+#' a maximum gradient less than the specified convergence criterion
 #' `conv_criteria`.
 #' @param profile.string Character string used to find parameter over which the
 #' profile was conducted. If `exact=FALSE`, this can be a substring of
