@@ -44,7 +44,8 @@ PinerPlot(
   verbose = TRUE,
   fleetgroups = NULL,
   likelihood_type = "raw_times_lambda",
-  minfraction = 0.01
+  minfraction = 0.01,
+  conv_criteria = 0.01
 )
 }
 \arguments{
@@ -60,8 +61,10 @@ PinerPlot(
 \item{main}{Title for plot. Should match component.}
 
 \item{models}{Optional subset of the models described in
-\code{summaryoutput}.  Either "all" or a vector of numbers indicating
-columns in summary tables.}
+\code{summaryoutput}. Can be "all", "converged", or a vector of numbers indicating
+columns in summary tables. The default "all" will include all models.
+The "converged" option will include only models with a maximum gradient less
+than or equal to the specified convergence criterion \code{conv_criteria}.}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}
@@ -165,6 +168,9 @@ determines whether or not likelihoods plotted are adjusted by lambdas
 \item{minfraction}{Minimum change in likelihood (over range considered) as a
 fraction of change in total likelihood for a component to be included in the
 figure.}
+
+\item{conv_criteria}{Maximum gradient for a model to be considered converged,
+used when \code{models = "converged"}.}
 }
 \description{
 This style of plot was officially named a "Piner Plot" at the

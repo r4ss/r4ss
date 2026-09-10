@@ -22,6 +22,10 @@
 #' filenaming convention based on iteration and date stamp.
 #' @inheritParams SS_output
 #' @inheritParams SStableComparisons
+#' @param modelnames Optional vector of model names that can be passed to
+#' downstream functions like `SSsummarize()`, `SSplotComparisons()` (where it is used
+#' in the default legend), and `SStableComparisons()` (where it is used in the
+#' default column names).
 #' @author Ian Taylor
 #' @export
 #' @seealso [SS_output()]

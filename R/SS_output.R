@@ -4491,27 +4491,33 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         ends <- grep("mean", rawALK[, 1]) - 1
         N_ALKs <- length(starts)
         # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
-        ALK <- array(NA, c(nlbinspop, accuage + 1, N_ALKs))
-        dimnames(ALK) <- list(
-          Length = rev(lbinspop),
-          TrueAge = 0:accuage,
-          Matrix = 1:N_ALKs
-        )
+        if (!is.null(nlbinspop) & length(nlbinspop) > 0) {
+          # if no comp data and model is purely age-based then nlbinspop is missing,
+          # but also probably not interested in constructing the ALK array anyway
+          ALK <- array(NA, c(nlbinspop, accuage + 1, N_ALKs))
+          dimnames(ALK) <- list(
+            Length = rev(lbinspop),
+            TrueAge = 0:accuage,
+            Matrix = 1:N_ALKs
+          )
 
-        # loop over subsections within age-length matrix
-        for (i in 1:N_ALKs) {
-          # get matrix of values
-          ALKtemp <- rawALK[starts[i]:ends[i], 2 + 0:accuage]
-          # loop over ages to convert values to numeric
-          ALKtemp <- type.convert(ALKtemp, as.is = TRUE)
-          # fill in appropriate slice of array
-          ALK[,, i] <- as.matrix(ALKtemp)
-          # get info on each matrix (such as "Seas: 1 Sub_Seas: 1 Morph: 1")
-          Matrix.Info <- rawALK[starts[i] - 2, ]
-          # filter out empty elements
-          Matrix.Info <- Matrix.Info[Matrix.Info != ""]
-          # combine elements to form a label in the dimnames
-          dimnames(ALK)[["Matrix"]][i] <- paste(Matrix.Info, collapse = " ")
+          # loop over subsections within age-length matrix
+          for (i in 1:N_ALKs) {
+            # get matrix of values
+            ALKtemp <- rawALK[starts[i]:ends[i], 2 + 0:accuage]
+            # loop over ages to convert values to numeric
+            ALKtemp <- type.convert(ALKtemp, as.is = TRUE)
+            # fill in appropriate slice of array
+            ALK[,, i] <- as.matrix(ALKtemp)
+            # get info on each matrix (such as "Seas: 1 Sub_Seas: 1 Morph: 1")
+            Matrix.Info <- rawALK[starts[i] - 2, ]
+            # filter out empty elements
+            Matrix.Info <- Matrix.Info[Matrix.Info != ""]
+            # combine elements to form a label in the dimnames
+            dimnames(ALK)[["Matrix"]][i] <- paste(Matrix.Info, collapse = " ")
+          }
+        } else {
+          ALK <- NULL
         }
         returndat[["ALK"]] <- ALK
       } # end check for keyword present
