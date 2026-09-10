@@ -71,6 +71,7 @@ total.</p>
 <span>    <span class="st">"F Ballpark"</span>, <span class="st">"Crash penalty"</span><span class="op">)</span>,</span>
 <span>  minfraction <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  sort.by.max.change <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  conv_criteria <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pch <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lty <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -119,8 +120,10 @@ total.</p>
 
 <dt id="arg-models">models<a class="anchor" aria-label="anchor" href="#arg-models"></a></dt>
 <dd><p>Optional subset of the models described in
-<code>summaryoutput</code>. Either "all" or a vector of numbers indicating
-columns in summary tables.</p></dd>
+<code>summaryoutput</code>. Can be "all", "converged", or a vector of numbers indicating
+columns in summary tables. The default "all" will include all models.
+The "converged" option will include only models with a maximum gradient less
+than or equal to the specified convergence criterion <code>conv_criteria</code>.</p></dd>
 
 
 <dt id="arg-profile-string">profile.string<a class="anchor" aria-label="anchor" href="#arg-profile-string"></a></dt>
@@ -170,6 +173,11 @@ figure.</p></dd>
 <dd><p>Switch giving option to sort components in legend
 in order of maximum amount of change in likelihood (over range considered).
 Default=TRUE.</p></dd>
+
+
+<dt id="arg-conv-criteria">conv_criteria<a class="anchor" aria-label="anchor" href="#arg-conv-criteria"></a></dt>
+<dd><p>Convergence criterion for determining which models are
+considered converged when <code>models="converged"</code>.</p></dd>
 
 
 <dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>

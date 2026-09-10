@@ -77,8 +77,13 @@ SSgetoutput(
 
 - modelnames:
 
-  optional vector of labels to use as column names. Default is
-  `summaryoutput[["modelnames"]]`.
+  Optional vector of model names that can be passed to downstream
+  functions like
+  [`SSsummarize()`](https://r4ss.github.io/r4ss/reference/SSsummarize.md),
+  [`SSplotComparisons()`](https://r4ss.github.io/r4ss/reference/SSplotComparisons.md)
+  (where it is used in the default legend), and
+  [`SStableComparisons()`](https://r4ss.github.io/r4ss/reference/SStableComparisons.md)
+  (where it is used in the default column names).
 
 ## See also
 

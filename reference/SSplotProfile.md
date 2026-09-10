@@ -28,6 +28,7 @@ SSplotProfile(
     "F Ballpark", "Crash penalty"),
   minfraction = 0.01,
   sort.by.max.change = TRUE,
+  conv_criteria = 0.01,
   col = NULL,
   pch = NULL,
   lty = 1,
@@ -75,8 +76,12 @@ SSplotProfile(
 
 - models:
 
-  Optional subset of the models described in `summaryoutput`. Either
-  "all" or a vector of numbers indicating columns in summary tables.
+  Optional subset of the models described in `summaryoutput`. Can be
+  "all", "converged", or a vector of numbers indicating columns in
+  summary tables. The default "all" will include all models. The
+  "converged" option will include only models with a maximum gradient
+  less than or equal to the specified convergence criterion
+  `conv_criteria`.
 
 - profile.string:
 
@@ -125,6 +130,11 @@ SSplotProfile(
 
   Switch giving option to sort components in legend in order of maximum
   amount of change in likelihood (over range considered). Default=TRUE.
+
+- conv_criteria:
+
+  Convergence criterion for determining which models are considered
+  converged when `models="converged"`.
 
 - col:
 

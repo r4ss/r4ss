@@ -96,7 +96,8 @@ but the name seems to have stuck.</p>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  fleetgroups <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  likelihood_type <span class="op">=</span> <span class="st">"raw_times_lambda"</span>,</span>
-<span>  minfraction <span class="op">=</span> <span class="fl">0.01</span></span>
+<span>  minfraction <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  conv_criteria <span class="op">=</span> <span class="fl">0.01</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -127,8 +128,10 @@ but the name seems to have stuck.</p>
 
 <dt id="arg-models">models<a class="anchor" aria-label="anchor" href="#arg-models"></a></dt>
 <dd><p>Optional subset of the models described in
-<code>summaryoutput</code>.  Either "all" or a vector of numbers indicating
-columns in summary tables.</p></dd>
+<code>summaryoutput</code>. Can be "all", "converged", or a vector of numbers indicating
+columns in summary tables. The default "all" will include all models.
+The "converged" option will include only models with a maximum gradient less
+than or equal to the specified convergence criterion <code>conv_criteria</code>.</p></dd>
 
 
 <dt id="arg-fleets">fleets<a class="anchor" aria-label="anchor" href="#arg-fleets"></a></dt>
@@ -300,6 +303,11 @@ determines whether or not likelihoods plotted are adjusted by lambdas
 <dd><p>Minimum change in likelihood (over range considered) as a
 fraction of change in total likelihood for a component to be included in the
 figure.</p></dd>
+
+
+<dt id="arg-conv-criteria">conv_criteria<a class="anchor" aria-label="anchor" href="#arg-conv-criteria"></a></dt>
+<dd><p>Maximum gradient for a model to be considered converged,
+used when <code>models = "converged"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

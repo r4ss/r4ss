@@ -49,7 +49,8 @@ PinerPlot(
   verbose = TRUE,
   fleetgroups = NULL,
   likelihood_type = "raw_times_lambda",
-  minfraction = 0.01
+  minfraction = 0.01,
+  conv_criteria = 0.01
 )
 ```
 
@@ -78,8 +79,12 @@ PinerPlot(
 
 - models:
 
-  Optional subset of the models described in `summaryoutput`. Either
-  "all" or a vector of numbers indicating columns in summary tables.
+  Optional subset of the models described in `summaryoutput`. Can be
+  "all", "converged", or a vector of numbers indicating columns in
+  summary tables. The default "all" will include all models. The
+  "converged" option will include only models with a maximum gradient
+  less than or equal to the specified convergence criterion
+  `conv_criteria`.
 
 - fleets:
 
@@ -245,6 +250,11 @@ PinerPlot(
   Minimum change in likelihood (over range considered) as a fraction of
   change in total likelihood for a component to be included in the
   figure.
+
+- conv_criteria:
+
+  Maximum gradient for a model to be considered converged, used when
+  `models = "converged"`.
 
 ## References
 
