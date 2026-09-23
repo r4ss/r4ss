@@ -59,8 +59,8 @@ The default is \code{punits="in"}.}
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{Point size for plotted text in plots printed to files (see
-\code{help("png")} in R for details).}
+\item{ptsize}{Point size for plotted text in plots printed to files. See
+\code{help("png")} in R for details.}
 
 \item{mar}{Either NULL to allow the default (which depends on whether the
 main title is included or not) or a numerical vector of the form

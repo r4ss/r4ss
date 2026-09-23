@@ -139,7 +139,7 @@ value as \code{png}.}
 
 \item{printfolder}{The sub-directory under 'dir' (see below) in which the
 PNG files will be located.  The default sub-directory is "plots".
-The directory will be created if it doesn\'t exist.
+The directory will be created if it doesn't exist.
 If 'printfolder' is set to "", it is ignored and the PNG files will be located
 in the directory specified by 'dir'.}
 
@@ -261,11 +261,11 @@ input vs. effective sample size? Default=TRUE.}
 \item{showeffN}{Display effective sample sizes on composition plots?
 Default=TRUE.}
 
-\item{sampsizeline}{show line for input sample sizes on top of conditional
-age-at-length plots (TRUE/FALSE, still in development)}
+\item{sampsizeline}{Show line for input sample sizes on top of conditional
+age-at-length plots (TRUE/FALSE, still in development).}
 
-\item{effNline}{show line for effective sample sizes on top of conditional
-age-at-length plots (TRUE/FALSE, still in development)}
+\item{effNline}{Show line for effective sample sizes on top of conditional
+age-at-length plots (TRUE/FALSE, still in development).}
 
 \item{showlegend}{Display legends in various plots?}
 
@@ -284,8 +284,8 @@ work best in a taller format.}
 (pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
 The default is \code{punits="in"}.}
 
-\item{ptsize}{Point size for plotted text in plots printed to files (see
-\code{help("png")} in R for details).}
+\item{ptsize}{Point size for plotted text in plots printed to files. See
+\code{help("png")} in R for details.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
@@ -331,23 +331,23 @@ plots. Default=TRUE.}
 \item{new}{Open a new window or add to existing plot windows.  Default=TRUE.}
 
 \item{SSplotDatMargin}{Size of right-hand margin in data plot (may be too
-small if fleet names are long)}
+small if fleet names are long).}
 
 \item{filenotes}{Optional vector of character strings to be added to intro
 HTML page (if created) with notes about the model.}
 
 \item{catchasnumbers}{Is catch input in numbers instead of biomass?
-Default=F.}
+Default=FALSE.}
 
-\item{catchbars}{show catch by fleet as barplot instead of stacked polygons
-(default=TRUE)}
+\item{catchbars}{Show catch by fleet as barplot instead of stacked polygons.
+Default=TRUE.}
 
 \item{legendloc}{Location of legend. Either a string like "topleft" or a
 vector of two numeric values representing the fraction of the maximum in
 the x and y dimensions, respectively. See \code{help("legend")} for more info
 on the string options.}
 
-\item{minyr}{First year to show in time-series and time-varying plots}
+\item{minyr}{First year to show in time-series and time-varying plots.}
 
 \item{maxyr}{Last year to show in time-series and time-varying plots. This
 can either be an alternative to, or redundant with, the forecastplot input.}
@@ -356,16 +356,16 @@ can either be an alternative to, or redundant with, the forecastplot input.}
 
 \item{scalebins}{Rescale expected and observed proportions in composition
 plots by dividing by bin width for models where bins have different widths?
-Caution!: May not work correctly in all cases.}
+Caution: May not work correctly in all cases.}
 
-\item{scalebubbles}{scale data-only bubbles by sample size, not just
+\item{scalebubbles}{Scale data-only bubbles by sample size, not just
 proportion within sample? Default=FALSE.}
 
 \item{tslabels}{Either NULL to have default labels for timeseries plots or
-a vector of appropriate length with labels for each figure}
+a vector of appropriate length with labels for each figure.}
 
 \item{catlabels}{Either NULL to have default labels for catch plots or
-a vector of appropriate length with labels for each figure}
+a vector of appropriate length with labels for each figure.}
 
 \item{maxsize}{The size of the largest bubble in the datasize
 plot. Default is 1.0.}
@@ -374,7 +374,7 @@ plot. Default is 1.0.}
 lines in the parameter distribution plots?}
 
 \item{showpost}{Show posterior distribution as bar graph in parameter
-distribution plots (requires MCMC results to be available in \code{replist})?}
+distribution plots? Requires MCMC results to be available in \code{replist}.}
 
 \item{showprior}{Show prior distribution as black line in the parameter
 distribution plots?}

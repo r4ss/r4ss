@@ -76,8 +76,8 @@ work best in a taller format.}
 (pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
 The default is \code{punits="in"}.}
 
-\item{ptsize}{Point size for plotted text in plots printed to files (see
-\code{help("png")} in R for details).}
+\item{ptsize}{Point size for plotted text in plots printed to files. See
+\code{help("png")} in R for details.}
 
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}
