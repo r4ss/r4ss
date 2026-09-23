@@ -22,8 +22,8 @@
 #' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
 #'   (pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
 #'   The default is \code{punits="in"}.
-#' @param ptsize Point size for plotted text in plots printed to files (see
-#'   \code{help("png")} in R for details).
+#' @param ptsize Point size for plotted text in plots printed to files. See
+#'   \code{help("png")} in R for details.
 #' @param cex.main Character expansion for plot titles.
 #'   The default is \code{cex.main=1}.
 #' @param mainTitle Logical indicating if a title should be included at the top

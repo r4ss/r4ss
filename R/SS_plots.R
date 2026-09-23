@@ -46,7 +46,7 @@
 #' value as `png`.
 #' @param printfolder The sub-directory under 'dir' (see below) in which the
 #' PNG files will be located.  The default sub-directory is "plots".
-#' The directory will be created if it doesn\'t exist.
+#' The directory will be created if it doesn't exist.
 #' If 'printfolder' is set to "", it is ignored and the PNG files will be located
 #' in the directory specified by 'dir'.
 #' @param dir The directory in which a PDF file (if requested) will be created
@@ -124,10 +124,10 @@
 #' @param showsampsize Display sample sizes on composition plots?  Default=TRUE.
 #' @param showeffN Display effective sample sizes on composition plots?
 #' Default=TRUE.
-#' @param sampsizeline show line for input sample sizes on top of conditional
-#' age-at-length plots (TRUE/FALSE, still in development)
-#' @param effNline show line for effective sample sizes on top of conditional
-#' age-at-length plots (TRUE/FALSE, still in development)
+#' @param sampsizeline Show line for input sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE, still in development).
+#' @param effNline Show line for effective sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE, still in development).
 #' @param showlegend Display legends in various plots?
 #' @param selexlines Vector controlling which lines should be shown on
 #' selectivity plots if the model includes retention. Default=1:5.
@@ -150,26 +150,26 @@
 #' plots. Default=TRUE.
 #' @param new Open a new window or add to existing plot windows.  Default=TRUE.
 #' @param SSplotDatMargin Size of right-hand margin in data plot (may be too
-#' small if fleet names are long)
+#' small if fleet names are long).
 #' @param filenotes Optional vector of character strings to be added to intro
 #' HTML page (if created) with notes about the model.
 #' @param catchasnumbers Is catch input in numbers instead of biomass?
-#' Default=F.
-#' @param catchbars show catch by fleet as barplot instead of stacked polygons
-#' (default=TRUE)
-#' @param minyr First year to show in time-series and time-varying plots
+#' Default=FALSE.
+#' @param catchbars Show catch by fleet as barplot instead of stacked polygons.
+#' Default=TRUE.
+#' @param minyr First year to show in time-series and time-varying plots.
 #' @param maxyr Last year to show in time-series and time-varying plots. This
 #' can either be an alternative to, or redundant with, the forecastplot input.
 #' @param sexes Which sexes to show in composition plots. Default="all".
 #' @param scalebins Rescale expected and observed proportions in composition
 #' plots by dividing by bin width for models where bins have different widths?
-#' Caution!: May not work correctly in all cases.
-#' @param scalebubbles scale data-only bubbles by sample size, not just
+#' Caution: May not work correctly in all cases.
+#' @param scalebubbles Scale data-only bubbles by sample size, not just
 #' proportion within sample? Default=FALSE.
 #' @param tslabels Either NULL to have default labels for timeseries plots or
-#' a vector of appropriate length with labels for each figure
+#' a vector of appropriate length with labels for each figure.
 #' @param catlabels Either NULL to have default labels for catch plots or
-#' a vector of appropriate length with labels for each figure
+#' a vector of appropriate length with labels for each figure.
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1.0.
 #' @param showmle Show MLE estimate and asymptotic variance estimate with blue
@@ -177,7 +177,7 @@
 #' @param showprior Show prior distribution as black line in the parameter
 #' distribution plots?
 #' @param showpost Show posterior distribution as bar graph in parameter
-#' distribution plots (requires MCMC results to be available in `replist`)?
+#' distribution plots? Requires MCMC results to be available in `replist`.
 #' @param showinit Show initial value as red triangle in the parameter
 #' distribution plots?
 #' @param showdev Include devs in the parameter distribution plots?
