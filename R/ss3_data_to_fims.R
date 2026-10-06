@@ -107,6 +107,13 @@ ss3_data_to_fims <- function(
       maxage <- ss3_inputs[["dat"]][["Nages"]]
     }
   }
+  # Validate maxage before constructing its sequence of age bins.
+  if (
+    !is.numeric(maxage) || length(maxage) != 1 || is.na(maxage) ||
+      !is.finite(maxage) || maxage < 0 || maxage != floor(maxage)
+  ) {
+    cli::cli_abort("{.code maxage} must be a single non-negative whole number.")
+  }
   ages <- 0:maxage
 
   cli::cli_alert_info(
@@ -114,6 +121,20 @@ ss3_data_to_fims <- function(
   )
   if (is.null(lengths)) {
     lengths <- dat[["lbin_vector"]]
+  }
+  # Ensure requested length bins are unique values in the SS3 data bins.
+  if (
+    !is.numeric(lengths) || length(lengths) == 0 || anyNA(lengths) ||
+      any(!is.finite(lengths)) || anyDuplicated(lengths)
+  ) {
+    cli::cli_abort(
+      "{.code lengths} must be a non-empty vector of unique finite numbers."
+    )
+  }
+  if (!all(lengths %in% dat[["lbin_vector"]])) {
+    cli::cli_abort(
+      "Every value in {.code lengths} must be a length bin in the SS3 data."
+    )
   }
   cli::cli_alert_info(
     "Using length bins: {paste(lengths, collapse = ', ')}"
@@ -131,10 +152,82 @@ ss3_data_to_fims <- function(
     uncertainty = character()
   )
 
+  #' Filter observations to selected fleets and report any rows removed.
+  #'
+  #' @param data Data frame containing a fleet or index column.
+  #' @param fleet_column Name of the column used to identify the fleet.
+  #' @param label Label used in the row-count message.
+  #' @return The filtered data frame.
+  filter_and_report_fleets <- function(data, fleet_column, label) {
+    n_before <- nrow(data)
+    filtered_data <- data |>
+      dplyr::filter(.data[[fleet_column]] %in% fleets)
+    n_after <- nrow(filtered_data)
+
+    if (n_after < n_before) {
+      cli::cli_alert_info(
+        "{label} rows before fleet filter: {n_before}; after: {n_after}"
+      )
+    }
+
+    filtered_data
+  }
+
+  #' Normalize composition bins and reshape them into one row per bin.
+  #'
+  #' @param data SS3 age- or length-composition data.
+  #' @param bin_pattern Regular expression matching the composition-bin columns.
+  #' @return Long-format data with fleet, year, sample size, bin, and proportion.
+  process_composition <- function(data, bin_pattern) {
+    bin_columns <- grep(bin_pattern, names(data), value = TRUE)
+    if (length(bin_columns) == 0) {
+      cli::cli_abort("No composition-bin columns were found in the SS3 data.")
+    }
+
+    data |>
+      dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
+      dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
+      dplyr::rowwise() |>
+      dplyr::mutate(
+        dplyr::across(
+          dplyr::all_of(bin_columns),
+          ~ .x / sum(dplyr::c_across(dplyr::all_of(bin_columns)), na.rm = TRUE)
+        )
+      ) |>
+      dplyr::ungroup() |>
+      tidyr::pivot_longer(
+        cols = dplyr::all_of(bin_columns),
+        names_to = "bin",
+        values_to = "observed"
+      ) |>
+      dplyr::mutate(bin = as.numeric(substring(bin, first = 2))) |>
+      dplyr::select(year, fleet, Nsamp, bin, observed) |>
+      dplyr::arrange(fleet, year, bin)
+  }
+
+    #' Reject conflicting duplicate keys and remove exact repeated observations.
+    #'
+    #' @param data Output rows for a single data type.
+    #' @return Data with at most one row per identifying key.
   filter_repeated_rows <- function(data) {
     n_rows_before <- nrow(data)
     data_type <- unique(data[["type"]])
     identifying_columns <- c("type", "fleet", "age", "length", "timing")
+    value_columns <- setdiff(names(data), identifying_columns)
+    conflicting_rows <- data |>
+      dplyr::group_by(dplyr::across(dplyr::all_of(identifying_columns))) |>
+      dplyr::filter(dplyr::if_any(
+        dplyr::all_of(value_columns),
+        ~ dplyr::n_distinct(.x, na.rm = FALSE) > 1
+      )) |>
+      dplyr::ungroup()
+
+    if (nrow(conflicting_rows) > 0) {
+      cli::cli_abort(
+        "Repeated rows for type {.val {data_type}} have conflicting values."
+      )
+    }
+
     data <- data |>
       dplyr::distinct(
         dplyr::across(dplyr::all_of(identifying_columns)),
@@ -149,24 +242,22 @@ ss3_data_to_fims <- function(
       )
     }
 
-    return(data)
+    data
   }
 
   # get catch data and filter by fleet and year
-  n_catch_before <- nrow(dat[["catch"]])
   # remove initial equilibrium catch rows (year = -999)
   catch_filtered <- dat[["catch"]] |>
     dplyr::filter(year != -999)
-  # count rows of catch data
-  n_catch_before_fleet <- nrow(catch_filtered)
-  # filter by fleet (if fleets provided)
-  catch_by_year_fleet <- catch_filtered |>
-    dplyr::filter(fleet %in% fleets)
-  n_catch_after <- nrow(catch_by_year_fleet)
-  # provide message if any rows were removed by filter
-  if (n_catch_after < n_catch_before_fleet) {
-    cli::cli_alert_info(
-      "catch rows before fleet filter: {n_catch_before_fleet}; after: {n_catch_after}"
+  catch_by_year_fleet <- filter_and_report_fleets(
+    catch_filtered,
+    fleet_column = "fleet",
+    label = "catch"
+  )
+  # A non-empty catch series is required to check that years are continuous.
+  if (nrow(catch_by_year_fleet) == 0) {
+    cli::cli_abort(
+      "No catch data remain after removing equilibrium rows and filtering fleets."
     )
   }
   # modify any rows with 0 catch
@@ -203,16 +294,11 @@ ss3_data_to_fims <- function(
 
   if (!is.null(dat[["CPUE"]])) {
     # convert indices to FIMSFrame format
-    n_cpue_before <- nrow(dat[["CPUE"]])
-    cpue_filtered <- dat[["CPUE"]] |>
-      dplyr::filter(index %in% fleets)
-    n_cpue_after <- nrow(cpue_filtered)
-    # provide message if any rows were removed by filter
-    if (n_cpue_after < n_cpue_before) {
-      cli::cli_alert_info(
-        "CPUE rows before fleet filter: {n_cpue_before}; after: {n_cpue_after}"
-      )
-    }
+    cpue_filtered <- filter_and_report_fleets(
+      dat[["CPUE"]],
+      fleet_column = "index",
+      label = "CPUE"
+    )
     index_info <- cpue_filtered |>
       dplyr::select(year, index, obs, se_log) |>
       dplyr::arrange(index, year) |>
@@ -224,11 +310,13 @@ ss3_data_to_fims <- function(
         distribution = dplyr::case_when(
           errtype == -1 ~ "dnorm(mean = index_expected, sd =",
           errtype == 0 ~ "dlnorm(meanlog = log_index_expected, sdlog =",
-          FALSE ~ "unknown"
+          # Send unsupported SS3 error types to the validation below.
+          TRUE ~ "unknown"
         ),
         uncertainty = glue::glue("~{distribution} {se_log})")
       )
-    if (any(index_info[["distribution"]] == "uknown")) {
+    # FIMS currently supports only normal and lognormal index likelihoods.
+    if (any(index_info[["distribution"]] == "unknown", na.rm = TRUE)) {
       cli::cli_abort(c(
         x = "FIMS cannot accommodate Student's t-distributions in index data.",
         i = "Check the distribution in the CPUEinfo section of your dat file
@@ -250,17 +338,11 @@ ss3_data_to_fims <- function(
   }
 
   if (!is.null(dat[["agecomp"]])) {
-    # further processing
-    n_agecomp_before <- nrow(dat[["agecomp"]])
-    agecomp_filtered <- dat[["agecomp"]] |>
-      dplyr::filter(fleet %in% fleets)
-    n_agecomp_after <- nrow(agecomp_filtered)
-    # provide message if any rows were removed by filter
-    if (n_agecomp_after < n_agecomp_before) {
-      cli::cli_alert_info(
-        "agecomp rows before fleet filter: {n_agecomp_before}; after: {n_agecomp_after}"
-      )
-    }
+    agecomp_filtered <- filter_and_report_fleets(
+      dat[["agecomp"]],
+      fleet_column = "fleet",
+      label = "agecomp"
+    )
 
     # if no age-0 observations, then insert columns for age-0 up to first age bin with 0 values
     # to avoid issues with missing age bins in the FIMSFrame
@@ -279,46 +361,26 @@ ss3_data_to_fims <- function(
         "Adding columns for missing age bins: {paste(new_column_names, collapse = ', ')}"
       )
       # add to data
-      Nsamp_column <- which(colnames(agecomp_filtered) == "Nsamp")
-      agecomp_filtered <- cbind(
-        agecomp_filtered[, 1:Nsamp_column],
+      Nsamp_column <- match("Nsamp", names(agecomp_filtered))
+      columns_before <- seq_len(Nsamp_column)
+      columns_after <- setdiff(seq_len(ncol(agecomp_filtered)), columns_before)
+      # Keep the original columns in order, even when Nsamp is the last column.
+      agecomp_filtered <- dplyr::bind_cols(
+        agecomp_filtered[, columns_before, drop = FALSE],
         new_columns,
-        agecomp_filtered[, (Nsamp_column + 1):ncol(agecomp_filtered)]
+        agecomp_filtered[, columns_after, drop = FALSE]
       )
     }
 
-    age_info <-
-      agecomp_filtered |>
-      dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
-      dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
-      # rescale to sum to Nsamp within each row after removing columns for males
-      dplyr::rowwise() |>
-      dplyr::mutate(
-        dplyr::across(
-          dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]"),
-          ~ .x /
-            sum(
-              c_across(dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]")),
-              na.rm = TRUE
-            )
-        )
-      ) |>
-      dplyr::ungroup() |>
-      tidyr::pivot_longer(
-        # convert columns f1...f17 to values in a new "age" colum of a longer table
-        cols = dplyr::matches("^f[0-9]") | dplyr::matches("^a[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses a1, a2, ...
-        names_to = "age",
-        values_to = "observed"
-      ) |>
-      dplyr::mutate(age = as.numeric(substring(age, first = 2))) |> # convert "f17" to 17
-      dplyr::select(year, fleet, Nsamp, age, observed) |>
+    age_info <- process_composition(agecomp_filtered, "^(f|a)[0-9]+$") |>
+      dplyr::rename(age = bin) |>
       # Find missing age in composition data and fill in for each fleet
       dplyr::group_by(fleet, year) |>
       tidyr::complete(age = ages) |>
       tidyr::fill(Nsamp, .direction = "updown") |>
       dplyr::mutate(observed = ifelse(is.na(observed), 0, observed)) |>
       dplyr::ungroup() |>
-      dplyr::arrange(fleet, year, age) #|>
+      dplyr::arrange(fleet, year, age)
     # Change from proportion to number
     #dplyr::mutate(observed = (observed * Nsamp) |> round(0))
 
@@ -357,43 +419,14 @@ ss3_data_to_fims <- function(
 
   # Length composition data
   if (!is.null(dat[["lencomp"]])) {
-    n_lencomp_before <- nrow(dat[["lencomp"]])
-    lencomp_filtered <- dat[["lencomp"]] |>
-      dplyr::filter(fleet %in% fleets) # filter by requested fleets
-    n_lencomp_after <- nrow(lencomp_filtered)
-    # provide message if any rows were removed by filter
-    if (n_lencomp_after < n_lencomp_before) {
-      cli::cli_alert_info(
-        "lencomp rows before fleet filter: {n_lencomp_before}; after: {n_lencomp_after}"
-      )
-    }
+    lencomp_filtered <- filter_and_report_fleets(
+      dat[["lencomp"]],
+      fleet_column = "fleet",
+      label = "lencomp"
+    )
 
-    len_info <-
-      lencomp_filtered |>
-      dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
-      dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
-      # rescale to sum to 1.0 within each row after removing columns for males
-      dplyr::rowwise() |>
-      dplyr::mutate(
-        dplyr::across(
-          dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"),
-          ~ .x /
-            sum(
-              c_across(dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]")),
-              na.rm = TRUE
-            )
-        )
-      ) |>
-      dplyr::ungroup() |>
-      tidyr::pivot_longer(
-        # convert columns f1...f17 to values in a new "length" colum of a longer table
-        cols = dplyr::matches("^f[0-9]") | dplyr::matches("^l[0-9]"), # 2-sex model uses f1, f2, ...; 1-sex model uses l1, l2, ...
-        names_to = "length",
-        values_to = "observed"
-      ) |>
-      dplyr::mutate(length = as.numeric(substring(length, first = 2))) |> # convert "l17" to 17
-      dplyr::select(year, fleet, Nsamp, length, observed) |>
-      dplyr::arrange(fleet, year, length) # |>
+    len_info <- process_composition(lencomp_filtered, "^(f|l)[0-9]+$") |>
+      dplyr::rename(length = bin)
     # Change from proportion to number
     #dplyr::mutate(observed = (observed * Nsamp) |> round(0))
 
@@ -525,7 +558,11 @@ ss3_data_to_fims <- function(
       high_bins <- NULL
     }
 
-    # function to provide length at age from SS3 output
+    #' Look up the SS3 age-to-length proportion for one age and length bin.
+    #'
+    #' @param age Age bin to look up.
+    #' @param length Length bin to look up.
+    #' @return The aggregated proportion, or `NA` when either bin is out of range.
     length_at_age_lookup <- function(age, length) {
       if (age %in% ages && length %in% lengths) {
         # add the low or high population bins to the first and last data bin
