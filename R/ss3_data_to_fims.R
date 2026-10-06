@@ -445,8 +445,10 @@ ss3_data_to_fims <- function(
 
     age_error_ids <- agecomp_filtered[[age_error_column]]
     if (
-      anyNA(age_error_ids) || !is.numeric(age_error_ids) ||
-        any(!is.finite(age_error_ids)) || any(age_error_ids < 0) ||
+      anyNA(age_error_ids) ||
+        !is.numeric(age_error_ids) ||
+        any(!is.finite(age_error_ids)) ||
+        any(age_error_ids < 0) ||
         any(age_error_ids != floor(age_error_ids))
     ) {
       cli::cli_abort(
@@ -461,7 +463,9 @@ ss3_data_to_fims <- function(
       nrow(ss3_ageerror) / 2
     }
     if (n_ageerror_definitions != floor(n_ageerror_definitions)) {
-      cli::cli_abort("SS3 age-error definitions must have paired mean and SD rows.")
+      cli::cli_abort(
+        "SS3 age-error definitions must have paired mean and SD rows."
+      )
     }
     if (any(age_error_ids > n_ageerror_definitions)) {
       cli::cli_abort(
@@ -584,12 +588,16 @@ ss3_data_to_fims <- function(
       identity_key <- matrix_key(identity_matrix)
       matrix_catalog <- list()
       definition_keys <- stats::setNames(
-        vapply(selected_ids, function(definition_id) {
-          probabilities <- make_ageing_error_matrix(definition_id)
-          key <- matrix_key(probabilities)
-          matrix_catalog[[key]] <<- probabilities
-          key
-        }, character(1)),
+        vapply(
+          selected_ids,
+          function(definition_id) {
+            probabilities <- make_ageing_error_matrix(definition_id)
+            key <- matrix_key(probabilities)
+            matrix_catalog[[key]] <<- probabilities
+            key
+          },
+          character(1)
+        ),
         as.character(selected_ids)
       )
       matrix_catalog[[identity_key]] <- identity_matrix
@@ -606,7 +614,10 @@ ss3_data_to_fims <- function(
 
       # Candidate defaults let FIMS apply one matrix broadly and override only
       # fleet-, year-, or fleet-year-specific exceptions.
-      candidate_defaults <- unique(c(identity_key, ageing_error_mapping$matrix_key))
+      candidate_defaults <- unique(c(
+        identity_key,
+        ageing_error_mapping[["matrix_key"]]
+      ))
       best_rule_count <- Inf
       best_rules <- NULL
       for (default_key in candidate_defaults) {
@@ -631,8 +642,14 @@ ss3_data_to_fims <- function(
           dplyr::rowwise() |>
           dplyr::mutate(
             applied_key = {
-              fleet_key <- fleet_rules$matrix_key[match(fleet, fleet_rules$fleet)]
-              year_key <- year_rules$matrix_key[match(timing, year_rules$timing)]
+              fleet_key <- fleet_rules[["matrix_key"]][match(
+                fleet,
+                fleet_rules[["fleet"]]
+              )]
+              year_key <- year_rules[["matrix_key"]][match(
+                timing,
+                year_rules[["timing"]]
+              )]
               if (!is.na(fleet_key)) {
                 fleet_key
               } else if (!is.na(year_key)) {
@@ -647,7 +664,9 @@ ss3_data_to_fims <- function(
           dplyr::select(fleet, timing, matrix_key)
 
         rule_count <- as.integer(default_key != identity_key) +
-          nrow(fleet_rules) + nrow(year_rules) + nrow(specific_rules)
+          nrow(fleet_rules) +
+          nrow(year_rules) +
+          nrow(specific_rules)
         if (rule_count < best_rule_count) {
           best_rule_count <- rule_count
           best_rules <- list(
@@ -674,31 +693,31 @@ ss3_data_to_fims <- function(
       }
 
       ageing_error_rows <- list()
-      if (best_rules$default_key != identity_key) {
+      if (best_rules[["default_key"]] != identity_key) {
         ageing_error_rows[[length(ageing_error_rows) + 1]] <- matrix_rows(
-          best_rules$default_key,
+          best_rules[["default_key"]],
           fleet = NA_character_,
           timing = NA_real_
         )
       }
-      for (rule_index in seq_len(nrow(best_rules$fleet))) {
-        rule <- best_rules$fleet[rule_index, ]
+      for (rule_index in seq_len(nrow(best_rules[["fleet"]]))) {
+        rule <- best_rules[["fleet"]][rule_index, ]
         ageing_error_rows[[length(ageing_error_rows) + 1]] <- matrix_rows(
           rule[["matrix_key"]],
           fleet = rule[["fleet"]],
           timing = NA_real_
         )
       }
-      for (rule_index in seq_len(nrow(best_rules$year))) {
-        rule <- best_rules$year[rule_index, ]
+      for (rule_index in seq_len(nrow(best_rules[["year"]]))) {
+        rule <- best_rules[["year"]][rule_index, ]
         ageing_error_rows[[length(ageing_error_rows) + 1]] <- matrix_rows(
           rule[["matrix_key"]],
           fleet = NA_character_,
           timing = rule[["timing"]]
         )
       }
-      for (rule_index in seq_len(nrow(best_rules$specific))) {
-        rule <- best_rules$specific[rule_index, ]
+      for (rule_index in seq_len(nrow(best_rules[["specific"]]))) {
+        rule <- best_rules[["specific"]][rule_index, ]
         ageing_error_rows[[length(ageing_error_rows) + 1]] <- matrix_rows(
           rule[["matrix_key"]],
           fleet = rule[["fleet"]],
@@ -706,7 +725,6 @@ ss3_data_to_fims <- function(
         )
       }
       ageing_error <- dplyr::bind_rows(ageing_error_rows)
-
     }
   }
 

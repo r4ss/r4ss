@@ -121,7 +121,10 @@ test_that("ss3_data_to_fims() converts SS3 ageing-error vectors", {
   probability_sums <- ageing_error |>
     dplyr::group_by(fleet, timing, uncertainty) |>
     dplyr::summarize(probability_sum = sum(observed), .groups = "drop")
-  expect_equal(probability_sums[["probability_sum"]], rep(1, nrow(probability_sums)))
+  expect_equal(
+    probability_sums[["probability_sum"]],
+    rep(1, nrow(probability_sums))
+  )
 })
 
 test_that("ss3_data_to_fims() ageing error matches SS3 AAK matrix 2", {
@@ -192,8 +195,10 @@ test_that("ss3_data_to_fims() emits year-specific ageing-error overrides", {
   ageing_error <- dplyr::filter(fims_data, type == "ageing_error")
 
   expect_true(all(is.na(ageing_error[["fleet"]])))
-  expect_true(all(is.na(ageing_error[["timing"]]) |
-    ageing_error[["timing"]] %in% years))
+  expect_true(all(
+    is.na(ageing_error[["timing"]]) |
+      ageing_error[["timing"]] %in% years
+  ))
   expect_equal(
     length(unique(ageing_error[["timing"]][!is.na(ageing_error[["timing"]])])),
     sum(year_definition != year_definition[1])
@@ -207,11 +212,21 @@ test_that("ss3_data_to_fims() emits year-specific ageing-error overrides", {
       lapply(function(rows) {
         list(
           timing = rows[["timing"]][1],
-          value = sum(rows[["observed"]][rows[["age"]] == 0 & rows[["uncertainty"]] == "0"])
+          value = sum(rows[["observed"]][
+            rows[["age"]] == 0 & rows[["uncertainty"]] == "0"
+          ])
         )
       })
-    default_index <- which(vapply(year_matrix, function(x) is.na(x$timing), logical(1)))
-    specific_index <- which(vapply(year_matrix, function(x) !is.na(x$timing), logical(1)))
+    default_index <- which(vapply(
+      year_matrix,
+      function(x) is.na(x$timing),
+      logical(1)
+    ))
+    specific_index <- which(vapply(
+      year_matrix,
+      function(x) !is.na(x$timing),
+      logical(1)
+    ))
     applied_matrix <- if (length(specific_index) > 0) {
       year_matrix[[specific_index[1]]]
     } else {
@@ -230,10 +245,13 @@ test_that("ss3_data_to_fims() emits year-specific ageing-error overrides", {
 test_that("ss3_data_to_fims() leaves fleets without rows at identity", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
-  fleet_without_ageing_error <- abs(ss3_inputs[["dat"]][["agecomp"]][["fleet"]][1])
+  fleet_without_ageing_error <- abs(ss3_inputs[["dat"]][["agecomp"]][["fleet"]][
+    1
+  ])
   ss3_inputs[["dat"]][["agecomp"]][["ageerr"]] <- 2
   ss3_inputs[["dat"]][["agecomp"]][["ageerr"]][
-    abs(ss3_inputs[["dat"]][["agecomp"]][["fleet"]]) == fleet_without_ageing_error
+    abs(ss3_inputs[["dat"]][["agecomp"]][["fleet"]]) ==
+      fleet_without_ageing_error
   ] <- 0
 
   fims_data <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
@@ -244,9 +262,14 @@ test_that("ss3_data_to_fims() leaves fleets without rows at identity", {
     is.na(timing)
   )
 
-  expect_equal(nrow(matrix_rows), length(0:max(ss3_inputs[["dat"]][["agebin_vector"]]))^2)
-  expect_false(any(ageing_error[["fleet"]] ==
-    ss3_inputs[["dat"]][["fleetnames"]][fleet_without_ageing_error]))
+  expect_equal(
+    nrow(matrix_rows),
+    length(0:max(ss3_inputs[["dat"]][["agebin_vector"]]))^2
+  )
+  expect_false(any(
+    ageing_error[["fleet"]] ==
+      ss3_inputs[["dat"]][["fleetnames"]][fleet_without_ageing_error]
+  ))
   expect_true(all(is.na(ageing_error[["timing"]])))
 })
 
