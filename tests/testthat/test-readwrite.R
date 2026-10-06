@@ -141,10 +141,20 @@ test_that("empty files lead to NULL or error", {
   ))
 })
 
+test_that("SS_read suggests original files when .ss_new files are missing", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+
+  expect_warning(
+    expect_error(SS_read(path, ss_new = TRUE)),
+    "ss_new = FALSE"
+  )
+})
+
 test_that("SS_read works with a raw github URL", {
   skip_if_offline(host = "github.com")
+  url <- "https://raw.githubusercontent.com/nmfs-ost/ss3-test-models/main/models/Simple"
   list_objs <- SS_read(
-    dir = "https://raw.githubusercontent.com/nmfs-ost/ss3-test-models/main/models/Simple"
+    dir = url
   )
   expect_true(is.list(list_objs))
   expect_equal(
@@ -157,5 +167,10 @@ test_that("SS_read works with a raw github URL", {
       "start",
       "fore"
     )
+  )
+
+  expect_warning(
+    expect_error(SS_read(dir = url, ss_new = TRUE)),
+    "ss_new = FALSE"
   )
 })
