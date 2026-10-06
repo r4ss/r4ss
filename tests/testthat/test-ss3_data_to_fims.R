@@ -119,6 +119,60 @@ test_that("ss3_data_to_fims() inherits EWAA from the control file", {
   ))
 })
 
+test_that("ss3_data_to_fims() rejects unsupported CPUE distributions", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+  ss3_inputs[["dat"]][["CPUEinfo"]][["errtype"]] <- 1
+
+  expect_error(
+    ss3_data_to_fims(ss3_inputs = ss3_inputs),
+    "FIMS cannot accommodate Student's t-distributions in index data"
+  )
+})
+
+test_that("ss3_data_to_fims() validates age and length bins", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+
+  expect_error(
+    ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE, maxage = -1),
+    "maxage.*non-negative whole number"
+  )
+  expect_error(
+    ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE, lengths = 999),
+    "lengths.*length bin in the SS3 data"
+  )
+})
+
+test_that("ss3_data_to_fims() rejects empty filtered catch data", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+
+  expect_error(
+    ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE, fleets = 999),
+    "No catch data remain after removing equilibrium rows"
+  )
+})
+
+test_that("ss3_data_to_fims() rejects conflicting repeated rows", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+  catch_row <- ss3_inputs[["dat"]][["catch"]] |>
+    dplyr::filter(year != -999) |>
+    dplyr::slice(1)
+  conflicting_row <- catch_row
+  conflicting_row[["catch"]] <- conflicting_row[["catch"]] + 1
+  ss3_inputs[["dat"]][["catch"]] <- dplyr::bind_rows(
+    ss3_inputs[["dat"]][["catch"]],
+    conflicting_row
+  )
+
+  expect_error(
+    ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE),
+    "have conflicting values"
+  )
+})
+
 test_that("ss3_data_to_fims() filters and reports repeated rows by type", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(
