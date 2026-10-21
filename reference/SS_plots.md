@@ -181,7 +181,7 @@ SS_plots(
 
   The sub-directory under 'dir' (see below) in which the PNG files will
   be located. The default sub-directory is "plots". The directory will
-  be created if it doesn\\t exist. If 'printfolder' is set to "", it is
+  be created if it doesn't exist. If 'printfolder' is set to "", it is
   ignored and the PNG files will be located in the directory specified
   by 'dir'.
 
@@ -371,13 +371,13 @@ SS_plots(
 
 - sampsizeline:
 
-  show line for input sample sizes on top of conditional age-at-length
-  plots (TRUE/FALSE, still in development)
+  Show line for input sample sizes on top of conditional age-at-length
+  plots (TRUE/FALSE, still in development).
 
 - effNline:
 
-  show line for effective sample sizes on top of conditional
-  age-at-length plots (TRUE/FALSE, still in development)
+  Show line for effective sample sizes on top of conditional
+  age-at-length plots (TRUE/FALSE, still in development).
 
 - showlegend:
 
@@ -407,9 +407,9 @@ SS_plots(
 
 - ptsize:
 
-  Point size for plotted text in plots printed to files (see
+  Point size for plotted text in plots printed to files. See
   [`help("png")`](https://rdrr.io/r/grDevices/png.html) in R for
-  details).
+  details.
 
 - res:
 
@@ -489,7 +489,7 @@ SS_plots(
 - SSplotDatMargin:
 
   Size of right-hand margin in data plot (may be too small if fleet
-  names are long)
+  names are long).
 
 - filenotes:
 
@@ -498,12 +498,12 @@ SS_plots(
 
 - catchasnumbers:
 
-  Is catch input in numbers instead of biomass? Default=F.
+  Is catch input in numbers instead of biomass? Default=FALSE.
 
 - catchbars:
 
-  show catch by fleet as barplot instead of stacked polygons
-  (default=TRUE)
+  Show catch by fleet as barplot instead of stacked polygons.
+  Default=TRUE.
 
 - legendloc:
 
@@ -515,7 +515,7 @@ SS_plots(
 
 - minyr:
 
-  First year to show in time-series and time-varying plots
+  First year to show in time-series and time-varying plots.
 
 - maxyr:
 
@@ -531,22 +531,22 @@ SS_plots(
 
   Rescale expected and observed proportions in composition plots by
   dividing by bin width for models where bins have different widths?
-  Caution!: May not work correctly in all cases.
+  Caution: May not work correctly in all cases.
 
 - scalebubbles:
 
-  scale data-only bubbles by sample size, not just proportion within
+  Scale data-only bubbles by sample size, not just proportion within
   sample? Default=FALSE.
 
 - tslabels:
 
   Either NULL to have default labels for timeseries plots or a vector of
-  appropriate length with labels for each figure
+  appropriate length with labels for each figure.
 
 - catlabels:
 
   Either NULL to have default labels for catch plots or a vector of
-  appropriate length with labels for each figure
+  appropriate length with labels for each figure.
 
 - maxsize:
 
@@ -560,7 +560,7 @@ SS_plots(
 - showpost:
 
   Show posterior distribution as bar graph in parameter distribution
-  plots (requires MCMC results to be available in `replist`)?
+  plots? Requires MCMC results to be available in `replist`.
 
 - showprior:
 

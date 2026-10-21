@@ -143,9 +143,9 @@ SSplotSPR(
 
 - ptsize:
 
-  Point size for plotted text in plots printed to files (see
+  Point size for plotted text in plots printed to files. See
   [`help("png")`](https://rdrr.io/r/grDevices/png.html) in R for
-  details).
+  details.
 
 - cex.main:
 
