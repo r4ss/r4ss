@@ -72,7 +72,7 @@ plot_twopanel_comparison <- function(
   if (is.null(legendlabels)) {
     legendlabels <- summary[["modelnames"]]
   }
-  
+
   # default file name
   if (is.null(filename)) {
     filename <- paste0("compare_", subplot1, "_and_", subplot2, ".png")
