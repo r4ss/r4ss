@@ -64,7 +64,7 @@ this makes it easier to show two quantities on a single page of a report.</p>
 <span>  subplot1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subplot2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hessian <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  endyrvec <span class="op">=</span> <span class="fl">2023</span>,</span>
+<span>  endyrvec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ylimAdj1 <span class="op">=</span> <span class="fl">1.05</span>,</span>
 <span>  ylimAdj2 <span class="op">=</span> <span class="fl">1.05</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -82,13 +82,13 @@ grouped together as a list(), or by <code><a href="SSgetoutput.html">SSgetoutput
 
 
 <dt id="arg-legendlabels">legendlabels<a class="anchor" aria-label="anchor" href="#arg-legendlabels"></a></dt>
-<dd><p>Labels for use in the legend. NULL value will
-use the lingcod model id</p></dd>
+<dd><p>Labels for use in the legend. If NULL, model names from
+<code><a href="SSsummarize.html">SSsummarize()</a></code> are used.</p></dd>
 
 
 <dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
-<dd><p>file to write to (relative to the "figures" directory)
-NULL value will use a filename like <code>compare_[id1]_[id2].png</code></p></dd>
+<dd><p>File name for the PNG, written under <code>dir</code>. If NULL, a name
+like <code>compare_2_and_4.png</code> is generated from the selected subplots.</p></dd>
 
 
 <dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
@@ -113,7 +113,7 @@ or with uncertainty (3 or 4) depending on whether input <code>hessian</code> is 
 
 <dt id="arg-endyrvec">endyrvec<a class="anchor" aria-label="anchor" href="#arg-endyrvec"></a></dt>
 <dd><p>final year to include in the figure passed to
-<code><a href="SSplotComparisons.html">SSplotComparisons()</a></code></p></dd>
+<code><a href="SSplotComparisons.html">SSplotComparisons()</a></code>. Null will use the last year + 1 in the models.</p></dd>
 
 
 <dt id="arg-ylimadj-">ylimAdj1<a class="anchor" aria-label="anchor" href="#arg-ylimadj-"></a></dt>
@@ -153,7 +153,7 @@ to the screen.</p></dd>
 <span class="r-in"><span>    <span class="va">model1</span>,</span></span>
 <span class="r-in"><span>    <span class="va">model2</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span>,</span></span>
-<span class="r-in"><span>  legendlabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model 1"</span>, <span class="st">"Model 2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  legendlabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model 1"</span>, <span class="st">"Model 2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plot_twopanel_comparison</span><span class="op">(</span></span></span>

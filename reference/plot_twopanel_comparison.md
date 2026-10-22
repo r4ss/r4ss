@@ -17,7 +17,7 @@ plot_twopanel_comparison(
   subplot1 = NULL,
   subplot2 = NULL,
   hessian = TRUE,
-  endyrvec = 2023,
+  endyrvec = NULL,
   ylimAdj1 = 1.05,
   ylimAdj2 = 1.05,
   verbose = TRUE,
@@ -36,12 +36,14 @@ plot_twopanel_comparison(
 
 - legendlabels:
 
-  Labels for use in the legend. NULL value will use the lingcod model id
+  Labels for use in the legend. If NULL, model names from
+  [`SSsummarize()`](https://r4ss.github.io/r4ss/reference/SSsummarize.md)
+  are used.
 
 - filename:
 
-  file to write to (relative to the "figures" directory) NULL value will
-  use a filename like `compare_[id1]_[id2].png`
+  File name for the PNG, written under `dir`. If NULL, a name like
+  `compare_2_and_4.png` is generated from the selected subplots.
 
 - dir:
 
@@ -71,7 +73,8 @@ plot_twopanel_comparison(
 - endyrvec:
 
   final year to include in the figure passed to
-  [`SSplotComparisons()`](https://r4ss.github.io/r4ss/reference/SSplotComparisons.md)
+  [`SSplotComparisons()`](https://r4ss.github.io/r4ss/reference/SSplotComparisons.md).
+  Null will use the last year + 1 in the models.
 
 - ylimAdj1:
 
@@ -109,7 +112,7 @@ plot_twopanel_comparison(
     model1,
     model2
   ),
-  legendlabels = c("Model 1", "Model 2"),
+  legendlabels = c("Model 1", "Model 2")
 )
 
 plot_twopanel_comparison(
