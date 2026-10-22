@@ -8,10 +8,10 @@
 #'
 #' @param mods A list of model objects as created by [SS_output()]
 #' grouped together as a list(), or by [SSgetoutput()]
-#' @param legendlabels Labels for use in the legend. NULL value will
-#' use the lingcod model id
-#' @param filename file to write to (relative to the "figures" directory)
-#' NULL value will use a filename like `compare_[id1]_[id2].png`
+#' @param legendlabels Labels for use in the legend. If NULL, model names from
+#' `SSsummarize()` are used.
+#' @param filename File name for the PNG, written under `dir`. If NULL, a name
+#' like `compare_2_and_4.png` is generated from the selected subplots.
 #' @param dir Where to put the PNG file. If NULL then will send to the current graphics device.
 #' @param subplot1 Which of the [SSplotComparisons()] plots to use
 #' for the top panel. By default will be either spawning biomass without
@@ -21,7 +21,7 @@
 #' or with uncertainty (3 or 4) depending on whether input `hessian` is TRUE or FALSE.
 #' @param hessian TRUE/FALSE whether to include hessian or not.
 #' @param endyrvec final year to include in the figure passed to
-#' [SSplotComparisons()]
+#' [SSplotComparisons()]. Null will use the last year + 1 in the models.
 #' @param ylimAdj1 adjustment to y-axis limit for the first plot,
 #' relative to highest point among all models shown
 #' @param ylimAdj2 adjustment to y-axis limit for the second plot,
@@ -39,7 +39,7 @@
 #'     model1,
 #'     model2
 #'   ),
-#'   legendlabels = c("Model 1", "Model 2"),
+#'   legendlabels = c("Model 1", "Model 2")
 #' )
 #'
 #' plot_twopanel_comparison(
@@ -61,7 +61,7 @@ plot_twopanel_comparison <- function(
   subplot1 = NULL,
   subplot2 = NULL,
   hessian = TRUE,
-  endyrvec = 2023,
+  endyrvec = NULL,
   ylimAdj1 = 1.05,
   ylimAdj2 = 1.05,
   verbose = TRUE,
@@ -72,8 +72,14 @@ plot_twopanel_comparison <- function(
   if (is.null(legendlabels)) {
     legendlabels <- summary[["modelnames"]]
   }
-  
-  # default file name
+
+  if (is.null(subplot1)) {
+    subplot1 <- ifelse(hessian, 2, 1)
+  }
+  if (is.null(subplot2)) {
+    subplot2 <- ifelse(hessian, 4, 3)
+  }
+
   if (is.null(filename)) {
     filename <- paste0("compare_", subplot1, "_and_", subplot2, ".png")
   }
@@ -82,7 +88,7 @@ plot_twopanel_comparison <- function(
     if (verbose) {
       cli::cli_alert_info("printing figure to {file.path(dir, filename)}")
     }
-    png(
+    grDevices::png(
       file.path(dir, filename),
       width = 6.5,
       height = 7.0,
@@ -90,13 +96,9 @@ plot_twopanel_comparison <- function(
       pointsize = 10,
       res = 300
     )
+    on.exit(grDevices::dev.off(), add = TRUE)
   }
-  if (is.null(subplot1)) {
-    subplot1 <- ifelse(hessian, 2, 1)
-  }
-  if (is.null(subplot2)) {
-    subplot2 <- ifelse(hessian, 4, 3)
-  }
+
   par(mfrow = c(2, 1), mar = c(1, 5, 1, 1), oma = c(3, 1, 0, 0))
   SSplotComparisons(
     summary,
@@ -119,8 +121,4 @@ plot_twopanel_comparison <- function(
     ...
   )
   mtext("Year", side = 1, line = 1, outer = TRUE)
-
-  if (!is.null(dir)) {
-    dev.off()
-  }
 }

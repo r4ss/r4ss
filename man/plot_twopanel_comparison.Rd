@@ -12,7 +12,7 @@ plot_twopanel_comparison(
   subplot1 = NULL,
   subplot2 = NULL,
   hessian = TRUE,
-  endyrvec = 2023,
+  endyrvec = NULL,
   ylimAdj1 = 1.05,
   ylimAdj2 = 1.05,
   verbose = TRUE,
@@ -23,11 +23,11 @@ plot_twopanel_comparison(
 \item{mods}{A list of model objects as created by \code{\link[=SS_output]{SS_output()}}
 grouped together as a list(), or by \code{\link[=SSgetoutput]{SSgetoutput()}}}
 
-\item{legendlabels}{Labels for use in the legend. NULL value will
-use the lingcod model id}
+\item{legendlabels}{Labels for use in the legend. If NULL, model names from
+\code{SSsummarize()} are used.}
 
-\item{filename}{file to write to (relative to the "figures" directory)
-NULL value will use a filename like \verb{compare_[id1]_[id2].png}}
+\item{filename}{File name for the PNG, written under \code{dir}. If NULL, a name
+like \code{compare_2_and_4.png} is generated from the selected subplots.}
 
 \item{dir}{Where to put the PNG file. If NULL then will send to the current graphics device.}
 
@@ -42,7 +42,7 @@ or with uncertainty (3 or 4) depending on whether input \code{hessian} is TRUE o
 \item{hessian}{TRUE/FALSE whether to include hessian or not.}
 
 \item{endyrvec}{final year to include in the figure passed to
-\code{\link[=SSplotComparisons]{SSplotComparisons()}}}
+\code{\link[=SSplotComparisons]{SSplotComparisons()}}. Null will use the last year + 1 in the models.}
 
 \item{ylimAdj1}{adjustment to y-axis limit for the first plot,
 relative to highest point among all models shown}
@@ -72,7 +72,7 @@ plot_twopanel_comparison(
     model1,
     model2
   ),
-  legendlabels = c("Model 1", "Model 2"),
+  legendlabels = c("Model 1", "Model 2")
 )
 
 plot_twopanel_comparison(
