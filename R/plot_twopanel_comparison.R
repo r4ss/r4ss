@@ -80,6 +80,10 @@ plot_twopanel_comparison <- function(
     subplot2 <- ifelse(hessian, 4, 3)
   }
 
+  # Use the selected subplots in the default file name.
+  if (is.null(filename)) {
+    filename <- paste0("compare_", subplot1, "_and_", subplot2, ".png")
+  }
   if (is.null(filename)) {
     filename <- paste0("compare_", subplot1, "_and_", subplot2, ".png")
   }

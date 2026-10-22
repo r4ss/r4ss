@@ -91,7 +91,7 @@ Suggests:
     truncnorm
 VignetteBuilder: 
     knitr
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
 Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
