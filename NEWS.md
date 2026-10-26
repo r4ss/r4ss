@@ -1,5 +1,5 @@
 # r4ss 1.57.0 (October 2026)
-* Add HTML view for comparison plots
+* Add HTML view for comparison plots #1105
 * Add `clean_files()` to list or delete unnecessary ADMB and Stock Synthesis output files. The default includes deletion; use `action = "list"` to preview matching files. #1099
 * Add `models = "converged"` and `conv_criteria` to `PinerPlot()` and `SSplotProfile()` to exclude unconverged models from likelihood-profile plots. #1101
 * Update and improve `ss3_data_to_fims()` for FIMS v0.10.0. #1094, #1096, and subsequent changes
