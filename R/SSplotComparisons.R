@@ -321,7 +321,9 @@ SSplotComparisons <-
     }
 
     if (html && pdf) {
-      cli::cli_abort("HTML galleries require PNG output and cannot be combined with 'pdf'.")
+      cli::cli_abort(
+        "HTML galleries require PNG output and cannot be combined with 'pdf'."
+      )
     }
     if (html) {
       png <- TRUE
@@ -3402,66 +3404,82 @@ SSplotComparisons <-
         "18" = "Summary biomass",
         "19" = "Summary biomass with uncertainty"
       )
-      plot_captions <- vapply(seq_along(file_names), function(i) {
-        subplot_id <- as.character(subplot_ids[i])
-        caption <- unname(subplot_labels[subplot_id])
-        if (is.na(caption)) {
-          caption <- tools::file_path_sans_ext(file_names[i])
-        }
-        # Index and density subplots can each produce several images. Preserve
-        # their fleet/parameter suffix in the caption to distinguish these plots.
-        suffix_prefix <- c(
-          "13" = "indices",
-          "14" = "indices_log",
-          "16" = "densities",
-          "17" = "densities"
-        )
-        if (subplot_id %in% names(suffix_prefix)) {
-          suffix <- sub(
-            paste0("^compare", subplot_id, "_", suffix_prefix[subplot_id], "_?"),
-            "",
-            tools::file_path_sans_ext(file_names[i])
+      plot_captions <- vapply(
+        seq_along(file_names),
+        function(i) {
+          subplot_id <- as.character(subplot_ids[i])
+          caption <- unname(subplot_labels[subplot_id])
+          if (is.na(caption)) {
+            caption <- tools::file_path_sans_ext(file_names[i])
+          }
+          # Index and density subplots can each produce several images. Preserve
+          # their fleet/parameter suffix in the caption to distinguish these plots.
+          suffix_prefix <- c(
+            "13" = "indices",
+            "14" = "indices_log",
+            "16" = "densities",
+            "17" = "densities"
           )
-          caption_suffix <- gsub("_", " ", suffix, fixed = TRUE)
-          if (subplot_id %in% c("13", "14")) {
-            index_number <- match(
-              if (nzchar(suffix)) paste0("_", suffix) else "",
-              index_plot_suffix
+          if (subplot_id %in% names(suffix_prefix)) {
+            suffix <- sub(
+              paste0(
+                "^compare",
+                subplot_id,
+                "_",
+                suffix_prefix[subplot_id],
+                "_?"
+              ),
+              "",
+              tools::file_path_sans_ext(file_names[i])
             )
-            if (!is.na(index_number)) {
-              # Match each selected model's fleet for this index, even when
-              # fleet numbers differ. Retain the numeric label if names differ.
-              fleet_names <- vapply(models, function(model_number) {
-                if (length(summaryoutput[["FleetNames"]]) < model_number) {
-                  return(NA_character_)
+            caption_suffix <- gsub("_", " ", suffix, fixed = TRUE)
+            if (subplot_id %in% c("13", "14")) {
+              index_number <- match(
+                if (nzchar(suffix)) paste0("_", suffix) else "",
+                index_plot_suffix
+              )
+              if (!is.na(index_number)) {
+                # Match each selected model's fleet for this index, even when
+                # fleet numbers differ. Retain the numeric label if names differ.
+                fleet_names <- vapply(
+                  models,
+                  function(model_number) {
+                    if (length(summaryoutput[["FleetNames"]]) < model_number) {
+                      return(NA_character_)
+                    }
+                    model_fleet_names <- summaryoutput[["FleetNames"]][[
+                      model_number
+                    ]]
+                    fleet_number <- indexfleets[[model_number]][index_number]
+                    fleet_name <- model_fleet_names[fleet_number]
+                    if (length(fleet_name) != 1L) {
+                      return(NA_character_)
+                    }
+                    as.character(fleet_name)
+                  },
+                  character(1)
+                )
+                if (
+                  all(!is.na(fleet_names) & nzchar(trimws(fleet_names))) &&
+                    length(unique(fleet_names)) == 1L
+                ) {
+                  caption_suffix <- fleet_names[1]
                 }
-                model_fleet_names <- summaryoutput[["FleetNames"]][[model_number]]
-                fleet_number <- indexfleets[[model_number]][index_number]
-                fleet_name <- model_fleet_names[fleet_number]
-                if (length(fleet_name) != 1L) {
-                  return(NA_character_)
-                }
-                as.character(fleet_name)
-              }, character(1))
-              if (
-                all(!is.na(fleet_names) & nzchar(trimws(fleet_names))) &&
-                  length(unique(fleet_names)) == 1L
-              ) {
-                caption_suffix <- fleet_names[1]
               }
             }
+            if (nzchar(caption_suffix)) {
+              caption <- paste0(
+                caption,
+                " (",
+                caption_suffix,
+                ")"
+              )
+            }
           }
-          if (nzchar(caption_suffix)) {
-            caption <- paste0(
-              caption,
-              " (",
-              caption_suffix,
-              ")"
-            )
-          }
-        }
-        caption
-      }, character(1))
+          caption
+        },
+        character(1)
+      )
 
       # Assemble one complete HTML document as a character vector, then write
       # it to disk. All pages share the same header, styles, and navigation.
@@ -3482,8 +3500,16 @@ SSplotComparisons <-
           "    body { font: 100% verdana, arial, sans-serif; background: #fff; margin: 50px; }",
           "    ul#tabnav { text-align: left; margin: 1em 0; font: bold 11px verdana, arial, sans-serif; line-height: 2.5; border-bottom: 1px solid #6c6; list-style-type: none; padding: 3px 10px 2px; }",
           "    ul#tabnav li { display: inline; }",
-          paste0("    ", active_tab_selectors, " { border-bottom: 1px solid #fff; background: #fff; }"),
-          paste0("    ", active_link_selectors, " { background: #fff; color: #000; position: relative; top: 1px; padding-top: 4px; }"),
+          paste0(
+            "    ",
+            active_tab_selectors,
+            " { border-bottom: 1px solid #fff; background: #fff; }"
+          ),
+          paste0(
+            "    ",
+            active_link_selectors,
+            " { background: #fff; color: #000; position: relative; top: 1px; padding-top: 4px; }"
+          ),
           "    ul#tabnav li a { padding: 2px 4px; border: 1px solid #6c6; background: #cfc; color: #666; text-decoration: none; border-bottom: none; }",
           "    ul#tabnav a:hover { background: #fff; }",
           "    h2 { font-size: 20px; color: #4c994c; border-bottom: 1px solid #6c6; padding-bottom: 2px; }",

@@ -20,7 +20,9 @@ test_that("SS_Sensi_plot runs", {
   skip_if_not_installed("gdtools")
   skip_if_not(requireNamespace("gdtools", quietly = TRUE))
   # optionally: try loading and skip on failure
-  tryCatch(library(gdtools), error = function(e) skip("gdtools not loadable on this system"))
+  tryCatch(library(gdtools), error = function(e) {
+    skip("gdtools not loadable on this system")
+  })
   # read model output
   simple_small <- SS_output(
     file.path(example_path, "simple_small"),

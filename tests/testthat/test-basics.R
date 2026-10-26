@@ -153,19 +153,33 @@ test_that("SSsummarize and SSplotComparisons both work", {
     "test__comparisons_densities.html"
   )
   expect_true(all(file.exists(file.path(comparison_html_dir, category_files))))
-  biomass_gallery <- paste(readLines(file.path(
-    comparison_html_dir,
-    category_files[1]
-  )), collapse = "\n")
+  biomass_gallery <- paste(
+    readLines(file.path(
+      comparison_html_dir,
+      category_files[1]
+    )),
+    collapse = "\n"
+  )
   expect_match(biomass_gallery, "test_compare1_spawnbio.png", fixed = TRUE)
   expect_match(biomass_gallery, "test_compare3_Bratio.png", fixed = TRUE)
   expect_match(biomass_gallery, "test_compare18_smrybio.png", fixed = TRUE)
-  expect_match(biomass_gallery, "<figcaption><strong>Spawning biomass", fixed = TRUE)
-  expect_false(grepl("test_compare5_SPRratio.png", biomass_gallery, fixed = TRUE))
-  spr_gallery <- paste(readLines(file.path(
-    comparison_html_dir,
-    category_files[2]
-  )), collapse = "\n")
+  expect_match(
+    biomass_gallery,
+    "<figcaption><strong>Spawning biomass",
+    fixed = TRUE
+  )
+  expect_false(grepl(
+    "test_compare5_SPRratio.png",
+    biomass_gallery,
+    fixed = TRUE
+  ))
+  spr_gallery <- paste(
+    readLines(file.path(
+      comparison_html_dir,
+      category_files[2]
+    )),
+    collapse = "\n"
+  )
   expect_match(spr_gallery, "test_compare15_phase_plot.png", fixed = TRUE)
 
   # make table of comparisons
@@ -176,7 +190,10 @@ test_that("SSsummarize and SSplotComparisons both work", {
 })
 
 test_that("Index HTML captions use matching names from the compared fleets", {
-  index_summary <- SSsummarize(list(simple_small, simple_small), verbose = FALSE)
+  index_summary <- SSsummarize(
+    list(simple_small, simple_small),
+    verbose = FALSE
+  )
   index_fleets <- sort(unique(index_summary[["indices"]][["Fleet"]]))
   shared_name <- "Survey & shared_name"
   index_summary[["FleetNames"]][[1]][index_fleets[1]] <- shared_name
@@ -195,16 +212,27 @@ test_that("Index HTML captions use matching names from the compared fleets", {
       verbose = FALSE,
       ...
     )
-    paste(readLines(file.path(output_dir, "_comparisons_indices.html")), collapse = "\n")
+    paste(
+      readLines(file.path(output_dir, "_comparisons_indices.html")),
+      collapse = "\n"
+    )
   }
 
   gallery <- index_caption_page(index_summary)
   expect_match(gallery, "Index fits (Survey &amp; shared_name)", fixed = TRUE)
-  expect_match(gallery, "Index fits (log scale) (Survey &amp; shared_name)", fixed = TRUE)
+  expect_match(
+    gallery,
+    "Index fits (log scale) (Survey &amp; shared_name)",
+    fixed = TRUE
+  )
 
   index_summary[["FleetNames"]][[2]][index_fleets[1]] <- "Different survey"
   gallery <- index_caption_page(index_summary)
-  expect_match(gallery, paste0("Index fits (flt", index_fleets[1], ")"), fixed = TRUE)
+  expect_match(
+    gallery,
+    paste0("Index fits (flt", index_fleets[1], ")"),
+    fixed = TRUE
+  )
 
   gallery <- index_caption_page(index_summary, models = 1)
   expect_match(gallery, "Index fits (Survey &amp; shared_name)", fixed = TRUE)
@@ -218,7 +246,11 @@ test_that("Index HTML captions use matching names from the compared fleets", {
 
   index_summary[["FleetNames"]] <- NULL
   gallery <- index_caption_page(index_summary)
-  expect_match(gallery, paste0("Index fits (flt", index_fleets[1], ")"), fixed = TRUE)
+  expect_match(
+    gallery,
+    paste0("Index fits (flt", index_fleets[1], ")"),
+    fixed = TRUE
+  )
 })
 
 ###############################################################################
