@@ -7,8 +7,8 @@
 SSplotComparisons(
   summaryoutput,
   subplots = 1:20,
-  plot = TRUE,
-  print = FALSE,
+  plot = FALSE,
+  print = TRUE,
   png = print,
   pdf = FALSE,
   models = "all",
@@ -54,7 +54,8 @@ SSplotComparisons(
   punits = "in",
   res = 300,
   ptsize = 10,
-  plotdir = NULL,
+  dir = getwd(),
+  plotdir = file.path(dir, "comparison_plots"),
   filenameprefix = "",
   densitynames = c("SSB_Virgin", "SR_LN(R0)"),
   densityxlabs = NULL,
@@ -73,6 +74,9 @@ SSplotComparisons(
   verbose = TRUE,
   mcmcVec = FALSE,
   show_equilibrium = TRUE,
+  html = TRUE,
+  html_title = "Model comparisons",
+  openhtml = TRUE,
   ...
 )
 }
@@ -108,7 +112,7 @@ Numbering of subplots is as follows:
 \item{print}{Print to PNG files?}
 
 \item{png}{Has same result as \code{print}, included for consistency with
-\code{SS_plots}.}
+\code{SS_plots}. HTML output also enables PNG output.}
 
 \item{pdf}{Write output to PDF file? Can't be used in conjunction with
 \code{png} or \code{print}.}
@@ -248,6 +252,10 @@ The default is \code{res = 300}.}
 \item{ptsize}{Point size for plotted text in plots printed to files. See
 \code{help("png")} in R for details.}
 
+\item{dir}{A file path to the directory of interest.
+When omitted, functions typically default to the current working
+directory or the model directory stored in \code{replist}.}
+
 \item{plotdir}{Directory where PNG files will be written.}
 
 \item{filenameprefix}{Additional text to append to PNG or PDF file names.
@@ -308,6 +316,13 @@ MLE}
 SSB. For some model comparisons, these might not be comparable and thus
 useful to turn off. Defaults to TRUE.}
 
+\item{html}{Create tabbed HTML gallery pages for the PNG comparison plots?
+PNG output is enabled, \code{plotdir} is required, and HTML output cannot be
+combined with \code{pdf}. Plots are grouped into biomass timeseries, SPR and F,
+recruitment and recdevs, indices, and densities, with captions below each plot.}
+
+\item{openhtml}{Open the generated HTML gallery in a browser?}
+
 \item{...}{Additional arguments passed to \code{\link[=add_legend]{add_legend()}}, which
 can include \code{legendcex}, \code{legendsp}, and \code{pt.cex}.}
 }
@@ -331,6 +346,14 @@ mod.sum <- SSsummarize(list(mod1, mod2))
 
 # plot comparisons
 SSplotComparisons(mod.sum, legendlabels = c("First model", "Second model"))
+# save selected comparison plots and create a tabbed HTML gallery
+SSplotComparisons(
+  mod.sum,
+  subplots = c(1, 3),
+  html = TRUE,
+  dir = dir2,
+  plotdir = "comparison_plots"
+)
 
 # Example showing comparison of MLE to MCMC results where the mcmc would have
 # been run in the subdirectory "mcmc"
