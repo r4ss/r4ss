@@ -1,3 +1,14 @@
+# r4ss 1.57.0 (October 2026)
+* Add HTML view for comparison plots
+* Add `clean_files()` to list or delete unnecessary ADMB and Stock Synthesis output files. The default includes deletion; use `action = "list"` to preview matching files. #1099
+* Add `models = "converged"` and `conv_criteria` to `PinerPlot()` and `SSplotProfile()` to exclude unconverged models from likelihood-profile plots. #1101
+* Update and improve `ss3_data_to_fims()` for FIMS v0.10.0. #1094, #1096, and subsequent changes
+* Add `SS_read(read_par = TRUE)` to read parameter files even when the model's starter settings do not require them. Also improve optional weight-at-age reading from URLs.
+* Fix `SS_output()` crashing during age-length-key processing for some age-based models without `CompReport.sso`.
+* Fix `retro()` errors when forecasting is disabled and restore compatibility with R versions before 4.6.1.
+* Fix some bugs in `plot_twopanel_comparison()`.
+
+
 # r4ss 1.56.0 (August 2026)
 
 * Improve `retro()`: several quantities now automatically adjusted, including the end year of main recruitment deviations, the bias adjustment settings, removing blocks which occur after the retro year, and year ranges in forecast file for forecast and benchmark calculations. See #1087 for details.
