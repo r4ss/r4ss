@@ -1,4 +1,4 @@
-#V3.30.25.00;_safe;_compile_date:_Jun 30 2026;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
+#V3.30.26.00;_safe;_compile_date:_Oct 29 2026;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_13.2
 #_Stock_Synthesis_is_a_work_of_the_U.S._Government_and_is_not_subject_to_copyright_protection_in_the_United_States.
 #_Foreign_copyrights_may_apply._See_copyright.txt_for_more_information.
 #_User_support_available_at:_https://groups.google.com/g/ss3-forum_and_NMFS.Stock.Synthesis@noaa.gov
@@ -173,7 +173,7 @@
 # F rates by fleet x season
 #_year:  2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030 2031 2032
 # seas:  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-# FISHERY 0.220229 0.239068 0.263759 0.287798 0.316758 0.350726 0.404085 0.405179 0.390484 0.37618 0.33635 0.226617 0.0405108 0.0466811 0.051486 0.0553062 0.0583986 0.0609127 0.0629524 0.0646111 0.0659699 0.067099
+# FISHERY 0.220229 0.239068 0.263759 0.287798 0.316758 0.350726 0.404085 0.405179 0.390484 0.37618 0.33635 0.226617 0.0405108 0.0466812 0.051486 0.0553062 0.0583986 0.0609127 0.0629524 0.0646111 0.0659699 0.067099
 #
 #_Q_setup for fleets with cpue or survey or deviation data
 #_1:  fleet number
