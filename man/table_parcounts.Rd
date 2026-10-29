@@ -22,6 +22,8 @@ If NULL, then the function will run \code{SS_read(replist[["inputs"]][["dir"]])}
 is NULL where a table folder will be created where the Report.sso file is
 located associated with \code{replist}.}
 
+\item{caption}{A character string used as the table caption.}
+
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 }

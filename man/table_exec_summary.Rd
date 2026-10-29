@@ -49,7 +49,7 @@ as required by the current Terms of Reference for U.S. West Coast
 groundfish assessments. Additionally, .rda files of historical catches,
 time-series, and numbers-at-age are created. A CSV file with captions is
 also created. This function is modified from \code{SSexecutivesummary()}
-associated with the adoption of the {asar} template.
+associated with the adoption of the \pkg{asar} template.
 }
 \examples{
 \dontrun{

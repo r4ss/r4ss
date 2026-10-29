@@ -27,8 +27,7 @@
 #' @param ylimAdj2 adjustment to y-axis limit for the second plot,
 #' relative to highest point among all models shown
 #' @inheritParams r4ss_params
-#' @param dots additional arguments that will get passed to
-#' [SSplotComparisons()]
+#' @param ... Additional arguments passed to [SSplotComparisons()].
 #'
 #' @export
 #' @author Ian G. Taylor

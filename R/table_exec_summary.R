@@ -5,7 +5,7 @@
 #' groundfish assessments. Additionally, .rda files of historical catches,
 #' time-series, and numbers-at-age are created. A CSV file with captions is
 #' also created. This function is modified from `SSexecutivesummary()`
-#' associated with the adoption of the {asar} template.
+#' associated with the adoption of the \pkg{asar} template.
 #'
 #' @inheritParams r4ss_params
 #' @param dir Directory where the .rda files will be written. The default value

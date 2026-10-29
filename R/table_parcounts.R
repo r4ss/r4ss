@@ -5,6 +5,7 @@
 #' @inheritParams table_exec_summary
 #' @param inputs An options list of inputs from the SS3 model created by `SS_read()`.
 #' If NULL, then the function will run `SS_read(replist[["inputs"]][["dir"]])` to get the inputs.
+#' @param caption A character string used as the table caption.
 #'
 #' @family table functions
 #' @export

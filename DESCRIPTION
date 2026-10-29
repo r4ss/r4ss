@@ -73,6 +73,7 @@ Imports:
     lifecycle,
     purrr,
     stringr,
+    tibble,
     tidyr,
     viridis
 Suggests: 

@@ -53,10 +53,7 @@ relative to highest point among all models shown}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen.}
 
-\item{...}{Additional arguments (unused, for compatibility only).}
-
-\item{dots}{additional arguments that will get passed to
-\code{\link[=SSplotComparisons]{SSplotComparisons()}}}
+\item{...}{Additional arguments passed to \code{\link[=SSplotComparisons]{SSplotComparisons()}}.}
 }
 \description{
 Plot a two-panel time series comparison of

@@ -14,6 +14,8 @@ jobs:
   call-workflow:
     uses: nmfs-ost/ghactions4r/.github/workflows/r-cmd-check.yml@main
     with:
+      additional_args_macos: |
+        brew install --cask xquartz
       additional_args_ubuntu: |
         sudo apt-get update
         sudo apt-get install -y libcurl4-openssl-dev

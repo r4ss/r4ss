@@ -25,7 +25,7 @@ Check that
 \item The function fails if the directory cannot be created.
 }
 
-Note: this function was copied from the {nwfscSurvey} package:
+Note: this function was copied from the \pkg{nwfscSurvey} package:
 https://github.com/pfmc-assessments/nwfscSurvey/blob/main/R/check_dir.R
 rather than adding an additional dependency on that package.
 }

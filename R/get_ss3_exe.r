@@ -16,7 +16,7 @@
 #' get_ss3_exe()
 #' get_ss3_exe(version = "v3.30.18")
 #' }
-#' @description The `get_ss3_exe()` function uses the {gh} package to get either
+#' @description The `get_ss3_exe()` function uses the \pkg{gh} package to get either
 #' the latest release (if version = NULL) or the specified version of the Stock
 #' Synthesis executable for the appropriate operating system to the directory `dir`.
 #' To view the version tags available go to
@@ -27,31 +27,25 @@ get_ss3_exe <- function(dir = getwd(), version = NULL) {
     stop("Directory doesn't exist: ", dir)
   }
 
+  token <- Sys.getenv("GITHUB_PAT")
+  if (!nzchar(token)) {
+    token <- NA_character_
+  }
+
   # Get latest release if version not specified
   if (is.null(version)) {
-    if (grepl("/Users/runner/work/", dir) || grepl("/var/folders", dir)) {
-      latest_release <- gh::gh(
-        "GET /repos/nmfs-ost/ss3-source-code/releases/latest",
-        page = 1
-      )
-    } else {
-      latest_release <- gh::gh(
-        "GET /repos/nmfs-ost/ss3-source-code/releases/latest",
-        page = 1,
-        .token = NA_character_
-      )
-    }
+    latest_release <- gh::gh(
+      "GET /repos/nmfs-ost/ss3-source-code/releases/latest",
+      page = 1,
+      .token = token
+    )
     tag <- latest_release[["tag_name"]]
   } else {
     # Otherwise get specified version
-    if (grepl("/Users/runner/work/", dir) || grepl("/var/folders", dir)) {
-      all_tags <- gh::gh("GET /repos/nmfs-ost/ss3-source-code/tags")
-    } else {
-      all_tags <- gh::gh(
-        "GET /repos/nmfs-ost/ss3-source-code/tags",
-        .token = NA_character_
-      )
-    }
+    all_tags <- gh::gh(
+      "GET /repos/nmfs-ost/ss3-source-code/tags",
+      .token = token
+    )
     df_tags <- as.data.frame(do.call(rbind, all_tags))
     tags <- unlist(df_tags[["name"]])
 

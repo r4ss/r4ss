@@ -17,7 +17,7 @@ https://github.com/nmfs-ost/ss3-source-code/tags}
 A string of the file path to the downloaded executable
 }
 \description{
-The \code{get_ss3_exe()} function uses the {gh} package to get either
+The \code{get_ss3_exe()} function uses the \pkg{gh} package to get either
 the latest release (if version = NULL) or the specified version of the Stock
 Synthesis executable for the appropriate operating system to the directory \code{dir}.
 To view the version tags available go to
