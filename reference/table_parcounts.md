@@ -34,6 +34,10 @@ table_parcounts(
   NULL where a table folder will be created where the Report.sso file is
   located associated with `replist`.
 
+- caption:
+
+  A character string used as the table caption.
+
 - verbose:
 
   A logical value specifying if output should be printed to the screen.

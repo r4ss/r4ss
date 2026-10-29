@@ -92,12 +92,8 @@ plot_twopanel_comparison(
 
 - ...:
 
-  Additional arguments (unused, for compatibility only).
-
-- dots:
-
-  additional arguments that will get passed to
-  [`SSplotComparisons()`](https://r4ss.github.io/r4ss/reference/SSplotComparisons.md)
+  Additional arguments passed to
+  [`SSplotComparisons()`](https://r4ss.github.io/r4ss/reference/SSplotComparisons.md).
 
 ## Author
 
