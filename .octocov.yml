@@ -13,3 +13,9 @@ comment:
   if: is_pull_request
 summary:
   if: true
+report:
+  datastores:
+    - artifact://${GITHUB_REPOSITORY}
+diff:
+  datastores:
+    - artifact://${GITHUB_REPOSITORY}

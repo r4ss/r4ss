@@ -1,10 +1,10 @@
-# call a workflow that runs covr::codecov() to calculate code coverage, then
+# Run covr::package_coverage() to calculate code coverage, then
 # uses octocov to summarize the coverage information and post it as appropriate.
 
 # note that a .octocov.yml file in the repository is also necessary.
 name: call-calc-cov-summaries
 # on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
-# The default is to run the workflow on every push or pull request opened to main.
+# Run on pushes to main and when pull requests targeting main are opened or updated.
 on:
   workflow_dispatch:
   push:
@@ -13,14 +13,49 @@ on:
   pull_request:
     types:
       - opened
+      - synchronize
+      - reopened
     branches:
       - main
       
-# limits permissions to write, as the common use case is for pull requests;
-# this means certain options may not work, but makes the workflow more secure
 permissions:
+  contents: read
+  actions: read
   pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   call-workflow:
-    uses: nmfs-ost/ghactions4r/.github/workflows/calc-cov-summaries.yml@main
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr, any::xml2, any::DT, any::htmltools
+          needs: coverage
+      - name: Calc. Test coverage
+        run: |
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
+          print(cov)
+          covr::to_cobertura(cov, filename = "coverage.xml")
+          covr::report(cov, browse = FALSE, file = "coverage_report.html")
+        shell: Rscript {0}
+      - name: Use octocov to create coverage summaries
+        uses: k1LoW/octocov-action@v1
+      - name: Upload artifact to GitHub Action Run
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage_report.html
+          path: ./coverage_report.html

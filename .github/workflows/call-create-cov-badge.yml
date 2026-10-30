@@ -1,10 +1,11 @@
-# Reusable workflow to calculate coverage add it to a badge that is stored on 
+# Calculate coverage and add it to a badge that is stored on
 # a branch in the repo called badges.
 # note that this has only been tested to build a badge with the main branch
 # coverage; it may not work to calculate coverage from other branches.
 name: call-create-cov-badge
 # on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
 on:
+  workflow_dispatch:
   push:
     branches: [main]
 
@@ -13,6 +14,43 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   call-workflow:
-    uses: nmfs-ost/ghactions4r/.github/workflows/create-cov-badge.yml@main
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr
+          needs: coverage
+      - name: Calc. test coverage and create badge
+        run: |
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
+          overall_cov <- round(covr::percent_coverage(cov), 1)
+          badge <- sprintf(
+            '{"schemaVersion":1,"label":"coverage","message":"%.1f%%","color":"blue"}',
+            overall_cov
+          )
+          print(badge)
+          dir.create("badges")
+          writeLines(badge, "badges/coverage-badge.json")
+        shell: Rscript {0}
+      - name: Add new badge to a branch called badges
+        if: github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: badges
+          branch: badges
