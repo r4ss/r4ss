@@ -3,7 +3,7 @@
 [![release
 date](https://img.shields.io/github/last-commit/r4ss/r4ss)](https://github.com/r4ss/r4ss/commits/main)
 [![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml)
-[![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r4ss/r4ss)
+[![coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/r4ss/r4ss/refs/heads/badges/coverage-badge.json)](https://github.com/r4ss/r4ss/tree/badges)
 
 Stock Synthesis is a fisheries stock assessment model written in ADMB by
 Rick Methot. The Stock Synthesis software and many other associated
