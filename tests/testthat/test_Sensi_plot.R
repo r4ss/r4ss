@@ -17,6 +17,12 @@ dir.create(temp_path, showWarnings = FALSE)
 on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 
 test_that("SS_Sensi_plot runs", {
+  skip_if_not_installed("gdtools")
+  skip_if_not(requireNamespace("gdtools", quietly = TRUE))
+  # optionally: try loading and skip on failure
+  tryCatch(library(gdtools), error = function(e) {
+    skip("gdtools not loadable on this system")
+  })
   # read model output
   simple_small <- SS_output(
     file.path(example_path, "simple_small"),

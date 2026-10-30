@@ -112,6 +112,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
   comparison_plots <- SSplotComparisons(
     simple_summary,
     png = TRUE,
+    html = FALSE,
     plotdir = temp_path,
     verbose = FALSE,
     indexUncertainty = TRUE
@@ -124,11 +125,132 @@ test_that("SSsummarize and SSplotComparisons both work", {
     expect_equal(length(comparison_plots), 19)
   }
 
+  comparison_html_dir <- file.path(temp_path, "comparison_html")
+  dir.create(comparison_html_dir)
+  SSplotComparisons(
+    simple_summary,
+    subplots = c(1, 3, 5, 9, 13, 15, 16, 18),
+    plot = FALSE,
+    html = TRUE,
+    openhtml = FALSE,
+    plotdir = comparison_html_dir,
+    filenameprefix = "test_",
+    verbose = FALSE
+  )
+  gallery_file <- file.path(
+    comparison_html_dir,
+    "test__comparisons.html"
+  )
+  gallery <- paste(readLines(gallery_file), collapse = "\n")
+  expect_true(file.exists(gallery_file))
+  expect_match(gallery, 'class="tab2"')
+  expect_match(gallery, "Biomass timeseries", fixed = TRUE)
+  category_files <- c(
+    "test__comparisons_biomass.html",
+    "test__comparisons_spr_f.html",
+    "test__comparisons_recruitment_recdevs.html",
+    "test__comparisons_indices.html",
+    "test__comparisons_densities.html"
+  )
+  expect_true(all(file.exists(file.path(comparison_html_dir, category_files))))
+  biomass_gallery <- paste(
+    readLines(file.path(
+      comparison_html_dir,
+      category_files[1]
+    )),
+    collapse = "\n"
+  )
+  expect_match(biomass_gallery, "test_compare1_spawnbio.png", fixed = TRUE)
+  expect_match(biomass_gallery, "test_compare3_Bratio.png", fixed = TRUE)
+  expect_match(biomass_gallery, "test_compare18_smrybio.png", fixed = TRUE)
+  expect_match(
+    biomass_gallery,
+    "<figcaption><strong>Spawning biomass",
+    fixed = TRUE
+  )
+  expect_false(grepl(
+    "test_compare5_SPRratio.png",
+    biomass_gallery,
+    fixed = TRUE
+  ))
+  spr_gallery <- paste(
+    readLines(file.path(
+      comparison_html_dir,
+      category_files[2]
+    )),
+    collapse = "\n"
+  )
+  expect_match(spr_gallery, "test_compare15_phase_plot.png", fixed = TRUE)
+
   # make table of comparisons
   simple_table <- SStableComparisons(simple_summary, verbose = FALSE)
   # confirm that output produces a data.frame
   # with 3 variables (label, model1, model2)
   expect_output(str(simple_table), "variables")
+})
+
+test_that("Index HTML captions use matching names from the compared fleets", {
+  index_summary <- SSsummarize(
+    list(simple_small, simple_small),
+    verbose = FALSE
+  )
+  index_fleets <- sort(unique(index_summary[["indices"]][["Fleet"]]))
+  shared_name <- "Survey & shared_name"
+  index_summary[["FleetNames"]][[1]][index_fleets[1]] <- shared_name
+  index_summary[["FleetNames"]][[2]][index_fleets[1]] <- shared_name
+
+  index_caption_page <- function(summary, ...) {
+    output_dir <- file.path(temp_path, "index_captions")
+    SSplotComparisons(
+      summary,
+      subplots = c(13, 14),
+      plot = FALSE,
+      html = TRUE,
+      openhtml = FALSE,
+      plotdir = output_dir,
+      res = 72,
+      verbose = FALSE,
+      ...
+    )
+    paste(
+      readLines(file.path(output_dir, "_comparisons_indices.html")),
+      collapse = "\n"
+    )
+  }
+
+  gallery <- index_caption_page(index_summary)
+  expect_match(gallery, "Index fits (Survey &amp; shared_name)", fixed = TRUE)
+  expect_match(
+    gallery,
+    "Index fits (log scale) (Survey &amp; shared_name)",
+    fixed = TRUE
+  )
+
+  index_summary[["FleetNames"]][[2]][index_fleets[1]] <- "Different survey"
+  gallery <- index_caption_page(index_summary)
+  expect_match(
+    gallery,
+    paste0("Index fits (flt", index_fleets[1], ")"),
+    fixed = TRUE
+  )
+
+  gallery <- index_caption_page(index_summary, models = 1)
+  expect_match(gallery, "Index fits (Survey &amp; shared_name)", fixed = TRUE)
+
+  index_summary[["FleetNames"]][[2]][index_fleets[2]] <- shared_name
+  gallery <- index_caption_page(
+    index_summary,
+    indexfleets = list(index_fleets[1], index_fleets[2])
+  )
+  expect_match(gallery, "Index fits (Survey &amp; shared_name)", fixed = TRUE)
+
+  index_summary[["FleetNames"]] <- NULL
+  gallery <- index_caption_page(index_summary)
+  expect_match(
+    gallery,
+    paste0("Index fits (flt", index_fleets[1], ")"),
+    fixed = TRUE
+  )
 })
 
 ###############################################################################

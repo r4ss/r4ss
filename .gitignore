@@ -8,6 +8,7 @@ inst/extdata/simple_small/retrospectives/
 vignettes/simple_new
 
 plots
+comparison_plots
 *.p0*
 *.b0*
 *.r0*
