@@ -4,11 +4,9 @@
 # coverage; it may not work to calculate coverage from other branches.
 name: call-create-cov-badge
 # on specifies the build triggers. See more info at https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows
-# other option would be to run this on a schedule. Other build trigger options may not work well.
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 # limits permissions to write, which is the minimum permissions needed to create
 # the coverage badge.

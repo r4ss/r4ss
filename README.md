@@ -2,7 +2,7 @@
 
 [![release date](https://img.shields.io/github/last-commit/r4ss/r4ss)](https://github.com/r4ss/r4ss/commits/main)
 [![call-r-cmd-check](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml/badge.svg)](https://github.com/r4ss/r4ss/actions/workflows/call-r-cmd-check.yml)
-[![codecov](https://codecov.io/gh/r4ss/r4ss/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r4ss/r4ss)
+[![coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/r4ss/r4ss/refs/heads/badges/coverage-badge.json)](https://github.com/r4ss/r4ss/tree/badges)
 <!-- # commenting out version badges which were misleading (CRAN not recommended and GitHub number is only most recent release, not the current code) -->
 <!-- [![cran version](http://www.r-pkg.org/badges/version/r4ss)](https://cran.r-project.org/package=r4ss)
 [![github](https://img.shields.io/github/v/release/r4ss/r4ss?color=brightgreen&label=GitHub)](https://github.com/r4ss/r4ss/releases/latest) -->
