@@ -31,7 +31,12 @@
 #' }
 #' @inheritParams r4ss_params
 #' @param png Has same result as `print`, included for consistency with
-#' `SS_plots`.
+#' `SS_plots`. HTML output also enables PNG output.
+#' @param html Create tabbed HTML gallery pages for the PNG comparison plots?
+#' PNG output is enabled, `plotdir` is required, and HTML output cannot be
+#' combined with `pdf`. Plots are grouped into biomass timeseries, SPR and F,
+#' recruitment and recdevs, indices, and densities, with captions below each plot.
+#' @param openhtml Open the generated HTML gallery in a browser?
 #' @param pdf Write output to PDF file? Can't be used in conjunction with
 #' `png` or `print`.
 #' @param models Optional subset of the models described in
@@ -170,6 +175,14 @@
 #'
 #' # plot comparisons
 #' SSplotComparisons(mod.sum, legendlabels = c("First model", "Second model"))
+#' # save selected comparison plots and create a tabbed HTML gallery
+#' SSplotComparisons(
+#'   mod.sum,
+#'   subplots = c(1, 3),
+#'   html = TRUE,
+#'   dir = dir2,
+#'   plotdir = "comparison_plots"
+#' )
 #'
 #' # Example showing comparison of MLE to MCMC results where the mcmc would have
 #' # been run in the subdirectory "mcmc"
@@ -190,8 +203,8 @@ SSplotComparisons <-
   function(
     summaryoutput,
     subplots = 1:20,
-    plot = TRUE,
-    print = FALSE,
+    plot = FALSE,
+    print = TRUE,
     png = print,
     pdf = FALSE,
     models = "all",
@@ -251,7 +264,8 @@ SSplotComparisons <-
     punits = "in",
     res = 300,
     ptsize = 10,
-    plotdir = NULL,
+    dir = getwd(),
+    plotdir = file.path(dir, "comparison_plots"),
     filenameprefix = "",
     densitynames = c("SSB_Virgin", "SR_LN(R0)"),
     densityxlabs = NULL,
@@ -270,11 +284,15 @@ SSplotComparisons <-
     verbose = TRUE,
     mcmcVec = FALSE,
     show_equilibrium = TRUE,
+    html = TRUE,
+    html_title = "Model comparisons",
+    openhtml = TRUE,
     ...
   ) {
     # switch to avoid repetition of warning about mean recruitment
     meanRecWarning <- TRUE
     ymax_vec <- rep(NA, 17) # vector of ymax values for each plot
+    comparison_png_files <- character()
 
     # local version of save_png which doesn't relate to plotinfo and
     # also adds control over 'filenameprefix' and 'par',
@@ -283,27 +301,47 @@ SSplotComparisons <-
     save_png_comparisons <- function(file) {
       # if extra text requested, add it before extention in file name
       file <- paste0(filenameprefix, file)
+      png_file <- file.path(plotdir, file)
       # open png file
       png(
-        filename = file.path(plotdir, file),
+        filename = png_file,
         width = pwidth,
         height = pheight,
         units = punits,
         res = res,
         pointsize = ptsize
       )
+      # Update the file list in the enclosing SSplotComparisons() call so the
+      # HTML gallery includes PNGs from every helper call. Using <- here would
+      # create a local copy instead; <<- finds the existing enclosing variable,
+      # not a global variable, because it was initialized above.
+      comparison_png_files <<- c(comparison_png_files, basename(png_file))
       # change graphics parameters to input value
       par(par)
     }
 
+    if (html && pdf) {
+      cli::cli_abort(
+        "HTML galleries require PNG output and cannot be combined with 'pdf'."
+      )
+    }
+    if (html) {
+      png <- TRUE
+      print <- TRUE
+    }
     if (png) {
       print <- TRUE
     }
 
+    # error if png but no plotdir
     if (png & is.null(plotdir)) {
       cli::cli_abort(
         "To print PNG files, you must supply a directory as 'plotdir'"
       )
+    }
+    # create directory if it doesn't exist
+    if (png & !dir.exists(plotdir)) {
+      dir.create(plotdir, recursive = TRUE)
     }
 
     # check for internal consistency
@@ -3256,5 +3294,331 @@ SSplotComparisons <-
     if (pdf) {
       dev.off()
     }
+
+    if (html) {
+      # Build the gallery from this call's recorded PNGs, rather than scanning
+      # the directory and potentially including plots from an earlier comparison.
+      if (length(comparison_png_files) == 0) {
+        cli::cli_abort(
+          "No comparison PNGs were generated, so an HTML gallery cannot be created."
+        )
+      }
+
+      # Encode characters that HTML would otherwise interpret as markup.
+      # Escape ampersands first so the replacement entities are not escaped again.
+      escape_html <- function(text) {
+        text <- gsub("&", "&amp;", text, fixed = TRUE)
+        text <- gsub("<", "&lt;", text, fixed = TRUE)
+        text <- gsub(">", "&gt;", text, fixed = TRUE)
+        text <- gsub("\"", "&quot;", text, fixed = TRUE)
+        gsub("'", "&#39;", text, fixed = TRUE)
+      }
+
+      # Remove the optional user prefix before reading the subplot number from
+      # filenames such as "compare13_indices_flt2.png" (subplot 13).
+      file_names <- substring(
+        comparison_png_files,
+        nchar(filenameprefix) + 1L
+      )
+      subplot_ids <- suppressWarnings(as.integer(sub(
+        "^compare([0-9]+)_.*$",
+        "\\1",
+        file_names
+      )))
+      # Each category becomes a separate HTML page. The numbers match the
+      # subplot choices documented above; keys are shorter names used in URLs.
+      category_subplots <- list(
+        "Biomass timeseries" = c(1, 2, 3, 4, 18, 19),
+        "SPR and F" = c(5, 6, 7, 8, 15),
+        "Recruitment and recdevs" = c(9, 10, 11, 12),
+        "Indices" = c(13, 14),
+        "Densities" = c(16, 17)
+      )
+      category_keys <- c(
+        "Biomass timeseries" = "biomass",
+        "SPR and F" = "spr_f",
+        "Recruitment and recdevs" = "recruitment_recdevs",
+        "Indices" = "indices",
+        "Densities" = "densities"
+      )
+      # Store positions in comparison_png_files, keeping the original plot order
+      # within each category. Omit pages and navigation tabs with no plots.
+      category_indexes <- lapply(category_subplots, function(ids) {
+        which(subplot_ids %in% ids)
+      })
+      has_plots <- lengths(category_indexes) > 0
+      category_indexes <- category_indexes[has_plots]
+      category_keys <- category_keys[has_plots]
+
+      # Keep files whose subplot number could not be parsed accessible through
+      # an "Other" tab instead of silently dropping them from the gallery.
+      other_indexes <- which(is.na(subplot_ids))
+      if (length(other_indexes) > 0) {
+        category_indexes[["Other"]] <- other_indexes
+        category_keys <- c(category_keys, Other = "other")
+      }
+
+      # Keep page filenames and their displayed tab labels in matching order:
+      # Home is page 1, followed by one page for each category that has plots.
+      home_file <- paste0(filenameprefix, "_comparisons.html")
+      category_files <- paste0(
+        filenameprefix,
+        "_comparisons_",
+        unname(category_keys),
+        ".html"
+      )
+      page_files <- c(home_file, category_files)
+      page_labels <- c("Home", names(category_indexes))
+      tab_ids <- seq_along(page_files)
+      # CSS selectors decide which tab looks selected. For example,
+      # "body#tab2 li.tab2" matches the tab2 list item only on the tab2 page.
+      # The additional "a" selector styles the link inside that list item.
+      active_tab_selectors <- paste(
+        sprintf("body#tab%d li.tab%d", tab_ids, tab_ids),
+        collapse = ", "
+      )
+      active_link_selectors <- paste(
+        sprintf("body#tab%d li.tab%d a", tab_ids, tab_ids),
+        collapse = ", "
+      )
+
+      # Use readable captions instead of displaying raw plot filenames alone.
+      subplot_labels <- c(
+        "1" = "Spawning biomass",
+        "2" = "Spawning biomass with uncertainty",
+        "3" = "Biomass ratio",
+        "4" = "Biomass ratio with uncertainty",
+        "5" = "SPR ratio",
+        "6" = "SPR ratio with uncertainty",
+        "7" = "Fishing mortality",
+        "8" = "Fishing mortality with uncertainty",
+        "9" = "Recruitment",
+        "10" = "Recruitment with uncertainty",
+        "11" = "Recruitment deviations",
+        "12" = "Recruitment deviations with uncertainty",
+        "13" = "Index fits",
+        "14" = "Index fits (log scale)",
+        "15" = "Phase plot",
+        "16" = "Density",
+        "17" = "Cumulative density",
+        "18" = "Summary biomass",
+        "19" = "Summary biomass with uncertainty"
+      )
+      plot_captions <- vapply(
+        seq_along(file_names),
+        function(i) {
+          subplot_id <- as.character(subplot_ids[i])
+          caption <- unname(subplot_labels[subplot_id])
+          if (is.na(caption)) {
+            caption <- tools::file_path_sans_ext(file_names[i])
+          }
+          # Index and density subplots can each produce several images. Preserve
+          # their fleet/parameter suffix in the caption to distinguish these plots.
+          suffix_prefix <- c(
+            "13" = "indices",
+            "14" = "indices_log",
+            "16" = "densities",
+            "17" = "densities"
+          )
+          if (subplot_id %in% names(suffix_prefix)) {
+            suffix <- sub(
+              paste0(
+                "^compare",
+                subplot_id,
+                "_",
+                suffix_prefix[subplot_id],
+                "_?"
+              ),
+              "",
+              tools::file_path_sans_ext(file_names[i])
+            )
+            caption_suffix <- gsub("_", " ", suffix, fixed = TRUE)
+            if (subplot_id %in% c("13", "14")) {
+              index_number <- match(
+                if (nzchar(suffix)) paste0("_", suffix) else "",
+                index_plot_suffix
+              )
+              if (!is.na(index_number)) {
+                # Match each selected model's fleet for this index, even when
+                # fleet numbers differ. Retain the numeric label if names differ.
+                fleet_names <- vapply(
+                  models,
+                  function(model_number) {
+                    if (length(summaryoutput[["FleetNames"]]) < model_number) {
+                      return(NA_character_)
+                    }
+                    model_fleet_names <- summaryoutput[["FleetNames"]][[
+                      model_number
+                    ]]
+                    fleet_number <- indexfleets[[model_number]][index_number]
+                    fleet_name <- model_fleet_names[fleet_number]
+                    if (length(fleet_name) != 1L) {
+                      return(NA_character_)
+                    }
+                    as.character(fleet_name)
+                  },
+                  character(1)
+                )
+                if (
+                  all(!is.na(fleet_names) & nzchar(trimws(fleet_names))) &&
+                    length(unique(fleet_names)) == 1L
+                ) {
+                  caption_suffix <- fleet_names[1]
+                }
+              }
+            }
+            if (nzchar(caption_suffix)) {
+              caption <- paste0(
+                caption,
+                " (",
+                caption_suffix,
+                ")"
+              )
+            }
+          }
+          caption
+        },
+        character(1)
+      )
+
+      # Assemble one complete HTML document as a character vector, then write
+      # it to disk. All pages share the same header, styles, and navigation.
+      write_gallery_page <- function(page_index) {
+        gallery_file <- file.path(plotdir, page_files[page_index])
+        # <head> contains browser metadata and CSS appearance rules; <body>
+        # contains visible content. The body ID selects this page's active tab.
+        html_lines <- c(
+          "<!DOCTYPE html>",
+          '<html lang="en">',
+          "<head>",
+          '  <meta charset="utf-8">',
+          '  <meta name="viewport" content="width=device-width, initial-scale=1">',
+          paste0("<title>", html_title, "</title>"),
+          "  <!-- Tab styling adapted from SS_html(): http://unraveled.com/publications/css_tabs/ -->",
+          "  <!-- CSS Tabs: Creative Commons Attribution 3.0, https://creativecommons.org/licenses/by/3.0/ -->",
+          "  <style>",
+          "    body { font: 100% verdana, arial, sans-serif; background: #fff; margin: 50px; }",
+          "    ul#tabnav { text-align: left; margin: 1em 0; font: bold 11px verdana, arial, sans-serif; line-height: 2.5; border-bottom: 1px solid #6c6; list-style-type: none; padding: 3px 10px 2px; }",
+          "    ul#tabnav li { display: inline; }",
+          paste0(
+            "    ",
+            active_tab_selectors,
+            " { border-bottom: 1px solid #fff; background: #fff; }"
+          ),
+          paste0(
+            "    ",
+            active_link_selectors,
+            " { background: #fff; color: #000; position: relative; top: 1px; padding-top: 4px; }"
+          ),
+          "    ul#tabnav li a { padding: 2px 4px; border: 1px solid #6c6; background: #cfc; color: #666; text-decoration: none; border-bottom: none; }",
+          "    ul#tabnav a:hover { background: #fff; }",
+          "    h2 { font-size: 20px; color: #4c994c; border-bottom: 1px solid #6c6; padding-bottom: 2px; }",
+          "    figure { margin: 1.5rem 0 2rem; }",
+          "    img { width: 650px; max-width: 100%; height: auto; }",
+          "    figcaption { margin-top: .4rem; }",
+          "  </style>",
+          "</head>",
+          sprintf('<body id="tab%d">', page_index),
+          paste0("  <h1>", html_title, "</h1>"),
+          '  <ul id="tabnav">'
+        )
+        # <ul>/<li> form a list styled to look like tabs, following SS_html().
+        # Each <a href="..."> opens another local page; no JavaScript is needed.
+        # URL encoding protects filenames with spaces or URL-special characters;
+        # HTML escaping then makes the URL safe inside the quoted href attribute.
+        for (itab in seq_along(page_files)) {
+          href <- utils::URLencode(page_files[itab], reserved = TRUE)
+          html_lines <- c(
+            html_lines,
+            sprintf(
+              '    <li class="tab%d"><a href="%s">%s</a></li>',
+              itab,
+              escape_html(href),
+              escape_html(page_labels[itab])
+            )
+          )
+        }
+        html_lines <- c(html_lines, "  </ul>")
+
+        # The home page lists category links and counts, rather than images.
+        if (page_index == 1) {
+          html_lines <- c(
+            html_lines,
+            "  <h2>Home</h2>",
+            "  <p>Select a comparison category from the tabs above.</p>",
+            "  <ul>"
+          )
+          for (icat in seq_along(category_indexes)) {
+            href <- utils::URLencode(category_files[icat], reserved = TRUE)
+            html_lines <- c(
+              html_lines,
+              sprintf(
+                '    <li><a href="%s">%s</a> (%d plots)</li>',
+                escape_html(href),
+                escape_html(names(category_indexes)[icat]),
+                length(category_indexes[[icat]])
+              )
+            )
+          }
+          html_lines <- c(html_lines, "  </ul>")
+        } else {
+          # Subtract the home-page offset to find this category's plot indexes.
+          category_index <- page_index - 1L
+          category <- names(category_indexes)[category_index]
+          html_lines <- c(
+            html_lines,
+            sprintf("  <h2>%s</h2>", escape_html(category))
+          )
+          # Use relative image links so the gallery can be moved or shared as
+          # a folder, provided the HTML pages and PNGs stay together.
+          for (iplot in category_indexes[[category_index]]) {
+            image_file <- utils::URLencode(
+              comparison_png_files[iplot],
+              reserved = TRUE
+            )
+            caption <- escape_html(plot_captions[iplot])
+            # <figure> groups an image with its <figcaption>. The link opens
+            # the full PNG, while alt supplies a text alternative to the image.
+            html_lines <- c(
+              html_lines,
+              sprintf(
+                paste0(
+                  '  <figure><a href="%s"><img src="%s" alt="%s"></a>',
+                  '<figcaption><strong>%s</strong><br><small>File: %s</small>',
+                  '</figcaption></figure>'
+                ),
+                escape_html(image_file),
+                escape_html(image_file),
+                caption,
+                caption,
+                escape_html(comparison_png_files[iplot])
+              )
+            )
+          }
+        }
+
+        # Close the document after the page-specific content is complete.
+        html_lines <- c(html_lines, "</body>", "</html>")
+        writeLines(html_lines, gallery_file)
+      }
+
+      # Write every linked page before opening Home, so its tabs work immediately.
+      for (ipage in seq_along(page_files)) {
+        write_gallery_page(ipage)
+      }
+      gallery_file <- file.path(plotdir, home_file)
+      if (verbose) {
+        cli::cli_alert_info("HTML comparison gallery written to {gallery_file}")
+      }
+      if (openhtml) {
+        # Windows browser launching needs an absolute path to the existing file.
+        utils::browseURL(normalizePath(
+          gallery_file,
+          winslash = "/",
+          mustWork = TRUE
+        ))
+      }
+    }
+
     return(invisible(ymax_vec))
   }
