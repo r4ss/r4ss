@@ -67,6 +67,57 @@ SS_read <- function(
   read_par = FALSE,
   verbose = FALSE
 ) {
+  if (ss_new) {
+    is_url <- grepl("^https?://", dir)
+    datname <- if (is_url && grepl("raw.githubusercontent", dir)) {
+      "data_echo.ss_new"
+    } else {
+      get_dat_new_name(dir)
+    }
+    # Keep an unknown data filename so the warning can name both supported variants.
+    missing_datname <- is.na(datname)
+    ss_new_files <- c(
+      "starter.ss_new",
+      "control.ss_new",
+      "forecast.ss_new"
+    )
+    if (!missing_datname) {
+      ss_new_files <- c(ss_new_files, datname)
+    }
+    if (is_url) {
+      # Remote files cannot be checked with file.exists(), so probe each URL by downloading it.
+      file_exists <- function(filename) {
+        temporary_file <- tempfile()
+        status <- tryCatch(
+          suppressWarnings(utils::download.file(
+            file.path(dir, filename),
+            temporary_file,
+            quiet = TRUE,
+            mode = "wb"
+          )),
+          error = function(error) 1L
+        )
+        unlink(temporary_file)
+        identical(status, 0L)
+      }
+      missing_files <- ss_new_files[
+        !vapply(ss_new_files, file_exists, logical(1))
+      ]
+    } else {
+      missing_files <- ss_new_files[!file.exists(file.path(dir, ss_new_files))]
+    }
+    if (missing_datname) {
+      # The exact missing filename is unknown, but either historical variant is required.
+      missing_files <- c(missing_files, "data.ss_new or data_echo.ss_new")
+    }
+    if (length(missing_files) > 0) {
+      cli::cli_warn(c(
+        "The requested {.code ss_new = TRUE} input files are missing: {paste(missing_files, collapse = ', ')}.",
+        "i" = "Try {.code ss_new = FALSE} to read the original input files instead."
+      ))
+    }
+  }
+
   # Read in starter first to find the names of the input files
   start <- SS_readstarter(
     file = file.path(dir, ifelse(ss_new, "starter.ss_new", "starter.ss")),

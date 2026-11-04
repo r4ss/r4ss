@@ -141,10 +141,39 @@ test_that("empty files lead to NULL or error", {
   ))
 })
 
+test_that("SS_read suggests original files when .ss_new files are missing", {
+  path <- tempfile("ss_new_missing_files_")
+  dir.create(path)
+  on.exit(unlink(path, recursive = TRUE), add = TRUE)
+
+  result <- expect_warning(
+    tryCatch(SS_read(path, ss_new = TRUE), error = function(error) NULL),
+    "ss_new = FALSE"
+  )
+  expect_null(result)
+})
+
+test_that("SS_read warns when the .ss_new data file is missing", {
+  path <- tempfile("ss_new_missing_data_")
+  dir.create(path)
+  on.exit(unlink(path, recursive = TRUE), add = TRUE)
+  file.create(file.path(
+    path,
+    c("starter.ss_new", "control.ss_new", "forecast.ss_new")
+  ))
+
+  result <- expect_warning(
+    tryCatch(SS_read(path, ss_new = TRUE), error = function(error) NULL),
+    "data\\.ss_new"
+  )
+  expect_null(result)
+})
+
 test_that("SS_read works with a raw github URL", {
   skip_if_offline(host = "github.com")
+  url <- "https://raw.githubusercontent.com/nmfs-ost/ss3-test-models/main/models/Simple"
   list_objs <- SS_read(
-    dir = "https://raw.githubusercontent.com/nmfs-ost/ss3-test-models/main/models/Simple"
+    dir = url
   )
   expect_true(is.list(list_objs))
   expect_equal(
@@ -158,4 +187,10 @@ test_that("SS_read works with a raw github URL", {
       "fore"
     )
   )
+
+  result <- expect_warning(
+    tryCatch(SS_read(dir = url, ss_new = TRUE), error = function(error) NULL),
+    "ss_new = FALSE"
+  )
+  expect_null(result)
 })
