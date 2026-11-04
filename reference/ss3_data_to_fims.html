@@ -55,7 +55,8 @@ filtering, simplifying, and reformatting.</p>
 <span>  EWAA <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fleets <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  maxage <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  lengths <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  lengths <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ageing_error_matrices <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -112,14 +113,58 @@ the SS3 model.</p></dd>
 Needs to be a subset of the length bins in the SS3 model.
 NULL will default to using all length data bins from the SS3 model.</p></dd>
 
+
+<dt id="arg-ageing-error-matrices">ageing_error_matrices<a class="anchor" aria-label="anchor" href="#arg-ageing-error-matrices"></a></dt>
+<dd><p>Optional vector of SS3 age-error definition IDs
+to convert. If NULL, all positive IDs referenced by retained age-composition
+data are converted. Definitions omitted from this vector are not applied.</p></dd>
+
+
+<dt id="arg-fleet-column">fleet_column<a class="anchor" aria-label="anchor" href="#arg-fleet-column"></a></dt>
+<dd><p>Name of the column used to identify the fleet.</p></dd>
+
+
+<dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
+<dd><p>Label used in the row-count message.</p></dd>
+
+
+<dt id="arg-bin-pattern">bin_pattern<a class="anchor" aria-label="anchor" href="#arg-bin-pattern"></a></dt>
+<dd><p>Regular expression matching the composition-bin columns.</p></dd>
+
+
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>Output rows for a single data type.</p></dd>
+
+
+<dt id="arg-definition-id">definition_id<a class="anchor" aria-label="anchor" href="#arg-definition-id"></a></dt>
+<dd><p>SS3 age-error definition number.</p></dd>
+
+
+<dt id="arg-age">age<a class="anchor" aria-label="anchor" href="#arg-age"></a></dt>
+<dd><p>Age bin to look up.</p></dd>
+
+
+<dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
+<dd><p>Length bin to look up.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data frame that can be passed to <code>FIMS::FIMSFrame()</code></p>
+<p>The filtered data frame.
+Normalize composition bins and reshape them into one row per bin.</p>
+<p>Long-format data with fleet, year, sample size, bin, and proportion.
+Reject conflicting duplicate keys and remove exact repeated observations.</p>
+<p>Data with at most one row per identifying key.
+Calculate observed-age probabilities from one SS3 mean/SD vector pair.</p>
+<p>A matrix with true ages in rows and observed ages in columns.
+Look up the SS3 age-to-length proportion for one age and length bin.</p>
+<p>The aggregated proportion, or <code>NA</code> when either bin is out of range.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="SS_write.html">SS_write()</a></code> can be used to write the input files using the list</p></div>
+    <div class="dont-index"><p><code><a href="SS_write.html">SS_write()</a></code> can be used to write the input files using the list
+Filter observations to selected fleets and report any rows removed.</p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

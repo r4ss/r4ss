@@ -15,7 +15,8 @@ ss3_data_to_fims(
   EWAA = NULL,
   fleets = NULL,
   maxage = NULL,
-  lengths = NULL
+  lengths = NULL,
+  ageing_error_matrices = NULL
 )
 ```
 
@@ -72,14 +73,64 @@ ss3_data_to_fims(
   subset of the length bins in the SS3 model. NULL will default to using
   all length data bins from the SS3 model.
 
+- ageing_error_matrices:
+
+  Optional vector of SS3 age-error definition IDs to convert. If NULL,
+  all positive IDs referenced by retained age-composition data are
+  converted. Definitions omitted from this vector are not applied.
+
+- fleet_column:
+
+  Name of the column used to identify the fleet.
+
+- label:
+
+  Label used in the row-count message.
+
+- bin_pattern:
+
+  Regular expression matching the composition-bin columns.
+
+- data:
+
+  Output rows for a single data type.
+
+- definition_id:
+
+  SS3 age-error definition number.
+
+- age:
+
+  Age bin to look up.
+
+- length:
+
+  Length bin to look up.
+
 ## Value
 
 A data frame that can be passed to `FIMS::FIMSFrame()`
 
+The filtered data frame. Normalize composition bins and reshape them
+into one row per bin.
+
+Long-format data with fleet, year, sample size, bin, and proportion.
+Reject conflicting duplicate keys and remove exact repeated
+observations.
+
+Data with at most one row per identifying key. Calculate observed-age
+probabilities from one SS3 mean/SD vector pair.
+
+A matrix with true ages in rows and observed ages in columns. Look up
+the SS3 age-to-length proportion for one age and length bin.
+
+The aggregated proportion, or `NA` when either bin is out of range.
+
 ## See also
 
 [`SS_write()`](https://r4ss.github.io/r4ss/reference/SS_write.md) can be
-used to write the input files using the list
+used to write the input files using the list Filter observations to
+selected fleets and report any rows removed.
 
 ## Author
 
