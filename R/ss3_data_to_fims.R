@@ -521,6 +521,11 @@ ss3_data_to_fims <- function(
           !is.na(mean_observed_age) & mean_observed_age <= -1
         )
         mean_observed_age[unbiased_mean] <- ages[unbiased_mean] + 0.5
+        if (sd_observed_age[1] < 0) {
+          cli::cli_abort(
+            "Parameter-based SS3 age-error definitions cannot be converted."
+          )
+        }
         if (
           any(!is.finite(mean_observed_age)) ||
             any(!is.finite(sd_observed_age)) ||

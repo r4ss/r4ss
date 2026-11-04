@@ -74,14 +74,18 @@ SS_read <- function(
     } else {
       get_dat_new_name(dir)
     }
+    # Keep an unknown data filename so the warning can name both supported variants.
+    missing_datname <- is.na(datname)
     ss_new_files <- c(
       "starter.ss_new",
       "control.ss_new",
-      "forecast.ss_new",
-      datname
+      "forecast.ss_new"
     )
-    ss_new_files <- ss_new_files[!is.na(ss_new_files)]
+    if (!missing_datname) {
+      ss_new_files <- c(ss_new_files, datname)
+    }
     if (is_url) {
+      # Remote files cannot be checked with file.exists(), so probe each URL by downloading it.
       file_exists <- function(filename) {
         temporary_file <- tempfile()
         status <- tryCatch(
@@ -101,6 +105,10 @@ SS_read <- function(
       ]
     } else {
       missing_files <- ss_new_files[!file.exists(file.path(dir, ss_new_files))]
+    }
+    if (missing_datname) {
+      # The exact missing filename is unknown, but either historical variant is required.
+      missing_files <- c(missing_files, "data.ss_new or data_echo.ss_new")
     }
     if (length(missing_files) > 0) {
       cli::cli_warn(c(

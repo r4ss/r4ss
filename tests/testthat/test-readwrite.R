@@ -142,12 +142,31 @@ test_that("empty files lead to NULL or error", {
 })
 
 test_that("SS_read suggests original files when .ss_new files are missing", {
-  path <- system.file("extdata", "simple_small", package = "r4ss")
+  path <- tempfile("ss_new_missing_files_")
+  dir.create(path)
+  on.exit(unlink(path, recursive = TRUE), add = TRUE)
 
-  expect_warning(
-    expect_error(SS_read(path, ss_new = TRUE)),
+  result <- expect_warning(
+    tryCatch(SS_read(path, ss_new = TRUE), error = function(error) NULL),
     "ss_new = FALSE"
   )
+  expect_null(result)
+})
+
+test_that("SS_read warns when the .ss_new data file is missing", {
+  path <- tempfile("ss_new_missing_data_")
+  dir.create(path)
+  on.exit(unlink(path, recursive = TRUE), add = TRUE)
+  file.create(file.path(
+    path,
+    c("starter.ss_new", "control.ss_new", "forecast.ss_new")
+  ))
+
+  result <- expect_warning(
+    tryCatch(SS_read(path, ss_new = TRUE), error = function(error) NULL),
+    "data\\.ss_new"
+  )
+  expect_null(result)
 })
 
 test_that("SS_read works with a raw github URL", {
@@ -169,8 +188,9 @@ test_that("SS_read works with a raw github URL", {
     )
   )
 
-  expect_warning(
-    expect_error(SS_read(dir = url, ss_new = TRUE)),
+  result <- expect_warning(
+    tryCatch(SS_read(dir = url, ss_new = TRUE), error = function(error) NULL),
     "ss_new = FALSE"
   )
+  expect_null(result)
 })

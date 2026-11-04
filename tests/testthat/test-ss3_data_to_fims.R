@@ -11,6 +11,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
     )
   )
 
+  # Confirm the FIMS schema and the data types represented by this model.
   expect_named(
     fims_data,
     c(
@@ -46,6 +47,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
   length_bins <- simple_small_input[["dat"]][["lbin_vector"]]
   age_bins <- 0:max(simple_small_input[["dat"]][["agebin_vector"]])
 
+  # The conversion table should contain every age-length combination.
   age_to_length <- subset(fims_data, type == "age_to_length_conversion")
 
   expect_equal(nrow(age_to_length), length(length_bins) * length(age_bins))
@@ -73,7 +75,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
     )
   )
 
-  # tests for converted weight-at-age data
+  # Weight-at-age includes every age for each model year plus the terminal year.
   weight_at_age <- subset(fims_data, type == "weight_at_age")
   expect_equal(nrow(weight_at_age), length(age_bins) * (1 + length(years)))
 })
@@ -86,6 +88,7 @@ test_that("ss3_data_to_fims() converts SS3 ageing-error vectors", {
   age_columns <- paste0("age", ages)
   mean_row <- 3
   sd_row <- 4
+  # Use known age-specific normal parameters to check probabilities and row sums.
   ss3_inputs[["dat"]][["ageerror"]][mean_row, age_columns] <- ages + 0.5
   ss3_inputs[["dat"]][["ageerror"]][mean_row, "age0"] <- -1
   ss3_inputs[["dat"]][["ageerror"]][sd_row, age_columns] <- 0.5
@@ -139,6 +142,7 @@ test_that("ss3_data_to_fims() ageing error matches SS3 AAK matrix 2", {
     is.na(fleet),
     is.na(timing)
   )
+  # Rebuild the converter's long rows as a matrix before aligning SS3 age bins.
   converter_matrix <- matrix(
     NA_real_,
     nrow = length(ages),
@@ -183,10 +187,12 @@ test_that("ss3_data_to_fims() emits year-specific ageing-error overrides", {
   ss3_inputs[["dat"]][["ageerror"]] <- ageerror
 
   years <- sort(unique(ss3_inputs[["dat"]][["agecomp"]][["year"]]))
+  # Alternate two definitions across years to require year-specific overrides.
   year_definition <- stats::setNames(
     rep(c(1, 2), length.out = length(years)),
     as.character(years)
   )
+  # Apply the assigned definition IDs to the composition observations by year.
   ss3_inputs[["dat"]][["agecomp"]][["ageerr"]] <- unname(
     year_definition[as.character(ss3_inputs[["dat"]][["agecomp"]][["year"]])]
   )
@@ -194,6 +200,7 @@ test_that("ss3_data_to_fims() emits year-specific ageing-error overrides", {
   fims_data <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
   ageing_error <- dplyr::filter(fims_data, type == "ageing_error")
 
+  # Check each year against its override, or the default matrix when none exists.
   expect_true(all(is.na(ageing_error[["fleet"]])))
   expect_true(all(
     is.na(ageing_error[["timing"]]) |
@@ -240,6 +247,37 @@ test_that("ss3_data_to_fims() emits year-specific ageing-error overrides", {
     }
     expect_equal(applied_matrix$value, expected_probability)
   }
+
+  # Selecting either available definition should change output; invalid IDs fail.
+  first_definition <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = FALSE,
+    ageing_error_matrices = 1
+  ) |>
+    dplyr::filter(type == "ageing_error")
+  second_definition <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = FALSE,
+    ageing_error_matrices = 2
+  ) |>
+    dplyr::filter(type == "ageing_error")
+  expect_false(isTRUE(all.equal(first_definition, second_definition)))
+  expect_error(
+    ss3_data_to_fims(
+      ss3_inputs = ss3_inputs,
+      EWAA = FALSE,
+      ageing_error_matrices = 0
+    ),
+    "must contain positive whole-number"
+  )
+  expect_error(
+    ss3_data_to_fims(
+      ss3_inputs = ss3_inputs,
+      EWAA = FALSE,
+      ageing_error_matrices = 3
+    ),
+    "unavailable SS3 definition ID"
+  )
 })
 
 test_that("ss3_data_to_fims() leaves fleets without rows at identity", {
@@ -248,6 +286,7 @@ test_that("ss3_data_to_fims() leaves fleets without rows at identity", {
   fleet_without_ageing_error <- abs(ss3_inputs[["dat"]][["agecomp"]][["fleet"]][
     1
   ])
+  # Code 0 leaves this fleet at the identity matrix, so it needs no output rows.
   ss3_inputs[["dat"]][["agecomp"]][["ageerr"]] <- 2
   ss3_inputs[["dat"]][["agecomp"]][["ageerr"]][
     abs(ss3_inputs[["dat"]][["agecomp"]][["fleet"]]) ==
@@ -276,11 +315,19 @@ test_that("ss3_data_to_fims() leaves fleets without rows at identity", {
 test_that("ss3_data_to_fims() does not convert parameter-based age error", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
-  ss3_inputs[["dat"]][["agecomp"]][["ageerr"]] <- 0
+  age_columns <- grep(
+    "^age[0-9]+$",
+    names(ss3_inputs[["dat"]][["ageerror"]]),
+    value = TRUE
+  )
+  # A negative mean marks a parameter-based definition, which is unsupported.
+  ss3_inputs[["dat"]][["ageerror"]][2, age_columns[1]] <- -1
+  ss3_inputs[["dat"]][["agecomp"]][["ageerr"]] <- 1
 
-  fims_data <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
-
-  expect_false(any(fims_data[["type"]] == "ageing_error"))
+  expect_error(
+    ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE),
+    "Parameter-based SS3 age-error definitions cannot be converted"
+  )
 })
 
 test_that("ss3_data_to_fims() rejects mixed age-error keys within a fleet-year", {
@@ -288,6 +335,7 @@ test_that("ss3_data_to_fims() rejects mixed age-error keys within a fleet-year",
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
   agecomp_row <- ss3_inputs[["dat"]][["agecomp"]] |>
     dplyr::slice(1)
+  # Give one fleet-year two different definition IDs to create an invalid mapping.
   agecomp_row[["ageerr"]] <- 0
   ss3_inputs[["dat"]][["agecomp"]] <- dplyr::bind_rows(
     ss3_inputs[["dat"]][["agecomp"]],
@@ -305,6 +353,7 @@ test_that("ss3_data_to_fims() skips empirical growth data when EWAA is false", {
   input_only_dir <- tempfile("ss3_inputs_")
   dir.create(input_only_dir)
   on.exit(unlink(input_only_dir, recursive = TRUE), add = TRUE)
+  # Omit wtatage and other growth inputs to verify they are not needed with EWAA off.
   file.copy(
     file.path(path, c("starter.ss", "control.ss", "data.ss", "forecast.ss")),
     input_only_dir
@@ -331,6 +380,7 @@ test_that("ss3_data_to_fims() inherits EWAA from the control file", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
 
+  # The fixture sets EmpiricalWAA to 0, so a NULL argument should omit growth data.
   expect_identical(ss3_inputs[["ctl"]][["EmpiricalWAA"]], 0)
   fims_data <- ss3_data_to_fims(
     ss3_inputs = ss3_inputs,
@@ -416,6 +466,7 @@ test_that("ss3_data_to_fims() filters and reports repeated rows by type", {
   catch_to_repeat <- ss3_inputs[["dat"]][["catch"]] |>
     dplyr::filter(year != -999) |>
     dplyr::slice(1)
+  # Add a duplicate catch observation to check that it is reported and removed.
   ss3_inputs[["dat"]][["catch"]] <- rbind(
     ss3_inputs[["dat"]][["catch"]],
     catch_to_repeat
