@@ -40,9 +40,7 @@ Gugliotti
 Gwladys
 Hilborn
 Hurtado
-INIT
 Ianelli
-Iteratively
 Jeffreys
 Jolla
 Kiva
@@ -76,7 +74,6 @@ Piner's
 README
 Rdata
 Rebuilder
-Rescale
 RunJitter
 SELEX
 SHA
@@ -91,7 +88,6 @@ Spawner
 TG
 TSC
 Thorson's
-Timeseries
 Tweedie
 VLab
 Valerio
@@ -142,7 +138,6 @@ depl
 dev
 devs
 diags
-dir
 doRetro
 doesn
 doi
@@ -179,9 +174,7 @@ icesjms
 iline
 indx
 initpoint
-iteratively
 ith
-jitter
 jmsc
 jstor
 keyvec
@@ -208,7 +201,6 @@ minbthresh
 minnbubble
 mnwgt
 modelled
-modeloutput
 morphcompdbase
 multifig
 newhis
@@ -269,8 +261,6 @@ recruitments
 reoptimize
 reoptimized
 replist
-rescaled
-rescaling
 retune
 retuning
 reweighting
@@ -290,7 +280,6 @@ sizedbase
 spacepoints
 spawner
 sprtarg
-src
 ss
 sso
 stackpoly
@@ -308,12 +297,12 @@ tgt
 th
 tibble
 tidyr
-timeseries
 tk
 tolerace
 topleft
 tryCatch
 tunings
+unconverged
 unfished
 unformatted
 unparsable
