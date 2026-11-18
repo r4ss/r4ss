@@ -1839,7 +1839,7 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
     # reading covar if -nohess used
     if (covar) {
       covarfile <- file.path(dir, covarfile)
-      if (!file.exists(covarfile)) {
+      if (file_is_empty(covarfile)) {
         cli::cli_alert_warning(
           "covar file not found, input 'covar' changed to FALSE"
         )
@@ -2260,6 +2260,23 @@ consider increasing 'aalmaxbinrange' to designate some of these data as conditio
         grep("breakpoints_for_bias", srhead[, biascol]),
         1:5 # get first 5 values
       ]
+      # format change in breakpoints table in 2025
+      # where the max bias adjustment is on the next line
+      if (
+        breakpoints_for_bias_adjustment_ramp[1] ==
+          "breakpoints_for_bias_adjustment_ramp:"
+      ) {
+        breakpoints_for_bias_adjustment_ramp <- breakpoints_for_bias_adjustment_ramp[
+          -1
+        ]
+        breakpoints_for_bias_adjustment_ramp <- cbind(
+          breakpoints_for_bias_adjustment_ramp,
+          srhead[
+            grep("breakpoints_for_bias", srhead[, biascol]) + 1,
+            2 # get first 5 values
+          ]
+        )
+      }
       colnames(breakpoints_for_bias_adjustment_ramp) <- c(
         "last_yr_early",
         "first_yr_full",
