@@ -123,6 +123,7 @@ SSgetoutput <-
     for (i in 1:n) {
       key <- keyvec[i]
       mydir <- dirvec[i]
+      is_url <- grepl("^https:", mydir)
       if (is.null(key)) {
         key2 <- NULL
       } else {
@@ -146,16 +147,15 @@ SSgetoutput <-
       }
 
       # mycovar = TRUE/FALSE based on presence of file and user input
-      mycovar <- file.exists(file.path(mydir, covarname)) & getcovar
+      mycovar <- getcovar &&
+        (is_url || file.exists(file.path(mydir, covarname)))
 
       fullfile <- paste(mydir, repFileName, sep = "")
       if (verbose) {
         cli::cli_alert_info("reading output from {fullfile}")
       }
-      repfilesize <- file.info(fullfile)[["size"]]
-
       output <- NA
-      if (isTRUE(repfilesize > 0)) {
+      if (is_url || isTRUE(file.info(fullfile)[["size"]] > 0)) {
         # if there's a non-empty file
         output <- SS_output(
           dir = mydir,
