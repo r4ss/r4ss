@@ -112,6 +112,16 @@ SSplotData <- function(
   # environmental data
   environmental_data <- replist[["environmental_data"]]
 
+  # use DM-weighted sample sizes where available, with adjusted sizes as fallback
+  composition_sample_size <- function(dat) {
+    sample_size <- dat[["Nsamp_adj"]]
+    if ("Nsamp_DM" %in% names(dat)) {
+      sample_size[!is.na(dat[["Nsamp_DM"]])] <-
+        dat[["Nsamp_DM"]][!is.na(dat[["Nsamp_DM"]])]
+    }
+    sample_size
+  }
+
   # make table of data types
   # fmt: skip
   typetable <- matrix(c(
@@ -235,7 +245,7 @@ SSplotData <- function(
           if (typename %in% c("lendbase", "sizedbase", "agedbase")) {
             # aggregate sample sizes by year
             dat.agg <- aggregate(
-              dat.f[["Nsamp_adj"]],
+              composition_sample_size(dat.f),
               by = list(dat.f[["Yr"]]),
               FUN = sum
             )
@@ -265,7 +275,7 @@ SSplotData <- function(
             if (nrow(dat.sub) > 0) {
               # aggregate sample sizes by year
               dat.agg <- aggregate(
-                dat.sub[["Nsamp_adj"]],
+                composition_sample_size(dat.sub),
                 by = list(dat.sub[["Yr"]]),
                 FUN = sum
               )
@@ -303,7 +313,7 @@ SSplotData <- function(
               # skip of all values are excluded
               # aggregate sample sizes by year
               dat.agg <- aggregate(
-                dat.f[["Nsamp_adj"]],
+                composition_sample_size(dat.f),
                 by = list(dat.f[["Yr"]]),
                 FUN = sum
               )
@@ -586,8 +596,9 @@ SSplotData <- function(
         "Data presence by year for each fleet, where circle area is <br> ",
         "relative within a data type. Circles are proportional to <br> ",
         "total catch for catches; to precision for indices, discards, and <br> ",
-        "mean body weight observations; and to total sample size for <br>",
-        "compositions and mean weight- or length-at-age observations. <br>",
+        "mean body weight observations; to the total adjusted or weighted <br>",
+        "sample size for compositions; and to sample size for mean weight- or <br>",
+        "length-at-age observations. <br>",
         "Observations excluded from the likelihood have <br>",
         "equal size for all years. <br>",
         "Note that since the circles are are scaled relative <br> ",
