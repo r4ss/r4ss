@@ -198,7 +198,11 @@ ss3_data_to_fims <- function(
   #' @param data SS3 age- or length-composition data.
   #' @param bin_pattern Regular expression matching the composition-bin columns.
   #' @return Long-format data with fleet, year, sample size, bin, and proportion.
-  process_composition <- function(data, bin_pattern, extra_columns = character()) {
+  process_composition <- function(
+    data,
+    bin_pattern,
+    extra_columns = character()
+  ) {
     bin_columns <- grep(bin_pattern, names(data), value = TRUE)
     if (length(bin_columns) == 0) {
       cli::cli_abort("No composition-bin columns were found in the SS3 data.")
@@ -224,7 +228,14 @@ ss3_data_to_fims <- function(
         values_to = "observed"
       ) |>
       dplyr::mutate(bin = as.numeric(substring(bin, first = 2))) |>
-      dplyr::select(year, fleet, Nsamp, bin, observed, dplyr::all_of(extra_columns)) |>
+      dplyr::select(
+        year,
+        fleet,
+        Nsamp,
+        bin,
+        observed,
+        dplyr::all_of(extra_columns)
+      ) |>
       dplyr::arrange(fleet, year, bin)
   }
 
