@@ -431,7 +431,11 @@ test_that("ss3_data_to_fims() validates age and length bins", {
 test_that("ss3_data_to_fims() interprets CAAL bounds using Lbin_method", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   inputs <- SS_read(dir = path, ss_new = FALSE)
-  inputs[["dat"]][["agecomp"]] <- inputs[["dat"]][["agecomp"]][1, , drop = FALSE]
+  inputs[["dat"]][["agecomp"]] <- inputs[["dat"]][["agecomp"]][
+    1,
+    ,
+    drop = FALSE
+  ]
 
   # Simple_small uses population-bin indexes; 1 through -1 spans all bins.
   marginal <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
