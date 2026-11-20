@@ -432,6 +432,92 @@ test_that("ss3_data_to_fims() rejects empty filtered catch data", {
   )
 })
 
+test_that("ss3_data_to_fims() excludes discard compositions before sample selection", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  inputs <- SS_read(dir = path, ss_new = FALSE)
+  for (datatype in c("agecomp", "lencomp")) {
+    inputs[["dat"]][[datatype]] <- inputs[["dat"]][[datatype]][1, , drop = FALSE]
+    inputs[["dat"]][[datatype]][["part"]] <- 2
+  }
+
+  for (length_bin in c(-1, 10)) {
+    inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- length_bin
+    expected <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+    with_discards <- inputs
+    for (datatype in c("agecomp", "lencomp")) {
+      discard <- inputs[["dat"]][[datatype]]
+      discard[["part"]] <- 1
+      discard[["Nsamp"]] <- discard[["Nsamp"]] + 1000
+      if (datatype == "agecomp") {
+        discard[["ageerr"]] <- 999
+      }
+      with_discards[["dat"]][[datatype]] <- rbind(
+        discard, inputs[["dat"]][[datatype]]
+      )
+    }
+    messages <- character()
+    converted <- withCallingHandlers(
+      ss3_data_to_fims(ss3_inputs = with_discards, EWAA = FALSE),
+      message = function(message) {
+        messages <<- c(messages, conditionMessage(message))
+      }
+    )
+    expect_equal(converted, expected)
+    expect_true(any(grepl("Excluded 1 discard age-composition rows", messages)))
+    expect_true(any(grepl("Excluded 1 discard length-composition rows", messages)))
+  }
+
+  for (datatype in c("agecomp", "lencomp")) {
+    inputs[["dat"]][[datatype]][["part"]] <- 1
+  }
+  discarded <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+  expect_false(any(
+    discarded[["type"]] %in% c("age_comp", "caal_comp", "length_comp", "ageing_error")
+  ))
+})
+
+test_that("ss3_data_to_fims() retains the largest length sample after fleet filtering", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+  ss3_inputs[["dat"]][["agecomp"]] <- NULL
+  small <- ss3_inputs[["dat"]][["lencomp"]][1, , drop = FALSE]
+  bin_columns <- grep("^(f|l)[0-9]+$", names(small), value = TRUE)
+  small[, bin_columns] <- 0
+  small[[bin_columns[1]]] <- 1
+  small[["Nsamp"]] <- 10
+  large <- small
+  large[, bin_columns] <- 0
+  large[[tail(bin_columns, 1)]] <- 1
+  large[["Nsamp"]] <- 20
+  tied <- small
+  tied[["Nsamp"]] <- large[["Nsamp"]]
+  negative <- small
+  negative[["fleet"]] <- -small[["fleet"]]
+  negative[["Nsamp"]] <- 100
+
+  ss3_inputs[["dat"]][["lencomp"]] <- large
+  expected <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  ss3_inputs[["dat"]][["lencomp"]] <- dplyr::bind_rows(
+    small, large, tied, negative
+  )
+  converted <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  expect_equal(converted, expected)
+
+  fleets <- c(seq_along(ss3_inputs[["dat"]][["fleetnames"]]), negative[["fleet"]])
+  selected <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = FALSE,
+    fleets = fleets
+  )
+  ss3_inputs[["dat"]][["lencomp"]] <- negative
+  expected_negative <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = FALSE,
+    fleets = fleets
+  )
+  expect_equal(selected, expected_negative)
+})
+
 test_that("ss3_data_to_fims() rejects conflicting repeated rows", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)

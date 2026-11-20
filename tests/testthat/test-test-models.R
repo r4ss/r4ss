@@ -1,6 +1,6 @@
 context("Read output and make plots for all test-models")
 
-# download models to a temporary directory
+# Keep downloaded models and generated outputs outside the repository.
 models_path <- file.path(tempdir(check = TRUE), "test-test-models")
 download_models(dir = models_path)
 mods <- list.dirs(
@@ -9,14 +9,14 @@ mods <- list.dirs(
   recursive = FALSE
 )
 
-# run models
+# Give each model its own test so failures identify the affected configuration.
 for (i in seq_along(mods)) {
   test_that(
     glue::glue(
-      "run SS_output() and SS_plots() on test model: {mods[i]}"
+      "run SS_output(), SS_plots(), and ss3_data_to_fims() on test model: {mods[i]}"
     ),
     {
-      # find simple_small
+      # Reuse the SS3 executable bundled with simple_small; skip if unavailable.
       dir_exe <- system.file("extdata", "simple_small", package = "r4ss")
       skip_if(
         (!file.exists(file.path(dir_exe, "ss3")) &
@@ -29,6 +29,8 @@ for (i in seq_along(mods)) {
       cli::cli_alert_info(
         "Now running without estimation: {mod}"
       )
+      # Regenerate reports and .ss_new inputs at the initial parameter values.
+      # Avoid estimation and Hessian calculations to keep integration tests fast.
       run(
         mod_path,
         exe = file.path(dir_exe, "ss3"),
@@ -52,15 +54,53 @@ for (i in seq_along(mods)) {
         expect_true("inputs" %in% names(output))
 
         cli::cli_alert_info(
+          "Running ss3_data_to_fims() for model {mod}"
+        )
+        # Read SS3's generated inputs, including weight-at-age where available.
+        # Reuse the parsed output for any empirical age-to-length conversion.
+        inputs <- SS_read(dir = mod_path, ss_new = TRUE, read_wtatage = TRUE)
+        fims_data <- ss3_data_to_fims(
+          ss3_inputs = inputs,
+          ss3_output = output
+        )
+        # Check conversion for every model, regardless of its composition types.
+        # These assertions check the FIMS data schema, not execution of FIMS.
+        expect_s3_class(fims_data, "data.frame")
+        expect_named(
+          fims_data,
+          c(
+            "type", "fleet", "age", "length", "timing", "observed", "unit",
+            "uncertainty"
+          )
+        )
+        expect_gt(nrow(fims_data), 0)
+
+        # Nonnegative Lbin_lo denotes ages conditioned on length; positive fleet
+        # IDs are selected by default. This trigger inspects input rows before
+        # the converter's discard and largest-sample filtering.
+        agecomp <- inputs[["dat"]][["agecomp"]]
+        if (
+          !is.null(agecomp) &&
+            any(agecomp[["Lbin_lo"]] >= 0 & agecomp[["fleet"]] > 0)
+        ) {
+          # CAAL output needs both coordinates, unlike marginal age compositions.
+          caal <- fims_data[fims_data[["type"]] == "caal_comp", ]
+          expect_gt(nrow(caal), 0)
+          expect_true(all(!is.na(caal[["age"]])))
+          expect_true(all(!is.na(caal[["length"]])))
+        }
+
+        cli::cli_alert_info(
           "Running SS_plots() for model {mod}"
         )
-        # make low-resolution plots to save time
+        # Use low resolution and check a representative file was written.
         SS_plots(output, verbose = FALSE, res = 50)
         expect_true("data_plot2.png" %in% dir(file.path(mod_path, "plots")))
 
         cli::cli_alert_info(
           "Running table_all() for model {mod}"
         )
+        # Exercise table generation and verify a representative saved table.
         table_all(output, verbose = TRUE)
         expect_true(
           "table_parcounts.rda" %in% dir(file.path(mod_path, "tables"))
