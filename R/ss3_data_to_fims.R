@@ -294,6 +294,60 @@ ss3_data_to_fims <- function(
       "No catch data remain after removing equilibrium rows and filtering fleets."
     )
   }
+  # SS3 can report catch by season, but FIMS has only fleet and year keys.
+  # First reject conflicting repeats of the same seasonal observation; exact
+  # repeated rows are safe to remove before combining seasons.
+  catch_keys <- c("fleet", "year", "seas")
+  n_catch_before_dedup <- nrow(catch_by_year_fleet)
+  repeated_catch <- catch_by_year_fleet |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(catch_keys))) |>
+    dplyr::filter(dplyr::n() > 1) |>
+    dplyr::ungroup()
+  conflicting_catch <- repeated_catch |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(catch_keys))) |>
+    dplyr::filter(dplyr::if_any(
+      dplyr::all_of(c("catch", "catch_se")),
+      ~ dplyr::n_distinct(.x, na.rm = FALSE) > 1
+    )) |>
+    dplyr::ungroup()
+  if (nrow(conflicting_catch) > 0) {
+    cli::cli_abort('Repeated rows for type "catch" have conflicting values.')
+  }
+  catch_by_year_fleet <- catch_by_year_fleet |>
+    dplyr::distinct(dplyr::across(dplyr::all_of(catch_keys)), .keep_all = TRUE)
+  n_catch_duplicates <- n_catch_before_dedup - nrow(catch_by_year_fleet)
+  if (n_catch_duplicates > 0) {
+    percent_removed <- round(
+      100 * n_catch_duplicates / n_catch_before_dedup,
+      digits = 1
+    )
+    cli::cli_alert_warning(
+      "Removed {n_catch_duplicates} repeated rows ({percent_removed}%) out of {n_catch_before_dedup} total rows for type {.val catch}."
+    )
+  }
+
+  # Sum seasonal catches to the annual fleet-year values FIMS can represent.
+  # For independent lognormal seasonal errors, combine variances on the catch
+  # scale and convert the resulting coefficient of variation back to sdlog.
+  catch_by_year_fleet <- catch_by_year_fleet |>
+    dplyr::group_by(.data[["fleet"]], .data[["year"]]) |>
+    dplyr::summarize(
+      annual_catch = sum(.data[["catch"]]),
+      catch_se = {
+        total_catch <- sum(.data[["catch"]])
+        if (total_catch > 0) {
+          variance <- sum(
+            .data[["catch"]]^2 * expm1(.data[["catch_se"]]^2)
+          )
+          sqrt(log1p(variance / total_catch^2))
+        } else {
+          max(.data[["catch_se"]])
+        }
+      },
+      .groups = "drop"
+    ) |>
+    dplyr::mutate(catch = .data[["annual_catch"]]) |>
+    dplyr::select(-"annual_catch")
   # Replace zero catches with a small positive value for the lognormal
   # likelihood; leave the remaining observations and their uncertainty intact.
   n_catch_zeros <- sum(catch_by_year_fleet[["catch"]] == 0)
@@ -446,10 +500,8 @@ ss3_data_to_fims <- function(
     # indexes, or actual lengths. Zero and -1 select the corresponding endpoint.
     lbin_method <- dat[["Lbin_method"]]
     pop_length_bins <- dat[["lbin_vector_pop"]]
-    n_pop_length_bins <- dat[["N_lbinspop"]]
-    if (is.null(n_pop_length_bins)) {
-      n_pop_length_bins <- length(pop_length_bins)
-    }
+    # The vector includes the final upper edge, which SS3 can use as a bound.
+    n_pop_length_bins <- length(pop_length_bins)
     if (
       length(lbin_method) != 1 ||
         is.na(lbin_method) ||
@@ -474,8 +526,12 @@ ss3_data_to_fims <- function(
         # Method 1 uses population-bin indexes; SS3 truncates fractional input.
         index <- as.integer(value)
       } else if (lbin_method == 2) {
-        # Method 2 uses data-bin indexes, which must map to a population bin.
+        # Method 2 uses data-bin indexes, but SS3 may already have expanded
+        # sentinel bounds in parsed data to population-bin indexes.
         index <- as.integer(value)
+        if (index > length(dat[["lbin_vector"]]) && index <= n_pop_length_bins) {
+          return(index)
+        }
         if (index < 1 || index > length(dat[["lbin_vector"]])) {
           cli::cli_abort(
             "Age-composition length bound is outside the data-bin indexes."
@@ -494,6 +550,10 @@ ss3_data_to_fims <- function(
       }
       index
     }
+    # In parsed SS3 data, the full-range pair can be stored as its expanded
+    # population-bin endpoints instead of the original 1/-1 input pair.
+    full_pop_range <- agecomp_filtered[["Lbin_lo"]] == 1 &
+      agecomp_filtered[["Lbin_hi"]] == n_pop_length_bins
     lower_bin <- vapply(
       agecomp_filtered[["Lbin_lo"]],
       resolve_pop_bin,
@@ -506,6 +566,8 @@ ss3_data_to_fims <- function(
       integer(1),
       lower = FALSE
     )
+    lower_bin[full_pop_range] <- 1L
+    upper_bin[full_pop_range] <- as.integer(n_pop_length_bins)
     # Full-range bounds are marginal ages. Restricted ranges are CAAL; store
     # their lower bound as an actual length, regardless of the input method.
     agecomp_filtered <- agecomp_filtered |>

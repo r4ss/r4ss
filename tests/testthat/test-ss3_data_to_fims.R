@@ -438,6 +438,17 @@ test_that("ss3_data_to_fims() interprets CAAL bounds using Lbin_method", {
   expect_true("age_comp" %in% marginal[["type"]])
   expect_false("caal_comp" %in% marginal[["type"]])
 
+  # SS3 may expand the method-2 sentinel pair to population-bin endpoints.
+  expanded_inputs <- inputs
+  expanded_inputs[["dat"]][["Lbin_method"]] <- 2
+  expanded_inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- 1
+  expanded_inputs[["dat"]][["agecomp"]][["Lbin_hi"]] <- length(
+    expanded_inputs[["dat"]][["lbin_vector_pop"]]
+  )
+  expanded <- ss3_data_to_fims(ss3_inputs = expanded_inputs, EWAA = FALSE)
+  expect_true("age_comp" %in% expanded[["type"]])
+  expect_false("caal_comp" %in% expanded[["type"]])
+
   # The same population length (28) is expressed differently by each method:
   # population-bin index, matching data-bin index, or actual length.
   method_cases <- list(
@@ -460,6 +471,41 @@ test_that("ss3_data_to_fims() interprets CAAL bounds using Lbin_method", {
     expect_true(all(caal[["length"]] == 28))
     expect_false("age_comp" %in% conditional[["type"]])
   }
+})
+
+test_that("ss3_data_to_fims() combines seasonal catches by fleet and year", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  inputs <- SS_read(dir = path, ss_new = FALSE)
+  first_season <- inputs[["dat"]][["catch"]] |>
+    dplyr::filter(year == 2013, fleet == 1, seas == 1) |>
+    dplyr::slice(1)
+  second_season <- first_season
+  second_season[["seas"]] <- 2
+  second_season[["catch"]] <- 50
+  second_season[["catch_se"]] <- 0.2
+  inputs[["dat"]][["catch"]] <- dplyr::bind_rows(
+    inputs[["dat"]][["catch"]],
+    second_season
+  )
+
+  converted <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+  annual_catch <- dplyr::filter(
+    converted,
+    type == "catch",
+    timing == 2013,
+    fleet == inputs[["dat"]][["fleetnames"]][1]
+  )
+  total_catch <- first_season[["catch"]] + second_season[["catch"]]
+  variance <- first_season[["catch"]]^2 * expm1(first_season[["catch_se"]]^2) +
+    second_season[["catch"]]^2 * expm1(second_season[["catch_se"]]^2)
+  expected_sdlog <- sqrt(log1p(variance / total_catch^2))
+
+  expect_equal(nrow(annual_catch), 1)
+  expect_equal(annual_catch[["observed"]], total_catch)
+  expect_equal(
+    annual_catch[["uncertainty"]],
+    glue::glue("~dlnorm(meanlog = log_catch_expected, sdlog = {expected_sdlog})")
+  )
 })
 
 test_that("ss3_data_to_fims() rejects empty filtered catch data", {
