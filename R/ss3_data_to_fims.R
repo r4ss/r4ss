@@ -172,12 +172,9 @@ ss3_data_to_fims <- function(
     uncertainty = character()
   )
 
-  #' Filter observations to selected fleets and report any rows removed.
-  #'
-  #' @param data Data frame containing a fleet or index column.
-  #' @param fleet_column Name of the column used to identify the fleet.
-  #' @param label Label used in the row-count message.
-  #' @return The filtered data frame.
+  # Filter observations to selected fleets and report any rows removed.
+  # data contains the fleet_column used to select rows; label names the data
+  # type in the row-count message. Return the filtered data frame.
   filter_and_report_fleets <- function(data, fleet_column, label) {
     n_before <- nrow(data)
     filtered_data <- data |>
@@ -193,12 +190,14 @@ ss3_data_to_fims <- function(
     filtered_data
   }
 
-  #' Normalize composition bins and reshape them into one row per bin.
-  #'
-  #' @param data SS3 age- or length-composition data.
-  #' @param bin_pattern Regular expression matching the composition-bin columns.
-  #' @return Long-format data with fleet, year, sample size, bin, and proportion.
-  process_composition <- function(data, bin_pattern, extra_columns = character()) {
+  # Normalize SS3 composition bins and reshape them into one row per bin.
+  # bin_pattern identifies the age or length columns; extra_columns preserves
+  # sample coordinates in the long-format output alongside fleet, year, and Nsamp.
+  process_composition <- function(
+    data,
+    bin_pattern,
+    extra_columns = character()
+  ) {
     bin_columns <- grep(bin_pattern, names(data), value = TRUE)
     if (length(bin_columns) == 0) {
       cli::cli_abort("No composition-bin columns were found in the SS3 data.")
@@ -224,14 +223,19 @@ ss3_data_to_fims <- function(
         values_to = "observed"
       ) |>
       dplyr::mutate(bin = as.numeric(substring(bin, first = 2))) |>
-      dplyr::select(year, fleet, Nsamp, bin, observed, dplyr::all_of(extra_columns)) |>
+      dplyr::select(
+        year,
+        fleet,
+        Nsamp,
+        bin,
+        observed,
+        dplyr::all_of(extra_columns)
+      ) |>
       dplyr::arrange(fleet, year, bin)
   }
 
-  #' Reject conflicting duplicate keys and remove exact repeated observations.
-  #'
-  #' @param data Output rows for a single data type.
-  #' @return Data with at most one row per identifying key.
+  # Reject conflicting duplicate keys and remove exact repeated observations.
+  # Input rows must all have the same data type. Return at most one row per key.
   filter_repeated_rows <- function(data) {
     n_rows_before <- nrow(data)
     data_type <- unique(data[["type"]])
@@ -437,10 +441,81 @@ ss3_data_to_fims <- function(
       )
     }
 
-    # A nonnegative lower length bound denotes CAAL. Use NA for marginal ages
-    # so the output type and likelihood can be chosen from this coordinate.
+    # Resolve age-composition bounds to population-bin indices. Depending on
+    # Lbin_method, SS3 interprets the input as population-bin indexes, data-bin
+    # indexes, or actual lengths. Zero and -1 select the corresponding endpoint.
+    lbin_method <- dat[["Lbin_method"]]
+    pop_length_bins <- dat[["lbin_vector_pop"]]
+    n_pop_length_bins <- dat[["N_lbinspop"]]
+    if (is.null(n_pop_length_bins)) {
+      n_pop_length_bins <- length(pop_length_bins)
+    }
+    if (
+      length(lbin_method) != 1 ||
+        is.na(lbin_method) ||
+        !lbin_method %in% 1:3 ||
+        is.null(pop_length_bins) ||
+        n_pop_length_bins < 1
+    ) {
+      cli::cli_abort(
+        "Age-composition length bounds require a valid {.code Lbin_method} and population length-bin vector."
+      )
+    }
+    pop_length_bins <- pop_length_bins[seq_len(n_pop_length_bins)]
+    resolve_pop_bin <- function(value, lower) {
+      if (is.na(value)) {
+        cli::cli_abort("Age-composition length bounds cannot be missing.")
+      }
+      if (value %in% c(-1, 0)) {
+        return(if (lower) 1L else as.integer(n_pop_length_bins))
+      }
+
+      if (lbin_method == 1) {
+        # Method 1 uses population-bin indexes; SS3 truncates fractional input.
+        index <- as.integer(value)
+      } else if (lbin_method == 2) {
+        # Method 2 uses data-bin indexes, which must map to a population bin.
+        index <- as.integer(value)
+        if (index < 1 || index > length(dat[["lbin_vector"]])) {
+          cli::cli_abort(
+            "Age-composition length bound is outside the data-bin indexes."
+          )
+        }
+        index <- match(dat[["lbin_vector"]][index], pop_length_bins)
+      } else {
+        # Method 3 uses actual lengths and requires an exact population-bin match.
+        index <- match(value, pop_length_bins)
+      }
+
+      if (is.na(index) || index < 1 || index > n_pop_length_bins) {
+        cli::cli_abort(
+          "Age-composition length bound does not identify a population length bin."
+        )
+      }
+      index
+    }
+    lower_bin <- vapply(
+      agecomp_filtered[["Lbin_lo"]],
+      resolve_pop_bin,
+      integer(1),
+      lower = TRUE
+    )
+    upper_bin <- vapply(
+      agecomp_filtered[["Lbin_hi"]],
+      resolve_pop_bin,
+      integer(1),
+      lower = FALSE
+    )
+    # Full-range bounds are marginal ages. Restricted ranges are CAAL; store
+    # their lower bound as an actual length, regardless of the input method.
     agecomp_filtered <- agecomp_filtered |>
-      dplyr::mutate(length = ifelse(Lbin_lo >= 0, Lbin_lo, NA_real_))
+      dplyr::mutate(
+        length = ifelse(
+          lower_bin == 1 & upper_bin == n_pop_length_bins,
+          NA_real_,
+          pop_length_bins[lower_bin]
+        )
+      )
     age_info <- process_composition(
       agecomp_filtered,
       "^(f|a)[0-9]+$",
@@ -566,10 +641,8 @@ ss3_data_to_fims <- function(
         )
       }
 
-      #' Calculate observed-age probabilities from one SS3 mean/SD vector pair.
-      #'
-      #' @param definition_id SS3 age-error definition number.
-      #' @return A matrix with true ages in rows and observed ages in columns.
+      # Calculate probabilities from the mean/SD pair identified by definition_id.
+      # Return a matrix with true ages in rows and observed ages in columns.
       make_ageing_error_matrix <- function(definition_id) {
         mean_observed_age <- as.numeric(
           ss3_ageerror[(2 * definition_id) - 1, age_columns, drop = TRUE]
@@ -981,11 +1054,8 @@ ss3_data_to_fims <- function(
       high_bins <- NULL
     }
 
-    #' Look up the SS3 age-to-length proportion for one age and length bin.
-    #'
-    #' @param age Age bin to look up.
-    #' @param length Length bin to look up.
-    #' @return The aggregated proportion, or `NA` when either bin is out of range.
+    # Look up the SS3 proportion for one age and length bin, aggregating tails.
+    # Return NA when either coordinate is outside the requested bins.
     length_at_age_lookup <- function(age, length) {
       if (age %in% ages && length %in% lengths) {
         # add the low or high population bins to the first and last data bin

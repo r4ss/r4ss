@@ -75,14 +75,9 @@ for (i in seq_along(mods)) {
         )
         expect_gt(nrow(fims_data), 0)
 
-        # Nonnegative Lbin_lo denotes ages conditioned on length; positive fleet
-        # IDs are selected by default. This trigger inspects input rows before
-        # the converter's discard and largest-sample filtering.
-        agecomp <- inputs[["dat"]][["agecomp"]]
-        if (
-          !is.null(agecomp) &&
-            any(agecomp[["Lbin_lo"]] >= 0 & agecomp[["fleet"]] > 0)
-        ) {
+        # Check CAAL coordinates only when the converter resolves restricted
+        # population-length bounds into conditional age-at-length output.
+        if ("caal_comp" %in% fims_data[["type"]]) {
           # CAAL output needs both coordinates, unlike marginal age compositions.
           caal <- fims_data[fims_data[["type"]] == "caal_comp", ]
           expect_gt(nrow(caal), 0)

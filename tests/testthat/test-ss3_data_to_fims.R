@@ -38,6 +38,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
     ) %in%
       fims_data$type
   ))
+  expect_false("caal_comp" %in% fims_data$type)
 
   simple_small_input <- SS_read(dir = path)
 
@@ -330,22 +331,27 @@ test_that("ss3_data_to_fims() does not convert parameter-based age error", {
   )
 })
 
-test_that("ss3_data_to_fims() rejects mixed age-error keys within a fleet-year", {
+test_that("ss3_data_to_fims() retains the largest sample with mixed age-error keys", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
   agecomp_row <- ss3_inputs[["dat"]][["agecomp"]] |>
     dplyr::slice(1)
-  # Give one fleet-year two different definition IDs to create an invalid mapping.
-  agecomp_row[["ageerr"]] <- 0
-  ss3_inputs[["dat"]][["agecomp"]] <- dplyr::bind_rows(
-    ss3_inputs[["dat"]][["agecomp"]],
-    agecomp_row
-  )
+  agecomp_row[["ageerr"]] <- 1
+  agecomp_row[["Nsamp"]] <- 10
+  larger_row <- agecomp_row
+  larger_row[["ageerr"]] <- 0
+  larger_row[["Nsamp"]] <- 20
 
-  expect_error(
-    ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE),
-    "fleet-year references multiple SS3 age-error definitions"
+  ss3_inputs[["dat"]][["agecomp"]] <- larger_row
+  expected <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  # The smaller sample's age-error definition must not affect the conversion.
+  ss3_inputs[["dat"]][["agecomp"]] <- dplyr::bind_rows(
+    agecomp_row,
+    larger_row
   )
+  converted <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  expect_equal(converted, expected)
+  expect_false(any(converted[["type"]] == "ageing_error"))
 })
 
 test_that("ss3_data_to_fims() skips empirical growth data when EWAA is false", {
@@ -420,6 +426,40 @@ test_that("ss3_data_to_fims() validates age and length bins", {
     ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE, lengths = 999),
     "lengths.*length bin in the SS3 data"
   )
+})
+
+test_that("ss3_data_to_fims() interprets CAAL bounds using Lbin_method", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  inputs <- SS_read(dir = path, ss_new = FALSE)
+  inputs[["dat"]][["agecomp"]] <- inputs[["dat"]][["agecomp"]][1, , drop = FALSE]
+
+  # Simple_small uses population-bin indexes; 1 through -1 spans all bins.
+  marginal <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+  expect_true("age_comp" %in% marginal[["type"]])
+  expect_false("caal_comp" %in% marginal[["type"]])
+
+  # The same population length (28) is expressed differently by each method:
+  # population-bin index, matching data-bin index, or actual length.
+  method_cases <- list(
+    list(method = 1, lower = 10, upper = 10),
+    list(method = 2, lower = 2, upper = 2),
+    list(method = 3, lower = 28, upper = 28)
+  )
+  for (case in method_cases) {
+    conditional_inputs <- inputs
+    conditional_inputs[["dat"]][["Lbin_method"]] <- case$method
+    conditional_inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- case$lower
+    conditional_inputs[["dat"]][["agecomp"]][["Lbin_hi"]] <- case$upper
+
+    conditional <- ss3_data_to_fims(
+      ss3_inputs = conditional_inputs,
+      EWAA = FALSE
+    )
+    caal <- dplyr::filter(conditional, type == "caal_comp")
+    expect_gt(nrow(caal), 0)
+    expect_true(all(caal[["length"]] == 28))
+    expect_false("age_comp" %in% conditional[["type"]])
+  }
 })
 
 test_that("ss3_data_to_fims() rejects empty filtered catch data", {
