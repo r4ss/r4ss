@@ -529,7 +529,9 @@ ss3_data_to_fims <- function(
         # Method 2 uses data-bin indexes, but SS3 may already have expanded
         # sentinel bounds in parsed data to population-bin indexes.
         index <- as.integer(value)
-        if (index > length(dat[["lbin_vector"]]) && index <= n_pop_length_bins) {
+        if (
+          index > length(dat[["lbin_vector"]]) && index <= n_pop_length_bins
+        ) {
           return(index)
         }
         if (index < 1 || index > length(dat[["lbin_vector"]])) {

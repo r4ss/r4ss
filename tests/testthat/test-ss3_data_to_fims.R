@@ -500,7 +500,8 @@ test_that("ss3_data_to_fims() combines seasonal catches by fleet and year", {
     fleet == inputs[["dat"]][["fleetnames"]][1]
   )
   total_catch <- first_season[["catch"]] + second_season[["catch"]]
-  variance <- first_season[["catch"]]^2 * expm1(first_season[["catch_se"]]^2) +
+  variance <- first_season[["catch"]]^2 *
+    expm1(first_season[["catch_se"]]^2) +
     second_season[["catch"]]^2 * expm1(second_season[["catch_se"]]^2)
   expected_sdlog <- sqrt(log1p(variance / total_catch^2))
 
@@ -508,7 +509,9 @@ test_that("ss3_data_to_fims() combines seasonal catches by fleet and year", {
   expect_equal(annual_catch[["observed"]], total_catch)
   expect_equal(
     annual_catch[["uncertainty"]],
-    glue::glue("~dlnorm(meanlog = log_catch_expected, sdlog = {expected_sdlog})")
+    glue::glue(
+      "~dlnorm(meanlog = log_catch_expected, sdlog = {expected_sdlog})"
+    )
   )
 })
 
