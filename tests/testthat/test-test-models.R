@@ -69,7 +69,13 @@ for (i in seq_along(mods)) {
         expect_named(
           fims_data,
           c(
-            "type", "fleet", "age", "length", "timing", "observed", "unit",
+            "type",
+            "fleet",
+            "age",
+            "length",
+            "timing",
+            "observed",
+            "unit",
             "uncertainty"
           )
         )

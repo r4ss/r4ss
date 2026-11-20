@@ -476,7 +476,11 @@ test_that("ss3_data_to_fims() excludes discard compositions before sample select
   path <- system.file("extdata", "simple_small", package = "r4ss")
   inputs <- SS_read(dir = path, ss_new = FALSE)
   for (datatype in c("agecomp", "lencomp")) {
-    inputs[["dat"]][[datatype]] <- inputs[["dat"]][[datatype]][1, , drop = FALSE]
+    inputs[["dat"]][[datatype]] <- inputs[["dat"]][[datatype]][
+      1,
+      ,
+      drop = FALSE
+    ]
     inputs[["dat"]][[datatype]][["part"]] <- 2
   }
 
@@ -492,7 +496,8 @@ test_that("ss3_data_to_fims() excludes discard compositions before sample select
         discard[["ageerr"]] <- 999
       }
       with_discards[["dat"]][[datatype]] <- rbind(
-        discard, inputs[["dat"]][[datatype]]
+        discard,
+        inputs[["dat"]][[datatype]]
       )
     }
     messages <- character()
@@ -504,7 +509,10 @@ test_that("ss3_data_to_fims() excludes discard compositions before sample select
     )
     expect_equal(converted, expected)
     expect_true(any(grepl("Excluded 1 discard age-composition rows", messages)))
-    expect_true(any(grepl("Excluded 1 discard length-composition rows", messages)))
+    expect_true(any(grepl(
+      "Excluded 1 discard length-composition rows",
+      messages
+    )))
   }
 
   for (datatype in c("agecomp", "lencomp")) {
@@ -512,7 +520,8 @@ test_that("ss3_data_to_fims() excludes discard compositions before sample select
   }
   discarded <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
   expect_false(any(
-    discarded[["type"]] %in% c("age_comp", "caal_comp", "length_comp", "ageing_error")
+    discarded[["type"]] %in%
+      c("age_comp", "caal_comp", "length_comp", "ageing_error")
   ))
 })
 
@@ -538,12 +547,18 @@ test_that("ss3_data_to_fims() retains the largest length sample after fleet filt
   ss3_inputs[["dat"]][["lencomp"]] <- large
   expected <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
   ss3_inputs[["dat"]][["lencomp"]] <- dplyr::bind_rows(
-    small, large, tied, negative
+    small,
+    large,
+    tied,
+    negative
   )
   converted <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
   expect_equal(converted, expected)
 
-  fleets <- c(seq_along(ss3_inputs[["dat"]][["fleetnames"]]), negative[["fleet"]])
+  fleets <- c(
+    seq_along(ss3_inputs[["dat"]][["fleetnames"]]),
+    negative[["fleet"]]
+  )
   selected <- ss3_data_to_fims(
     ss3_inputs = ss3_inputs,
     EWAA = FALSE,
