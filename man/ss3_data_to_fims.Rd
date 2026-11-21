@@ -54,45 +54,22 @@ NULL will default to using all length data bins from the SS3 model.}
 \item{ageing_error_matrices}{Optional vector of SS3 age-error definition IDs
 to convert. If NULL, all positive IDs referenced by retained age-composition
 data are converted. Definitions omitted from this vector are not applied.}
-
-\item{fleet_column}{Name of the column used to identify the fleet.}
-
-\item{label}{Label used in the row-count message.}
-
-\item{bin_pattern}{Regular expression matching the composition-bin columns.}
-
-\item{data}{Output rows for a single data type.}
-
-\item{definition_id}{SS3 age-error definition number.}
-
-\item{age}{Age bin to look up.}
-
-\item{length}{Length bin to look up.}
 }
 \value{
 A data frame that can be passed to \code{FIMS::FIMSFrame()}
-
-The filtered data frame.
-Normalize composition bins and reshape them into one row per bin.
-
-Long-format data with fleet, year, sample size, bin, and proportion.
-Reject conflicting duplicate keys and remove exact repeated observations.
-
-Data with at most one row per identifying key.
-Calculate observed-age probabilities from one SS3 mean/SD vector pair.
-
-A matrix with true ages in rows and observed ages in columns.
-Look up the SS3 age-to-length proportion for one age and length bin.
-
-The aggregated proportion, or \code{NA} when either bin is out of range.
 }
 \description{
 Uses output from \code{r4ss::SS_read()} and does
 filtering, simplifying, and reformatting.
+Discard age- and length-composition rows (\code{part = 1}) are excluded because
+FIMS does not support them.
+After fleet filtering, only the observation with the largest \code{Nsamp} is
+retained for each fleet-year, separately for length and age compositions.
+Age-composition selection is across marginal and conditional age-at-length
+samples. Ties retain the first input row.
 }
 \seealso{
 \code{\link[=SS_write]{SS_write()}} can be used to write the input files using the list
-Filter observations to selected fleets and report any rows removed.
 }
 \author{
 Ian G. Taylor, Megumi Oshima, Kelli F. Johnson

@@ -38,6 +38,7 @@ test_that("ss3_data_to_fims() runs on simple_small", {
     ) %in%
       fims_data$type
   ))
+  expect_false("caal_comp" %in% fims_data$type)
 
   simple_small_input <- SS_read(dir = path)
 
@@ -330,22 +331,27 @@ test_that("ss3_data_to_fims() does not convert parameter-based age error", {
   )
 })
 
-test_that("ss3_data_to_fims() rejects mixed age-error keys within a fleet-year", {
+test_that("ss3_data_to_fims() retains the largest sample with mixed age-error keys", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
   agecomp_row <- ss3_inputs[["dat"]][["agecomp"]] |>
     dplyr::slice(1)
-  # Give one fleet-year two different definition IDs to create an invalid mapping.
-  agecomp_row[["ageerr"]] <- 0
-  ss3_inputs[["dat"]][["agecomp"]] <- dplyr::bind_rows(
-    ss3_inputs[["dat"]][["agecomp"]],
-    agecomp_row
-  )
+  agecomp_row[["ageerr"]] <- 1
+  agecomp_row[["Nsamp"]] <- 10
+  larger_row <- agecomp_row
+  larger_row[["ageerr"]] <- 0
+  larger_row[["Nsamp"]] <- 20
 
-  expect_error(
-    ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE),
-    "fleet-year references multiple SS3 age-error definitions"
+  ss3_inputs[["dat"]][["agecomp"]] <- larger_row
+  expected <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  # The smaller sample's age-error definition must not affect the conversion.
+  ss3_inputs[["dat"]][["agecomp"]] <- dplyr::bind_rows(
+    agecomp_row,
+    larger_row
   )
+  converted <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  expect_equal(converted, expected)
+  expect_false(any(converted[["type"]] == "ageing_error"))
 })
 
 test_that("ss3_data_to_fims() skips empirical growth data when EWAA is false", {
@@ -397,6 +403,30 @@ test_that("ss3_data_to_fims() inherits EWAA from the control file", {
   ))
 })
 
+test_that("ss3_data_to_fims() skips length processing for empirical WAA models", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(
+    dir = path,
+    ss_new = FALSE,
+    read_wtatage = TRUE
+  )
+  ss3_inputs[["ctl"]][["EmpiricalWAA"]] <- 1
+  ss3_inputs[["dat"]][["lbin_vector"]] <- NULL
+  ss3_inputs[["dat"]][["lbin_vector_pop"]] <- NULL
+  ss3_inputs[["dat"]][["N_lbinspop"]] <- NULL
+  ss3_inputs[["dat"]][["lencomp"]] <- NULL
+
+  fims_data <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = NULL
+  )
+
+  expect_true("age_comp" %in% fims_data[["type"]])
+  expect_false("caal_comp" %in% fims_data[["type"]])
+  expect_true("weight_at_age" %in% fims_data[["type"]])
+  expect_false("age_to_length_conversion" %in% fims_data[["type"]])
+})
+
 test_that("ss3_data_to_fims() rejects unsupported CPUE distributions", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
@@ -422,6 +452,97 @@ test_that("ss3_data_to_fims() validates age and length bins", {
   )
 })
 
+test_that("ss3_data_to_fims() interprets CAAL bounds using Lbin_method", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  inputs <- SS_read(dir = path, ss_new = FALSE)
+  inputs[["dat"]][["agecomp"]] <- inputs[["dat"]][["agecomp"]][
+    1,
+    ,
+    drop = FALSE
+  ]
+
+  # Simple_small uses population-bin indexes; 1 through -1 spans all bins.
+  marginal <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+  expect_true("age_comp" %in% marginal[["type"]])
+  expect_false("caal_comp" %in% marginal[["type"]])
+
+  # SS3 treats negative method-2 bounds as the first/last data-bin indexes.
+  # These bounds are conditional because the population bins extend below the
+  # data-bin range, so the resulting lower bound is the first data length.
+  for (bounds in list(c(-1, -25), c(1, 44))) {
+    bounded_inputs <- inputs
+    bounded_inputs[["dat"]][["Lbin_method"]] <- 2
+    bounded_inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- bounds[1]
+    bounded_inputs[["dat"]][["agecomp"]][["Lbin_hi"]] <- bounds[2]
+    bounded <- ss3_data_to_fims(ss3_inputs = bounded_inputs, EWAA = FALSE)
+    caal <- dplyr::filter(bounded, type == "caal_comp")
+    expect_gt(nrow(caal), 0)
+    expect_true(all(caal[["length"]] == 26))
+    expect_false("age_comp" %in% bounded[["type"]])
+  }
+
+  # The same population length (28) is expressed differently by each method:
+  # population-bin index, matching data-bin index, or actual length.
+  method_cases <- list(
+    list(method = 1, lower = 10, upper = 10),
+    list(method = 2, lower = 2, upper = 2),
+    list(method = 3, lower = 28, upper = 28)
+  )
+  for (case in method_cases) {
+    conditional_inputs <- inputs
+    conditional_inputs[["dat"]][["Lbin_method"]] <- case$method
+    conditional_inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- case$lower
+    conditional_inputs[["dat"]][["agecomp"]][["Lbin_hi"]] <- case$upper
+
+    conditional <- ss3_data_to_fims(
+      ss3_inputs = conditional_inputs,
+      EWAA = FALSE
+    )
+    caal <- dplyr::filter(conditional, type == "caal_comp")
+    expect_gt(nrow(caal), 0)
+    expect_true(all(caal[["length"]] == 28))
+    expect_false("age_comp" %in% conditional[["type"]])
+  }
+})
+
+test_that("ss3_data_to_fims() combines seasonal catches by fleet and year", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  inputs <- SS_read(dir = path, ss_new = FALSE)
+  first_season <- inputs[["dat"]][["catch"]] |>
+    dplyr::filter(year == 2013, fleet == 1, seas == 1) |>
+    dplyr::slice(1)
+  second_season <- first_season
+  second_season[["seas"]] <- 2
+  second_season[["catch"]] <- 50
+  second_season[["catch_se"]] <- 0.2
+  inputs[["dat"]][["catch"]] <- dplyr::bind_rows(
+    inputs[["dat"]][["catch"]],
+    second_season
+  )
+
+  converted <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+  annual_catch <- dplyr::filter(
+    converted,
+    type == "catch",
+    timing == 2013,
+    fleet == inputs[["dat"]][["fleetnames"]][1]
+  )
+  total_catch <- first_season[["catch"]] + second_season[["catch"]]
+  variance <- first_season[["catch"]]^2 *
+    expm1(first_season[["catch_se"]]^2) +
+    second_season[["catch"]]^2 * expm1(second_season[["catch_se"]]^2)
+  expected_sdlog <- sqrt(log1p(variance / total_catch^2))
+
+  expect_equal(nrow(annual_catch), 1)
+  expect_equal(annual_catch[["observed"]], total_catch)
+  expect_equal(
+    annual_catch[["uncertainty"]],
+    glue::glue(
+      "~dlnorm(meanlog = log_catch_expected, sdlog = {expected_sdlog})"
+    )
+  )
+})
+
 test_that("ss3_data_to_fims() rejects empty filtered catch data", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
@@ -430,6 +551,107 @@ test_that("ss3_data_to_fims() rejects empty filtered catch data", {
     ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE, fleets = 999),
     "No catch data remain after removing equilibrium rows"
   )
+})
+
+test_that("ss3_data_to_fims() excludes discard compositions before sample selection", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  inputs <- SS_read(dir = path, ss_new = FALSE)
+  for (datatype in c("agecomp", "lencomp")) {
+    inputs[["dat"]][[datatype]] <- inputs[["dat"]][[datatype]][
+      1,
+      ,
+      drop = FALSE
+    ]
+    inputs[["dat"]][[datatype]][["part"]] <- 2
+  }
+
+  for (length_bin in c(-1, 10)) {
+    inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- length_bin
+    expected <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+    with_discards <- inputs
+    for (datatype in c("agecomp", "lencomp")) {
+      discard <- inputs[["dat"]][[datatype]]
+      discard[["part"]] <- 1
+      discard[["Nsamp"]] <- discard[["Nsamp"]] + 1000
+      if (datatype == "agecomp") {
+        discard[["ageerr"]] <- 999
+      }
+      with_discards[["dat"]][[datatype]] <- rbind(
+        discard,
+        inputs[["dat"]][[datatype]]
+      )
+    }
+    messages <- character()
+    converted <- withCallingHandlers(
+      ss3_data_to_fims(ss3_inputs = with_discards, EWAA = FALSE),
+      message = function(message) {
+        messages <<- c(messages, conditionMessage(message))
+      }
+    )
+    expect_equal(converted, expected)
+    expect_true(any(grepl("Excluded 1 discard age-composition rows", messages)))
+    expect_true(any(grepl(
+      "Excluded 1 discard length-composition rows",
+      messages
+    )))
+  }
+
+  for (datatype in c("agecomp", "lencomp")) {
+    inputs[["dat"]][[datatype]][["part"]] <- 1
+  }
+  discarded <- ss3_data_to_fims(ss3_inputs = inputs, EWAA = FALSE)
+  expect_false(any(
+    discarded[["type"]] %in%
+      c("age_comp", "caal_comp", "length_comp", "ageing_error")
+  ))
+})
+
+test_that("ss3_data_to_fims() retains the largest length sample after fleet filtering", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
+  ss3_inputs[["dat"]][["agecomp"]] <- NULL
+  small <- ss3_inputs[["dat"]][["lencomp"]][1, , drop = FALSE]
+  bin_columns <- grep("^(f|l)[0-9]+$", names(small), value = TRUE)
+  small[, bin_columns] <- 0
+  small[[bin_columns[1]]] <- 1
+  small[["Nsamp"]] <- 10
+  large <- small
+  large[, bin_columns] <- 0
+  large[[tail(bin_columns, 1)]] <- 1
+  large[["Nsamp"]] <- 20
+  tied <- small
+  tied[["Nsamp"]] <- large[["Nsamp"]]
+  negative <- small
+  negative[["fleet"]] <- -small[["fleet"]]
+  negative[["Nsamp"]] <- 100
+
+  ss3_inputs[["dat"]][["lencomp"]] <- large
+  expected <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  ss3_inputs[["dat"]][["lencomp"]] <- dplyr::bind_rows(
+    small,
+    large,
+    tied,
+    negative
+  )
+  converted <- ss3_data_to_fims(ss3_inputs = ss3_inputs, EWAA = FALSE)
+  expect_equal(converted, expected)
+
+  fleets <- c(
+    seq_along(ss3_inputs[["dat"]][["fleetnames"]]),
+    negative[["fleet"]]
+  )
+  selected <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = FALSE,
+    fleets = fleets
+  )
+  ss3_inputs[["dat"]][["lencomp"]] <- negative
+  expected_negative <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = FALSE,
+    fleets = fleets
+  )
+  expect_equal(selected, expected_negative)
 })
 
 test_that("ss3_data_to_fims() rejects conflicting repeated rows", {

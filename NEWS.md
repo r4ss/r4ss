@@ -1,3 +1,9 @@
+# in process changes
+* Expand the `ss3_data_to_fims()` function to convert ageing error matrices and conditional age-at-length data to FIMS
+* Add `show_empty` to `SSplotData()` to retain labeled blank sections for requested data types with no observations.
+* Make `SSgetoutput()` work with URLs and allow `SS_output()` to read covariance files from URLs.
+
+
 # r4ss 1.56.0 (August 2026)
 
 * Improve `retro()`: several quantities now automatically adjusted, including the end year of main recruitment deviations, the bias adjustment settings, removing blocks which occur after the retro year, and year ranges in forecast file for forecast and benchmark calculations. See #1087 for details.

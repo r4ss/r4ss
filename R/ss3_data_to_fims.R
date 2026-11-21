@@ -2,6 +2,12 @@
 #'
 #' Uses output from `r4ss::SS_read()` and does
 #' filtering, simplifying, and reformatting.
+#' Discard age- and length-composition rows (`part = 1`) are excluded because
+#' FIMS does not support them.
+#' After fleet filtering, only the observation with the largest `Nsamp` is
+#' retained for each fleet-year, separately for length and age compositions.
+#' Age-composition selection is across marginal and conditional age-at-length
+#' samples. Ties retain the first input row.
 #'
 #' @param ss3_dir Directory containing the SS3 input and output model
 #' files. Alternatively the SS3 input and output lists can be input
@@ -67,6 +73,8 @@ ss3_data_to_fims <- function(
       "`ss3_inputs` should be a list containing 'dat'"
     )
   }
+  # An explicit EWAA setting overrides SS3; otherwise follow its control file.
+  # Empirical mode supplies fixed weight and age-to-length tables to FIMS.
   if (is.null(EWAA)) {
     if (is.null(ss3_inputs[["ctl"]][["EmpiricalWAA"]])) {
       cli::cli_abort(
@@ -96,6 +104,32 @@ ss3_data_to_fims <- function(
 
   # pull out dat element from the list to simplify code
   dat <- ss3_inputs[["dat"]]
+  uses_empirical_waa <- isTRUE(
+    as.logical(ss3_inputs[["ctl"]][["EmpiricalWAA"]])
+  )
+  validate_length_bins <- function(length_bins) {
+    if (
+      !is.numeric(length_bins) ||
+        length(length_bins) == 0 ||
+        anyNA(length_bins) ||
+        any(!is.finite(length_bins)) ||
+        anyDuplicated(length_bins)
+    ) {
+      cli::cli_abort(
+        "{.code lengths} must be a non-empty vector of unique finite numbers."
+      )
+    }
+    if (!all(length_bins %in% dat[["lbin_vector"]])) {
+      cli::cli_abort(
+        "Every value in {.code lengths} must be a length bin in the SS3 data."
+      )
+    }
+    length_bins
+  }
+  # Explicitly supplied bins retain their validation even when they are unused.
+  if (!is.null(lengths)) {
+    lengths <- validate_length_bins(lengths)
+  }
 
   # fill in any missing inputs
   if (is.null(fleets)) {
@@ -127,31 +161,8 @@ ss3_data_to_fims <- function(
   cli::cli_alert_info(
     "Using age bins: {paste(ages, collapse = ', ')}"
   )
-  if (is.null(lengths)) {
-    lengths <- dat[["lbin_vector"]]
-  }
-  # Ensure requested length bins are unique values in the SS3 data bins.
-  if (
-    !is.numeric(lengths) ||
-      length(lengths) == 0 ||
-      anyNA(lengths) ||
-      any(!is.finite(lengths)) ||
-      anyDuplicated(lengths)
-  ) {
-    cli::cli_abort(
-      "{.code lengths} must be a non-empty vector of unique finite numbers."
-    )
-  }
-  if (!all(lengths %in% dat[["lbin_vector"]])) {
-    cli::cli_abort(
-      "Every value in {.code lengths} must be a length bin in the SS3 data."
-    )
-  }
-  cli::cli_alert_info(
-    "Using length bins: {paste(lengths, collapse = ', ')}"
-  )
-
-  # create empty data frame
+  # Define the common FIMS schema used by all data types below. Coordinates
+  # that do not apply to a data type are filled with NA when its rows are built.
   res <- data.frame(
     type = character(),
     fleet = character(),
@@ -163,12 +174,9 @@ ss3_data_to_fims <- function(
     uncertainty = character()
   )
 
-  #' Filter observations to selected fleets and report any rows removed.
-  #'
-  #' @param data Data frame containing a fleet or index column.
-  #' @param fleet_column Name of the column used to identify the fleet.
-  #' @param label Label used in the row-count message.
-  #' @return The filtered data frame.
+  # Filter observations to selected fleets and report any rows removed.
+  # data contains the fleet_column used to select rows; label names the data
+  # type in the row-count message. Return the filtered data frame.
   filter_and_report_fleets <- function(data, fleet_column, label) {
     n_before <- nrow(data)
     filtered_data <- data |>
@@ -184,17 +192,22 @@ ss3_data_to_fims <- function(
     filtered_data
   }
 
-  #' Normalize composition bins and reshape them into one row per bin.
-  #'
-  #' @param data SS3 age- or length-composition data.
-  #' @param bin_pattern Regular expression matching the composition-bin columns.
-  #' @return Long-format data with fleet, year, sample size, bin, and proportion.
-  process_composition <- function(data, bin_pattern) {
+  # Normalize SS3 composition bins and reshape them into one row per bin.
+  # bin_pattern identifies the age or length columns; extra_columns preserves
+  # sample coordinates in the long-format output alongside fleet, year, and Nsamp.
+  process_composition <- function(
+    data,
+    bin_pattern,
+    extra_columns = character()
+  ) {
     bin_columns <- grep(bin_pattern, names(data), value = TRUE)
     if (length(bin_columns) == 0) {
       cli::cli_abort("No composition-bin columns were found in the SS3 data.")
     }
 
+    # Normalize each sample across its retained bins before converting wide
+    # columns to long rows. Nsamp remains the sample size, not a bin count.
+    # Preserve extra coordinates such as conditioning length for CAAL samples.
     data |>
       dplyr::mutate(fleet = abs(fleet)) |> # convert any negative fleet to positive
       dplyr::select(!dplyr::matches("^m[0-9]")) |> # exclude male comps
@@ -212,22 +225,31 @@ ss3_data_to_fims <- function(
         values_to = "observed"
       ) |>
       dplyr::mutate(bin = as.numeric(substring(bin, first = 2))) |>
-      dplyr::select(year, fleet, Nsamp, bin, observed) |>
+      dplyr::select(
+        year,
+        fleet,
+        Nsamp,
+        bin,
+        observed,
+        dplyr::all_of(extra_columns)
+      ) |>
       dplyr::arrange(fleet, year, bin)
   }
 
-  #' Reject conflicting duplicate keys and remove exact repeated observations.
-  #'
-  #' @param data Output rows for a single data type.
-  #' @return Data with at most one row per identifying key.
+  # Reject conflicting duplicate keys and remove exact repeated observations.
+  # Input rows must all have the same data type. Return at most one row per key.
   filter_repeated_rows <- function(data) {
     n_rows_before <- nrow(data)
     data_type <- unique(data[["type"]])
     identifying_columns <- c("type", "fleet", "age", "length", "timing")
+    # For ageing_error, uncertainty stores true age, while age is observed age.
+    # Both are needed to identify a matrix cell rather than a whole age row.
     if (identical(data_type, "ageing_error")) {
       identifying_columns <- c(identifying_columns, "uncertainty")
     }
     value_columns <- setdiff(names(data), identifying_columns)
+    # Do not silently choose between different values for the same FIMS key.
+    # Only exact repetitions can be safely removed by distinct() below.
     conflicting_rows <- data |>
       dplyr::group_by(dplyr::across(dplyr::all_of(identifying_columns))) |>
       dplyr::filter(dplyr::if_any(
@@ -274,7 +296,62 @@ ss3_data_to_fims <- function(
       "No catch data remain after removing equilibrium rows and filtering fleets."
     )
   }
-  # modify any rows with 0 catch
+  # SS3 can report catch by season, but FIMS has only fleet and year keys.
+  # First reject conflicting repeats of the same seasonal observation; exact
+  # repeated rows are safe to remove before combining seasons.
+  catch_keys <- c("fleet", "year", "seas")
+  n_catch_before_dedup <- nrow(catch_by_year_fleet)
+  repeated_catch <- catch_by_year_fleet |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(catch_keys))) |>
+    dplyr::filter(dplyr::n() > 1) |>
+    dplyr::ungroup()
+  conflicting_catch <- repeated_catch |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(catch_keys))) |>
+    dplyr::filter(dplyr::if_any(
+      dplyr::all_of(c("catch", "catch_se")),
+      ~ dplyr::n_distinct(.x, na.rm = FALSE) > 1
+    )) |>
+    dplyr::ungroup()
+  if (nrow(conflicting_catch) > 0) {
+    cli::cli_abort('Repeated rows for type "catch" have conflicting values.')
+  }
+  catch_by_year_fleet <- catch_by_year_fleet |>
+    dplyr::distinct(dplyr::across(dplyr::all_of(catch_keys)), .keep_all = TRUE)
+  n_catch_duplicates <- n_catch_before_dedup - nrow(catch_by_year_fleet)
+  if (n_catch_duplicates > 0) {
+    percent_removed <- round(
+      100 * n_catch_duplicates / n_catch_before_dedup,
+      digits = 1
+    )
+    cli::cli_alert_warning(
+      "Removed {n_catch_duplicates} repeated rows ({percent_removed}%) out of {n_catch_before_dedup} total rows for type {.val catch}."
+    )
+  }
+
+  # Sum seasonal catches to the annual fleet-year values FIMS can represent.
+  # For independent lognormal seasonal errors, combine variances on the catch
+  # scale and convert the resulting coefficient of variation back to sdlog.
+  catch_by_year_fleet <- catch_by_year_fleet |>
+    dplyr::group_by(.data[["fleet"]], .data[["year"]]) |>
+    dplyr::summarize(
+      annual_catch = sum(.data[["catch"]]),
+      catch_se = {
+        total_catch <- sum(.data[["catch"]])
+        if (total_catch > 0) {
+          variance <- sum(
+            .data[["catch"]]^2 * expm1(.data[["catch_se"]]^2)
+          )
+          sqrt(log1p(variance / total_catch^2))
+        } else {
+          max(.data[["catch_se"]])
+        }
+      },
+      .groups = "drop"
+    ) |>
+    dplyr::mutate(catch = .data[["annual_catch"]]) |>
+    dplyr::select(-"annual_catch")
+  # Replace zero catches with a small positive value for the lognormal
+  # likelihood; leave the remaining observations and their uncertainty intact.
   n_catch_zeros <- sum(catch_by_year_fleet[["catch"]] == 0)
   if (n_catch_zeros > 0) {
     cli::cli_alert_info(
@@ -313,6 +390,8 @@ ss3_data_to_fims <- function(
       fleet_column = "index",
       label = "CPUE"
     )
+    # Observation rows identify the survey by index; CPUEinfo identifies it
+    # by fleet. Join these IDs to choose the likelihood for each observation.
     index_info <- cpue_filtered |>
       dplyr::select(year, index, obs, se_log) |>
       dplyr::arrange(index, year) |>
@@ -358,6 +437,37 @@ ss3_data_to_fims <- function(
       fleet_column = "fleet",
       label = "agecomp"
     )
+    # Exclude unsupported discard samples before ranking Nsamp, so a larger
+    # discard sample cannot replace a usable sample or supply its age-error ID.
+    n_discard_agecomp <- sum(agecomp_filtered[["part"]] == 1, na.rm = TRUE)
+    if (n_discard_agecomp > 0) {
+      agecomp_filtered <- agecomp_filtered |>
+        dplyr::filter(is.na(.data[["part"]]) | .data[["part"]] != 1)
+      cli::cli_alert_info(
+        "Excluded {n_discard_agecomp} discard age-composition rows (part = 1), which FIMS does not support."
+      )
+    }
+  }
+  # Filtering can remove every sample. Skip reshaping and bin completion in
+  # that case, while still allowing catch and other data types to be converted.
+  if (!is.null(dat[["agecomp"]]) && nrow(agecomp_filtered) > 0) {
+    # Filter signed fleet IDs first, so negative fleets require explicit selection.
+    # Then map retained positive/negative IDs to the same FIMS fleet for grouping.
+    n_agecomp <- nrow(agecomp_filtered)
+    # FIMS uses one age-error matrix per fleet-year. Keep only the largest-Nsamp
+    # row across marginal ages and all CAAL length strata, not one per stratum.
+    # Do this before reshaping so compositions and age-error mappings use the
+    # same retained observations. Equal sample sizes retain the first input row.
+    agecomp_filtered <- agecomp_filtered |>
+      dplyr::mutate(fleet = abs(.data[["fleet"]])) |>
+      dplyr::group_by(.data[["fleet"]], .data[["year"]]) |>
+      dplyr::slice_max(.data[["Nsamp"]], n = 1, with_ties = FALSE) |>
+      dplyr::ungroup()
+    if (nrow(agecomp_filtered) < n_agecomp) {
+      cli::cli_alert_info(
+        "Retained the largest-sample age composition per fleet-year: {n_agecomp} rows reduced to {nrow(agecomp_filtered)}."
+      )
+    }
 
     # if no age-0 observations, then insert columns for age-0 up to first age bin with 0 values
     # to avoid issues with missing age bins in the FIMSFrame
@@ -387,30 +497,140 @@ ss3_data_to_fims <- function(
       )
     }
 
-    age_info <- process_composition(agecomp_filtered, "^(f|a)[0-9]+$") |>
+    if (uses_empirical_waa) {
+      # Empirical weight-at-age models do not use CAAL; retain these as marginal ages.
+      agecomp_filtered <- agecomp_filtered |>
+        dplyr::mutate(length = NA_real_)
+    } else {
+      # Resolve age-composition bounds to population-bin indices. Depending on
+      # Lbin_method, SS3 interprets the input as population-bin indexes, data-bin
+      # indexes, or actual lengths. Nonpositive bounds select an endpoint.
+      lbin_method <- dat[["Lbin_method"]]
+      pop_length_bins <- dat[["lbin_vector_pop"]]
+      n_pop_length_bins <- dat[["N_lbinspop"]]
+      if (is.null(n_pop_length_bins)) {
+        n_pop_length_bins <- length(pop_length_bins) - 1L
+      }
+      if (
+        length(lbin_method) != 1 ||
+          is.na(lbin_method) ||
+          !lbin_method %in% 1:3 ||
+          is.null(pop_length_bins) ||
+          n_pop_length_bins < 1
+      ) {
+        cli::cli_abort(
+          "Age-composition length bounds require a valid {.code Lbin_method} and population length-bin vector."
+        )
+      }
+      pop_length_bins <- pop_length_bins[seq_len(n_pop_length_bins)]
+      resolve_pop_bin <- function(value, lower) {
+        if (is.na(value)) {
+          cli::cli_abort("Age-composition length bounds cannot be missing.")
+        }
+
+        if (lbin_method == 1) {
+          # Method 1 uses population-bin indexes; SS3 truncates fractional input.
+          if (lower) {
+            index <- if (value <= 0) 1L else as.integer(value)
+          } else {
+            index <- if (value <= 0 || value > n_pop_length_bins) {
+              as.integer(n_pop_length_bins)
+            } else {
+              as.integer(value)
+            }
+          }
+        } else if (lbin_method == 2) {
+          # Method 2 bounds are data-bin indexes. SS3 treats nonpositive lower
+          # bounds as the first data bin and nonpositive or oversized upper
+          # bounds as the last; then it maps those bins to population indexes.
+          n_data_bins <- length(dat[["lbin_vector"]])
+          if (lower) {
+            index <- if (value <= 0) 1L else as.integer(value)
+          } else {
+            index <- if (value <= 0 || value > n_data_bins) {
+              as.integer(n_data_bins)
+            } else {
+              as.integer(value)
+            }
+          }
+          if (index < 1 || index > n_data_bins) {
+            cli::cli_abort(
+              "Age-composition length bound is outside the data-bin indexes."
+            )
+          }
+          index <- match(dat[["lbin_vector"]][index], pop_length_bins)
+        } else {
+          # Method 3 uses actual lengths. Nonpositive lower bounds select the
+          # first population bin; nonpositive or oversized upper bounds select
+          # the last, as in SS3.
+          length_value <- if (lower) {
+            if (value <= 0) pop_length_bins[1] else value
+          } else if (value <= 0 || value > max(pop_length_bins)) {
+            tail(pop_length_bins, 1)
+          } else {
+            value
+          }
+          index <- match(length_value, pop_length_bins)
+        }
+
+        if (is.na(index) || index < 1 || index > n_pop_length_bins) {
+          cli::cli_abort(
+            "Age-composition length bound does not identify a population length bin."
+          )
+        }
+        index
+      }
+      lower_bin <- vapply(
+        agecomp_filtered[["Lbin_lo"]],
+        resolve_pop_bin,
+        integer(1),
+        lower = TRUE
+      )
+      upper_bin <- vapply(
+        agecomp_filtered[["Lbin_hi"]],
+        resolve_pop_bin,
+        integer(1),
+        lower = FALSE
+      )
+      # Full-range bounds are marginal ages. Restricted ranges are CAAL; store
+      # their lower bound as an actual length, regardless of the input method.
+      agecomp_filtered <- agecomp_filtered |>
+        dplyr::mutate(
+          length = ifelse(
+            lower_bin == 1 & upper_bin == n_pop_length_bins,
+            NA_real_,
+            pop_length_bins[lower_bin]
+          )
+        )
+    }
+    age_info <- process_composition(
+      agecomp_filtered,
+      "^(f|a)[0-9]+$",
+      extra_columns = "length"
+    ) |>
       dplyr::rename(age = bin) |>
       # Find missing age in composition data and fill in for each fleet
-      dplyr::group_by(fleet, year) |>
+      dplyr::group_by(fleet, year, length) |>
       tidyr::complete(age = ages) |>
       tidyr::fill(Nsamp, .direction = "updown") |>
       dplyr::mutate(observed = ifelse(is.na(observed), 0, observed)) |>
       dplyr::ungroup() |>
-      dplyr::arrange(fleet, year, age)
+      dplyr::arrange(fleet, year, age, length)
     # Change from proportion to number
     #dplyr::mutate(observed = (observed * Nsamp) |> round(0))
 
     # finish converting age comps to FIMSFrame format
     agecomps <- data.frame(
-      type = "age_comp",
+      type = ifelse(is.na(age_info[["length"]]), "age_comp", "caal_comp"),
       fleet = dat[["fleetnames"]][abs(age_info[["fleet"]])], # abs to include negative fleet numbers which may contain marginal ages
       age = age_info[["age"]],
-      length = NA,
+      length = age_info[["length"]],
       timing = age_info[["year"]],
       observed = age_info[["observed"]], # + 0.001, # add constant to avoid 0 values
       unit = "proportion",
       # Q: should uncertainty here be the total sample size across bins, or the samples within the bin?
       uncertainty = glue::glue(
-        "~dmultinom(prob = agecomp_proportion, size = {round(age_info[['Nsamp']])})"
+        "~dmultinom(prob = {ifelse(is.na(age_info[['length']]), 'agecomp_proportion', 'caalcomp_proportion')}, size = {round(age_info[['Nsamp']])})"
       )
     )
     if (any(dat[["age_info"]][["CompError"]] != 0)) {
@@ -428,7 +648,7 @@ ss3_data_to_fims <- function(
       )
     }
   } else {
-    # if no age comps present
+    # if no retained age comps present
     agecomps <- NULL
   }
 
@@ -456,6 +676,8 @@ ss3_data_to_fims <- function(
       )
     }
 
+    # Definition k occupies rows 2*k-1 and 2*k: mean observed age and SD,
+    # respectively, with one column for each true age.
     ss3_ageerror <- dat[["ageerror"]]
     n_ageerror_definitions <- if (is.null(ss3_ageerror)) {
       0L
@@ -473,6 +695,8 @@ ss3_data_to_fims <- function(
       )
     }
 
+    # Convert only definitions referenced by retained samples. ID zero needs
+    # no error matrix; user-omitted definitions also use identity below.
     referenced_ids <- unique(age_error_ids[age_error_ids > 0])
     if (!is.null(ageing_error_matrices)) {
       if (
@@ -504,10 +728,8 @@ ss3_data_to_fims <- function(
         )
       }
 
-      #' Calculate observed-age probabilities from one SS3 mean/SD vector pair.
-      #'
-      #' @param definition_id SS3 age-error definition number.
-      #' @return A matrix with true ages in rows and observed ages in columns.
+      # Calculate probabilities from the mean/SD pair identified by definition_id.
+      # Return a matrix with true ages in rows and observed ages in columns.
       make_ageing_error_matrix <- function(definition_id) {
         mean_observed_age <- as.numeric(
           ss3_ageerror[(2 * definition_id) - 1, age_columns, drop = TRUE]
@@ -561,6 +783,8 @@ ss3_data_to_fims <- function(
         probabilities
       }
 
+      # Map retained samples to FIMS fleet names and years. Other SS3 sample
+      # coordinates are not part of this age-error matrix assignment.
       all_ageing_error_mappings <- agecomp_filtered |>
         dplyr::transmute(
           fleet = dat[["fleetnames"]][abs(.data[["fleet"]])],
@@ -569,6 +793,8 @@ ss3_data_to_fims <- function(
         ) |>
         dplyr::distinct()
 
+      # Check all definitions in any fleet-year that needs a selected matrix,
+      # including omitted IDs, to avoid assigning that matrix to other samples.
       selected_fleet_years <- all_ageing_error_mappings |>
         dplyr::filter(definition_id %in% selected_ids) |>
         dplyr::distinct(fleet, timing)
@@ -591,6 +817,8 @@ ss3_data_to_fims <- function(
       }
       identity_matrix <- diag(length(ages))
       identity_key <- matrix_key(identity_matrix)
+      # Cache each distinct matrix once and map definition IDs to its key.
+      # Identity represents no misclassification: observed age equals true age.
       matrix_catalog <- list()
       definition_keys <- stats::setNames(
         vapply(
@@ -626,6 +854,8 @@ ss3_data_to_fims <- function(
       best_rule_count <- Inf
       best_rules <- NULL
       for (default_key in candidate_defaults) {
+        # A fleet or year can share one override only if all its mapped samples
+        # use the same matrix. The chosen default needs no such override.
         fleet_rules <- ageing_error_mapping |>
           dplyr::group_by(fleet) |>
           dplyr::summarize(
@@ -643,6 +873,8 @@ ss3_data_to_fims <- function(
           ) |>
           dplyr::filter(is_uniform, matrix_key != default_key)
 
+        # Find exceptions left after broader rules. Fleet overrides take
+        # precedence over year overrides here; otherwise use the default.
         specific_rules <- ageing_error_mapping |>
           dplyr::rowwise() |>
           dplyr::mutate(
@@ -668,6 +900,8 @@ ss3_data_to_fims <- function(
           dplyr::filter(matrix_key != applied_key) |>
           dplyr::select(fleet, timing, matrix_key)
 
+        # Choose the representation with the fewest complete matrix tables.
+        # An identity default is implicit, so it adds no output table.
         rule_count <- as.integer(default_key != identity_key) +
           nrow(fleet_rules) +
           nrow(year_rules) +
@@ -683,6 +917,8 @@ ss3_data_to_fims <- function(
         }
       }
 
+      # Flatten each matrix into FIMS rows: age identifies observed age and
+      # uncertainty identifies true age. NA fleet/timing gives a broader scope.
       matrix_rows <- function(key, fleet, timing) {
         probabilities <- matrix_catalog[[key]]
         data.frame(
@@ -697,6 +933,9 @@ ss3_data_to_fims <- function(
         )
       }
 
+      # Add the general age-error matrix, then any different matrices needed
+      # for particular fleets, years, or fleet-year combinations. Use the same
+      # matrix values wherever the same matrix is needed.
       ageing_error_rows <- list()
       if (best_rules[["default_key"]] != identity_key) {
         ageing_error_rows[[length(ageing_error_rows) + 1]] <- matrix_rows(
@@ -740,6 +979,31 @@ ss3_data_to_fims <- function(
       fleet_column = "fleet",
       label = "lencomp"
     )
+    # Remove discard samples before duplicate selection, just as for ages.
+    # Missing partition values are retained rather than assumed to be discards.
+    n_discard_lencomp <- sum(lencomp_filtered[["part"]] == 1, na.rm = TRUE)
+    if (n_discard_lencomp > 0) {
+      lencomp_filtered <- lencomp_filtered |>
+        dplyr::filter(is.na(.data[["part"]]) | .data[["part"]] != 1)
+      cli::cli_alert_info(
+        "Excluded {n_discard_lencomp} discard length-composition rows (part = 1), which FIMS does not support."
+      )
+    }
+  }
+  if (!is.null(dat[["lencomp"]]) && nrow(lencomp_filtered) > 0) {
+    # As for ages, select one sample per FIMS fleet-year before reshaping.
+    # Signed fleet filtering has already occurred; ties keep the first input row.
+    n_lencomp <- nrow(lencomp_filtered)
+    lencomp_filtered <- lencomp_filtered |>
+      dplyr::mutate(fleet = abs(.data[["fleet"]])) |>
+      dplyr::group_by(.data[["fleet"]], .data[["year"]]) |>
+      dplyr::slice_max(.data[["Nsamp"]], n = 1, with_ties = FALSE) |>
+      dplyr::ungroup()
+    if (nrow(lencomp_filtered) < n_lencomp) {
+      cli::cli_alert_info(
+        "Retained the largest-sample length composition per fleet-year: {n_lencomp} rows reduced to {nrow(lencomp_filtered)}."
+      )
+    }
 
     len_info <- process_composition(lencomp_filtered, "^(f|l)[0-9]+$") |>
       dplyr::rename(length = bin)
@@ -775,12 +1039,13 @@ ss3_data_to_fims <- function(
       )
     }
   } else {
-    # if no length comps present
+    # if no retained length comps present
     lencomps <- NULL # not sure if we need this but wanting to avoid an error if missing age or length comps
   }
 
   if (EWAA) {
-    # weight_at_age data
+    # Use SS3's population (fleet 0) female weights in season/birthseason 1.
+    # This is a fixed subset, not a fleet-specific or sex-averaged weight table.
     wtatage <- ss3_inputs[["wtatage"]] |>
       dplyr::filter(fleet == 0 & sex == 1 & seas == 1 & birthseas == 1) |> # TODO make this more flexible
       dplyr::select("year", dplyr::matches("[0-9]+")) |>
@@ -817,9 +1082,16 @@ ss3_data_to_fims <- function(
     wtatage <- NULL
   }
 
-  # get age-to-length conversion matrix
+  # In empirical mode, length and CAAL likelihoods need age-to-length
+  # probabilities; marginal age compositions alone do not trigger this table.
   # TODO: is it correct to make this conditional on length comps existing?
-  if (EWAA && !is.null(lencomps)) {
+  if (EWAA && (!is.null(lencomps) || any(agecomps[["type"]] == "caal_comp"))) {
+    if (is.null(lengths)) {
+      lengths <- validate_length_bins(dat[["lbin_vector"]])
+    }
+    cli::cli_alert_info(
+      "Using length bins: {paste(lengths, collapse = ', ')}"
+    )
     if (!is.null(ss3_dir)) {
       cli::cli_alert_info(
         "Reading in output from {.code {ss3_dir}} using {.code r4ss::SS_output()}"
@@ -834,11 +1106,12 @@ ss3_data_to_fims <- function(
       cli::cli_abort(
         c(
           "Age-to-length conversion requires `ss3_output` with an `ALK` component.",
-          "i" = "Provide `ss3_output` containing `ALK`, or supply `ss3_dir` so SS3 output can be read when length compositions are present."
+          "i" = "Provide `ss3_output` containing `ALK`, or supply `ss3_dir` so SS3 output can be read when length or conditional age-at-length compositions are present."
         )
       )
     }
-    # initially always take the matrix for females in the middle of season 1
+    # Use the female ALK at the middle of season 1. Rows are population length
+    # bins and columns are ages; no seasonal or sex averaging is performed.
     ALK <- ss3_output[["ALK"]][,, "Seas: 1 Sub_Seas: 2 Morph: 1"]
 
     # check for bin widths different between data and population length bins
@@ -874,11 +1147,8 @@ ss3_data_to_fims <- function(
       high_bins <- NULL
     }
 
-    #' Look up the SS3 age-to-length proportion for one age and length bin.
-    #'
-    #' @param age Age bin to look up.
-    #' @param length Length bin to look up.
-    #' @return The aggregated proportion, or `NA` when either bin is out of range.
+    # Look up the SS3 proportion for one age and length bin, aggregating tails.
+    # Return NA when either coordinate is outside the requested bins.
     length_at_age_lookup <- function(age, length) {
       if (age %in% ages && length %in% lengths) {
         # add the low or high population bins to the first and last data bin
@@ -909,7 +1179,8 @@ ss3_data_to_fims <- function(
       length = integer(),
       timing = character()
     )
-    # create a data frame with every combination of age and length
+    # Build every requested age-length pair, including zero probabilities.
+    # NA fleet and timing mark this conversion table as shared across the model.
     age_to_length <-
       expand.grid(
         age = ages,
@@ -942,7 +1213,8 @@ ss3_data_to_fims <- function(
     age_to_length
   )
 
-  # remove any projection/forecast years (where weight-at-age is 1 year beyond the rest)
+  # Keep observations through endyr and weights through endyr + 1. filter_out()
+  # preserves rows with NA timing, such as model-wide conversion matrices.
   res <- res |>
     dplyr::filter_out(type == "weight_at_age" & timing > dat[["endyr"]] + 1) |>
     dplyr::filter_out(type != "weight_at_age" & timing > dat[["endyr"]])
@@ -960,7 +1232,8 @@ ss3_data_to_fims <- function(
   }
 
   if (nrow(res) > 0) {
-    # filter repeated rows separately for each data type
+    # Validate final keys after all transformations. Check each type separately
+    # because ageing_error uses an additional true-age coordinate in its key.
     res <- res |>
       split(factor(res[["type"]], levels = unique(res[["type"]]))) |>
       lapply(filter_repeated_rows) |>
