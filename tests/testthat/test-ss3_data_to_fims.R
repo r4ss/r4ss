@@ -403,6 +403,30 @@ test_that("ss3_data_to_fims() inherits EWAA from the control file", {
   ))
 })
 
+test_that("ss3_data_to_fims() skips length processing for empirical WAA models", {
+  path <- system.file("extdata", "simple_small", package = "r4ss")
+  ss3_inputs <- SS_read(
+    dir = path,
+    ss_new = FALSE,
+    read_wtatage = TRUE
+  )
+  ss3_inputs[["ctl"]][["EmpiricalWAA"]] <- 1
+  ss3_inputs[["dat"]][["lbin_vector"]] <- NULL
+  ss3_inputs[["dat"]][["lbin_vector_pop"]] <- NULL
+  ss3_inputs[["dat"]][["N_lbinspop"]] <- NULL
+  ss3_inputs[["dat"]][["lencomp"]] <- NULL
+
+  fims_data <- ss3_data_to_fims(
+    ss3_inputs = ss3_inputs,
+    EWAA = NULL
+  )
+
+  expect_true("age_comp" %in% fims_data[["type"]])
+  expect_false("caal_comp" %in% fims_data[["type"]])
+  expect_true("weight_at_age" %in% fims_data[["type"]])
+  expect_false("age_to_length_conversion" %in% fims_data[["type"]])
+})
+
 test_that("ss3_data_to_fims() rejects unsupported CPUE distributions", {
   path <- system.file("extdata", "simple_small", package = "r4ss")
   ss3_inputs <- SS_read(dir = path, ss_new = FALSE)
@@ -442,16 +466,20 @@ test_that("ss3_data_to_fims() interprets CAAL bounds using Lbin_method", {
   expect_true("age_comp" %in% marginal[["type"]])
   expect_false("caal_comp" %in% marginal[["type"]])
 
-  # SS3 may expand the method-2 sentinel pair to population-bin endpoints.
-  expanded_inputs <- inputs
-  expanded_inputs[["dat"]][["Lbin_method"]] <- 2
-  expanded_inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- 1
-  expanded_inputs[["dat"]][["agecomp"]][["Lbin_hi"]] <- length(
-    expanded_inputs[["dat"]][["lbin_vector_pop"]]
-  )
-  expanded <- ss3_data_to_fims(ss3_inputs = expanded_inputs, EWAA = FALSE)
-  expect_true("age_comp" %in% expanded[["type"]])
-  expect_false("caal_comp" %in% expanded[["type"]])
+  # SS3 treats negative method-2 bounds as the first/last data-bin indexes.
+  # These bounds are conditional because the population bins extend below the
+  # data-bin range, so the resulting lower bound is the first data length.
+  for (bounds in list(c(-1, -25), c(1, 44))) {
+    bounded_inputs <- inputs
+    bounded_inputs[["dat"]][["Lbin_method"]] <- 2
+    bounded_inputs[["dat"]][["agecomp"]][["Lbin_lo"]] <- bounds[1]
+    bounded_inputs[["dat"]][["agecomp"]][["Lbin_hi"]] <- bounds[2]
+    bounded <- ss3_data_to_fims(ss3_inputs = bounded_inputs, EWAA = FALSE)
+    caal <- dplyr::filter(bounded, type == "caal_comp")
+    expect_gt(nrow(caal), 0)
+    expect_true(all(caal[["length"]] == 26))
+    expect_false("age_comp" %in% bounded[["type"]])
+  }
 
   # The same population length (28) is expressed differently by each method:
   # population-bin index, matching data-bin index, or actual length.

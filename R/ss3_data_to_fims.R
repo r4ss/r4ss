@@ -104,6 +104,32 @@ ss3_data_to_fims <- function(
 
   # pull out dat element from the list to simplify code
   dat <- ss3_inputs[["dat"]]
+  uses_empirical_waa <- isTRUE(
+    as.logical(ss3_inputs[["ctl"]][["EmpiricalWAA"]])
+  )
+  validate_length_bins <- function(length_bins) {
+    if (
+      !is.numeric(length_bins) ||
+        length(length_bins) == 0 ||
+        anyNA(length_bins) ||
+        any(!is.finite(length_bins)) ||
+        anyDuplicated(length_bins)
+    ) {
+      cli::cli_abort(
+        "{.code lengths} must be a non-empty vector of unique finite numbers."
+      )
+    }
+    if (!all(length_bins %in% dat[["lbin_vector"]])) {
+      cli::cli_abort(
+        "Every value in {.code lengths} must be a length bin in the SS3 data."
+      )
+    }
+    length_bins
+  }
+  # Explicitly supplied bins retain their validation even when they are unused.
+  if (!is.null(lengths)) {
+    lengths <- validate_length_bins(lengths)
+  }
 
   # fill in any missing inputs
   if (is.null(fleets)) {
@@ -135,30 +161,6 @@ ss3_data_to_fims <- function(
   cli::cli_alert_info(
     "Using age bins: {paste(ages, collapse = ', ')}"
   )
-  if (is.null(lengths)) {
-    lengths <- dat[["lbin_vector"]]
-  }
-  # Ensure requested length bins are unique values in the SS3 data bins.
-  if (
-    !is.numeric(lengths) ||
-      length(lengths) == 0 ||
-      anyNA(lengths) ||
-      any(!is.finite(lengths)) ||
-      anyDuplicated(lengths)
-  ) {
-    cli::cli_abort(
-      "{.code lengths} must be a non-empty vector of unique finite numbers."
-    )
-  }
-  if (!all(lengths %in% dat[["lbin_vector"]])) {
-    cli::cli_abort(
-      "Every value in {.code lengths} must be a length bin in the SS3 data."
-    )
-  }
-  cli::cli_alert_info(
-    "Using length bins: {paste(lengths, collapse = ', ')}"
-  )
-
   # Define the common FIMS schema used by all data types below. Coordinates
   # that do not apply to a data type are filled with NA when its rows are built.
   res <- data.frame(
@@ -495,91 +497,112 @@ ss3_data_to_fims <- function(
       )
     }
 
-    # Resolve age-composition bounds to population-bin indices. Depending on
-    # Lbin_method, SS3 interprets the input as population-bin indexes, data-bin
-    # indexes, or actual lengths. Zero and -1 select the corresponding endpoint.
-    lbin_method <- dat[["Lbin_method"]]
-    pop_length_bins <- dat[["lbin_vector_pop"]]
-    # The vector includes the final upper edge, which SS3 can use as a bound.
-    n_pop_length_bins <- length(pop_length_bins)
-    if (
-      length(lbin_method) != 1 ||
-        is.na(lbin_method) ||
-        !lbin_method %in% 1:3 ||
-        is.null(pop_length_bins) ||
-        n_pop_length_bins < 1
-    ) {
-      cli::cli_abort(
-        "Age-composition length bounds require a valid {.code Lbin_method} and population length-bin vector."
-      )
-    }
-    pop_length_bins <- pop_length_bins[seq_len(n_pop_length_bins)]
-    resolve_pop_bin <- function(value, lower) {
-      if (is.na(value)) {
-        cli::cli_abort("Age-composition length bounds cannot be missing.")
+    if (uses_empirical_waa) {
+      # Empirical weight-at-age models do not use CAAL; retain these as marginal ages.
+      agecomp_filtered <- agecomp_filtered |>
+        dplyr::mutate(length = NA_real_)
+    } else {
+      # Resolve age-composition bounds to population-bin indices. Depending on
+      # Lbin_method, SS3 interprets the input as population-bin indexes, data-bin
+      # indexes, or actual lengths. Nonpositive bounds select an endpoint.
+      lbin_method <- dat[["Lbin_method"]]
+      pop_length_bins <- dat[["lbin_vector_pop"]]
+      n_pop_length_bins <- dat[["N_lbinspop"]]
+      if (is.null(n_pop_length_bins)) {
+        n_pop_length_bins <- length(pop_length_bins) - 1L
       }
-      if (value %in% c(-1, 0)) {
-        return(if (lower) 1L else as.integer(n_pop_length_bins))
+      if (
+        length(lbin_method) != 1 ||
+          is.na(lbin_method) ||
+          !lbin_method %in% 1:3 ||
+          is.null(pop_length_bins) ||
+          n_pop_length_bins < 1
+      ) {
+        cli::cli_abort(
+          "Age-composition length bounds require a valid {.code Lbin_method} and population length-bin vector."
+        )
       }
-
-      if (lbin_method == 1) {
-        # Method 1 uses population-bin indexes; SS3 truncates fractional input.
-        index <- as.integer(value)
-      } else if (lbin_method == 2) {
-        # Method 2 uses data-bin indexes, but SS3 may already have expanded
-        # sentinel bounds in parsed data to population-bin indexes.
-        index <- as.integer(value)
-        if (
-          index > length(dat[["lbin_vector"]]) && index <= n_pop_length_bins
-        ) {
-          return(index)
+      pop_length_bins <- pop_length_bins[seq_len(n_pop_length_bins)]
+      resolve_pop_bin <- function(value, lower) {
+        if (is.na(value)) {
+          cli::cli_abort("Age-composition length bounds cannot be missing.")
         }
-        if (index < 1 || index > length(dat[["lbin_vector"]])) {
+
+        if (lbin_method == 1) {
+          # Method 1 uses population-bin indexes; SS3 truncates fractional input.
+          if (lower) {
+            index <- if (value <= 0) 1L else as.integer(value)
+          } else {
+            index <- if (value <= 0 || value > n_pop_length_bins) {
+              as.integer(n_pop_length_bins)
+            } else {
+              as.integer(value)
+            }
+          }
+        } else if (lbin_method == 2) {
+          # Method 2 bounds are data-bin indexes. SS3 treats nonpositive lower
+          # bounds as the first data bin and nonpositive or oversized upper
+          # bounds as the last; then it maps those bins to population indexes.
+          n_data_bins <- length(dat[["lbin_vector"]])
+          if (lower) {
+            index <- if (value <= 0) 1L else as.integer(value)
+          } else {
+            index <- if (value <= 0 || value > n_data_bins) {
+              as.integer(n_data_bins)
+            } else {
+              as.integer(value)
+            }
+          }
+          if (index < 1 || index > n_data_bins) {
+            cli::cli_abort(
+              "Age-composition length bound is outside the data-bin indexes."
+            )
+          }
+          index <- match(dat[["lbin_vector"]][index], pop_length_bins)
+        } else {
+          # Method 3 uses actual lengths. Nonpositive lower bounds select the
+          # first population bin; nonpositive or oversized upper bounds select
+          # the last, as in SS3.
+          length_value <- if (lower) {
+            if (value <= 0) pop_length_bins[1] else value
+          } else if (value <= 0 || value > max(pop_length_bins)) {
+            tail(pop_length_bins, 1)
+          } else {
+            value
+          }
+          index <- match(length_value, pop_length_bins)
+        }
+
+        if (is.na(index) || index < 1 || index > n_pop_length_bins) {
           cli::cli_abort(
-            "Age-composition length bound is outside the data-bin indexes."
+            "Age-composition length bound does not identify a population length bin."
           )
         }
-        index <- match(dat[["lbin_vector"]][index], pop_length_bins)
-      } else {
-        # Method 3 uses actual lengths and requires an exact population-bin match.
-        index <- match(value, pop_length_bins)
+        index
       }
-
-      if (is.na(index) || index < 1 || index > n_pop_length_bins) {
-        cli::cli_abort(
-          "Age-composition length bound does not identify a population length bin."
-        )
-      }
-      index
-    }
-    # In parsed SS3 data, the full-range pair can be stored as its expanded
-    # population-bin endpoints instead of the original 1/-1 input pair.
-    full_pop_range <- agecomp_filtered[["Lbin_lo"]] == 1 &
-      agecomp_filtered[["Lbin_hi"]] == n_pop_length_bins
-    lower_bin <- vapply(
-      agecomp_filtered[["Lbin_lo"]],
-      resolve_pop_bin,
-      integer(1),
-      lower = TRUE
-    )
-    upper_bin <- vapply(
-      agecomp_filtered[["Lbin_hi"]],
-      resolve_pop_bin,
-      integer(1),
-      lower = FALSE
-    )
-    lower_bin[full_pop_range] <- 1L
-    upper_bin[full_pop_range] <- as.integer(n_pop_length_bins)
-    # Full-range bounds are marginal ages. Restricted ranges are CAAL; store
-    # their lower bound as an actual length, regardless of the input method.
-    agecomp_filtered <- agecomp_filtered |>
-      dplyr::mutate(
-        length = ifelse(
-          lower_bin == 1 & upper_bin == n_pop_length_bins,
-          NA_real_,
-          pop_length_bins[lower_bin]
-        )
+      lower_bin <- vapply(
+        agecomp_filtered[["Lbin_lo"]],
+        resolve_pop_bin,
+        integer(1),
+        lower = TRUE
       )
+      upper_bin <- vapply(
+        agecomp_filtered[["Lbin_hi"]],
+        resolve_pop_bin,
+        integer(1),
+        lower = FALSE
+      )
+      # Full-range bounds are marginal ages. Restricted ranges are CAAL; store
+      # their lower bound as an actual length, regardless of the input method.
+      agecomp_filtered <- agecomp_filtered |>
+        dplyr::mutate(
+          length = ifelse(
+            lower_bin == 1 & upper_bin == n_pop_length_bins,
+            NA_real_,
+            pop_length_bins[lower_bin]
+          )
+        )
+    }
     age_info <- process_composition(
       agecomp_filtered,
       "^(f|a)[0-9]+$",
@@ -1063,6 +1086,12 @@ ss3_data_to_fims <- function(
   # probabilities; marginal age compositions alone do not trigger this table.
   # TODO: is it correct to make this conditional on length comps existing?
   if (EWAA && (!is.null(lencomps) || any(agecomps[["type"]] == "caal_comp"))) {
+    if (is.null(lengths)) {
+      lengths <- validate_length_bins(dat[["lbin_vector"]])
+    }
+    cli::cli_alert_info(
+      "Using length bins: {paste(lengths, collapse = ', ')}"
+    )
     if (!is.null(ss3_dir)) {
       cli::cli_alert_info(
         "Reading in output from {.code {ss3_dir}} using {.code r4ss::SS_output()}"
